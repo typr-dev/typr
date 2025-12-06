@@ -6,38 +6,40 @@
 package adventureworks.public.title
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait TitleFields {
+trait TitleFields extends FieldsExpr[TitleRow] {
   def code: IdField[TitleId, TitleRow]
+
+  override def columns: java.util.List[FieldLike[?, TitleRow]]
+
+  override def rowParser: RowParser[TitleRow] = TitleRow._rowParser
 }
 
 object TitleFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[TitleFields, TitleRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends TitleFields with Relation[TitleFields, TitleRow] {
 
-    override lazy val fields: TitleFields = {
-      new TitleFields {
-        override def code: IdField[TitleId, TitleRow] = {
-          new IdField[TitleId, TitleRow](
-            _path,
-            "code",
-            _.code,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(code = value),
-            TitleId.pgType
-          )
-        }
-      }
+    override def code: IdField[TitleId, TitleRow] = {
+      new IdField[TitleId, TitleRow](
+        _path,
+        "code",
+        _.code,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(code = value),
+        TitleId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, TitleRow]] = java.util.List.of(this.fields.code)
+    override def columns: java.util.List[FieldLike[?, TitleRow]] = java.util.List.of(this.code)
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(`_path`: java.util.List[Path]): Relation[TitleFields, TitleRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[TitleFields, TitleRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

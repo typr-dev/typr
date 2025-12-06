@@ -44,7 +44,7 @@ case class UsersRow(
 }
 
 object UsersRow {
-  val `_rowParser`: RowParser[UsersRow] = RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.opt(), TypoUnknownCitext.pgType, PgTypes.text, TypoInstant.pgType, TypoInstant.pgType.opt(), UsersRow.apply, row => Array(row.userId, row.name, row.lastName, row.email, row.password, row.createdAt, row.verifiedOn))
+  val `_rowParser`: RowParser[UsersRow] = RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.opt(), TypoUnknownCitext.pgType, PgTypes.text, TypoInstant.pgType, TypoInstant.pgType.opt(), UsersRow.apply, row => Array[Object](row.userId.asInstanceOf[Object], row.name.asInstanceOf[Object], row.lastName.asInstanceOf[Object], row.email.asInstanceOf[Object], row.password.asInstanceOf[Object], row.createdAt.asInstanceOf[Object], row.verifiedOn.asInstanceOf[Object]))
 
   given pgText: PgText[UsersRow] = PgText.from(`_rowParser`)
 }

@@ -38,5 +38,5 @@ case class PodViewRow(
 )
 
 object PodViewRow {
-  val `_rowParser`: RowParser[PodViewRow] = RowParsers.of(PgTypes.int4, PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PodViewRow.apply, row => Array(row.id, row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate))
+  val `_rowParser`: RowParser[PodViewRow] = RowParsers.of(PgTypes.int4, PurchaseorderheaderId.pgType, PgTypes.int4, TypoLocalDateTime.pgType, TypoShort.pgType, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PodViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.purchaseorderid.asInstanceOf[Object], row.purchaseorderdetailid.asInstanceOf[Object], row.duedate.asInstanceOf[Object], row.orderqty.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.unitprice.asInstanceOf[Object], row.receivedqty.asInstanceOf[Object], row.rejectedqty.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

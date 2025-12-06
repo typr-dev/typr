@@ -11,6 +11,7 @@ import testdb.customer_status.CustomerStatusFields
 import testdb.customer_status.CustomerStatusId
 import testdb.customer_status.CustomerStatusRow
 import typo.data.maria.MariaSet
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -19,8 +20,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait CustomersFields {
+trait CustomersFields extends FieldsExpr[CustomersRow] {
   def customerId: IdField[CustomersId, CustomersRow]
 
   def email: Field[String, CustomersRow]
@@ -50,174 +52,187 @@ trait CustomersFields {
   def lastLoginAt: OptField[LocalDateTime, CustomersRow]
 
   def fkCustomerStatus: ForeignKey[CustomerStatusFields, CustomerStatusRow] = ForeignKey.of[CustomerStatusFields, CustomerStatusRow]("fk_customer_status").withColumnPair(status, _.statusCode)
+
+  override def columns: java.util.List[FieldLike[?, CustomersRow]]
+
+  override def rowParser: RowParser[CustomersRow] = CustomersRow._rowParser
 }
 
 object CustomersFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CustomersFields, CustomersRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CustomersFields with Relation[CustomersFields, CustomersRow] {
 
-    override lazy val fields: CustomersFields = {
-      new CustomersFields {
-        override def customerId: IdField[CustomersId, CustomersRow] = {
-          new IdField[CustomersId, CustomersRow](
-            _path,
-            "customer_id",
-            _.customerId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(customerId = value),
-            CustomersId.pgType
-          )
-        }
-        override def email: Field[String, CustomersRow] = {
-          new Field[String, CustomersRow](
-            _path,
-            "email",
-            _.email,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(email = value),
-            MariaTypes.varchar
-          )
-        }
-        override def passwordHash: Field[Array[Byte], CustomersRow] = {
-          new Field[Array[Byte], CustomersRow](
-            _path,
-            "password_hash",
-            _.passwordHash,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(passwordHash = value),
-            MariaTypes.binary
-          )
-        }
-        override def firstName: Field[String, CustomersRow] = {
-          new Field[String, CustomersRow](
-            _path,
-            "first_name",
-            _.firstName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(firstName = value),
-            MariaTypes.varchar
-          )
-        }
-        override def lastName: Field[String, CustomersRow] = {
-          new Field[String, CustomersRow](
-            _path,
-            "last_name",
-            _.lastName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastName = value),
-            MariaTypes.varchar
-          )
-        }
-        override def phone: OptField[String, CustomersRow] = {
-          new OptField[String, CustomersRow](
-            _path,
-            "phone",
-            _.phone,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(phone = value),
-            MariaTypes.varchar
-          )
-        }
-        override def status: Field[CustomerStatusId, CustomersRow] = {
-          new Field[CustomerStatusId, CustomersRow](
-            _path,
-            "status",
-            _.status,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(status = value),
-            CustomerStatusId.pgType
-          )
-        }
-        override def tier: Field[String, CustomersRow] = {
-          new Field[String, CustomersRow](
-            _path,
-            "tier",
-            _.tier,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(tier = value),
-            MariaTypes.text
-          )
-        }
-        override def preferences: OptField[String, CustomersRow] = {
-          new OptField[String, CustomersRow](
-            _path,
-            "preferences",
-            _.preferences,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(preferences = value),
-            MariaTypes.longtext
-          )
-        }
-        override def marketingFlags: OptField[MariaSet, CustomersRow] = {
-          new OptField[MariaSet, CustomersRow](
-            _path,
-            "marketing_flags",
-            _.marketingFlags,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(marketingFlags = value),
-            MariaTypes.set
-          )
-        }
-        override def notes: OptField[String, CustomersRow] = {
-          new OptField[String, CustomersRow](
-            _path,
-            "notes",
-            _.notes,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(notes = value),
-            MariaTypes.text
-          )
-        }
-        override def createdAt: Field[LocalDateTime, CustomersRow] = {
-          new Field[LocalDateTime, CustomersRow](
-            _path,
-            "created_at",
-            _.createdAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(createdAt = value),
-            MariaTypes.datetime
-          )
-        }
-        override def updatedAt: Field[LocalDateTime, CustomersRow] = {
-          new Field[LocalDateTime, CustomersRow](
-            _path,
-            "updated_at",
-            _.updatedAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(updatedAt = value),
-            MariaTypes.datetime
-          )
-        }
-        override def lastLoginAt: OptField[LocalDateTime, CustomersRow] = {
-          new OptField[LocalDateTime, CustomersRow](
-            _path,
-            "last_login_at",
-            _.lastLoginAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastLoginAt = value),
-            MariaTypes.datetime
-          )
-        }
-      }
+    override def customerId: IdField[CustomersId, CustomersRow] = {
+      new IdField[CustomersId, CustomersRow](
+        _path,
+        "customer_id",
+        _.customerId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(customerId = value),
+        CustomersId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CustomersRow]] = java.util.List.of(this.fields.customerId, this.fields.email, this.fields.passwordHash, this.fields.firstName, this.fields.lastName, this.fields.phone, this.fields.status, this.fields.tier, this.fields.preferences, this.fields.marketingFlags, this.fields.notes, this.fields.createdAt, this.fields.updatedAt, this.fields.lastLoginAt)
+    override def email: Field[String, CustomersRow] = {
+      new Field[String, CustomersRow](
+        _path,
+        "email",
+        _.email,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(email = value),
+        MariaTypes.varchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def passwordHash: Field[Array[Byte], CustomersRow] = {
+      new Field[Array[Byte], CustomersRow](
+        _path,
+        "password_hash",
+        _.passwordHash,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(passwordHash = value),
+        MariaTypes.binary
+      )
+    }
+
+    override def firstName: Field[String, CustomersRow] = {
+      new Field[String, CustomersRow](
+        _path,
+        "first_name",
+        _.firstName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(firstName = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def lastName: Field[String, CustomersRow] = {
+      new Field[String, CustomersRow](
+        _path,
+        "last_name",
+        _.lastName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastName = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def phone: OptField[String, CustomersRow] = {
+      new OptField[String, CustomersRow](
+        _path,
+        "phone",
+        _.phone,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(phone = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def status: Field[CustomerStatusId, CustomersRow] = {
+      new Field[CustomerStatusId, CustomersRow](
+        _path,
+        "status",
+        _.status,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(status = value),
+        CustomerStatusId.pgType
+      )
+    }
+
+    override def tier: Field[String, CustomersRow] = {
+      new Field[String, CustomersRow](
+        _path,
+        "tier",
+        _.tier,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(tier = value),
+        MariaTypes.text
+      )
+    }
+
+    override def preferences: OptField[String, CustomersRow] = {
+      new OptField[String, CustomersRow](
+        _path,
+        "preferences",
+        _.preferences,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(preferences = value),
+        MariaTypes.longtext
+      )
+    }
+
+    override def marketingFlags: OptField[MariaSet, CustomersRow] = {
+      new OptField[MariaSet, CustomersRow](
+        _path,
+        "marketing_flags",
+        _.marketingFlags,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(marketingFlags = value),
+        MariaTypes.set
+      )
+    }
+
+    override def notes: OptField[String, CustomersRow] = {
+      new OptField[String, CustomersRow](
+        _path,
+        "notes",
+        _.notes,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(notes = value),
+        MariaTypes.text
+      )
+    }
+
+    override def createdAt: Field[LocalDateTime, CustomersRow] = {
+      new Field[LocalDateTime, CustomersRow](
+        _path,
+        "created_at",
+        _.createdAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(createdAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def updatedAt: Field[LocalDateTime, CustomersRow] = {
+      new Field[LocalDateTime, CustomersRow](
+        _path,
+        "updated_at",
+        _.updatedAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(updatedAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def lastLoginAt: OptField[LocalDateTime, CustomersRow] = {
+      new OptField[LocalDateTime, CustomersRow](
+        _path,
+        "last_login_at",
+        _.lastLoginAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastLoginAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CustomersRow]] = java.util.List.of(this.customerId, this.email, this.passwordHash, this.firstName, this.lastName, this.phone, this.status, this.tier, this.preferences, this.marketingFlags, this.notes, this.createdAt, this.updatedAt, this.lastLoginAt)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CustomersFields, CustomersRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CustomersFields, CustomersRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

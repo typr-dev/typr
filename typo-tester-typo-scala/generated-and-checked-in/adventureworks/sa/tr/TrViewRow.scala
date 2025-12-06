@@ -36,5 +36,5 @@ case class TrViewRow(
 )
 
 object TrViewRow {
-  val `_rowParser`: RowParser[TrViewRow] = RowParsers.of(SalestaxrateId.pgType, SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, TrViewRow.apply, row => Array(row.id, row.salestaxrateid, row.stateprovinceid, row.taxtype, row.taxrate, row.name, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[TrViewRow] = RowParsers.of(SalestaxrateId.pgType, SalestaxrateId.pgType, StateprovinceId.pgType, TypoShort.pgType, PgTypes.numeric, Name.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, TrViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.salestaxrateid.asInstanceOf[Object], row.stateprovinceid.asInstanceOf[Object], row.taxtype.asInstanceOf[Object], row.taxrate.asInstanceOf[Object], row.name.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

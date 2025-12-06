@@ -5,9 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package customtypes
+package typo.generated.customtypes
 
 import anorm.Column
 import anorm.ParameterMetaData
@@ -18,49 +16,68 @@ import org.postgresql.jdbc.PgArray
 import org.postgresql.util.PGobject
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
+import typo.generated.Text
 
 /** regtype (via PGObject) */
 case class TypoRegtype(value: String)
 
 object TypoRegtype {
-  implicit lazy val arrayColumn: Column[Array[TypoRegtype]] = Column.nonNull[Array[TypoRegtype]]((v1: Any, _) =>
-    v1 match {
-        case v: PgArray =>
-         v.getArray match {
-           case v: Array[?] =>
-             Right(v.map(v => TypoRegtype(v.asInstanceOf[String])))
-           case other => Left(TypeDoesNotMatch(s"Expected one-dimensional array from JDBC to produce an array of TypoRegtype, got ${other.getClass.getName}"))
-         }
-      case other => Left(TypeDoesNotMatch(s"Expected instance of org.postgresql.jdbc.PgArray, got ${other.getClass.getName}"))
-    }
-  )
-  implicit lazy val arrayToStatement: ToStatement[Array[TypoRegtype]] = ToStatement[Array[TypoRegtype]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("regtype", v.map(v => {
-                                                                                                                           val obj = new PGobject
-                                                                                                                           obj.setType("regtype")
-                                                                                                                           obj.setValue(v.value)
-                                                                                                                           obj
-                                                                                                                         }))))
-  implicit lazy val column: Column[TypoRegtype] = Column.nonNull[TypoRegtype]((v1: Any, _) =>
-    v1 match {
-      case v: PGobject => Right(TypoRegtype(v.getValue))
-      case other => Left(TypeDoesNotMatch(s"Expected instance of org.postgresql.util.PGobject, got ${other.getClass.getName}"))
-    }
-  )
-  implicit lazy val ordering: Ordering[TypoRegtype] = Ordering.by(_.value)
-  implicit lazy val parameterMetadata: ParameterMetaData[TypoRegtype] = new ParameterMetaData[TypoRegtype] {
-    override def sqlType: String = "regtype"
-    override def jdbcType: Int = Types.OTHER
+  implicit lazy val arrayColumn: Column[Array[TypoRegtype]] = {
+    Column.nonNull[Array[TypoRegtype]]((v1: Any, _) =>
+      v1 match {
+          case v: PgArray =>
+           v.getArray match {
+             case v: Array[?] =>
+               Right(v.map(v => new TypoRegtype(v.asInstanceOf[String])))
+             case other => Left(TypeDoesNotMatch(s"Expected one-dimensional array from JDBC to produce an array of TypoRegtype, got ${other.getClass.getName}"))
+           }
+        case other => Left(TypeDoesNotMatch(s"Expected instance of org.postgresql.jdbc.PgArray, got ${other.getClass.getName}"))
+      }
+    )
   }
+
+  implicit lazy val arrayToStatement: ToStatement[Array[TypoRegtype]] = {
+    ToStatement[Array[TypoRegtype]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("regtype", v.map(v => {
+      val obj = new PGobject()
+      obj.setType("regtype")
+      obj.setValue(v.value)
+      obj
+    }))))
+  }
+
+  implicit lazy val column: Column[TypoRegtype] = {
+    Column.nonNull[TypoRegtype]((v1: Any, _) =>
+      v1 match {
+        case v: PGobject => Right(new TypoRegtype(v.getValue))
+        case other => Left(TypeDoesNotMatch(s"Expected instance of org.postgresql.util.PGobject, got ${other.getClass.getName}"))
+      }
+    )
+  }
+
+  implicit lazy val parameterMetadata: ParameterMetaData[TypoRegtype] = {
+    new ParameterMetaData[TypoRegtype] {
+      override def sqlType: String = "regtype"
+      override def jdbcType: Int = Types.OTHER
+    }
+  }
+
+  implicit lazy val pgText: Text[TypoRegtype] = {
+    new Text[TypoRegtype] {
+      override def unsafeEncode(v: TypoRegtype, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+      override def unsafeArrayEncode(v: TypoRegtype, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+    }
+  }
+
   implicit lazy val reads: Reads[TypoRegtype] = Reads.StringReads.map(TypoRegtype.apply)
-  implicit lazy val text: Text[TypoRegtype] = new Text[TypoRegtype] {
-    override def unsafeEncode(v: TypoRegtype, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: TypoRegtype, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+
+  implicit lazy val toStatement: ToStatement[TypoRegtype] = {
+    ToStatement[TypoRegtype]((s, index, v) => s.setObject(index, {
+      val obj = new PGobject()
+      obj.setType("regtype")
+      obj.setValue(v.value)
+      obj
+    }))
   }
-  implicit lazy val toStatement: ToStatement[TypoRegtype] = ToStatement[TypoRegtype]((s, index, v) => s.setObject(index, {
-                                                                 val obj = new PGobject
-                                                                 obj.setType("regtype")
-                                                                 obj.setValue(v.value)
-                                                                 obj
-                                                               }))
+
   implicit lazy val writes: Writes[TypoRegtype] = Writes.StringWrites.contramap(_.value)
 }

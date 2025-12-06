@@ -11,56 +11,53 @@ import adventureworks.humanresources.jobcandidate.JobcandidateId;
 import adventureworks.person.businessentity.BusinessentityId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface JcViewFields {
-  final class Impl extends Relation<JcViewFields, JcViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface JcViewFields extends FieldsExpr<JcViewRow> {
+  record Impl(List<Path> _path) implements JcViewFields, Relation<JcViewFields, JcViewRow> {
+    @Override
+    public Field<JobcandidateId, JcViewRow> id() {
+      return new Field<JobcandidateId, JcViewRow>(_path, "id", JcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), JobcandidateId.pgType);
+    };
 
     @Override
-    public JcViewFields fields() {
-      return new JcViewFields() {
-               @Override
-               public Field<JobcandidateId, JcViewRow> id() {
-                 return new Field<JobcandidateId, JcViewRow>(_path, "id", JcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), JobcandidateId.pgType);
-               };
-               @Override
-               public Field<JobcandidateId, JcViewRow> jobcandidateid() {
-                 return new Field<JobcandidateId, JcViewRow>(_path, "jobcandidateid", JcViewRow::jobcandidateid, Optional.empty(), Optional.empty(), (row, value) -> row.withJobcandidateid(value), JobcandidateId.pgType);
-               };
-               @Override
-               public OptField<BusinessentityId, JcViewRow> businessentityid() {
-                 return new OptField<BusinessentityId, JcViewRow>(_path, "businessentityid", JcViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public OptField<TypoXml, JcViewRow> resume() {
-                 return new OptField<TypoXml, JcViewRow>(_path, "resume", JcViewRow::resume, Optional.empty(), Optional.empty(), (row, value) -> row.withResume(value), TypoXml.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, JcViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, JcViewRow>(_path, "modifieddate", JcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<JobcandidateId, JcViewRow> jobcandidateid() {
+      return new Field<JobcandidateId, JcViewRow>(_path, "jobcandidateid", JcViewRow::jobcandidateid, Optional.empty(), Optional.empty(), (row, value) -> row.withJobcandidateid(value), JobcandidateId.pgType);
+    };
+
+    @Override
+    public OptField<BusinessentityId, JcViewRow> businessentityid() {
+      return new OptField<BusinessentityId, JcViewRow>(_path, "businessentityid", JcViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public OptField<TypoXml, JcViewRow> resume() {
+      return new OptField<TypoXml, JcViewRow>(_path, "resume", JcViewRow::resume, Optional.empty(), Optional.empty(), (row, value) -> row.withResume(value), TypoXml.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, JcViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, JcViewRow>(_path, "modifieddate", JcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, JcViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().jobcandidateid(), this.fields().businessentityid(), this.fields().resume(), this.fields().modifieddate());
+      return List.of(this.id(), this.jobcandidateid(), this.businessentityid(), this.resume(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<JcViewFields, JcViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<JcViewFields, JcViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -73,4 +70,12 @@ public interface JcViewFields {
   OptField<TypoXml, JcViewRow> resume();
 
   Field<TypoLocalDateTime, JcViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, JcViewRow>> columns();
+
+  @Override
+  default RowParser<JcViewRow> rowParser() {
+    return JcViewRow._rowParser;
+  };
 }

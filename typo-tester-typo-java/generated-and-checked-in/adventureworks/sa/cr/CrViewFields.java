@@ -11,64 +11,63 @@ import adventureworks.sales.currencyrate.CurrencyrateId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface CrViewFields {
-  final class Impl extends Relation<CrViewFields, CrViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CrViewFields extends FieldsExpr<CrViewRow> {
+  record Impl(List<Path> _path) implements CrViewFields, Relation<CrViewFields, CrViewRow> {
+    @Override
+    public Field<CurrencyrateId, CrViewRow> currencyrateid() {
+      return new Field<CurrencyrateId, CrViewRow>(_path, "currencyrateid", CrViewRow::currencyrateid, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencyrateid(value), CurrencyrateId.pgType);
+    };
 
     @Override
-    public CrViewFields fields() {
-      return new CrViewFields() {
-               @Override
-               public Field<CurrencyrateId, CrViewRow> currencyrateid() {
-                 return new Field<CurrencyrateId, CrViewRow>(_path, "currencyrateid", CrViewRow::currencyrateid, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencyrateid(value), CurrencyrateId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CrViewRow> currencyratedate() {
-                 return new Field<TypoLocalDateTime, CrViewRow>(_path, "currencyratedate", CrViewRow::currencyratedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withCurrencyratedate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<CurrencyId, CrViewRow> fromcurrencycode() {
-                 return new Field<CurrencyId, CrViewRow>(_path, "fromcurrencycode", CrViewRow::fromcurrencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withFromcurrencycode(value), CurrencyId.pgType);
-               };
-               @Override
-               public Field<CurrencyId, CrViewRow> tocurrencycode() {
-                 return new Field<CurrencyId, CrViewRow>(_path, "tocurrencycode", CrViewRow::tocurrencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withTocurrencycode(value), CurrencyId.pgType);
-               };
-               @Override
-               public Field<BigDecimal, CrViewRow> averagerate() {
-                 return new Field<BigDecimal, CrViewRow>(_path, "averagerate", CrViewRow::averagerate, Optional.empty(), Optional.empty(), (row, value) -> row.withAveragerate(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, CrViewRow> endofdayrate() {
-                 return new Field<BigDecimal, CrViewRow>(_path, "endofdayrate", CrViewRow::endofdayrate, Optional.empty(), Optional.empty(), (row, value) -> row.withEndofdayrate(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CrViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<TypoLocalDateTime, CrViewRow> currencyratedate() {
+      return new Field<TypoLocalDateTime, CrViewRow>(_path, "currencyratedate", CrViewRow::currencyratedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withCurrencyratedate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<CurrencyId, CrViewRow> fromcurrencycode() {
+      return new Field<CurrencyId, CrViewRow>(_path, "fromcurrencycode", CrViewRow::fromcurrencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withFromcurrencycode(value), CurrencyId.pgType);
+    };
+
+    @Override
+    public Field<CurrencyId, CrViewRow> tocurrencycode() {
+      return new Field<CurrencyId, CrViewRow>(_path, "tocurrencycode", CrViewRow::tocurrencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withTocurrencycode(value), CurrencyId.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, CrViewRow> averagerate() {
+      return new Field<BigDecimal, CrViewRow>(_path, "averagerate", CrViewRow::averagerate, Optional.empty(), Optional.empty(), (row, value) -> row.withAveragerate(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, CrViewRow> endofdayrate() {
+      return new Field<BigDecimal, CrViewRow>(_path, "endofdayrate", CrViewRow::endofdayrate, Optional.empty(), Optional.empty(), (row, value) -> row.withEndofdayrate(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CrViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CrViewRow>> columns() {
-      return List.of(this.fields().currencyrateid(), this.fields().currencyratedate(), this.fields().fromcurrencycode(), this.fields().tocurrencycode(), this.fields().averagerate(), this.fields().endofdayrate(), this.fields().modifieddate());
+      return List.of(this.currencyrateid(), this.currencyratedate(), this.fromcurrencycode(), this.tocurrencycode(), this.averagerate(), this.endofdayrate(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CrViewFields, CrViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CrViewFields, CrViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -85,4 +84,12 @@ public interface CrViewFields {
   Field<BigDecimal, CrViewRow> endofdayrate();
 
   Field<TypoLocalDateTime, CrViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CrViewRow>> columns();
+
+  @Override
+  default RowParser<CrViewRow> rowParser() {
+    return CrViewRow._rowParser;
+  };
 }

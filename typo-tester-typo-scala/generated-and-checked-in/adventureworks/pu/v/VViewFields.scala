@@ -12,14 +12,16 @@ import adventureworks.public.AccountNumber
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VViewFields {
+trait VViewFields extends FieldsExpr[VViewRow] {
   def id: Field[BusinessentityId, VViewRow]
 
   def businessentityid: Field[BusinessentityId, VViewRow]
@@ -37,119 +39,127 @@ trait VViewFields {
   def purchasingwebserviceurl: OptField[/* max 1024 chars */ String, VViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, VViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VViewRow]]
+
+  override def rowParser: RowParser[VViewRow] = VViewRow._rowParser
 }
 
 object VViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VViewFields, VViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VViewFields with Relation[VViewFields, VViewRow] {
 
-    override lazy val fields: VViewFields = {
-      new VViewFields {
-        override def id: Field[BusinessentityId, VViewRow] = {
-          new Field[BusinessentityId, VViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, VViewRow] = {
-          new Field[BusinessentityId, VViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def accountnumber: Field[AccountNumber, VViewRow] = {
-          new Field[AccountNumber, VViewRow](
-            _path,
-            "accountnumber",
-            _.accountnumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(accountnumber = value),
-            AccountNumber.pgType
-          )
-        }
-        override def name: Field[Name, VViewRow] = {
-          new Field[Name, VViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def creditrating: Field[TypoShort, VViewRow] = {
-          new Field[TypoShort, VViewRow](
-            _path,
-            "creditrating",
-            _.creditrating,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(creditrating = value),
-            TypoShort.pgType
-          )
-        }
-        override def preferredvendorstatus: Field[Flag, VViewRow] = {
-          new Field[Flag, VViewRow](
-            _path,
-            "preferredvendorstatus",
-            _.preferredvendorstatus,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(preferredvendorstatus = value),
-            Flag.pgType
-          )
-        }
-        override def activeflag: Field[Flag, VViewRow] = {
-          new Field[Flag, VViewRow](
-            _path,
-            "activeflag",
-            _.activeflag,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(activeflag = value),
-            Flag.pgType
-          )
-        }
-        override def purchasingwebserviceurl: OptField[/* max 1024 chars */ String, VViewRow] = {
-          new OptField[/* max 1024 chars */ String, VViewRow](
-            _path,
-            "purchasingwebserviceurl",
-            _.purchasingwebserviceurl,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(purchasingwebserviceurl = value),
-            PgTypes.text
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, VViewRow] = {
-          new Field[TypoLocalDateTime, VViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, VViewRow] = {
+      new Field[BusinessentityId, VViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.accountnumber, this.fields.name, this.fields.creditrating, this.fields.preferredvendorstatus, this.fields.activeflag, this.fields.purchasingwebserviceurl, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, VViewRow] = {
+      new Field[BusinessentityId, VViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def accountnumber: Field[AccountNumber, VViewRow] = {
+      new Field[AccountNumber, VViewRow](
+        _path,
+        "accountnumber",
+        _.accountnumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(accountnumber = value),
+        AccountNumber.pgType
+      )
+    }
+
+    override def name: Field[Name, VViewRow] = {
+      new Field[Name, VViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def creditrating: Field[TypoShort, VViewRow] = {
+      new Field[TypoShort, VViewRow](
+        _path,
+        "creditrating",
+        _.creditrating,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(creditrating = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def preferredvendorstatus: Field[Flag, VViewRow] = {
+      new Field[Flag, VViewRow](
+        _path,
+        "preferredvendorstatus",
+        _.preferredvendorstatus,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(preferredvendorstatus = value),
+        Flag.pgType
+      )
+    }
+
+    override def activeflag: Field[Flag, VViewRow] = {
+      new Field[Flag, VViewRow](
+        _path,
+        "activeflag",
+        _.activeflag,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(activeflag = value),
+        Flag.pgType
+      )
+    }
+
+    override def purchasingwebserviceurl: OptField[/* max 1024 chars */ String, VViewRow] = {
+      new OptField[/* max 1024 chars */ String, VViewRow](
+        _path,
+        "purchasingwebserviceurl",
+        _.purchasingwebserviceurl,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(purchasingwebserviceurl = value),
+        PgTypes.text
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, VViewRow] = {
+      new Field[TypoLocalDateTime, VViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VViewRow]] = java.util.List.of(this.id, this.businessentityid, this.accountnumber, this.name, this.creditrating, this.preferredvendorstatus, this.activeflag, this.purchasingwebserviceurl, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VViewFields, VViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VViewFields, VViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

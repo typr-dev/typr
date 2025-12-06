@@ -8,13 +8,15 @@ package adventureworks.pr.tha
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait ThaViewFields {
+trait ThaViewFields extends FieldsExpr[ThaViewRow] {
   def id: Field[TransactionhistoryarchiveId, ThaViewRow]
 
   def transactionid: Field[TransactionhistoryarchiveId, ThaViewRow]
@@ -34,130 +36,139 @@ trait ThaViewFields {
   def actualcost: Field[java.math.BigDecimal, ThaViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, ThaViewRow]
+
+  override def columns: java.util.List[FieldLike[?, ThaViewRow]]
+
+  override def rowParser: RowParser[ThaViewRow] = ThaViewRow._rowParser
 }
 
 object ThaViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ThaViewFields, ThaViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ThaViewFields with Relation[ThaViewFields, ThaViewRow] {
 
-    override lazy val fields: ThaViewFields = {
-      new ThaViewFields {
-        override def id: Field[TransactionhistoryarchiveId, ThaViewRow] = {
-          new Field[TransactionhistoryarchiveId, ThaViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            TransactionhistoryarchiveId.pgType
-          )
-        }
-        override def transactionid: Field[TransactionhistoryarchiveId, ThaViewRow] = {
-          new Field[TransactionhistoryarchiveId, ThaViewRow](
-            _path,
-            "transactionid",
-            _.transactionid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(transactionid = value),
-            TransactionhistoryarchiveId.pgType
-          )
-        }
-        override def productid: Field[Integer, ThaViewRow] = {
-          new Field[Integer, ThaViewRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productid = value),
-            PgTypes.int4
-          )
-        }
-        override def referenceorderid: Field[Integer, ThaViewRow] = {
-          new Field[Integer, ThaViewRow](
-            _path,
-            "referenceorderid",
-            _.referenceorderid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(referenceorderid = value),
-            PgTypes.int4
-          )
-        }
-        override def referenceorderlineid: Field[Integer, ThaViewRow] = {
-          new Field[Integer, ThaViewRow](
-            _path,
-            "referenceorderlineid",
-            _.referenceorderlineid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(referenceorderlineid = value),
-            PgTypes.int4
-          )
-        }
-        override def transactiondate: Field[TypoLocalDateTime, ThaViewRow] = {
-          new Field[TypoLocalDateTime, ThaViewRow](
-            _path,
-            "transactiondate",
-            _.transactiondate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(transactiondate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def transactiontype: Field[/* bpchar, max 1 chars */ String, ThaViewRow] = {
-          new Field[/* bpchar, max 1 chars */ String, ThaViewRow](
-            _path,
-            "transactiontype",
-            _.transactiontype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(transactiontype = value),
-            PgTypes.bpchar
-          )
-        }
-        override def quantity: Field[Integer, ThaViewRow] = {
-          new Field[Integer, ThaViewRow](
-            _path,
-            "quantity",
-            _.quantity,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(quantity = value),
-            PgTypes.int4
-          )
-        }
-        override def actualcost: Field[java.math.BigDecimal, ThaViewRow] = {
-          new Field[java.math.BigDecimal, ThaViewRow](
-            _path,
-            "actualcost",
-            _.actualcost,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(actualcost = value),
-            PgTypes.numeric
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ThaViewRow] = {
-          new Field[TypoLocalDateTime, ThaViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[TransactionhistoryarchiveId, ThaViewRow] = {
+      new Field[TransactionhistoryarchiveId, ThaViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        TransactionhistoryarchiveId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ThaViewRow]] = java.util.List.of(this.fields.id, this.fields.transactionid, this.fields.productid, this.fields.referenceorderid, this.fields.referenceorderlineid, this.fields.transactiondate, this.fields.transactiontype, this.fields.quantity, this.fields.actualcost, this.fields.modifieddate)
+    override def transactionid: Field[TransactionhistoryarchiveId, ThaViewRow] = {
+      new Field[TransactionhistoryarchiveId, ThaViewRow](
+        _path,
+        "transactionid",
+        _.transactionid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(transactionid = value),
+        TransactionhistoryarchiveId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def productid: Field[Integer, ThaViewRow] = {
+      new Field[Integer, ThaViewRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productid = value),
+        PgTypes.int4
+      )
+    }
+
+    override def referenceorderid: Field[Integer, ThaViewRow] = {
+      new Field[Integer, ThaViewRow](
+        _path,
+        "referenceorderid",
+        _.referenceorderid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(referenceorderid = value),
+        PgTypes.int4
+      )
+    }
+
+    override def referenceorderlineid: Field[Integer, ThaViewRow] = {
+      new Field[Integer, ThaViewRow](
+        _path,
+        "referenceorderlineid",
+        _.referenceorderlineid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(referenceorderlineid = value),
+        PgTypes.int4
+      )
+    }
+
+    override def transactiondate: Field[TypoLocalDateTime, ThaViewRow] = {
+      new Field[TypoLocalDateTime, ThaViewRow](
+        _path,
+        "transactiondate",
+        _.transactiondate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(transactiondate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def transactiontype: Field[/* bpchar, max 1 chars */ String, ThaViewRow] = {
+      new Field[/* bpchar, max 1 chars */ String, ThaViewRow](
+        _path,
+        "transactiontype",
+        _.transactiontype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(transactiontype = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def quantity: Field[Integer, ThaViewRow] = {
+      new Field[Integer, ThaViewRow](
+        _path,
+        "quantity",
+        _.quantity,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(quantity = value),
+        PgTypes.int4
+      )
+    }
+
+    override def actualcost: Field[java.math.BigDecimal, ThaViewRow] = {
+      new Field[java.math.BigDecimal, ThaViewRow](
+        _path,
+        "actualcost",
+        _.actualcost,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(actualcost = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, ThaViewRow] = {
+      new Field[TypoLocalDateTime, ThaViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ThaViewRow]] = java.util.List.of(this.id, this.transactionid, this.productid, this.referenceorderid, this.referenceorderlineid, this.transactiondate, this.transactiontype, this.quantity, this.actualcost, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ThaViewFields, ThaViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ThaViewFields, ThaViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -11,12 +11,16 @@ import adventureworks.production.productphoto.ProductphotoId
 import adventureworks.public.Flag
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface PppViewFields {
+interface PppViewFields : FieldsExpr<PppViewRow> {
+  override fun columns(): List<FieldLike<*, PppViewRow>>
+
   fun modifieddate(): Field<TypoLocalDateTime, PppViewRow>
 
   fun primary(): Field<Flag, PppViewRow>
@@ -25,20 +29,23 @@ interface PppViewFields {
 
   fun productphotoid(): Field<ProductphotoId, PppViewRow>
 
+  override fun rowParser(): RowParser<PppViewRow> = PppViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<PppViewFields, PppViewRow>(path) {
-      override fun fields(): PppViewFields = object : PppViewFields {
-        override fun productid(): Field<ProductId, PppViewRow> = Field<ProductId, PppViewRow>(_path, "productid", PppViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun productphotoid(): Field<ProductphotoId, PppViewRow> = Field<ProductphotoId, PppViewRow>(_path, "productphotoid", PppViewRow::productphotoid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productphotoid = value) }, ProductphotoId.pgType)
-        override fun primary(): Field<Flag, PppViewRow> = Field<Flag, PppViewRow>(_path, "primary", PppViewRow::primary, Optional.empty(), Optional.empty(), { row, value -> row.copy(primary = value) }, Flag.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, PppViewRow> = Field<TypoLocalDateTime, PppViewRow>(_path, "modifieddate", PppViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : PppViewFields, Relation<PppViewFields, PppViewRow> {
+      override fun productid(): Field<ProductId, PppViewRow> = Field<ProductId, PppViewRow>(_path, "productid", PppViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
-      override fun columns(): List<FieldLike<*, PppViewRow>> = listOf(this.fields().productid(), this.fields().productphotoid(), this.fields().primary(), this.fields().modifieddate())
+      override fun productphotoid(): Field<ProductphotoId, PppViewRow> = Field<ProductphotoId, PppViewRow>(_path, "productphotoid", PppViewRow::productphotoid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productphotoid = value) }, ProductphotoId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun primary(): Field<Flag, PppViewRow> = Field<Flag, PppViewRow>(_path, "primary", PppViewRow::primary, Optional.empty(), Optional.empty(), { row, value -> row.copy(primary = value) }, Flag.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, PppViewRow> = Field<TypoLocalDateTime, PppViewRow>(_path, "modifieddate", PppViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, PppViewRow>> = listOf(this.productid(), this.productphotoid(), this.primary(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<PppViewFields, PppViewRow> = Impl(_path)
     }
 
-    val structure: Relation<PppViewFields, PppViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

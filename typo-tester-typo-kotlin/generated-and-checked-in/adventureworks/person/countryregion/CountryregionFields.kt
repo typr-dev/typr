@@ -9,32 +9,38 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface CountryregionFields {
+interface CountryregionFields : FieldsExpr<CountryregionRow> {
+  override fun columns(): List<FieldLike<*, CountryregionRow>>
+
   fun countryregioncode(): IdField<CountryregionId, CountryregionRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, CountryregionRow>
 
   fun name(): Field<Name, CountryregionRow>
 
+  override fun rowParser(): RowParser<CountryregionRow> = CountryregionRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<CountryregionFields, CountryregionRow>(path) {
-      override fun fields(): CountryregionFields = object : CountryregionFields {
-        override fun countryregioncode(): IdField<CountryregionId, CountryregionRow> = IdField<CountryregionId, CountryregionRow>(_path, "countryregioncode", CountryregionRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
-        override fun name(): Field<Name, CountryregionRow> = Field<Name, CountryregionRow>(_path, "name", CountryregionRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, CountryregionRow> = Field<TypoLocalDateTime, CountryregionRow>(_path, "modifieddate", CountryregionRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : CountryregionFields, Relation<CountryregionFields, CountryregionRow> {
+      override fun countryregioncode(): IdField<CountryregionId, CountryregionRow> = IdField<CountryregionId, CountryregionRow>(_path, "countryregioncode", CountryregionRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
 
-      override fun columns(): List<FieldLike<*, CountryregionRow>> = listOf(this.fields().countryregioncode(), this.fields().name(), this.fields().modifieddate())
+      override fun name(): Field<Name, CountryregionRow> = Field<Name, CountryregionRow>(_path, "name", CountryregionRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, CountryregionRow> = Field<TypoLocalDateTime, CountryregionRow>(_path, "modifieddate", CountryregionRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, CountryregionRow>> = listOf(this.countryregioncode(), this.name(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<CountryregionFields, CountryregionRow> = Impl(_path)
     }
 
-    val structure: Relation<CountryregionFields, CountryregionRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

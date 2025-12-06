@@ -17,25 +17,13 @@ import java.util.function.Function;
 /**
  * SQL implementation of UpdateBuilder that generates and executes UPDATE queries.
  */
-public class UpdateBuilderSql<Fields, Row> implements UpdateBuilder<Fields, Row> {
-    private final String tableName;
-    private final RenderCtx renderCtx;
-    private final Structure<Fields, Row> structure;
-    private final UpdateParams<Fields, Row> params;
-    private final ResultSetParser<List<Row>> parser;
-
-    public UpdateBuilderSql(
-            String tableName,
-            RenderCtx renderCtx,
-            Structure<Fields, Row> structure,
-            UpdateParams<Fields, Row> params,
-            ResultSetParser<List<Row>> parser) {
-        this.tableName = tableName;
-        this.renderCtx = renderCtx;
-        this.structure = structure;
-        this.params = params;
-        this.parser = parser;
-    }
+public record UpdateBuilderSql<Fields, Row>(
+        String tableName,
+        RenderCtx renderCtx,
+        Structure<Fields, Row> structure,
+        UpdateParams<Fields, Row> params,
+        ResultSetParser<List<Row>> parser
+) implements UpdateBuilder<Fields, Row> {
     
     @Override
     public <T> UpdateBuilder<Fields, Row> set(Function<Fields, SqlExpr.FieldLike<T, Row>> field, T value, DbType<T> pgType) {

@@ -10,31 +10,37 @@ import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface CrViewFields {
+interface CrViewFields : FieldsExpr<CrViewRow> {
+  override fun columns(): List<FieldLike<*, CrViewRow>>
+
   fun countryregioncode(): Field<CountryregionId, CrViewRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, CrViewRow>
 
   fun name(): Field<Name, CrViewRow>
 
+  override fun rowParser(): RowParser<CrViewRow> = CrViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<CrViewFields, CrViewRow>(path) {
-      override fun fields(): CrViewFields = object : CrViewFields {
-        override fun countryregioncode(): Field<CountryregionId, CrViewRow> = Field<CountryregionId, CrViewRow>(_path, "countryregioncode", CrViewRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
-        override fun name(): Field<Name, CrViewRow> = Field<Name, CrViewRow>(_path, "name", CrViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, CrViewRow> = Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : CrViewFields, Relation<CrViewFields, CrViewRow> {
+      override fun countryregioncode(): Field<CountryregionId, CrViewRow> = Field<CountryregionId, CrViewRow>(_path, "countryregioncode", CrViewRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
 
-      override fun columns(): List<FieldLike<*, CrViewRow>> = listOf(this.fields().countryregioncode(), this.fields().name(), this.fields().modifieddate())
+      override fun name(): Field<Name, CrViewRow> = Field<Name, CrViewRow>(_path, "name", CrViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, CrViewRow> = Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, CrViewRow>> = listOf(this.countryregioncode(), this.name(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<CrViewFields, CrViewRow> = Impl(_path)
     }
 
-    val structure: Relation<CrViewFields, CrViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

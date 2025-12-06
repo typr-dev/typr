@@ -6,53 +6,56 @@
 package testdb.mariatest_identity
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait MariatestIdentityFields {
+trait MariatestIdentityFields extends FieldsExpr[MariatestIdentityRow] {
   def id: IdField[MariatestIdentityId, MariatestIdentityRow]
 
   def name: Field[String, MariatestIdentityRow]
+
+  override def columns: java.util.List[FieldLike[?, MariatestIdentityRow]]
+
+  override def rowParser: RowParser[MariatestIdentityRow] = MariatestIdentityRow._rowParser
 }
 
 object MariatestIdentityFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[MariatestIdentityFields, MariatestIdentityRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends MariatestIdentityFields with Relation[MariatestIdentityFields, MariatestIdentityRow] {
 
-    override lazy val fields: MariatestIdentityFields = {
-      new MariatestIdentityFields {
-        override def id: IdField[MariatestIdentityId, MariatestIdentityRow] = {
-          new IdField[MariatestIdentityId, MariatestIdentityRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            MariatestIdentityId.pgType
-          )
-        }
-        override def name: Field[String, MariatestIdentityRow] = {
-          new Field[String, MariatestIdentityRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            MariaTypes.varchar
-          )
-        }
-      }
+    override def id: IdField[MariatestIdentityId, MariatestIdentityRow] = {
+      new IdField[MariatestIdentityId, MariatestIdentityRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        MariatestIdentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, MariatestIdentityRow]] = java.util.List.of(this.fields.id, this.fields.name)
+    override def name: Field[String, MariatestIdentityRow] = {
+      new Field[String, MariatestIdentityRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        MariaTypes.varchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def columns: java.util.List[FieldLike[?, MariatestIdentityRow]] = java.util.List.of(this.id, this.name)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[MariatestIdentityFields, MariatestIdentityRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[MariatestIdentityFields, MariatestIdentityRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

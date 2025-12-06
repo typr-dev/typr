@@ -14,6 +14,7 @@ import adventureworks.production.workorder.WorkorderFields
 import adventureworks.production.workorder.WorkorderId
 import adventureworks.production.workorder.WorkorderRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -25,8 +26,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait WorkorderroutingFields {
+trait WorkorderroutingFields extends FieldsExpr[WorkorderroutingRow] {
   def workorderid: IdField[WorkorderId, WorkorderroutingRow]
 
   def productid: IdField[Integer, WorkorderroutingRow]
@@ -58,152 +60,163 @@ trait WorkorderroutingFields {
   def compositeIdIs(compositeId: WorkorderroutingId): SqlExpr[java.lang.Boolean] = SqlExpr.all(workorderid.isEqual(compositeId.workorderid), productid.isEqual(compositeId.productid), operationsequence.isEqual(compositeId.operationsequence))
 
   def compositeIdIn(compositeIds: java.util.List[WorkorderroutingId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[WorkorderId, WorkorderroutingId, WorkorderroutingRow](workorderid, _.workorderid, WorkorderId.pgType), new Part[Integer, WorkorderroutingId, WorkorderroutingRow](productid, _.productid, PgTypes.int4), new Part[TypoShort, WorkorderroutingId, WorkorderroutingRow](operationsequence, _.operationsequence, TypoShort.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, WorkorderroutingRow]]
+
+  override def rowParser: RowParser[WorkorderroutingRow] = WorkorderroutingRow._rowParser
 }
 
 object WorkorderroutingFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[WorkorderroutingFields, WorkorderroutingRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends WorkorderroutingFields with Relation[WorkorderroutingFields, WorkorderroutingRow] {
 
-    override lazy val fields: WorkorderroutingFields = {
-      new WorkorderroutingFields {
-        override def workorderid: IdField[WorkorderId, WorkorderroutingRow] = {
-          new IdField[WorkorderId, WorkorderroutingRow](
-            _path,
-            "workorderid",
-            _.workorderid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(workorderid = value),
-            WorkorderId.pgType
-          )
-        }
-        override def productid: IdField[Integer, WorkorderroutingRow] = {
-          new IdField[Integer, WorkorderroutingRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productid = value),
-            PgTypes.int4
-          )
-        }
-        override def operationsequence: IdField[TypoShort, WorkorderroutingRow] = {
-          new IdField[TypoShort, WorkorderroutingRow](
-            _path,
-            "operationsequence",
-            _.operationsequence,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(operationsequence = value),
-            TypoShort.pgType
-          )
-        }
-        override def locationid: Field[LocationId, WorkorderroutingRow] = {
-          new Field[LocationId, WorkorderroutingRow](
-            _path,
-            "locationid",
-            _.locationid,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(locationid = value),
-            LocationId.pgType
-          )
-        }
-        override def scheduledstartdate: Field[TypoLocalDateTime, WorkorderroutingRow] = {
-          new Field[TypoLocalDateTime, WorkorderroutingRow](
-            _path,
-            "scheduledstartdate",
-            _.scheduledstartdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(scheduledstartdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def scheduledenddate: Field[TypoLocalDateTime, WorkorderroutingRow] = {
-          new Field[TypoLocalDateTime, WorkorderroutingRow](
-            _path,
-            "scheduledenddate",
-            _.scheduledenddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(scheduledenddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def actualstartdate: OptField[TypoLocalDateTime, WorkorderroutingRow] = {
-          new OptField[TypoLocalDateTime, WorkorderroutingRow](
-            _path,
-            "actualstartdate",
-            _.actualstartdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(actualstartdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def actualenddate: OptField[TypoLocalDateTime, WorkorderroutingRow] = {
-          new OptField[TypoLocalDateTime, WorkorderroutingRow](
-            _path,
-            "actualenddate",
-            _.actualenddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(actualenddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def actualresourcehrs: OptField[java.math.BigDecimal, WorkorderroutingRow] = {
-          new OptField[java.math.BigDecimal, WorkorderroutingRow](
-            _path,
-            "actualresourcehrs",
-            _.actualresourcehrs,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(actualresourcehrs = value),
-            PgTypes.numeric
-          )
-        }
-        override def plannedcost: Field[java.math.BigDecimal, WorkorderroutingRow] = {
-          new Field[java.math.BigDecimal, WorkorderroutingRow](
-            _path,
-            "plannedcost",
-            _.plannedcost,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(plannedcost = value),
-            PgTypes.numeric
-          )
-        }
-        override def actualcost: OptField[java.math.BigDecimal, WorkorderroutingRow] = {
-          new OptField[java.math.BigDecimal, WorkorderroutingRow](
-            _path,
-            "actualcost",
-            _.actualcost,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(actualcost = value),
-            PgTypes.numeric
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, WorkorderroutingRow] = {
-          new Field[TypoLocalDateTime, WorkorderroutingRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def workorderid: IdField[WorkorderId, WorkorderroutingRow] = {
+      new IdField[WorkorderId, WorkorderroutingRow](
+        _path,
+        "workorderid",
+        _.workorderid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(workorderid = value),
+        WorkorderId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, WorkorderroutingRow]] = java.util.List.of(this.fields.workorderid, this.fields.productid, this.fields.operationsequence, this.fields.locationid, this.fields.scheduledstartdate, this.fields.scheduledenddate, this.fields.actualstartdate, this.fields.actualenddate, this.fields.actualresourcehrs, this.fields.plannedcost, this.fields.actualcost, this.fields.modifieddate)
+    override def productid: IdField[Integer, WorkorderroutingRow] = {
+      new IdField[Integer, WorkorderroutingRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productid = value),
+        PgTypes.int4
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def operationsequence: IdField[TypoShort, WorkorderroutingRow] = {
+      new IdField[TypoShort, WorkorderroutingRow](
+        _path,
+        "operationsequence",
+        _.operationsequence,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(operationsequence = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def locationid: Field[LocationId, WorkorderroutingRow] = {
+      new Field[LocationId, WorkorderroutingRow](
+        _path,
+        "locationid",
+        _.locationid,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(locationid = value),
+        LocationId.pgType
+      )
+    }
+
+    override def scheduledstartdate: Field[TypoLocalDateTime, WorkorderroutingRow] = {
+      new Field[TypoLocalDateTime, WorkorderroutingRow](
+        _path,
+        "scheduledstartdate",
+        _.scheduledstartdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(scheduledstartdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def scheduledenddate: Field[TypoLocalDateTime, WorkorderroutingRow] = {
+      new Field[TypoLocalDateTime, WorkorderroutingRow](
+        _path,
+        "scheduledenddate",
+        _.scheduledenddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(scheduledenddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def actualstartdate: OptField[TypoLocalDateTime, WorkorderroutingRow] = {
+      new OptField[TypoLocalDateTime, WorkorderroutingRow](
+        _path,
+        "actualstartdate",
+        _.actualstartdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(actualstartdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def actualenddate: OptField[TypoLocalDateTime, WorkorderroutingRow] = {
+      new OptField[TypoLocalDateTime, WorkorderroutingRow](
+        _path,
+        "actualenddate",
+        _.actualenddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(actualenddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def actualresourcehrs: OptField[java.math.BigDecimal, WorkorderroutingRow] = {
+      new OptField[java.math.BigDecimal, WorkorderroutingRow](
+        _path,
+        "actualresourcehrs",
+        _.actualresourcehrs,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(actualresourcehrs = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def plannedcost: Field[java.math.BigDecimal, WorkorderroutingRow] = {
+      new Field[java.math.BigDecimal, WorkorderroutingRow](
+        _path,
+        "plannedcost",
+        _.plannedcost,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(plannedcost = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def actualcost: OptField[java.math.BigDecimal, WorkorderroutingRow] = {
+      new OptField[java.math.BigDecimal, WorkorderroutingRow](
+        _path,
+        "actualcost",
+        _.actualcost,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(actualcost = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, WorkorderroutingRow] = {
+      new Field[TypoLocalDateTime, WorkorderroutingRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, WorkorderroutingRow]] = java.util.List.of(this.workorderid, this.productid, this.operationsequence, this.locationid, this.scheduledstartdate, this.scheduledenddate, this.actualstartdate, this.actualenddate, this.actualresourcehrs, this.plannedcost, this.actualcost, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[WorkorderroutingFields, WorkorderroutingRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[WorkorderroutingFields, WorkorderroutingRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

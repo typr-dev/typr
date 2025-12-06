@@ -11,6 +11,7 @@ import adventureworks.public_.test_utdanningstilbud.TestUtdanningstilbudId;
 import adventureworks.public_.test_utdanningstilbud.TestUtdanningstilbudRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -21,43 +22,37 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface TestSakSoknadsalternativFields {
-  final class Impl extends Relation<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface TestSakSoknadsalternativFields extends FieldsExpr<TestSakSoknadsalternativRow> {
+  record Impl(List<Path> _path) implements TestSakSoknadsalternativFields, Relation<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> {
+    @Override
+    public IdField<String, TestSakSoknadsalternativRow> organisasjonskodeSaksbehandler() {
+      return new IdField<String, TestSakSoknadsalternativRow>(_path, "organisasjonskode_saksbehandler", TestSakSoknadsalternativRow::organisasjonskodeSaksbehandler, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskodeSaksbehandler(value), PgTypes.text);
+    };
 
     @Override
-    public TestSakSoknadsalternativFields fields() {
-      return new TestSakSoknadsalternativFields() {
-               @Override
-               public IdField<String, TestSakSoknadsalternativRow> organisasjonskodeSaksbehandler() {
-                 return new IdField<String, TestSakSoknadsalternativRow>(_path, "organisasjonskode_saksbehandler", TestSakSoknadsalternativRow::organisasjonskodeSaksbehandler, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskodeSaksbehandler(value), PgTypes.text);
-               };
-               @Override
-               public IdField<String, TestSakSoknadsalternativRow> utdanningsmulighetKode() {
-                 return new IdField<String, TestSakSoknadsalternativRow>(_path, "utdanningsmulighet_kode", TestSakSoknadsalternativRow::utdanningsmulighetKode, Optional.empty(), Optional.empty(), (row, value) -> row.withUtdanningsmulighetKode(value), PgTypes.text);
-               };
-               @Override
-               public Field<TestOrganisasjonId, TestSakSoknadsalternativRow> organisasjonskodeTilbyder() {
-                 return new Field<TestOrganisasjonId, TestSakSoknadsalternativRow>(_path, "organisasjonskode_tilbyder", TestSakSoknadsalternativRow::organisasjonskodeTilbyder, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskodeTilbyder(value), TestOrganisasjonId.pgType);
-               };
-             };
+    public IdField<String, TestSakSoknadsalternativRow> utdanningsmulighetKode() {
+      return new IdField<String, TestSakSoknadsalternativRow>(_path, "utdanningsmulighet_kode", TestSakSoknadsalternativRow::utdanningsmulighetKode, Optional.empty(), Optional.empty(), (row, value) -> row.withUtdanningsmulighetKode(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TestOrganisasjonId, TestSakSoknadsalternativRow> organisasjonskodeTilbyder() {
+      return new Field<TestOrganisasjonId, TestSakSoknadsalternativRow>(_path, "organisasjonskode_tilbyder", TestSakSoknadsalternativRow::organisasjonskodeTilbyder, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskodeTilbyder(value), TestOrganisasjonId.pgType);
     };
 
     @Override
     public List<FieldLike<?, TestSakSoknadsalternativRow>> columns() {
-      return List.of(this.fields().organisasjonskodeSaksbehandler(), this.fields().utdanningsmulighetKode(), this.fields().organisasjonskodeTilbyder());
+      return List.of(this.organisasjonskodeSaksbehandler(), this.utdanningsmulighetKode(), this.organisasjonskodeTilbyder());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -86,5 +81,13 @@ public interface TestSakSoknadsalternativFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<TestSakSoknadsalternativId> compositeIds) {
     return new CompositeIn(List.of(new Part<String, TestSakSoknadsalternativId, TestSakSoknadsalternativRow>(organisasjonskodeSaksbehandler(), TestSakSoknadsalternativId::organisasjonskodeSaksbehandler, PgTypes.text), new Part<String, TestSakSoknadsalternativId, TestSakSoknadsalternativRow>(utdanningsmulighetKode(), TestSakSoknadsalternativId::utdanningsmulighetKode, PgTypes.text)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, TestSakSoknadsalternativRow>> columns();
+
+  @Override
+  default RowParser<TestSakSoknadsalternativRow> rowParser() {
+    return TestSakSoknadsalternativRow._rowParser;
   };
 }

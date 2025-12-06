@@ -10,13 +10,17 @@ import adventureworks.production.product.ProductId
 import adventureworks.sales.shoppingcartitem.ShoppingcartitemId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface SciViewFields {
+interface SciViewFields : FieldsExpr<SciViewRow> {
+  override fun columns(): List<FieldLike<*, SciViewRow>>
+
   fun datecreated(): Field<TypoLocalDateTime, SciViewRow>
 
   fun id(): Field<ShoppingcartitemId, SciViewRow>
@@ -27,27 +31,33 @@ interface SciViewFields {
 
   fun quantity(): Field<Int, SciViewRow>
 
+  override fun rowParser(): RowParser<SciViewRow> = SciViewRow._rowParser
+
   fun shoppingcartid(): Field</* max 50 chars */ String, SciViewRow>
 
   fun shoppingcartitemid(): Field<ShoppingcartitemId, SciViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SciViewFields, SciViewRow>(path) {
-      override fun fields(): SciViewFields = object : SciViewFields {
-        override fun id(): Field<ShoppingcartitemId, SciViewRow> = Field<ShoppingcartitemId, SciViewRow>(_path, "id", SciViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ShoppingcartitemId.pgType)
-        override fun shoppingcartitemid(): Field<ShoppingcartitemId, SciViewRow> = Field<ShoppingcartitemId, SciViewRow>(_path, "shoppingcartitemid", SciViewRow::shoppingcartitemid, Optional.empty(), Optional.empty(), { row, value -> row.copy(shoppingcartitemid = value) }, ShoppingcartitemId.pgType)
-        override fun shoppingcartid(): Field</* max 50 chars */ String, SciViewRow> = Field</* max 50 chars */ String, SciViewRow>(_path, "shoppingcartid", SciViewRow::shoppingcartid, Optional.empty(), Optional.empty(), { row, value -> row.copy(shoppingcartid = value) }, PgTypes.text)
-        override fun quantity(): Field<Int, SciViewRow> = Field<Int, SciViewRow>(_path, "quantity", SciViewRow::quantity, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantity = value) }, PgTypes.int4)
-        override fun productid(): Field<ProductId, SciViewRow> = Field<ProductId, SciViewRow>(_path, "productid", SciViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun datecreated(): Field<TypoLocalDateTime, SciViewRow> = Field<TypoLocalDateTime, SciViewRow>(_path, "datecreated", SciViewRow::datecreated, Optional.of("text"), Optional.empty(), { row, value -> row.copy(datecreated = value) }, TypoLocalDateTime.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SciViewRow> = Field<TypoLocalDateTime, SciViewRow>(_path, "modifieddate", SciViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SciViewFields, Relation<SciViewFields, SciViewRow> {
+      override fun id(): Field<ShoppingcartitemId, SciViewRow> = Field<ShoppingcartitemId, SciViewRow>(_path, "id", SciViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ShoppingcartitemId.pgType)
 
-      override fun columns(): List<FieldLike<*, SciViewRow>> = listOf(this.fields().id(), this.fields().shoppingcartitemid(), this.fields().shoppingcartid(), this.fields().quantity(), this.fields().productid(), this.fields().datecreated(), this.fields().modifieddate())
+      override fun shoppingcartitemid(): Field<ShoppingcartitemId, SciViewRow> = Field<ShoppingcartitemId, SciViewRow>(_path, "shoppingcartitemid", SciViewRow::shoppingcartitemid, Optional.empty(), Optional.empty(), { row, value -> row.copy(shoppingcartitemid = value) }, ShoppingcartitemId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun shoppingcartid(): Field</* max 50 chars */ String, SciViewRow> = Field</* max 50 chars */ String, SciViewRow>(_path, "shoppingcartid", SciViewRow::shoppingcartid, Optional.empty(), Optional.empty(), { row, value -> row.copy(shoppingcartid = value) }, PgTypes.text)
+
+      override fun quantity(): Field<Int, SciViewRow> = Field<Int, SciViewRow>(_path, "quantity", SciViewRow::quantity, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantity = value) }, PgTypes.int4)
+
+      override fun productid(): Field<ProductId, SciViewRow> = Field<ProductId, SciViewRow>(_path, "productid", SciViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
+
+      override fun datecreated(): Field<TypoLocalDateTime, SciViewRow> = Field<TypoLocalDateTime, SciViewRow>(_path, "datecreated", SciViewRow::datecreated, Optional.of("text"), Optional.empty(), { row, value -> row.copy(datecreated = value) }, TypoLocalDateTime.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SciViewRow> = Field<TypoLocalDateTime, SciViewRow>(_path, "modifieddate", SciViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SciViewRow>> = listOf(this.id(), this.shoppingcartitemid(), this.shoppingcartid(), this.quantity(), this.productid(), this.datecreated(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SciViewFields, SciViewRow> = Impl(_path)
     }
 
-    val structure: Relation<SciViewFields, SciViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -30,5 +30,5 @@ case class EViewRow(
 )
 
 object EViewRow {
-  val `_rowParser`: RowParser[EViewRow] = RowParsers.of(PgTypes.int4, BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EViewRow.apply, row => Array(row.id, row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[EViewRow] = RowParsers.of(PgTypes.int4, BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, EViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.emailaddressid.asInstanceOf[Object], row.emailaddress.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

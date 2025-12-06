@@ -7,36 +7,43 @@ package testdb.mariatest_unique
 
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface MariatestUniqueFields {
+interface MariatestUniqueFields : FieldsExpr<MariatestUniqueRow> {
   fun category(): Field<String, MariatestUniqueRow>
 
   fun code(): Field<String, MariatestUniqueRow>
+
+  override fun columns(): List<FieldLike<*, MariatestUniqueRow>>
 
   fun email(): Field<String, MariatestUniqueRow>
 
   fun id(): IdField<MariatestUniqueId, MariatestUniqueRow>
 
+  override fun rowParser(): RowParser<MariatestUniqueRow> = MariatestUniqueRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<MariatestUniqueFields, MariatestUniqueRow>(path) {
-      override fun fields(): MariatestUniqueFields = object : MariatestUniqueFields {
-        override fun id(): IdField<MariatestUniqueId, MariatestUniqueRow> = IdField<MariatestUniqueId, MariatestUniqueRow>(_path, "id", MariatestUniqueRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, MariatestUniqueId.pgType)
-        override fun email(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "email", MariatestUniqueRow::email, Optional.empty(), Optional.empty(), { row, value -> row.copy(email = value) }, MariaTypes.varchar)
-        override fun code(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "code", MariatestUniqueRow::code, Optional.empty(), Optional.empty(), { row, value -> row.copy(code = value) }, MariaTypes.varchar)
-        override fun category(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "category", MariatestUniqueRow::category, Optional.empty(), Optional.empty(), { row, value -> row.copy(category = value) }, MariaTypes.varchar)
-      }
+    data class Impl(val _path: List<Path>) : MariatestUniqueFields, Relation<MariatestUniqueFields, MariatestUniqueRow> {
+      override fun id(): IdField<MariatestUniqueId, MariatestUniqueRow> = IdField<MariatestUniqueId, MariatestUniqueRow>(_path, "id", MariatestUniqueRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, MariatestUniqueId.pgType)
 
-      override fun columns(): List<FieldLike<*, MariatestUniqueRow>> = listOf(this.fields().id(), this.fields().email(), this.fields().code(), this.fields().category())
+      override fun email(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "email", MariatestUniqueRow::email, Optional.empty(), Optional.empty(), { row, value -> row.copy(email = value) }, MariaTypes.varchar)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun code(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "code", MariatestUniqueRow::code, Optional.empty(), Optional.empty(), { row, value -> row.copy(code = value) }, MariaTypes.varchar)
+
+      override fun category(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "category", MariatestUniqueRow::category, Optional.empty(), Optional.empty(), { row, value -> row.copy(category = value) }, MariaTypes.varchar)
+
+      override fun columns(): List<FieldLike<*, MariatestUniqueRow>> = listOf(this.id(), this.email(), this.code(), this.category())
+
+      override fun copy(_path: List<Path>): Relation<MariatestUniqueFields, MariatestUniqueRow> = Impl(_path)
     }
 
-    val structure: Relation<MariatestUniqueFields, MariatestUniqueRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

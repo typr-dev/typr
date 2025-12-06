@@ -10,14 +10,16 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SpViewFields {
+trait SpViewFields extends FieldsExpr[SpViewRow] {
   def id: Field[BusinessentityId, SpViewRow]
 
   def businessentityid: Field[BusinessentityId, SpViewRow]
@@ -37,130 +39,139 @@ trait SpViewFields {
   def rowguid: Field[TypoUUID, SpViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, SpViewRow]
+
+  override def columns: java.util.List[FieldLike[?, SpViewRow]]
+
+  override def rowParser: RowParser[SpViewRow] = SpViewRow._rowParser
 }
 
 object SpViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SpViewFields, SpViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SpViewFields with Relation[SpViewFields, SpViewRow] {
 
-    override lazy val fields: SpViewFields = {
-      new SpViewFields {
-        override def id: Field[BusinessentityId, SpViewRow] = {
-          new Field[BusinessentityId, SpViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, SpViewRow] = {
-          new Field[BusinessentityId, SpViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def territoryid: OptField[SalesterritoryId, SpViewRow] = {
-          new OptField[SalesterritoryId, SpViewRow](
-            _path,
-            "territoryid",
-            _.territoryid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(territoryid = value),
-            SalesterritoryId.pgType
-          )
-        }
-        override def salesquota: OptField[java.math.BigDecimal, SpViewRow] = {
-          new OptField[java.math.BigDecimal, SpViewRow](
-            _path,
-            "salesquota",
-            _.salesquota,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salesquota = value),
-            PgTypes.numeric
-          )
-        }
-        override def bonus: Field[java.math.BigDecimal, SpViewRow] = {
-          new Field[java.math.BigDecimal, SpViewRow](
-            _path,
-            "bonus",
-            _.bonus,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(bonus = value),
-            PgTypes.numeric
-          )
-        }
-        override def commissionpct: Field[java.math.BigDecimal, SpViewRow] = {
-          new Field[java.math.BigDecimal, SpViewRow](
-            _path,
-            "commissionpct",
-            _.commissionpct,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(commissionpct = value),
-            PgTypes.numeric
-          )
-        }
-        override def salesytd: Field[java.math.BigDecimal, SpViewRow] = {
-          new Field[java.math.BigDecimal, SpViewRow](
-            _path,
-            "salesytd",
-            _.salesytd,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salesytd = value),
-            PgTypes.numeric
-          )
-        }
-        override def saleslastyear: Field[java.math.BigDecimal, SpViewRow] = {
-          new Field[java.math.BigDecimal, SpViewRow](
-            _path,
-            "saleslastyear",
-            _.saleslastyear,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(saleslastyear = value),
-            PgTypes.numeric
-          )
-        }
-        override def rowguid: Field[TypoUUID, SpViewRow] = {
-          new Field[TypoUUID, SpViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SpViewRow] = {
-          new Field[TypoLocalDateTime, SpViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, SpViewRow] = {
+      new Field[BusinessentityId, SpViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SpViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.territoryid, this.fields.salesquota, this.fields.bonus, this.fields.commissionpct, this.fields.salesytd, this.fields.saleslastyear, this.fields.rowguid, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, SpViewRow] = {
+      new Field[BusinessentityId, SpViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def territoryid: OptField[SalesterritoryId, SpViewRow] = {
+      new OptField[SalesterritoryId, SpViewRow](
+        _path,
+        "territoryid",
+        _.territoryid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(territoryid = value),
+        SalesterritoryId.pgType
+      )
+    }
+
+    override def salesquota: OptField[java.math.BigDecimal, SpViewRow] = {
+      new OptField[java.math.BigDecimal, SpViewRow](
+        _path,
+        "salesquota",
+        _.salesquota,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salesquota = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def bonus: Field[java.math.BigDecimal, SpViewRow] = {
+      new Field[java.math.BigDecimal, SpViewRow](
+        _path,
+        "bonus",
+        _.bonus,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(bonus = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def commissionpct: Field[java.math.BigDecimal, SpViewRow] = {
+      new Field[java.math.BigDecimal, SpViewRow](
+        _path,
+        "commissionpct",
+        _.commissionpct,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(commissionpct = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def salesytd: Field[java.math.BigDecimal, SpViewRow] = {
+      new Field[java.math.BigDecimal, SpViewRow](
+        _path,
+        "salesytd",
+        _.salesytd,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salesytd = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def saleslastyear: Field[java.math.BigDecimal, SpViewRow] = {
+      new Field[java.math.BigDecimal, SpViewRow](
+        _path,
+        "saleslastyear",
+        _.saleslastyear,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(saleslastyear = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SpViewRow] = {
+      new Field[TypoUUID, SpViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SpViewRow] = {
+      new Field[TypoLocalDateTime, SpViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SpViewRow]] = java.util.List.of(this.id, this.businessentityid, this.territoryid, this.salesquota, this.bonus, this.commissionpct, this.salesytd, this.saleslastyear, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SpViewFields, SpViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SpViewFields, SpViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

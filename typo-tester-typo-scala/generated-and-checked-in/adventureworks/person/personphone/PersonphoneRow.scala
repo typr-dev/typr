@@ -47,7 +47,7 @@ case class PersonphoneRow(
 }
 
 object PersonphoneRow {
-  val `_rowParser`: RowParser[PersonphoneRow] = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PersonphoneRow.apply, row => Array(row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate))
+  val `_rowParser`: RowParser[PersonphoneRow] = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, TypoLocalDateTime.pgType, PersonphoneRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.phonenumber.asInstanceOf[Object], row.phonenumbertypeid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: PersonphoneId,

@@ -7,6 +7,7 @@ package testdb.payment_methods
 
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
@@ -14,9 +15,12 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface PaymentMethodsFields {
+interface PaymentMethodsFields : FieldsExpr<PaymentMethodsRow> {
   fun code(): Field<String, PaymentMethodsRow>
+
+  override fun columns(): List<FieldLike<*, PaymentMethodsRow>>
 
   fun isActive(): Field<Boolean, PaymentMethodsRow>
 
@@ -28,25 +32,31 @@ interface PaymentMethodsFields {
 
   fun processorConfig(): OptField<String, PaymentMethodsRow>
 
+  override fun rowParser(): RowParser<PaymentMethodsRow> = PaymentMethodsRow._rowParser
+
   fun sortOrder(): Field<Byte, PaymentMethodsRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<PaymentMethodsFields, PaymentMethodsRow>(path) {
-      override fun fields(): PaymentMethodsFields = object : PaymentMethodsFields {
-        override fun methodId(): IdField<PaymentMethodsId, PaymentMethodsRow> = IdField<PaymentMethodsId, PaymentMethodsRow>(_path, "method_id", PaymentMethodsRow::methodId, Optional.empty(), Optional.empty(), { row, value -> row.copy(methodId = value) }, PaymentMethodsId.pgType)
-        override fun code(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "code", PaymentMethodsRow::code, Optional.empty(), Optional.empty(), { row, value -> row.copy(code = value) }, MariaTypes.varchar)
-        override fun name(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "name", PaymentMethodsRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, MariaTypes.varchar)
-        override fun methodType(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "method_type", PaymentMethodsRow::methodType, Optional.empty(), Optional.empty(), { row, value -> row.copy(methodType = value) }, MariaTypes.text)
-        override fun processorConfig(): OptField<String, PaymentMethodsRow> = OptField<String, PaymentMethodsRow>(_path, "processor_config", PaymentMethodsRow::processorConfig, Optional.empty(), Optional.empty(), { row, value -> row.copy(processorConfig = value) }, MariaTypes.longtext)
-        override fun isActive(): Field<Boolean, PaymentMethodsRow> = Field<Boolean, PaymentMethodsRow>(_path, "is_active", PaymentMethodsRow::isActive, Optional.empty(), Optional.empty(), { row, value -> row.copy(isActive = value) }, MariaTypes.bool)
-        override fun sortOrder(): Field<Byte, PaymentMethodsRow> = Field<Byte, PaymentMethodsRow>(_path, "sort_order", PaymentMethodsRow::sortOrder, Optional.empty(), Optional.empty(), { row, value -> row.copy(sortOrder = value) }, MariaTypes.tinyint)
-      }
+    data class Impl(val _path: List<Path>) : PaymentMethodsFields, Relation<PaymentMethodsFields, PaymentMethodsRow> {
+      override fun methodId(): IdField<PaymentMethodsId, PaymentMethodsRow> = IdField<PaymentMethodsId, PaymentMethodsRow>(_path, "method_id", PaymentMethodsRow::methodId, Optional.empty(), Optional.empty(), { row, value -> row.copy(methodId = value) }, PaymentMethodsId.pgType)
 
-      override fun columns(): List<FieldLike<*, PaymentMethodsRow>> = listOf(this.fields().methodId(), this.fields().code(), this.fields().name(), this.fields().methodType(), this.fields().processorConfig(), this.fields().isActive(), this.fields().sortOrder())
+      override fun code(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "code", PaymentMethodsRow::code, Optional.empty(), Optional.empty(), { row, value -> row.copy(code = value) }, MariaTypes.varchar)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "name", PaymentMethodsRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+
+      override fun methodType(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "method_type", PaymentMethodsRow::methodType, Optional.empty(), Optional.empty(), { row, value -> row.copy(methodType = value) }, MariaTypes.text)
+
+      override fun processorConfig(): OptField<String, PaymentMethodsRow> = OptField<String, PaymentMethodsRow>(_path, "processor_config", PaymentMethodsRow::processorConfig, Optional.empty(), Optional.empty(), { row, value -> row.copy(processorConfig = value) }, MariaTypes.longtext)
+
+      override fun isActive(): Field<Boolean, PaymentMethodsRow> = Field<Boolean, PaymentMethodsRow>(_path, "is_active", PaymentMethodsRow::isActive, Optional.empty(), Optional.empty(), { row, value -> row.copy(isActive = value) }, MariaTypes.bool)
+
+      override fun sortOrder(): Field<Byte, PaymentMethodsRow> = Field<Byte, PaymentMethodsRow>(_path, "sort_order", PaymentMethodsRow::sortOrder, Optional.empty(), Optional.empty(), { row, value -> row.copy(sortOrder = value) }, MariaTypes.tinyint)
+
+      override fun columns(): List<FieldLike<*, PaymentMethodsRow>> = listOf(this.methodId(), this.code(), this.name(), this.methodType(), this.processorConfig(), this.isActive(), this.sortOrder())
+
+      override fun copy(_path: List<Path>): Relation<PaymentMethodsFields, PaymentMethodsRow> = Impl(_path)
     }
 
-    val structure: Relation<PaymentMethodsFields, PaymentMethodsRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

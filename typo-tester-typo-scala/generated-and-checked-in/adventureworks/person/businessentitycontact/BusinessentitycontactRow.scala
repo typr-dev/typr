@@ -55,7 +55,7 @@ case class BusinessentitycontactRow(
 }
 
 object BusinessentitycontactRow {
-  val `_rowParser`: RowParser[BusinessentitycontactRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentitycontactRow.apply, row => Array(row.businessentityid, row.personid, row.contacttypeid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[BusinessentitycontactRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentitycontactRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.personid.asInstanceOf[Object], row.contacttypeid.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: BusinessentitycontactId,

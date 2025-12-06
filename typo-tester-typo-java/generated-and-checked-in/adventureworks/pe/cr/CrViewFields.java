@@ -10,47 +10,42 @@ import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CrViewFields {
-  final class Impl extends Relation<CrViewFields, CrViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CrViewFields extends FieldsExpr<CrViewRow> {
+  record Impl(List<Path> _path) implements CrViewFields, Relation<CrViewFields, CrViewRow> {
+    @Override
+    public Field<CountryregionId, CrViewRow> countryregioncode() {
+      return new Field<CountryregionId, CrViewRow>(_path, "countryregioncode", CrViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
+    };
 
     @Override
-    public CrViewFields fields() {
-      return new CrViewFields() {
-               @Override
-               public Field<CountryregionId, CrViewRow> countryregioncode() {
-                 return new Field<CountryregionId, CrViewRow>(_path, "countryregioncode", CrViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
-               };
-               @Override
-               public Field<Name, CrViewRow> name() {
-                 return new Field<Name, CrViewRow>(_path, "name", CrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CrViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, CrViewRow> name() {
+      return new Field<Name, CrViewRow>(_path, "name", CrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CrViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CrViewRow>(_path, "modifieddate", CrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CrViewRow>> columns() {
-      return List.of(this.fields().countryregioncode(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.countryregioncode(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CrViewFields, CrViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CrViewFields, CrViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface CrViewFields {
   Field<Name, CrViewRow> name();
 
   Field<TypoLocalDateTime, CrViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CrViewRow>> columns();
+
+  @Override
+  default RowParser<CrViewRow> rowParser() {
+    return CrViewRow._rowParser;
+  };
 }

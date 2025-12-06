@@ -14,24 +14,28 @@ package object generated {
   implicit lazy val FloatArrayToStatement: anorm.ToStatement[Array[scala.Float]] = anorm.ToStatement[Array[scala.Float]]((ps, index, v) => ps.setArray(index, ps.getConnection.createArrayOf("float4", v.map(v => v: java.lang.Float))))
   implicit lazy val IntArrayToStatement: anorm.ToStatement[Array[scala.Int]] = anorm.ToStatement[Array[scala.Int]]((ps, index, v) => ps.setArray(index, ps.getConnection.createArrayOf("int4", v.map(v => v: java.lang.Integer))))
   implicit lazy val LongArrayToStatement: anorm.ToStatement[Array[scala.Long]] = anorm.ToStatement[Array[scala.Long]]((ps, index, v) => ps.setArray(index, ps.getConnection.createArrayOf("int8", v.map(v => v: java.lang.Long))))
-  implicit lazy val OffsetTimeReads: play.api.libs.json.Reads[java.time.OffsetTime] = play.api.libs.json.Reads.StringReads.flatMapResult { str =>
+  implicit lazy val OffsetTimeReads: play.api.libs.json.Reads[java.time.OffsetTime] = {
+    play.api.libs.json.Reads.StringReads.flatMapResult { str =>
       try play.api.libs.json.JsSuccess(java.time.OffsetTime.parse(str)) catch {
         case x: java.time.format.DateTimeParseException => play.api.libs.json.JsError(s"must follow ${java.time.format.DateTimeFormatter.ISO_OFFSET_TIME}: ${x.getMessage}")
       }
     }
+  }
   implicit lazy val OffsetTimeWrites: play.api.libs.json.Writes[java.time.OffsetTime] = play.api.libs.json.Writes.StringWrites.contramap(_.toString)
   implicit lazy val ShortArrayToStatement: anorm.ToStatement[Array[scala.Short]] = anorm.ToStatement[Array[scala.Short]]((ps, index, v) => ps.setArray(index, ps.getConnection.createArrayOf("int2", v.map(v => v: java.lang.Short))))
-  implicit def arrayParameterMetaData[T](implicit T: anorm.ParameterMetaData[T]): anorm.ParameterMetaData[Array[T]] = new anorm.ParameterMetaData[Array[T]] {
-    override def sqlType: java.lang.String =
-      T.sqlType match {
-        case "INTEGER" => "int4[]"
-        case "FLOAT" => "float4[]"
-        case "DOUBLE PRECISION" => "float8[]"
-        case "DECIMAL" => "float8[]"
-        case "VARCHAR" => "text[]"
-        case other => s"${other}[]"
-      }
+  implicit def arrayParameterMetaData[T](implicit T: anorm.ParameterMetaData[T]): anorm.ParameterMetaData[Array[T]] = {
+    new anorm.ParameterMetaData[Array[T]] {
+      override def sqlType: java.lang.String =
+        T.sqlType match {
+          case "INTEGER" => "int4[]"
+          case "FLOAT" => "float4[]"
+          case "DOUBLE PRECISION" => "float8[]"
+          case "DECIMAL" => "float8[]"
+          case "VARCHAR" => "text[]"
+          case other => s"${other}[]"
+        }
   
-    override def jdbcType: scala.Int = java.sql.Types.ARRAY
+      override def jdbcType: scala.Int = java.sql.Types.ARRAY
+    }
   }
 }

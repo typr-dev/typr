@@ -24,7 +24,7 @@ case class OnlyPkColumnsRow(
 }
 
 object OnlyPkColumnsRow {
-  val `_rowParser`: RowParser[OnlyPkColumnsRow] = RowParsers.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsRow.apply, row => Array(row.keyColumn1, row.keyColumn2))
+  val `_rowParser`: RowParser[OnlyPkColumnsRow] = RowParsers.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsRow.apply, row => Array[Object](row.keyColumn1.asInstanceOf[Object], row.keyColumn2.asInstanceOf[Object]))
 
   def apply(compositeId: OnlyPkColumnsId): OnlyPkColumnsRow = new OnlyPkColumnsRow(compositeId.keyColumn1, compositeId.keyColumn2)
 

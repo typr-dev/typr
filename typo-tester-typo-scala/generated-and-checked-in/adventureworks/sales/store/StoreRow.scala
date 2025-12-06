@@ -56,7 +56,7 @@ case class StoreRow(
 }
 
 object StoreRow {
-  val `_rowParser`: RowParser[StoreRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, StoreRow.apply, row => Array(row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[StoreRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, StoreRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.salespersonid.asInstanceOf[Object], row.demographics.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[StoreRow] = PgText.from(`_rowParser`)
 }

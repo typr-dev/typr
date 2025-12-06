@@ -17,6 +17,7 @@ import adventureworks.production.productmodel.ProductmodelId
 import adventureworks.production.productmodel.ProductmodelRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -26,8 +27,11 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface ProductmodelproductdescriptioncultureFields {
+interface ProductmodelproductdescriptioncultureFields : FieldsExpr<ProductmodelproductdescriptioncultureRow> {
+  override fun columns(): List<FieldLike<*, ProductmodelproductdescriptioncultureRow>>
+
   fun compositeIdIn(compositeIds: List<ProductmodelproductdescriptioncultureId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<ProductmodelId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(productmodelid(), ProductmodelproductdescriptioncultureId::productmodelid, ProductmodelId.pgType), Part<ProductdescriptionId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(productdescriptionid(), ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.pgType), Part<CultureId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(cultureid(), ProductmodelproductdescriptioncultureId::cultureid, CultureId.pgType)), compositeIds)
 
   fun compositeIdIs(compositeId: ProductmodelproductdescriptioncultureId): SqlExpr<Boolean> = SqlExpr.all(productmodelid().isEqual(compositeId.productmodelid), productdescriptionid().isEqual(compositeId.productdescriptionid), cultureid().isEqual(compositeId.cultureid))
@@ -46,20 +50,23 @@ interface ProductmodelproductdescriptioncultureFields {
 
   fun productmodelid(): IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow>
 
+  override fun rowParser(): RowParser<ProductmodelproductdescriptioncultureRow> = ProductmodelproductdescriptioncultureRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow>(path) {
-      override fun fields(): ProductmodelproductdescriptioncultureFields = object : ProductmodelproductdescriptioncultureFields {
-        override fun productmodelid(): IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow> = IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow>(_path, "productmodelid", ProductmodelproductdescriptioncultureRow::productmodelid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
-        override fun productdescriptionid(): IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow> = IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow>(_path, "productdescriptionid", ProductmodelproductdescriptioncultureRow::productdescriptionid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productdescriptionid = value) }, ProductdescriptionId.pgType)
-        override fun cultureid(): IdField<CultureId, ProductmodelproductdescriptioncultureRow> = IdField<CultureId, ProductmodelproductdescriptioncultureRow>(_path, "cultureid", ProductmodelproductdescriptioncultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(cultureid = value) }, CultureId.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow> = Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow>(_path, "modifieddate", ProductmodelproductdescriptioncultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : ProductmodelproductdescriptioncultureFields, Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> {
+      override fun productmodelid(): IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow> = IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow>(_path, "productmodelid", ProductmodelproductdescriptioncultureRow::productmodelid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
 
-      override fun columns(): List<FieldLike<*, ProductmodelproductdescriptioncultureRow>> = listOf(this.fields().productmodelid(), this.fields().productdescriptionid(), this.fields().cultureid(), this.fields().modifieddate())
+      override fun productdescriptionid(): IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow> = IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow>(_path, "productdescriptionid", ProductmodelproductdescriptioncultureRow::productdescriptionid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productdescriptionid = value) }, ProductdescriptionId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun cultureid(): IdField<CultureId, ProductmodelproductdescriptioncultureRow> = IdField<CultureId, ProductmodelproductdescriptioncultureRow>(_path, "cultureid", ProductmodelproductdescriptioncultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(cultureid = value) }, CultureId.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow> = Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow>(_path, "modifieddate", ProductmodelproductdescriptioncultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, ProductmodelproductdescriptioncultureRow>> = listOf(this.productmodelid(), this.productdescriptionid(), this.cultureid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> = Impl(_path)
     }
 
-    val structure: Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

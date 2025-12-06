@@ -12,59 +12,57 @@ import adventureworks.person.addresstype.AddresstypeId;
 import adventureworks.person.businessentity.BusinessentityId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface BeaViewFields {
-  final class Impl extends Relation<BeaViewFields, BeaViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface BeaViewFields extends FieldsExpr<BeaViewRow> {
+  record Impl(List<Path> _path) implements BeaViewFields, Relation<BeaViewFields, BeaViewRow> {
+    @Override
+    public Field<BusinessentityId, BeaViewRow> id() {
+      return new Field<BusinessentityId, BeaViewRow>(_path, "id", BeaViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public BeaViewFields fields() {
-      return new BeaViewFields() {
-               @Override
-               public Field<BusinessentityId, BeaViewRow> id() {
-                 return new Field<BusinessentityId, BeaViewRow>(_path, "id", BeaViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, BeaViewRow> businessentityid() {
-                 return new Field<BusinessentityId, BeaViewRow>(_path, "businessentityid", BeaViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<AddressId, BeaViewRow> addressid() {
-                 return new Field<AddressId, BeaViewRow>(_path, "addressid", BeaViewRow::addressid, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressid(value), AddressId.pgType);
-               };
-               @Override
-               public Field<AddresstypeId, BeaViewRow> addresstypeid() {
-                 return new Field<AddresstypeId, BeaViewRow>(_path, "addresstypeid", BeaViewRow::addresstypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withAddresstypeid(value), AddresstypeId.pgType);
-               };
-               @Override
-               public Field<TypoUUID, BeaViewRow> rowguid() {
-                 return new Field<TypoUUID, BeaViewRow>(_path, "rowguid", BeaViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, BeaViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, BeaViewRow>(_path, "modifieddate", BeaViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, BeaViewRow> businessentityid() {
+      return new Field<BusinessentityId, BeaViewRow>(_path, "businessentityid", BeaViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<AddressId, BeaViewRow> addressid() {
+      return new Field<AddressId, BeaViewRow>(_path, "addressid", BeaViewRow::addressid, Optional.empty(), Optional.empty(), (row, value) -> row.withAddressid(value), AddressId.pgType);
+    };
+
+    @Override
+    public Field<AddresstypeId, BeaViewRow> addresstypeid() {
+      return new Field<AddresstypeId, BeaViewRow>(_path, "addresstypeid", BeaViewRow::addresstypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withAddresstypeid(value), AddresstypeId.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, BeaViewRow> rowguid() {
+      return new Field<TypoUUID, BeaViewRow>(_path, "rowguid", BeaViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, BeaViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, BeaViewRow>(_path, "modifieddate", BeaViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, BeaViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().addressid(), this.fields().addresstypeid(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.addressid(), this.addresstypeid(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<BeaViewFields, BeaViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<BeaViewFields, BeaViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -79,4 +77,12 @@ public interface BeaViewFields {
   Field<TypoUUID, BeaViewRow> rowguid();
 
   Field<TypoLocalDateTime, BeaViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, BeaViewRow>> columns();
+
+  @Override
+  default RowParser<BeaViewRow> rowParser() {
+    return BeaViewRow._rowParser;
+  };
 }

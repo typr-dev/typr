@@ -7,6 +7,7 @@ package testdb.brands
 
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
@@ -14,9 +15,12 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface BrandsFields {
+interface BrandsFields : FieldsExpr<BrandsRow> {
   fun brandId(): IdField<BrandsId, BrandsRow>
+
+  override fun columns(): List<FieldLike<*, BrandsRow>>
 
   fun countryOfOrigin(): OptField<String, BrandsRow>
 
@@ -26,27 +30,33 @@ interface BrandsFields {
 
   fun name(): Field<String, BrandsRow>
 
+  override fun rowParser(): RowParser<BrandsRow> = BrandsRow._rowParser
+
   fun slug(): Field<String, BrandsRow>
 
   fun websiteUrl(): OptField<String, BrandsRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<BrandsFields, BrandsRow>(path) {
-      override fun fields(): BrandsFields = object : BrandsFields {
-        override fun brandId(): IdField<BrandsId, BrandsRow> = IdField<BrandsId, BrandsRow>(_path, "brand_id", BrandsRow::brandId, Optional.empty(), Optional.empty(), { row, value -> row.copy(brandId = value) }, BrandsId.pgType)
-        override fun name(): Field<String, BrandsRow> = Field<String, BrandsRow>(_path, "name", BrandsRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, MariaTypes.varchar)
-        override fun slug(): Field<String, BrandsRow> = Field<String, BrandsRow>(_path, "slug", BrandsRow::slug, Optional.empty(), Optional.empty(), { row, value -> row.copy(slug = value) }, MariaTypes.varchar)
-        override fun logoBlob(): OptField<ByteArray, BrandsRow> = OptField<ByteArray, BrandsRow>(_path, "logo_blob", BrandsRow::logoBlob, Optional.empty(), Optional.empty(), { row, value -> row.copy(logoBlob = value) }, MariaTypes.mediumblob)
-        override fun websiteUrl(): OptField<String, BrandsRow> = OptField<String, BrandsRow>(_path, "website_url", BrandsRow::websiteUrl, Optional.empty(), Optional.empty(), { row, value -> row.copy(websiteUrl = value) }, MariaTypes.varchar)
-        override fun countryOfOrigin(): OptField<String, BrandsRow> = OptField<String, BrandsRow>(_path, "country_of_origin", BrandsRow::countryOfOrigin, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryOfOrigin = value) }, MariaTypes.char_)
-        override fun isActive(): Field<Boolean, BrandsRow> = Field<Boolean, BrandsRow>(_path, "is_active", BrandsRow::isActive, Optional.empty(), Optional.empty(), { row, value -> row.copy(isActive = value) }, MariaTypes.bool)
-      }
+    data class Impl(val _path: List<Path>) : BrandsFields, Relation<BrandsFields, BrandsRow> {
+      override fun brandId(): IdField<BrandsId, BrandsRow> = IdField<BrandsId, BrandsRow>(_path, "brand_id", BrandsRow::brandId, Optional.empty(), Optional.empty(), { row, value -> row.copy(brandId = value) }, BrandsId.pgType)
 
-      override fun columns(): List<FieldLike<*, BrandsRow>> = listOf(this.fields().brandId(), this.fields().name(), this.fields().slug(), this.fields().logoBlob(), this.fields().websiteUrl(), this.fields().countryOfOrigin(), this.fields().isActive())
+      override fun name(): Field<String, BrandsRow> = Field<String, BrandsRow>(_path, "name", BrandsRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, MariaTypes.varchar)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun slug(): Field<String, BrandsRow> = Field<String, BrandsRow>(_path, "slug", BrandsRow::slug, Optional.empty(), Optional.empty(), { row, value -> row.copy(slug = value) }, MariaTypes.varchar)
+
+      override fun logoBlob(): OptField<ByteArray, BrandsRow> = OptField<ByteArray, BrandsRow>(_path, "logo_blob", BrandsRow::logoBlob, Optional.empty(), Optional.empty(), { row, value -> row.copy(logoBlob = value) }, MariaTypes.mediumblob)
+
+      override fun websiteUrl(): OptField<String, BrandsRow> = OptField<String, BrandsRow>(_path, "website_url", BrandsRow::websiteUrl, Optional.empty(), Optional.empty(), { row, value -> row.copy(websiteUrl = value) }, MariaTypes.varchar)
+
+      override fun countryOfOrigin(): OptField<String, BrandsRow> = OptField<String, BrandsRow>(_path, "country_of_origin", BrandsRow::countryOfOrigin, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryOfOrigin = value) }, MariaTypes.char_)
+
+      override fun isActive(): Field<Boolean, BrandsRow> = Field<Boolean, BrandsRow>(_path, "is_active", BrandsRow::isActive, Optional.empty(), Optional.empty(), { row, value -> row.copy(isActive = value) }, MariaTypes.bool)
+
+      override fun columns(): List<FieldLike<*, BrandsRow>> = listOf(this.brandId(), this.name(), this.slug(), this.logoBlob(), this.websiteUrl(), this.countryOfOrigin(), this.isActive())
+
+      override fun copy(_path: List<Path>): Relation<BrandsFields, BrandsRow> = Impl(_path)
     }
 
-    val structure: Relation<BrandsFields, BrandsRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

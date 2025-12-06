@@ -15,6 +15,7 @@ import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -23,63 +24,62 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface VendorFields {
-  final class Impl extends Relation<VendorFields, VendorRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VendorFields extends FieldsExpr<VendorRow> {
+  record Impl(List<Path> _path) implements VendorFields, Relation<VendorFields, VendorRow> {
+    @Override
+    public IdField<BusinessentityId, VendorRow> businessentityid() {
+      return new IdField<BusinessentityId, VendorRow>(_path, "businessentityid", VendorRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public VendorFields fields() {
-      return new VendorFields() {
-               @Override
-               public IdField<BusinessentityId, VendorRow> businessentityid() {
-                 return new IdField<BusinessentityId, VendorRow>(_path, "businessentityid", VendorRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<AccountNumber, VendorRow> accountnumber() {
-                 return new Field<AccountNumber, VendorRow>(_path, "accountnumber", VendorRow::accountnumber, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withAccountnumber(value), AccountNumber.pgType);
-               };
-               @Override
-               public Field<Name, VendorRow> name() {
-                 return new Field<Name, VendorRow>(_path, "name", VendorRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoShort, VendorRow> creditrating() {
-                 return new Field<TypoShort, VendorRow>(_path, "creditrating", VendorRow::creditrating, Optional.empty(), Optional.of("int2"), (row, value) -> row.withCreditrating(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<Flag, VendorRow> preferredvendorstatus() {
-                 return new Field<Flag, VendorRow>(_path, "preferredvendorstatus", VendorRow::preferredvendorstatus, Optional.empty(), Optional.of("bool"), (row, value) -> row.withPreferredvendorstatus(value), Flag.pgType);
-               };
-               @Override
-               public Field<Flag, VendorRow> activeflag() {
-                 return new Field<Flag, VendorRow>(_path, "activeflag", VendorRow::activeflag, Optional.empty(), Optional.of("bool"), (row, value) -> row.withActiveflag(value), Flag.pgType);
-               };
-               @Override
-               public OptField</* max 1024 chars */ String, VendorRow> purchasingwebserviceurl() {
-                 return new OptField</* max 1024 chars */ String, VendorRow>(_path, "purchasingwebserviceurl", VendorRow::purchasingwebserviceurl, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchasingwebserviceurl(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoLocalDateTime, VendorRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, VendorRow>(_path, "modifieddate", VendorRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<AccountNumber, VendorRow> accountnumber() {
+      return new Field<AccountNumber, VendorRow>(_path, "accountnumber", VendorRow::accountnumber, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withAccountnumber(value), AccountNumber.pgType);
+    };
+
+    @Override
+    public Field<Name, VendorRow> name() {
+      return new Field<Name, VendorRow>(_path, "name", VendorRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, VendorRow> creditrating() {
+      return new Field<TypoShort, VendorRow>(_path, "creditrating", VendorRow::creditrating, Optional.empty(), Optional.of("int2"), (row, value) -> row.withCreditrating(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<Flag, VendorRow> preferredvendorstatus() {
+      return new Field<Flag, VendorRow>(_path, "preferredvendorstatus", VendorRow::preferredvendorstatus, Optional.empty(), Optional.of("bool"), (row, value) -> row.withPreferredvendorstatus(value), Flag.pgType);
+    };
+
+    @Override
+    public Field<Flag, VendorRow> activeflag() {
+      return new Field<Flag, VendorRow>(_path, "activeflag", VendorRow::activeflag, Optional.empty(), Optional.of("bool"), (row, value) -> row.withActiveflag(value), Flag.pgType);
+    };
+
+    @Override
+    public OptField</* max 1024 chars */ String, VendorRow> purchasingwebserviceurl() {
+      return new OptField</* max 1024 chars */ String, VendorRow>(_path, "purchasingwebserviceurl", VendorRow::purchasingwebserviceurl, Optional.empty(), Optional.empty(), (row, value) -> row.withPurchasingwebserviceurl(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, VendorRow> modifieddate() {
+      return new Field<TypoLocalDateTime, VendorRow>(_path, "modifieddate", VendorRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, VendorRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().accountnumber(), this.fields().name(), this.fields().creditrating(), this.fields().preferredvendorstatus(), this.fields().activeflag(), this.fields().purchasingwebserviceurl(), this.fields().modifieddate());
+      return List.of(this.businessentityid(), this.accountnumber(), this.name(), this.creditrating(), this.preferredvendorstatus(), this.activeflag(), this.purchasingwebserviceurl(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VendorFields, VendorRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VendorFields, VendorRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -101,5 +101,13 @@ public interface VendorFields {
 
   default ForeignKey<BusinessentityFields, BusinessentityRow> fkPersonBusinessentity() {
     return ForeignKey.<BusinessentityFields, BusinessentityRow>of("purchasing.FK_Vendor_BusinessEntity_BusinessEntityID").withColumnPair(businessentityid(), BusinessentityFields::businessentityid);
+  };
+
+  @Override
+  List<FieldLike<?, VendorRow>> columns();
+
+  @Override
+  default RowParser<VendorRow> rowParser() {
+    return VendorRow._rowParser;
   };
 }

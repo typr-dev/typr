@@ -12,6 +12,7 @@ import testdb.customer_status.CustomerStatusFields
 import testdb.customer_status.CustomerStatusId
 import testdb.customer_status.CustomerStatusRow
 import typo.data.maria.MariaSet
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -20,8 +21,11 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface CustomersFields {
+interface CustomersFields : FieldsExpr<CustomersRow> {
+  override fun columns(): List<FieldLike<*, CustomersRow>>
+
   fun createdAt(): Field<LocalDateTime, CustomersRow>
 
   fun customerId(): IdField<CustomersId, CustomersRow>
@@ -46,6 +50,8 @@ interface CustomersFields {
 
   fun preferences(): OptField<String, CustomersRow>
 
+  override fun rowParser(): RowParser<CustomersRow> = CustomersRow._rowParser
+
   fun status(): Field<CustomerStatusId, CustomersRow>
 
   fun tier(): Field<String, CustomersRow>
@@ -53,29 +59,40 @@ interface CustomersFields {
   fun updatedAt(): Field<LocalDateTime, CustomersRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<CustomersFields, CustomersRow>(path) {
-      override fun fields(): CustomersFields = object : CustomersFields {
-        override fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "customer_id", CustomersRow::customerId, Optional.empty(), Optional.empty(), { row, value -> row.copy(customerId = value) }, CustomersId.pgType)
-        override fun email(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "email", CustomersRow::email, Optional.empty(), Optional.empty(), { row, value -> row.copy(email = value) }, MariaTypes.varchar)
-        override fun passwordHash(): Field<ByteArray, CustomersRow> = Field<ByteArray, CustomersRow>(_path, "password_hash", CustomersRow::passwordHash, Optional.empty(), Optional.empty(), { row, value -> row.copy(passwordHash = value) }, MariaTypes.binary)
-        override fun firstName(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "first_name", CustomersRow::firstName, Optional.empty(), Optional.empty(), { row, value -> row.copy(firstName = value) }, MariaTypes.varchar)
-        override fun lastName(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "last_name", CustomersRow::lastName, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastName = value) }, MariaTypes.varchar)
-        override fun phone(): OptField<String, CustomersRow> = OptField<String, CustomersRow>(_path, "phone", CustomersRow::phone, Optional.empty(), Optional.empty(), { row, value -> row.copy(phone = value) }, MariaTypes.varchar)
-        override fun status(): Field<CustomerStatusId, CustomersRow> = Field<CustomerStatusId, CustomersRow>(_path, "status", CustomersRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, CustomerStatusId.pgType)
-        override fun tier(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "tier", CustomersRow::tier, Optional.empty(), Optional.empty(), { row, value -> row.copy(tier = value) }, MariaTypes.text)
-        override fun preferences(): OptField<String, CustomersRow> = OptField<String, CustomersRow>(_path, "preferences", CustomersRow::preferences, Optional.empty(), Optional.empty(), { row, value -> row.copy(preferences = value) }, MariaTypes.longtext)
-        override fun marketingFlags(): OptField<MariaSet, CustomersRow> = OptField<MariaSet, CustomersRow>(_path, "marketing_flags", CustomersRow::marketingFlags, Optional.empty(), Optional.empty(), { row, value -> row.copy(marketingFlags = value) }, MariaTypes.set)
-        override fun notes(): OptField<String, CustomersRow> = OptField<String, CustomersRow>(_path, "notes", CustomersRow::notes, Optional.empty(), Optional.empty(), { row, value -> row.copy(notes = value) }, MariaTypes.text)
-        override fun createdAt(): Field<LocalDateTime, CustomersRow> = Field<LocalDateTime, CustomersRow>(_path, "created_at", CustomersRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
-        override fun updatedAt(): Field<LocalDateTime, CustomersRow> = Field<LocalDateTime, CustomersRow>(_path, "updated_at", CustomersRow::updatedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
-        override fun lastLoginAt(): OptField<LocalDateTime, CustomersRow> = OptField<LocalDateTime, CustomersRow>(_path, "last_login_at", CustomersRow::lastLoginAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastLoginAt = value) }, MariaTypes.datetime)
-      }
+    data class Impl(val _path: List<Path>) : CustomersFields, Relation<CustomersFields, CustomersRow> {
+      override fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "customer_id", CustomersRow::customerId, Optional.empty(), Optional.empty(), { row, value -> row.copy(customerId = value) }, CustomersId.pgType)
 
-      override fun columns(): List<FieldLike<*, CustomersRow>> = listOf(this.fields().customerId(), this.fields().email(), this.fields().passwordHash(), this.fields().firstName(), this.fields().lastName(), this.fields().phone(), this.fields().status(), this.fields().tier(), this.fields().preferences(), this.fields().marketingFlags(), this.fields().notes(), this.fields().createdAt(), this.fields().updatedAt(), this.fields().lastLoginAt())
+      override fun email(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "email", CustomersRow::email, Optional.empty(), Optional.empty(), { row, value -> row.copy(email = value) }, MariaTypes.varchar)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun passwordHash(): Field<ByteArray, CustomersRow> = Field<ByteArray, CustomersRow>(_path, "password_hash", CustomersRow::passwordHash, Optional.empty(), Optional.empty(), { row, value -> row.copy(passwordHash = value) }, MariaTypes.binary)
+
+      override fun firstName(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "first_name", CustomersRow::firstName, Optional.empty(), Optional.empty(), { row, value -> row.copy(firstName = value) }, MariaTypes.varchar)
+
+      override fun lastName(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "last_name", CustomersRow::lastName, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastName = value) }, MariaTypes.varchar)
+
+      override fun phone(): OptField<String, CustomersRow> = OptField<String, CustomersRow>(_path, "phone", CustomersRow::phone, Optional.empty(), Optional.empty(), { row, value -> row.copy(phone = value) }, MariaTypes.varchar)
+
+      override fun status(): Field<CustomerStatusId, CustomersRow> = Field<CustomerStatusId, CustomersRow>(_path, "status", CustomersRow::status, Optional.empty(), Optional.empty(), { row, value -> row.copy(status = value) }, CustomerStatusId.pgType)
+
+      override fun tier(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "tier", CustomersRow::tier, Optional.empty(), Optional.empty(), { row, value -> row.copy(tier = value) }, MariaTypes.text)
+
+      override fun preferences(): OptField<String, CustomersRow> = OptField<String, CustomersRow>(_path, "preferences", CustomersRow::preferences, Optional.empty(), Optional.empty(), { row, value -> row.copy(preferences = value) }, MariaTypes.longtext)
+
+      override fun marketingFlags(): OptField<MariaSet, CustomersRow> = OptField<MariaSet, CustomersRow>(_path, "marketing_flags", CustomersRow::marketingFlags, Optional.empty(), Optional.empty(), { row, value -> row.copy(marketingFlags = value) }, MariaTypes.set)
+
+      override fun notes(): OptField<String, CustomersRow> = OptField<String, CustomersRow>(_path, "notes", CustomersRow::notes, Optional.empty(), Optional.empty(), { row, value -> row.copy(notes = value) }, MariaTypes.text)
+
+      override fun createdAt(): Field<LocalDateTime, CustomersRow> = Field<LocalDateTime, CustomersRow>(_path, "created_at", CustomersRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+
+      override fun updatedAt(): Field<LocalDateTime, CustomersRow> = Field<LocalDateTime, CustomersRow>(_path, "updated_at", CustomersRow::updatedAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
+
+      override fun lastLoginAt(): OptField<LocalDateTime, CustomersRow> = OptField<LocalDateTime, CustomersRow>(_path, "last_login_at", CustomersRow::lastLoginAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastLoginAt = value) }, MariaTypes.datetime)
+
+      override fun columns(): List<FieldLike<*, CustomersRow>> = listOf(this.customerId(), this.email(), this.passwordHash(), this.firstName(), this.lastName(), this.phone(), this.status(), this.tier(), this.preferences(), this.marketingFlags(), this.notes(), this.createdAt(), this.updatedAt(), this.lastLoginAt())
+
+      override fun copy(_path: List<Path>): Relation<CustomersFields, CustomersRow> = Impl(_path)
     }
 
-    val structure: Relation<CustomersFields, CustomersRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

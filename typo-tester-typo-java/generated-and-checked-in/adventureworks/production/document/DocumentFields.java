@@ -15,6 +15,7 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Flag;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -23,83 +24,87 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface DocumentFields {
-  final class Impl extends Relation<DocumentFields, DocumentRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface DocumentFields extends FieldsExpr<DocumentRow> {
+  record Impl(List<Path> _path) implements DocumentFields, Relation<DocumentFields, DocumentRow> {
+    @Override
+    public Field</* max 50 chars */ String, DocumentRow> title() {
+      return new Field</* max 50 chars */ String, DocumentRow>(_path, "title", DocumentRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
+    };
 
     @Override
-    public DocumentFields fields() {
-      return new DocumentFields() {
-               @Override
-               public Field</* max 50 chars */ String, DocumentRow> title() {
-                 return new Field</* max 50 chars */ String, DocumentRow>(_path, "title", DocumentRow::title, Optional.empty(), Optional.empty(), (row, value) -> row.withTitle(value), PgTypes.text);
-               };
-               @Override
-               public Field<BusinessentityId, DocumentRow> owner() {
-                 return new Field<BusinessentityId, DocumentRow>(_path, "owner", DocumentRow::owner, Optional.empty(), Optional.of("int4"), (row, value) -> row.withOwner(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<Flag, DocumentRow> folderflag() {
-                 return new Field<Flag, DocumentRow>(_path, "folderflag", DocumentRow::folderflag, Optional.empty(), Optional.of("bool"), (row, value) -> row.withFolderflag(value), Flag.pgType);
-               };
-               @Override
-               public Field</* max 400 chars */ String, DocumentRow> filename() {
-                 return new Field</* max 400 chars */ String, DocumentRow>(_path, "filename", DocumentRow::filename, Optional.empty(), Optional.empty(), (row, value) -> row.withFilename(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 8 chars */ String, DocumentRow> fileextension() {
-                 return new OptField</* max 8 chars */ String, DocumentRow>(_path, "fileextension", DocumentRow::fileextension, Optional.empty(), Optional.empty(), (row, value) -> row.withFileextension(value), PgTypes.text);
-               };
-               @Override
-               public Field</* bpchar, max 5 chars */ String, DocumentRow> revision() {
-                 return new Field</* bpchar, max 5 chars */ String, DocumentRow>(_path, "revision", DocumentRow::revision, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withRevision(value), PgTypes.bpchar);
-               };
-               @Override
-               public Field<Integer, DocumentRow> changenumber() {
-                 return new Field<Integer, DocumentRow>(_path, "changenumber", DocumentRow::changenumber, Optional.empty(), Optional.of("int4"), (row, value) -> row.withChangenumber(value), PgTypes.int4);
-               };
-               @Override
-               public Field<TypoShort, DocumentRow> status() {
-                 return new Field<TypoShort, DocumentRow>(_path, "status", DocumentRow::status, Optional.empty(), Optional.of("int2"), (row, value) -> row.withStatus(value), TypoShort.pgType);
-               };
-               @Override
-               public OptField<String, DocumentRow> documentsummary() {
-                 return new OptField<String, DocumentRow>(_path, "documentsummary", DocumentRow::documentsummary, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentsummary(value), PgTypes.text);
-               };
-               @Override
-               public OptField<TypoBytea, DocumentRow> document() {
-                 return new OptField<TypoBytea, DocumentRow>(_path, "document", DocumentRow::document, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withDocument(value), TypoBytea.pgType);
-               };
-               @Override
-               public Field<TypoUUID, DocumentRow> rowguid() {
-                 return new Field<TypoUUID, DocumentRow>(_path, "rowguid", DocumentRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, DocumentRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, DocumentRow>(_path, "modifieddate", DocumentRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public IdField<DocumentId, DocumentRow> documentnode() {
-                 return new IdField<DocumentId, DocumentRow>(_path, "documentnode", DocumentRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
-               };
-             };
+    public Field<BusinessentityId, DocumentRow> owner() {
+      return new Field<BusinessentityId, DocumentRow>(_path, "owner", DocumentRow::owner, Optional.empty(), Optional.of("int4"), (row, value) -> row.withOwner(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<Flag, DocumentRow> folderflag() {
+      return new Field<Flag, DocumentRow>(_path, "folderflag", DocumentRow::folderflag, Optional.empty(), Optional.of("bool"), (row, value) -> row.withFolderflag(value), Flag.pgType);
+    };
+
+    @Override
+    public Field</* max 400 chars */ String, DocumentRow> filename() {
+      return new Field</* max 400 chars */ String, DocumentRow>(_path, "filename", DocumentRow::filename, Optional.empty(), Optional.empty(), (row, value) -> row.withFilename(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 8 chars */ String, DocumentRow> fileextension() {
+      return new OptField</* max 8 chars */ String, DocumentRow>(_path, "fileextension", DocumentRow::fileextension, Optional.empty(), Optional.empty(), (row, value) -> row.withFileextension(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* bpchar, max 5 chars */ String, DocumentRow> revision() {
+      return new Field</* bpchar, max 5 chars */ String, DocumentRow>(_path, "revision", DocumentRow::revision, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withRevision(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public Field<Integer, DocumentRow> changenumber() {
+      return new Field<Integer, DocumentRow>(_path, "changenumber", DocumentRow::changenumber, Optional.empty(), Optional.of("int4"), (row, value) -> row.withChangenumber(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<TypoShort, DocumentRow> status() {
+      return new Field<TypoShort, DocumentRow>(_path, "status", DocumentRow::status, Optional.empty(), Optional.of("int2"), (row, value) -> row.withStatus(value), TypoShort.pgType);
+    };
+
+    @Override
+    public OptField<String, DocumentRow> documentsummary() {
+      return new OptField<String, DocumentRow>(_path, "documentsummary", DocumentRow::documentsummary, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentsummary(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField<TypoBytea, DocumentRow> document() {
+      return new OptField<TypoBytea, DocumentRow>(_path, "document", DocumentRow::document, Optional.empty(), Optional.of("bytea"), (row, value) -> row.withDocument(value), TypoBytea.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, DocumentRow> rowguid() {
+      return new Field<TypoUUID, DocumentRow>(_path, "rowguid", DocumentRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, DocumentRow> modifieddate() {
+      return new Field<TypoLocalDateTime, DocumentRow>(_path, "modifieddate", DocumentRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public IdField<DocumentId, DocumentRow> documentnode() {
+      return new IdField<DocumentId, DocumentRow>(_path, "documentnode", DocumentRow::documentnode, Optional.empty(), Optional.empty(), (row, value) -> row.withDocumentnode(value), DocumentId.pgType);
     };
 
     @Override
     public List<FieldLike<?, DocumentRow>> columns() {
-      return List.of(this.fields().title(), this.fields().owner(), this.fields().folderflag(), this.fields().filename(), this.fields().fileextension(), this.fields().revision(), this.fields().changenumber(), this.fields().status(), this.fields().documentsummary(), this.fields().document(), this.fields().rowguid(), this.fields().modifieddate(), this.fields().documentnode());
+      return List.of(this.title(), this.owner(), this.folderflag(), this.filename(), this.fileextension(), this.revision(), this.changenumber(), this.status(), this.documentsummary(), this.document(), this.rowguid(), this.modifieddate(), this.documentnode());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<DocumentFields, DocumentRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<DocumentFields, DocumentRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -131,5 +136,13 @@ public interface DocumentFields {
 
   default ForeignKey<EmployeeFields, EmployeeRow> fkHumanresourcesEmployee() {
     return ForeignKey.<EmployeeFields, EmployeeRow>of("production.FK_Document_Employee_Owner").withColumnPair(owner(), EmployeeFields::businessentityid);
+  };
+
+  @Override
+  List<FieldLike<?, DocumentRow>> columns();
+
+  @Override
+  default RowParser<DocumentRow> rowParser() {
+    return DocumentRow._rowParser;
   };
 }

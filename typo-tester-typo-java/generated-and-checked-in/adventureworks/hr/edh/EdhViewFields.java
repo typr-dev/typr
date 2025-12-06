@@ -12,64 +12,63 @@ import adventureworks.humanresources.shift.ShiftId;
 import adventureworks.person.businessentity.BusinessentityId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface EdhViewFields {
-  final class Impl extends Relation<EdhViewFields, EdhViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface EdhViewFields extends FieldsExpr<EdhViewRow> {
+  record Impl(List<Path> _path) implements EdhViewFields, Relation<EdhViewFields, EdhViewRow> {
+    @Override
+    public Field<BusinessentityId, EdhViewRow> id() {
+      return new Field<BusinessentityId, EdhViewRow>(_path, "id", EdhViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public EdhViewFields fields() {
-      return new EdhViewFields() {
-               @Override
-               public Field<BusinessentityId, EdhViewRow> id() {
-                 return new Field<BusinessentityId, EdhViewRow>(_path, "id", EdhViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, EdhViewRow> businessentityid() {
-                 return new Field<BusinessentityId, EdhViewRow>(_path, "businessentityid", EdhViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<DepartmentId, EdhViewRow> departmentid() {
-                 return new Field<DepartmentId, EdhViewRow>(_path, "departmentid", EdhViewRow::departmentid, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
-               };
-               @Override
-               public Field<ShiftId, EdhViewRow> shiftid() {
-                 return new Field<ShiftId, EdhViewRow>(_path, "shiftid", EdhViewRow::shiftid, Optional.empty(), Optional.empty(), (row, value) -> row.withShiftid(value), ShiftId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDate, EdhViewRow> startdate() {
-                 return new Field<TypoLocalDate, EdhViewRow>(_path, "startdate", EdhViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDate.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDate, EdhViewRow> enddate() {
-                 return new OptField<TypoLocalDate, EdhViewRow>(_path, "enddate", EdhViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDate.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, EdhViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, EdhViewRow>(_path, "modifieddate", EdhViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, EdhViewRow> businessentityid() {
+      return new Field<BusinessentityId, EdhViewRow>(_path, "businessentityid", EdhViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<DepartmentId, EdhViewRow> departmentid() {
+      return new Field<DepartmentId, EdhViewRow>(_path, "departmentid", EdhViewRow::departmentid, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
+    };
+
+    @Override
+    public Field<ShiftId, EdhViewRow> shiftid() {
+      return new Field<ShiftId, EdhViewRow>(_path, "shiftid", EdhViewRow::shiftid, Optional.empty(), Optional.empty(), (row, value) -> row.withShiftid(value), ShiftId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDate, EdhViewRow> startdate() {
+      return new Field<TypoLocalDate, EdhViewRow>(_path, "startdate", EdhViewRow::startdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withStartdate(value), TypoLocalDate.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDate, EdhViewRow> enddate() {
+      return new OptField<TypoLocalDate, EdhViewRow>(_path, "enddate", EdhViewRow::enddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withEnddate(value), TypoLocalDate.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, EdhViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, EdhViewRow>(_path, "modifieddate", EdhViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, EdhViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().departmentid(), this.fields().shiftid(), this.fields().startdate(), this.fields().enddate(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.departmentid(), this.shiftid(), this.startdate(), this.enddate(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<EdhViewFields, EdhViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<EdhViewFields, EdhViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -86,4 +85,12 @@ public interface EdhViewFields {
   OptField<TypoLocalDate, EdhViewRow> enddate();
 
   Field<TypoLocalDateTime, EdhViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, EdhViewRow>> columns();
+
+  @Override
+  default RowParser<EdhViewRow> rowParser() {
+    return EdhViewRow._rowParser;
+  };
 }

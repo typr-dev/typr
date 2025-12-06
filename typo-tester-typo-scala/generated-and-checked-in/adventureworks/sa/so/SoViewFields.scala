@@ -9,14 +9,16 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.sales.specialoffer.SpecialofferId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SoViewFields {
+trait SoViewFields extends FieldsExpr[SoViewRow] {
   def id: Field[SpecialofferId, SoViewRow]
 
   def specialofferid: Field[SpecialofferId, SoViewRow]
@@ -40,152 +42,163 @@ trait SoViewFields {
   def rowguid: Field[TypoUUID, SoViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, SoViewRow]
+
+  override def columns: java.util.List[FieldLike[?, SoViewRow]]
+
+  override def rowParser: RowParser[SoViewRow] = SoViewRow._rowParser
 }
 
 object SoViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SoViewFields, SoViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SoViewFields with Relation[SoViewFields, SoViewRow] {
 
-    override lazy val fields: SoViewFields = {
-      new SoViewFields {
-        override def id: Field[SpecialofferId, SoViewRow] = {
-          new Field[SpecialofferId, SoViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            SpecialofferId.pgType
-          )
-        }
-        override def specialofferid: Field[SpecialofferId, SoViewRow] = {
-          new Field[SpecialofferId, SoViewRow](
-            _path,
-            "specialofferid",
-            _.specialofferid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(specialofferid = value),
-            SpecialofferId.pgType
-          )
-        }
-        override def description: Field[/* max 255 chars */ String, SoViewRow] = {
-          new Field[/* max 255 chars */ String, SoViewRow](
-            _path,
-            "description",
-            _.description,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(description = value),
-            PgTypes.text
-          )
-        }
-        override def discountpct: Field[java.math.BigDecimal, SoViewRow] = {
-          new Field[java.math.BigDecimal, SoViewRow](
-            _path,
-            "discountpct",
-            _.discountpct,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(discountpct = value),
-            PgTypes.numeric
-          )
-        }
-        override def `type`: Field[/* max 50 chars */ String, SoViewRow] = {
-          new Field[/* max 50 chars */ String, SoViewRow](
-            _path,
-            "type",
-            _.`type`,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(`type` = value),
-            PgTypes.text
-          )
-        }
-        override def category: Field[/* max 50 chars */ String, SoViewRow] = {
-          new Field[/* max 50 chars */ String, SoViewRow](
-            _path,
-            "category",
-            _.category,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(category = value),
-            PgTypes.text
-          )
-        }
-        override def startdate: Field[TypoLocalDateTime, SoViewRow] = {
-          new Field[TypoLocalDateTime, SoViewRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def enddate: Field[TypoLocalDateTime, SoViewRow] = {
-          new Field[TypoLocalDateTime, SoViewRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def minqty: Field[Integer, SoViewRow] = {
-          new Field[Integer, SoViewRow](
-            _path,
-            "minqty",
-            _.minqty,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(minqty = value),
-            PgTypes.int4
-          )
-        }
-        override def maxqty: OptField[Integer, SoViewRow] = {
-          new OptField[Integer, SoViewRow](
-            _path,
-            "maxqty",
-            _.maxqty,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(maxqty = value),
-            PgTypes.int4
-          )
-        }
-        override def rowguid: Field[TypoUUID, SoViewRow] = {
-          new Field[TypoUUID, SoViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SoViewRow] = {
-          new Field[TypoLocalDateTime, SoViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[SpecialofferId, SoViewRow] = {
+      new Field[SpecialofferId, SoViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        SpecialofferId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SoViewRow]] = java.util.List.of(this.fields.id, this.fields.specialofferid, this.fields.description, this.fields.discountpct, this.fields.`type`, this.fields.category, this.fields.startdate, this.fields.enddate, this.fields.minqty, this.fields.maxqty, this.fields.rowguid, this.fields.modifieddate)
+    override def specialofferid: Field[SpecialofferId, SoViewRow] = {
+      new Field[SpecialofferId, SoViewRow](
+        _path,
+        "specialofferid",
+        _.specialofferid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(specialofferid = value),
+        SpecialofferId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def description: Field[/* max 255 chars */ String, SoViewRow] = {
+      new Field[/* max 255 chars */ String, SoViewRow](
+        _path,
+        "description",
+        _.description,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(description = value),
+        PgTypes.text
+      )
+    }
+
+    override def discountpct: Field[java.math.BigDecimal, SoViewRow] = {
+      new Field[java.math.BigDecimal, SoViewRow](
+        _path,
+        "discountpct",
+        _.discountpct,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(discountpct = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def `type`: Field[/* max 50 chars */ String, SoViewRow] = {
+      new Field[/* max 50 chars */ String, SoViewRow](
+        _path,
+        "type",
+        _.`type`,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(`type` = value),
+        PgTypes.text
+      )
+    }
+
+    override def category: Field[/* max 50 chars */ String, SoViewRow] = {
+      new Field[/* max 50 chars */ String, SoViewRow](
+        _path,
+        "category",
+        _.category,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(category = value),
+        PgTypes.text
+      )
+    }
+
+    override def startdate: Field[TypoLocalDateTime, SoViewRow] = {
+      new Field[TypoLocalDateTime, SoViewRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def enddate: Field[TypoLocalDateTime, SoViewRow] = {
+      new Field[TypoLocalDateTime, SoViewRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def minqty: Field[Integer, SoViewRow] = {
+      new Field[Integer, SoViewRow](
+        _path,
+        "minqty",
+        _.minqty,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(minqty = value),
+        PgTypes.int4
+      )
+    }
+
+    override def maxqty: OptField[Integer, SoViewRow] = {
+      new OptField[Integer, SoViewRow](
+        _path,
+        "maxqty",
+        _.maxqty,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(maxqty = value),
+        PgTypes.int4
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SoViewRow] = {
+      new Field[TypoUUID, SoViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SoViewRow] = {
+      new Field[TypoLocalDateTime, SoViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SoViewRow]] = java.util.List.of(this.id, this.specialofferid, this.description, this.discountpct, this.`type`, this.category, this.startdate, this.enddate, this.minqty, this.maxqty, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SoViewFields, SoViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SoViewFields, SoViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

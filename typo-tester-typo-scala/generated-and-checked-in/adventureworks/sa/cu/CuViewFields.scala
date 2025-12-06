@@ -9,12 +9,14 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import adventureworks.sales.currency.CurrencyId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait CuViewFields {
+trait CuViewFields extends FieldsExpr[CuViewRow] {
   def id: Field[CurrencyId, CuViewRow]
 
   def currencycode: Field[CurrencyId, CuViewRow]
@@ -22,64 +24,67 @@ trait CuViewFields {
   def name: Field[Name, CuViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, CuViewRow]
+
+  override def columns: java.util.List[FieldLike[?, CuViewRow]]
+
+  override def rowParser: RowParser[CuViewRow] = CuViewRow._rowParser
 }
 
 object CuViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CuViewFields, CuViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CuViewFields with Relation[CuViewFields, CuViewRow] {
 
-    override lazy val fields: CuViewFields = {
-      new CuViewFields {
-        override def id: Field[CurrencyId, CuViewRow] = {
-          new Field[CurrencyId, CuViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            CurrencyId.pgType
-          )
-        }
-        override def currencycode: Field[CurrencyId, CuViewRow] = {
-          new Field[CurrencyId, CuViewRow](
-            _path,
-            "currencycode",
-            _.currencycode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(currencycode = value),
-            CurrencyId.pgType
-          )
-        }
-        override def name: Field[Name, CuViewRow] = {
-          new Field[Name, CuViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, CuViewRow] = {
-          new Field[TypoLocalDateTime, CuViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[CurrencyId, CuViewRow] = {
+      new Field[CurrencyId, CuViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        CurrencyId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CuViewRow]] = java.util.List.of(this.fields.id, this.fields.currencycode, this.fields.name, this.fields.modifieddate)
+    override def currencycode: Field[CurrencyId, CuViewRow] = {
+      new Field[CurrencyId, CuViewRow](
+        _path,
+        "currencycode",
+        _.currencycode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(currencycode = value),
+        CurrencyId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[Name, CuViewRow] = {
+      new Field[Name, CuViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, CuViewRow] = {
+      new Field[TypoLocalDateTime, CuViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CuViewRow]] = java.util.List.of(this.id, this.currencycode, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CuViewFields, CuViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CuViewFields, CuViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

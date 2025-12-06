@@ -6,38 +6,40 @@
 package testdb.hardcoded.myschema.marital_status
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait MaritalStatusFields {
+trait MaritalStatusFields extends FieldsExpr[MaritalStatusRow] {
   def id: IdField[MaritalStatusId, MaritalStatusRow]
+
+  override def columns: java.util.List[FieldLike[?, MaritalStatusRow]]
+
+  override def rowParser: RowParser[MaritalStatusRow] = MaritalStatusRow._rowParser
 }
 
 object MaritalStatusFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[MaritalStatusFields, MaritalStatusRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends MaritalStatusFields with Relation[MaritalStatusFields, MaritalStatusRow] {
 
-    override lazy val fields: MaritalStatusFields = {
-      new MaritalStatusFields {
-        override def id: IdField[MaritalStatusId, MaritalStatusRow] = {
-          new IdField[MaritalStatusId, MaritalStatusRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.of("int8"),
-            (row, value) => row.copy(id = value),
-            MaritalStatusId.pgType
-          )
-        }
-      }
+    override def id: IdField[MaritalStatusId, MaritalStatusRow] = {
+      new IdField[MaritalStatusId, MaritalStatusRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.of("int8"),
+        (row, value) => row.copy(id = value),
+        MaritalStatusId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, MaritalStatusRow]] = java.util.List.of(this.fields.id)
+    override def columns: java.util.List[FieldLike[?, MaritalStatusRow]] = java.util.List.of(this.id)
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(`_path`: java.util.List[Path]): Relation[MaritalStatusFields, MaritalStatusRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[MaritalStatusFields, MaritalStatusRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

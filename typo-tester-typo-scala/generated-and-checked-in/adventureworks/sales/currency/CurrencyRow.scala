@@ -30,7 +30,7 @@ case class CurrencyRow(
 }
 
 object CurrencyRow {
-  val `_rowParser`: RowParser[CurrencyRow] = RowParsers.of(CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CurrencyRow.apply, row => Array(row.currencycode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CurrencyRow] = RowParsers.of(CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CurrencyRow.apply, row => Array[Object](row.currencycode.asInstanceOf[Object], row.name.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[CurrencyRow] = PgText.from(`_rowParser`)
 }

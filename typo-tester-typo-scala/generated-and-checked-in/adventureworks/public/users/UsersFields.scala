@@ -8,6 +8,7 @@ package adventureworks.public.users
 import adventureworks.customtypes.TypoInstant
 import adventureworks.customtypes.TypoUnknownCitext
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
@@ -15,8 +16,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait UsersFields {
+trait UsersFields extends FieldsExpr[UsersRow] {
   def userId: IdField[UsersId, UsersRow]
 
   def name: Field[String, UsersRow]
@@ -30,97 +32,103 @@ trait UsersFields {
   def createdAt: Field[TypoInstant, UsersRow]
 
   def verifiedOn: OptField[TypoInstant, UsersRow]
+
+  override def columns: java.util.List[FieldLike[?, UsersRow]]
+
+  override def rowParser: RowParser[UsersRow] = UsersRow._rowParser
 }
 
 object UsersFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[UsersFields, UsersRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends UsersFields with Relation[UsersFields, UsersRow] {
 
-    override lazy val fields: UsersFields = {
-      new UsersFields {
-        override def userId: IdField[UsersId, UsersRow] = {
-          new IdField[UsersId, UsersRow](
-            _path,
-            "user_id",
-            _.userId,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(userId = value),
-            UsersId.pgType
-          )
-        }
-        override def name: Field[String, UsersRow] = {
-          new Field[String, UsersRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            PgTypes.text
-          )
-        }
-        override def lastName: OptField[String, UsersRow] = {
-          new OptField[String, UsersRow](
-            _path,
-            "last_name",
-            _.lastName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastName = value),
-            PgTypes.text
-          )
-        }
-        override def email: Field[TypoUnknownCitext, UsersRow] = {
-          new Field[TypoUnknownCitext, UsersRow](
-            _path,
-            "email",
-            _.email,
-            Optional.of("text"),
-            Optional.of("citext"),
-            (row, value) => row.copy(email = value),
-            TypoUnknownCitext.pgType
-          )
-        }
-        override def password: Field[String, UsersRow] = {
-          new Field[String, UsersRow](
-            _path,
-            "password",
-            _.password,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(password = value),
-            PgTypes.text
-          )
-        }
-        override def createdAt: Field[TypoInstant, UsersRow] = {
-          new Field[TypoInstant, UsersRow](
-            _path,
-            "created_at",
-            _.createdAt,
-            Optional.of("text"),
-            Optional.of("timestamptz"),
-            (row, value) => row.copy(createdAt = value),
-            TypoInstant.pgType
-          )
-        }
-        override def verifiedOn: OptField[TypoInstant, UsersRow] = {
-          new OptField[TypoInstant, UsersRow](
-            _path,
-            "verified_on",
-            _.verifiedOn,
-            Optional.of("text"),
-            Optional.of("timestamptz"),
-            (row, value) => row.copy(verifiedOn = value),
-            TypoInstant.pgType
-          )
-        }
-      }
+    override def userId: IdField[UsersId, UsersRow] = {
+      new IdField[UsersId, UsersRow](
+        _path,
+        "user_id",
+        _.userId,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(userId = value),
+        UsersId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, UsersRow]] = java.util.List.of(this.fields.userId, this.fields.name, this.fields.lastName, this.fields.email, this.fields.password, this.fields.createdAt, this.fields.verifiedOn)
+    override def name: Field[String, UsersRow] = {
+      new Field[String, UsersRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def lastName: OptField[String, UsersRow] = {
+      new OptField[String, UsersRow](
+        _path,
+        "last_name",
+        _.lastName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastName = value),
+        PgTypes.text
+      )
+    }
+
+    override def email: Field[TypoUnknownCitext, UsersRow] = {
+      new Field[TypoUnknownCitext, UsersRow](
+        _path,
+        "email",
+        _.email,
+        Optional.of("text"),
+        Optional.of("citext"),
+        (row, value) => row.copy(email = value),
+        TypoUnknownCitext.pgType
+      )
+    }
+
+    override def password: Field[String, UsersRow] = {
+      new Field[String, UsersRow](
+        _path,
+        "password",
+        _.password,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(password = value),
+        PgTypes.text
+      )
+    }
+
+    override def createdAt: Field[TypoInstant, UsersRow] = {
+      new Field[TypoInstant, UsersRow](
+        _path,
+        "created_at",
+        _.createdAt,
+        Optional.of("text"),
+        Optional.of("timestamptz"),
+        (row, value) => row.copy(createdAt = value),
+        TypoInstant.pgType
+      )
+    }
+
+    override def verifiedOn: OptField[TypoInstant, UsersRow] = {
+      new OptField[TypoInstant, UsersRow](
+        _path,
+        "verified_on",
+        _.verifiedOn,
+        Optional.of("text"),
+        Optional.of("timestamptz"),
+        (row, value) => row.copy(verifiedOn = value),
+        TypoInstant.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, UsersRow]] = java.util.List.of(this.userId, this.name, this.lastName, this.email, this.password, this.createdAt, this.verifiedOn)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[UsersFields, UsersRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[UsersFields, UsersRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

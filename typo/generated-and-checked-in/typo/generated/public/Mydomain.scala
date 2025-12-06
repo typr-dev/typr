@@ -5,9 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package public
+package typo.generated.public
 
 import anorm.Column
 import anorm.ParameterMetaData
@@ -15,25 +13,37 @@ import anorm.ToStatement
 import java.sql.Types
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
+import typo.generated.Text
 
 /** Domain `public.mydomain`
-  * No constraint
-  */
+ * No constraint
+ */
 case class Mydomain(value: String)
+
 object Mydomain {
   implicit lazy val arrayColumn: Column[Array[Mydomain]] = Column.columnToArray(column, implicitly)
+
   implicit lazy val arrayToStatement: ToStatement[Array[Mydomain]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
+
   implicit lazy val column: Column[Mydomain] = Column.columnToString.map(Mydomain.apply)
-  implicit lazy val ordering: Ordering[Mydomain] = Ordering.by(_.value)
-  implicit lazy val parameterMetadata: ParameterMetaData[Mydomain] = new ParameterMetaData[Mydomain] {
-    override def sqlType: String = """"public"."mydomain""""
-    override def jdbcType: Int = Types.OTHER
+
+  implicit lazy val parameterMetadata: ParameterMetaData[Mydomain] = {
+    new ParameterMetaData[Mydomain] {
+      override def sqlType: String = """"public"."mydomain""""
+      override def jdbcType: Int = Types.OTHER
+    }
   }
+
+  implicit lazy val pgText: Text[Mydomain] = {
+    new Text[Mydomain] {
+      override def unsafeEncode(v: Mydomain, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+      override def unsafeArrayEncode(v: Mydomain, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+    }
+  }
+
   implicit lazy val reads: Reads[Mydomain] = Reads.StringReads.map(Mydomain.apply)
-  implicit lazy val text: Text[Mydomain] = new Text[Mydomain] {
-    override def unsafeEncode(v: Mydomain, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: Mydomain, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
-  }
+
   implicit lazy val toStatement: ToStatement[Mydomain] = ToStatement.stringToStatement.contramap(_.value)
+
   implicit lazy val writes: Writes[Mydomain] = Writes.StringWrites.contramap(_.value)
 }

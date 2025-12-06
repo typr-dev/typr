@@ -13,6 +13,7 @@ import adventureworks.person.businessentity.BusinessentityId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -23,9 +24,12 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface EmployeepayhistoryFields {
+interface EmployeepayhistoryFields : FieldsExpr<EmployeepayhistoryRow> {
   fun businessentityid(): IdField<BusinessentityId, EmployeepayhistoryRow>
+
+  override fun columns(): List<FieldLike<*, EmployeepayhistoryRow>>
 
   fun compositeIdIn(compositeIds: List<EmployeepayhistoryId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<BusinessentityId, EmployeepayhistoryId, EmployeepayhistoryRow>(businessentityid(), EmployeepayhistoryId::businessentityid, BusinessentityId.pgType), Part<TypoLocalDateTime, EmployeepayhistoryId, EmployeepayhistoryRow>(ratechangedate(), EmployeepayhistoryId::ratechangedate, TypoLocalDateTime.pgType)), compositeIds)
 
@@ -41,21 +45,25 @@ interface EmployeepayhistoryFields {
 
   fun ratechangedate(): IdField<TypoLocalDateTime, EmployeepayhistoryRow>
 
+  override fun rowParser(): RowParser<EmployeepayhistoryRow> = EmployeepayhistoryRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<EmployeepayhistoryFields, EmployeepayhistoryRow>(path) {
-      override fun fields(): EmployeepayhistoryFields = object : EmployeepayhistoryFields {
-        override fun businessentityid(): IdField<BusinessentityId, EmployeepayhistoryRow> = IdField<BusinessentityId, EmployeepayhistoryRow>(_path, "businessentityid", EmployeepayhistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun ratechangedate(): IdField<TypoLocalDateTime, EmployeepayhistoryRow> = IdField<TypoLocalDateTime, EmployeepayhistoryRow>(_path, "ratechangedate", EmployeepayhistoryRow::ratechangedate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(ratechangedate = value) }, TypoLocalDateTime.pgType)
-        override fun rate(): Field<BigDecimal, EmployeepayhistoryRow> = Field<BigDecimal, EmployeepayhistoryRow>(_path, "rate", EmployeepayhistoryRow::rate, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(rate = value) }, PgTypes.numeric)
-        override fun payfrequency(): Field<TypoShort, EmployeepayhistoryRow> = Field<TypoShort, EmployeepayhistoryRow>(_path, "payfrequency", EmployeepayhistoryRow::payfrequency, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(payfrequency = value) }, TypoShort.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, EmployeepayhistoryRow> = Field<TypoLocalDateTime, EmployeepayhistoryRow>(_path, "modifieddate", EmployeepayhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : EmployeepayhistoryFields, Relation<EmployeepayhistoryFields, EmployeepayhistoryRow> {
+      override fun businessentityid(): IdField<BusinessentityId, EmployeepayhistoryRow> = IdField<BusinessentityId, EmployeepayhistoryRow>(_path, "businessentityid", EmployeepayhistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, EmployeepayhistoryRow>> = listOf(this.fields().businessentityid(), this.fields().ratechangedate(), this.fields().rate(), this.fields().payfrequency(), this.fields().modifieddate())
+      override fun ratechangedate(): IdField<TypoLocalDateTime, EmployeepayhistoryRow> = IdField<TypoLocalDateTime, EmployeepayhistoryRow>(_path, "ratechangedate", EmployeepayhistoryRow::ratechangedate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(ratechangedate = value) }, TypoLocalDateTime.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun rate(): Field<BigDecimal, EmployeepayhistoryRow> = Field<BigDecimal, EmployeepayhistoryRow>(_path, "rate", EmployeepayhistoryRow::rate, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(rate = value) }, PgTypes.numeric)
+
+      override fun payfrequency(): Field<TypoShort, EmployeepayhistoryRow> = Field<TypoShort, EmployeepayhistoryRow>(_path, "payfrequency", EmployeepayhistoryRow::payfrequency, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(payfrequency = value) }, TypoShort.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, EmployeepayhistoryRow> = Field<TypoLocalDateTime, EmployeepayhistoryRow>(_path, "modifieddate", EmployeepayhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, EmployeepayhistoryRow>> = listOf(this.businessentityid(), this.ratechangedate(), this.rate(), this.payfrequency(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<EmployeepayhistoryFields, EmployeepayhistoryRow> = Impl(_path)
     }
 
-    val structure: Relation<EmployeepayhistoryFields, EmployeepayhistoryRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

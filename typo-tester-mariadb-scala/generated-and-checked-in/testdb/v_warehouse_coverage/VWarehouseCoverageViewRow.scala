@@ -62,5 +62,5 @@ case class VWarehouseCoverageViewRow(
 )
 
 object VWarehouseCoverageViewRow {
-  val `_rowParser`: RowParser[VWarehouseCoverageViewRow] = RowParsers.of(WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.longtext.opt(), MariaTypes.longtext.opt(), MariaTypes.varchar, MariaTypes.bool, MariaTypes.bigint, MariaTypes.decimal.opt(), VWarehouseCoverageViewRow.apply, row => Array(row.warehouseId, row.code, row.name, row.address, row.locationWkt, row.serviceAreaWkt, row.timezone, row.isActive, row.productsStocked, row.totalInventory))
+  val `_rowParser`: RowParser[VWarehouseCoverageViewRow] = RowParsers.of(WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.longtext.opt(), MariaTypes.longtext.opt(), MariaTypes.varchar, MariaTypes.bool, MariaTypes.bigint, MariaTypes.decimal.opt(), VWarehouseCoverageViewRow.apply, row => Array[Object](row.warehouseId.asInstanceOf[Object], row.code.asInstanceOf[Object], row.name.asInstanceOf[Object], row.address.asInstanceOf[Object], row.locationWkt.asInstanceOf[Object], row.serviceAreaWkt.asInstanceOf[Object], row.timezone.asInstanceOf[Object], row.isActive.asInstanceOf[Object], row.productsStocked.asInstanceOf[Object], row.totalInventory.asInstanceOf[Object]))
 }

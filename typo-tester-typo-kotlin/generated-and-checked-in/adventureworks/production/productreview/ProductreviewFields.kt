@@ -12,6 +12,7 @@ import adventureworks.production.product.ProductRow
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -20,8 +21,11 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface ProductreviewFields {
+interface ProductreviewFields : FieldsExpr<ProductreviewRow> {
+  override fun columns(): List<FieldLike<*, ProductreviewRow>>
+
   fun comments(): OptField</* max 3850 chars */ String, ProductreviewRow>
 
   fun emailaddress(): Field</* max 50 chars */ String, ProductreviewRow>
@@ -40,24 +44,31 @@ interface ProductreviewFields {
 
   fun reviewername(): Field<Name, ProductreviewRow>
 
+  override fun rowParser(): RowParser<ProductreviewRow> = ProductreviewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<ProductreviewFields, ProductreviewRow>(path) {
-      override fun fields(): ProductreviewFields = object : ProductreviewFields {
-        override fun productreviewid(): IdField<ProductreviewId, ProductreviewRow> = IdField<ProductreviewId, ProductreviewRow>(_path, "productreviewid", ProductreviewRow::productreviewid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productreviewid = value) }, ProductreviewId.pgType)
-        override fun productid(): Field<ProductId, ProductreviewRow> = Field<ProductId, ProductreviewRow>(_path, "productid", ProductreviewRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun reviewername(): Field<Name, ProductreviewRow> = Field<Name, ProductreviewRow>(_path, "reviewername", ProductreviewRow::reviewername, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(reviewername = value) }, Name.pgType)
-        override fun reviewdate(): Field<TypoLocalDateTime, ProductreviewRow> = Field<TypoLocalDateTime, ProductreviewRow>(_path, "reviewdate", ProductreviewRow::reviewdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(reviewdate = value) }, TypoLocalDateTime.pgType)
-        override fun emailaddress(): Field</* max 50 chars */ String, ProductreviewRow> = Field</* max 50 chars */ String, ProductreviewRow>(_path, "emailaddress", ProductreviewRow::emailaddress, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailaddress = value) }, PgTypes.text)
-        override fun rating(): Field<Int, ProductreviewRow> = Field<Int, ProductreviewRow>(_path, "rating", ProductreviewRow::rating, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(rating = value) }, PgTypes.int4)
-        override fun comments(): OptField</* max 3850 chars */ String, ProductreviewRow> = OptField</* max 3850 chars */ String, ProductreviewRow>(_path, "comments", ProductreviewRow::comments, Optional.empty(), Optional.empty(), { row, value -> row.copy(comments = value) }, PgTypes.text)
-        override fun modifieddate(): Field<TypoLocalDateTime, ProductreviewRow> = Field<TypoLocalDateTime, ProductreviewRow>(_path, "modifieddate", ProductreviewRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : ProductreviewFields, Relation<ProductreviewFields, ProductreviewRow> {
+      override fun productreviewid(): IdField<ProductreviewId, ProductreviewRow> = IdField<ProductreviewId, ProductreviewRow>(_path, "productreviewid", ProductreviewRow::productreviewid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productreviewid = value) }, ProductreviewId.pgType)
 
-      override fun columns(): List<FieldLike<*, ProductreviewRow>> = listOf(this.fields().productreviewid(), this.fields().productid(), this.fields().reviewername(), this.fields().reviewdate(), this.fields().emailaddress(), this.fields().rating(), this.fields().comments(), this.fields().modifieddate())
+      override fun productid(): Field<ProductId, ProductreviewRow> = Field<ProductId, ProductreviewRow>(_path, "productid", ProductreviewRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun reviewername(): Field<Name, ProductreviewRow> = Field<Name, ProductreviewRow>(_path, "reviewername", ProductreviewRow::reviewername, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(reviewername = value) }, Name.pgType)
+
+      override fun reviewdate(): Field<TypoLocalDateTime, ProductreviewRow> = Field<TypoLocalDateTime, ProductreviewRow>(_path, "reviewdate", ProductreviewRow::reviewdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(reviewdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun emailaddress(): Field</* max 50 chars */ String, ProductreviewRow> = Field</* max 50 chars */ String, ProductreviewRow>(_path, "emailaddress", ProductreviewRow::emailaddress, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailaddress = value) }, PgTypes.text)
+
+      override fun rating(): Field<Int, ProductreviewRow> = Field<Int, ProductreviewRow>(_path, "rating", ProductreviewRow::rating, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(rating = value) }, PgTypes.int4)
+
+      override fun comments(): OptField</* max 3850 chars */ String, ProductreviewRow> = OptField</* max 3850 chars */ String, ProductreviewRow>(_path, "comments", ProductreviewRow::comments, Optional.empty(), Optional.empty(), { row, value -> row.copy(comments = value) }, PgTypes.text)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, ProductreviewRow> = Field<TypoLocalDateTime, ProductreviewRow>(_path, "modifieddate", ProductreviewRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, ProductreviewRow>> = listOf(this.productreviewid(), this.productid(), this.reviewername(), this.reviewdate(), this.emailaddress(), this.rating(), this.comments(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<ProductreviewFields, ProductreviewRow> = Impl(_path)
     }
 
-    val structure: Relation<ProductreviewFields, ProductreviewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

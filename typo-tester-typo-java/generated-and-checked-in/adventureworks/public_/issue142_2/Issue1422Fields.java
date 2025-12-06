@@ -10,40 +10,33 @@ import adventureworks.public_.issue142.Issue142Id;
 import adventureworks.public_.issue142.Issue142Row;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface Issue1422Fields {
-  final class Impl extends Relation<Issue1422Fields, Issue1422Row> {
-    Impl(List<Path> path) {
-      super(path);
-    }
-
+public interface Issue1422Fields extends FieldsExpr<Issue1422Row> {
+  record Impl(List<Path> _path) implements Issue1422Fields, Relation<Issue1422Fields, Issue1422Row> {
     @Override
-    public Issue1422Fields fields() {
-      return new Issue1422Fields() {
-               @Override
-               public IdField<Issue142Id, Issue1422Row> tabellkode() {
-                 return new IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, Optional.empty(), Optional.empty(), (row, value) -> row.withTabellkode(value), Issue142Id.pgType);
-               };
-             };
+    public IdField<Issue142Id, Issue1422Row> tabellkode() {
+      return new IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, Optional.empty(), Optional.empty(), (row, value) -> row.withTabellkode(value), Issue142Id.pgType);
     };
 
     @Override
     public List<FieldLike<?, Issue1422Row>> columns() {
-      return List.of(this.fields().tabellkode());
+      return List.of(this.tabellkode());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<Issue1422Fields, Issue1422Row> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<Issue1422Fields, Issue1422Row> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -51,5 +44,13 @@ public interface Issue1422Fields {
 
   default ForeignKey<Issue142Fields, Issue142Row> fkIssue142() {
     return ForeignKey.<Issue142Fields, Issue142Row>of("public.tabell2_tabell_fk").withColumnPair(tabellkode(), Issue142Fields::tabellkode);
+  };
+
+  @Override
+  List<FieldLike<?, Issue1422Row>> columns();
+
+  @Override
+  default RowParser<Issue1422Row> rowParser() {
+    return Issue1422Row._rowParser;
   };
 }

@@ -90,7 +90,7 @@ case class DocumentRow(
 }
 
 object DocumentRow {
-  val `_rowParser`: RowParser[DocumentRow] = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.bpchar, PgTypes.int4, TypoShort.pgType, PgTypes.text.opt(), TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, DocumentRow.apply, row => Array(row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode))
+  val `_rowParser`: RowParser[DocumentRow] = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.bpchar, PgTypes.int4, TypoShort.pgType, PgTypes.text.opt(), TypoBytea.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, DocumentId.pgType, DocumentRow.apply, row => Array[Object](row.title.asInstanceOf[Object], row.owner.asInstanceOf[Object], row.folderflag.asInstanceOf[Object], row.filename.asInstanceOf[Object], row.fileextension.asInstanceOf[Object], row.revision.asInstanceOf[Object], row.changenumber.asInstanceOf[Object], row.status.asInstanceOf[Object], row.documentsummary.asInstanceOf[Object], row.document.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object], row.documentnode.asInstanceOf[Object]))
 
   given pgText: PgText[DocumentRow] = PgText.from(`_rowParser`)
 }

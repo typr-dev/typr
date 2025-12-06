@@ -10,13 +10,15 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.public.Name
 import adventureworks.purchasing.shipmethod.ShipmethodId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SmViewFields {
+trait SmViewFields extends FieldsExpr[SmViewRow] {
   def id: Field[ShipmethodId, SmViewRow]
 
   def shipmethodid: Field[ShipmethodId, SmViewRow]
@@ -30,97 +32,103 @@ trait SmViewFields {
   def rowguid: Field[TypoUUID, SmViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, SmViewRow]
+
+  override def columns: java.util.List[FieldLike[?, SmViewRow]]
+
+  override def rowParser: RowParser[SmViewRow] = SmViewRow._rowParser
 }
 
 object SmViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SmViewFields, SmViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SmViewFields with Relation[SmViewFields, SmViewRow] {
 
-    override lazy val fields: SmViewFields = {
-      new SmViewFields {
-        override def id: Field[ShipmethodId, SmViewRow] = {
-          new Field[ShipmethodId, SmViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            ShipmethodId.pgType
-          )
-        }
-        override def shipmethodid: Field[ShipmethodId, SmViewRow] = {
-          new Field[ShipmethodId, SmViewRow](
-            _path,
-            "shipmethodid",
-            _.shipmethodid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shipmethodid = value),
-            ShipmethodId.pgType
-          )
-        }
-        override def name: Field[Name, SmViewRow] = {
-          new Field[Name, SmViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def shipbase: Field[java.math.BigDecimal, SmViewRow] = {
-          new Field[java.math.BigDecimal, SmViewRow](
-            _path,
-            "shipbase",
-            _.shipbase,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shipbase = value),
-            PgTypes.numeric
-          )
-        }
-        override def shiprate: Field[java.math.BigDecimal, SmViewRow] = {
-          new Field[java.math.BigDecimal, SmViewRow](
-            _path,
-            "shiprate",
-            _.shiprate,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shiprate = value),
-            PgTypes.numeric
-          )
-        }
-        override def rowguid: Field[TypoUUID, SmViewRow] = {
-          new Field[TypoUUID, SmViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SmViewRow] = {
-          new Field[TypoLocalDateTime, SmViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[ShipmethodId, SmViewRow] = {
+      new Field[ShipmethodId, SmViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        ShipmethodId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SmViewRow]] = java.util.List.of(this.fields.id, this.fields.shipmethodid, this.fields.name, this.fields.shipbase, this.fields.shiprate, this.fields.rowguid, this.fields.modifieddate)
+    override def shipmethodid: Field[ShipmethodId, SmViewRow] = {
+      new Field[ShipmethodId, SmViewRow](
+        _path,
+        "shipmethodid",
+        _.shipmethodid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shipmethodid = value),
+        ShipmethodId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[Name, SmViewRow] = {
+      new Field[Name, SmViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def shipbase: Field[java.math.BigDecimal, SmViewRow] = {
+      new Field[java.math.BigDecimal, SmViewRow](
+        _path,
+        "shipbase",
+        _.shipbase,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shipbase = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def shiprate: Field[java.math.BigDecimal, SmViewRow] = {
+      new Field[java.math.BigDecimal, SmViewRow](
+        _path,
+        "shiprate",
+        _.shiprate,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shiprate = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SmViewRow] = {
+      new Field[TypoUUID, SmViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SmViewRow] = {
+      new Field[TypoLocalDateTime, SmViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SmViewRow]] = java.util.List.of(this.id, this.shipmethodid, this.name, this.shipbase, this.shiprate, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SmViewFields, SmViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SmViewFields, SmViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -10,93 +10,99 @@ import java.util.List;
 import java.util.Optional;
 import testdb.products.ProductsId;
 import testdb.warehouses.WarehousesId;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface VInventoryStatusViewFields {
-  final class Impl extends Relation<VInventoryStatusViewFields, VInventoryStatusViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VInventoryStatusViewFields extends FieldsExpr<VInventoryStatusViewRow> {
+  record Impl(List<Path> _path) implements VInventoryStatusViewFields, Relation<VInventoryStatusViewFields, VInventoryStatusViewRow> {
+    @Override
+    public Field<ProductsId, VInventoryStatusViewRow> productId() {
+      return new Field<ProductsId, VInventoryStatusViewRow>(_path, "product_id", VInventoryStatusViewRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
+    };
 
     @Override
-    public VInventoryStatusViewFields fields() {
-      return new VInventoryStatusViewFields() {
-               @Override
-               public Field<ProductsId, VInventoryStatusViewRow> productId() {
-                 return new Field<ProductsId, VInventoryStatusViewRow>(_path, "product_id", VInventoryStatusViewRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
-               };
-               @Override
-               public Field<String, VInventoryStatusViewRow> sku() {
-                 return new Field<String, VInventoryStatusViewRow>(_path, "sku", VInventoryStatusViewRow::sku, Optional.empty(), Optional.empty(), (row, value) -> row.withSku(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, VInventoryStatusViewRow> productName() {
-                 return new Field<String, VInventoryStatusViewRow>(_path, "product_name", VInventoryStatusViewRow::productName, Optional.empty(), Optional.empty(), (row, value) -> row.withProductName(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<WarehousesId, VInventoryStatusViewRow> warehouseId() {
-                 return new Field<WarehousesId, VInventoryStatusViewRow>(_path, "warehouse_id", VInventoryStatusViewRow::warehouseId, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseId(value), WarehousesId.pgType);
-               };
-               @Override
-               public Field<String, VInventoryStatusViewRow> warehouseCode() {
-                 return new Field<String, VInventoryStatusViewRow>(_path, "warehouse_code", VInventoryStatusViewRow::warehouseCode, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseCode(value), MariaTypes.char_);
-               };
-               @Override
-               public Field<String, VInventoryStatusViewRow> warehouseName() {
-                 return new Field<String, VInventoryStatusViewRow>(_path, "warehouse_name", VInventoryStatusViewRow::warehouseName, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseName(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<Integer, VInventoryStatusViewRow> quantityOnHand() {
-                 return new Field<Integer, VInventoryStatusViewRow>(_path, "quantity_on_hand", VInventoryStatusViewRow::quantityOnHand, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityOnHand(value), MariaTypes.int_);
-               };
-               @Override
-               public Field<Integer, VInventoryStatusViewRow> quantityReserved() {
-                 return new Field<Integer, VInventoryStatusViewRow>(_path, "quantity_reserved", VInventoryStatusViewRow::quantityReserved, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityReserved(value), MariaTypes.int_);
-               };
-               @Override
-               public Field<Integer, VInventoryStatusViewRow> quantityOnOrder() {
-                 return new Field<Integer, VInventoryStatusViewRow>(_path, "quantity_on_order", VInventoryStatusViewRow::quantityOnOrder, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityOnOrder(value), MariaTypes.int_);
-               };
-               @Override
-               public Field<Long, VInventoryStatusViewRow> available() {
-                 return new Field<Long, VInventoryStatusViewRow>(_path, "available", VInventoryStatusViewRow::available, Optional.empty(), Optional.empty(), (row, value) -> row.withAvailable(value), MariaTypes.bigint);
-               };
-               @Override
-               public Field<Integer, VInventoryStatusViewRow> reorderPoint() {
-                 return new Field<Integer, VInventoryStatusViewRow>(_path, "reorder_point", VInventoryStatusViewRow::reorderPoint, Optional.empty(), Optional.empty(), (row, value) -> row.withReorderPoint(value), MariaTypes.int_);
-               };
-               @Override
-               public Field<String, VInventoryStatusViewRow> stockStatus() {
-                 return new Field<String, VInventoryStatusViewRow>(_path, "stock_status", VInventoryStatusViewRow::stockStatus, Optional.empty(), Optional.empty(), (row, value) -> row.withStockStatus(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, VInventoryStatusViewRow> binLocation() {
-                 return new OptField<String, VInventoryStatusViewRow>(_path, "bin_location", VInventoryStatusViewRow::binLocation, Optional.empty(), Optional.empty(), (row, value) -> row.withBinLocation(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<LocalDateTime, VInventoryStatusViewRow> lastCountedAt() {
-                 return new OptField<LocalDateTime, VInventoryStatusViewRow>(_path, "last_counted_at", VInventoryStatusViewRow::lastCountedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withLastCountedAt(value), MariaTypes.datetime);
-               };
-             };
+    public Field<String, VInventoryStatusViewRow> sku() {
+      return new Field<String, VInventoryStatusViewRow>(_path, "sku", VInventoryStatusViewRow::sku, Optional.empty(), Optional.empty(), (row, value) -> row.withSku(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, VInventoryStatusViewRow> productName() {
+      return new Field<String, VInventoryStatusViewRow>(_path, "product_name", VInventoryStatusViewRow::productName, Optional.empty(), Optional.empty(), (row, value) -> row.withProductName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<WarehousesId, VInventoryStatusViewRow> warehouseId() {
+      return new Field<WarehousesId, VInventoryStatusViewRow>(_path, "warehouse_id", VInventoryStatusViewRow::warehouseId, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseId(value), WarehousesId.pgType);
+    };
+
+    @Override
+    public Field<String, VInventoryStatusViewRow> warehouseCode() {
+      return new Field<String, VInventoryStatusViewRow>(_path, "warehouse_code", VInventoryStatusViewRow::warehouseCode, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseCode(value), MariaTypes.char_);
+    };
+
+    @Override
+    public Field<String, VInventoryStatusViewRow> warehouseName() {
+      return new Field<String, VInventoryStatusViewRow>(_path, "warehouse_name", VInventoryStatusViewRow::warehouseName, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<Integer, VInventoryStatusViewRow> quantityOnHand() {
+      return new Field<Integer, VInventoryStatusViewRow>(_path, "quantity_on_hand", VInventoryStatusViewRow::quantityOnHand, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityOnHand(value), MariaTypes.int_);
+    };
+
+    @Override
+    public Field<Integer, VInventoryStatusViewRow> quantityReserved() {
+      return new Field<Integer, VInventoryStatusViewRow>(_path, "quantity_reserved", VInventoryStatusViewRow::quantityReserved, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityReserved(value), MariaTypes.int_);
+    };
+
+    @Override
+    public Field<Integer, VInventoryStatusViewRow> quantityOnOrder() {
+      return new Field<Integer, VInventoryStatusViewRow>(_path, "quantity_on_order", VInventoryStatusViewRow::quantityOnOrder, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantityOnOrder(value), MariaTypes.int_);
+    };
+
+    @Override
+    public Field<Long, VInventoryStatusViewRow> available() {
+      return new Field<Long, VInventoryStatusViewRow>(_path, "available", VInventoryStatusViewRow::available, Optional.empty(), Optional.empty(), (row, value) -> row.withAvailable(value), MariaTypes.bigint);
+    };
+
+    @Override
+    public Field<Integer, VInventoryStatusViewRow> reorderPoint() {
+      return new Field<Integer, VInventoryStatusViewRow>(_path, "reorder_point", VInventoryStatusViewRow::reorderPoint, Optional.empty(), Optional.empty(), (row, value) -> row.withReorderPoint(value), MariaTypes.int_);
+    };
+
+    @Override
+    public Field<String, VInventoryStatusViewRow> stockStatus() {
+      return new Field<String, VInventoryStatusViewRow>(_path, "stock_status", VInventoryStatusViewRow::stockStatus, Optional.empty(), Optional.empty(), (row, value) -> row.withStockStatus(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, VInventoryStatusViewRow> binLocation() {
+      return new OptField<String, VInventoryStatusViewRow>(_path, "bin_location", VInventoryStatusViewRow::binLocation, Optional.empty(), Optional.empty(), (row, value) -> row.withBinLocation(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<LocalDateTime, VInventoryStatusViewRow> lastCountedAt() {
+      return new OptField<LocalDateTime, VInventoryStatusViewRow>(_path, "last_counted_at", VInventoryStatusViewRow::lastCountedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withLastCountedAt(value), MariaTypes.datetime);
     };
 
     @Override
     public List<FieldLike<?, VInventoryStatusViewRow>> columns() {
-      return List.of(this.fields().productId(), this.fields().sku(), this.fields().productName(), this.fields().warehouseId(), this.fields().warehouseCode(), this.fields().warehouseName(), this.fields().quantityOnHand(), this.fields().quantityReserved(), this.fields().quantityOnOrder(), this.fields().available(), this.fields().reorderPoint(), this.fields().stockStatus(), this.fields().binLocation(), this.fields().lastCountedAt());
+      return List.of(this.productId(), this.sku(), this.productName(), this.warehouseId(), this.warehouseCode(), this.warehouseName(), this.quantityOnHand(), this.quantityReserved(), this.quantityOnOrder(), this.available(), this.reorderPoint(), this.stockStatus(), this.binLocation(), this.lastCountedAt());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VInventoryStatusViewFields, VInventoryStatusViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VInventoryStatusViewFields, VInventoryStatusViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -127,4 +133,12 @@ public interface VInventoryStatusViewFields {
   OptField<String, VInventoryStatusViewRow> binLocation();
 
   OptField<LocalDateTime, VInventoryStatusViewRow> lastCountedAt();
+
+  @Override
+  List<FieldLike<?, VInventoryStatusViewRow>> columns();
+
+  @Override
+  default RowParser<VInventoryStatusViewRow> rowParser() {
+    return VInventoryStatusViewRow._rowParser;
+  };
 }

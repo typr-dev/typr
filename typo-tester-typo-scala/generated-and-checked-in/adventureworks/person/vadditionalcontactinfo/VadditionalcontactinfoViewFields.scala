@@ -12,14 +12,16 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VadditionalcontactinfoViewFields {
+trait VadditionalcontactinfoViewFields extends FieldsExpr[VadditionalcontactinfoViewRow] {
   def businessentityid: Field[BusinessentityId, VadditionalcontactinfoViewRow]
 
   def firstname: Field[/* user-picked */ FirstName, VadditionalcontactinfoViewRow]
@@ -53,207 +55,223 @@ trait VadditionalcontactinfoViewFields {
   def rowguid: Field[TypoUUID, VadditionalcontactinfoViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, VadditionalcontactinfoViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VadditionalcontactinfoViewRow]]
+
+  override def rowParser: RowParser[VadditionalcontactinfoViewRow] = VadditionalcontactinfoViewRow._rowParser
 }
 
 object VadditionalcontactinfoViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VadditionalcontactinfoViewFields with Relation[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] {
 
-    override lazy val fields: VadditionalcontactinfoViewFields = {
-      new VadditionalcontactinfoViewFields {
-        override def businessentityid: Field[BusinessentityId, VadditionalcontactinfoViewRow] = {
-          new Field[BusinessentityId, VadditionalcontactinfoViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def firstname: Field[/* user-picked */ FirstName, VadditionalcontactinfoViewRow] = {
-          new Field[/* user-picked */ FirstName, VadditionalcontactinfoViewRow](
-            _path,
-            "firstname",
-            _.firstname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(firstname = value),
-            FirstName.pgType
-          )
-        }
-        override def middlename: OptField[Name, VadditionalcontactinfoViewRow] = {
-          new OptField[Name, VadditionalcontactinfoViewRow](
-            _path,
-            "middlename",
-            _.middlename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(middlename = value),
-            Name.pgType
-          )
-        }
-        override def lastname: Field[Name, VadditionalcontactinfoViewRow] = {
-          new Field[Name, VadditionalcontactinfoViewRow](
-            _path,
-            "lastname",
-            _.lastname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastname = value),
-            Name.pgType
-          )
-        }
-        override def telephonenumber: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "telephonenumber",
-            _.telephonenumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(telephonenumber = value),
-            TypoXml.pgType
-          )
-        }
-        override def telephonespecialinstructions: OptField[String, VadditionalcontactinfoViewRow] = {
-          new OptField[String, VadditionalcontactinfoViewRow](
-            _path,
-            "telephonespecialinstructions",
-            _.telephonespecialinstructions,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(telephonespecialinstructions = value),
-            PgTypes.text
-          )
-        }
-        override def street: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "street",
-            _.street,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(street = value),
-            TypoXml.pgType
-          )
-        }
-        override def city: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "city",
-            _.city,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(city = value),
-            TypoXml.pgType
-          )
-        }
-        override def stateprovince: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "stateprovince",
-            _.stateprovince,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(stateprovince = value),
-            TypoXml.pgType
-          )
-        }
-        override def postalcode: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "postalcode",
-            _.postalcode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(postalcode = value),
-            TypoXml.pgType
-          )
-        }
-        override def countryregion: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "countryregion",
-            _.countryregion,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryregion = value),
-            TypoXml.pgType
-          )
-        }
-        override def homeaddressspecialinstructions: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "homeaddressspecialinstructions",
-            _.homeaddressspecialinstructions,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(homeaddressspecialinstructions = value),
-            TypoXml.pgType
-          )
-        }
-        override def emailaddress: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "emailaddress",
-            _.emailaddress,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailaddress = value),
-            TypoXml.pgType
-          )
-        }
-        override def emailspecialinstructions: OptField[String, VadditionalcontactinfoViewRow] = {
-          new OptField[String, VadditionalcontactinfoViewRow](
-            _path,
-            "emailspecialinstructions",
-            _.emailspecialinstructions,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailspecialinstructions = value),
-            PgTypes.text
-          )
-        }
-        override def emailtelephonenumber: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
-          new OptField[TypoXml, VadditionalcontactinfoViewRow](
-            _path,
-            "emailtelephonenumber",
-            _.emailtelephonenumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailtelephonenumber = value),
-            TypoXml.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, VadditionalcontactinfoViewRow] = {
-          new Field[TypoUUID, VadditionalcontactinfoViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, VadditionalcontactinfoViewRow] = {
-          new Field[TypoLocalDateTime, VadditionalcontactinfoViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: Field[BusinessentityId, VadditionalcontactinfoViewRow] = {
+      new Field[BusinessentityId, VadditionalcontactinfoViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VadditionalcontactinfoViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.telephonenumber, this.fields.telephonespecialinstructions, this.fields.street, this.fields.city, this.fields.stateprovince, this.fields.postalcode, this.fields.countryregion, this.fields.homeaddressspecialinstructions, this.fields.emailaddress, this.fields.emailspecialinstructions, this.fields.emailtelephonenumber, this.fields.rowguid, this.fields.modifieddate)
+    override def firstname: Field[/* user-picked */ FirstName, VadditionalcontactinfoViewRow] = {
+      new Field[/* user-picked */ FirstName, VadditionalcontactinfoViewRow](
+        _path,
+        "firstname",
+        _.firstname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(firstname = value),
+        FirstName.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def middlename: OptField[Name, VadditionalcontactinfoViewRow] = {
+      new OptField[Name, VadditionalcontactinfoViewRow](
+        _path,
+        "middlename",
+        _.middlename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(middlename = value),
+        Name.pgType
+      )
+    }
+
+    override def lastname: Field[Name, VadditionalcontactinfoViewRow] = {
+      new Field[Name, VadditionalcontactinfoViewRow](
+        _path,
+        "lastname",
+        _.lastname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastname = value),
+        Name.pgType
+      )
+    }
+
+    override def telephonenumber: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "telephonenumber",
+        _.telephonenumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(telephonenumber = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def telephonespecialinstructions: OptField[String, VadditionalcontactinfoViewRow] = {
+      new OptField[String, VadditionalcontactinfoViewRow](
+        _path,
+        "telephonespecialinstructions",
+        _.telephonespecialinstructions,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(telephonespecialinstructions = value),
+        PgTypes.text
+      )
+    }
+
+    override def street: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "street",
+        _.street,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(street = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def city: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "city",
+        _.city,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(city = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def stateprovince: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "stateprovince",
+        _.stateprovince,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(stateprovince = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def postalcode: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "postalcode",
+        _.postalcode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(postalcode = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def countryregion: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "countryregion",
+        _.countryregion,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryregion = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def homeaddressspecialinstructions: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "homeaddressspecialinstructions",
+        _.homeaddressspecialinstructions,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(homeaddressspecialinstructions = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def emailaddress: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "emailaddress",
+        _.emailaddress,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailaddress = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def emailspecialinstructions: OptField[String, VadditionalcontactinfoViewRow] = {
+      new OptField[String, VadditionalcontactinfoViewRow](
+        _path,
+        "emailspecialinstructions",
+        _.emailspecialinstructions,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailspecialinstructions = value),
+        PgTypes.text
+      )
+    }
+
+    override def emailtelephonenumber: OptField[TypoXml, VadditionalcontactinfoViewRow] = {
+      new OptField[TypoXml, VadditionalcontactinfoViewRow](
+        _path,
+        "emailtelephonenumber",
+        _.emailtelephonenumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailtelephonenumber = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, VadditionalcontactinfoViewRow] = {
+      new Field[TypoUUID, VadditionalcontactinfoViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, VadditionalcontactinfoViewRow] = {
+      new Field[TypoLocalDateTime, VadditionalcontactinfoViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VadditionalcontactinfoViewRow]] = java.util.List.of(this.businessentityid, this.firstname, this.middlename, this.lastname, this.telephonenumber, this.telephonespecialinstructions, this.street, this.city, this.stateprovince, this.postalcode, this.countryregion, this.homeaddressspecialinstructions, this.emailaddress, this.emailspecialinstructions, this.emailtelephonenumber, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

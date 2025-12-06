@@ -12,14 +12,18 @@ import adventureworks.public.Name
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface VproductmodelinstructionsViewFields {
+interface VproductmodelinstructionsViewFields : FieldsExpr<VproductmodelinstructionsViewRow> {
+  override fun columns(): List<FieldLike<*, VproductmodelinstructionsViewRow>>
+
   fun instructions(): OptField<String, VproductmodelinstructionsViewRow>
 
   fun laborHours(): OptField<BigDecimal, VproductmodelinstructionsViewRow>
@@ -36,6 +40,8 @@ interface VproductmodelinstructionsViewFields {
 
   fun productmodelid(): Field<ProductmodelId, VproductmodelinstructionsViewRow>
 
+  override fun rowParser(): RowParser<VproductmodelinstructionsViewRow> = VproductmodelinstructionsViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, VproductmodelinstructionsViewRow>
 
   fun setupHours(): OptField<BigDecimal, VproductmodelinstructionsViewRow>
@@ -43,26 +49,34 @@ interface VproductmodelinstructionsViewFields {
   fun step(): OptField</* max 1024 chars */ String, VproductmodelinstructionsViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow>(path) {
-      override fun fields(): VproductmodelinstructionsViewFields = object : VproductmodelinstructionsViewFields {
-        override fun productmodelid(): Field<ProductmodelId, VproductmodelinstructionsViewRow> = Field<ProductmodelId, VproductmodelinstructionsViewRow>(_path, "productmodelid", VproductmodelinstructionsViewRow::productmodelid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
-        override fun name(): Field<Name, VproductmodelinstructionsViewRow> = Field<Name, VproductmodelinstructionsViewRow>(_path, "name", VproductmodelinstructionsViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun instructions(): OptField<String, VproductmodelinstructionsViewRow> = OptField<String, VproductmodelinstructionsViewRow>(_path, "instructions", VproductmodelinstructionsViewRow::instructions, Optional.empty(), Optional.empty(), { row, value -> row.copy(instructions = value) }, PgTypes.text)
-        override fun locationID(): OptField<Int, VproductmodelinstructionsViewRow> = OptField<Int, VproductmodelinstructionsViewRow>(_path, "LocationID", VproductmodelinstructionsViewRow::locationID, Optional.empty(), Optional.empty(), { row, value -> row.copy(locationID = value) }, PgTypes.int4)
-        override fun setupHours(): OptField<BigDecimal, VproductmodelinstructionsViewRow> = OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "SetupHours", VproductmodelinstructionsViewRow::setupHours, Optional.empty(), Optional.empty(), { row, value -> row.copy(setupHours = value) }, PgTypes.numeric)
-        override fun machineHours(): OptField<BigDecimal, VproductmodelinstructionsViewRow> = OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "MachineHours", VproductmodelinstructionsViewRow::machineHours, Optional.empty(), Optional.empty(), { row, value -> row.copy(machineHours = value) }, PgTypes.numeric)
-        override fun laborHours(): OptField<BigDecimal, VproductmodelinstructionsViewRow> = OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "LaborHours", VproductmodelinstructionsViewRow::laborHours, Optional.empty(), Optional.empty(), { row, value -> row.copy(laborHours = value) }, PgTypes.numeric)
-        override fun lotSize(): OptField<Int, VproductmodelinstructionsViewRow> = OptField<Int, VproductmodelinstructionsViewRow>(_path, "LotSize", VproductmodelinstructionsViewRow::lotSize, Optional.empty(), Optional.empty(), { row, value -> row.copy(lotSize = value) }, PgTypes.int4)
-        override fun step(): OptField</* max 1024 chars */ String, VproductmodelinstructionsViewRow> = OptField</* max 1024 chars */ String, VproductmodelinstructionsViewRow>(_path, "Step", VproductmodelinstructionsViewRow::step, Optional.empty(), Optional.empty(), { row, value -> row.copy(step = value) }, PgTypes.text)
-        override fun rowguid(): Field<TypoUUID, VproductmodelinstructionsViewRow> = Field<TypoUUID, VproductmodelinstructionsViewRow>(_path, "rowguid", VproductmodelinstructionsViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, VproductmodelinstructionsViewRow> = Field<TypoLocalDateTime, VproductmodelinstructionsViewRow>(_path, "modifieddate", VproductmodelinstructionsViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : VproductmodelinstructionsViewFields, Relation<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> {
+      override fun productmodelid(): Field<ProductmodelId, VproductmodelinstructionsViewRow> = Field<ProductmodelId, VproductmodelinstructionsViewRow>(_path, "productmodelid", VproductmodelinstructionsViewRow::productmodelid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
 
-      override fun columns(): List<FieldLike<*, VproductmodelinstructionsViewRow>> = listOf(this.fields().productmodelid(), this.fields().name(), this.fields().instructions(), this.fields().locationID(), this.fields().setupHours(), this.fields().machineHours(), this.fields().laborHours(), this.fields().lotSize(), this.fields().step(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun name(): Field<Name, VproductmodelinstructionsViewRow> = Field<Name, VproductmodelinstructionsViewRow>(_path, "name", VproductmodelinstructionsViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun instructions(): OptField<String, VproductmodelinstructionsViewRow> = OptField<String, VproductmodelinstructionsViewRow>(_path, "instructions", VproductmodelinstructionsViewRow::instructions, Optional.empty(), Optional.empty(), { row, value -> row.copy(instructions = value) }, PgTypes.text)
+
+      override fun locationID(): OptField<Int, VproductmodelinstructionsViewRow> = OptField<Int, VproductmodelinstructionsViewRow>(_path, "LocationID", VproductmodelinstructionsViewRow::locationID, Optional.empty(), Optional.empty(), { row, value -> row.copy(locationID = value) }, PgTypes.int4)
+
+      override fun setupHours(): OptField<BigDecimal, VproductmodelinstructionsViewRow> = OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "SetupHours", VproductmodelinstructionsViewRow::setupHours, Optional.empty(), Optional.empty(), { row, value -> row.copy(setupHours = value) }, PgTypes.numeric)
+
+      override fun machineHours(): OptField<BigDecimal, VproductmodelinstructionsViewRow> = OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "MachineHours", VproductmodelinstructionsViewRow::machineHours, Optional.empty(), Optional.empty(), { row, value -> row.copy(machineHours = value) }, PgTypes.numeric)
+
+      override fun laborHours(): OptField<BigDecimal, VproductmodelinstructionsViewRow> = OptField<BigDecimal, VproductmodelinstructionsViewRow>(_path, "LaborHours", VproductmodelinstructionsViewRow::laborHours, Optional.empty(), Optional.empty(), { row, value -> row.copy(laborHours = value) }, PgTypes.numeric)
+
+      override fun lotSize(): OptField<Int, VproductmodelinstructionsViewRow> = OptField<Int, VproductmodelinstructionsViewRow>(_path, "LotSize", VproductmodelinstructionsViewRow::lotSize, Optional.empty(), Optional.empty(), { row, value -> row.copy(lotSize = value) }, PgTypes.int4)
+
+      override fun step(): OptField</* max 1024 chars */ String, VproductmodelinstructionsViewRow> = OptField</* max 1024 chars */ String, VproductmodelinstructionsViewRow>(_path, "Step", VproductmodelinstructionsViewRow::step, Optional.empty(), Optional.empty(), { row, value -> row.copy(step = value) }, PgTypes.text)
+
+      override fun rowguid(): Field<TypoUUID, VproductmodelinstructionsViewRow> = Field<TypoUUID, VproductmodelinstructionsViewRow>(_path, "rowguid", VproductmodelinstructionsViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, VproductmodelinstructionsViewRow> = Field<TypoLocalDateTime, VproductmodelinstructionsViewRow>(_path, "modifieddate", VproductmodelinstructionsViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, VproductmodelinstructionsViewRow>> = listOf(this.productmodelid(), this.name(), this.instructions(), this.locationID(), this.setupHours(), this.machineHours(), this.laborHours(), this.lotSize(), this.step(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> = Impl(_path)
     }
 
-    val structure: Relation<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

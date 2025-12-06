@@ -11,137 +11,154 @@ import adventureworks.production.productmodel.ProductmodelId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface VproductmodelcatalogdescriptionViewFields {
-  final class Impl extends Relation<VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VproductmodelcatalogdescriptionViewFields extends FieldsExpr<VproductmodelcatalogdescriptionViewRow> {
+  record Impl(List<Path> _path) implements VproductmodelcatalogdescriptionViewFields, Relation<VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow> {
+    @Override
+    public Field<ProductmodelId, VproductmodelcatalogdescriptionViewRow> productmodelid() {
+      return new Field<ProductmodelId, VproductmodelcatalogdescriptionViewRow>(_path, "productmodelid", VproductmodelcatalogdescriptionViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
+    };
 
     @Override
-    public VproductmodelcatalogdescriptionViewFields fields() {
-      return new VproductmodelcatalogdescriptionViewFields() {
-               @Override
-               public Field<ProductmodelId, VproductmodelcatalogdescriptionViewRow> productmodelid() {
-                 return new Field<ProductmodelId, VproductmodelcatalogdescriptionViewRow>(_path, "productmodelid", VproductmodelcatalogdescriptionViewRow::productmodelid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
-               };
-               @Override
-               public Field<Name, VproductmodelcatalogdescriptionViewRow> name() {
-                 return new Field<Name, VproductmodelcatalogdescriptionViewRow>(_path, "name", VproductmodelcatalogdescriptionViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public OptField<String, VproductmodelcatalogdescriptionViewRow> summary() {
-                 return new OptField<String, VproductmodelcatalogdescriptionViewRow>(_path, "Summary", VproductmodelcatalogdescriptionViewRow::summary, Optional.empty(), Optional.empty(), (row, value) -> row.withSummary(value), PgTypes.text);
-               };
-               @Override
-               public OptField<String, VproductmodelcatalogdescriptionViewRow> manufacturer() {
-                 return new OptField<String, VproductmodelcatalogdescriptionViewRow>(_path, "manufacturer", VproductmodelcatalogdescriptionViewRow::manufacturer, Optional.empty(), Optional.empty(), (row, value) -> row.withManufacturer(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow> copyright() {
-                 return new OptField</* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "copyright", VproductmodelcatalogdescriptionViewRow::copyright, Optional.empty(), Optional.empty(), (row, value) -> row.withCopyright(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> producturl() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "producturl", VproductmodelcatalogdescriptionViewRow::producturl, Optional.empty(), Optional.empty(), (row, value) -> row.withProducturl(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> warrantyperiod() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "warrantyperiod", VproductmodelcatalogdescriptionViewRow::warrantyperiod, Optional.empty(), Optional.empty(), (row, value) -> row.withWarrantyperiod(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> warrantydescription() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "warrantydescription", VproductmodelcatalogdescriptionViewRow::warrantydescription, Optional.empty(), Optional.empty(), (row, value) -> row.withWarrantydescription(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> noofyears() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "noofyears", VproductmodelcatalogdescriptionViewRow::noofyears, Optional.empty(), Optional.empty(), (row, value) -> row.withNoofyears(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> maintenancedescription() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "maintenancedescription", VproductmodelcatalogdescriptionViewRow::maintenancedescription, Optional.empty(), Optional.empty(), (row, value) -> row.withMaintenancedescription(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> wheel() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "wheel", VproductmodelcatalogdescriptionViewRow::wheel, Optional.empty(), Optional.empty(), (row, value) -> row.withWheel(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> saddle() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "saddle", VproductmodelcatalogdescriptionViewRow::saddle, Optional.empty(), Optional.empty(), (row, value) -> row.withSaddle(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> pedal() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "pedal", VproductmodelcatalogdescriptionViewRow::pedal, Optional.empty(), Optional.empty(), (row, value) -> row.withPedal(value), PgTypes.text);
-               };
-               @Override
-               public OptField<String, VproductmodelcatalogdescriptionViewRow> bikeframe() {
-                 return new OptField<String, VproductmodelcatalogdescriptionViewRow>(_path, "bikeframe", VproductmodelcatalogdescriptionViewRow::bikeframe, Optional.empty(), Optional.empty(), (row, value) -> row.withBikeframe(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> crankset() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "crankset", VproductmodelcatalogdescriptionViewRow::crankset, Optional.empty(), Optional.empty(), (row, value) -> row.withCrankset(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> pictureangle() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "pictureangle", VproductmodelcatalogdescriptionViewRow::pictureangle, Optional.empty(), Optional.empty(), (row, value) -> row.withPictureangle(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> picturesize() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "picturesize", VproductmodelcatalogdescriptionViewRow::picturesize, Optional.empty(), Optional.empty(), (row, value) -> row.withPicturesize(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> productphotoid() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "productphotoid", VproductmodelcatalogdescriptionViewRow::productphotoid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductphotoid(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> material() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "material", VproductmodelcatalogdescriptionViewRow::material, Optional.empty(), Optional.empty(), (row, value) -> row.withMaterial(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> color() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "color", VproductmodelcatalogdescriptionViewRow::color, Optional.empty(), Optional.empty(), (row, value) -> row.withColor(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> productline() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "productline", VproductmodelcatalogdescriptionViewRow::productline, Optional.empty(), Optional.empty(), (row, value) -> row.withProductline(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> style() {
-                 return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "style", VproductmodelcatalogdescriptionViewRow::style, Optional.empty(), Optional.empty(), (row, value) -> row.withStyle(value), PgTypes.text);
-               };
-               @Override
-               public OptField</* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow> riderexperience() {
-                 return new OptField</* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "riderexperience", VproductmodelcatalogdescriptionViewRow::riderexperience, Optional.empty(), Optional.empty(), (row, value) -> row.withRiderexperience(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoUUID, VproductmodelcatalogdescriptionViewRow> rowguid() {
-                 return new Field<TypoUUID, VproductmodelcatalogdescriptionViewRow>(_path, "rowguid", VproductmodelcatalogdescriptionViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow>(_path, "modifieddate", VproductmodelcatalogdescriptionViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, VproductmodelcatalogdescriptionViewRow> name() {
+      return new Field<Name, VproductmodelcatalogdescriptionViewRow>(_path, "name", VproductmodelcatalogdescriptionViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public OptField<String, VproductmodelcatalogdescriptionViewRow> summary() {
+      return new OptField<String, VproductmodelcatalogdescriptionViewRow>(_path, "Summary", VproductmodelcatalogdescriptionViewRow::summary, Optional.empty(), Optional.empty(), (row, value) -> row.withSummary(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField<String, VproductmodelcatalogdescriptionViewRow> manufacturer() {
+      return new OptField<String, VproductmodelcatalogdescriptionViewRow>(_path, "manufacturer", VproductmodelcatalogdescriptionViewRow::manufacturer, Optional.empty(), Optional.empty(), (row, value) -> row.withManufacturer(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow> copyright() {
+      return new OptField</* max 30 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "copyright", VproductmodelcatalogdescriptionViewRow::copyright, Optional.empty(), Optional.empty(), (row, value) -> row.withCopyright(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> producturl() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "producturl", VproductmodelcatalogdescriptionViewRow::producturl, Optional.empty(), Optional.empty(), (row, value) -> row.withProducturl(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> warrantyperiod() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "warrantyperiod", VproductmodelcatalogdescriptionViewRow::warrantyperiod, Optional.empty(), Optional.empty(), (row, value) -> row.withWarrantyperiod(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> warrantydescription() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "warrantydescription", VproductmodelcatalogdescriptionViewRow::warrantydescription, Optional.empty(), Optional.empty(), (row, value) -> row.withWarrantydescription(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> noofyears() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "noofyears", VproductmodelcatalogdescriptionViewRow::noofyears, Optional.empty(), Optional.empty(), (row, value) -> row.withNoofyears(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> maintenancedescription() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "maintenancedescription", VproductmodelcatalogdescriptionViewRow::maintenancedescription, Optional.empty(), Optional.empty(), (row, value) -> row.withMaintenancedescription(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> wheel() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "wheel", VproductmodelcatalogdescriptionViewRow::wheel, Optional.empty(), Optional.empty(), (row, value) -> row.withWheel(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> saddle() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "saddle", VproductmodelcatalogdescriptionViewRow::saddle, Optional.empty(), Optional.empty(), (row, value) -> row.withSaddle(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> pedal() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "pedal", VproductmodelcatalogdescriptionViewRow::pedal, Optional.empty(), Optional.empty(), (row, value) -> row.withPedal(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField<String, VproductmodelcatalogdescriptionViewRow> bikeframe() {
+      return new OptField<String, VproductmodelcatalogdescriptionViewRow>(_path, "bikeframe", VproductmodelcatalogdescriptionViewRow::bikeframe, Optional.empty(), Optional.empty(), (row, value) -> row.withBikeframe(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> crankset() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "crankset", VproductmodelcatalogdescriptionViewRow::crankset, Optional.empty(), Optional.empty(), (row, value) -> row.withCrankset(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> pictureangle() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "pictureangle", VproductmodelcatalogdescriptionViewRow::pictureangle, Optional.empty(), Optional.empty(), (row, value) -> row.withPictureangle(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> picturesize() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "picturesize", VproductmodelcatalogdescriptionViewRow::picturesize, Optional.empty(), Optional.empty(), (row, value) -> row.withPicturesize(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> productphotoid() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "productphotoid", VproductmodelcatalogdescriptionViewRow::productphotoid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductphotoid(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> material() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "material", VproductmodelcatalogdescriptionViewRow::material, Optional.empty(), Optional.empty(), (row, value) -> row.withMaterial(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> color() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "color", VproductmodelcatalogdescriptionViewRow::color, Optional.empty(), Optional.empty(), (row, value) -> row.withColor(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> productline() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "productline", VproductmodelcatalogdescriptionViewRow::productline, Optional.empty(), Optional.empty(), (row, value) -> row.withProductline(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow> style() {
+      return new OptField</* max 256 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "style", VproductmodelcatalogdescriptionViewRow::style, Optional.empty(), Optional.empty(), (row, value) -> row.withStyle(value), PgTypes.text);
+    };
+
+    @Override
+    public OptField</* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow> riderexperience() {
+      return new OptField</* max 1024 chars */ String, VproductmodelcatalogdescriptionViewRow>(_path, "riderexperience", VproductmodelcatalogdescriptionViewRow::riderexperience, Optional.empty(), Optional.empty(), (row, value) -> row.withRiderexperience(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoUUID, VproductmodelcatalogdescriptionViewRow> rowguid() {
+      return new Field<TypoUUID, VproductmodelcatalogdescriptionViewRow>(_path, "rowguid", VproductmodelcatalogdescriptionViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow>(_path, "modifieddate", VproductmodelcatalogdescriptionViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, VproductmodelcatalogdescriptionViewRow>> columns() {
-      return List.of(this.fields().productmodelid(), this.fields().name(), this.fields().summary(), this.fields().manufacturer(), this.fields().copyright(), this.fields().producturl(), this.fields().warrantyperiod(), this.fields().warrantydescription(), this.fields().noofyears(), this.fields().maintenancedescription(), this.fields().wheel(), this.fields().saddle(), this.fields().pedal(), this.fields().bikeframe(), this.fields().crankset(), this.fields().pictureangle(), this.fields().picturesize(), this.fields().productphotoid(), this.fields().material(), this.fields().color(), this.fields().productline(), this.fields().style(), this.fields().riderexperience(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.productmodelid(), this.name(), this.summary(), this.manufacturer(), this.copyright(), this.producturl(), this.warrantyperiod(), this.warrantydescription(), this.noofyears(), this.maintenancedescription(), this.wheel(), this.saddle(), this.pedal(), this.bikeframe(), this.crankset(), this.pictureangle(), this.picturesize(), this.productphotoid(), this.material(), this.color(), this.productline(), this.style(), this.riderexperience(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -194,4 +211,12 @@ public interface VproductmodelcatalogdescriptionViewFields {
   Field<TypoUUID, VproductmodelcatalogdescriptionViewRow> rowguid();
 
   Field<TypoLocalDateTime, VproductmodelcatalogdescriptionViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, VproductmodelcatalogdescriptionViewRow>> columns();
+
+  @Override
+  default RowParser<VproductmodelcatalogdescriptionViewRow> rowParser() {
+    return VproductmodelcatalogdescriptionViewRow._rowParser;
+  };
 }

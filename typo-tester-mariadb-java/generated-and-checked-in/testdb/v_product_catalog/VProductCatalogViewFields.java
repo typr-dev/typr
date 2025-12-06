@@ -10,81 +10,84 @@ import java.util.List;
 import java.util.Optional;
 import testdb.products.ProductsId;
 import typo.data.maria.MariaSet;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface VProductCatalogViewFields {
-  final class Impl extends Relation<VProductCatalogViewFields, VProductCatalogViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface VProductCatalogViewFields extends FieldsExpr<VProductCatalogViewRow> {
+  record Impl(List<Path> _path) implements VProductCatalogViewFields, Relation<VProductCatalogViewFields, VProductCatalogViewRow> {
+    @Override
+    public Field<ProductsId, VProductCatalogViewRow> productId() {
+      return new Field<ProductsId, VProductCatalogViewRow>(_path, "product_id", VProductCatalogViewRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
+    };
 
     @Override
-    public VProductCatalogViewFields fields() {
-      return new VProductCatalogViewFields() {
-               @Override
-               public Field<ProductsId, VProductCatalogViewRow> productId() {
-                 return new Field<ProductsId, VProductCatalogViewRow>(_path, "product_id", VProductCatalogViewRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
-               };
-               @Override
-               public Field<String, VProductCatalogViewRow> sku() {
-                 return new Field<String, VProductCatalogViewRow>(_path, "sku", VProductCatalogViewRow::sku, Optional.empty(), Optional.empty(), (row, value) -> row.withSku(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, VProductCatalogViewRow> name() {
-                 return new Field<String, VProductCatalogViewRow>(_path, "name", VProductCatalogViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, VProductCatalogViewRow> shortDescription() {
-                 return new OptField<String, VProductCatalogViewRow>(_path, "short_description", VProductCatalogViewRow::shortDescription, Optional.empty(), Optional.empty(), (row, value) -> row.withShortDescription(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<BigDecimal, VProductCatalogViewRow> basePrice() {
-                 return new Field<BigDecimal, VProductCatalogViewRow>(_path, "base_price", VProductCatalogViewRow::basePrice, Optional.empty(), Optional.empty(), (row, value) -> row.withBasePrice(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<String, VProductCatalogViewRow> status() {
-                 return new Field<String, VProductCatalogViewRow>(_path, "status", VProductCatalogViewRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), MariaTypes.text);
-               };
-               @Override
-               public OptField<MariaSet, VProductCatalogViewRow> tags() {
-                 return new OptField<MariaSet, VProductCatalogViewRow>(_path, "tags", VProductCatalogViewRow::tags, Optional.empty(), Optional.empty(), (row, value) -> row.withTags(value), MariaTypes.set);
-               };
-               @Override
-               public OptField<String, VProductCatalogViewRow> brandName() {
-                 return new OptField<String, VProductCatalogViewRow>(_path, "brand_name", VProductCatalogViewRow::brandName, Optional.empty(), Optional.empty(), (row, value) -> row.withBrandName(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<BigDecimal, VProductCatalogViewRow> availableQuantity() {
-                 return new Field<BigDecimal, VProductCatalogViewRow>(_path, "available_quantity", VProductCatalogViewRow::availableQuantity, Optional.empty(), Optional.empty(), (row, value) -> row.withAvailableQuantity(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<BigDecimal, VProductCatalogViewRow> avgRating() {
-                 return new Field<BigDecimal, VProductCatalogViewRow>(_path, "avg_rating", VProductCatalogViewRow::avgRating, Optional.empty(), Optional.empty(), (row, value) -> row.withAvgRating(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<Long, VProductCatalogViewRow> reviewCount() {
-                 return new Field<Long, VProductCatalogViewRow>(_path, "review_count", VProductCatalogViewRow::reviewCount, Optional.empty(), Optional.empty(), (row, value) -> row.withReviewCount(value), MariaTypes.bigint);
-               };
-             };
+    public Field<String, VProductCatalogViewRow> sku() {
+      return new Field<String, VProductCatalogViewRow>(_path, "sku", VProductCatalogViewRow::sku, Optional.empty(), Optional.empty(), (row, value) -> row.withSku(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, VProductCatalogViewRow> name() {
+      return new Field<String, VProductCatalogViewRow>(_path, "name", VProductCatalogViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, VProductCatalogViewRow> shortDescription() {
+      return new OptField<String, VProductCatalogViewRow>(_path, "short_description", VProductCatalogViewRow::shortDescription, Optional.empty(), Optional.empty(), (row, value) -> row.withShortDescription(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<BigDecimal, VProductCatalogViewRow> basePrice() {
+      return new Field<BigDecimal, VProductCatalogViewRow>(_path, "base_price", VProductCatalogViewRow::basePrice, Optional.empty(), Optional.empty(), (row, value) -> row.withBasePrice(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<String, VProductCatalogViewRow> status() {
+      return new Field<String, VProductCatalogViewRow>(_path, "status", VProductCatalogViewRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), MariaTypes.text);
+    };
+
+    @Override
+    public OptField<MariaSet, VProductCatalogViewRow> tags() {
+      return new OptField<MariaSet, VProductCatalogViewRow>(_path, "tags", VProductCatalogViewRow::tags, Optional.empty(), Optional.empty(), (row, value) -> row.withTags(value), MariaTypes.set);
+    };
+
+    @Override
+    public OptField<String, VProductCatalogViewRow> brandName() {
+      return new OptField<String, VProductCatalogViewRow>(_path, "brand_name", VProductCatalogViewRow::brandName, Optional.empty(), Optional.empty(), (row, value) -> row.withBrandName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<BigDecimal, VProductCatalogViewRow> availableQuantity() {
+      return new Field<BigDecimal, VProductCatalogViewRow>(_path, "available_quantity", VProductCatalogViewRow::availableQuantity, Optional.empty(), Optional.empty(), (row, value) -> row.withAvailableQuantity(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<BigDecimal, VProductCatalogViewRow> avgRating() {
+      return new Field<BigDecimal, VProductCatalogViewRow>(_path, "avg_rating", VProductCatalogViewRow::avgRating, Optional.empty(), Optional.empty(), (row, value) -> row.withAvgRating(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<Long, VProductCatalogViewRow> reviewCount() {
+      return new Field<Long, VProductCatalogViewRow>(_path, "review_count", VProductCatalogViewRow::reviewCount, Optional.empty(), Optional.empty(), (row, value) -> row.withReviewCount(value), MariaTypes.bigint);
     };
 
     @Override
     public List<FieldLike<?, VProductCatalogViewRow>> columns() {
-      return List.of(this.fields().productId(), this.fields().sku(), this.fields().name(), this.fields().shortDescription(), this.fields().basePrice(), this.fields().status(), this.fields().tags(), this.fields().brandName(), this.fields().availableQuantity(), this.fields().avgRating(), this.fields().reviewCount());
+      return List.of(this.productId(), this.sku(), this.name(), this.shortDescription(), this.basePrice(), this.status(), this.tags(), this.brandName(), this.availableQuantity(), this.avgRating(), this.reviewCount());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<VProductCatalogViewFields, VProductCatalogViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<VProductCatalogViewFields, VProductCatalogViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -109,4 +112,12 @@ public interface VProductCatalogViewFields {
   Field<BigDecimal, VProductCatalogViewRow> avgRating();
 
   Field<Long, VProductCatalogViewRow> reviewCount();
+
+  @Override
+  List<FieldLike<?, VProductCatalogViewRow>> columns();
+
+  @Override
+  default RowParser<VProductCatalogViewRow> rowParser() {
+    return VProductCatalogViewRow._rowParser;
+  };
 }

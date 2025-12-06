@@ -13,80 +13,83 @@ import adventureworks.sales.salesterritory.SalesterritoryId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface StViewFields {
-  final class Impl extends Relation<StViewFields, StViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface StViewFields extends FieldsExpr<StViewRow> {
+  record Impl(List<Path> _path) implements StViewFields, Relation<StViewFields, StViewRow> {
+    @Override
+    public Field<SalesterritoryId, StViewRow> id() {
+      return new Field<SalesterritoryId, StViewRow>(_path, "id", StViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalesterritoryId.pgType);
+    };
 
     @Override
-    public StViewFields fields() {
-      return new StViewFields() {
-               @Override
-               public Field<SalesterritoryId, StViewRow> id() {
-                 return new Field<SalesterritoryId, StViewRow>(_path, "id", StViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public Field<SalesterritoryId, StViewRow> territoryid() {
-                 return new Field<SalesterritoryId, StViewRow>(_path, "territoryid", StViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public Field<Name, StViewRow> name() {
-                 return new Field<Name, StViewRow>(_path, "name", StViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<CountryregionId, StViewRow> countryregioncode() {
-                 return new Field<CountryregionId, StViewRow>(_path, "countryregioncode", StViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
-               };
-               @Override
-               public Field</* max 50 chars */ String, StViewRow> group() {
-                 return new Field</* max 50 chars */ String, StViewRow>(_path, "group", StViewRow::group, Optional.empty(), Optional.empty(), (row, value) -> row.withGroup(value), PgTypes.text);
-               };
-               @Override
-               public Field<BigDecimal, StViewRow> salesytd() {
-                 return new Field<BigDecimal, StViewRow>(_path, "salesytd", StViewRow::salesytd, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesytd(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, StViewRow> saleslastyear() {
-                 return new Field<BigDecimal, StViewRow>(_path, "saleslastyear", StViewRow::saleslastyear, Optional.empty(), Optional.empty(), (row, value) -> row.withSaleslastyear(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, StViewRow> costytd() {
-                 return new Field<BigDecimal, StViewRow>(_path, "costytd", StViewRow::costytd, Optional.empty(), Optional.empty(), (row, value) -> row.withCostytd(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, StViewRow> costlastyear() {
-                 return new Field<BigDecimal, StViewRow>(_path, "costlastyear", StViewRow::costlastyear, Optional.empty(), Optional.empty(), (row, value) -> row.withCostlastyear(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoUUID, StViewRow> rowguid() {
-                 return new Field<TypoUUID, StViewRow>(_path, "rowguid", StViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, StViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, StViewRow>(_path, "modifieddate", StViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<SalesterritoryId, StViewRow> territoryid() {
+      return new Field<SalesterritoryId, StViewRow>(_path, "territoryid", StViewRow::territoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
+    };
+
+    @Override
+    public Field<Name, StViewRow> name() {
+      return new Field<Name, StViewRow>(_path, "name", StViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<CountryregionId, StViewRow> countryregioncode() {
+      return new Field<CountryregionId, StViewRow>(_path, "countryregioncode", StViewRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
+    };
+
+    @Override
+    public Field</* max 50 chars */ String, StViewRow> group() {
+      return new Field</* max 50 chars */ String, StViewRow>(_path, "group", StViewRow::group, Optional.empty(), Optional.empty(), (row, value) -> row.withGroup(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<BigDecimal, StViewRow> salesytd() {
+      return new Field<BigDecimal, StViewRow>(_path, "salesytd", StViewRow::salesytd, Optional.empty(), Optional.empty(), (row, value) -> row.withSalesytd(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, StViewRow> saleslastyear() {
+      return new Field<BigDecimal, StViewRow>(_path, "saleslastyear", StViewRow::saleslastyear, Optional.empty(), Optional.empty(), (row, value) -> row.withSaleslastyear(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, StViewRow> costytd() {
+      return new Field<BigDecimal, StViewRow>(_path, "costytd", StViewRow::costytd, Optional.empty(), Optional.empty(), (row, value) -> row.withCostytd(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, StViewRow> costlastyear() {
+      return new Field<BigDecimal, StViewRow>(_path, "costlastyear", StViewRow::costlastyear, Optional.empty(), Optional.empty(), (row, value) -> row.withCostlastyear(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoUUID, StViewRow> rowguid() {
+      return new Field<TypoUUID, StViewRow>(_path, "rowguid", StViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, StViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, StViewRow>(_path, "modifieddate", StViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, StViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().territoryid(), this.fields().name(), this.fields().countryregioncode(), this.fields().group(), this.fields().salesytd(), this.fields().saleslastyear(), this.fields().costytd(), this.fields().costlastyear(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.territoryid(), this.name(), this.countryregioncode(), this.group(), this.salesytd(), this.saleslastyear(), this.costytd(), this.costlastyear(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<StViewFields, StViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<StViewFields, StViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -111,4 +114,12 @@ public interface StViewFields {
   Field<TypoUUID, StViewRow> rowguid();
 
   Field<TypoLocalDateTime, StViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, StViewRow>> columns();
+
+  @Override
+  default RowParser<StViewRow> rowParser() {
+    return StViewRow._rowParser;
+  };
 }

@@ -10,34 +10,41 @@ import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface UmViewFields {
+interface UmViewFields : FieldsExpr<UmViewRow> {
+  override fun columns(): List<FieldLike<*, UmViewRow>>
+
   fun id(): Field<UnitmeasureId, UmViewRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, UmViewRow>
 
   fun name(): Field<Name, UmViewRow>
 
+  override fun rowParser(): RowParser<UmViewRow> = UmViewRow._rowParser
+
   fun unitmeasurecode(): Field<UnitmeasureId, UmViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<UmViewFields, UmViewRow>(path) {
-      override fun fields(): UmViewFields = object : UmViewFields {
-        override fun id(): Field<UnitmeasureId, UmViewRow> = Field<UnitmeasureId, UmViewRow>(_path, "id", UmViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, UnitmeasureId.pgType)
-        override fun unitmeasurecode(): Field<UnitmeasureId, UmViewRow> = Field<UnitmeasureId, UmViewRow>(_path, "unitmeasurecode", UmViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), { row, value -> row.copy(unitmeasurecode = value) }, UnitmeasureId.pgType)
-        override fun name(): Field<Name, UmViewRow> = Field<Name, UmViewRow>(_path, "name", UmViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, UmViewRow> = Field<TypoLocalDateTime, UmViewRow>(_path, "modifieddate", UmViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : UmViewFields, Relation<UmViewFields, UmViewRow> {
+      override fun id(): Field<UnitmeasureId, UmViewRow> = Field<UnitmeasureId, UmViewRow>(_path, "id", UmViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, UnitmeasureId.pgType)
 
-      override fun columns(): List<FieldLike<*, UmViewRow>> = listOf(this.fields().id(), this.fields().unitmeasurecode(), this.fields().name(), this.fields().modifieddate())
+      override fun unitmeasurecode(): Field<UnitmeasureId, UmViewRow> = Field<UnitmeasureId, UmViewRow>(_path, "unitmeasurecode", UmViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), { row, value -> row.copy(unitmeasurecode = value) }, UnitmeasureId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, UmViewRow> = Field<Name, UmViewRow>(_path, "name", UmViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, UmViewRow> = Field<TypoLocalDateTime, UmViewRow>(_path, "modifieddate", UmViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, UmViewRow>> = listOf(this.id(), this.unitmeasurecode(), this.name(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<UmViewFields, UmViewRow> = Impl(_path)
     }
 
-    val structure: Relation<UmViewFields, UmViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

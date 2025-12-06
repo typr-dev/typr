@@ -36,7 +36,7 @@ case class BusinessentityRow(
 }
 
 object BusinessentityRow {
-  val `_rowParser`: RowParser[BusinessentityRow] = RowParsers.of(BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentityRow.apply, row => Array(row.businessentityid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[BusinessentityRow] = RowParsers.of(BusinessentityId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BusinessentityRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[BusinessentityRow] = PgText.from(`_rowParser`)
 }

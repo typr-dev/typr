@@ -9,48 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface ScrapreasonFields {
-  final class Impl extends Relation<ScrapreasonFields, ScrapreasonRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ScrapreasonFields extends FieldsExpr<ScrapreasonRow> {
+  record Impl(List<Path> _path) implements ScrapreasonFields, Relation<ScrapreasonFields, ScrapreasonRow> {
+    @Override
+    public IdField<ScrapreasonId, ScrapreasonRow> scrapreasonid() {
+      return new IdField<ScrapreasonId, ScrapreasonRow>(_path, "scrapreasonid", ScrapreasonRow::scrapreasonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withScrapreasonid(value), ScrapreasonId.pgType);
+    };
 
     @Override
-    public ScrapreasonFields fields() {
-      return new ScrapreasonFields() {
-               @Override
-               public IdField<ScrapreasonId, ScrapreasonRow> scrapreasonid() {
-                 return new IdField<ScrapreasonId, ScrapreasonRow>(_path, "scrapreasonid", ScrapreasonRow::scrapreasonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withScrapreasonid(value), ScrapreasonId.pgType);
-               };
-               @Override
-               public Field<Name, ScrapreasonRow> name() {
-                 return new Field<Name, ScrapreasonRow>(_path, "name", ScrapreasonRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ScrapreasonRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ScrapreasonRow>(_path, "modifieddate", ScrapreasonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, ScrapreasonRow> name() {
+      return new Field<Name, ScrapreasonRow>(_path, "name", ScrapreasonRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ScrapreasonRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ScrapreasonRow>(_path, "modifieddate", ScrapreasonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ScrapreasonRow>> columns() {
-      return List.of(this.fields().scrapreasonid(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.scrapreasonid(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ScrapreasonFields, ScrapreasonRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ScrapreasonFields, ScrapreasonRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface ScrapreasonFields {
   Field<Name, ScrapreasonRow> name();
 
   Field<TypoLocalDateTime, ScrapreasonRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, ScrapreasonRow>> columns();
+
+  @Override
+  default RowParser<ScrapreasonRow> rowParser() {
+    return ScrapreasonRow._rowParser;
+  };
 }

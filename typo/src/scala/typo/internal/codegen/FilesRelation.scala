@@ -407,13 +407,14 @@ case class FilesRelation(
         }
         .getOrElse(Nil)
 
-    // Structure implementation
+    // Structure implementation - now a record that implements both Relation and Fields
     val ImplName = jvm.Ident("Impl")
     val pathList = lang.ListType.tpe.of(jvm.Type.dsl.Path)
     val generalizedColumn = jvm.Type.dsl.FieldLikeNoHkt.of(jvm.Type.Wildcard, names.RowName)
     val columnsList = lang.ListType.tpe.of(generalizedColumn)
 
-    // Field implementations inside the Impl class
+    // Field implementations for the record
+    // Uses _path to avoid conflicts with tables that have a 'path' column
     val fieldImplMethods: List[jvm.Method] = cols.toList.map { col =>
       val (cls, tpe) =
         if (names.isIdColumn(col.dbName)) (jvm.Type.dsl.IdField, col.tpe)
@@ -456,11 +457,9 @@ case class FilesRelation(
       )
     }
 
-    // For columns access: uses fields() method which is an override value (function in Kotlin, lazy val in Scala)
+    // columns() method - calls each column accessor on this
     val columnsExpr = lang.ListType.create(cols.toList.map { c =>
-      val fieldsRef = lang.overrideValueAccess(code"this", jvm.Ident("fields"))
-      val fieldAccess = jvm.ApplyNullary(fieldsRef, c.name) // field access methods still need parens
-      fieldAccess.code
+      jvm.ApplyNullary(code"this", c.name).code
     })
 
     /* fields: lazy override val (Scala) / @Override public Type fields() (Java) */
@@ -473,11 +472,22 @@ case class FilesRelation(
       isOverride = true
     )
 
-    // columns: lazy override val (Scala) / @Override public Type columns() (Java)
-    val columnsValue = jvm.Value(Nil, jvm.Ident("columns"), columnsList, Some(columnsExpr), isLazy = true, isOverride = true)
+    val columnsImplMethod = jvm.Method(
+      annotations = Nil,
+      comments = jvm.Comments.Empty,
+      tparams = Nil,
+      name = jvm.Ident("columns"),
+      params = Nil,
+      implicitParams = Nil,
+      tpe = columnsList,
+      throws = Nil,
+      body = jvm.Body.Expr(columnsExpr),
+      isOverride = true,
+      isDefault = false
+    )
 
-    // copy method
-    val copyPathParam = jvm.Param(jvm.Ident("path"), pathList)
+    // copy method - uses _path to avoid conflicts with tables that have a 'path' column
+    val copyPathParam = jvm.Param(jvm.Ident("_path"), pathList)
     val copyMethod = jvm.Method(
       Nil,
       jvm.Comments.Empty,
@@ -485,36 +495,72 @@ case class FilesRelation(
       jvm.Ident("copy"),
       List(copyPathParam),
       Nil,
-      jvm.Type.Qualified(ImplName),
+      jvm.Type.dsl.StructureRelation.of(fieldsName, names.RowName),
       Nil,
       jvm.Body.Expr(jvm.New(jvm.Type.Qualified(ImplName), List(jvm.Arg.Pos(copyPathParam.name.code)))),
       isOverride = true,
       isDefault = false
     )
 
-    // The nested Impl class
-    val implClass = jvm.NestedClass(
-      isPrivate = true,
-      isFinal = true,
+    // The nested Impl record - implements both Relation and the Fields interface
+    // Uses _path to avoid conflicts with tables that have a 'path' column
+    val implRecord = jvm.NestedRecord(
+      isPrivate = false,
       name = ImplName,
-      params = List(jvm.Param(jvm.Ident("path"), pathList)),
-      `extends` = Some(jvm.Type.dsl.StructureRelation.of(fieldsName, names.RowName)),
-      superArgs = List(jvm.Arg.Pos(code"path")),
-      members = List(fieldsValue, columnsValue, copyMethod)
+      params = List(jvm.Param(jvm.Ident("_path"), pathList)),
+      implements = List(fieldsName, jvm.Type.dsl.StructureRelation.of(fieldsName, names.RowName)),
+      members = fieldImplMethods ++ List(columnsImplMethod, copyMethod)
     )
 
-    // Static structure field
-    val structureField = jvm.Value(
+    // Static structure method
+    val structureMethod = jvm.Method(
+      Nil,
+      jvm.Comments.Empty,
       Nil,
       jvm.Ident("structure"),
-      jvm.Type.dsl.StructureRelation.of(fieldsName, names.RowName),
-      Some(jvm.New(jvm.Type.Qualified(ImplName), List(jvm.Arg.Pos(lang.ListType.create(Nil)))).code),
-      isLazy = true,
-      isOverride = false
+      Nil,
+      Nil,
+      jvm.Type.Qualified(ImplName),
+      Nil,
+      jvm.Body.Expr(jvm.New(jvm.Type.Qualified(ImplName), List(jvm.Arg.Pos(lang.ListType.create(Nil))))),
+      isOverride = false,
+      isDefault = false
     )
 
-    // All interface members: column methods (abstract), FK methods (with default body)
-    val allMembers: List[jvm.ClassMember] = colMethods ++ fkMembers ++ extractFkMember ++ compositeIdMembers
+    // FieldsExpr methods: columns(), decodeRow(), encodeRow()
+    val columnsMethod = jvm.Method(
+      annotations = Nil,
+      comments = jvm.Comments.Empty,
+      tparams = Nil,
+      name = jvm.Ident("columns"),
+      params = Nil,
+      implicitParams = Nil,
+      tpe = columnsList,
+      throws = Nil,
+      body = jvm.Body.Abstract,
+      isOverride = true,
+      isDefault = false
+    )
+
+    // Generate rowParser() method that returns RowParser<Row>
+    // Uses the Row's existing _rowParser static field
+    val rowParserType = jvm.Type.runtime.RowParser.of(names.RowName)
+    val rowParserMethod = jvm.Method(
+      annotations = Nil,
+      comments = jvm.Comments.Empty,
+      tparams = Nil,
+      name = jvm.Ident("rowParser"),
+      params = Nil,
+      implicitParams = Nil,
+      tpe = rowParserType,
+      throws = Nil,
+      body = jvm.Body.Expr(code"${names.RowName}._rowParser"),
+      isOverride = true,
+      isDefault = true
+    )
+
+    // All interface members: column methods (abstract), FK methods (with default body), FieldsExpr methods
+    val allMembers: List[jvm.ClassMember] = colMethods ++ fkMembers ++ extractFkMember ++ compositeIdMembers ++ List(columnsMethod, rowParserMethod)
 
     // Build the interface/trait using jvm.Class
     val fieldsClass = jvm.Class(
@@ -526,9 +572,9 @@ case class FilesRelation(
       params = Nil,
       implicitParams = Nil,
       `extends` = None,
-      implements = Nil,
+      implements = List(jvm.Type.dsl.FieldsExpr.of(names.RowName)),
       members = allMembers,
-      staticMembers = List(structureField, implClass)
+      staticMembers = List(structureMethod, implRecord)
     )
 
     jvm.File(fieldsName, fieldsClass.code, Nil, scope = Scope.Main)

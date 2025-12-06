@@ -7,6 +7,7 @@ package testdb.brands;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
@@ -14,59 +15,57 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface BrandsFields {
-  final class Impl extends Relation<BrandsFields, BrandsRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface BrandsFields extends FieldsExpr<BrandsRow> {
+  record Impl(List<Path> _path) implements BrandsFields, Relation<BrandsFields, BrandsRow> {
+    @Override
+    public IdField<BrandsId, BrandsRow> brandId() {
+      return new IdField<BrandsId, BrandsRow>(_path, "brand_id", BrandsRow::brandId, Optional.empty(), Optional.empty(), (row, value) -> row.withBrandId(value), BrandsId.pgType);
+    };
 
     @Override
-    public BrandsFields fields() {
-      return new BrandsFields() {
-               @Override
-               public IdField<BrandsId, BrandsRow> brandId() {
-                 return new IdField<BrandsId, BrandsRow>(_path, "brand_id", BrandsRow::brandId, Optional.empty(), Optional.empty(), (row, value) -> row.withBrandId(value), BrandsId.pgType);
-               };
-               @Override
-               public Field<String, BrandsRow> name() {
-                 return new Field<String, BrandsRow>(_path, "name", BrandsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, BrandsRow> slug() {
-                 return new Field<String, BrandsRow>(_path, "slug", BrandsRow::slug, Optional.empty(), Optional.empty(), (row, value) -> row.withSlug(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<byte[], BrandsRow> logoBlob() {
-                 return new OptField<byte[], BrandsRow>(_path, "logo_blob", BrandsRow::logoBlob, Optional.empty(), Optional.empty(), (row, value) -> row.withLogoBlob(value), MariaTypes.mediumblob);
-               };
-               @Override
-               public OptField<String, BrandsRow> websiteUrl() {
-                 return new OptField<String, BrandsRow>(_path, "website_url", BrandsRow::websiteUrl, Optional.empty(), Optional.empty(), (row, value) -> row.withWebsiteUrl(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, BrandsRow> countryOfOrigin() {
-                 return new OptField<String, BrandsRow>(_path, "country_of_origin", BrandsRow::countryOfOrigin, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryOfOrigin(value), MariaTypes.char_);
-               };
-               @Override
-               public Field<Boolean, BrandsRow> isActive() {
-                 return new Field<Boolean, BrandsRow>(_path, "is_active", BrandsRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
-               };
-             };
+    public Field<String, BrandsRow> name() {
+      return new Field<String, BrandsRow>(_path, "name", BrandsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, BrandsRow> slug() {
+      return new Field<String, BrandsRow>(_path, "slug", BrandsRow::slug, Optional.empty(), Optional.empty(), (row, value) -> row.withSlug(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<byte[], BrandsRow> logoBlob() {
+      return new OptField<byte[], BrandsRow>(_path, "logo_blob", BrandsRow::logoBlob, Optional.empty(), Optional.empty(), (row, value) -> row.withLogoBlob(value), MariaTypes.mediumblob);
+    };
+
+    @Override
+    public OptField<String, BrandsRow> websiteUrl() {
+      return new OptField<String, BrandsRow>(_path, "website_url", BrandsRow::websiteUrl, Optional.empty(), Optional.empty(), (row, value) -> row.withWebsiteUrl(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, BrandsRow> countryOfOrigin() {
+      return new OptField<String, BrandsRow>(_path, "country_of_origin", BrandsRow::countryOfOrigin, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryOfOrigin(value), MariaTypes.char_);
+    };
+
+    @Override
+    public Field<Boolean, BrandsRow> isActive() {
+      return new Field<Boolean, BrandsRow>(_path, "is_active", BrandsRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
     };
 
     @Override
     public List<FieldLike<?, BrandsRow>> columns() {
-      return List.of(this.fields().brandId(), this.fields().name(), this.fields().slug(), this.fields().logoBlob(), this.fields().websiteUrl(), this.fields().countryOfOrigin(), this.fields().isActive());
+      return List.of(this.brandId(), this.name(), this.slug(), this.logoBlob(), this.websiteUrl(), this.countryOfOrigin(), this.isActive());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<BrandsFields, BrandsRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<BrandsFields, BrandsRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -83,4 +82,12 @@ public interface BrandsFields {
   OptField<String, BrandsRow> countryOfOrigin();
 
   Field<Boolean, BrandsRow> isActive();
+
+  @Override
+  List<FieldLike<?, BrandsRow>> columns();
+
+  @Override
+  default RowParser<BrandsRow> rowParser() {
+    return BrandsRow._rowParser;
+  };
 }

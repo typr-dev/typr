@@ -14,6 +14,7 @@ import adventureworks.production.productmodel.ProductmodelId
 import adventureworks.production.productmodel.ProductmodelRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -23,8 +24,11 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface ProductmodelillustrationFields {
+interface ProductmodelillustrationFields : FieldsExpr<ProductmodelillustrationRow> {
+  override fun columns(): List<FieldLike<*, ProductmodelillustrationRow>>
+
   fun compositeIdIn(compositeIds: List<ProductmodelillustrationId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<ProductmodelId, ProductmodelillustrationId, ProductmodelillustrationRow>(productmodelid(), ProductmodelillustrationId::productmodelid, ProductmodelId.pgType), Part<IllustrationId, ProductmodelillustrationId, ProductmodelillustrationRow>(illustrationid(), ProductmodelillustrationId::illustrationid, IllustrationId.pgType)), compositeIds)
 
   fun compositeIdIs(compositeId: ProductmodelillustrationId): SqlExpr<Boolean> = SqlExpr.all(productmodelid().isEqual(compositeId.productmodelid), illustrationid().isEqual(compositeId.illustrationid))
@@ -39,19 +43,21 @@ interface ProductmodelillustrationFields {
 
   fun productmodelid(): IdField<ProductmodelId, ProductmodelillustrationRow>
 
+  override fun rowParser(): RowParser<ProductmodelillustrationRow> = ProductmodelillustrationRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<ProductmodelillustrationFields, ProductmodelillustrationRow>(path) {
-      override fun fields(): ProductmodelillustrationFields = object : ProductmodelillustrationFields {
-        override fun productmodelid(): IdField<ProductmodelId, ProductmodelillustrationRow> = IdField<ProductmodelId, ProductmodelillustrationRow>(_path, "productmodelid", ProductmodelillustrationRow::productmodelid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
-        override fun illustrationid(): IdField<IllustrationId, ProductmodelillustrationRow> = IdField<IllustrationId, ProductmodelillustrationRow>(_path, "illustrationid", ProductmodelillustrationRow::illustrationid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(illustrationid = value) }, IllustrationId.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, ProductmodelillustrationRow> = Field<TypoLocalDateTime, ProductmodelillustrationRow>(_path, "modifieddate", ProductmodelillustrationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : ProductmodelillustrationFields, Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> {
+      override fun productmodelid(): IdField<ProductmodelId, ProductmodelillustrationRow> = IdField<ProductmodelId, ProductmodelillustrationRow>(_path, "productmodelid", ProductmodelillustrationRow::productmodelid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
 
-      override fun columns(): List<FieldLike<*, ProductmodelillustrationRow>> = listOf(this.fields().productmodelid(), this.fields().illustrationid(), this.fields().modifieddate())
+      override fun illustrationid(): IdField<IllustrationId, ProductmodelillustrationRow> = IdField<IllustrationId, ProductmodelillustrationRow>(_path, "illustrationid", ProductmodelillustrationRow::illustrationid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(illustrationid = value) }, IllustrationId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, ProductmodelillustrationRow> = Field<TypoLocalDateTime, ProductmodelillustrationRow>(_path, "modifieddate", ProductmodelillustrationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, ProductmodelillustrationRow>> = listOf(this.productmodelid(), this.illustrationid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> = Impl(_path)
     }
 
-    val structure: Relation<ProductmodelillustrationFields, ProductmodelillustrationRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

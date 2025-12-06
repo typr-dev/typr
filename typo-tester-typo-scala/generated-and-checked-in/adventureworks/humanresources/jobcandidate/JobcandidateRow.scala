@@ -48,7 +48,7 @@ case class JobcandidateRow(
 }
 
 object JobcandidateRow {
-  val `_rowParser`: RowParser[JobcandidateRow] = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JobcandidateRow.apply, row => Array(row.jobcandidateid, row.businessentityid, row.resume, row.modifieddate))
+  val `_rowParser`: RowParser[JobcandidateRow] = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoLocalDateTime.pgType, JobcandidateRow.apply, row => Array[Object](row.jobcandidateid.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.resume.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[JobcandidateRow] = PgText.from(`_rowParser`)
 }

@@ -86,7 +86,7 @@ case class MariatestSpatialNullRow(
 }
 
 object MariatestSpatialNullRow {
-  val `_rowParser`: RowParser[MariatestSpatialNullRow] = RowParsers.of(MariatestSpatialNullId.pgType, MariaTypes.geometry.opt(), MariaTypes.point.opt(), MariaTypes.linestring.opt(), MariaTypes.polygon.opt(), MariaTypes.multipoint.opt(), MariaTypes.multilinestring.opt(), MariaTypes.multipolygon.opt(), MariaTypes.geometrycollection.opt(), MariatestSpatialNullRow.apply, row => Array(row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
+  val `_rowParser`: RowParser[MariatestSpatialNullRow] = RowParsers.of(MariatestSpatialNullId.pgType, MariaTypes.geometry.opt(), MariaTypes.point.opt(), MariaTypes.linestring.opt(), MariaTypes.polygon.opt(), MariaTypes.multipoint.opt(), MariaTypes.multilinestring.opt(), MariaTypes.multipolygon.opt(), MariaTypes.geometrycollection.opt(), MariatestSpatialNullRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.geometryCol.asInstanceOf[Object], row.pointCol.asInstanceOf[Object], row.linestringCol.asInstanceOf[Object], row.polygonCol.asInstanceOf[Object], row.multipointCol.asInstanceOf[Object], row.multilinestringCol.asInstanceOf[Object], row.multipolygonCol.asInstanceOf[Object], row.geometrycollectionCol.asInstanceOf[Object]))
 
   given mariaText: MariaText[MariatestSpatialNullRow] = MariaText.from(`_rowParser`)
 }

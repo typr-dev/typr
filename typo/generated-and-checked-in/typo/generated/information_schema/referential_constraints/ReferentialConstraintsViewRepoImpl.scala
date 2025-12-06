@@ -5,18 +5,15 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package information_schema
-package referential_constraints
+package typo.generated.information_schema.referential_constraints
 
-import anorm.SqlStringInterpolation
 import java.sql.Connection
+import anorm.SqlStringInterpolation
 
 class ReferentialConstraintsViewRepoImpl extends ReferentialConstraintsViewRepo {
   override def selectAll(implicit c: Connection): List[ReferentialConstraintsViewRow] = {
     SQL"""select "constraint_catalog", "constraint_schema", "constraint_name", "unique_constraint_catalog", "unique_constraint_schema", "unique_constraint_name", "match_option", "update_rule", "delete_rule"
-          from "information_schema"."referential_constraints"
-       """.as(ReferentialConstraintsViewRow.rowParser(1).*)
+    from "information_schema"."referential_constraints"
+    """.as(ReferentialConstraintsViewRow.rowParser(1).*)
   }
 }

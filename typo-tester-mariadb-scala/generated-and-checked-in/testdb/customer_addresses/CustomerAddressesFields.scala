@@ -11,6 +11,7 @@ import org.mariadb.jdbc.`type`.Point
 import testdb.customers.CustomersFields
 import testdb.customers.CustomersId
 import testdb.customers.CustomersRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -19,8 +20,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait CustomerAddressesFields {
+trait CustomerAddressesFields extends FieldsExpr[CustomerAddressesRow] {
   def addressId: IdField[CustomerAddressesId, CustomerAddressesRow]
 
   def customerId: Field[CustomersId, CustomerAddressesRow]
@@ -50,174 +52,187 @@ trait CustomerAddressesFields {
   def createdAt: Field[LocalDateTime, CustomerAddressesRow]
 
   def fkCustomers: ForeignKey[CustomersFields, CustomersRow] = ForeignKey.of[CustomersFields, CustomersRow]("fk_address_customer").withColumnPair(customerId, _.customerId)
+
+  override def columns: java.util.List[FieldLike[?, CustomerAddressesRow]]
+
+  override def rowParser: RowParser[CustomerAddressesRow] = CustomerAddressesRow._rowParser
 }
 
 object CustomerAddressesFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CustomerAddressesFields, CustomerAddressesRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CustomerAddressesFields with Relation[CustomerAddressesFields, CustomerAddressesRow] {
 
-    override lazy val fields: CustomerAddressesFields = {
-      new CustomerAddressesFields {
-        override def addressId: IdField[CustomerAddressesId, CustomerAddressesRow] = {
-          new IdField[CustomerAddressesId, CustomerAddressesRow](
-            _path,
-            "address_id",
-            _.addressId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addressId = value),
-            CustomerAddressesId.pgType
-          )
-        }
-        override def customerId: Field[CustomersId, CustomerAddressesRow] = {
-          new Field[CustomersId, CustomerAddressesRow](
-            _path,
-            "customer_id",
-            _.customerId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(customerId = value),
-            CustomersId.pgType
-          )
-        }
-        override def addressType: Field[String, CustomerAddressesRow] = {
-          new Field[String, CustomerAddressesRow](
-            _path,
-            "address_type",
-            _.addressType,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addressType = value),
-            MariaTypes.text
-          )
-        }
-        override def isDefault: Field[java.lang.Boolean, CustomerAddressesRow] = {
-          new Field[java.lang.Boolean, CustomerAddressesRow](
-            _path,
-            "is_default",
-            _.isDefault,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(isDefault = value),
-            MariaTypes.bool
-          )
-        }
-        override def recipientName: Field[String, CustomerAddressesRow] = {
-          new Field[String, CustomerAddressesRow](
-            _path,
-            "recipient_name",
-            _.recipientName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(recipientName = value),
-            MariaTypes.varchar
-          )
-        }
-        override def streetLine1: Field[String, CustomerAddressesRow] = {
-          new Field[String, CustomerAddressesRow](
-            _path,
-            "street_line1",
-            _.streetLine1,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(streetLine1 = value),
-            MariaTypes.varchar
-          )
-        }
-        override def streetLine2: OptField[String, CustomerAddressesRow] = {
-          new OptField[String, CustomerAddressesRow](
-            _path,
-            "street_line2",
-            _.streetLine2,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(streetLine2 = value),
-            MariaTypes.varchar
-          )
-        }
-        override def city: Field[String, CustomerAddressesRow] = {
-          new Field[String, CustomerAddressesRow](
-            _path,
-            "city",
-            _.city,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(city = value),
-            MariaTypes.varchar
-          )
-        }
-        override def stateProvince: OptField[String, CustomerAddressesRow] = {
-          new OptField[String, CustomerAddressesRow](
-            _path,
-            "state_province",
-            _.stateProvince,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(stateProvince = value),
-            MariaTypes.varchar
-          )
-        }
-        override def postalCode: Field[String, CustomerAddressesRow] = {
-          new Field[String, CustomerAddressesRow](
-            _path,
-            "postal_code",
-            _.postalCode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(postalCode = value),
-            MariaTypes.varchar
-          )
-        }
-        override def countryCode: Field[String, CustomerAddressesRow] = {
-          new Field[String, CustomerAddressesRow](
-            _path,
-            "country_code",
-            _.countryCode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryCode = value),
-            MariaTypes.char_
-          )
-        }
-        override def location: OptField[Point, CustomerAddressesRow] = {
-          new OptField[Point, CustomerAddressesRow](
-            _path,
-            "location",
-            _.location,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(location = value),
-            MariaTypes.point
-          )
-        }
-        override def deliveryNotes: OptField[String, CustomerAddressesRow] = {
-          new OptField[String, CustomerAddressesRow](
-            _path,
-            "delivery_notes",
-            _.deliveryNotes,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(deliveryNotes = value),
-            MariaTypes.tinytext
-          )
-        }
-        override def createdAt: Field[LocalDateTime, CustomerAddressesRow] = {
-          new Field[LocalDateTime, CustomerAddressesRow](
-            _path,
-            "created_at",
-            _.createdAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(createdAt = value),
-            MariaTypes.datetime
-          )
-        }
-      }
+    override def addressId: IdField[CustomerAddressesId, CustomerAddressesRow] = {
+      new IdField[CustomerAddressesId, CustomerAddressesRow](
+        _path,
+        "address_id",
+        _.addressId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addressId = value),
+        CustomerAddressesId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CustomerAddressesRow]] = java.util.List.of(this.fields.addressId, this.fields.customerId, this.fields.addressType, this.fields.isDefault, this.fields.recipientName, this.fields.streetLine1, this.fields.streetLine2, this.fields.city, this.fields.stateProvince, this.fields.postalCode, this.fields.countryCode, this.fields.location, this.fields.deliveryNotes, this.fields.createdAt)
+    override def customerId: Field[CustomersId, CustomerAddressesRow] = {
+      new Field[CustomersId, CustomerAddressesRow](
+        _path,
+        "customer_id",
+        _.customerId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(customerId = value),
+        CustomersId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def addressType: Field[String, CustomerAddressesRow] = {
+      new Field[String, CustomerAddressesRow](
+        _path,
+        "address_type",
+        _.addressType,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addressType = value),
+        MariaTypes.text
+      )
+    }
+
+    override def isDefault: Field[java.lang.Boolean, CustomerAddressesRow] = {
+      new Field[java.lang.Boolean, CustomerAddressesRow](
+        _path,
+        "is_default",
+        _.isDefault,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(isDefault = value),
+        MariaTypes.bool
+      )
+    }
+
+    override def recipientName: Field[String, CustomerAddressesRow] = {
+      new Field[String, CustomerAddressesRow](
+        _path,
+        "recipient_name",
+        _.recipientName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(recipientName = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def streetLine1: Field[String, CustomerAddressesRow] = {
+      new Field[String, CustomerAddressesRow](
+        _path,
+        "street_line1",
+        _.streetLine1,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(streetLine1 = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def streetLine2: OptField[String, CustomerAddressesRow] = {
+      new OptField[String, CustomerAddressesRow](
+        _path,
+        "street_line2",
+        _.streetLine2,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(streetLine2 = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def city: Field[String, CustomerAddressesRow] = {
+      new Field[String, CustomerAddressesRow](
+        _path,
+        "city",
+        _.city,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(city = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def stateProvince: OptField[String, CustomerAddressesRow] = {
+      new OptField[String, CustomerAddressesRow](
+        _path,
+        "state_province",
+        _.stateProvince,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(stateProvince = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def postalCode: Field[String, CustomerAddressesRow] = {
+      new Field[String, CustomerAddressesRow](
+        _path,
+        "postal_code",
+        _.postalCode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(postalCode = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def countryCode: Field[String, CustomerAddressesRow] = {
+      new Field[String, CustomerAddressesRow](
+        _path,
+        "country_code",
+        _.countryCode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryCode = value),
+        MariaTypes.char_
+      )
+    }
+
+    override def location: OptField[Point, CustomerAddressesRow] = {
+      new OptField[Point, CustomerAddressesRow](
+        _path,
+        "location",
+        _.location,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(location = value),
+        MariaTypes.point
+      )
+    }
+
+    override def deliveryNotes: OptField[String, CustomerAddressesRow] = {
+      new OptField[String, CustomerAddressesRow](
+        _path,
+        "delivery_notes",
+        _.deliveryNotes,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(deliveryNotes = value),
+        MariaTypes.tinytext
+      )
+    }
+
+    override def createdAt: Field[LocalDateTime, CustomerAddressesRow] = {
+      new Field[LocalDateTime, CustomerAddressesRow](
+        _path,
+        "created_at",
+        _.createdAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(createdAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CustomerAddressesRow]] = java.util.List.of(this.addressId, this.customerId, this.addressType, this.isDefault, this.recipientName, this.streetLine1, this.streetLine2, this.city, this.stateProvince, this.postalCode, this.countryCode, this.location, this.deliveryNotes, this.createdAt)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CustomerAddressesFields, CustomerAddressesRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CustomerAddressesFields, CustomerAddressesRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

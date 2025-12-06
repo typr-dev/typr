@@ -15,7 +15,7 @@ import typo.runtime.RowParsers
 case class MaritalStatusRow(id: MaritalStatusId)
 
 object MaritalStatusRow {
-  val `_rowParser`: RowParser[MaritalStatusRow] = RowParsers.of(MaritalStatusId.pgType, MaritalStatusRow.apply, row => Array(row.id))
+  val `_rowParser`: RowParser[MaritalStatusRow] = RowParsers.of(MaritalStatusId.pgType, MaritalStatusRow.apply, row => Array[Object](row.id.asInstanceOf[Object]))
 
   given pgText: PgText[MaritalStatusRow] = PgText.from(`_rowParser`)
 }

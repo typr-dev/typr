@@ -10,12 +10,16 @@ import adventureworks.humanresources.department.DepartmentId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface DViewFields {
+interface DViewFields : FieldsExpr<DViewRow> {
+  override fun columns(): List<FieldLike<*, DViewRow>>
+
   fun departmentid(): Field<DepartmentId, DViewRow>
 
   fun groupname(): Field<Name, DViewRow>
@@ -26,21 +30,25 @@ interface DViewFields {
 
   fun name(): Field<Name, DViewRow>
 
+  override fun rowParser(): RowParser<DViewRow> = DViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<DViewFields, DViewRow>(path) {
-      override fun fields(): DViewFields = object : DViewFields {
-        override fun id(): Field<DepartmentId, DViewRow> = Field<DepartmentId, DViewRow>(_path, "id", DViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, DepartmentId.pgType)
-        override fun departmentid(): Field<DepartmentId, DViewRow> = Field<DepartmentId, DViewRow>(_path, "departmentid", DViewRow::departmentid, Optional.empty(), Optional.empty(), { row, value -> row.copy(departmentid = value) }, DepartmentId.pgType)
-        override fun name(): Field<Name, DViewRow> = Field<Name, DViewRow>(_path, "name", DViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun groupname(): Field<Name, DViewRow> = Field<Name, DViewRow>(_path, "groupname", DViewRow::groupname, Optional.empty(), Optional.empty(), { row, value -> row.copy(groupname = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, DViewRow> = Field<TypoLocalDateTime, DViewRow>(_path, "modifieddate", DViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : DViewFields, Relation<DViewFields, DViewRow> {
+      override fun id(): Field<DepartmentId, DViewRow> = Field<DepartmentId, DViewRow>(_path, "id", DViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, DepartmentId.pgType)
 
-      override fun columns(): List<FieldLike<*, DViewRow>> = listOf(this.fields().id(), this.fields().departmentid(), this.fields().name(), this.fields().groupname(), this.fields().modifieddate())
+      override fun departmentid(): Field<DepartmentId, DViewRow> = Field<DepartmentId, DViewRow>(_path, "departmentid", DViewRow::departmentid, Optional.empty(), Optional.empty(), { row, value -> row.copy(departmentid = value) }, DepartmentId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, DViewRow> = Field<Name, DViewRow>(_path, "name", DViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun groupname(): Field<Name, DViewRow> = Field<Name, DViewRow>(_path, "groupname", DViewRow::groupname, Optional.empty(), Optional.empty(), { row, value -> row.copy(groupname = value) }, Name.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, DViewRow> = Field<TypoLocalDateTime, DViewRow>(_path, "modifieddate", DViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, DViewRow>> = listOf(this.id(), this.departmentid(), this.name(), this.groupname(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<DViewFields, DViewRow> = Impl(_path)
     }
 
-    val structure: Relation<DViewFields, DViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

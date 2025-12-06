@@ -8,6 +8,7 @@ package adventureworks.public_.flaff;
 import adventureworks.public_.ShortText;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -18,51 +19,47 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface FlaffFields {
-  final class Impl extends Relation<FlaffFields, FlaffRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface FlaffFields extends FieldsExpr<FlaffRow> {
+  record Impl(List<Path> _path) implements FlaffFields, Relation<FlaffFields, FlaffRow> {
+    @Override
+    public IdField<ShortText, FlaffRow> code() {
+      return new IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, Optional.empty(), Optional.of("text"), (row, value) -> row.withCode(value), ShortText.pgType);
+    };
 
     @Override
-    public FlaffFields fields() {
-      return new FlaffFields() {
-               @Override
-               public IdField<ShortText, FlaffRow> code() {
-                 return new IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, Optional.empty(), Optional.of("text"), (row, value) -> row.withCode(value), ShortText.pgType);
-               };
-               @Override
-               public IdField</* max 20 chars */ String, FlaffRow> anotherCode() {
-                 return new IdField</* max 20 chars */ String, FlaffRow>(_path, "another_code", FlaffRow::anotherCode, Optional.empty(), Optional.empty(), (row, value) -> row.withAnotherCode(value), PgTypes.text);
-               };
-               @Override
-               public IdField<Integer, FlaffRow> someNumber() {
-                 return new IdField<Integer, FlaffRow>(_path, "some_number", FlaffRow::someNumber, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSomeNumber(value), PgTypes.int4);
-               };
-               @Override
-               public IdField<ShortText, FlaffRow> specifier() {
-                 return new IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, Optional.empty(), Optional.of("text"), (row, value) -> row.withSpecifier(value), ShortText.pgType);
-               };
-               @Override
-               public OptField<ShortText, FlaffRow> parentspecifier() {
-                 return new OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, Optional.empty(), Optional.of("text"), (row, value) -> row.withParentspecifier(value), ShortText.pgType);
-               };
-             };
+    public IdField</* max 20 chars */ String, FlaffRow> anotherCode() {
+      return new IdField</* max 20 chars */ String, FlaffRow>(_path, "another_code", FlaffRow::anotherCode, Optional.empty(), Optional.empty(), (row, value) -> row.withAnotherCode(value), PgTypes.text);
+    };
+
+    @Override
+    public IdField<Integer, FlaffRow> someNumber() {
+      return new IdField<Integer, FlaffRow>(_path, "some_number", FlaffRow::someNumber, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSomeNumber(value), PgTypes.int4);
+    };
+
+    @Override
+    public IdField<ShortText, FlaffRow> specifier() {
+      return new IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, Optional.empty(), Optional.of("text"), (row, value) -> row.withSpecifier(value), ShortText.pgType);
+    };
+
+    @Override
+    public OptField<ShortText, FlaffRow> parentspecifier() {
+      return new OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, Optional.empty(), Optional.of("text"), (row, value) -> row.withParentspecifier(value), ShortText.pgType);
     };
 
     @Override
     public List<FieldLike<?, FlaffRow>> columns() {
-      return List.of(this.fields().code(), this.fields().anotherCode(), this.fields().someNumber(), this.fields().specifier(), this.fields().parentspecifier());
+      return List.of(this.code(), this.anotherCode(), this.someNumber(), this.specifier(), this.parentspecifier());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<FlaffFields, FlaffRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<FlaffFields, FlaffRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -89,5 +86,13 @@ public interface FlaffFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<FlaffId> compositeIds) {
     return new CompositeIn(List.of(new Part<ShortText, FlaffId, FlaffRow>(code(), FlaffId::code, ShortText.pgType), new Part</* max 20 chars */ String, FlaffId, FlaffRow>(anotherCode(), FlaffId::anotherCode, PgTypes.text), new Part<Integer, FlaffId, FlaffRow>(someNumber(), FlaffId::someNumber, PgTypes.int4), new Part<ShortText, FlaffId, FlaffRow>(specifier(), FlaffId::specifier, ShortText.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, FlaffRow>> columns();
+
+  @Override
+  default RowParser<FlaffRow> rowParser() {
+    return FlaffRow._rowParser;
   };
 }

@@ -66,5 +66,5 @@ case class VCustomerSummaryViewRow(
 )
 
 object VCustomerSummaryViewRow {
-  val `_rowParser`: RowParser[VCustomerSummaryViewRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.text, CustomerStatusId.pgType, MariaTypes.datetime, MariaTypes.datetime.opt(), MariaTypes.bigint, MariaTypes.decimal, MariaTypes.datetime.opt(), VCustomerSummaryViewRow.apply, row => Array(row.customerId, row.email, row.fullName, row.tier, row.status, row.createdAt, row.lastLoginAt, row.totalOrders, row.lifetimeValue, row.lastOrderDate))
+  val `_rowParser`: RowParser[VCustomerSummaryViewRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.text, CustomerStatusId.pgType, MariaTypes.datetime, MariaTypes.datetime.opt(), MariaTypes.bigint, MariaTypes.decimal, MariaTypes.datetime.opt(), VCustomerSummaryViewRow.apply, row => Array[Object](row.customerId.asInstanceOf[Object], row.email.asInstanceOf[Object], row.fullName.asInstanceOf[Object], row.tier.asInstanceOf[Object], row.status.asInstanceOf[Object], row.createdAt.asInstanceOf[Object], row.lastLoginAt.asInstanceOf[Object], row.totalOrders.asInstanceOf[Object], row.lifetimeValue.asInstanceOf[Object], row.lastOrderDate.asInstanceOf[Object]))
 }

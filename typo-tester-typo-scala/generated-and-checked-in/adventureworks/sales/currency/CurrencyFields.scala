@@ -8,65 +8,69 @@ package adventureworks.sales.currency
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait CurrencyFields {
+trait CurrencyFields extends FieldsExpr[CurrencyRow] {
   def currencycode: IdField[CurrencyId, CurrencyRow]
 
   def name: Field[Name, CurrencyRow]
 
   def modifieddate: Field[TypoLocalDateTime, CurrencyRow]
+
+  override def columns: java.util.List[FieldLike[?, CurrencyRow]]
+
+  override def rowParser: RowParser[CurrencyRow] = CurrencyRow._rowParser
 }
 
 object CurrencyFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CurrencyFields, CurrencyRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CurrencyFields with Relation[CurrencyFields, CurrencyRow] {
 
-    override lazy val fields: CurrencyFields = {
-      new CurrencyFields {
-        override def currencycode: IdField[CurrencyId, CurrencyRow] = {
-          new IdField[CurrencyId, CurrencyRow](
-            _path,
-            "currencycode",
-            _.currencycode,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(currencycode = value),
-            CurrencyId.pgType
-          )
-        }
-        override def name: Field[Name, CurrencyRow] = {
-          new Field[Name, CurrencyRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, CurrencyRow] = {
-          new Field[TypoLocalDateTime, CurrencyRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def currencycode: IdField[CurrencyId, CurrencyRow] = {
+      new IdField[CurrencyId, CurrencyRow](
+        _path,
+        "currencycode",
+        _.currencycode,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(currencycode = value),
+        CurrencyId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CurrencyRow]] = java.util.List.of(this.fields.currencycode, this.fields.name, this.fields.modifieddate)
+    override def name: Field[Name, CurrencyRow] = {
+      new Field[Name, CurrencyRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, CurrencyRow] = {
+      new Field[TypoLocalDateTime, CurrencyRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CurrencyRow]] = java.util.List.of(this.currencycode, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CurrencyFields, CurrencyRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CurrencyFields, CurrencyRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -12,68 +12,68 @@ import adventureworks.production.location.LocationId;
 import adventureworks.production.product.ProductId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PiViewFields {
-  final class Impl extends Relation<PiViewFields, PiViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PiViewFields extends FieldsExpr<PiViewRow> {
+  record Impl(List<Path> _path) implements PiViewFields, Relation<PiViewFields, PiViewRow> {
+    @Override
+    public Field<ProductId, PiViewRow> id() {
+      return new Field<ProductId, PiViewRow>(_path, "id", PiViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
+    };
 
     @Override
-    public PiViewFields fields() {
-      return new PiViewFields() {
-               @Override
-               public Field<ProductId, PiViewRow> id() {
-                 return new Field<ProductId, PiViewRow>(_path, "id", PiViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
-               };
-               @Override
-               public Field<ProductId, PiViewRow> productid() {
-                 return new Field<ProductId, PiViewRow>(_path, "productid", PiViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<LocationId, PiViewRow> locationid() {
-                 return new Field<LocationId, PiViewRow>(_path, "locationid", PiViewRow::locationid, Optional.empty(), Optional.empty(), (row, value) -> row.withLocationid(value), LocationId.pgType);
-               };
-               @Override
-               public Field</* max 10 chars */ String, PiViewRow> shelf() {
-                 return new Field</* max 10 chars */ String, PiViewRow>(_path, "shelf", PiViewRow::shelf, Optional.empty(), Optional.empty(), (row, value) -> row.withShelf(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoShort, PiViewRow> bin() {
-                 return new Field<TypoShort, PiViewRow>(_path, "bin", PiViewRow::bin, Optional.empty(), Optional.empty(), (row, value) -> row.withBin(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoShort, PiViewRow> quantity() {
-                 return new Field<TypoShort, PiViewRow>(_path, "quantity", PiViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoUUID, PiViewRow> rowguid() {
-                 return new Field<TypoUUID, PiViewRow>(_path, "rowguid", PiViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PiViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PiViewRow>(_path, "modifieddate", PiViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductId, PiViewRow> productid() {
+      return new Field<ProductId, PiViewRow>(_path, "productid", PiViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<LocationId, PiViewRow> locationid() {
+      return new Field<LocationId, PiViewRow>(_path, "locationid", PiViewRow::locationid, Optional.empty(), Optional.empty(), (row, value) -> row.withLocationid(value), LocationId.pgType);
+    };
+
+    @Override
+    public Field</* max 10 chars */ String, PiViewRow> shelf() {
+      return new Field</* max 10 chars */ String, PiViewRow>(_path, "shelf", PiViewRow::shelf, Optional.empty(), Optional.empty(), (row, value) -> row.withShelf(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoShort, PiViewRow> bin() {
+      return new Field<TypoShort, PiViewRow>(_path, "bin", PiViewRow::bin, Optional.empty(), Optional.empty(), (row, value) -> row.withBin(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, PiViewRow> quantity() {
+      return new Field<TypoShort, PiViewRow>(_path, "quantity", PiViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, PiViewRow> rowguid() {
+      return new Field<TypoUUID, PiViewRow>(_path, "rowguid", PiViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PiViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PiViewRow>(_path, "modifieddate", PiViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PiViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().productid(), this.fields().locationid(), this.fields().shelf(), this.fields().bin(), this.fields().quantity(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.productid(), this.locationid(), this.shelf(), this.bin(), this.quantity(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PiViewFields, PiViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PiViewFields, PiViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -92,4 +92,12 @@ public interface PiViewFields {
   Field<TypoUUID, PiViewRow> rowguid();
 
   Field<TypoLocalDateTime, PiViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PiViewRow>> columns();
+
+  @Override
+  default RowParser<PiViewRow> rowParser() {
+    return PiViewRow._rowParser;
+  };
 }

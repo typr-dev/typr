@@ -12,6 +12,7 @@ import testdb.customer_status.CustomerStatusFields;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customer_status.CustomerStatusRow;
 import typo.data.maria.MariaSet;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -20,87 +21,92 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface CustomersFields {
-  final class Impl extends Relation<CustomersFields, CustomersRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CustomersFields extends FieldsExpr<CustomersRow> {
+  record Impl(List<Path> _path) implements CustomersFields, Relation<CustomersFields, CustomersRow> {
+    @Override
+    public IdField<CustomersId, CustomersRow> customerId() {
+      return new IdField<CustomersId, CustomersRow>(_path, "customer_id", CustomersRow::customerId, Optional.empty(), Optional.empty(), (row, value) -> row.withCustomerId(value), CustomersId.pgType);
+    };
 
     @Override
-    public CustomersFields fields() {
-      return new CustomersFields() {
-               @Override
-               public IdField<CustomersId, CustomersRow> customerId() {
-                 return new IdField<CustomersId, CustomersRow>(_path, "customer_id", CustomersRow::customerId, Optional.empty(), Optional.empty(), (row, value) -> row.withCustomerId(value), CustomersId.pgType);
-               };
-               @Override
-               public Field<String, CustomersRow> email() {
-                 return new Field<String, CustomersRow>(_path, "email", CustomersRow::email, Optional.empty(), Optional.empty(), (row, value) -> row.withEmail(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<byte[], CustomersRow> passwordHash() {
-                 return new Field<byte[], CustomersRow>(_path, "password_hash", CustomersRow::passwordHash, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordHash(value), MariaTypes.binary);
-               };
-               @Override
-               public Field<String, CustomersRow> firstName() {
-                 return new Field<String, CustomersRow>(_path, "first_name", CustomersRow::firstName, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstName(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, CustomersRow> lastName() {
-                 return new Field<String, CustomersRow>(_path, "last_name", CustomersRow::lastName, Optional.empty(), Optional.empty(), (row, value) -> row.withLastName(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, CustomersRow> phone() {
-                 return new OptField<String, CustomersRow>(_path, "phone", CustomersRow::phone, Optional.empty(), Optional.empty(), (row, value) -> row.withPhone(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<CustomerStatusId, CustomersRow> status() {
-                 return new Field<CustomerStatusId, CustomersRow>(_path, "status", CustomersRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), CustomerStatusId.pgType);
-               };
-               @Override
-               public Field<String, CustomersRow> tier() {
-                 return new Field<String, CustomersRow>(_path, "tier", CustomersRow::tier, Optional.empty(), Optional.empty(), (row, value) -> row.withTier(value), MariaTypes.text);
-               };
-               @Override
-               public OptField<String, CustomersRow> preferences() {
-                 return new OptField<String, CustomersRow>(_path, "preferences", CustomersRow::preferences, Optional.empty(), Optional.empty(), (row, value) -> row.withPreferences(value), MariaTypes.longtext);
-               };
-               @Override
-               public OptField<MariaSet, CustomersRow> marketingFlags() {
-                 return new OptField<MariaSet, CustomersRow>(_path, "marketing_flags", CustomersRow::marketingFlags, Optional.empty(), Optional.empty(), (row, value) -> row.withMarketingFlags(value), MariaTypes.set);
-               };
-               @Override
-               public OptField<String, CustomersRow> notes() {
-                 return new OptField<String, CustomersRow>(_path, "notes", CustomersRow::notes, Optional.empty(), Optional.empty(), (row, value) -> row.withNotes(value), MariaTypes.text);
-               };
-               @Override
-               public Field<LocalDateTime, CustomersRow> createdAt() {
-                 return new Field<LocalDateTime, CustomersRow>(_path, "created_at", CustomersRow::createdAt, Optional.empty(), Optional.empty(), (row, value) -> row.withCreatedAt(value), MariaTypes.datetime);
-               };
-               @Override
-               public Field<LocalDateTime, CustomersRow> updatedAt() {
-                 return new Field<LocalDateTime, CustomersRow>(_path, "updated_at", CustomersRow::updatedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withUpdatedAt(value), MariaTypes.datetime);
-               };
-               @Override
-               public OptField<LocalDateTime, CustomersRow> lastLoginAt() {
-                 return new OptField<LocalDateTime, CustomersRow>(_path, "last_login_at", CustomersRow::lastLoginAt, Optional.empty(), Optional.empty(), (row, value) -> row.withLastLoginAt(value), MariaTypes.datetime);
-               };
-             };
+    public Field<String, CustomersRow> email() {
+      return new Field<String, CustomersRow>(_path, "email", CustomersRow::email, Optional.empty(), Optional.empty(), (row, value) -> row.withEmail(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<byte[], CustomersRow> passwordHash() {
+      return new Field<byte[], CustomersRow>(_path, "password_hash", CustomersRow::passwordHash, Optional.empty(), Optional.empty(), (row, value) -> row.withPasswordHash(value), MariaTypes.binary);
+    };
+
+    @Override
+    public Field<String, CustomersRow> firstName() {
+      return new Field<String, CustomersRow>(_path, "first_name", CustomersRow::firstName, Optional.empty(), Optional.empty(), (row, value) -> row.withFirstName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, CustomersRow> lastName() {
+      return new Field<String, CustomersRow>(_path, "last_name", CustomersRow::lastName, Optional.empty(), Optional.empty(), (row, value) -> row.withLastName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, CustomersRow> phone() {
+      return new OptField<String, CustomersRow>(_path, "phone", CustomersRow::phone, Optional.empty(), Optional.empty(), (row, value) -> row.withPhone(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<CustomerStatusId, CustomersRow> status() {
+      return new Field<CustomerStatusId, CustomersRow>(_path, "status", CustomersRow::status, Optional.empty(), Optional.empty(), (row, value) -> row.withStatus(value), CustomerStatusId.pgType);
+    };
+
+    @Override
+    public Field<String, CustomersRow> tier() {
+      return new Field<String, CustomersRow>(_path, "tier", CustomersRow::tier, Optional.empty(), Optional.empty(), (row, value) -> row.withTier(value), MariaTypes.text);
+    };
+
+    @Override
+    public OptField<String, CustomersRow> preferences() {
+      return new OptField<String, CustomersRow>(_path, "preferences", CustomersRow::preferences, Optional.empty(), Optional.empty(), (row, value) -> row.withPreferences(value), MariaTypes.longtext);
+    };
+
+    @Override
+    public OptField<MariaSet, CustomersRow> marketingFlags() {
+      return new OptField<MariaSet, CustomersRow>(_path, "marketing_flags", CustomersRow::marketingFlags, Optional.empty(), Optional.empty(), (row, value) -> row.withMarketingFlags(value), MariaTypes.set);
+    };
+
+    @Override
+    public OptField<String, CustomersRow> notes() {
+      return new OptField<String, CustomersRow>(_path, "notes", CustomersRow::notes, Optional.empty(), Optional.empty(), (row, value) -> row.withNotes(value), MariaTypes.text);
+    };
+
+    @Override
+    public Field<LocalDateTime, CustomersRow> createdAt() {
+      return new Field<LocalDateTime, CustomersRow>(_path, "created_at", CustomersRow::createdAt, Optional.empty(), Optional.empty(), (row, value) -> row.withCreatedAt(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public Field<LocalDateTime, CustomersRow> updatedAt() {
+      return new Field<LocalDateTime, CustomersRow>(_path, "updated_at", CustomersRow::updatedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withUpdatedAt(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public OptField<LocalDateTime, CustomersRow> lastLoginAt() {
+      return new OptField<LocalDateTime, CustomersRow>(_path, "last_login_at", CustomersRow::lastLoginAt, Optional.empty(), Optional.empty(), (row, value) -> row.withLastLoginAt(value), MariaTypes.datetime);
     };
 
     @Override
     public List<FieldLike<?, CustomersRow>> columns() {
-      return List.of(this.fields().customerId(), this.fields().email(), this.fields().passwordHash(), this.fields().firstName(), this.fields().lastName(), this.fields().phone(), this.fields().status(), this.fields().tier(), this.fields().preferences(), this.fields().marketingFlags(), this.fields().notes(), this.fields().createdAt(), this.fields().updatedAt(), this.fields().lastLoginAt());
+      return List.of(this.customerId(), this.email(), this.passwordHash(), this.firstName(), this.lastName(), this.phone(), this.status(), this.tier(), this.preferences(), this.marketingFlags(), this.notes(), this.createdAt(), this.updatedAt(), this.lastLoginAt());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CustomersFields, CustomersRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CustomersFields, CustomersRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -134,5 +140,13 @@ public interface CustomersFields {
 
   default ForeignKey<CustomerStatusFields, CustomerStatusRow> fkCustomerStatus() {
     return ForeignKey.<CustomerStatusFields, CustomerStatusRow>of("fk_customer_status").withColumnPair(status(), CustomerStatusFields::statusCode);
+  };
+
+  @Override
+  List<FieldLike<?, CustomersRow>> columns();
+
+  @Override
+  default RowParser<CustomersRow> rowParser() {
+    return CustomersRow._rowParser;
   };
 }

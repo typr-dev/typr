@@ -11,55 +11,52 @@ import adventureworks.person.phonenumbertype.PhonenumbertypeId;
 import adventureworks.public_.Phone;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PpViewFields {
-  final class Impl extends Relation<PpViewFields, PpViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PpViewFields extends FieldsExpr<PpViewRow> {
+  record Impl(List<Path> _path) implements PpViewFields, Relation<PpViewFields, PpViewRow> {
+    @Override
+    public Field<BusinessentityId, PpViewRow> id() {
+      return new Field<BusinessentityId, PpViewRow>(_path, "id", PpViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public PpViewFields fields() {
-      return new PpViewFields() {
-               @Override
-               public Field<BusinessentityId, PpViewRow> id() {
-                 return new Field<BusinessentityId, PpViewRow>(_path, "id", PpViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, PpViewRow> businessentityid() {
-                 return new Field<BusinessentityId, PpViewRow>(_path, "businessentityid", PpViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<Phone, PpViewRow> phonenumber() {
-                 return new Field<Phone, PpViewRow>(_path, "phonenumber", PpViewRow::phonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumber(value), Phone.pgType);
-               };
-               @Override
-               public Field<PhonenumbertypeId, PpViewRow> phonenumbertypeid() {
-                 return new Field<PhonenumbertypeId, PpViewRow>(_path, "phonenumbertypeid", PpViewRow::phonenumbertypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PpViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PpViewRow>(_path, "modifieddate", PpViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, PpViewRow> businessentityid() {
+      return new Field<BusinessentityId, PpViewRow>(_path, "businessentityid", PpViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<Phone, PpViewRow> phonenumber() {
+      return new Field<Phone, PpViewRow>(_path, "phonenumber", PpViewRow::phonenumber, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumber(value), Phone.pgType);
+    };
+
+    @Override
+    public Field<PhonenumbertypeId, PpViewRow> phonenumbertypeid() {
+      return new Field<PhonenumbertypeId, PpViewRow>(_path, "phonenumbertypeid", PpViewRow::phonenumbertypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withPhonenumbertypeid(value), PhonenumbertypeId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PpViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PpViewRow>(_path, "modifieddate", PpViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PpViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().phonenumber(), this.fields().phonenumbertypeid(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.phonenumber(), this.phonenumbertypeid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PpViewFields, PpViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PpViewFields, PpViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -72,4 +69,12 @@ public interface PpViewFields {
   Field<PhonenumbertypeId, PpViewRow> phonenumbertypeid();
 
   Field<TypoLocalDateTime, PpViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PpViewRow>> columns();
+
+  @Override
+  default RowParser<PpViewRow> rowParser() {
+    return PpViewRow._rowParser;
+  };
 }

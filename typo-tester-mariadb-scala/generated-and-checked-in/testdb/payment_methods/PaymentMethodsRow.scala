@@ -59,7 +59,7 @@ case class PaymentMethodsRow(
 }
 
 object PaymentMethodsRow {
-  val `_rowParser`: RowParser[PaymentMethodsRow] = RowParsers.of(PaymentMethodsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.longtext.opt(), MariaTypes.bool, MariaTypes.tinyint, PaymentMethodsRow.apply, row => Array(row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder))
+  val `_rowParser`: RowParser[PaymentMethodsRow] = RowParsers.of(PaymentMethodsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.longtext.opt(), MariaTypes.bool, MariaTypes.tinyint, PaymentMethodsRow.apply, row => Array[Object](row.methodId.asInstanceOf[Object], row.code.asInstanceOf[Object], row.name.asInstanceOf[Object], row.methodType.asInstanceOf[Object], row.processorConfig.asInstanceOf[Object], row.isActive.asInstanceOf[Object], row.sortOrder.asInstanceOf[Object]))
 
   given mariaText: MariaText[PaymentMethodsRow] = MariaText.from(`_rowParser`)
 }

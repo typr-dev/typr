@@ -10,55 +10,52 @@ import adventureworks.humanresources.department.DepartmentId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface DViewFields {
-  final class Impl extends Relation<DViewFields, DViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface DViewFields extends FieldsExpr<DViewRow> {
+  record Impl(List<Path> _path) implements DViewFields, Relation<DViewFields, DViewRow> {
+    @Override
+    public Field<DepartmentId, DViewRow> id() {
+      return new Field<DepartmentId, DViewRow>(_path, "id", DViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), DepartmentId.pgType);
+    };
 
     @Override
-    public DViewFields fields() {
-      return new DViewFields() {
-               @Override
-               public Field<DepartmentId, DViewRow> id() {
-                 return new Field<DepartmentId, DViewRow>(_path, "id", DViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), DepartmentId.pgType);
-               };
-               @Override
-               public Field<DepartmentId, DViewRow> departmentid() {
-                 return new Field<DepartmentId, DViewRow>(_path, "departmentid", DViewRow::departmentid, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
-               };
-               @Override
-               public Field<Name, DViewRow> name() {
-                 return new Field<Name, DViewRow>(_path, "name", DViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, DViewRow> groupname() {
-                 return new Field<Name, DViewRow>(_path, "groupname", DViewRow::groupname, Optional.empty(), Optional.empty(), (row, value) -> row.withGroupname(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, DViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, DViewRow>(_path, "modifieddate", DViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<DepartmentId, DViewRow> departmentid() {
+      return new Field<DepartmentId, DViewRow>(_path, "departmentid", DViewRow::departmentid, Optional.empty(), Optional.empty(), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
+    };
+
+    @Override
+    public Field<Name, DViewRow> name() {
+      return new Field<Name, DViewRow>(_path, "name", DViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, DViewRow> groupname() {
+      return new Field<Name, DViewRow>(_path, "groupname", DViewRow::groupname, Optional.empty(), Optional.empty(), (row, value) -> row.withGroupname(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, DViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, DViewRow>(_path, "modifieddate", DViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, DViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().departmentid(), this.fields().name(), this.fields().groupname(), this.fields().modifieddate());
+      return List.of(this.id(), this.departmentid(), this.name(), this.groupname(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<DViewFields, DViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<DViewFields, DViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -71,4 +68,12 @@ public interface DViewFields {
   Field<Name, DViewRow> groupname();
 
   Field<TypoLocalDateTime, DViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, DViewRow>> columns();
+
+  @Override
+  default RowParser<DViewRow> rowParser() {
+    return DViewRow._rowParser;
+  };
 }

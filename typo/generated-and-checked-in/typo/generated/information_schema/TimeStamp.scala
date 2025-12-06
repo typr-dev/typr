@@ -5,9 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package information_schema
+package typo.generated.information_schema
 
 import anorm.Column
 import anorm.ParameterMetaData
@@ -15,26 +13,38 @@ import anorm.ToStatement
 import java.sql.Types
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
+import typo.generated.Text
 import typo.generated.customtypes.TypoInstant
 
 /** Domain `information_schema.time_stamp`
-  * No constraint
-  */
+ * No constraint
+ */
 case class TimeStamp(value: TypoInstant)
+
 object TimeStamp {
   implicit lazy val arrayColumn: Column[Array[TimeStamp]] = Column.columnToArray(column, implicitly)
+
   implicit lazy val arrayToStatement: ToStatement[Array[TimeStamp]] = TypoInstant.arrayToStatement.contramap(_.map(_.value))
+
   implicit lazy val column: Column[TimeStamp] = TypoInstant.column.map(TimeStamp.apply)
-  implicit def ordering(implicit O0: Ordering[TypoInstant]): Ordering[TimeStamp] = Ordering.by(_.value)
-  implicit lazy val parameterMetadata: ParameterMetaData[TimeStamp] = new ParameterMetaData[TimeStamp] {
-    override def sqlType: String = """"information_schema"."time_stamp""""
-    override def jdbcType: Int = Types.OTHER
+
+  implicit lazy val parameterMetadata: ParameterMetaData[TimeStamp] = {
+    new ParameterMetaData[TimeStamp] {
+      override def sqlType: String = """"information_schema"."time_stamp""""
+      override def jdbcType: Int = Types.OTHER
+    }
   }
+
+  implicit lazy val pgText: Text[TimeStamp] = {
+    new Text[TimeStamp] {
+      override def unsafeEncode(v: TimeStamp, sb: StringBuilder): Unit = TypoInstant.pgText.unsafeEncode(v.value, sb)
+      override def unsafeArrayEncode(v: TimeStamp, sb: StringBuilder): Unit = TypoInstant.pgText.unsafeArrayEncode(v.value, sb)
+    }
+  }
+
   implicit lazy val reads: Reads[TimeStamp] = TypoInstant.reads.map(TimeStamp.apply)
-  implicit lazy val text: Text[TimeStamp] = new Text[TimeStamp] {
-    override def unsafeEncode(v: TimeStamp, sb: StringBuilder) = TypoInstant.text.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: TimeStamp, sb: StringBuilder) = TypoInstant.text.unsafeArrayEncode(v.value, sb)
-  }
+
   implicit lazy val toStatement: ToStatement[TimeStamp] = TypoInstant.toStatement.contramap(_.value)
+
   implicit lazy val writes: Writes[TimeStamp] = TypoInstant.writes.contramap(_.value)
 }

@@ -12,59 +12,57 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface PscViewFields {
-  final class Impl extends Relation<PscViewFields, PscViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PscViewFields extends FieldsExpr<PscViewRow> {
+  record Impl(List<Path> _path) implements PscViewFields, Relation<PscViewFields, PscViewRow> {
+    @Override
+    public Field<ProductsubcategoryId, PscViewRow> id() {
+      return new Field<ProductsubcategoryId, PscViewRow>(_path, "id", PscViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductsubcategoryId.pgType);
+    };
 
     @Override
-    public PscViewFields fields() {
-      return new PscViewFields() {
-               @Override
-               public Field<ProductsubcategoryId, PscViewRow> id() {
-                 return new Field<ProductsubcategoryId, PscViewRow>(_path, "id", PscViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductsubcategoryId.pgType);
-               };
-               @Override
-               public Field<ProductsubcategoryId, PscViewRow> productsubcategoryid() {
-                 return new Field<ProductsubcategoryId, PscViewRow>(_path, "productsubcategoryid", PscViewRow::productsubcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductsubcategoryid(value), ProductsubcategoryId.pgType);
-               };
-               @Override
-               public Field<ProductcategoryId, PscViewRow> productcategoryid() {
-                 return new Field<ProductcategoryId, PscViewRow>(_path, "productcategoryid", PscViewRow::productcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
-               };
-               @Override
-               public Field<Name, PscViewRow> name() {
-                 return new Field<Name, PscViewRow>(_path, "name", PscViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoUUID, PscViewRow> rowguid() {
-                 return new Field<TypoUUID, PscViewRow>(_path, "rowguid", PscViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PscViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PscViewRow>(_path, "modifieddate", PscViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductsubcategoryId, PscViewRow> productsubcategoryid() {
+      return new Field<ProductsubcategoryId, PscViewRow>(_path, "productsubcategoryid", PscViewRow::productsubcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductsubcategoryid(value), ProductsubcategoryId.pgType);
+    };
+
+    @Override
+    public Field<ProductcategoryId, PscViewRow> productcategoryid() {
+      return new Field<ProductcategoryId, PscViewRow>(_path, "productcategoryid", PscViewRow::productcategoryid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductcategoryid(value), ProductcategoryId.pgType);
+    };
+
+    @Override
+    public Field<Name, PscViewRow> name() {
+      return new Field<Name, PscViewRow>(_path, "name", PscViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, PscViewRow> rowguid() {
+      return new Field<TypoUUID, PscViewRow>(_path, "rowguid", PscViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PscViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PscViewRow>(_path, "modifieddate", PscViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PscViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().productsubcategoryid(), this.fields().productcategoryid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.productsubcategoryid(), this.productcategoryid(), this.name(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PscViewFields, PscViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PscViewFields, PscViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -79,4 +77,12 @@ public interface PscViewFields {
   Field<TypoUUID, PscViewRow> rowguid();
 
   Field<TypoLocalDateTime, PscViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PscViewRow>> columns();
+
+  @Override
+  default RowParser<PscViewRow> rowParser() {
+    return PscViewRow._rowParser;
+  };
 }

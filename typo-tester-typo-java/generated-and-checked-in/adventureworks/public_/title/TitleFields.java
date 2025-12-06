@@ -7,41 +7,42 @@ package adventureworks.public_.title;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface TitleFields {
-  final class Impl extends Relation<TitleFields, TitleRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
-
+public interface TitleFields extends FieldsExpr<TitleRow> {
+  record Impl(List<Path> _path) implements TitleFields, Relation<TitleFields, TitleRow> {
     @Override
-    public TitleFields fields() {
-      return new TitleFields() {
-               @Override
-               public IdField<TitleId, TitleRow> code() {
-                 return new IdField<TitleId, TitleRow>(_path, "code", TitleRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), TitleId.pgType);
-               };
-             };
+    public IdField<TitleId, TitleRow> code() {
+      return new IdField<TitleId, TitleRow>(_path, "code", TitleRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), TitleId.pgType);
     };
 
     @Override
     public List<FieldLike<?, TitleRow>> columns() {
-      return List.of(this.fields().code());
+      return List.of(this.code());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<TitleFields, TitleRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<TitleFields, TitleRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
   IdField<TitleId, TitleRow> code();
+
+  @Override
+  List<FieldLike<?, TitleRow>> columns();
+
+  @Override
+  default RowParser<TitleRow> rowParser() {
+    return TitleRow._rowParser;
+  };
 }

@@ -8,47 +8,26 @@ import java.util.stream.Collectors;
  * Calculates aliases for all unique list of Paths in a select query.
  * This is used to evaluate expressions from an SqlExpr when we have joined relations.
  */
-public class RenderCtx {
-
+public record RenderCtx(
     // Map from path to alias
-    private final Map<List<Path>, String> aliasMap;
+    Map<List<Path>, String> aliasMap,
     // Dialect for quoting identifiers and type casts
-    private final Dialect dialect;
+    Dialect dialect,
     // Whether we're rendering in a join context (referencing CTEs vs actual tables)
-    private final boolean inJoinContext;
+    boolean inJoinContext,
     // When in join context, maps base aliases to the CTE name that contains them
     // e.g., if join_cte1 contains columns from publictitledperson0, maps publictitledperson0 -> join_cte1
-    private final Map<String, String> aliasToCteMap;
-
-    private RenderCtx(Map<List<Path>, String> aliasMap, Dialect dialect, boolean inJoinContext, Map<String, String> aliasToCteMap) {
-        this.aliasMap = aliasMap;
-        this.dialect = dialect;
-        this.inJoinContext = inJoinContext;
-        this.aliasToCteMap = aliasToCteMap;
-    }
-
-    /**
-     * Get the dialect for this context.
-     */
-    public Dialect dialect() {
-        return dialect;
-    }
-
-    /**
-     * Check if we're rendering in a join context.
-     * In join context, column references should use unique alias format (alias.alias_column)
-     * to reference CTE outputs. In base context, column references should use
-     * (alias)."column" to reference actual table columns.
-     */
-    public boolean inJoinContext() {
-        return inJoinContext;
-    }
+    Map<String, String> aliasToCteMap,
+    // Map from projected SqlExpr (by identity) to column reference (e.g., "projected.proj_0")
+    // Used when rendering correlation predicates that reference projected columns
+    IdentityHashMap<SqlExpr<?>, String> projectedExprMap
+) {
 
     /**
      * Create a copy of this context with join context flag set.
      */
     public RenderCtx withJoinContext(boolean joinContext) {
-        return new RenderCtx(aliasMap, dialect, joinContext, aliasToCteMap);
+        return new RenderCtx(aliasMap, dialect, joinContext, aliasToCteMap, projectedExprMap);
     }
 
     /**
@@ -56,7 +35,26 @@ public class RenderCtx {
      * This maps base table aliases to the CTE name that actually contains those columns.
      */
     public RenderCtx withAliasToCteMap(Map<String, String> aliasToCteMap) {
-        return new RenderCtx(aliasMap, dialect, inJoinContext, aliasToCteMap);
+        return new RenderCtx(aliasMap, dialect, inJoinContext, aliasToCteMap, projectedExprMap);
+    }
+
+    /**
+     * Create a copy of this context with projected expression mapping.
+     * Used for rendering correlation predicates that reference projected columns.
+     */
+    public RenderCtx withProjectedExprMap(IdentityHashMap<SqlExpr<?>, String> projectedExprMap) {
+        return new RenderCtx(aliasMap, dialect, inJoinContext, aliasToCteMap, projectedExprMap);
+    }
+
+    /**
+     * Get the projected column reference for an expression, if it was a projected expression.
+     * Returns Optional.empty() if the expression is not a projected expression.
+     */
+    public Optional<String> projectedColumnRef(SqlExpr<?> expr) {
+        if (projectedExprMap == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(projectedExprMap.get(expr));
     }
 
     /**
@@ -71,7 +69,7 @@ public class RenderCtx {
      * Create a simple RenderCtx with just a dialect (no alias map).
      */
     public static RenderCtx of(Dialect dialect) {
-        return new RenderCtx(Map.of(), dialect, false, Map.of());
+        return new RenderCtx(Map.of(), dialect, false, Map.of(), null);
     }
 
     /**
@@ -79,7 +77,7 @@ public class RenderCtx {
      */
     public static RenderCtx from(SelectBuilder<?, ?> builder, Dialect dialect) {
         if (!(builder instanceof SelectBuilderSql<?, ?> sqlBuilder)) {
-            return new RenderCtx(Map.of(), dialect, false, Map.of());
+            return new RenderCtx(Map.of(), dialect, false, Map.of(), null);
         }
         return fromSql(sqlBuilder, dialect);
     }
@@ -109,7 +107,7 @@ public class RenderCtx {
             }
         }
 
-        return new RenderCtx(aliasMap, dialect, false, Map.of());
+        return new RenderCtx(aliasMap, dialect, false, Map.of(), null);
     }
 
     private static List<PathAndName> findPathsAndTableNames(SelectBuilderSql<?, ?> builder) {
@@ -122,16 +120,16 @@ public class RenderCtx {
         if (builder instanceof SelectBuilderSql.Relation<?, ?> relation) {
             // Extract table name and filter to alphanumeric chars
             String tableName = filterAlphanumeric(relation.name());
-            result.add(new PathAndName(relation.structure().path(), tableName));
+            result.add(new PathAndName(relation.structure()._path(), tableName));
         } else if (builder instanceof SelectBuilderSql.TableJoin<?, ?, ?, ?> join) {
             // Add entry for the join itself
-            result.add(new PathAndName(join.structure().path(), "join_cte"));
+            result.add(new PathAndName(join.structure()._path(), "join_cte"));
             // Recursively process left and right
             findPathsAndTableNamesRecursive(join.left(), result);
             findPathsAndTableNamesRecursive(join.right(), result);
         } else if (builder instanceof SelectBuilderSql.TableLeftJoin<?, ?, ?, ?> leftJoin) {
             // Add entry for the left join itself
-            result.add(new PathAndName(leftJoin.structure().path(), "left_join_cte"));
+            result.add(new PathAndName(leftJoin.structure()._path(), "left_join_cte"));
             // Recursively process left and right
             findPathsAndTableNamesRecursive(leftJoin.left(), result);
             findPathsAndTableNamesRecursive(leftJoin.right(), result);
@@ -190,6 +188,32 @@ public class RenderCtx {
      */
     public Optional<String> alias(Path path) {
         return alias(List.of(path));
+    }
+
+    /**
+     * Create a context specifically for rendering correlation predicates in correlated subqueries.
+     * Maps the parent structure path to the parent table alias, and child structure path to child table alias.
+     */
+    public static RenderCtx forCorrelation(List<Path> parentPath, String parentAlias,
+                                           List<Path> childPath, String childAlias,
+                                           Dialect dialect) {
+        Map<List<Path>, String> aliasMap = new HashMap<>();
+        aliasMap.put(parentPath, parentAlias);
+        aliasMap.put(childPath, childAlias);
+        return new RenderCtx(aliasMap, dialect, true, Map.of(), null);
+    }
+
+    /**
+     * Create a context for rendering correlation predicates where the parent is a projected query.
+     * The projected expressions are mapped by identity to their column references.
+     */
+    public static RenderCtx forProjectedCorrelation(
+            IdentityHashMap<SqlExpr<?>, String> projectedExprMap,
+            List<Path> childPath, String childAlias,
+            Dialect dialect) {
+        Map<List<Path>, String> aliasMap = new HashMap<>();
+        aliasMap.put(childPath, childAlias);
+        return new RenderCtx(aliasMap, dialect, true, Map.of(), projectedExprMap);
     }
 
     // Internal record to hold path and table name pairs

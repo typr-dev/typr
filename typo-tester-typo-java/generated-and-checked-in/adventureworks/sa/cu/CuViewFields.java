@@ -10,51 +10,47 @@ import adventureworks.public_.Name;
 import adventureworks.sales.currency.CurrencyId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CuViewFields {
-  final class Impl extends Relation<CuViewFields, CuViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CuViewFields extends FieldsExpr<CuViewRow> {
+  record Impl(List<Path> _path) implements CuViewFields, Relation<CuViewFields, CuViewRow> {
+    @Override
+    public Field<CurrencyId, CuViewRow> id() {
+      return new Field<CurrencyId, CuViewRow>(_path, "id", CuViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CurrencyId.pgType);
+    };
 
     @Override
-    public CuViewFields fields() {
-      return new CuViewFields() {
-               @Override
-               public Field<CurrencyId, CuViewRow> id() {
-                 return new Field<CurrencyId, CuViewRow>(_path, "id", CuViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CurrencyId.pgType);
-               };
-               @Override
-               public Field<CurrencyId, CuViewRow> currencycode() {
-                 return new Field<CurrencyId, CuViewRow>(_path, "currencycode", CuViewRow::currencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
-               };
-               @Override
-               public Field<Name, CuViewRow> name() {
-                 return new Field<Name, CuViewRow>(_path, "name", CuViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CuViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CuViewRow>(_path, "modifieddate", CuViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<CurrencyId, CuViewRow> currencycode() {
+      return new Field<CurrencyId, CuViewRow>(_path, "currencycode", CuViewRow::currencycode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencycode(value), CurrencyId.pgType);
+    };
+
+    @Override
+    public Field<Name, CuViewRow> name() {
+      return new Field<Name, CuViewRow>(_path, "name", CuViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CuViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CuViewRow>(_path, "modifieddate", CuViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CuViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().currencycode(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.id(), this.currencycode(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CuViewFields, CuViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CuViewFields, CuViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface CuViewFields {
   Field<Name, CuViewRow> name();
 
   Field<TypoLocalDateTime, CuViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CuViewRow>> columns();
+
+  @Override
+  default RowParser<CuViewRow> rowParser() {
+    return CuViewRow._rowParser;
+  };
 }

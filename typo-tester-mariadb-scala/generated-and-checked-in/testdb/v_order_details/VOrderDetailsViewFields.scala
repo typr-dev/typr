@@ -8,14 +8,16 @@ package testdb.v_order_details
 import java.time.LocalDateTime
 import java.util.Optional
 import testdb.orders.OrdersId
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait VOrderDetailsViewFields {
+trait VOrderDetailsViewFields extends FieldsExpr[VOrderDetailsViewRow] {
   def orderId: Field[OrdersId, VOrderDetailsViewRow]
 
   def orderNumber: Field[String, VOrderDetailsViewRow]
@@ -43,174 +45,187 @@ trait VOrderDetailsViewFields {
   def shippingStatus: OptField[String, VOrderDetailsViewRow]
 
   def carrierName: OptField[String, VOrderDetailsViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VOrderDetailsViewRow]]
+
+  override def rowParser: RowParser[VOrderDetailsViewRow] = VOrderDetailsViewRow._rowParser
 }
 
 object VOrderDetailsViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VOrderDetailsViewFields, VOrderDetailsViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VOrderDetailsViewFields with Relation[VOrderDetailsViewFields, VOrderDetailsViewRow] {
 
-    override lazy val fields: VOrderDetailsViewFields = {
-      new VOrderDetailsViewFields {
-        override def orderId: Field[OrdersId, VOrderDetailsViewRow] = {
-          new Field[OrdersId, VOrderDetailsViewRow](
-            _path,
-            "order_id",
-            _.orderId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderId = value),
-            OrdersId.pgType
-          )
-        }
-        override def orderNumber: Field[String, VOrderDetailsViewRow] = {
-          new Field[String, VOrderDetailsViewRow](
-            _path,
-            "order_number",
-            _.orderNumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderNumber = value),
-            MariaTypes.varchar
-          )
-        }
-        override def orderStatus: Field[String, VOrderDetailsViewRow] = {
-          new Field[String, VOrderDetailsViewRow](
-            _path,
-            "order_status",
-            _.orderStatus,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderStatus = value),
-            MariaTypes.text
-          )
-        }
-        override def paymentStatus: Field[String, VOrderDetailsViewRow] = {
-          new Field[String, VOrderDetailsViewRow](
-            _path,
-            "payment_status",
-            _.paymentStatus,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(paymentStatus = value),
-            MariaTypes.text
-          )
-        }
-        override def totalAmount: Field[java.math.BigDecimal, VOrderDetailsViewRow] = {
-          new Field[java.math.BigDecimal, VOrderDetailsViewRow](
-            _path,
-            "total_amount",
-            _.totalAmount,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(totalAmount = value),
-            MariaTypes.decimal
-          )
-        }
-        override def currencyCode: Field[String, VOrderDetailsViewRow] = {
-          new Field[String, VOrderDetailsViewRow](
-            _path,
-            "currency_code",
-            _.currencyCode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(currencyCode = value),
-            MariaTypes.char_
-          )
-        }
-        override def orderedAt: Field[LocalDateTime, VOrderDetailsViewRow] = {
-          new Field[LocalDateTime, VOrderDetailsViewRow](
-            _path,
-            "ordered_at",
-            _.orderedAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderedAt = value),
-            MariaTypes.datetime
-          )
-        }
-        override def customerEmail: Field[String, VOrderDetailsViewRow] = {
-          new Field[String, VOrderDetailsViewRow](
-            _path,
-            "customer_email",
-            _.customerEmail,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(customerEmail = value),
-            MariaTypes.varchar
-          )
-        }
-        override def customerName: OptField[String, VOrderDetailsViewRow] = {
-          new OptField[String, VOrderDetailsViewRow](
-            _path,
-            "customer_name",
-            _.customerName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(customerName = value),
-            MariaTypes.varchar
-          )
-        }
-        override def itemCount: Field[java.lang.Long, VOrderDetailsViewRow] = {
-          new Field[java.lang.Long, VOrderDetailsViewRow](
-            _path,
-            "item_count",
-            _.itemCount,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(itemCount = value),
-            MariaTypes.bigint
-          )
-        }
-        override def totalQuantity: OptField[java.math.BigDecimal, VOrderDetailsViewRow] = {
-          new OptField[java.math.BigDecimal, VOrderDetailsViewRow](
-            _path,
-            "total_quantity",
-            _.totalQuantity,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(totalQuantity = value),
-            MariaTypes.decimal
-          )
-        }
-        override def trackingNumber: OptField[String, VOrderDetailsViewRow] = {
-          new OptField[String, VOrderDetailsViewRow](
-            _path,
-            "tracking_number",
-            _.trackingNumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(trackingNumber = value),
-            MariaTypes.varchar
-          )
-        }
-        override def shippingStatus: OptField[String, VOrderDetailsViewRow] = {
-          new OptField[String, VOrderDetailsViewRow](
-            _path,
-            "shipping_status",
-            _.shippingStatus,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shippingStatus = value),
-            MariaTypes.text
-          )
-        }
-        override def carrierName: OptField[String, VOrderDetailsViewRow] = {
-          new OptField[String, VOrderDetailsViewRow](
-            _path,
-            "carrier_name",
-            _.carrierName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(carrierName = value),
-            MariaTypes.varchar
-          )
-        }
-      }
+    override def orderId: Field[OrdersId, VOrderDetailsViewRow] = {
+      new Field[OrdersId, VOrderDetailsViewRow](
+        _path,
+        "order_id",
+        _.orderId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderId = value),
+        OrdersId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VOrderDetailsViewRow]] = java.util.List.of(this.fields.orderId, this.fields.orderNumber, this.fields.orderStatus, this.fields.paymentStatus, this.fields.totalAmount, this.fields.currencyCode, this.fields.orderedAt, this.fields.customerEmail, this.fields.customerName, this.fields.itemCount, this.fields.totalQuantity, this.fields.trackingNumber, this.fields.shippingStatus, this.fields.carrierName)
+    override def orderNumber: Field[String, VOrderDetailsViewRow] = {
+      new Field[String, VOrderDetailsViewRow](
+        _path,
+        "order_number",
+        _.orderNumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderNumber = value),
+        MariaTypes.varchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def orderStatus: Field[String, VOrderDetailsViewRow] = {
+      new Field[String, VOrderDetailsViewRow](
+        _path,
+        "order_status",
+        _.orderStatus,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderStatus = value),
+        MariaTypes.text
+      )
+    }
+
+    override def paymentStatus: Field[String, VOrderDetailsViewRow] = {
+      new Field[String, VOrderDetailsViewRow](
+        _path,
+        "payment_status",
+        _.paymentStatus,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(paymentStatus = value),
+        MariaTypes.text
+      )
+    }
+
+    override def totalAmount: Field[java.math.BigDecimal, VOrderDetailsViewRow] = {
+      new Field[java.math.BigDecimal, VOrderDetailsViewRow](
+        _path,
+        "total_amount",
+        _.totalAmount,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(totalAmount = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def currencyCode: Field[String, VOrderDetailsViewRow] = {
+      new Field[String, VOrderDetailsViewRow](
+        _path,
+        "currency_code",
+        _.currencyCode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(currencyCode = value),
+        MariaTypes.char_
+      )
+    }
+
+    override def orderedAt: Field[LocalDateTime, VOrderDetailsViewRow] = {
+      new Field[LocalDateTime, VOrderDetailsViewRow](
+        _path,
+        "ordered_at",
+        _.orderedAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderedAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def customerEmail: Field[String, VOrderDetailsViewRow] = {
+      new Field[String, VOrderDetailsViewRow](
+        _path,
+        "customer_email",
+        _.customerEmail,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(customerEmail = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def customerName: OptField[String, VOrderDetailsViewRow] = {
+      new OptField[String, VOrderDetailsViewRow](
+        _path,
+        "customer_name",
+        _.customerName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(customerName = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def itemCount: Field[java.lang.Long, VOrderDetailsViewRow] = {
+      new Field[java.lang.Long, VOrderDetailsViewRow](
+        _path,
+        "item_count",
+        _.itemCount,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(itemCount = value),
+        MariaTypes.bigint
+      )
+    }
+
+    override def totalQuantity: OptField[java.math.BigDecimal, VOrderDetailsViewRow] = {
+      new OptField[java.math.BigDecimal, VOrderDetailsViewRow](
+        _path,
+        "total_quantity",
+        _.totalQuantity,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(totalQuantity = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def trackingNumber: OptField[String, VOrderDetailsViewRow] = {
+      new OptField[String, VOrderDetailsViewRow](
+        _path,
+        "tracking_number",
+        _.trackingNumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(trackingNumber = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def shippingStatus: OptField[String, VOrderDetailsViewRow] = {
+      new OptField[String, VOrderDetailsViewRow](
+        _path,
+        "shipping_status",
+        _.shippingStatus,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shippingStatus = value),
+        MariaTypes.text
+      )
+    }
+
+    override def carrierName: OptField[String, VOrderDetailsViewRow] = {
+      new OptField[String, VOrderDetailsViewRow](
+        _path,
+        "carrier_name",
+        _.carrierName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(carrierName = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VOrderDetailsViewRow]] = java.util.List.of(this.orderId, this.orderNumber, this.orderStatus, this.paymentStatus, this.totalAmount, this.currencyCode, this.orderedAt, this.customerEmail, this.customerName, this.itemCount, this.totalQuantity, this.trackingNumber, this.shippingStatus, this.carrierName)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VOrderDetailsViewFields, VOrderDetailsViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VOrderDetailsViewFields, VOrderDetailsViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -7,6 +7,7 @@ package adventureworks.public_.only_pk_columns;
 
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
 import typo.dsl.SqlExpr.CompositeIn;
@@ -15,39 +16,32 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface OnlyPkColumnsFields {
-  final class Impl extends Relation<OnlyPkColumnsFields, OnlyPkColumnsRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface OnlyPkColumnsFields extends FieldsExpr<OnlyPkColumnsRow> {
+  record Impl(List<Path> _path) implements OnlyPkColumnsFields, Relation<OnlyPkColumnsFields, OnlyPkColumnsRow> {
+    @Override
+    public IdField<String, OnlyPkColumnsRow> keyColumn1() {
+      return new IdField<String, OnlyPkColumnsRow>(_path, "key_column_1", OnlyPkColumnsRow::keyColumn1, Optional.empty(), Optional.empty(), (row, value) -> row.withKeyColumn1(value), PgTypes.text);
+    };
 
     @Override
-    public OnlyPkColumnsFields fields() {
-      return new OnlyPkColumnsFields() {
-               @Override
-               public IdField<String, OnlyPkColumnsRow> keyColumn1() {
-                 return new IdField<String, OnlyPkColumnsRow>(_path, "key_column_1", OnlyPkColumnsRow::keyColumn1, Optional.empty(), Optional.empty(), (row, value) -> row.withKeyColumn1(value), PgTypes.text);
-               };
-               @Override
-               public IdField<Integer, OnlyPkColumnsRow> keyColumn2() {
-                 return new IdField<Integer, OnlyPkColumnsRow>(_path, "key_column_2", OnlyPkColumnsRow::keyColumn2, Optional.empty(), Optional.of("int4"), (row, value) -> row.withKeyColumn2(value), PgTypes.int4);
-               };
-             };
+    public IdField<Integer, OnlyPkColumnsRow> keyColumn2() {
+      return new IdField<Integer, OnlyPkColumnsRow>(_path, "key_column_2", OnlyPkColumnsRow::keyColumn2, Optional.empty(), Optional.of("int4"), (row, value) -> row.withKeyColumn2(value), PgTypes.int4);
     };
 
     @Override
     public List<FieldLike<?, OnlyPkColumnsRow>> columns() {
-      return List.of(this.fields().keyColumn1(), this.fields().keyColumn2());
+      return List.of(this.keyColumn1(), this.keyColumn2());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<OnlyPkColumnsFields, OnlyPkColumnsRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<OnlyPkColumnsFields, OnlyPkColumnsRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -61,5 +55,13 @@ public interface OnlyPkColumnsFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<OnlyPkColumnsId> compositeIds) {
     return new CompositeIn(List.of(new Part<String, OnlyPkColumnsId, OnlyPkColumnsRow>(keyColumn1(), OnlyPkColumnsId::keyColumn1, PgTypes.text), new Part<Integer, OnlyPkColumnsId, OnlyPkColumnsRow>(keyColumn2(), OnlyPkColumnsId::keyColumn2, PgTypes.int4)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, OnlyPkColumnsRow>> columns();
+
+  @Override
+  default RowParser<OnlyPkColumnsRow> rowParser() {
+    return OnlyPkColumnsRow._rowParser;
   };
 }

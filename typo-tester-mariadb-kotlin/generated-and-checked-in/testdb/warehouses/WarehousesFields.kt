@@ -9,6 +9,7 @@ import java.util.Optional
 import kotlin.collections.List
 import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
@@ -16,11 +17,14 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface WarehousesFields {
+interface WarehousesFields : FieldsExpr<WarehousesRow> {
   fun address(): Field<String, WarehousesRow>
 
   fun code(): Field<String, WarehousesRow>
+
+  override fun columns(): List<FieldLike<*, WarehousesRow>>
 
   fun contactEmail(): OptField<String, WarehousesRow>
 
@@ -32,6 +36,8 @@ interface WarehousesFields {
 
   fun name(): Field<String, WarehousesRow>
 
+  override fun rowParser(): RowParser<WarehousesRow> = WarehousesRow._rowParser
+
   fun serviceArea(): OptField<Polygon, WarehousesRow>
 
   fun timezone(): Field<String, WarehousesRow>
@@ -39,25 +45,32 @@ interface WarehousesFields {
   fun warehouseId(): IdField<WarehousesId, WarehousesRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<WarehousesFields, WarehousesRow>(path) {
-      override fun fields(): WarehousesFields = object : WarehousesFields {
-        override fun warehouseId(): IdField<WarehousesId, WarehousesRow> = IdField<WarehousesId, WarehousesRow>(_path, "warehouse_id", WarehousesRow::warehouseId, Optional.empty(), Optional.empty(), { row, value -> row.copy(warehouseId = value) }, WarehousesId.pgType)
-        override fun code(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "code", WarehousesRow::code, Optional.empty(), Optional.empty(), { row, value -> row.copy(code = value) }, MariaTypes.char_)
-        override fun name(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "name", WarehousesRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, MariaTypes.varchar)
-        override fun address(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "address", WarehousesRow::address, Optional.empty(), Optional.empty(), { row, value -> row.copy(address = value) }, MariaTypes.varchar)
-        override fun location(): Field<Point, WarehousesRow> = Field<Point, WarehousesRow>(_path, "location", WarehousesRow::location, Optional.empty(), Optional.empty(), { row, value -> row.copy(location = value) }, MariaTypes.point)
-        override fun serviceArea(): OptField<Polygon, WarehousesRow> = OptField<Polygon, WarehousesRow>(_path, "service_area", WarehousesRow::serviceArea, Optional.empty(), Optional.empty(), { row, value -> row.copy(serviceArea = value) }, MariaTypes.polygon)
-        override fun timezone(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "timezone", WarehousesRow::timezone, Optional.empty(), Optional.empty(), { row, value -> row.copy(timezone = value) }, MariaTypes.varchar)
-        override fun isActive(): Field<Boolean, WarehousesRow> = Field<Boolean, WarehousesRow>(_path, "is_active", WarehousesRow::isActive, Optional.empty(), Optional.empty(), { row, value -> row.copy(isActive = value) }, MariaTypes.bool)
-        override fun contactEmail(): OptField<String, WarehousesRow> = OptField<String, WarehousesRow>(_path, "contact_email", WarehousesRow::contactEmail, Optional.empty(), Optional.empty(), { row, value -> row.copy(contactEmail = value) }, MariaTypes.varchar)
-        override fun contactPhone(): OptField<String, WarehousesRow> = OptField<String, WarehousesRow>(_path, "contact_phone", WarehousesRow::contactPhone, Optional.empty(), Optional.empty(), { row, value -> row.copy(contactPhone = value) }, MariaTypes.varchar)
-      }
+    data class Impl(val _path: List<Path>) : WarehousesFields, Relation<WarehousesFields, WarehousesRow> {
+      override fun warehouseId(): IdField<WarehousesId, WarehousesRow> = IdField<WarehousesId, WarehousesRow>(_path, "warehouse_id", WarehousesRow::warehouseId, Optional.empty(), Optional.empty(), { row, value -> row.copy(warehouseId = value) }, WarehousesId.pgType)
 
-      override fun columns(): List<FieldLike<*, WarehousesRow>> = listOf(this.fields().warehouseId(), this.fields().code(), this.fields().name(), this.fields().address(), this.fields().location(), this.fields().serviceArea(), this.fields().timezone(), this.fields().isActive(), this.fields().contactEmail(), this.fields().contactPhone())
+      override fun code(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "code", WarehousesRow::code, Optional.empty(), Optional.empty(), { row, value -> row.copy(code = value) }, MariaTypes.char_)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "name", WarehousesRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+
+      override fun address(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "address", WarehousesRow::address, Optional.empty(), Optional.empty(), { row, value -> row.copy(address = value) }, MariaTypes.varchar)
+
+      override fun location(): Field<Point, WarehousesRow> = Field<Point, WarehousesRow>(_path, "location", WarehousesRow::location, Optional.empty(), Optional.empty(), { row, value -> row.copy(location = value) }, MariaTypes.point)
+
+      override fun serviceArea(): OptField<Polygon, WarehousesRow> = OptField<Polygon, WarehousesRow>(_path, "service_area", WarehousesRow::serviceArea, Optional.empty(), Optional.empty(), { row, value -> row.copy(serviceArea = value) }, MariaTypes.polygon)
+
+      override fun timezone(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "timezone", WarehousesRow::timezone, Optional.empty(), Optional.empty(), { row, value -> row.copy(timezone = value) }, MariaTypes.varchar)
+
+      override fun isActive(): Field<Boolean, WarehousesRow> = Field<Boolean, WarehousesRow>(_path, "is_active", WarehousesRow::isActive, Optional.empty(), Optional.empty(), { row, value -> row.copy(isActive = value) }, MariaTypes.bool)
+
+      override fun contactEmail(): OptField<String, WarehousesRow> = OptField<String, WarehousesRow>(_path, "contact_email", WarehousesRow::contactEmail, Optional.empty(), Optional.empty(), { row, value -> row.copy(contactEmail = value) }, MariaTypes.varchar)
+
+      override fun contactPhone(): OptField<String, WarehousesRow> = OptField<String, WarehousesRow>(_path, "contact_phone", WarehousesRow::contactPhone, Optional.empty(), Optional.empty(), { row, value -> row.copy(contactPhone = value) }, MariaTypes.varchar)
+
+      override fun columns(): List<FieldLike<*, WarehousesRow>> = listOf(this.warehouseId(), this.code(), this.name(), this.address(), this.location(), this.serviceArea(), this.timezone(), this.isActive(), this.contactEmail(), this.contactPhone())
+
+      override fun copy(_path: List<Path>): Relation<WarehousesFields, WarehousesRow> = Impl(_path)
     }
 
-    val structure: Relation<WarehousesFields, WarehousesRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

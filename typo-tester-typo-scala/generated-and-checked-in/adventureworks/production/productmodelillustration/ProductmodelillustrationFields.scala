@@ -13,6 +13,7 @@ import adventureworks.production.productmodel.ProductmodelFields
 import adventureworks.production.productmodel.ProductmodelId
 import adventureworks.production.productmodel.ProductmodelRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -22,8 +23,9 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait ProductmodelillustrationFields {
+trait ProductmodelillustrationFields extends FieldsExpr[ProductmodelillustrationRow] {
   def productmodelid: IdField[ProductmodelId, ProductmodelillustrationRow]
 
   def illustrationid: IdField[IllustrationId, ProductmodelillustrationRow]
@@ -37,53 +39,55 @@ trait ProductmodelillustrationFields {
   def compositeIdIs(compositeId: ProductmodelillustrationId): SqlExpr[java.lang.Boolean] = SqlExpr.all(productmodelid.isEqual(compositeId.productmodelid), illustrationid.isEqual(compositeId.illustrationid))
 
   def compositeIdIn(compositeIds: java.util.List[ProductmodelillustrationId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[ProductmodelId, ProductmodelillustrationId, ProductmodelillustrationRow](productmodelid, _.productmodelid, ProductmodelId.pgType), new Part[IllustrationId, ProductmodelillustrationId, ProductmodelillustrationRow](illustrationid, _.illustrationid, IllustrationId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, ProductmodelillustrationRow]]
+
+  override def rowParser: RowParser[ProductmodelillustrationRow] = ProductmodelillustrationRow._rowParser
 }
 
 object ProductmodelillustrationFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductmodelillustrationFields, ProductmodelillustrationRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductmodelillustrationFields with Relation[ProductmodelillustrationFields, ProductmodelillustrationRow] {
 
-    override lazy val fields: ProductmodelillustrationFields = {
-      new ProductmodelillustrationFields {
-        override def productmodelid: IdField[ProductmodelId, ProductmodelillustrationRow] = {
-          new IdField[ProductmodelId, ProductmodelillustrationRow](
-            _path,
-            "productmodelid",
-            _.productmodelid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productmodelid = value),
-            ProductmodelId.pgType
-          )
-        }
-        override def illustrationid: IdField[IllustrationId, ProductmodelillustrationRow] = {
-          new IdField[IllustrationId, ProductmodelillustrationRow](
-            _path,
-            "illustrationid",
-            _.illustrationid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(illustrationid = value),
-            IllustrationId.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ProductmodelillustrationRow] = {
-          new Field[TypoLocalDateTime, ProductmodelillustrationRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def productmodelid: IdField[ProductmodelId, ProductmodelillustrationRow] = {
+      new IdField[ProductmodelId, ProductmodelillustrationRow](
+        _path,
+        "productmodelid",
+        _.productmodelid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productmodelid = value),
+        ProductmodelId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductmodelillustrationRow]] = java.util.List.of(this.fields.productmodelid, this.fields.illustrationid, this.fields.modifieddate)
+    override def illustrationid: IdField[IllustrationId, ProductmodelillustrationRow] = {
+      new IdField[IllustrationId, ProductmodelillustrationRow](
+        _path,
+        "illustrationid",
+        _.illustrationid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(illustrationid = value),
+        IllustrationId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, ProductmodelillustrationRow] = {
+      new Field[TypoLocalDateTime, ProductmodelillustrationRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductmodelillustrationRow]] = java.util.List.of(this.productmodelid, this.illustrationid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductmodelillustrationFields, ProductmodelillustrationRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductmodelillustrationFields, ProductmodelillustrationRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -9,36 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface ProductdescriptionFields {
+interface ProductdescriptionFields : FieldsExpr<ProductdescriptionRow> {
+  override fun columns(): List<FieldLike<*, ProductdescriptionRow>>
+
   fun description(): Field</* max 400 chars */ String, ProductdescriptionRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, ProductdescriptionRow>
 
   fun productdescriptionid(): IdField<ProductdescriptionId, ProductdescriptionRow>
 
+  override fun rowParser(): RowParser<ProductdescriptionRow> = ProductdescriptionRow._rowParser
+
   fun rowguid(): Field<TypoUUID, ProductdescriptionRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<ProductdescriptionFields, ProductdescriptionRow>(path) {
-      override fun fields(): ProductdescriptionFields = object : ProductdescriptionFields {
-        override fun productdescriptionid(): IdField<ProductdescriptionId, ProductdescriptionRow> = IdField<ProductdescriptionId, ProductdescriptionRow>(_path, "productdescriptionid", ProductdescriptionRow::productdescriptionid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productdescriptionid = value) }, ProductdescriptionId.pgType)
-        override fun description(): Field</* max 400 chars */ String, ProductdescriptionRow> = Field</* max 400 chars */ String, ProductdescriptionRow>(_path, "description", ProductdescriptionRow::description, Optional.empty(), Optional.empty(), { row, value -> row.copy(description = value) }, PgTypes.text)
-        override fun rowguid(): Field<TypoUUID, ProductdescriptionRow> = Field<TypoUUID, ProductdescriptionRow>(_path, "rowguid", ProductdescriptionRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, ProductdescriptionRow> = Field<TypoLocalDateTime, ProductdescriptionRow>(_path, "modifieddate", ProductdescriptionRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : ProductdescriptionFields, Relation<ProductdescriptionFields, ProductdescriptionRow> {
+      override fun productdescriptionid(): IdField<ProductdescriptionId, ProductdescriptionRow> = IdField<ProductdescriptionId, ProductdescriptionRow>(_path, "productdescriptionid", ProductdescriptionRow::productdescriptionid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productdescriptionid = value) }, ProductdescriptionId.pgType)
 
-      override fun columns(): List<FieldLike<*, ProductdescriptionRow>> = listOf(this.fields().productdescriptionid(), this.fields().description(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun description(): Field</* max 400 chars */ String, ProductdescriptionRow> = Field</* max 400 chars */ String, ProductdescriptionRow>(_path, "description", ProductdescriptionRow::description, Optional.empty(), Optional.empty(), { row, value -> row.copy(description = value) }, PgTypes.text)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun rowguid(): Field<TypoUUID, ProductdescriptionRow> = Field<TypoUUID, ProductdescriptionRow>(_path, "rowguid", ProductdescriptionRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, ProductdescriptionRow> = Field<TypoLocalDateTime, ProductdescriptionRow>(_path, "modifieddate", ProductdescriptionRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, ProductdescriptionRow>> = listOf(this.productdescriptionid(), this.description(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<ProductdescriptionFields, ProductdescriptionRow> = Impl(_path)
     }
 
-    val structure: Relation<ProductdescriptionFields, ProductdescriptionRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -13,6 +13,7 @@ import adventureworks.sales.salesreason.SalesreasonFields
 import adventureworks.sales.salesreason.SalesreasonId
 import adventureworks.sales.salesreason.SalesreasonRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -22,8 +23,9 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait SalesorderheadersalesreasonFields {
+trait SalesorderheadersalesreasonFields extends FieldsExpr[SalesorderheadersalesreasonRow] {
   def salesorderid: IdField[SalesorderheaderId, SalesorderheadersalesreasonRow]
 
   def salesreasonid: IdField[SalesreasonId, SalesorderheadersalesreasonRow]
@@ -37,53 +39,55 @@ trait SalesorderheadersalesreasonFields {
   def compositeIdIs(compositeId: SalesorderheadersalesreasonId): SqlExpr[java.lang.Boolean] = SqlExpr.all(salesorderid.isEqual(compositeId.salesorderid), salesreasonid.isEqual(compositeId.salesreasonid))
 
   def compositeIdIn(compositeIds: java.util.List[SalesorderheadersalesreasonId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[SalesorderheaderId, SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow](salesorderid, _.salesorderid, SalesorderheaderId.pgType), new Part[SalesreasonId, SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow](salesreasonid, _.salesreasonid, SalesreasonId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, SalesorderheadersalesreasonRow]]
+
+  override def rowParser: RowParser[SalesorderheadersalesreasonRow] = SalesorderheadersalesreasonRow._rowParser
 }
 
 object SalesorderheadersalesreasonFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SalesorderheadersalesreasonFields with Relation[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] {
 
-    override lazy val fields: SalesorderheadersalesreasonFields = {
-      new SalesorderheadersalesreasonFields {
-        override def salesorderid: IdField[SalesorderheaderId, SalesorderheadersalesreasonRow] = {
-          new IdField[SalesorderheaderId, SalesorderheadersalesreasonRow](
-            _path,
-            "salesorderid",
-            _.salesorderid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(salesorderid = value),
-            SalesorderheaderId.pgType
-          )
-        }
-        override def salesreasonid: IdField[SalesreasonId, SalesorderheadersalesreasonRow] = {
-          new IdField[SalesreasonId, SalesorderheadersalesreasonRow](
-            _path,
-            "salesreasonid",
-            _.salesreasonid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(salesreasonid = value),
-            SalesreasonId.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SalesorderheadersalesreasonRow] = {
-          new Field[TypoLocalDateTime, SalesorderheadersalesreasonRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def salesorderid: IdField[SalesorderheaderId, SalesorderheadersalesreasonRow] = {
+      new IdField[SalesorderheaderId, SalesorderheadersalesreasonRow](
+        _path,
+        "salesorderid",
+        _.salesorderid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(salesorderid = value),
+        SalesorderheaderId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SalesorderheadersalesreasonRow]] = java.util.List.of(this.fields.salesorderid, this.fields.salesreasonid, this.fields.modifieddate)
+    override def salesreasonid: IdField[SalesreasonId, SalesorderheadersalesreasonRow] = {
+      new IdField[SalesreasonId, SalesorderheadersalesreasonRow](
+        _path,
+        "salesreasonid",
+        _.salesreasonid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(salesreasonid = value),
+        SalesreasonId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, SalesorderheadersalesreasonRow] = {
+      new Field[TypoLocalDateTime, SalesorderheadersalesreasonRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SalesorderheadersalesreasonRow]] = java.util.List.of(this.salesorderid, this.salesreasonid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

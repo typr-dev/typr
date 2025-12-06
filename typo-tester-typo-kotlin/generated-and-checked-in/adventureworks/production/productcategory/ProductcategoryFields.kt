@@ -10,35 +10,42 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface ProductcategoryFields {
+interface ProductcategoryFields : FieldsExpr<ProductcategoryRow> {
+  override fun columns(): List<FieldLike<*, ProductcategoryRow>>
+
   fun modifieddate(): Field<TypoLocalDateTime, ProductcategoryRow>
 
   fun name(): Field<Name, ProductcategoryRow>
 
   fun productcategoryid(): IdField<ProductcategoryId, ProductcategoryRow>
 
+  override fun rowParser(): RowParser<ProductcategoryRow> = ProductcategoryRow._rowParser
+
   fun rowguid(): Field<TypoUUID, ProductcategoryRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<ProductcategoryFields, ProductcategoryRow>(path) {
-      override fun fields(): ProductcategoryFields = object : ProductcategoryFields {
-        override fun productcategoryid(): IdField<ProductcategoryId, ProductcategoryRow> = IdField<ProductcategoryId, ProductcategoryRow>(_path, "productcategoryid", ProductcategoryRow::productcategoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productcategoryid = value) }, ProductcategoryId.pgType)
-        override fun name(): Field<Name, ProductcategoryRow> = Field<Name, ProductcategoryRow>(_path, "name", ProductcategoryRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun rowguid(): Field<TypoUUID, ProductcategoryRow> = Field<TypoUUID, ProductcategoryRow>(_path, "rowguid", ProductcategoryRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, ProductcategoryRow> = Field<TypoLocalDateTime, ProductcategoryRow>(_path, "modifieddate", ProductcategoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : ProductcategoryFields, Relation<ProductcategoryFields, ProductcategoryRow> {
+      override fun productcategoryid(): IdField<ProductcategoryId, ProductcategoryRow> = IdField<ProductcategoryId, ProductcategoryRow>(_path, "productcategoryid", ProductcategoryRow::productcategoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productcategoryid = value) }, ProductcategoryId.pgType)
 
-      override fun columns(): List<FieldLike<*, ProductcategoryRow>> = listOf(this.fields().productcategoryid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun name(): Field<Name, ProductcategoryRow> = Field<Name, ProductcategoryRow>(_path, "name", ProductcategoryRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun rowguid(): Field<TypoUUID, ProductcategoryRow> = Field<TypoUUID, ProductcategoryRow>(_path, "rowguid", ProductcategoryRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, ProductcategoryRow> = Field<TypoLocalDateTime, ProductcategoryRow>(_path, "modifieddate", ProductcategoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, ProductcategoryRow>> = listOf(this.productcategoryid(), this.name(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<ProductcategoryFields, ProductcategoryRow> = Impl(_path)
     }
 
-    val structure: Relation<ProductcategoryFields, ProductcategoryRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

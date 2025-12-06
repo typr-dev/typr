@@ -15,6 +15,7 @@ import adventureworks.sales.specialoffer.SpecialofferId
 import adventureworks.sales.specialoffer.SpecialofferRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -24,8 +25,11 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface SpecialofferproductFields {
+interface SpecialofferproductFields : FieldsExpr<SpecialofferproductRow> {
+  override fun columns(): List<FieldLike<*, SpecialofferproductRow>>
+
   fun compositeIdIn(compositeIds: List<SpecialofferproductId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<SpecialofferId, SpecialofferproductId, SpecialofferproductRow>(specialofferid(), SpecialofferproductId::specialofferid, SpecialofferId.pgType), Part<ProductId, SpecialofferproductId, SpecialofferproductRow>(productid(), SpecialofferproductId::productid, ProductId.pgType)), compositeIds)
 
   fun compositeIdIs(compositeId: SpecialofferproductId): SqlExpr<Boolean> = SqlExpr.all(specialofferid().isEqual(compositeId.specialofferid), productid().isEqual(compositeId.productid))
@@ -38,24 +42,27 @@ interface SpecialofferproductFields {
 
   fun productid(): IdField<ProductId, SpecialofferproductRow>
 
+  override fun rowParser(): RowParser<SpecialofferproductRow> = SpecialofferproductRow._rowParser
+
   fun rowguid(): Field<TypoUUID, SpecialofferproductRow>
 
   fun specialofferid(): IdField<SpecialofferId, SpecialofferproductRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SpecialofferproductFields, SpecialofferproductRow>(path) {
-      override fun fields(): SpecialofferproductFields = object : SpecialofferproductFields {
-        override fun specialofferid(): IdField<SpecialofferId, SpecialofferproductRow> = IdField<SpecialofferId, SpecialofferproductRow>(_path, "specialofferid", SpecialofferproductRow::specialofferid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
-        override fun productid(): IdField<ProductId, SpecialofferproductRow> = IdField<ProductId, SpecialofferproductRow>(_path, "productid", SpecialofferproductRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun rowguid(): Field<TypoUUID, SpecialofferproductRow> = Field<TypoUUID, SpecialofferproductRow>(_path, "rowguid", SpecialofferproductRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SpecialofferproductRow> = Field<TypoLocalDateTime, SpecialofferproductRow>(_path, "modifieddate", SpecialofferproductRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SpecialofferproductFields, Relation<SpecialofferproductFields, SpecialofferproductRow> {
+      override fun specialofferid(): IdField<SpecialofferId, SpecialofferproductRow> = IdField<SpecialofferId, SpecialofferproductRow>(_path, "specialofferid", SpecialofferproductRow::specialofferid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
 
-      override fun columns(): List<FieldLike<*, SpecialofferproductRow>> = listOf(this.fields().specialofferid(), this.fields().productid(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun productid(): IdField<ProductId, SpecialofferproductRow> = IdField<ProductId, SpecialofferproductRow>(_path, "productid", SpecialofferproductRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun rowguid(): Field<TypoUUID, SpecialofferproductRow> = Field<TypoUUID, SpecialofferproductRow>(_path, "rowguid", SpecialofferproductRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SpecialofferproductRow> = Field<TypoLocalDateTime, SpecialofferproductRow>(_path, "modifieddate", SpecialofferproductRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SpecialofferproductRow>> = listOf(this.specialofferid(), this.productid(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SpecialofferproductFields, SpecialofferproductRow> = Impl(_path)
     }
 
-    val structure: Relation<SpecialofferproductFields, SpecialofferproductRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

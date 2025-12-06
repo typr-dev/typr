@@ -10,6 +10,7 @@ import adventureworks.public_.test_organisasjon.TestOrganisasjonId;
 import adventureworks.public_.test_organisasjon.TestOrganisasjonRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -19,39 +20,32 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface TestUtdanningstilbudFields {
-  final class Impl extends Relation<TestUtdanningstilbudFields, TestUtdanningstilbudRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface TestUtdanningstilbudFields extends FieldsExpr<TestUtdanningstilbudRow> {
+  record Impl(List<Path> _path) implements TestUtdanningstilbudFields, Relation<TestUtdanningstilbudFields, TestUtdanningstilbudRow> {
+    @Override
+    public IdField<TestOrganisasjonId, TestUtdanningstilbudRow> organisasjonskode() {
+      return new IdField<TestOrganisasjonId, TestUtdanningstilbudRow>(_path, "organisasjonskode", TestUtdanningstilbudRow::organisasjonskode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskode(value), TestOrganisasjonId.pgType);
+    };
 
     @Override
-    public TestUtdanningstilbudFields fields() {
-      return new TestUtdanningstilbudFields() {
-               @Override
-               public IdField<TestOrganisasjonId, TestUtdanningstilbudRow> organisasjonskode() {
-                 return new IdField<TestOrganisasjonId, TestUtdanningstilbudRow>(_path, "organisasjonskode", TestUtdanningstilbudRow::organisasjonskode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganisasjonskode(value), TestOrganisasjonId.pgType);
-               };
-               @Override
-               public IdField<String, TestUtdanningstilbudRow> utdanningsmulighetKode() {
-                 return new IdField<String, TestUtdanningstilbudRow>(_path, "utdanningsmulighet_kode", TestUtdanningstilbudRow::utdanningsmulighetKode, Optional.empty(), Optional.empty(), (row, value) -> row.withUtdanningsmulighetKode(value), PgTypes.text);
-               };
-             };
+    public IdField<String, TestUtdanningstilbudRow> utdanningsmulighetKode() {
+      return new IdField<String, TestUtdanningstilbudRow>(_path, "utdanningsmulighet_kode", TestUtdanningstilbudRow::utdanningsmulighetKode, Optional.empty(), Optional.empty(), (row, value) -> row.withUtdanningsmulighetKode(value), PgTypes.text);
     };
 
     @Override
     public List<FieldLike<?, TestUtdanningstilbudRow>> columns() {
-      return List.of(this.fields().organisasjonskode(), this.fields().utdanningsmulighetKode());
+      return List.of(this.organisasjonskode(), this.utdanningsmulighetKode());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<TestUtdanningstilbudFields, TestUtdanningstilbudRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<TestUtdanningstilbudFields, TestUtdanningstilbudRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -69,5 +63,13 @@ public interface TestUtdanningstilbudFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<TestUtdanningstilbudId> compositeIds) {
     return new CompositeIn(List.of(new Part<TestOrganisasjonId, TestUtdanningstilbudId, TestUtdanningstilbudRow>(organisasjonskode(), TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId.pgType), new Part<String, TestUtdanningstilbudId, TestUtdanningstilbudRow>(utdanningsmulighetKode(), TestUtdanningstilbudId::utdanningsmulighetKode, PgTypes.text)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, TestUtdanningstilbudRow>> columns();
+
+  @Override
+  default RowParser<TestUtdanningstilbudRow> rowParser() {
+    return TestUtdanningstilbudRow._rowParser;
   };
 }

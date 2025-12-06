@@ -12,6 +12,7 @@ import org.mariadb.jdbc.type.Point
 import testdb.customers.CustomersFields
 import testdb.customers.CustomersId
 import testdb.customers.CustomersRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -20,13 +21,16 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface CustomerAddressesFields {
+interface CustomerAddressesFields : FieldsExpr<CustomerAddressesRow> {
   fun addressId(): IdField<CustomerAddressesId, CustomerAddressesRow>
 
   fun addressType(): Field<String, CustomerAddressesRow>
 
   fun city(): Field<String, CustomerAddressesRow>
+
+  override fun columns(): List<FieldLike<*, CustomerAddressesRow>>
 
   fun countryCode(): Field<String, CustomerAddressesRow>
 
@@ -46,6 +50,8 @@ interface CustomerAddressesFields {
 
   fun recipientName(): Field<String, CustomerAddressesRow>
 
+  override fun rowParser(): RowParser<CustomerAddressesRow> = CustomerAddressesRow._rowParser
+
   fun stateProvince(): OptField<String, CustomerAddressesRow>
 
   fun streetLine1(): Field<String, CustomerAddressesRow>
@@ -53,29 +59,40 @@ interface CustomerAddressesFields {
   fun streetLine2(): OptField<String, CustomerAddressesRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<CustomerAddressesFields, CustomerAddressesRow>(path) {
-      override fun fields(): CustomerAddressesFields = object : CustomerAddressesFields {
-        override fun addressId(): IdField<CustomerAddressesId, CustomerAddressesRow> = IdField<CustomerAddressesId, CustomerAddressesRow>(_path, "address_id", CustomerAddressesRow::addressId, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressId = value) }, CustomerAddressesId.pgType)
-        override fun customerId(): Field<CustomersId, CustomerAddressesRow> = Field<CustomersId, CustomerAddressesRow>(_path, "customer_id", CustomerAddressesRow::customerId, Optional.empty(), Optional.empty(), { row, value -> row.copy(customerId = value) }, CustomersId.pgType)
-        override fun addressType(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "address_type", CustomerAddressesRow::addressType, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressType = value) }, MariaTypes.text)
-        override fun isDefault(): Field<Boolean, CustomerAddressesRow> = Field<Boolean, CustomerAddressesRow>(_path, "is_default", CustomerAddressesRow::isDefault, Optional.empty(), Optional.empty(), { row, value -> row.copy(isDefault = value) }, MariaTypes.bool)
-        override fun recipientName(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "recipient_name", CustomerAddressesRow::recipientName, Optional.empty(), Optional.empty(), { row, value -> row.copy(recipientName = value) }, MariaTypes.varchar)
-        override fun streetLine1(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "street_line1", CustomerAddressesRow::streetLine1, Optional.empty(), Optional.empty(), { row, value -> row.copy(streetLine1 = value) }, MariaTypes.varchar)
-        override fun streetLine2(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "street_line2", CustomerAddressesRow::streetLine2, Optional.empty(), Optional.empty(), { row, value -> row.copy(streetLine2 = value) }, MariaTypes.varchar)
-        override fun city(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "city", CustomerAddressesRow::city, Optional.empty(), Optional.empty(), { row, value -> row.copy(city = value) }, MariaTypes.varchar)
-        override fun stateProvince(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "state_province", CustomerAddressesRow::stateProvince, Optional.empty(), Optional.empty(), { row, value -> row.copy(stateProvince = value) }, MariaTypes.varchar)
-        override fun postalCode(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "postal_code", CustomerAddressesRow::postalCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(postalCode = value) }, MariaTypes.varchar)
-        override fun countryCode(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "country_code", CustomerAddressesRow::countryCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryCode = value) }, MariaTypes.char_)
-        override fun location(): OptField<Point, CustomerAddressesRow> = OptField<Point, CustomerAddressesRow>(_path, "location", CustomerAddressesRow::location, Optional.empty(), Optional.empty(), { row, value -> row.copy(location = value) }, MariaTypes.point)
-        override fun deliveryNotes(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "delivery_notes", CustomerAddressesRow::deliveryNotes, Optional.empty(), Optional.empty(), { row, value -> row.copy(deliveryNotes = value) }, MariaTypes.tinytext)
-        override fun createdAt(): Field<LocalDateTime, CustomerAddressesRow> = Field<LocalDateTime, CustomerAddressesRow>(_path, "created_at", CustomerAddressesRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
-      }
+    data class Impl(val _path: List<Path>) : CustomerAddressesFields, Relation<CustomerAddressesFields, CustomerAddressesRow> {
+      override fun addressId(): IdField<CustomerAddressesId, CustomerAddressesRow> = IdField<CustomerAddressesId, CustomerAddressesRow>(_path, "address_id", CustomerAddressesRow::addressId, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressId = value) }, CustomerAddressesId.pgType)
 
-      override fun columns(): List<FieldLike<*, CustomerAddressesRow>> = listOf(this.fields().addressId(), this.fields().customerId(), this.fields().addressType(), this.fields().isDefault(), this.fields().recipientName(), this.fields().streetLine1(), this.fields().streetLine2(), this.fields().city(), this.fields().stateProvince(), this.fields().postalCode(), this.fields().countryCode(), this.fields().location(), this.fields().deliveryNotes(), this.fields().createdAt())
+      override fun customerId(): Field<CustomersId, CustomerAddressesRow> = Field<CustomersId, CustomerAddressesRow>(_path, "customer_id", CustomerAddressesRow::customerId, Optional.empty(), Optional.empty(), { row, value -> row.copy(customerId = value) }, CustomersId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun addressType(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "address_type", CustomerAddressesRow::addressType, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressType = value) }, MariaTypes.text)
+
+      override fun isDefault(): Field<Boolean, CustomerAddressesRow> = Field<Boolean, CustomerAddressesRow>(_path, "is_default", CustomerAddressesRow::isDefault, Optional.empty(), Optional.empty(), { row, value -> row.copy(isDefault = value) }, MariaTypes.bool)
+
+      override fun recipientName(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "recipient_name", CustomerAddressesRow::recipientName, Optional.empty(), Optional.empty(), { row, value -> row.copy(recipientName = value) }, MariaTypes.varchar)
+
+      override fun streetLine1(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "street_line1", CustomerAddressesRow::streetLine1, Optional.empty(), Optional.empty(), { row, value -> row.copy(streetLine1 = value) }, MariaTypes.varchar)
+
+      override fun streetLine2(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "street_line2", CustomerAddressesRow::streetLine2, Optional.empty(), Optional.empty(), { row, value -> row.copy(streetLine2 = value) }, MariaTypes.varchar)
+
+      override fun city(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "city", CustomerAddressesRow::city, Optional.empty(), Optional.empty(), { row, value -> row.copy(city = value) }, MariaTypes.varchar)
+
+      override fun stateProvince(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "state_province", CustomerAddressesRow::stateProvince, Optional.empty(), Optional.empty(), { row, value -> row.copy(stateProvince = value) }, MariaTypes.varchar)
+
+      override fun postalCode(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "postal_code", CustomerAddressesRow::postalCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(postalCode = value) }, MariaTypes.varchar)
+
+      override fun countryCode(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "country_code", CustomerAddressesRow::countryCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryCode = value) }, MariaTypes.char_)
+
+      override fun location(): OptField<Point, CustomerAddressesRow> = OptField<Point, CustomerAddressesRow>(_path, "location", CustomerAddressesRow::location, Optional.empty(), Optional.empty(), { row, value -> row.copy(location = value) }, MariaTypes.point)
+
+      override fun deliveryNotes(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "delivery_notes", CustomerAddressesRow::deliveryNotes, Optional.empty(), Optional.empty(), { row, value -> row.copy(deliveryNotes = value) }, MariaTypes.tinytext)
+
+      override fun createdAt(): Field<LocalDateTime, CustomerAddressesRow> = Field<LocalDateTime, CustomerAddressesRow>(_path, "created_at", CustomerAddressesRow::createdAt, Optional.empty(), Optional.empty(), { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+
+      override fun columns(): List<FieldLike<*, CustomerAddressesRow>> = listOf(this.addressId(), this.customerId(), this.addressType(), this.isDefault(), this.recipientName(), this.streetLine1(), this.streetLine2(), this.city(), this.stateProvince(), this.postalCode(), this.countryCode(), this.location(), this.deliveryNotes(), this.createdAt())
+
+      override fun copy(_path: List<Path>): Relation<CustomerAddressesFields, CustomerAddressesRow> = Impl(_path)
     }
 
-    val structure: Relation<CustomerAddressesFields, CustomerAddressesRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

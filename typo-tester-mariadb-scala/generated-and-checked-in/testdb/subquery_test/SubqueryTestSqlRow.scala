@@ -27,5 +27,5 @@ case class SubqueryTestSqlRow(
 )
 
 object SubqueryTestSqlRow {
-  val `_rowParser`: RowParser[SubqueryTestSqlRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.bigint, MariaTypes.decimal, MariaTypes.varchar.opt(), SubqueryTestSqlRow.apply, row => Array(row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand))
+  val `_rowParser`: RowParser[SubqueryTestSqlRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.bigint, MariaTypes.decimal, MariaTypes.varchar.opt(), SubqueryTestSqlRow.apply, row => Array[Object](row.customerId.asInstanceOf[Object], row.email.asInstanceOf[Object], row.firstName.asInstanceOf[Object], row.orderCount.asInstanceOf[Object], row.totalSpent.asInstanceOf[Object], row.favoriteBrand.asInstanceOf[Object]))
 }

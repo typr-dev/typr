@@ -12,14 +12,18 @@ import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface EdhViewFields {
+interface EdhViewFields : FieldsExpr<EdhViewRow> {
   fun businessentityid(): Field<BusinessentityId, EdhViewRow>
+
+  override fun columns(): List<FieldLike<*, EdhViewRow>>
 
   fun departmentid(): Field<DepartmentId, EdhViewRow>
 
@@ -29,27 +33,33 @@ interface EdhViewFields {
 
   fun modifieddate(): Field<TypoLocalDateTime, EdhViewRow>
 
+  override fun rowParser(): RowParser<EdhViewRow> = EdhViewRow._rowParser
+
   fun shiftid(): Field<ShiftId, EdhViewRow>
 
   fun startdate(): Field<TypoLocalDate, EdhViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<EdhViewFields, EdhViewRow>(path) {
-      override fun fields(): EdhViewFields = object : EdhViewFields {
-        override fun id(): Field<BusinessentityId, EdhViewRow> = Field<BusinessentityId, EdhViewRow>(_path, "id", EdhViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
-        override fun businessentityid(): Field<BusinessentityId, EdhViewRow> = Field<BusinessentityId, EdhViewRow>(_path, "businessentityid", EdhViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun departmentid(): Field<DepartmentId, EdhViewRow> = Field<DepartmentId, EdhViewRow>(_path, "departmentid", EdhViewRow::departmentid, Optional.empty(), Optional.empty(), { row, value -> row.copy(departmentid = value) }, DepartmentId.pgType)
-        override fun shiftid(): Field<ShiftId, EdhViewRow> = Field<ShiftId, EdhViewRow>(_path, "shiftid", EdhViewRow::shiftid, Optional.empty(), Optional.empty(), { row, value -> row.copy(shiftid = value) }, ShiftId.pgType)
-        override fun startdate(): Field<TypoLocalDate, EdhViewRow> = Field<TypoLocalDate, EdhViewRow>(_path, "startdate", EdhViewRow::startdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(startdate = value) }, TypoLocalDate.pgType)
-        override fun enddate(): OptField<TypoLocalDate, EdhViewRow> = OptField<TypoLocalDate, EdhViewRow>(_path, "enddate", EdhViewRow::enddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(enddate = value) }, TypoLocalDate.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, EdhViewRow> = Field<TypoLocalDateTime, EdhViewRow>(_path, "modifieddate", EdhViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : EdhViewFields, Relation<EdhViewFields, EdhViewRow> {
+      override fun id(): Field<BusinessentityId, EdhViewRow> = Field<BusinessentityId, EdhViewRow>(_path, "id", EdhViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, EdhViewRow>> = listOf(this.fields().id(), this.fields().businessentityid(), this.fields().departmentid(), this.fields().shiftid(), this.fields().startdate(), this.fields().enddate(), this.fields().modifieddate())
+      override fun businessentityid(): Field<BusinessentityId, EdhViewRow> = Field<BusinessentityId, EdhViewRow>(_path, "businessentityid", EdhViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun departmentid(): Field<DepartmentId, EdhViewRow> = Field<DepartmentId, EdhViewRow>(_path, "departmentid", EdhViewRow::departmentid, Optional.empty(), Optional.empty(), { row, value -> row.copy(departmentid = value) }, DepartmentId.pgType)
+
+      override fun shiftid(): Field<ShiftId, EdhViewRow> = Field<ShiftId, EdhViewRow>(_path, "shiftid", EdhViewRow::shiftid, Optional.empty(), Optional.empty(), { row, value -> row.copy(shiftid = value) }, ShiftId.pgType)
+
+      override fun startdate(): Field<TypoLocalDate, EdhViewRow> = Field<TypoLocalDate, EdhViewRow>(_path, "startdate", EdhViewRow::startdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(startdate = value) }, TypoLocalDate.pgType)
+
+      override fun enddate(): OptField<TypoLocalDate, EdhViewRow> = OptField<TypoLocalDate, EdhViewRow>(_path, "enddate", EdhViewRow::enddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(enddate = value) }, TypoLocalDate.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, EdhViewRow> = Field<TypoLocalDateTime, EdhViewRow>(_path, "modifieddate", EdhViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, EdhViewRow>> = listOf(this.id(), this.businessentityid(), this.departmentid(), this.shiftid(), this.startdate(), this.enddate(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<EdhViewFields, EdhViewRow> = Impl(_path)
     }
 
-    val structure: Relation<EdhViewFields, EdhViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

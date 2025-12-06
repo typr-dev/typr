@@ -12,6 +12,7 @@ import adventureworks.humanresources.employee.EmployeeRow;
 import adventureworks.person.businessentity.BusinessentityId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -19,47 +20,42 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface JobcandidateFields {
-  final class Impl extends Relation<JobcandidateFields, JobcandidateRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface JobcandidateFields extends FieldsExpr<JobcandidateRow> {
+  record Impl(List<Path> _path) implements JobcandidateFields, Relation<JobcandidateFields, JobcandidateRow> {
+    @Override
+    public IdField<JobcandidateId, JobcandidateRow> jobcandidateid() {
+      return new IdField<JobcandidateId, JobcandidateRow>(_path, "jobcandidateid", JobcandidateRow::jobcandidateid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withJobcandidateid(value), JobcandidateId.pgType);
+    };
 
     @Override
-    public JobcandidateFields fields() {
-      return new JobcandidateFields() {
-               @Override
-               public IdField<JobcandidateId, JobcandidateRow> jobcandidateid() {
-                 return new IdField<JobcandidateId, JobcandidateRow>(_path, "jobcandidateid", JobcandidateRow::jobcandidateid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withJobcandidateid(value), JobcandidateId.pgType);
-               };
-               @Override
-               public OptField<BusinessentityId, JobcandidateRow> businessentityid() {
-                 return new OptField<BusinessentityId, JobcandidateRow>(_path, "businessentityid", JobcandidateRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public OptField<TypoXml, JobcandidateRow> resume() {
-                 return new OptField<TypoXml, JobcandidateRow>(_path, "resume", JobcandidateRow::resume, Optional.empty(), Optional.of("xml"), (row, value) -> row.withResume(value), TypoXml.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, JobcandidateRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, JobcandidateRow>(_path, "modifieddate", JobcandidateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public OptField<BusinessentityId, JobcandidateRow> businessentityid() {
+      return new OptField<BusinessentityId, JobcandidateRow>(_path, "businessentityid", JobcandidateRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public OptField<TypoXml, JobcandidateRow> resume() {
+      return new OptField<TypoXml, JobcandidateRow>(_path, "resume", JobcandidateRow::resume, Optional.empty(), Optional.of("xml"), (row, value) -> row.withResume(value), TypoXml.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, JobcandidateRow> modifieddate() {
+      return new Field<TypoLocalDateTime, JobcandidateRow>(_path, "modifieddate", JobcandidateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, JobcandidateRow>> columns() {
-      return List.of(this.fields().jobcandidateid(), this.fields().businessentityid(), this.fields().resume(), this.fields().modifieddate());
+      return List.of(this.jobcandidateid(), this.businessentityid(), this.resume(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<JobcandidateFields, JobcandidateRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<JobcandidateFields, JobcandidateRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -73,5 +69,13 @@ public interface JobcandidateFields {
 
   default ForeignKey<EmployeeFields, EmployeeRow> fkEmployee() {
     return ForeignKey.<EmployeeFields, EmployeeRow>of("humanresources.FK_JobCandidate_Employee_BusinessEntityID").withColumnPair(businessentityid(), EmployeeFields::businessentityid);
+  };
+
+  @Override
+  List<FieldLike<?, JobcandidateRow>> columns();
+
+  @Override
+  default RowParser<JobcandidateRow> rowParser() {
+    return JobcandidateRow._rowParser;
   };
 }

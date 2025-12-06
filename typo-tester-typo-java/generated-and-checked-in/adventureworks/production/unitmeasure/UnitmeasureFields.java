@@ -9,48 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface UnitmeasureFields {
-  final class Impl extends Relation<UnitmeasureFields, UnitmeasureRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface UnitmeasureFields extends FieldsExpr<UnitmeasureRow> {
+  record Impl(List<Path> _path) implements UnitmeasureFields, Relation<UnitmeasureFields, UnitmeasureRow> {
+    @Override
+    public IdField<UnitmeasureId, UnitmeasureRow> unitmeasurecode() {
+      return new IdField<UnitmeasureId, UnitmeasureRow>(_path, "unitmeasurecode", UnitmeasureRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
+    };
 
     @Override
-    public UnitmeasureFields fields() {
-      return new UnitmeasureFields() {
-               @Override
-               public IdField<UnitmeasureId, UnitmeasureRow> unitmeasurecode() {
-                 return new IdField<UnitmeasureId, UnitmeasureRow>(_path, "unitmeasurecode", UnitmeasureRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public Field<Name, UnitmeasureRow> name() {
-                 return new Field<Name, UnitmeasureRow>(_path, "name", UnitmeasureRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, UnitmeasureRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, UnitmeasureRow>(_path, "modifieddate", UnitmeasureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, UnitmeasureRow> name() {
+      return new Field<Name, UnitmeasureRow>(_path, "name", UnitmeasureRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, UnitmeasureRow> modifieddate() {
+      return new Field<TypoLocalDateTime, UnitmeasureRow>(_path, "modifieddate", UnitmeasureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, UnitmeasureRow>> columns() {
-      return List.of(this.fields().unitmeasurecode(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.unitmeasurecode(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<UnitmeasureFields, UnitmeasureRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<UnitmeasureFields, UnitmeasureRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface UnitmeasureFields {
   Field<Name, UnitmeasureRow> name();
 
   Field<TypoLocalDateTime, UnitmeasureRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, UnitmeasureRow>> columns();
+
+  @Override
+  default RowParser<UnitmeasureRow> rowParser() {
+    return UnitmeasureRow._rowParser;
+  };
 }

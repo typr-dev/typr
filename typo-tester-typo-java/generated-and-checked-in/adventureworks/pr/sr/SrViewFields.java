@@ -10,51 +10,47 @@ import adventureworks.production.scrapreason.ScrapreasonId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface SrViewFields {
-  final class Impl extends Relation<SrViewFields, SrViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SrViewFields extends FieldsExpr<SrViewRow> {
+  record Impl(List<Path> _path) implements SrViewFields, Relation<SrViewFields, SrViewRow> {
+    @Override
+    public Field<ScrapreasonId, SrViewRow> id() {
+      return new Field<ScrapreasonId, SrViewRow>(_path, "id", SrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ScrapreasonId.pgType);
+    };
 
     @Override
-    public SrViewFields fields() {
-      return new SrViewFields() {
-               @Override
-               public Field<ScrapreasonId, SrViewRow> id() {
-                 return new Field<ScrapreasonId, SrViewRow>(_path, "id", SrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ScrapreasonId.pgType);
-               };
-               @Override
-               public Field<ScrapreasonId, SrViewRow> scrapreasonid() {
-                 return new Field<ScrapreasonId, SrViewRow>(_path, "scrapreasonid", SrViewRow::scrapreasonid, Optional.empty(), Optional.empty(), (row, value) -> row.withScrapreasonid(value), ScrapreasonId.pgType);
-               };
-               @Override
-               public Field<Name, SrViewRow> name() {
-                 return new Field<Name, SrViewRow>(_path, "name", SrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SrViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SrViewRow>(_path, "modifieddate", SrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ScrapreasonId, SrViewRow> scrapreasonid() {
+      return new Field<ScrapreasonId, SrViewRow>(_path, "scrapreasonid", SrViewRow::scrapreasonid, Optional.empty(), Optional.empty(), (row, value) -> row.withScrapreasonid(value), ScrapreasonId.pgType);
+    };
+
+    @Override
+    public Field<Name, SrViewRow> name() {
+      return new Field<Name, SrViewRow>(_path, "name", SrViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SrViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SrViewRow>(_path, "modifieddate", SrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SrViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().scrapreasonid(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.id(), this.scrapreasonid(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SrViewFields, SrViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SrViewFields, SrViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface SrViewFields {
   Field<Name, SrViewRow> name();
 
   Field<TypoLocalDateTime, SrViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, SrViewRow>> columns();
+
+  @Override
+  default RowParser<SrViewRow> rowParser() {
+    return SrViewRow._rowParser;
+  };
 }

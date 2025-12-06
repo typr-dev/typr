@@ -1,0 +1,4 @@
+select join_cte0.col_0, join_cte0.col_1, humanresourcesdepartment0."departmentid", humanresourcesdepartment0."name", humanresourcesdepartment0."groupname", humanresourcesdepartment0."modifieddate"::text
+from (SELECT "persontype" AS col_0, COUNT(*)AS col_1 FROM (select * from "person"."person" t0 where ("lastname"  = ?::"public"."Name")) t0 WHERE ("lastname"  = ?::"public"."Name") GROUP BY "persontype" ) join_cte0
+join (select * from "humanresources"."department" humanresourcesdepartment0 where (((humanresourcesdepartment0)."name"  = ?::"public"."Name") OR ((humanresourcesdepartment0)."name"  = ?::"public"."Name"))) humanresourcesdepartment0
+  on ?::bool

@@ -103,7 +103,7 @@ case class PurchaseorderheaderRow(
 }
 
 object PurchaseorderheaderRow {
-  val `_rowParser`: RowParser[PurchaseorderheaderRow] = RowParsers.of(PurchaseorderheaderId.pgType, TypoShort.pgType, TypoShort.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderheaderRow.apply, row => Array(row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate))
+  val `_rowParser`: RowParser[PurchaseorderheaderRow] = RowParsers.of(PurchaseorderheaderId.pgType, TypoShort.pgType, TypoShort.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, PurchaseorderheaderRow.apply, row => Array[Object](row.purchaseorderid.asInstanceOf[Object], row.revisionnumber.asInstanceOf[Object], row.status.asInstanceOf[Object], row.employeeid.asInstanceOf[Object], row.vendorid.asInstanceOf[Object], row.shipmethodid.asInstanceOf[Object], row.orderdate.asInstanceOf[Object], row.shipdate.asInstanceOf[Object], row.subtotal.asInstanceOf[Object], row.taxamt.asInstanceOf[Object], row.freight.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[PurchaseorderheaderRow] = PgText.from(`_rowParser`)
 }

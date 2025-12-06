@@ -12,6 +12,7 @@ import adventureworks.person.countryregion.CountryregionId
 import adventureworks.person.countryregion.CountryregionRow
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -19,8 +20,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SalesterritoryFields {
+trait SalesterritoryFields extends FieldsExpr[SalesterritoryRow] {
   def territoryid: IdField[SalesterritoryId, SalesterritoryRow]
 
   def name: Field[Name, SalesterritoryRow]
@@ -42,130 +44,139 @@ trait SalesterritoryFields {
   def modifieddate: Field[TypoLocalDateTime, SalesterritoryRow]
 
   def fkPersonCountryregion: ForeignKey[CountryregionFields, CountryregionRow] = ForeignKey.of[CountryregionFields, CountryregionRow]("sales.FK_SalesTerritory_CountryRegion_CountryRegionCode").withColumnPair(countryregioncode, _.countryregioncode)
+
+  override def columns: java.util.List[FieldLike[?, SalesterritoryRow]]
+
+  override def rowParser: RowParser[SalesterritoryRow] = SalesterritoryRow._rowParser
 }
 
 object SalesterritoryFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SalesterritoryFields, SalesterritoryRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SalesterritoryFields with Relation[SalesterritoryFields, SalesterritoryRow] {
 
-    override lazy val fields: SalesterritoryFields = {
-      new SalesterritoryFields {
-        override def territoryid: IdField[SalesterritoryId, SalesterritoryRow] = {
-          new IdField[SalesterritoryId, SalesterritoryRow](
-            _path,
-            "territoryid",
-            _.territoryid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(territoryid = value),
-            SalesterritoryId.pgType
-          )
-        }
-        override def name: Field[Name, SalesterritoryRow] = {
-          new Field[Name, SalesterritoryRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def countryregioncode: Field[CountryregionId, SalesterritoryRow] = {
-          new Field[CountryregionId, SalesterritoryRow](
-            _path,
-            "countryregioncode",
-            _.countryregioncode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryregioncode = value),
-            CountryregionId.pgType
-          )
-        }
-        override def group: Field[/* max 50 chars */ String, SalesterritoryRow] = {
-          new Field[/* max 50 chars */ String, SalesterritoryRow](
-            _path,
-            "group",
-            _.group,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(group = value),
-            PgTypes.text
-          )
-        }
-        override def salesytd: Field[java.math.BigDecimal, SalesterritoryRow] = {
-          new Field[java.math.BigDecimal, SalesterritoryRow](
-            _path,
-            "salesytd",
-            _.salesytd,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(salesytd = value),
-            PgTypes.numeric
-          )
-        }
-        override def saleslastyear: Field[java.math.BigDecimal, SalesterritoryRow] = {
-          new Field[java.math.BigDecimal, SalesterritoryRow](
-            _path,
-            "saleslastyear",
-            _.saleslastyear,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(saleslastyear = value),
-            PgTypes.numeric
-          )
-        }
-        override def costytd: Field[java.math.BigDecimal, SalesterritoryRow] = {
-          new Field[java.math.BigDecimal, SalesterritoryRow](
-            _path,
-            "costytd",
-            _.costytd,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(costytd = value),
-            PgTypes.numeric
-          )
-        }
-        override def costlastyear: Field[java.math.BigDecimal, SalesterritoryRow] = {
-          new Field[java.math.BigDecimal, SalesterritoryRow](
-            _path,
-            "costlastyear",
-            _.costlastyear,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(costlastyear = value),
-            PgTypes.numeric
-          )
-        }
-        override def rowguid: Field[TypoUUID, SalesterritoryRow] = {
-          new Field[TypoUUID, SalesterritoryRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SalesterritoryRow] = {
-          new Field[TypoLocalDateTime, SalesterritoryRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def territoryid: IdField[SalesterritoryId, SalesterritoryRow] = {
+      new IdField[SalesterritoryId, SalesterritoryRow](
+        _path,
+        "territoryid",
+        _.territoryid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(territoryid = value),
+        SalesterritoryId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SalesterritoryRow]] = java.util.List.of(this.fields.territoryid, this.fields.name, this.fields.countryregioncode, this.fields.group, this.fields.salesytd, this.fields.saleslastyear, this.fields.costytd, this.fields.costlastyear, this.fields.rowguid, this.fields.modifieddate)
+    override def name: Field[Name, SalesterritoryRow] = {
+      new Field[Name, SalesterritoryRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def countryregioncode: Field[CountryregionId, SalesterritoryRow] = {
+      new Field[CountryregionId, SalesterritoryRow](
+        _path,
+        "countryregioncode",
+        _.countryregioncode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryregioncode = value),
+        CountryregionId.pgType
+      )
+    }
+
+    override def group: Field[/* max 50 chars */ String, SalesterritoryRow] = {
+      new Field[/* max 50 chars */ String, SalesterritoryRow](
+        _path,
+        "group",
+        _.group,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(group = value),
+        PgTypes.text
+      )
+    }
+
+    override def salesytd: Field[java.math.BigDecimal, SalesterritoryRow] = {
+      new Field[java.math.BigDecimal, SalesterritoryRow](
+        _path,
+        "salesytd",
+        _.salesytd,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(salesytd = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def saleslastyear: Field[java.math.BigDecimal, SalesterritoryRow] = {
+      new Field[java.math.BigDecimal, SalesterritoryRow](
+        _path,
+        "saleslastyear",
+        _.saleslastyear,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(saleslastyear = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def costytd: Field[java.math.BigDecimal, SalesterritoryRow] = {
+      new Field[java.math.BigDecimal, SalesterritoryRow](
+        _path,
+        "costytd",
+        _.costytd,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(costytd = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def costlastyear: Field[java.math.BigDecimal, SalesterritoryRow] = {
+      new Field[java.math.BigDecimal, SalesterritoryRow](
+        _path,
+        "costlastyear",
+        _.costlastyear,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(costlastyear = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SalesterritoryRow] = {
+      new Field[TypoUUID, SalesterritoryRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SalesterritoryRow] = {
+      new Field[TypoLocalDateTime, SalesterritoryRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SalesterritoryRow]] = java.util.List.of(this.territoryid, this.name, this.countryregioncode, this.group, this.salesytd, this.saleslastyear, this.costytd, this.costlastyear, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SalesterritoryFields, SalesterritoryRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SalesterritoryFields, SalesterritoryRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

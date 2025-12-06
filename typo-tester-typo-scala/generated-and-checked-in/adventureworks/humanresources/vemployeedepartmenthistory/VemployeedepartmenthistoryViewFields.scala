@@ -10,14 +10,16 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VemployeedepartmenthistoryViewFields {
+trait VemployeedepartmenthistoryViewFields extends FieldsExpr[VemployeedepartmenthistoryViewRow] {
   def businessentityid: Field[BusinessentityId, VemployeedepartmenthistoryViewRow]
 
   def title: OptField[/* max 8 chars */ String, VemployeedepartmenthistoryViewRow]
@@ -39,141 +41,151 @@ trait VemployeedepartmenthistoryViewFields {
   def startdate: Field[TypoLocalDate, VemployeedepartmenthistoryViewRow]
 
   def enddate: OptField[TypoLocalDate, VemployeedepartmenthistoryViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VemployeedepartmenthistoryViewRow]]
+
+  override def rowParser: RowParser[VemployeedepartmenthistoryViewRow] = VemployeedepartmenthistoryViewRow._rowParser
 }
 
 object VemployeedepartmenthistoryViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VemployeedepartmenthistoryViewFields with Relation[VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow] {
 
-    override lazy val fields: VemployeedepartmenthistoryViewFields = {
-      new VemployeedepartmenthistoryViewFields {
-        override def businessentityid: Field[BusinessentityId, VemployeedepartmenthistoryViewRow] = {
-          new Field[BusinessentityId, VemployeedepartmenthistoryViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def title: OptField[/* max 8 chars */ String, VemployeedepartmenthistoryViewRow] = {
-          new OptField[/* max 8 chars */ String, VemployeedepartmenthistoryViewRow](
-            _path,
-            "title",
-            _.title,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(title = value),
-            PgTypes.text
-          )
-        }
-        override def firstname: Field[/* user-picked */ FirstName, VemployeedepartmenthistoryViewRow] = {
-          new Field[/* user-picked */ FirstName, VemployeedepartmenthistoryViewRow](
-            _path,
-            "firstname",
-            _.firstname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(firstname = value),
-            FirstName.pgType
-          )
-        }
-        override def middlename: OptField[Name, VemployeedepartmenthistoryViewRow] = {
-          new OptField[Name, VemployeedepartmenthistoryViewRow](
-            _path,
-            "middlename",
-            _.middlename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(middlename = value),
-            Name.pgType
-          )
-        }
-        override def lastname: Field[Name, VemployeedepartmenthistoryViewRow] = {
-          new Field[Name, VemployeedepartmenthistoryViewRow](
-            _path,
-            "lastname",
-            _.lastname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastname = value),
-            Name.pgType
-          )
-        }
-        override def suffix: OptField[/* max 10 chars */ String, VemployeedepartmenthistoryViewRow] = {
-          new OptField[/* max 10 chars */ String, VemployeedepartmenthistoryViewRow](
-            _path,
-            "suffix",
-            _.suffix,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(suffix = value),
-            PgTypes.text
-          )
-        }
-        override def shift: Field[Name, VemployeedepartmenthistoryViewRow] = {
-          new Field[Name, VemployeedepartmenthistoryViewRow](
-            _path,
-            "shift",
-            _.shift,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shift = value),
-            Name.pgType
-          )
-        }
-        override def department: Field[Name, VemployeedepartmenthistoryViewRow] = {
-          new Field[Name, VemployeedepartmenthistoryViewRow](
-            _path,
-            "department",
-            _.department,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(department = value),
-            Name.pgType
-          )
-        }
-        override def groupname: Field[Name, VemployeedepartmenthistoryViewRow] = {
-          new Field[Name, VemployeedepartmenthistoryViewRow](
-            _path,
-            "groupname",
-            _.groupname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(groupname = value),
-            Name.pgType
-          )
-        }
-        override def startdate: Field[TypoLocalDate, VemployeedepartmenthistoryViewRow] = {
-          new Field[TypoLocalDate, VemployeedepartmenthistoryViewRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def enddate: OptField[TypoLocalDate, VemployeedepartmenthistoryViewRow] = {
-          new OptField[TypoLocalDate, VemployeedepartmenthistoryViewRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDate.pgType
-          )
-        }
-      }
+    override def businessentityid: Field[BusinessentityId, VemployeedepartmenthistoryViewRow] = {
+      new Field[BusinessentityId, VemployeedepartmenthistoryViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VemployeedepartmenthistoryViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.shift, this.fields.department, this.fields.groupname, this.fields.startdate, this.fields.enddate)
+    override def title: OptField[/* max 8 chars */ String, VemployeedepartmenthistoryViewRow] = {
+      new OptField[/* max 8 chars */ String, VemployeedepartmenthistoryViewRow](
+        _path,
+        "title",
+        _.title,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(title = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def firstname: Field[/* user-picked */ FirstName, VemployeedepartmenthistoryViewRow] = {
+      new Field[/* user-picked */ FirstName, VemployeedepartmenthistoryViewRow](
+        _path,
+        "firstname",
+        _.firstname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(firstname = value),
+        FirstName.pgType
+      )
+    }
+
+    override def middlename: OptField[Name, VemployeedepartmenthistoryViewRow] = {
+      new OptField[Name, VemployeedepartmenthistoryViewRow](
+        _path,
+        "middlename",
+        _.middlename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(middlename = value),
+        Name.pgType
+      )
+    }
+
+    override def lastname: Field[Name, VemployeedepartmenthistoryViewRow] = {
+      new Field[Name, VemployeedepartmenthistoryViewRow](
+        _path,
+        "lastname",
+        _.lastname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastname = value),
+        Name.pgType
+      )
+    }
+
+    override def suffix: OptField[/* max 10 chars */ String, VemployeedepartmenthistoryViewRow] = {
+      new OptField[/* max 10 chars */ String, VemployeedepartmenthistoryViewRow](
+        _path,
+        "suffix",
+        _.suffix,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(suffix = value),
+        PgTypes.text
+      )
+    }
+
+    override def shift: Field[Name, VemployeedepartmenthistoryViewRow] = {
+      new Field[Name, VemployeedepartmenthistoryViewRow](
+        _path,
+        "shift",
+        _.shift,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shift = value),
+        Name.pgType
+      )
+    }
+
+    override def department: Field[Name, VemployeedepartmenthistoryViewRow] = {
+      new Field[Name, VemployeedepartmenthistoryViewRow](
+        _path,
+        "department",
+        _.department,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(department = value),
+        Name.pgType
+      )
+    }
+
+    override def groupname: Field[Name, VemployeedepartmenthistoryViewRow] = {
+      new Field[Name, VemployeedepartmenthistoryViewRow](
+        _path,
+        "groupname",
+        _.groupname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(groupname = value),
+        Name.pgType
+      )
+    }
+
+    override def startdate: Field[TypoLocalDate, VemployeedepartmenthistoryViewRow] = {
+      new Field[TypoLocalDate, VemployeedepartmenthistoryViewRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def enddate: OptField[TypoLocalDate, VemployeedepartmenthistoryViewRow] = {
+      new OptField[TypoLocalDate, VemployeedepartmenthistoryViewRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VemployeedepartmenthistoryViewRow]] = java.util.List.of(this.businessentityid, this.title, this.firstname, this.middlename, this.lastname, this.suffix, this.shift, this.department, this.groupname, this.startdate, this.enddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

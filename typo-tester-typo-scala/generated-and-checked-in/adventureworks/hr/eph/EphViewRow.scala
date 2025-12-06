@@ -29,5 +29,5 @@ case class EphViewRow(
 )
 
 object EphViewRow {
-  val `_rowParser`: RowParser[EphViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EphViewRow.apply, row => Array(row.id, row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate))
+  val `_rowParser`: RowParser[EphViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EphViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.ratechangedate.asInstanceOf[Object], row.rate.asInstanceOf[Object], row.payfrequency.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

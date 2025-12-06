@@ -8,65 +8,69 @@ package adventureworks.person.businessentity
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait BusinessentityFields {
+trait BusinessentityFields extends FieldsExpr[BusinessentityRow] {
   def businessentityid: IdField[BusinessentityId, BusinessentityRow]
 
   def rowguid: Field[TypoUUID, BusinessentityRow]
 
   def modifieddate: Field[TypoLocalDateTime, BusinessentityRow]
+
+  override def columns: java.util.List[FieldLike[?, BusinessentityRow]]
+
+  override def rowParser: RowParser[BusinessentityRow] = BusinessentityRow._rowParser
 }
 
 object BusinessentityFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[BusinessentityFields, BusinessentityRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends BusinessentityFields with Relation[BusinessentityFields, BusinessentityRow] {
 
-    override lazy val fields: BusinessentityFields = {
-      new BusinessentityFields {
-        override def businessentityid: IdField[BusinessentityId, BusinessentityRow] = {
-          new IdField[BusinessentityId, BusinessentityRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, BusinessentityRow] = {
-          new Field[TypoUUID, BusinessentityRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, BusinessentityRow] = {
-          new Field[TypoLocalDateTime, BusinessentityRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: IdField[BusinessentityId, BusinessentityRow] = {
+      new IdField[BusinessentityId, BusinessentityRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, BusinessentityRow]] = java.util.List.of(this.fields.businessentityid, this.fields.rowguid, this.fields.modifieddate)
+    override def rowguid: Field[TypoUUID, BusinessentityRow] = {
+      new Field[TypoUUID, BusinessentityRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, BusinessentityRow] = {
+      new Field[TypoLocalDateTime, BusinessentityRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, BusinessentityRow]] = java.util.List.of(this.businessentityid, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[BusinessentityFields, BusinessentityRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[BusinessentityFields, BusinessentityRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

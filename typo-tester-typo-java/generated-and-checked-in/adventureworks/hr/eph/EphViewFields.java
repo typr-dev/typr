@@ -11,60 +11,58 @@ import adventureworks.person.businessentity.BusinessentityId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface EphViewFields {
-  final class Impl extends Relation<EphViewFields, EphViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface EphViewFields extends FieldsExpr<EphViewRow> {
+  record Impl(List<Path> _path) implements EphViewFields, Relation<EphViewFields, EphViewRow> {
+    @Override
+    public Field<BusinessentityId, EphViewRow> id() {
+      return new Field<BusinessentityId, EphViewRow>(_path, "id", EphViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public EphViewFields fields() {
-      return new EphViewFields() {
-               @Override
-               public Field<BusinessentityId, EphViewRow> id() {
-                 return new Field<BusinessentityId, EphViewRow>(_path, "id", EphViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, EphViewRow> businessentityid() {
-                 return new Field<BusinessentityId, EphViewRow>(_path, "businessentityid", EphViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, EphViewRow> ratechangedate() {
-                 return new Field<TypoLocalDateTime, EphViewRow>(_path, "ratechangedate", EphViewRow::ratechangedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withRatechangedate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<BigDecimal, EphViewRow> rate() {
-                 return new Field<BigDecimal, EphViewRow>(_path, "rate", EphViewRow::rate, Optional.empty(), Optional.empty(), (row, value) -> row.withRate(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoShort, EphViewRow> payfrequency() {
-                 return new Field<TypoShort, EphViewRow>(_path, "payfrequency", EphViewRow::payfrequency, Optional.empty(), Optional.empty(), (row, value) -> row.withPayfrequency(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, EphViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, EphViewRow>(_path, "modifieddate", EphViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, EphViewRow> businessentityid() {
+      return new Field<BusinessentityId, EphViewRow>(_path, "businessentityid", EphViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, EphViewRow> ratechangedate() {
+      return new Field<TypoLocalDateTime, EphViewRow>(_path, "ratechangedate", EphViewRow::ratechangedate, Optional.of("text"), Optional.empty(), (row, value) -> row.withRatechangedate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, EphViewRow> rate() {
+      return new Field<BigDecimal, EphViewRow>(_path, "rate", EphViewRow::rate, Optional.empty(), Optional.empty(), (row, value) -> row.withRate(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoShort, EphViewRow> payfrequency() {
+      return new Field<TypoShort, EphViewRow>(_path, "payfrequency", EphViewRow::payfrequency, Optional.empty(), Optional.empty(), (row, value) -> row.withPayfrequency(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, EphViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, EphViewRow>(_path, "modifieddate", EphViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, EphViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().ratechangedate(), this.fields().rate(), this.fields().payfrequency(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.ratechangedate(), this.rate(), this.payfrequency(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<EphViewFields, EphViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<EphViewFields, EphViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -79,4 +77,12 @@ public interface EphViewFields {
   Field<TypoShort, EphViewRow> payfrequency();
 
   Field<TypoLocalDateTime, EphViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, EphViewRow>> columns();
+
+  @Override
+  default RowParser<EphViewRow> rowParser() {
+    return EphViewRow._rowParser;
+  };
 }

@@ -10,64 +10,63 @@ import adventureworks.production.product.ProductId;
 import adventureworks.sales.shoppingcartitem.ShoppingcartitemId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface SciViewFields {
-  final class Impl extends Relation<SciViewFields, SciViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SciViewFields extends FieldsExpr<SciViewRow> {
+  record Impl(List<Path> _path) implements SciViewFields, Relation<SciViewFields, SciViewRow> {
+    @Override
+    public Field<ShoppingcartitemId, SciViewRow> id() {
+      return new Field<ShoppingcartitemId, SciViewRow>(_path, "id", SciViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ShoppingcartitemId.pgType);
+    };
 
     @Override
-    public SciViewFields fields() {
-      return new SciViewFields() {
-               @Override
-               public Field<ShoppingcartitemId, SciViewRow> id() {
-                 return new Field<ShoppingcartitemId, SciViewRow>(_path, "id", SciViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ShoppingcartitemId.pgType);
-               };
-               @Override
-               public Field<ShoppingcartitemId, SciViewRow> shoppingcartitemid() {
-                 return new Field<ShoppingcartitemId, SciViewRow>(_path, "shoppingcartitemid", SciViewRow::shoppingcartitemid, Optional.empty(), Optional.empty(), (row, value) -> row.withShoppingcartitemid(value), ShoppingcartitemId.pgType);
-               };
-               @Override
-               public Field</* max 50 chars */ String, SciViewRow> shoppingcartid() {
-                 return new Field</* max 50 chars */ String, SciViewRow>(_path, "shoppingcartid", SciViewRow::shoppingcartid, Optional.empty(), Optional.empty(), (row, value) -> row.withShoppingcartid(value), PgTypes.text);
-               };
-               @Override
-               public Field<Integer, SciViewRow> quantity() {
-                 return new Field<Integer, SciViewRow>(_path, "quantity", SciViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), PgTypes.int4);
-               };
-               @Override
-               public Field<ProductId, SciViewRow> productid() {
-                 return new Field<ProductId, SciViewRow>(_path, "productid", SciViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SciViewRow> datecreated() {
-                 return new Field<TypoLocalDateTime, SciViewRow>(_path, "datecreated", SciViewRow::datecreated, Optional.of("text"), Optional.empty(), (row, value) -> row.withDatecreated(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SciViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SciViewRow>(_path, "modifieddate", SciViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ShoppingcartitemId, SciViewRow> shoppingcartitemid() {
+      return new Field<ShoppingcartitemId, SciViewRow>(_path, "shoppingcartitemid", SciViewRow::shoppingcartitemid, Optional.empty(), Optional.empty(), (row, value) -> row.withShoppingcartitemid(value), ShoppingcartitemId.pgType);
+    };
+
+    @Override
+    public Field</* max 50 chars */ String, SciViewRow> shoppingcartid() {
+      return new Field</* max 50 chars */ String, SciViewRow>(_path, "shoppingcartid", SciViewRow::shoppingcartid, Optional.empty(), Optional.empty(), (row, value) -> row.withShoppingcartid(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Integer, SciViewRow> quantity() {
+      return new Field<Integer, SciViewRow>(_path, "quantity", SciViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<ProductId, SciViewRow> productid() {
+      return new Field<ProductId, SciViewRow>(_path, "productid", SciViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SciViewRow> datecreated() {
+      return new Field<TypoLocalDateTime, SciViewRow>(_path, "datecreated", SciViewRow::datecreated, Optional.of("text"), Optional.empty(), (row, value) -> row.withDatecreated(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SciViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SciViewRow>(_path, "modifieddate", SciViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SciViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().shoppingcartitemid(), this.fields().shoppingcartid(), this.fields().quantity(), this.fields().productid(), this.fields().datecreated(), this.fields().modifieddate());
+      return List.of(this.id(), this.shoppingcartitemid(), this.shoppingcartid(), this.quantity(), this.productid(), this.datecreated(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SciViewFields, SciViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SciViewFields, SciViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -84,4 +83,12 @@ public interface SciViewFields {
   Field<TypoLocalDateTime, SciViewRow> datecreated();
 
   Field<TypoLocalDateTime, SciViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, SciViewRow>> columns();
+
+  @Override
+  default RowParser<SciViewRow> rowParser() {
+    return SciViewRow._rowParser;
+  };
 }

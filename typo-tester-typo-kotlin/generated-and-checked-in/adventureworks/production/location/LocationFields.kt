@@ -10,15 +10,19 @@ import adventureworks.public.Name
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface LocationFields {
+interface LocationFields : FieldsExpr<LocationRow> {
   fun availability(): Field<BigDecimal, LocationRow>
+
+  override fun columns(): List<FieldLike<*, LocationRow>>
 
   fun costrate(): Field<BigDecimal, LocationRow>
 
@@ -28,21 +32,25 @@ interface LocationFields {
 
   fun name(): Field<Name, LocationRow>
 
+  override fun rowParser(): RowParser<LocationRow> = LocationRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<LocationFields, LocationRow>(path) {
-      override fun fields(): LocationFields = object : LocationFields {
-        override fun locationid(): IdField<LocationId, LocationRow> = IdField<LocationId, LocationRow>(_path, "locationid", LocationRow::locationid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(locationid = value) }, LocationId.pgType)
-        override fun name(): Field<Name, LocationRow> = Field<Name, LocationRow>(_path, "name", LocationRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun costrate(): Field<BigDecimal, LocationRow> = Field<BigDecimal, LocationRow>(_path, "costrate", LocationRow::costrate, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(costrate = value) }, PgTypes.numeric)
-        override fun availability(): Field<BigDecimal, LocationRow> = Field<BigDecimal, LocationRow>(_path, "availability", LocationRow::availability, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(availability = value) }, PgTypes.numeric)
-        override fun modifieddate(): Field<TypoLocalDateTime, LocationRow> = Field<TypoLocalDateTime, LocationRow>(_path, "modifieddate", LocationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : LocationFields, Relation<LocationFields, LocationRow> {
+      override fun locationid(): IdField<LocationId, LocationRow> = IdField<LocationId, LocationRow>(_path, "locationid", LocationRow::locationid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(locationid = value) }, LocationId.pgType)
 
-      override fun columns(): List<FieldLike<*, LocationRow>> = listOf(this.fields().locationid(), this.fields().name(), this.fields().costrate(), this.fields().availability(), this.fields().modifieddate())
+      override fun name(): Field<Name, LocationRow> = Field<Name, LocationRow>(_path, "name", LocationRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun costrate(): Field<BigDecimal, LocationRow> = Field<BigDecimal, LocationRow>(_path, "costrate", LocationRow::costrate, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(costrate = value) }, PgTypes.numeric)
+
+      override fun availability(): Field<BigDecimal, LocationRow> = Field<BigDecimal, LocationRow>(_path, "availability", LocationRow::availability, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(availability = value) }, PgTypes.numeric)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, LocationRow> = Field<TypoLocalDateTime, LocationRow>(_path, "modifieddate", LocationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, LocationRow>> = listOf(this.locationid(), this.name(), this.costrate(), this.availability(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<LocationFields, LocationRow> = Impl(_path)
     }
 
-    val structure: Relation<LocationFields, LocationRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

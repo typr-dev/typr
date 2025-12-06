@@ -10,14 +10,16 @@ import adventureworks.public.Name
 import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VvendorwithcontactsViewFields {
+trait VvendorwithcontactsViewFields extends FieldsExpr[VvendorwithcontactsViewRow] {
   def businessentityid: Field[BusinessentityId, VvendorwithcontactsViewRow]
 
   def name: Field[Name, VvendorwithcontactsViewRow]
@@ -41,152 +43,163 @@ trait VvendorwithcontactsViewFields {
   def emailaddress: OptField[/* max 50 chars */ String, VvendorwithcontactsViewRow]
 
   def emailpromotion: Field[Integer, VvendorwithcontactsViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VvendorwithcontactsViewRow]]
+
+  override def rowParser: RowParser[VvendorwithcontactsViewRow] = VvendorwithcontactsViewRow._rowParser
 }
 
 object VvendorwithcontactsViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VvendorwithcontactsViewFields, VvendorwithcontactsViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VvendorwithcontactsViewFields with Relation[VvendorwithcontactsViewFields, VvendorwithcontactsViewRow] {
 
-    override lazy val fields: VvendorwithcontactsViewFields = {
-      new VvendorwithcontactsViewFields {
-        override def businessentityid: Field[BusinessentityId, VvendorwithcontactsViewRow] = {
-          new Field[BusinessentityId, VvendorwithcontactsViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def name: Field[Name, VvendorwithcontactsViewRow] = {
-          new Field[Name, VvendorwithcontactsViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def contacttype: Field[Name, VvendorwithcontactsViewRow] = {
-          new Field[Name, VvendorwithcontactsViewRow](
-            _path,
-            "contacttype",
-            _.contacttype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(contacttype = value),
-            Name.pgType
-          )
-        }
-        override def title: OptField[/* max 8 chars */ String, VvendorwithcontactsViewRow] = {
-          new OptField[/* max 8 chars */ String, VvendorwithcontactsViewRow](
-            _path,
-            "title",
-            _.title,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(title = value),
-            PgTypes.text
-          )
-        }
-        override def firstname: Field[/* user-picked */ FirstName, VvendorwithcontactsViewRow] = {
-          new Field[/* user-picked */ FirstName, VvendorwithcontactsViewRow](
-            _path,
-            "firstname",
-            _.firstname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(firstname = value),
-            FirstName.pgType
-          )
-        }
-        override def middlename: OptField[Name, VvendorwithcontactsViewRow] = {
-          new OptField[Name, VvendorwithcontactsViewRow](
-            _path,
-            "middlename",
-            _.middlename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(middlename = value),
-            Name.pgType
-          )
-        }
-        override def lastname: Field[Name, VvendorwithcontactsViewRow] = {
-          new Field[Name, VvendorwithcontactsViewRow](
-            _path,
-            "lastname",
-            _.lastname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastname = value),
-            Name.pgType
-          )
-        }
-        override def suffix: OptField[/* max 10 chars */ String, VvendorwithcontactsViewRow] = {
-          new OptField[/* max 10 chars */ String, VvendorwithcontactsViewRow](
-            _path,
-            "suffix",
-            _.suffix,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(suffix = value),
-            PgTypes.text
-          )
-        }
-        override def phonenumber: OptField[Phone, VvendorwithcontactsViewRow] = {
-          new OptField[Phone, VvendorwithcontactsViewRow](
-            _path,
-            "phonenumber",
-            _.phonenumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(phonenumber = value),
-            Phone.pgType
-          )
-        }
-        override def phonenumbertype: OptField[Name, VvendorwithcontactsViewRow] = {
-          new OptField[Name, VvendorwithcontactsViewRow](
-            _path,
-            "phonenumbertype",
-            _.phonenumbertype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(phonenumbertype = value),
-            Name.pgType
-          )
-        }
-        override def emailaddress: OptField[/* max 50 chars */ String, VvendorwithcontactsViewRow] = {
-          new OptField[/* max 50 chars */ String, VvendorwithcontactsViewRow](
-            _path,
-            "emailaddress",
-            _.emailaddress,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailaddress = value),
-            PgTypes.text
-          )
-        }
-        override def emailpromotion: Field[Integer, VvendorwithcontactsViewRow] = {
-          new Field[Integer, VvendorwithcontactsViewRow](
-            _path,
-            "emailpromotion",
-            _.emailpromotion,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailpromotion = value),
-            PgTypes.int4
-          )
-        }
-      }
+    override def businessentityid: Field[BusinessentityId, VvendorwithcontactsViewRow] = {
+      new Field[BusinessentityId, VvendorwithcontactsViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VvendorwithcontactsViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.name, this.fields.contacttype, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.phonenumber, this.fields.phonenumbertype, this.fields.emailaddress, this.fields.emailpromotion)
+    override def name: Field[Name, VvendorwithcontactsViewRow] = {
+      new Field[Name, VvendorwithcontactsViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def contacttype: Field[Name, VvendorwithcontactsViewRow] = {
+      new Field[Name, VvendorwithcontactsViewRow](
+        _path,
+        "contacttype",
+        _.contacttype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(contacttype = value),
+        Name.pgType
+      )
+    }
+
+    override def title: OptField[/* max 8 chars */ String, VvendorwithcontactsViewRow] = {
+      new OptField[/* max 8 chars */ String, VvendorwithcontactsViewRow](
+        _path,
+        "title",
+        _.title,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(title = value),
+        PgTypes.text
+      )
+    }
+
+    override def firstname: Field[/* user-picked */ FirstName, VvendorwithcontactsViewRow] = {
+      new Field[/* user-picked */ FirstName, VvendorwithcontactsViewRow](
+        _path,
+        "firstname",
+        _.firstname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(firstname = value),
+        FirstName.pgType
+      )
+    }
+
+    override def middlename: OptField[Name, VvendorwithcontactsViewRow] = {
+      new OptField[Name, VvendorwithcontactsViewRow](
+        _path,
+        "middlename",
+        _.middlename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(middlename = value),
+        Name.pgType
+      )
+    }
+
+    override def lastname: Field[Name, VvendorwithcontactsViewRow] = {
+      new Field[Name, VvendorwithcontactsViewRow](
+        _path,
+        "lastname",
+        _.lastname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastname = value),
+        Name.pgType
+      )
+    }
+
+    override def suffix: OptField[/* max 10 chars */ String, VvendorwithcontactsViewRow] = {
+      new OptField[/* max 10 chars */ String, VvendorwithcontactsViewRow](
+        _path,
+        "suffix",
+        _.suffix,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(suffix = value),
+        PgTypes.text
+      )
+    }
+
+    override def phonenumber: OptField[Phone, VvendorwithcontactsViewRow] = {
+      new OptField[Phone, VvendorwithcontactsViewRow](
+        _path,
+        "phonenumber",
+        _.phonenumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(phonenumber = value),
+        Phone.pgType
+      )
+    }
+
+    override def phonenumbertype: OptField[Name, VvendorwithcontactsViewRow] = {
+      new OptField[Name, VvendorwithcontactsViewRow](
+        _path,
+        "phonenumbertype",
+        _.phonenumbertype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(phonenumbertype = value),
+        Name.pgType
+      )
+    }
+
+    override def emailaddress: OptField[/* max 50 chars */ String, VvendorwithcontactsViewRow] = {
+      new OptField[/* max 50 chars */ String, VvendorwithcontactsViewRow](
+        _path,
+        "emailaddress",
+        _.emailaddress,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailaddress = value),
+        PgTypes.text
+      )
+    }
+
+    override def emailpromotion: Field[Integer, VvendorwithcontactsViewRow] = {
+      new Field[Integer, VvendorwithcontactsViewRow](
+        _path,
+        "emailpromotion",
+        _.emailpromotion,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailpromotion = value),
+        PgTypes.int4
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VvendorwithcontactsViewRow]] = java.util.List.of(this.businessentityid, this.name, this.contacttype, this.title, this.firstname, this.middlename, this.lastname, this.suffix, this.phonenumber, this.phonenumbertype, this.emailaddress, this.emailpromotion)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VvendorwithcontactsViewFields, VvendorwithcontactsViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VvendorwithcontactsViewFields, VvendorwithcontactsViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

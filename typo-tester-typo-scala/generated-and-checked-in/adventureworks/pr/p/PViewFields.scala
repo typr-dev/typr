@@ -15,14 +15,16 @@ import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PViewFields {
+trait PViewFields extends FieldsExpr[PViewRow] {
   def id: Field[ProductId, PViewRow]
 
   def productid: Field[ProductId, PViewRow]
@@ -74,306 +76,331 @@ trait PViewFields {
   def rowguid: Field[TypoUUID, PViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PViewRow]]
+
+  override def rowParser: RowParser[PViewRow] = PViewRow._rowParser
 }
 
 object PViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PViewFields, PViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PViewFields with Relation[PViewFields, PViewRow] {
 
-    override lazy val fields: PViewFields = {
-      new PViewFields {
-        override def id: Field[ProductId, PViewRow] = {
-          new Field[ProductId, PViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            ProductId.pgType
-          )
-        }
-        override def productid: Field[ProductId, PViewRow] = {
-          new Field[ProductId, PViewRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def name: Field[Name, PViewRow] = {
-          new Field[Name, PViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def productnumber: Field[/* max 25 chars */ String, PViewRow] = {
-          new Field[/* max 25 chars */ String, PViewRow](
-            _path,
-            "productnumber",
-            _.productnumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productnumber = value),
-            PgTypes.text
-          )
-        }
-        override def makeflag: Field[Flag, PViewRow] = {
-          new Field[Flag, PViewRow](
-            _path,
-            "makeflag",
-            _.makeflag,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(makeflag = value),
-            Flag.pgType
-          )
-        }
-        override def finishedgoodsflag: Field[Flag, PViewRow] = {
-          new Field[Flag, PViewRow](
-            _path,
-            "finishedgoodsflag",
-            _.finishedgoodsflag,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(finishedgoodsflag = value),
-            Flag.pgType
-          )
-        }
-        override def color: OptField[/* max 15 chars */ String, PViewRow] = {
-          new OptField[/* max 15 chars */ String, PViewRow](
-            _path,
-            "color",
-            _.color,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(color = value),
-            PgTypes.text
-          )
-        }
-        override def safetystocklevel: Field[TypoShort, PViewRow] = {
-          new Field[TypoShort, PViewRow](
-            _path,
-            "safetystocklevel",
-            _.safetystocklevel,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(safetystocklevel = value),
-            TypoShort.pgType
-          )
-        }
-        override def reorderpoint: Field[TypoShort, PViewRow] = {
-          new Field[TypoShort, PViewRow](
-            _path,
-            "reorderpoint",
-            _.reorderpoint,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(reorderpoint = value),
-            TypoShort.pgType
-          )
-        }
-        override def standardcost: Field[java.math.BigDecimal, PViewRow] = {
-          new Field[java.math.BigDecimal, PViewRow](
-            _path,
-            "standardcost",
-            _.standardcost,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(standardcost = value),
-            PgTypes.numeric
-          )
-        }
-        override def listprice: Field[java.math.BigDecimal, PViewRow] = {
-          new Field[java.math.BigDecimal, PViewRow](
-            _path,
-            "listprice",
-            _.listprice,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(listprice = value),
-            PgTypes.numeric
-          )
-        }
-        override def size: OptField[/* max 5 chars */ String, PViewRow] = {
-          new OptField[/* max 5 chars */ String, PViewRow](
-            _path,
-            "size",
-            _.size,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(size = value),
-            PgTypes.text
-          )
-        }
-        override def sizeunitmeasurecode: OptField[UnitmeasureId, PViewRow] = {
-          new OptField[UnitmeasureId, PViewRow](
-            _path,
-            "sizeunitmeasurecode",
-            _.sizeunitmeasurecode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(sizeunitmeasurecode = value),
-            UnitmeasureId.pgType
-          )
-        }
-        override def weightunitmeasurecode: OptField[UnitmeasureId, PViewRow] = {
-          new OptField[UnitmeasureId, PViewRow](
-            _path,
-            "weightunitmeasurecode",
-            _.weightunitmeasurecode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(weightunitmeasurecode = value),
-            UnitmeasureId.pgType
-          )
-        }
-        override def weight: OptField[java.math.BigDecimal, PViewRow] = {
-          new OptField[java.math.BigDecimal, PViewRow](
-            _path,
-            "weight",
-            _.weight,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(weight = value),
-            PgTypes.numeric
-          )
-        }
-        override def daystomanufacture: Field[Integer, PViewRow] = {
-          new Field[Integer, PViewRow](
-            _path,
-            "daystomanufacture",
-            _.daystomanufacture,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(daystomanufacture = value),
-            PgTypes.int4
-          )
-        }
-        override def productline: OptField[/* bpchar, max 2 chars */ String, PViewRow] = {
-          new OptField[/* bpchar, max 2 chars */ String, PViewRow](
-            _path,
-            "productline",
-            _.productline,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productline = value),
-            PgTypes.bpchar
-          )
-        }
-        override def `class`: OptField[/* bpchar, max 2 chars */ String, PViewRow] = {
-          new OptField[/* bpchar, max 2 chars */ String, PViewRow](
-            _path,
-            "class",
-            _.`class`,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(`class` = value),
-            PgTypes.bpchar
-          )
-        }
-        override def style: OptField[/* bpchar, max 2 chars */ String, PViewRow] = {
-          new OptField[/* bpchar, max 2 chars */ String, PViewRow](
-            _path,
-            "style",
-            _.style,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(style = value),
-            PgTypes.bpchar
-          )
-        }
-        override def productsubcategoryid: OptField[ProductsubcategoryId, PViewRow] = {
-          new OptField[ProductsubcategoryId, PViewRow](
-            _path,
-            "productsubcategoryid",
-            _.productsubcategoryid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productsubcategoryid = value),
-            ProductsubcategoryId.pgType
-          )
-        }
-        override def productmodelid: OptField[ProductmodelId, PViewRow] = {
-          new OptField[ProductmodelId, PViewRow](
-            _path,
-            "productmodelid",
-            _.productmodelid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productmodelid = value),
-            ProductmodelId.pgType
-          )
-        }
-        override def sellstartdate: Field[TypoLocalDateTime, PViewRow] = {
-          new Field[TypoLocalDateTime, PViewRow](
-            _path,
-            "sellstartdate",
-            _.sellstartdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(sellstartdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def sellenddate: OptField[TypoLocalDateTime, PViewRow] = {
-          new OptField[TypoLocalDateTime, PViewRow](
-            _path,
-            "sellenddate",
-            _.sellenddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(sellenddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def discontinueddate: OptField[TypoLocalDateTime, PViewRow] = {
-          new OptField[TypoLocalDateTime, PViewRow](
-            _path,
-            "discontinueddate",
-            _.discontinueddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(discontinueddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, PViewRow] = {
-          new Field[TypoUUID, PViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PViewRow] = {
-          new Field[TypoLocalDateTime, PViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[ProductId, PViewRow] = {
+      new Field[ProductId, PViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        ProductId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PViewRow]] = java.util.List.of(this.fields.id, this.fields.productid, this.fields.name, this.fields.productnumber, this.fields.makeflag, this.fields.finishedgoodsflag, this.fields.color, this.fields.safetystocklevel, this.fields.reorderpoint, this.fields.standardcost, this.fields.listprice, this.fields.size, this.fields.sizeunitmeasurecode, this.fields.weightunitmeasurecode, this.fields.weight, this.fields.daystomanufacture, this.fields.productline, this.fields.`class`, this.fields.style, this.fields.productsubcategoryid, this.fields.productmodelid, this.fields.sellstartdate, this.fields.sellenddate, this.fields.discontinueddate, this.fields.rowguid, this.fields.modifieddate)
+    override def productid: Field[ProductId, PViewRow] = {
+      new Field[ProductId, PViewRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[Name, PViewRow] = {
+      new Field[Name, PViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def productnumber: Field[/* max 25 chars */ String, PViewRow] = {
+      new Field[/* max 25 chars */ String, PViewRow](
+        _path,
+        "productnumber",
+        _.productnumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productnumber = value),
+        PgTypes.text
+      )
+    }
+
+    override def makeflag: Field[Flag, PViewRow] = {
+      new Field[Flag, PViewRow](
+        _path,
+        "makeflag",
+        _.makeflag,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(makeflag = value),
+        Flag.pgType
+      )
+    }
+
+    override def finishedgoodsflag: Field[Flag, PViewRow] = {
+      new Field[Flag, PViewRow](
+        _path,
+        "finishedgoodsflag",
+        _.finishedgoodsflag,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(finishedgoodsflag = value),
+        Flag.pgType
+      )
+    }
+
+    override def color: OptField[/* max 15 chars */ String, PViewRow] = {
+      new OptField[/* max 15 chars */ String, PViewRow](
+        _path,
+        "color",
+        _.color,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(color = value),
+        PgTypes.text
+      )
+    }
+
+    override def safetystocklevel: Field[TypoShort, PViewRow] = {
+      new Field[TypoShort, PViewRow](
+        _path,
+        "safetystocklevel",
+        _.safetystocklevel,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(safetystocklevel = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def reorderpoint: Field[TypoShort, PViewRow] = {
+      new Field[TypoShort, PViewRow](
+        _path,
+        "reorderpoint",
+        _.reorderpoint,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(reorderpoint = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def standardcost: Field[java.math.BigDecimal, PViewRow] = {
+      new Field[java.math.BigDecimal, PViewRow](
+        _path,
+        "standardcost",
+        _.standardcost,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(standardcost = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def listprice: Field[java.math.BigDecimal, PViewRow] = {
+      new Field[java.math.BigDecimal, PViewRow](
+        _path,
+        "listprice",
+        _.listprice,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(listprice = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def size: OptField[/* max 5 chars */ String, PViewRow] = {
+      new OptField[/* max 5 chars */ String, PViewRow](
+        _path,
+        "size",
+        _.size,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(size = value),
+        PgTypes.text
+      )
+    }
+
+    override def sizeunitmeasurecode: OptField[UnitmeasureId, PViewRow] = {
+      new OptField[UnitmeasureId, PViewRow](
+        _path,
+        "sizeunitmeasurecode",
+        _.sizeunitmeasurecode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(sizeunitmeasurecode = value),
+        UnitmeasureId.pgType
+      )
+    }
+
+    override def weightunitmeasurecode: OptField[UnitmeasureId, PViewRow] = {
+      new OptField[UnitmeasureId, PViewRow](
+        _path,
+        "weightunitmeasurecode",
+        _.weightunitmeasurecode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(weightunitmeasurecode = value),
+        UnitmeasureId.pgType
+      )
+    }
+
+    override def weight: OptField[java.math.BigDecimal, PViewRow] = {
+      new OptField[java.math.BigDecimal, PViewRow](
+        _path,
+        "weight",
+        _.weight,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(weight = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def daystomanufacture: Field[Integer, PViewRow] = {
+      new Field[Integer, PViewRow](
+        _path,
+        "daystomanufacture",
+        _.daystomanufacture,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(daystomanufacture = value),
+        PgTypes.int4
+      )
+    }
+
+    override def productline: OptField[/* bpchar, max 2 chars */ String, PViewRow] = {
+      new OptField[/* bpchar, max 2 chars */ String, PViewRow](
+        _path,
+        "productline",
+        _.productline,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productline = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def `class`: OptField[/* bpchar, max 2 chars */ String, PViewRow] = {
+      new OptField[/* bpchar, max 2 chars */ String, PViewRow](
+        _path,
+        "class",
+        _.`class`,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(`class` = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def style: OptField[/* bpchar, max 2 chars */ String, PViewRow] = {
+      new OptField[/* bpchar, max 2 chars */ String, PViewRow](
+        _path,
+        "style",
+        _.style,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(style = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def productsubcategoryid: OptField[ProductsubcategoryId, PViewRow] = {
+      new OptField[ProductsubcategoryId, PViewRow](
+        _path,
+        "productsubcategoryid",
+        _.productsubcategoryid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productsubcategoryid = value),
+        ProductsubcategoryId.pgType
+      )
+    }
+
+    override def productmodelid: OptField[ProductmodelId, PViewRow] = {
+      new OptField[ProductmodelId, PViewRow](
+        _path,
+        "productmodelid",
+        _.productmodelid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productmodelid = value),
+        ProductmodelId.pgType
+      )
+    }
+
+    override def sellstartdate: Field[TypoLocalDateTime, PViewRow] = {
+      new Field[TypoLocalDateTime, PViewRow](
+        _path,
+        "sellstartdate",
+        _.sellstartdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(sellstartdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def sellenddate: OptField[TypoLocalDateTime, PViewRow] = {
+      new OptField[TypoLocalDateTime, PViewRow](
+        _path,
+        "sellenddate",
+        _.sellenddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(sellenddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def discontinueddate: OptField[TypoLocalDateTime, PViewRow] = {
+      new OptField[TypoLocalDateTime, PViewRow](
+        _path,
+        "discontinueddate",
+        _.discontinueddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(discontinueddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, PViewRow] = {
+      new Field[TypoUUID, PViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PViewRow] = {
+      new Field[TypoLocalDateTime, PViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PViewRow]] = java.util.List.of(this.id, this.productid, this.name, this.productnumber, this.makeflag, this.finishedgoodsflag, this.color, this.safetystocklevel, this.reorderpoint, this.standardcost, this.listprice, this.size, this.sizeunitmeasurecode, this.weightunitmeasurecode, this.weight, this.daystomanufacture, this.productline, this.`class`, this.style, this.productsubcategoryid, this.productmodelid, this.sellstartdate, this.sellenddate, this.discontinueddate, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PViewFields, PViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PViewFields, PViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -10,76 +10,78 @@ import adventureworks.production.transactionhistoryarchive.Transactionhistoryarc
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface ThaViewFields {
-  final class Impl extends Relation<ThaViewFields, ThaViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ThaViewFields extends FieldsExpr<ThaViewRow> {
+  record Impl(List<Path> _path) implements ThaViewFields, Relation<ThaViewFields, ThaViewRow> {
+    @Override
+    public Field<TransactionhistoryarchiveId, ThaViewRow> id() {
+      return new Field<TransactionhistoryarchiveId, ThaViewRow>(_path, "id", ThaViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), TransactionhistoryarchiveId.pgType);
+    };
 
     @Override
-    public ThaViewFields fields() {
-      return new ThaViewFields() {
-               @Override
-               public Field<TransactionhistoryarchiveId, ThaViewRow> id() {
-                 return new Field<TransactionhistoryarchiveId, ThaViewRow>(_path, "id", ThaViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), TransactionhistoryarchiveId.pgType);
-               };
-               @Override
-               public Field<TransactionhistoryarchiveId, ThaViewRow> transactionid() {
-                 return new Field<TransactionhistoryarchiveId, ThaViewRow>(_path, "transactionid", ThaViewRow::transactionid, Optional.empty(), Optional.empty(), (row, value) -> row.withTransactionid(value), TransactionhistoryarchiveId.pgType);
-               };
-               @Override
-               public Field<Integer, ThaViewRow> productid() {
-                 return new Field<Integer, ThaViewRow>(_path, "productid", ThaViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), PgTypes.int4);
-               };
-               @Override
-               public Field<Integer, ThaViewRow> referenceorderid() {
-                 return new Field<Integer, ThaViewRow>(_path, "referenceorderid", ThaViewRow::referenceorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withReferenceorderid(value), PgTypes.int4);
-               };
-               @Override
-               public Field<Integer, ThaViewRow> referenceorderlineid() {
-                 return new Field<Integer, ThaViewRow>(_path, "referenceorderlineid", ThaViewRow::referenceorderlineid, Optional.empty(), Optional.empty(), (row, value) -> row.withReferenceorderlineid(value), PgTypes.int4);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ThaViewRow> transactiondate() {
-                 return new Field<TypoLocalDateTime, ThaViewRow>(_path, "transactiondate", ThaViewRow::transactiondate, Optional.of("text"), Optional.empty(), (row, value) -> row.withTransactiondate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field</* bpchar, max 1 chars */ String, ThaViewRow> transactiontype() {
-                 return new Field</* bpchar, max 1 chars */ String, ThaViewRow>(_path, "transactiontype", ThaViewRow::transactiontype, Optional.empty(), Optional.empty(), (row, value) -> row.withTransactiontype(value), PgTypes.bpchar);
-               };
-               @Override
-               public Field<Integer, ThaViewRow> quantity() {
-                 return new Field<Integer, ThaViewRow>(_path, "quantity", ThaViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), PgTypes.int4);
-               };
-               @Override
-               public Field<BigDecimal, ThaViewRow> actualcost() {
-                 return new Field<BigDecimal, ThaViewRow>(_path, "actualcost", ThaViewRow::actualcost, Optional.empty(), Optional.empty(), (row, value) -> row.withActualcost(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ThaViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ThaViewRow>(_path, "modifieddate", ThaViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<TransactionhistoryarchiveId, ThaViewRow> transactionid() {
+      return new Field<TransactionhistoryarchiveId, ThaViewRow>(_path, "transactionid", ThaViewRow::transactionid, Optional.empty(), Optional.empty(), (row, value) -> row.withTransactionid(value), TransactionhistoryarchiveId.pgType);
+    };
+
+    @Override
+    public Field<Integer, ThaViewRow> productid() {
+      return new Field<Integer, ThaViewRow>(_path, "productid", ThaViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<Integer, ThaViewRow> referenceorderid() {
+      return new Field<Integer, ThaViewRow>(_path, "referenceorderid", ThaViewRow::referenceorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withReferenceorderid(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<Integer, ThaViewRow> referenceorderlineid() {
+      return new Field<Integer, ThaViewRow>(_path, "referenceorderlineid", ThaViewRow::referenceorderlineid, Optional.empty(), Optional.empty(), (row, value) -> row.withReferenceorderlineid(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ThaViewRow> transactiondate() {
+      return new Field<TypoLocalDateTime, ThaViewRow>(_path, "transactiondate", ThaViewRow::transactiondate, Optional.of("text"), Optional.empty(), (row, value) -> row.withTransactiondate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field</* bpchar, max 1 chars */ String, ThaViewRow> transactiontype() {
+      return new Field</* bpchar, max 1 chars */ String, ThaViewRow>(_path, "transactiontype", ThaViewRow::transactiontype, Optional.empty(), Optional.empty(), (row, value) -> row.withTransactiontype(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public Field<Integer, ThaViewRow> quantity() {
+      return new Field<Integer, ThaViewRow>(_path, "quantity", ThaViewRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<BigDecimal, ThaViewRow> actualcost() {
+      return new Field<BigDecimal, ThaViewRow>(_path, "actualcost", ThaViewRow::actualcost, Optional.empty(), Optional.empty(), (row, value) -> row.withActualcost(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ThaViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ThaViewRow>(_path, "modifieddate", ThaViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ThaViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().transactionid(), this.fields().productid(), this.fields().referenceorderid(), this.fields().referenceorderlineid(), this.fields().transactiondate(), this.fields().transactiontype(), this.fields().quantity(), this.fields().actualcost(), this.fields().modifieddate());
+      return List.of(this.id(), this.transactionid(), this.productid(), this.referenceorderid(), this.referenceorderlineid(), this.transactiondate(), this.transactiontype(), this.quantity(), this.actualcost(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ThaViewFields, ThaViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ThaViewFields, ThaViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -102,4 +104,12 @@ public interface ThaViewFields {
   Field<BigDecimal, ThaViewRow> actualcost();
 
   Field<TypoLocalDateTime, ThaViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, ThaViewRow>> columns();
+
+  @Override
+  default RowParser<ThaViewRow> rowParser() {
+    return ThaViewRow._rowParser;
+  };
 }

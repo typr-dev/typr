@@ -5,9 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package information_schema
+package typo.generated.information_schema
 
 import anorm.Column
 import anorm.ParameterMetaData
@@ -15,25 +13,37 @@ import anorm.ToStatement
 import java.sql.Types
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
+import typo.generated.Text
 
 /** Domain `information_schema.character_data`
-  * No constraint
-  */
+ * No constraint
+ */
 case class CharacterData(value: String)
+
 object CharacterData {
   implicit lazy val arrayColumn: Column[Array[CharacterData]] = Column.columnToArray(column, implicitly)
+
   implicit lazy val arrayToStatement: ToStatement[Array[CharacterData]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
+
   implicit lazy val column: Column[CharacterData] = Column.columnToString.map(CharacterData.apply)
-  implicit lazy val ordering: Ordering[CharacterData] = Ordering.by(_.value)
-  implicit lazy val parameterMetadata: ParameterMetaData[CharacterData] = new ParameterMetaData[CharacterData] {
-    override def sqlType: String = """"information_schema"."character_data""""
-    override def jdbcType: Int = Types.OTHER
+
+  implicit lazy val parameterMetadata: ParameterMetaData[CharacterData] = {
+    new ParameterMetaData[CharacterData] {
+      override def sqlType: String = """"information_schema"."character_data""""
+      override def jdbcType: Int = Types.OTHER
+    }
   }
+
+  implicit lazy val pgText: Text[CharacterData] = {
+    new Text[CharacterData] {
+      override def unsafeEncode(v: CharacterData, sb: StringBuilder): Unit = Text.stringInstance.unsafeEncode(v.value, sb)
+      override def unsafeArrayEncode(v: CharacterData, sb: StringBuilder): Unit = Text.stringInstance.unsafeArrayEncode(v.value, sb)
+    }
+  }
+
   implicit lazy val reads: Reads[CharacterData] = Reads.StringReads.map(CharacterData.apply)
-  implicit lazy val text: Text[CharacterData] = new Text[CharacterData] {
-    override def unsafeEncode(v: CharacterData, sb: StringBuilder) = Text.stringInstance.unsafeEncode(v.value, sb)
-    override def unsafeArrayEncode(v: CharacterData, sb: StringBuilder) = Text.stringInstance.unsafeArrayEncode(v.value, sb)
-  }
+
   implicit lazy val toStatement: ToStatement[CharacterData] = ToStatement.stringToStatement.contramap(_.value)
+
   implicit lazy val writes: Writes[CharacterData] = Writes.StringWrites.contramap(_.value)
 }

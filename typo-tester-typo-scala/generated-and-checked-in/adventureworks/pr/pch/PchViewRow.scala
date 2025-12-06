@@ -29,5 +29,5 @@ case class PchViewRow(
 )
 
 object PchViewRow {
-  val `_rowParser`: RowParser[PchViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, PchViewRow.apply, row => Array(row.id, row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
+  val `_rowParser`: RowParser[PchViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, PchViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.startdate.asInstanceOf[Object], row.enddate.asInstanceOf[Object], row.standardcost.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

@@ -10,14 +10,16 @@ import adventureworks.customtypes.TypoShort
 import adventureworks.production.product.ProductId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait BomViewFields {
+trait BomViewFields extends FieldsExpr[BomViewRow] {
   def id: Field[Integer, BomViewRow]
 
   def billofmaterialsid: Field[Integer, BomViewRow]
@@ -37,130 +39,139 @@ trait BomViewFields {
   def perassemblyqty: Field[java.math.BigDecimal, BomViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, BomViewRow]
+
+  override def columns: java.util.List[FieldLike[?, BomViewRow]]
+
+  override def rowParser: RowParser[BomViewRow] = BomViewRow._rowParser
 }
 
 object BomViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[BomViewFields, BomViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends BomViewFields with Relation[BomViewFields, BomViewRow] {
 
-    override lazy val fields: BomViewFields = {
-      new BomViewFields {
-        override def id: Field[Integer, BomViewRow] = {
-          new Field[Integer, BomViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            PgTypes.int4
-          )
-        }
-        override def billofmaterialsid: Field[Integer, BomViewRow] = {
-          new Field[Integer, BomViewRow](
-            _path,
-            "billofmaterialsid",
-            _.billofmaterialsid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(billofmaterialsid = value),
-            PgTypes.int4
-          )
-        }
-        override def productassemblyid: OptField[ProductId, BomViewRow] = {
-          new OptField[ProductId, BomViewRow](
-            _path,
-            "productassemblyid",
-            _.productassemblyid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productassemblyid = value),
-            ProductId.pgType
-          )
-        }
-        override def componentid: Field[ProductId, BomViewRow] = {
-          new Field[ProductId, BomViewRow](
-            _path,
-            "componentid",
-            _.componentid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(componentid = value),
-            ProductId.pgType
-          )
-        }
-        override def startdate: Field[TypoLocalDateTime, BomViewRow] = {
-          new Field[TypoLocalDateTime, BomViewRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def enddate: OptField[TypoLocalDateTime, BomViewRow] = {
-          new OptField[TypoLocalDateTime, BomViewRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def unitmeasurecode: Field[UnitmeasureId, BomViewRow] = {
-          new Field[UnitmeasureId, BomViewRow](
-            _path,
-            "unitmeasurecode",
-            _.unitmeasurecode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(unitmeasurecode = value),
-            UnitmeasureId.pgType
-          )
-        }
-        override def bomlevel: Field[TypoShort, BomViewRow] = {
-          new Field[TypoShort, BomViewRow](
-            _path,
-            "bomlevel",
-            _.bomlevel,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(bomlevel = value),
-            TypoShort.pgType
-          )
-        }
-        override def perassemblyqty: Field[java.math.BigDecimal, BomViewRow] = {
-          new Field[java.math.BigDecimal, BomViewRow](
-            _path,
-            "perassemblyqty",
-            _.perassemblyqty,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(perassemblyqty = value),
-            PgTypes.numeric
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, BomViewRow] = {
-          new Field[TypoLocalDateTime, BomViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[Integer, BomViewRow] = {
+      new Field[Integer, BomViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        PgTypes.int4
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, BomViewRow]] = java.util.List.of(this.fields.id, this.fields.billofmaterialsid, this.fields.productassemblyid, this.fields.componentid, this.fields.startdate, this.fields.enddate, this.fields.unitmeasurecode, this.fields.bomlevel, this.fields.perassemblyqty, this.fields.modifieddate)
+    override def billofmaterialsid: Field[Integer, BomViewRow] = {
+      new Field[Integer, BomViewRow](
+        _path,
+        "billofmaterialsid",
+        _.billofmaterialsid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(billofmaterialsid = value),
+        PgTypes.int4
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def productassemblyid: OptField[ProductId, BomViewRow] = {
+      new OptField[ProductId, BomViewRow](
+        _path,
+        "productassemblyid",
+        _.productassemblyid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productassemblyid = value),
+        ProductId.pgType
+      )
+    }
+
+    override def componentid: Field[ProductId, BomViewRow] = {
+      new Field[ProductId, BomViewRow](
+        _path,
+        "componentid",
+        _.componentid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(componentid = value),
+        ProductId.pgType
+      )
+    }
+
+    override def startdate: Field[TypoLocalDateTime, BomViewRow] = {
+      new Field[TypoLocalDateTime, BomViewRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def enddate: OptField[TypoLocalDateTime, BomViewRow] = {
+      new OptField[TypoLocalDateTime, BomViewRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def unitmeasurecode: Field[UnitmeasureId, BomViewRow] = {
+      new Field[UnitmeasureId, BomViewRow](
+        _path,
+        "unitmeasurecode",
+        _.unitmeasurecode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(unitmeasurecode = value),
+        UnitmeasureId.pgType
+      )
+    }
+
+    override def bomlevel: Field[TypoShort, BomViewRow] = {
+      new Field[TypoShort, BomViewRow](
+        _path,
+        "bomlevel",
+        _.bomlevel,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(bomlevel = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def perassemblyqty: Field[java.math.BigDecimal, BomViewRow] = {
+      new Field[java.math.BigDecimal, BomViewRow](
+        _path,
+        "perassemblyqty",
+        _.perassemblyqty,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(perassemblyqty = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, BomViewRow] = {
+      new Field[TypoLocalDateTime, BomViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, BomViewRow]] = java.util.List.of(this.id, this.billofmaterialsid, this.productassemblyid, this.componentid, this.startdate, this.enddate, this.unitmeasurecode, this.bomlevel, this.perassemblyqty, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[BomViewFields, BomViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[BomViewFields, BomViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

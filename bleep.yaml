@@ -38,6 +38,9 @@ projects:
       options: -proc:none --release 24
     platform:
       name: jvm
+    sourcegen:
+      project: typo-scripts
+      main: scripts.GeneratedTuples
   typo-dsl-doobie:
     dependsOn: typo-runtime-doobie
     extends: template-cross

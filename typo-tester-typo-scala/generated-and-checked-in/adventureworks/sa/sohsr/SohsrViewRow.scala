@@ -22,5 +22,5 @@ case class SohsrViewRow(
 )
 
 object SohsrViewRow {
-  val `_rowParser`: RowParser[SohsrViewRow] = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SohsrViewRow.apply, row => Array(row.salesorderid, row.salesreasonid, row.modifieddate))
+  val `_rowParser`: RowParser[SohsrViewRow] = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, TypoLocalDateTime.pgType, SohsrViewRow.apply, row => Array[Object](row.salesorderid.asInstanceOf[Object], row.salesreasonid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

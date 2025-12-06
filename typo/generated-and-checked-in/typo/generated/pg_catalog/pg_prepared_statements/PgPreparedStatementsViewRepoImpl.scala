@@ -5,18 +5,15 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package pg_catalog
-package pg_prepared_statements
+package typo.generated.pg_catalog.pg_prepared_statements
 
-import anorm.SqlStringInterpolation
 import java.sql.Connection
+import anorm.SqlStringInterpolation
 
 class PgPreparedStatementsViewRepoImpl extends PgPreparedStatementsViewRepo {
   override def selectAll(implicit c: Connection): List[PgPreparedStatementsViewRow] = {
-    SQL"""select "name", "statement", "prepare_time"::text, "parameter_types", "from_sql"
-          from "pg_catalog"."pg_prepared_statements"
-       """.as(PgPreparedStatementsViewRow.rowParser(1).*)
+    SQL"""select "name", "statement", "prepare_time"::text, "parameter_types", "result_types", "from_sql", "generic_plans", "custom_plans"
+    from "pg_catalog"."pg_prepared_statements"
+    """.as(PgPreparedStatementsViewRow.rowParser(1).*)
   }
 }

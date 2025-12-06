@@ -1,5 +1,6 @@
 package typo.dsl;
 
+import typo.data.Json;
 import typo.dsl.internal.RowComparator;
 import typo.runtime.Fragment;
 
@@ -188,5 +189,255 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
         }
         
         return filtered.subList(start, end);
+    }
+
+    @Override
+    public <NewFields extends Tuples.TupleExpr<NewRow>, NewRow extends Tuples.Tuple>
+    SelectBuilder<NewFields, NewRow> mapExpr(Function<Fields, NewFields> projection) {
+        NewFields tupleExpr = projection.apply(structure.fields());
+        List<SqlExpr<?>> projectedExprs = tupleExpr.exprs();
+
+        // Create a structure for the projected results
+        ProjectedMockStructure<NewFields, NewRow> projectedStructure =
+            new ProjectedMockStructure<>(tupleExpr, projectedExprs);
+
+        // Create supplier that evaluates the projection for each row
+        Supplier<List<NewRow>> projectedRowsSupplier = () -> {
+            List<NewRow> result = new ArrayList<>();
+            for (Row row : allRowsSupplier.get()) {
+                // Evaluate each expression against the row
+                Object[] values = new Object[projectedExprs.size()];
+                for (int i = 0; i < projectedExprs.size(); i++) {
+                    SqlExpr<?> expr = projectedExprs.get(i);
+                    Optional<?> value = structure.untypedEval(expr, row);
+                    values[i] = value.orElse(null);
+                }
+                @SuppressWarnings("unchecked")
+                NewRow tuple = (NewRow) Tuples.createTuple(values);
+                result.add(tuple);
+            }
+            return result;
+        };
+
+        return new SelectBuilderMock<>(projectedStructure, projectedRowsSupplier, SelectParams.empty());
+    }
+
+    /**
+     * Structure implementation for projected results.
+     */
+    record ProjectedMockStructure<NewFields extends Tuples.TupleExpr<NewRow>, NewRow extends Tuples.Tuple>(
+            NewFields fields,
+            List<SqlExpr<?>> projectedExprs,
+            List<Path> path
+    ) implements Structure<NewFields, NewRow> {
+
+        ProjectedMockStructure(NewFields fields, List<SqlExpr<?>> projectedExprs) {
+            this(fields, projectedExprs, List.of());
+        }
+
+        @Override
+        public List<SqlExpr.FieldLike<?, ?>> allFields() {
+            // Projected structure doesn't have traditional columns
+            return List.of();
+        }
+
+        @Override
+        public List<Path> _path() {
+            return path;
+        }
+
+        @Override
+        public Structure<NewFields, NewRow> withPath(Path newPath) {
+            List<Path> newPaths = new ArrayList<>();
+            newPaths.add(newPath);
+            newPaths.addAll(path);
+            return new ProjectedMockStructure<>(fields, projectedExprs, newPaths);
+        }
+
+        @Override
+        public <T> Optional<T> untypedGetFieldValue(SqlExpr.FieldLike<T, ?> field, NewRow row) {
+            // For projected rows, we need to find which position the field corresponds to
+            // and get that value from the tuple
+            Object[] values = row.asArray();
+            for (int i = 0; i < projectedExprs.size(); i++) {
+                SqlExpr<?> expr = projectedExprs.get(i);
+                if (expr instanceof SqlExpr.FieldLike<?, ?> fieldExpr) {
+                    if (fieldExpr._path().equals(field._path()) && fieldExpr.column().equals(field.column())) {
+                        @SuppressWarnings("unchecked")
+                        T result = (T) values[i];
+                        return Optional.ofNullable(result);
+                    }
+                }
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public <T> Optional<T> untypedEval(SqlExpr<T> expr, NewRow row) {
+            // For expressions, check if it matches any of our projected expressions
+            Object[] values = row.asArray();
+            for (int i = 0; i < projectedExprs.size(); i++) {
+                SqlExpr<?> projExpr = projectedExprs.get(i);
+                if (projExpr.equals(expr)) {
+                    @SuppressWarnings("unchecked")
+                    T result = (T) values[i];
+                    return Optional.ofNullable(result);
+                }
+            }
+            // For other expressions like predicates, delegate to default implementation
+            return Structure.super.untypedEval(expr, row);
+        }
+    }
+
+    @Override
+    public <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Json>>
+    multisetOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred) {
+
+        if (!(other instanceof SelectBuilderMock<Fields2, Row2> otherMock)) {
+            throw new IllegalArgumentException("Cannot mix mock and SQL repos");
+        }
+
+        SelectBuilderMock<Fields, Row> self = this.withPath(Path.of("parent"));
+        SelectBuilderMock<Fields2, Row2> child = otherMock.withPath(Path.of("child"));
+
+        // Create the combined structure for evaluating the predicate
+        Structure<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Row2>> joinStructure =
+            self.structure.join(child.structure);
+
+        // Create a multiset structure
+        MultisetMockStructure<Fields, Row, Fields2> multisetStructure =
+            new MultisetMockStructure<>(self.structure, child.structure);
+
+        // Create supplier that for each parent row, collects matching child rows as JSON
+        Supplier<List<Structure.Tuple2<Row, Json>>> resultSupplier = () -> {
+            List<Structure.Tuple2<Row, Json>> result = new ArrayList<>();
+            List<Row> parentRows = self.toList(null);
+            List<Row2> childRows = child.toList(null);
+
+            for (Row parentRow : parentRows) {
+                // Collect all matching child rows
+                List<Row2> matchingChildren = new ArrayList<>();
+                for (Row2 childRow : childRows) {
+                    Structure.Tuple2<Row, Row2> tuple = Structure.Tuple2.of(parentRow, childRow);
+                    Boolean matches = joinStructure.untypedEval(pred.apply(joinStructure.fields()), tuple)
+                        .orElse(false);
+                    if (matches) {
+                        matchingChildren.add(childRow);
+                    }
+                }
+
+                // Convert matching children to JSON array
+                Json jsonArray = childRowsToJson(matchingChildren, child.structure);
+                result.add(Structure.Tuple2.of(parentRow, jsonArray));
+            }
+            return result;
+        };
+
+        return new SelectBuilderMock<>(multisetStructure, resultSupplier, SelectParams.empty());
+    }
+
+    /**
+     * Convert a list of child rows to a JSON array string.
+     */
+    private static <Row2> Json childRowsToJson(List<Row2> rows, Structure<?, Row2> structure) {
+        StringBuilder sb = new StringBuilder("[");
+        boolean first = true;
+        for (Row2 row : rows) {
+            if (!first) {
+                sb.append(",");
+            }
+            first = false;
+            sb.append("{");
+            boolean firstCol = true;
+            for (SqlExpr.FieldLike<?, ?> col : structure.allFields()) {
+                if (!firstCol) {
+                    sb.append(",");
+                }
+                firstCol = false;
+                Optional<?> value = structure.untypedGetFieldValue(col, row);
+                sb.append("\"").append(escapeJsonString(col.column())).append("\":");
+                appendJsonValue(sb, value.orElse(null));
+            }
+            sb.append("}");
+        }
+        sb.append("]");
+        return new Json(sb.toString());
+    }
+
+    /**
+     * Escape a string for JSON.
+     */
+    private static String escapeJsonString(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
+    }
+
+    /**
+     * Append a value as JSON to the StringBuilder.
+     */
+    private static void appendJsonValue(StringBuilder sb, Object value) {
+        if (value == null) {
+            sb.append("null");
+        } else if (value instanceof String s) {
+            sb.append("\"").append(escapeJsonString(s)).append("\"");
+        } else if (value instanceof Number || value instanceof Boolean) {
+            sb.append(value);
+        } else {
+            // For other types, convert to string
+            sb.append("\"").append(escapeJsonString(value.toString())).append("\"");
+        }
+    }
+
+    @Override
+    public GroupedBuilder<Fields, Row> groupByExpr(Function<Fields, List<SqlExpr<?>>> groupKeys) {
+        return new GroupedBuilderMock<>(this, groupKeys);
+    }
+
+    /**
+     * Structure implementation for multiset results.
+     */
+    record MultisetMockStructure<Fields1, Row1, Fields2>(
+            Structure<Fields1, Row1> parentStructure,
+            Structure<Fields2, ?> childStructure,
+            List<Path> path
+    ) implements Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> {
+
+        MultisetMockStructure(Structure<Fields1, Row1> parentStructure, Structure<Fields2, ?> childStructure) {
+            this(parentStructure, childStructure, List.of());
+        }
+
+        @Override
+        public Structure.Tuple2<Fields1, Fields2> fields() {
+            return Structure.Tuple2.of(parentStructure.fields(), childStructure.fields());
+        }
+
+        @Override
+        public List<SqlExpr.FieldLike<?, ?>> allFields() {
+            // Return parent fields (Json column is synthetic)
+            return new ArrayList<>(parentStructure.allFields());
+        }
+
+        @Override
+        public List<Path> _path() {
+            return path;
+        }
+
+        @Override
+        public Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> withPath(Path newPath) {
+            List<Path> newPaths = new ArrayList<>();
+            newPaths.add(newPath);
+            newPaths.addAll(path);
+            return new MultisetMockStructure<>(parentStructure.withPath(newPath), childStructure.withPath(newPath), newPaths);
+        }
+
+        @Override
+        public <T> Optional<T> untypedGetFieldValue(SqlExpr.FieldLike<T, ?> field, Structure.Tuple2<Row1, Json> row) {
+            // Try to get from parent structure
+            return parentStructure.untypedGetFieldValue(field, row._1());
+        }
     }
 }

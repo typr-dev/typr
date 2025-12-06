@@ -6,53 +6,56 @@
 package testdb.hardcoded.myschema.football_club
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait FootballClubFields {
+trait FootballClubFields extends FieldsExpr[FootballClubRow] {
   def id: IdField[FootballClubId, FootballClubRow]
 
   def name: Field[/* max 100 chars */ String, FootballClubRow]
+
+  override def columns: java.util.List[FieldLike[?, FootballClubRow]]
+
+  override def rowParser: RowParser[FootballClubRow] = FootballClubRow._rowParser
 }
 
 object FootballClubFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[FootballClubFields, FootballClubRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends FootballClubFields with Relation[FootballClubFields, FootballClubRow] {
 
-    override lazy val fields: FootballClubFields = {
-      new FootballClubFields {
-        override def id: IdField[FootballClubId, FootballClubRow] = {
-          new IdField[FootballClubId, FootballClubRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.of("int8"),
-            (row, value) => row.copy(id = value),
-            FootballClubId.pgType
-          )
-        }
-        override def name: Field[/* max 100 chars */ String, FootballClubRow] = {
-          new Field[/* max 100 chars */ String, FootballClubRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            PgTypes.text
-          )
-        }
-      }
+    override def id: IdField[FootballClubId, FootballClubRow] = {
+      new IdField[FootballClubId, FootballClubRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.of("int8"),
+        (row, value) => row.copy(id = value),
+        FootballClubId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, FootballClubRow]] = java.util.List.of(this.fields.id, this.fields.name)
+    override def name: Field[/* max 100 chars */ String, FootballClubRow] = {
+      new Field[/* max 100 chars */ String, FootballClubRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def columns: java.util.List[FieldLike[?, FootballClubRow]] = java.util.List.of(this.id, this.name)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[FootballClubFields, FootballClubRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[FootballClubFields, FootballClubRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

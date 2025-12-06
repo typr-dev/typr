@@ -12,6 +12,7 @@ import adventureworks.production.product.ProductRow
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -19,9 +20,12 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface TransactionhistoryFields {
+interface TransactionhistoryFields : FieldsExpr<TransactionhistoryRow> {
   fun actualcost(): Field<BigDecimal, TransactionhistoryRow>
+
+  override fun columns(): List<FieldLike<*, TransactionhistoryRow>>
 
   fun fkProduct(): ForeignKey<ProductFields, ProductRow> = ForeignKey.of<ProductFields, ProductRow>("production.FK_TransactionHistory_Product_ProductID").withColumnPair(productid(), ProductFields::productid)
 
@@ -35,6 +39,8 @@ interface TransactionhistoryFields {
 
   fun referenceorderlineid(): Field<Int, TransactionhistoryRow>
 
+  override fun rowParser(): RowParser<TransactionhistoryRow> = TransactionhistoryRow._rowParser
+
   fun transactiondate(): Field<TypoLocalDateTime, TransactionhistoryRow>
 
   fun transactionid(): IdField<TransactionhistoryId, TransactionhistoryRow>
@@ -42,24 +48,30 @@ interface TransactionhistoryFields {
   fun transactiontype(): Field</* bpchar, max 1 chars */ String, TransactionhistoryRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<TransactionhistoryFields, TransactionhistoryRow>(path) {
-      override fun fields(): TransactionhistoryFields = object : TransactionhistoryFields {
-        override fun transactionid(): IdField<TransactionhistoryId, TransactionhistoryRow> = IdField<TransactionhistoryId, TransactionhistoryRow>(_path, "transactionid", TransactionhistoryRow::transactionid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(transactionid = value) }, TransactionhistoryId.pgType)
-        override fun productid(): Field<ProductId, TransactionhistoryRow> = Field<ProductId, TransactionhistoryRow>(_path, "productid", TransactionhistoryRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun referenceorderid(): Field<Int, TransactionhistoryRow> = Field<Int, TransactionhistoryRow>(_path, "referenceorderid", TransactionhistoryRow::referenceorderid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(referenceorderid = value) }, PgTypes.int4)
-        override fun referenceorderlineid(): Field<Int, TransactionhistoryRow> = Field<Int, TransactionhistoryRow>(_path, "referenceorderlineid", TransactionhistoryRow::referenceorderlineid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(referenceorderlineid = value) }, PgTypes.int4)
-        override fun transactiondate(): Field<TypoLocalDateTime, TransactionhistoryRow> = Field<TypoLocalDateTime, TransactionhistoryRow>(_path, "transactiondate", TransactionhistoryRow::transactiondate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(transactiondate = value) }, TypoLocalDateTime.pgType)
-        override fun transactiontype(): Field</* bpchar, max 1 chars */ String, TransactionhistoryRow> = Field</* bpchar, max 1 chars */ String, TransactionhistoryRow>(_path, "transactiontype", TransactionhistoryRow::transactiontype, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(transactiontype = value) }, PgTypes.bpchar)
-        override fun quantity(): Field<Int, TransactionhistoryRow> = Field<Int, TransactionhistoryRow>(_path, "quantity", TransactionhistoryRow::quantity, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(quantity = value) }, PgTypes.int4)
-        override fun actualcost(): Field<BigDecimal, TransactionhistoryRow> = Field<BigDecimal, TransactionhistoryRow>(_path, "actualcost", TransactionhistoryRow::actualcost, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(actualcost = value) }, PgTypes.numeric)
-        override fun modifieddate(): Field<TypoLocalDateTime, TransactionhistoryRow> = Field<TypoLocalDateTime, TransactionhistoryRow>(_path, "modifieddate", TransactionhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : TransactionhistoryFields, Relation<TransactionhistoryFields, TransactionhistoryRow> {
+      override fun transactionid(): IdField<TransactionhistoryId, TransactionhistoryRow> = IdField<TransactionhistoryId, TransactionhistoryRow>(_path, "transactionid", TransactionhistoryRow::transactionid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(transactionid = value) }, TransactionhistoryId.pgType)
 
-      override fun columns(): List<FieldLike<*, TransactionhistoryRow>> = listOf(this.fields().transactionid(), this.fields().productid(), this.fields().referenceorderid(), this.fields().referenceorderlineid(), this.fields().transactiondate(), this.fields().transactiontype(), this.fields().quantity(), this.fields().actualcost(), this.fields().modifieddate())
+      override fun productid(): Field<ProductId, TransactionhistoryRow> = Field<ProductId, TransactionhistoryRow>(_path, "productid", TransactionhistoryRow::productid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun referenceorderid(): Field<Int, TransactionhistoryRow> = Field<Int, TransactionhistoryRow>(_path, "referenceorderid", TransactionhistoryRow::referenceorderid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(referenceorderid = value) }, PgTypes.int4)
+
+      override fun referenceorderlineid(): Field<Int, TransactionhistoryRow> = Field<Int, TransactionhistoryRow>(_path, "referenceorderlineid", TransactionhistoryRow::referenceorderlineid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(referenceorderlineid = value) }, PgTypes.int4)
+
+      override fun transactiondate(): Field<TypoLocalDateTime, TransactionhistoryRow> = Field<TypoLocalDateTime, TransactionhistoryRow>(_path, "transactiondate", TransactionhistoryRow::transactiondate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(transactiondate = value) }, TypoLocalDateTime.pgType)
+
+      override fun transactiontype(): Field</* bpchar, max 1 chars */ String, TransactionhistoryRow> = Field</* bpchar, max 1 chars */ String, TransactionhistoryRow>(_path, "transactiontype", TransactionhistoryRow::transactiontype, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(transactiontype = value) }, PgTypes.bpchar)
+
+      override fun quantity(): Field<Int, TransactionhistoryRow> = Field<Int, TransactionhistoryRow>(_path, "quantity", TransactionhistoryRow::quantity, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(quantity = value) }, PgTypes.int4)
+
+      override fun actualcost(): Field<BigDecimal, TransactionhistoryRow> = Field<BigDecimal, TransactionhistoryRow>(_path, "actualcost", TransactionhistoryRow::actualcost, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(actualcost = value) }, PgTypes.numeric)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, TransactionhistoryRow> = Field<TypoLocalDateTime, TransactionhistoryRow>(_path, "modifieddate", TransactionhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, TransactionhistoryRow>> = listOf(this.transactionid(), this.productid(), this.referenceorderid(), this.referenceorderlineid(), this.transactiondate(), this.transactiontype(), this.quantity(), this.actualcost(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<TransactionhistoryFields, TransactionhistoryRow> = Impl(_path)
     }
 
-    val structure: Relation<TransactionhistoryFields, TransactionhistoryRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

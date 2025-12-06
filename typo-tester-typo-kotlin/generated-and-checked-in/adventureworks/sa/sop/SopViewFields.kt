@@ -11,37 +11,45 @@ import adventureworks.production.product.ProductId
 import adventureworks.sales.specialoffer.SpecialofferId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface SopViewFields {
+interface SopViewFields : FieldsExpr<SopViewRow> {
+  override fun columns(): List<FieldLike<*, SopViewRow>>
+
   fun id(): Field<SpecialofferId, SopViewRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, SopViewRow>
 
   fun productid(): Field<ProductId, SopViewRow>
 
+  override fun rowParser(): RowParser<SopViewRow> = SopViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, SopViewRow>
 
   fun specialofferid(): Field<SpecialofferId, SopViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SopViewFields, SopViewRow>(path) {
-      override fun fields(): SopViewFields = object : SopViewFields {
-        override fun id(): Field<SpecialofferId, SopViewRow> = Field<SpecialofferId, SopViewRow>(_path, "id", SopViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, SpecialofferId.pgType)
-        override fun specialofferid(): Field<SpecialofferId, SopViewRow> = Field<SpecialofferId, SopViewRow>(_path, "specialofferid", SopViewRow::specialofferid, Optional.empty(), Optional.empty(), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
-        override fun productid(): Field<ProductId, SopViewRow> = Field<ProductId, SopViewRow>(_path, "productid", SopViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun rowguid(): Field<TypoUUID, SopViewRow> = Field<TypoUUID, SopViewRow>(_path, "rowguid", SopViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SopViewRow> = Field<TypoLocalDateTime, SopViewRow>(_path, "modifieddate", SopViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SopViewFields, Relation<SopViewFields, SopViewRow> {
+      override fun id(): Field<SpecialofferId, SopViewRow> = Field<SpecialofferId, SopViewRow>(_path, "id", SopViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, SpecialofferId.pgType)
 
-      override fun columns(): List<FieldLike<*, SopViewRow>> = listOf(this.fields().id(), this.fields().specialofferid(), this.fields().productid(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun specialofferid(): Field<SpecialofferId, SopViewRow> = Field<SpecialofferId, SopViewRow>(_path, "specialofferid", SopViewRow::specialofferid, Optional.empty(), Optional.empty(), { row, value -> row.copy(specialofferid = value) }, SpecialofferId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun productid(): Field<ProductId, SopViewRow> = Field<ProductId, SopViewRow>(_path, "productid", SopViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
+
+      override fun rowguid(): Field<TypoUUID, SopViewRow> = Field<TypoUUID, SopViewRow>(_path, "rowguid", SopViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SopViewRow> = Field<TypoLocalDateTime, SopViewRow>(_path, "modifieddate", SopViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SopViewRow>> = listOf(this.id(), this.specialofferid(), this.productid(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SopViewFields, SopViewRow> = Impl(_path)
     }
 
-    val structure: Relation<SopViewFields, SopViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

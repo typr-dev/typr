@@ -31,7 +31,7 @@ case class TestSakSoknadsalternativRow(
 }
 
 object TestSakSoknadsalternativRow {
-  val `_rowParser`: RowParser[TestSakSoknadsalternativRow] = RowParsers.of(PgTypes.text, PgTypes.text, TestOrganisasjonId.pgType, TestSakSoknadsalternativRow.apply, row => Array(row.organisasjonskodeSaksbehandler, row.utdanningsmulighetKode, row.organisasjonskodeTilbyder))
+  val `_rowParser`: RowParser[TestSakSoknadsalternativRow] = RowParsers.of(PgTypes.text, PgTypes.text, TestOrganisasjonId.pgType, TestSakSoknadsalternativRow.apply, row => Array[Object](row.organisasjonskodeSaksbehandler.asInstanceOf[Object], row.utdanningsmulighetKode.asInstanceOf[Object], row.organisasjonskodeTilbyder.asInstanceOf[Object]))
 
   def apply(
     compositeId: TestSakSoknadsalternativId,

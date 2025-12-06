@@ -32,5 +32,5 @@ case class SimpleCustomerLookupSqlRow(
 )
 
 object SimpleCustomerLookupSqlRow {
-  val `_rowParser`: RowParser[SimpleCustomerLookupSqlRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, CustomerStatusId.pgType, MariaTypes.datetime, SimpleCustomerLookupSqlRow.apply, row => Array(row.customerId, row.email, row.firstName, row.lastName, row.tier, row.status, row.createdAt))
+  val `_rowParser`: RowParser[SimpleCustomerLookupSqlRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, CustomerStatusId.pgType, MariaTypes.datetime, SimpleCustomerLookupSqlRow.apply, row => Array[Object](row.customerId.asInstanceOf[Object], row.email.asInstanceOf[Object], row.firstName.asInstanceOf[Object], row.lastName.asInstanceOf[Object], row.tier.asInstanceOf[Object], row.status.asInstanceOf[Object], row.createdAt.asInstanceOf[Object]))
 }

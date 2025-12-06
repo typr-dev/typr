@@ -8,65 +8,69 @@ package adventureworks.person.countryregion
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait CountryregionFields {
+trait CountryregionFields extends FieldsExpr[CountryregionRow] {
   def countryregioncode: IdField[CountryregionId, CountryregionRow]
 
   def name: Field[Name, CountryregionRow]
 
   def modifieddate: Field[TypoLocalDateTime, CountryregionRow]
+
+  override def columns: java.util.List[FieldLike[?, CountryregionRow]]
+
+  override def rowParser: RowParser[CountryregionRow] = CountryregionRow._rowParser
 }
 
 object CountryregionFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CountryregionFields, CountryregionRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CountryregionFields with Relation[CountryregionFields, CountryregionRow] {
 
-    override lazy val fields: CountryregionFields = {
-      new CountryregionFields {
-        override def countryregioncode: IdField[CountryregionId, CountryregionRow] = {
-          new IdField[CountryregionId, CountryregionRow](
-            _path,
-            "countryregioncode",
-            _.countryregioncode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryregioncode = value),
-            CountryregionId.pgType
-          )
-        }
-        override def name: Field[Name, CountryregionRow] = {
-          new Field[Name, CountryregionRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, CountryregionRow] = {
-          new Field[TypoLocalDateTime, CountryregionRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def countryregioncode: IdField[CountryregionId, CountryregionRow] = {
+      new IdField[CountryregionId, CountryregionRow](
+        _path,
+        "countryregioncode",
+        _.countryregioncode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryregioncode = value),
+        CountryregionId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CountryregionRow]] = java.util.List.of(this.fields.countryregioncode, this.fields.name, this.fields.modifieddate)
+    override def name: Field[Name, CountryregionRow] = {
+      new Field[Name, CountryregionRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, CountryregionRow] = {
+      new Field[TypoLocalDateTime, CountryregionRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CountryregionRow]] = java.util.List.of(this.countryregioncode, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CountryregionFields, CountryregionRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CountryregionFields, CountryregionRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

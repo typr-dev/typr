@@ -24,5 +24,5 @@ case class CtViewRow(
 )
 
 object CtViewRow {
-  val `_rowParser`: RowParser[CtViewRow] = RowParsers.of(ContacttypeId.pgType, ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, CtViewRow.apply, row => Array(row.id, row.contacttypeid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CtViewRow] = RowParsers.of(ContacttypeId.pgType, ContacttypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, CtViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.contacttypeid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

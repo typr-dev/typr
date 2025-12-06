@@ -5,10 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package information_schema
-package tables
+package typo.generated.information_schema.tables
 
 import anorm.Column
 import anorm.RowParser
@@ -51,57 +48,65 @@ case class TablesViewRow(
 )
 
 object TablesViewRow {
-  implicit lazy val reads: Reads[TablesViewRow] = Reads[TablesViewRow](json => JsResult.fromTry(
-      Try(
-        TablesViewRow(
-          tableCatalog = json.\("table_catalog").toOption.map(_.as(Reads.StringReads)),
-          tableSchema = json.\("table_schema").toOption.map(_.as(Reads.StringReads)),
-          tableName = json.\("table_name").toOption.map(_.as(Reads.StringReads)),
-          tableType = json.\("table_type").toOption.map(_.as(Reads.StringReads)),
-          selfReferencingColumnName = json.\("self_referencing_column_name").toOption.map(_.as(Reads.StringReads)),
-          referenceGeneration = json.\("reference_generation").toOption.map(_.as(Reads.StringReads)),
-          userDefinedTypeCatalog = json.\("user_defined_type_catalog").toOption.map(_.as(Reads.StringReads)),
-          userDefinedTypeSchema = json.\("user_defined_type_schema").toOption.map(_.as(Reads.StringReads)),
-          userDefinedTypeName = json.\("user_defined_type_name").toOption.map(_.as(Reads.StringReads)),
-          isInsertableInto = json.\("is_insertable_into").toOption.map(_.as(Reads.StringReads)),
-          isTyped = json.\("is_typed").toOption.map(_.as(Reads.StringReads)),
-          commitAction = json.\("commit_action").toOption.map(_.as(Reads.StringReads))
+  implicit lazy val reads: Reads[TablesViewRow] = {
+    Reads[TablesViewRow](json => JsResult.fromTry(
+        Try(
+          TablesViewRow(
+            tableCatalog = json.\("table_catalog").toOption.map(_.as(Reads.StringReads)),
+            tableSchema = json.\("table_schema").toOption.map(_.as(Reads.StringReads)),
+            tableName = json.\("table_name").toOption.map(_.as(Reads.StringReads)),
+            tableType = json.\("table_type").toOption.map(_.as(Reads.StringReads)),
+            selfReferencingColumnName = json.\("self_referencing_column_name").toOption.map(_.as(Reads.StringReads)),
+            referenceGeneration = json.\("reference_generation").toOption.map(_.as(Reads.StringReads)),
+            userDefinedTypeCatalog = json.\("user_defined_type_catalog").toOption.map(_.as(Reads.StringReads)),
+            userDefinedTypeSchema = json.\("user_defined_type_schema").toOption.map(_.as(Reads.StringReads)),
+            userDefinedTypeName = json.\("user_defined_type_name").toOption.map(_.as(Reads.StringReads)),
+            isInsertableInto = json.\("is_insertable_into").toOption.map(_.as(Reads.StringReads)),
+            isTyped = json.\("is_typed").toOption.map(_.as(Reads.StringReads)),
+            commitAction = json.\("commit_action").toOption.map(_.as(Reads.StringReads))
+          )
         )
-      )
-    ),
-  )
-  def rowParser(idx: Int): RowParser[TablesViewRow] = RowParser[TablesViewRow] { row =>
-    Success(
-      TablesViewRow(
-        tableCatalog = row(idx + 0)(Column.columnToOption(Column.columnToString)),
-        tableSchema = row(idx + 1)(Column.columnToOption(Column.columnToString)),
-        tableName = row(idx + 2)(Column.columnToOption(Column.columnToString)),
-        tableType = row(idx + 3)(Column.columnToOption(Column.columnToString)),
-        selfReferencingColumnName = row(idx + 4)(Column.columnToOption(Column.columnToString)),
-        referenceGeneration = row(idx + 5)(Column.columnToOption(Column.columnToString)),
-        userDefinedTypeCatalog = row(idx + 6)(Column.columnToOption(Column.columnToString)),
-        userDefinedTypeSchema = row(idx + 7)(Column.columnToOption(Column.columnToString)),
-        userDefinedTypeName = row(idx + 8)(Column.columnToOption(Column.columnToString)),
-        isInsertableInto = row(idx + 9)(Column.columnToOption(Column.columnToString)),
-        isTyped = row(idx + 10)(Column.columnToOption(Column.columnToString)),
-        commitAction = row(idx + 11)(Column.columnToOption(Column.columnToString))
-      )
+      ),
     )
   }
-  implicit lazy val writes: OWrites[TablesViewRow] = OWrites[TablesViewRow](o =>
-    new JsObject(ListMap[String, JsValue](
-      "table_catalog" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableCatalog),
-      "table_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableSchema),
-      "table_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableName),
-      "table_type" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableType),
-      "self_referencing_column_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.selfReferencingColumnName),
-      "reference_generation" -> Writes.OptionWrites(Writes.StringWrites).writes(o.referenceGeneration),
-      "user_defined_type_catalog" -> Writes.OptionWrites(Writes.StringWrites).writes(o.userDefinedTypeCatalog),
-      "user_defined_type_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.userDefinedTypeSchema),
-      "user_defined_type_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.userDefinedTypeName),
-      "is_insertable_into" -> Writes.OptionWrites(Writes.StringWrites).writes(o.isInsertableInto),
-      "is_typed" -> Writes.OptionWrites(Writes.StringWrites).writes(o.isTyped),
-      "commit_action" -> Writes.OptionWrites(Writes.StringWrites).writes(o.commitAction)
-    ))
-  )
+
+  def rowParser(idx: Int): RowParser[TablesViewRow] = {
+    RowParser[TablesViewRow] { row =>
+      Success(
+        TablesViewRow(
+          tableCatalog = row(idx + 0)(Column.columnToOption(Column.columnToString)),
+          tableSchema = row(idx + 1)(Column.columnToOption(Column.columnToString)),
+          tableName = row(idx + 2)(Column.columnToOption(Column.columnToString)),
+          tableType = row(idx + 3)(Column.columnToOption(Column.columnToString)),
+          selfReferencingColumnName = row(idx + 4)(Column.columnToOption(Column.columnToString)),
+          referenceGeneration = row(idx + 5)(Column.columnToOption(Column.columnToString)),
+          userDefinedTypeCatalog = row(idx + 6)(Column.columnToOption(Column.columnToString)),
+          userDefinedTypeSchema = row(idx + 7)(Column.columnToOption(Column.columnToString)),
+          userDefinedTypeName = row(idx + 8)(Column.columnToOption(Column.columnToString)),
+          isInsertableInto = row(idx + 9)(Column.columnToOption(Column.columnToString)),
+          isTyped = row(idx + 10)(Column.columnToOption(Column.columnToString)),
+          commitAction = row(idx + 11)(Column.columnToOption(Column.columnToString))
+        )
+      )
+    }
+  }
+
+  implicit lazy val writes: OWrites[TablesViewRow] = {
+    OWrites[TablesViewRow](o =>
+      new JsObject(ListMap[String, JsValue](
+        "table_catalog" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableCatalog),
+        "table_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableSchema),
+        "table_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableName),
+        "table_type" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableType),
+        "self_referencing_column_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.selfReferencingColumnName),
+        "reference_generation" -> Writes.OptionWrites(Writes.StringWrites).writes(o.referenceGeneration),
+        "user_defined_type_catalog" -> Writes.OptionWrites(Writes.StringWrites).writes(o.userDefinedTypeCatalog),
+        "user_defined_type_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.userDefinedTypeSchema),
+        "user_defined_type_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.userDefinedTypeName),
+        "is_insertable_into" -> Writes.OptionWrites(Writes.StringWrites).writes(o.isInsertableInto),
+        "is_typed" -> Writes.OptionWrites(Writes.StringWrites).writes(o.isTyped),
+        "commit_action" -> Writes.OptionWrites(Writes.StringWrites).writes(o.commitAction)
+      ))
+    )
+  }
 }

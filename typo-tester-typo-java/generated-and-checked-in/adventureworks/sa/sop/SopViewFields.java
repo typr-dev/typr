@@ -11,55 +11,52 @@ import adventureworks.production.product.ProductId;
 import adventureworks.sales.specialoffer.SpecialofferId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface SopViewFields {
-  final class Impl extends Relation<SopViewFields, SopViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SopViewFields extends FieldsExpr<SopViewRow> {
+  record Impl(List<Path> _path) implements SopViewFields, Relation<SopViewFields, SopViewRow> {
+    @Override
+    public Field<SpecialofferId, SopViewRow> id() {
+      return new Field<SpecialofferId, SopViewRow>(_path, "id", SopViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SpecialofferId.pgType);
+    };
 
     @Override
-    public SopViewFields fields() {
-      return new SopViewFields() {
-               @Override
-               public Field<SpecialofferId, SopViewRow> id() {
-                 return new Field<SpecialofferId, SopViewRow>(_path, "id", SopViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), SpecialofferId.pgType);
-               };
-               @Override
-               public Field<SpecialofferId, SopViewRow> specialofferid() {
-                 return new Field<SpecialofferId, SopViewRow>(_path, "specialofferid", SopViewRow::specialofferid, Optional.empty(), Optional.empty(), (row, value) -> row.withSpecialofferid(value), SpecialofferId.pgType);
-               };
-               @Override
-               public Field<ProductId, SopViewRow> productid() {
-                 return new Field<ProductId, SopViewRow>(_path, "productid", SopViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<TypoUUID, SopViewRow> rowguid() {
-                 return new Field<TypoUUID, SopViewRow>(_path, "rowguid", SopViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SopViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SopViewRow>(_path, "modifieddate", SopViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<SpecialofferId, SopViewRow> specialofferid() {
+      return new Field<SpecialofferId, SopViewRow>(_path, "specialofferid", SopViewRow::specialofferid, Optional.empty(), Optional.empty(), (row, value) -> row.withSpecialofferid(value), SpecialofferId.pgType);
+    };
+
+    @Override
+    public Field<ProductId, SopViewRow> productid() {
+      return new Field<ProductId, SopViewRow>(_path, "productid", SopViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, SopViewRow> rowguid() {
+      return new Field<TypoUUID, SopViewRow>(_path, "rowguid", SopViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SopViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SopViewRow>(_path, "modifieddate", SopViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SopViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().specialofferid(), this.fields().productid(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.specialofferid(), this.productid(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SopViewFields, SopViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SopViewFields, SopViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -72,4 +69,12 @@ public interface SopViewFields {
   Field<TypoUUID, SopViewRow> rowguid();
 
   Field<TypoLocalDateTime, SopViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, SopViewRow>> columns();
+
+  @Override
+  default RowParser<SopViewRow> rowParser() {
+    return SopViewRow._rowParser;
+  };
 }

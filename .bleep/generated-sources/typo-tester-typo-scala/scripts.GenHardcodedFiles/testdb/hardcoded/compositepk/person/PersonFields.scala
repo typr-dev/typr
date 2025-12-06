@@ -6,66 +6,70 @@
 package testdb.hardcoded.compositepk.person
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PersonFields {
+trait PersonFields extends FieldsExpr[PersonRow] {
   def one: IdField[java.lang.Long, PersonRow]
 
   def two: IdField[Optional[String], PersonRow]
 
   def name: OptField[String, PersonRow]
+
+  override def columns: java.util.List[FieldLike[?, PersonRow]]
+
+  override def rowParser: RowParser[PersonRow] = PersonRow._rowParser
 }
 
 object PersonFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PersonFields, PersonRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PersonFields with Relation[PersonFields, PersonRow] {
 
-    override lazy val fields: PersonFields = {
-      new PersonFields {
-        override def one: IdField[java.lang.Long, PersonRow] = {
-          new IdField[java.lang.Long, PersonRow](
-            _path,
-            "one",
-            _.one,
-            Optional.empty(),
-            Optional.of("int8"),
-            (row, value) => row.copy(one = value),
-            PgTypes.int8
-          )
-        }
-        override def two: IdField[Optional[String], PersonRow] = {
-          new IdField[Optional[String], PersonRow](
-            _path,
-            "two",
-            _.two,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(two = value),
-            PgTypes.text.opt()
-          )
-        }
-        override def name: OptField[String, PersonRow] = {
-          new OptField[String, PersonRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            PgTypes.text
-          )
-        }
-      }
+    override def one: IdField[java.lang.Long, PersonRow] = {
+      new IdField[java.lang.Long, PersonRow](
+        _path,
+        "one",
+        _.one,
+        Optional.empty(),
+        Optional.of("int8"),
+        (row, value) => row.copy(one = value),
+        PgTypes.int8
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PersonRow]] = java.util.List.of(this.fields.one, this.fields.two, this.fields.name)
+    override def two: IdField[Optional[String], PersonRow] = {
+      new IdField[Optional[String], PersonRow](
+        _path,
+        "two",
+        _.two,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(two = value),
+        PgTypes.text.opt()
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: OptField[String, PersonRow] = {
+      new OptField[String, PersonRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        PgTypes.text
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PersonRow]] = java.util.List.of(this.one, this.two, this.name)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PersonFields, PersonRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PersonFields, PersonRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

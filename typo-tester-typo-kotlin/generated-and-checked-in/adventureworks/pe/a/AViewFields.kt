@@ -12,14 +12,16 @@ import adventureworks.person.address.AddressId
 import adventureworks.person.stateprovince.StateprovinceId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface AViewFields {
+interface AViewFields : FieldsExpr<AViewRow> {
   fun addressid(): Field<AddressId, AViewRow>
 
   fun addressline1(): Field</* max 60 chars */ String, AViewRow>
@@ -28,11 +30,15 @@ interface AViewFields {
 
   fun city(): Field</* max 30 chars */ String, AViewRow>
 
+  override fun columns(): List<FieldLike<*, AViewRow>>
+
   fun id(): Field<AddressId, AViewRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, AViewRow>
 
   fun postalcode(): Field</* max 15 chars */ String, AViewRow>
+
+  override fun rowParser(): RowParser<AViewRow> = AViewRow._rowParser
 
   fun rowguid(): Field<TypoUUID, AViewRow>
 
@@ -41,25 +47,32 @@ interface AViewFields {
   fun stateprovinceid(): Field<StateprovinceId, AViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<AViewFields, AViewRow>(path) {
-      override fun fields(): AViewFields = object : AViewFields {
-        override fun id(): Field<AddressId, AViewRow> = Field<AddressId, AViewRow>(_path, "id", AViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, AddressId.pgType)
-        override fun addressid(): Field<AddressId, AViewRow> = Field<AddressId, AViewRow>(_path, "addressid", AViewRow::addressid, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressid = value) }, AddressId.pgType)
-        override fun addressline1(): Field</* max 60 chars */ String, AViewRow> = Field</* max 60 chars */ String, AViewRow>(_path, "addressline1", AViewRow::addressline1, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressline1 = value) }, PgTypes.text)
-        override fun addressline2(): OptField</* max 60 chars */ String, AViewRow> = OptField</* max 60 chars */ String, AViewRow>(_path, "addressline2", AViewRow::addressline2, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressline2 = value) }, PgTypes.text)
-        override fun city(): Field</* max 30 chars */ String, AViewRow> = Field</* max 30 chars */ String, AViewRow>(_path, "city", AViewRow::city, Optional.empty(), Optional.empty(), { row, value -> row.copy(city = value) }, PgTypes.text)
-        override fun stateprovinceid(): Field<StateprovinceId, AViewRow> = Field<StateprovinceId, AViewRow>(_path, "stateprovinceid", AViewRow::stateprovinceid, Optional.empty(), Optional.empty(), { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
-        override fun postalcode(): Field</* max 15 chars */ String, AViewRow> = Field</* max 15 chars */ String, AViewRow>(_path, "postalcode", AViewRow::postalcode, Optional.empty(), Optional.empty(), { row, value -> row.copy(postalcode = value) }, PgTypes.text)
-        override fun spatiallocation(): OptField<TypoBytea, AViewRow> = OptField<TypoBytea, AViewRow>(_path, "spatiallocation", AViewRow::spatiallocation, Optional.empty(), Optional.empty(), { row, value -> row.copy(spatiallocation = value) }, TypoBytea.pgType)
-        override fun rowguid(): Field<TypoUUID, AViewRow> = Field<TypoUUID, AViewRow>(_path, "rowguid", AViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, AViewRow> = Field<TypoLocalDateTime, AViewRow>(_path, "modifieddate", AViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : AViewFields, Relation<AViewFields, AViewRow> {
+      override fun id(): Field<AddressId, AViewRow> = Field<AddressId, AViewRow>(_path, "id", AViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, AddressId.pgType)
 
-      override fun columns(): List<FieldLike<*, AViewRow>> = listOf(this.fields().id(), this.fields().addressid(), this.fields().addressline1(), this.fields().addressline2(), this.fields().city(), this.fields().stateprovinceid(), this.fields().postalcode(), this.fields().spatiallocation(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun addressid(): Field<AddressId, AViewRow> = Field<AddressId, AViewRow>(_path, "addressid", AViewRow::addressid, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressid = value) }, AddressId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun addressline1(): Field</* max 60 chars */ String, AViewRow> = Field</* max 60 chars */ String, AViewRow>(_path, "addressline1", AViewRow::addressline1, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressline1 = value) }, PgTypes.text)
+
+      override fun addressline2(): OptField</* max 60 chars */ String, AViewRow> = OptField</* max 60 chars */ String, AViewRow>(_path, "addressline2", AViewRow::addressline2, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressline2 = value) }, PgTypes.text)
+
+      override fun city(): Field</* max 30 chars */ String, AViewRow> = Field</* max 30 chars */ String, AViewRow>(_path, "city", AViewRow::city, Optional.empty(), Optional.empty(), { row, value -> row.copy(city = value) }, PgTypes.text)
+
+      override fun stateprovinceid(): Field<StateprovinceId, AViewRow> = Field<StateprovinceId, AViewRow>(_path, "stateprovinceid", AViewRow::stateprovinceid, Optional.empty(), Optional.empty(), { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
+
+      override fun postalcode(): Field</* max 15 chars */ String, AViewRow> = Field</* max 15 chars */ String, AViewRow>(_path, "postalcode", AViewRow::postalcode, Optional.empty(), Optional.empty(), { row, value -> row.copy(postalcode = value) }, PgTypes.text)
+
+      override fun spatiallocation(): OptField<TypoBytea, AViewRow> = OptField<TypoBytea, AViewRow>(_path, "spatiallocation", AViewRow::spatiallocation, Optional.empty(), Optional.empty(), { row, value -> row.copy(spatiallocation = value) }, TypoBytea.pgType)
+
+      override fun rowguid(): Field<TypoUUID, AViewRow> = Field<TypoUUID, AViewRow>(_path, "rowguid", AViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, AViewRow> = Field<TypoLocalDateTime, AViewRow>(_path, "modifieddate", AViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, AViewRow>> = listOf(this.id(), this.addressid(), this.addressline1(), this.addressline2(), this.city(), this.stateprovinceid(), this.postalcode(), this.spatiallocation(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<AViewFields, AViewRow> = Impl(_path)
     }
 
-    val structure: Relation<AViewFields, AViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

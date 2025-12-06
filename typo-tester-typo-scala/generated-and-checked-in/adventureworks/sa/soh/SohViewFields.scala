@@ -20,14 +20,16 @@ import adventureworks.sales.salesorderheader.SalesorderheaderId
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.userdefined.CustomCreditcardId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SohViewFields {
+trait SohViewFields extends FieldsExpr[SohViewRow] {
   def id: Field[SalesorderheaderId, SohViewRow]
 
   def salesorderid: Field[SalesorderheaderId, SohViewRow]
@@ -79,306 +81,331 @@ trait SohViewFields {
   def rowguid: Field[TypoUUID, SohViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, SohViewRow]
+
+  override def columns: java.util.List[FieldLike[?, SohViewRow]]
+
+  override def rowParser: RowParser[SohViewRow] = SohViewRow._rowParser
 }
 
 object SohViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SohViewFields, SohViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SohViewFields with Relation[SohViewFields, SohViewRow] {
 
-    override lazy val fields: SohViewFields = {
-      new SohViewFields {
-        override def id: Field[SalesorderheaderId, SohViewRow] = {
-          new Field[SalesorderheaderId, SohViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            SalesorderheaderId.pgType
-          )
-        }
-        override def salesorderid: Field[SalesorderheaderId, SohViewRow] = {
-          new Field[SalesorderheaderId, SohViewRow](
-            _path,
-            "salesorderid",
-            _.salesorderid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salesorderid = value),
-            SalesorderheaderId.pgType
-          )
-        }
-        override def revisionnumber: Field[TypoShort, SohViewRow] = {
-          new Field[TypoShort, SohViewRow](
-            _path,
-            "revisionnumber",
-            _.revisionnumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(revisionnumber = value),
-            TypoShort.pgType
-          )
-        }
-        override def orderdate: Field[TypoLocalDateTime, SohViewRow] = {
-          new Field[TypoLocalDateTime, SohViewRow](
-            _path,
-            "orderdate",
-            _.orderdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(orderdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def duedate: Field[TypoLocalDateTime, SohViewRow] = {
-          new Field[TypoLocalDateTime, SohViewRow](
-            _path,
-            "duedate",
-            _.duedate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(duedate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def shipdate: OptField[TypoLocalDateTime, SohViewRow] = {
-          new OptField[TypoLocalDateTime, SohViewRow](
-            _path,
-            "shipdate",
-            _.shipdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(shipdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def status: Field[TypoShort, SohViewRow] = {
-          new Field[TypoShort, SohViewRow](
-            _path,
-            "status",
-            _.status,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(status = value),
-            TypoShort.pgType
-          )
-        }
-        override def onlineorderflag: Field[Flag, SohViewRow] = {
-          new Field[Flag, SohViewRow](
-            _path,
-            "onlineorderflag",
-            _.onlineorderflag,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(onlineorderflag = value),
-            Flag.pgType
-          )
-        }
-        override def purchaseordernumber: OptField[OrderNumber, SohViewRow] = {
-          new OptField[OrderNumber, SohViewRow](
-            _path,
-            "purchaseordernumber",
-            _.purchaseordernumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(purchaseordernumber = value),
-            OrderNumber.pgType
-          )
-        }
-        override def accountnumber: OptField[AccountNumber, SohViewRow] = {
-          new OptField[AccountNumber, SohViewRow](
-            _path,
-            "accountnumber",
-            _.accountnumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(accountnumber = value),
-            AccountNumber.pgType
-          )
-        }
-        override def customerid: Field[CustomerId, SohViewRow] = {
-          new Field[CustomerId, SohViewRow](
-            _path,
-            "customerid",
-            _.customerid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(customerid = value),
-            CustomerId.pgType
-          )
-        }
-        override def salespersonid: OptField[BusinessentityId, SohViewRow] = {
-          new OptField[BusinessentityId, SohViewRow](
-            _path,
-            "salespersonid",
-            _.salespersonid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salespersonid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def territoryid: OptField[SalesterritoryId, SohViewRow] = {
-          new OptField[SalesterritoryId, SohViewRow](
-            _path,
-            "territoryid",
-            _.territoryid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(territoryid = value),
-            SalesterritoryId.pgType
-          )
-        }
-        override def billtoaddressid: Field[AddressId, SohViewRow] = {
-          new Field[AddressId, SohViewRow](
-            _path,
-            "billtoaddressid",
-            _.billtoaddressid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(billtoaddressid = value),
-            AddressId.pgType
-          )
-        }
-        override def shiptoaddressid: Field[AddressId, SohViewRow] = {
-          new Field[AddressId, SohViewRow](
-            _path,
-            "shiptoaddressid",
-            _.shiptoaddressid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shiptoaddressid = value),
-            AddressId.pgType
-          )
-        }
-        override def shipmethodid: Field[ShipmethodId, SohViewRow] = {
-          new Field[ShipmethodId, SohViewRow](
-            _path,
-            "shipmethodid",
-            _.shipmethodid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shipmethodid = value),
-            ShipmethodId.pgType
-          )
-        }
-        override def creditcardid: OptField[/* user-picked */ CustomCreditcardId, SohViewRow] = {
-          new OptField[/* user-picked */ CustomCreditcardId, SohViewRow](
-            _path,
-            "creditcardid",
-            _.creditcardid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(creditcardid = value),
-            CustomCreditcardId.pgType
-          )
-        }
-        override def creditcardapprovalcode: OptField[/* max 15 chars */ String, SohViewRow] = {
-          new OptField[/* max 15 chars */ String, SohViewRow](
-            _path,
-            "creditcardapprovalcode",
-            _.creditcardapprovalcode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(creditcardapprovalcode = value),
-            PgTypes.text
-          )
-        }
-        override def currencyrateid: OptField[CurrencyrateId, SohViewRow] = {
-          new OptField[CurrencyrateId, SohViewRow](
-            _path,
-            "currencyrateid",
-            _.currencyrateid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(currencyrateid = value),
-            CurrencyrateId.pgType
-          )
-        }
-        override def subtotal: Field[java.math.BigDecimal, SohViewRow] = {
-          new Field[java.math.BigDecimal, SohViewRow](
-            _path,
-            "subtotal",
-            _.subtotal,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(subtotal = value),
-            PgTypes.numeric
-          )
-        }
-        override def taxamt: Field[java.math.BigDecimal, SohViewRow] = {
-          new Field[java.math.BigDecimal, SohViewRow](
-            _path,
-            "taxamt",
-            _.taxamt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(taxamt = value),
-            PgTypes.numeric
-          )
-        }
-        override def freight: Field[java.math.BigDecimal, SohViewRow] = {
-          new Field[java.math.BigDecimal, SohViewRow](
-            _path,
-            "freight",
-            _.freight,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(freight = value),
-            PgTypes.numeric
-          )
-        }
-        override def totaldue: OptField[java.math.BigDecimal, SohViewRow] = {
-          new OptField[java.math.BigDecimal, SohViewRow](
-            _path,
-            "totaldue",
-            _.totaldue,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(totaldue = value),
-            PgTypes.numeric
-          )
-        }
-        override def comment: OptField[/* max 128 chars */ String, SohViewRow] = {
-          new OptField[/* max 128 chars */ String, SohViewRow](
-            _path,
-            "comment",
-            _.comment,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(comment = value),
-            PgTypes.text
-          )
-        }
-        override def rowguid: Field[TypoUUID, SohViewRow] = {
-          new Field[TypoUUID, SohViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SohViewRow] = {
-          new Field[TypoLocalDateTime, SohViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[SalesorderheaderId, SohViewRow] = {
+      new Field[SalesorderheaderId, SohViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        SalesorderheaderId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SohViewRow]] = java.util.List.of(this.fields.id, this.fields.salesorderid, this.fields.revisionnumber, this.fields.orderdate, this.fields.duedate, this.fields.shipdate, this.fields.status, this.fields.onlineorderflag, this.fields.purchaseordernumber, this.fields.accountnumber, this.fields.customerid, this.fields.salespersonid, this.fields.territoryid, this.fields.billtoaddressid, this.fields.shiptoaddressid, this.fields.shipmethodid, this.fields.creditcardid, this.fields.creditcardapprovalcode, this.fields.currencyrateid, this.fields.subtotal, this.fields.taxamt, this.fields.freight, this.fields.totaldue, this.fields.comment, this.fields.rowguid, this.fields.modifieddate)
+    override def salesorderid: Field[SalesorderheaderId, SohViewRow] = {
+      new Field[SalesorderheaderId, SohViewRow](
+        _path,
+        "salesorderid",
+        _.salesorderid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salesorderid = value),
+        SalesorderheaderId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def revisionnumber: Field[TypoShort, SohViewRow] = {
+      new Field[TypoShort, SohViewRow](
+        _path,
+        "revisionnumber",
+        _.revisionnumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(revisionnumber = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def orderdate: Field[TypoLocalDateTime, SohViewRow] = {
+      new Field[TypoLocalDateTime, SohViewRow](
+        _path,
+        "orderdate",
+        _.orderdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(orderdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def duedate: Field[TypoLocalDateTime, SohViewRow] = {
+      new Field[TypoLocalDateTime, SohViewRow](
+        _path,
+        "duedate",
+        _.duedate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(duedate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def shipdate: OptField[TypoLocalDateTime, SohViewRow] = {
+      new OptField[TypoLocalDateTime, SohViewRow](
+        _path,
+        "shipdate",
+        _.shipdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(shipdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def status: Field[TypoShort, SohViewRow] = {
+      new Field[TypoShort, SohViewRow](
+        _path,
+        "status",
+        _.status,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(status = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def onlineorderflag: Field[Flag, SohViewRow] = {
+      new Field[Flag, SohViewRow](
+        _path,
+        "onlineorderflag",
+        _.onlineorderflag,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(onlineorderflag = value),
+        Flag.pgType
+      )
+    }
+
+    override def purchaseordernumber: OptField[OrderNumber, SohViewRow] = {
+      new OptField[OrderNumber, SohViewRow](
+        _path,
+        "purchaseordernumber",
+        _.purchaseordernumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(purchaseordernumber = value),
+        OrderNumber.pgType
+      )
+    }
+
+    override def accountnumber: OptField[AccountNumber, SohViewRow] = {
+      new OptField[AccountNumber, SohViewRow](
+        _path,
+        "accountnumber",
+        _.accountnumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(accountnumber = value),
+        AccountNumber.pgType
+      )
+    }
+
+    override def customerid: Field[CustomerId, SohViewRow] = {
+      new Field[CustomerId, SohViewRow](
+        _path,
+        "customerid",
+        _.customerid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(customerid = value),
+        CustomerId.pgType
+      )
+    }
+
+    override def salespersonid: OptField[BusinessentityId, SohViewRow] = {
+      new OptField[BusinessentityId, SohViewRow](
+        _path,
+        "salespersonid",
+        _.salespersonid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salespersonid = value),
+        BusinessentityId.pgType
+      )
+    }
+
+    override def territoryid: OptField[SalesterritoryId, SohViewRow] = {
+      new OptField[SalesterritoryId, SohViewRow](
+        _path,
+        "territoryid",
+        _.territoryid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(territoryid = value),
+        SalesterritoryId.pgType
+      )
+    }
+
+    override def billtoaddressid: Field[AddressId, SohViewRow] = {
+      new Field[AddressId, SohViewRow](
+        _path,
+        "billtoaddressid",
+        _.billtoaddressid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(billtoaddressid = value),
+        AddressId.pgType
+      )
+    }
+
+    override def shiptoaddressid: Field[AddressId, SohViewRow] = {
+      new Field[AddressId, SohViewRow](
+        _path,
+        "shiptoaddressid",
+        _.shiptoaddressid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shiptoaddressid = value),
+        AddressId.pgType
+      )
+    }
+
+    override def shipmethodid: Field[ShipmethodId, SohViewRow] = {
+      new Field[ShipmethodId, SohViewRow](
+        _path,
+        "shipmethodid",
+        _.shipmethodid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shipmethodid = value),
+        ShipmethodId.pgType
+      )
+    }
+
+    override def creditcardid: OptField[/* user-picked */ CustomCreditcardId, SohViewRow] = {
+      new OptField[/* user-picked */ CustomCreditcardId, SohViewRow](
+        _path,
+        "creditcardid",
+        _.creditcardid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(creditcardid = value),
+        CustomCreditcardId.pgType
+      )
+    }
+
+    override def creditcardapprovalcode: OptField[/* max 15 chars */ String, SohViewRow] = {
+      new OptField[/* max 15 chars */ String, SohViewRow](
+        _path,
+        "creditcardapprovalcode",
+        _.creditcardapprovalcode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(creditcardapprovalcode = value),
+        PgTypes.text
+      )
+    }
+
+    override def currencyrateid: OptField[CurrencyrateId, SohViewRow] = {
+      new OptField[CurrencyrateId, SohViewRow](
+        _path,
+        "currencyrateid",
+        _.currencyrateid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(currencyrateid = value),
+        CurrencyrateId.pgType
+      )
+    }
+
+    override def subtotal: Field[java.math.BigDecimal, SohViewRow] = {
+      new Field[java.math.BigDecimal, SohViewRow](
+        _path,
+        "subtotal",
+        _.subtotal,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(subtotal = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def taxamt: Field[java.math.BigDecimal, SohViewRow] = {
+      new Field[java.math.BigDecimal, SohViewRow](
+        _path,
+        "taxamt",
+        _.taxamt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(taxamt = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def freight: Field[java.math.BigDecimal, SohViewRow] = {
+      new Field[java.math.BigDecimal, SohViewRow](
+        _path,
+        "freight",
+        _.freight,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(freight = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def totaldue: OptField[java.math.BigDecimal, SohViewRow] = {
+      new OptField[java.math.BigDecimal, SohViewRow](
+        _path,
+        "totaldue",
+        _.totaldue,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(totaldue = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def comment: OptField[/* max 128 chars */ String, SohViewRow] = {
+      new OptField[/* max 128 chars */ String, SohViewRow](
+        _path,
+        "comment",
+        _.comment,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(comment = value),
+        PgTypes.text
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SohViewRow] = {
+      new Field[TypoUUID, SohViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SohViewRow] = {
+      new Field[TypoLocalDateTime, SohViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SohViewRow]] = java.util.List.of(this.id, this.salesorderid, this.revisionnumber, this.orderdate, this.duedate, this.shipdate, this.status, this.onlineorderflag, this.purchaseordernumber, this.accountnumber, this.customerid, this.salespersonid, this.territoryid, this.billtoaddressid, this.shiptoaddressid, this.shipmethodid, this.creditcardid, this.creditcardapprovalcode, this.currencyrateid, this.subtotal, this.taxamt, this.freight, this.totaldue, this.comment, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SohViewFields, SohViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SohViewFields, SohViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

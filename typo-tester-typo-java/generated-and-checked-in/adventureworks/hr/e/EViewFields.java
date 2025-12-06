@@ -13,101 +13,109 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Flag;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface EViewFields {
-  final class Impl extends Relation<EViewFields, EViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface EViewFields extends FieldsExpr<EViewRow> {
+  record Impl(List<Path> _path) implements EViewFields, Relation<EViewFields, EViewRow> {
+    @Override
+    public Field<BusinessentityId, EViewRow> id() {
+      return new Field<BusinessentityId, EViewRow>(_path, "id", EViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public EViewFields fields() {
-      return new EViewFields() {
-               @Override
-               public Field<BusinessentityId, EViewRow> id() {
-                 return new Field<BusinessentityId, EViewRow>(_path, "id", EViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, EViewRow> businessentityid() {
-                 return new Field<BusinessentityId, EViewRow>(_path, "businessentityid", EViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field</* max 15 chars */ String, EViewRow> nationalidnumber() {
-                 return new Field</* max 15 chars */ String, EViewRow>(_path, "nationalidnumber", EViewRow::nationalidnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withNationalidnumber(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 256 chars */ String, EViewRow> loginid() {
-                 return new Field</* max 256 chars */ String, EViewRow>(_path, "loginid", EViewRow::loginid, Optional.empty(), Optional.empty(), (row, value) -> row.withLoginid(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 50 chars */ String, EViewRow> jobtitle() {
-                 return new Field</* max 50 chars */ String, EViewRow>(_path, "jobtitle", EViewRow::jobtitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobtitle(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoLocalDate, EViewRow> birthdate() {
-                 return new Field<TypoLocalDate, EViewRow>(_path, "birthdate", EViewRow::birthdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withBirthdate(value), TypoLocalDate.pgType);
-               };
-               @Override
-               public Field</* bpchar, max 1 chars */ String, EViewRow> maritalstatus() {
-                 return new Field</* bpchar, max 1 chars */ String, EViewRow>(_path, "maritalstatus", EViewRow::maritalstatus, Optional.empty(), Optional.empty(), (row, value) -> row.withMaritalstatus(value), PgTypes.bpchar);
-               };
-               @Override
-               public Field</* bpchar, max 1 chars */ String, EViewRow> gender() {
-                 return new Field</* bpchar, max 1 chars */ String, EViewRow>(_path, "gender", EViewRow::gender, Optional.empty(), Optional.empty(), (row, value) -> row.withGender(value), PgTypes.bpchar);
-               };
-               @Override
-               public Field<TypoLocalDate, EViewRow> hiredate() {
-                 return new Field<TypoLocalDate, EViewRow>(_path, "hiredate", EViewRow::hiredate, Optional.of("text"), Optional.empty(), (row, value) -> row.withHiredate(value), TypoLocalDate.pgType);
-               };
-               @Override
-               public Field<Flag, EViewRow> salariedflag() {
-                 return new Field<Flag, EViewRow>(_path, "salariedflag", EViewRow::salariedflag, Optional.empty(), Optional.empty(), (row, value) -> row.withSalariedflag(value), Flag.pgType);
-               };
-               @Override
-               public Field<TypoShort, EViewRow> vacationhours() {
-                 return new Field<TypoShort, EViewRow>(_path, "vacationhours", EViewRow::vacationhours, Optional.empty(), Optional.empty(), (row, value) -> row.withVacationhours(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoShort, EViewRow> sickleavehours() {
-                 return new Field<TypoShort, EViewRow>(_path, "sickleavehours", EViewRow::sickleavehours, Optional.empty(), Optional.empty(), (row, value) -> row.withSickleavehours(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<Flag, EViewRow> currentflag() {
-                 return new Field<Flag, EViewRow>(_path, "currentflag", EViewRow::currentflag, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrentflag(value), Flag.pgType);
-               };
-               @Override
-               public Field<TypoUUID, EViewRow> rowguid() {
-                 return new Field<TypoUUID, EViewRow>(_path, "rowguid", EViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, EViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, EViewRow>(_path, "modifieddate", EViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<String, EViewRow> organizationnode() {
-                 return new OptField<String, EViewRow>(_path, "organizationnode", EViewRow::organizationnode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganizationnode(value), PgTypes.text);
-               };
-             };
+    public Field<BusinessentityId, EViewRow> businessentityid() {
+      return new Field<BusinessentityId, EViewRow>(_path, "businessentityid", EViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field</* max 15 chars */ String, EViewRow> nationalidnumber() {
+      return new Field</* max 15 chars */ String, EViewRow>(_path, "nationalidnumber", EViewRow::nationalidnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withNationalidnumber(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 256 chars */ String, EViewRow> loginid() {
+      return new Field</* max 256 chars */ String, EViewRow>(_path, "loginid", EViewRow::loginid, Optional.empty(), Optional.empty(), (row, value) -> row.withLoginid(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 50 chars */ String, EViewRow> jobtitle() {
+      return new Field</* max 50 chars */ String, EViewRow>(_path, "jobtitle", EViewRow::jobtitle, Optional.empty(), Optional.empty(), (row, value) -> row.withJobtitle(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoLocalDate, EViewRow> birthdate() {
+      return new Field<TypoLocalDate, EViewRow>(_path, "birthdate", EViewRow::birthdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withBirthdate(value), TypoLocalDate.pgType);
+    };
+
+    @Override
+    public Field</* bpchar, max 1 chars */ String, EViewRow> maritalstatus() {
+      return new Field</* bpchar, max 1 chars */ String, EViewRow>(_path, "maritalstatus", EViewRow::maritalstatus, Optional.empty(), Optional.empty(), (row, value) -> row.withMaritalstatus(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public Field</* bpchar, max 1 chars */ String, EViewRow> gender() {
+      return new Field</* bpchar, max 1 chars */ String, EViewRow>(_path, "gender", EViewRow::gender, Optional.empty(), Optional.empty(), (row, value) -> row.withGender(value), PgTypes.bpchar);
+    };
+
+    @Override
+    public Field<TypoLocalDate, EViewRow> hiredate() {
+      return new Field<TypoLocalDate, EViewRow>(_path, "hiredate", EViewRow::hiredate, Optional.of("text"), Optional.empty(), (row, value) -> row.withHiredate(value), TypoLocalDate.pgType);
+    };
+
+    @Override
+    public Field<Flag, EViewRow> salariedflag() {
+      return new Field<Flag, EViewRow>(_path, "salariedflag", EViewRow::salariedflag, Optional.empty(), Optional.empty(), (row, value) -> row.withSalariedflag(value), Flag.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, EViewRow> vacationhours() {
+      return new Field<TypoShort, EViewRow>(_path, "vacationhours", EViewRow::vacationhours, Optional.empty(), Optional.empty(), (row, value) -> row.withVacationhours(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, EViewRow> sickleavehours() {
+      return new Field<TypoShort, EViewRow>(_path, "sickleavehours", EViewRow::sickleavehours, Optional.empty(), Optional.empty(), (row, value) -> row.withSickleavehours(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<Flag, EViewRow> currentflag() {
+      return new Field<Flag, EViewRow>(_path, "currentflag", EViewRow::currentflag, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrentflag(value), Flag.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, EViewRow> rowguid() {
+      return new Field<TypoUUID, EViewRow>(_path, "rowguid", EViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, EViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, EViewRow>(_path, "modifieddate", EViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<String, EViewRow> organizationnode() {
+      return new OptField<String, EViewRow>(_path, "organizationnode", EViewRow::organizationnode, Optional.empty(), Optional.empty(), (row, value) -> row.withOrganizationnode(value), PgTypes.text);
     };
 
     @Override
     public List<FieldLike<?, EViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().nationalidnumber(), this.fields().loginid(), this.fields().jobtitle(), this.fields().birthdate(), this.fields().maritalstatus(), this.fields().gender(), this.fields().hiredate(), this.fields().salariedflag(), this.fields().vacationhours(), this.fields().sickleavehours(), this.fields().currentflag(), this.fields().rowguid(), this.fields().modifieddate(), this.fields().organizationnode());
+      return List.of(this.id(), this.businessentityid(), this.nationalidnumber(), this.loginid(), this.jobtitle(), this.birthdate(), this.maritalstatus(), this.gender(), this.hiredate(), this.salariedflag(), this.vacationhours(), this.sickleavehours(), this.currentflag(), this.rowguid(), this.modifieddate(), this.organizationnode());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<EViewFields, EViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<EViewFields, EViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -142,4 +150,12 @@ public interface EViewFields {
   Field<TypoLocalDateTime, EViewRow> modifieddate();
 
   OptField<String, EViewRow> organizationnode();
+
+  @Override
+  List<FieldLike<?, EViewRow>> columns();
+
+  @Override
+  default RowParser<EViewRow> rowParser() {
+    return EViewRow._rowParser;
+  };
 }

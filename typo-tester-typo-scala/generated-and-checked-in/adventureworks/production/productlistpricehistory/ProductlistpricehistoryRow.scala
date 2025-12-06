@@ -54,7 +54,7 @@ case class ProductlistpricehistoryRow(
 }
 
 object ProductlistpricehistoryRow {
-  val `_rowParser`: RowParser[ProductlistpricehistoryRow] = RowParsers.of(ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, ProductlistpricehistoryRow.apply, row => Array(row.productid, row.startdate, row.enddate, row.listprice, row.modifieddate))
+  val `_rowParser`: RowParser[ProductlistpricehistoryRow] = RowParsers.of(ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), PgTypes.numeric, TypoLocalDateTime.pgType, ProductlistpricehistoryRow.apply, row => Array[Object](row.productid.asInstanceOf[Object], row.startdate.asInstanceOf[Object], row.enddate.asInstanceOf[Object], row.listprice.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: ProductlistpricehistoryId,

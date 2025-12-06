@@ -29,5 +29,5 @@ case class PaViewRow(
 )
 
 object PaViewRow {
-  val `_rowParser`: RowParser[PaViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PaViewRow.apply, row => Array(row.id, row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[PaViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, TypoUUID.pgType, TypoLocalDateTime.pgType, PaViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.passwordhash.asInstanceOf[Object], row.passwordsalt.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

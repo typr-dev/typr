@@ -11,6 +11,7 @@ import adventureworks.humanresources.employee.EmployeeFields
 import adventureworks.humanresources.employee.EmployeeRow
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -21,8 +22,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait EmployeepayhistoryFields {
+trait EmployeepayhistoryFields extends FieldsExpr[EmployeepayhistoryRow] {
   def businessentityid: IdField[BusinessentityId, EmployeepayhistoryRow]
 
   def ratechangedate: IdField[TypoLocalDateTime, EmployeepayhistoryRow]
@@ -38,75 +40,79 @@ trait EmployeepayhistoryFields {
   def compositeIdIs(compositeId: EmployeepayhistoryId): SqlExpr[java.lang.Boolean] = SqlExpr.all(businessentityid.isEqual(compositeId.businessentityid), ratechangedate.isEqual(compositeId.ratechangedate))
 
   def compositeIdIn(compositeIds: java.util.List[EmployeepayhistoryId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[BusinessentityId, EmployeepayhistoryId, EmployeepayhistoryRow](businessentityid, _.businessentityid, BusinessentityId.pgType), new Part[TypoLocalDateTime, EmployeepayhistoryId, EmployeepayhistoryRow](ratechangedate, _.ratechangedate, TypoLocalDateTime.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, EmployeepayhistoryRow]]
+
+  override def rowParser: RowParser[EmployeepayhistoryRow] = EmployeepayhistoryRow._rowParser
 }
 
 object EmployeepayhistoryFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[EmployeepayhistoryFields, EmployeepayhistoryRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends EmployeepayhistoryFields with Relation[EmployeepayhistoryFields, EmployeepayhistoryRow] {
 
-    override lazy val fields: EmployeepayhistoryFields = {
-      new EmployeepayhistoryFields {
-        override def businessentityid: IdField[BusinessentityId, EmployeepayhistoryRow] = {
-          new IdField[BusinessentityId, EmployeepayhistoryRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def ratechangedate: IdField[TypoLocalDateTime, EmployeepayhistoryRow] = {
-          new IdField[TypoLocalDateTime, EmployeepayhistoryRow](
-            _path,
-            "ratechangedate",
-            _.ratechangedate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(ratechangedate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def rate: Field[java.math.BigDecimal, EmployeepayhistoryRow] = {
-          new Field[java.math.BigDecimal, EmployeepayhistoryRow](
-            _path,
-            "rate",
-            _.rate,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(rate = value),
-            PgTypes.numeric
-          )
-        }
-        override def payfrequency: Field[TypoShort, EmployeepayhistoryRow] = {
-          new Field[TypoShort, EmployeepayhistoryRow](
-            _path,
-            "payfrequency",
-            _.payfrequency,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(payfrequency = value),
-            TypoShort.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, EmployeepayhistoryRow] = {
-          new Field[TypoLocalDateTime, EmployeepayhistoryRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def businessentityid: IdField[BusinessentityId, EmployeepayhistoryRow] = {
+      new IdField[BusinessentityId, EmployeepayhistoryRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, EmployeepayhistoryRow]] = java.util.List.of(this.fields.businessentityid, this.fields.ratechangedate, this.fields.rate, this.fields.payfrequency, this.fields.modifieddate)
+    override def ratechangedate: IdField[TypoLocalDateTime, EmployeepayhistoryRow] = {
+      new IdField[TypoLocalDateTime, EmployeepayhistoryRow](
+        _path,
+        "ratechangedate",
+        _.ratechangedate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(ratechangedate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def rate: Field[java.math.BigDecimal, EmployeepayhistoryRow] = {
+      new Field[java.math.BigDecimal, EmployeepayhistoryRow](
+        _path,
+        "rate",
+        _.rate,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(rate = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def payfrequency: Field[TypoShort, EmployeepayhistoryRow] = {
+      new Field[TypoShort, EmployeepayhistoryRow](
+        _path,
+        "payfrequency",
+        _.payfrequency,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(payfrequency = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, EmployeepayhistoryRow] = {
+      new Field[TypoLocalDateTime, EmployeepayhistoryRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, EmployeepayhistoryRow]] = java.util.List.of(this.businessentityid, this.ratechangedate, this.rate, this.payfrequency, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[EmployeepayhistoryFields, EmployeepayhistoryRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[EmployeepayhistoryFields, EmployeepayhistoryRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

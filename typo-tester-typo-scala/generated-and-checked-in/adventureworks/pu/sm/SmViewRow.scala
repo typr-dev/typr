@@ -32,5 +32,5 @@ case class SmViewRow(
 )
 
 object SmViewRow {
-  val `_rowParser`: RowParser[SmViewRow] = RowParsers.of(ShipmethodId.pgType, ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SmViewRow.apply, row => Array(row.id, row.shipmethodid, row.name, row.shipbase, row.shiprate, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SmViewRow] = RowParsers.of(ShipmethodId.pgType, ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SmViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.shipmethodid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.shipbase.asInstanceOf[Object], row.shiprate.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

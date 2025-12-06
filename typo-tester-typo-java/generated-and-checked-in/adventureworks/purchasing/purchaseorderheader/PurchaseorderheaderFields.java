@@ -18,6 +18,7 @@ import adventureworks.purchasing.vendor.VendorRow;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -26,79 +27,82 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PurchaseorderheaderFields {
-  final class Impl extends Relation<PurchaseorderheaderFields, PurchaseorderheaderRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PurchaseorderheaderFields extends FieldsExpr<PurchaseorderheaderRow> {
+  record Impl(List<Path> _path) implements PurchaseorderheaderFields, Relation<PurchaseorderheaderFields, PurchaseorderheaderRow> {
+    @Override
+    public IdField<PurchaseorderheaderId, PurchaseorderheaderRow> purchaseorderid() {
+      return new IdField<PurchaseorderheaderId, PurchaseorderheaderRow>(_path, "purchaseorderid", PurchaseorderheaderRow::purchaseorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
+    };
 
     @Override
-    public PurchaseorderheaderFields fields() {
-      return new PurchaseorderheaderFields() {
-               @Override
-               public IdField<PurchaseorderheaderId, PurchaseorderheaderRow> purchaseorderid() {
-                 return new IdField<PurchaseorderheaderId, PurchaseorderheaderRow>(_path, "purchaseorderid", PurchaseorderheaderRow::purchaseorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withPurchaseorderid(value), PurchaseorderheaderId.pgType);
-               };
-               @Override
-               public Field<TypoShort, PurchaseorderheaderRow> revisionnumber() {
-                 return new Field<TypoShort, PurchaseorderheaderRow>(_path, "revisionnumber", PurchaseorderheaderRow::revisionnumber, Optional.empty(), Optional.of("int2"), (row, value) -> row.withRevisionnumber(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoShort, PurchaseorderheaderRow> status() {
-                 return new Field<TypoShort, PurchaseorderheaderRow>(_path, "status", PurchaseorderheaderRow::status, Optional.empty(), Optional.of("int2"), (row, value) -> row.withStatus(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, PurchaseorderheaderRow> employeeid() {
-                 return new Field<BusinessentityId, PurchaseorderheaderRow>(_path, "employeeid", PurchaseorderheaderRow::employeeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withEmployeeid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, PurchaseorderheaderRow> vendorid() {
-                 return new Field<BusinessentityId, PurchaseorderheaderRow>(_path, "vendorid", PurchaseorderheaderRow::vendorid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withVendorid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<ShipmethodId, PurchaseorderheaderRow> shipmethodid() {
-                 return new Field<ShipmethodId, PurchaseorderheaderRow>(_path, "shipmethodid", PurchaseorderheaderRow::shipmethodid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PurchaseorderheaderRow> orderdate() {
-                 return new Field<TypoLocalDateTime, PurchaseorderheaderRow>(_path, "orderdate", PurchaseorderheaderRow::orderdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withOrderdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, PurchaseorderheaderRow> shipdate() {
-                 return new OptField<TypoLocalDateTime, PurchaseorderheaderRow>(_path, "shipdate", PurchaseorderheaderRow::shipdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withShipdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<BigDecimal, PurchaseorderheaderRow> subtotal() {
-                 return new Field<BigDecimal, PurchaseorderheaderRow>(_path, "subtotal", PurchaseorderheaderRow::subtotal, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSubtotal(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PurchaseorderheaderRow> taxamt() {
-                 return new Field<BigDecimal, PurchaseorderheaderRow>(_path, "taxamt", PurchaseorderheaderRow::taxamt, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withTaxamt(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, PurchaseorderheaderRow> freight() {
-                 return new Field<BigDecimal, PurchaseorderheaderRow>(_path, "freight", PurchaseorderheaderRow::freight, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withFreight(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PurchaseorderheaderRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PurchaseorderheaderRow>(_path, "modifieddate", PurchaseorderheaderRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<TypoShort, PurchaseorderheaderRow> revisionnumber() {
+      return new Field<TypoShort, PurchaseorderheaderRow>(_path, "revisionnumber", PurchaseorderheaderRow::revisionnumber, Optional.empty(), Optional.of("int2"), (row, value) -> row.withRevisionnumber(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, PurchaseorderheaderRow> status() {
+      return new Field<TypoShort, PurchaseorderheaderRow>(_path, "status", PurchaseorderheaderRow::status, Optional.empty(), Optional.of("int2"), (row, value) -> row.withStatus(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<BusinessentityId, PurchaseorderheaderRow> employeeid() {
+      return new Field<BusinessentityId, PurchaseorderheaderRow>(_path, "employeeid", PurchaseorderheaderRow::employeeid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withEmployeeid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<BusinessentityId, PurchaseorderheaderRow> vendorid() {
+      return new Field<BusinessentityId, PurchaseorderheaderRow>(_path, "vendorid", PurchaseorderheaderRow::vendorid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withVendorid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<ShipmethodId, PurchaseorderheaderRow> shipmethodid() {
+      return new Field<ShipmethodId, PurchaseorderheaderRow>(_path, "shipmethodid", PurchaseorderheaderRow::shipmethodid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PurchaseorderheaderRow> orderdate() {
+      return new Field<TypoLocalDateTime, PurchaseorderheaderRow>(_path, "orderdate", PurchaseorderheaderRow::orderdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withOrderdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, PurchaseorderheaderRow> shipdate() {
+      return new OptField<TypoLocalDateTime, PurchaseorderheaderRow>(_path, "shipdate", PurchaseorderheaderRow::shipdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withShipdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, PurchaseorderheaderRow> subtotal() {
+      return new Field<BigDecimal, PurchaseorderheaderRow>(_path, "subtotal", PurchaseorderheaderRow::subtotal, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withSubtotal(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PurchaseorderheaderRow> taxamt() {
+      return new Field<BigDecimal, PurchaseorderheaderRow>(_path, "taxamt", PurchaseorderheaderRow::taxamt, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withTaxamt(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, PurchaseorderheaderRow> freight() {
+      return new Field<BigDecimal, PurchaseorderheaderRow>(_path, "freight", PurchaseorderheaderRow::freight, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withFreight(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PurchaseorderheaderRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PurchaseorderheaderRow>(_path, "modifieddate", PurchaseorderheaderRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PurchaseorderheaderRow>> columns() {
-      return List.of(this.fields().purchaseorderid(), this.fields().revisionnumber(), this.fields().status(), this.fields().employeeid(), this.fields().vendorid(), this.fields().shipmethodid(), this.fields().orderdate(), this.fields().shipdate(), this.fields().subtotal(), this.fields().taxamt(), this.fields().freight(), this.fields().modifieddate());
+      return List.of(this.purchaseorderid(), this.revisionnumber(), this.status(), this.employeeid(), this.vendorid(), this.shipmethodid(), this.orderdate(), this.shipdate(), this.subtotal(), this.taxamt(), this.freight(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PurchaseorderheaderFields, PurchaseorderheaderRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PurchaseorderheaderFields, PurchaseorderheaderRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -136,5 +140,13 @@ public interface PurchaseorderheaderFields {
 
   default ForeignKey<VendorFields, VendorRow> fkVendor() {
     return ForeignKey.<VendorFields, VendorRow>of("purchasing.FK_PurchaseOrderHeader_Vendor_VendorID").withColumnPair(vendorid(), VendorFields::businessentityid);
+  };
+
+  @Override
+  List<FieldLike<?, PurchaseorderheaderRow>> columns();
+
+  @Override
+  default RowParser<PurchaseorderheaderRow> rowParser() {
+    return PurchaseorderheaderRow._rowParser;
   };
 }

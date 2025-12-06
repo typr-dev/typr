@@ -11,12 +11,16 @@ import adventureworks.production.productcategory.ProductcategoryId
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface PcViewFields {
+interface PcViewFields : FieldsExpr<PcViewRow> {
+  override fun columns(): List<FieldLike<*, PcViewRow>>
+
   fun id(): Field<ProductcategoryId, PcViewRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, PcViewRow>
@@ -25,23 +29,27 @@ interface PcViewFields {
 
   fun productcategoryid(): Field<ProductcategoryId, PcViewRow>
 
+  override fun rowParser(): RowParser<PcViewRow> = PcViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, PcViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<PcViewFields, PcViewRow>(path) {
-      override fun fields(): PcViewFields = object : PcViewFields {
-        override fun id(): Field<ProductcategoryId, PcViewRow> = Field<ProductcategoryId, PcViewRow>(_path, "id", PcViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ProductcategoryId.pgType)
-        override fun productcategoryid(): Field<ProductcategoryId, PcViewRow> = Field<ProductcategoryId, PcViewRow>(_path, "productcategoryid", PcViewRow::productcategoryid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productcategoryid = value) }, ProductcategoryId.pgType)
-        override fun name(): Field<Name, PcViewRow> = Field<Name, PcViewRow>(_path, "name", PcViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun rowguid(): Field<TypoUUID, PcViewRow> = Field<TypoUUID, PcViewRow>(_path, "rowguid", PcViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, PcViewRow> = Field<TypoLocalDateTime, PcViewRow>(_path, "modifieddate", PcViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : PcViewFields, Relation<PcViewFields, PcViewRow> {
+      override fun id(): Field<ProductcategoryId, PcViewRow> = Field<ProductcategoryId, PcViewRow>(_path, "id", PcViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ProductcategoryId.pgType)
 
-      override fun columns(): List<FieldLike<*, PcViewRow>> = listOf(this.fields().id(), this.fields().productcategoryid(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun productcategoryid(): Field<ProductcategoryId, PcViewRow> = Field<ProductcategoryId, PcViewRow>(_path, "productcategoryid", PcViewRow::productcategoryid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productcategoryid = value) }, ProductcategoryId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, PcViewRow> = Field<Name, PcViewRow>(_path, "name", PcViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun rowguid(): Field<TypoUUID, PcViewRow> = Field<TypoUUID, PcViewRow>(_path, "rowguid", PcViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, PcViewRow> = Field<TypoLocalDateTime, PcViewRow>(_path, "modifieddate", PcViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, PcViewRow>> = listOf(this.id(), this.productcategoryid(), this.name(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<PcViewFields, PcViewRow> = Impl(_path)
     }
 
-    val structure: Relation<PcViewFields, PcViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

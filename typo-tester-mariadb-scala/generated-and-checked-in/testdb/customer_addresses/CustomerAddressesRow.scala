@@ -94,7 +94,7 @@ case class CustomerAddressesRow(
 }
 
 object CustomerAddressesRow {
-  val `_rowParser`: RowParser[CustomerAddressesRow] = RowParsers.of(CustomerAddressesId.pgType, CustomersId.pgType, MariaTypes.text, MariaTypes.bool, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.opt(), MariaTypes.tinytext.opt(), MariaTypes.datetime, CustomerAddressesRow.apply, row => Array(row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt))
+  val `_rowParser`: RowParser[CustomerAddressesRow] = RowParsers.of(CustomerAddressesId.pgType, CustomersId.pgType, MariaTypes.text, MariaTypes.bool, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.opt(), MariaTypes.tinytext.opt(), MariaTypes.datetime, CustomerAddressesRow.apply, row => Array[Object](row.addressId.asInstanceOf[Object], row.customerId.asInstanceOf[Object], row.addressType.asInstanceOf[Object], row.isDefault.asInstanceOf[Object], row.recipientName.asInstanceOf[Object], row.streetLine1.asInstanceOf[Object], row.streetLine2.asInstanceOf[Object], row.city.asInstanceOf[Object], row.stateProvince.asInstanceOf[Object], row.postalCode.asInstanceOf[Object], row.countryCode.asInstanceOf[Object], row.location.asInstanceOf[Object], row.deliveryNotes.asInstanceOf[Object], row.createdAt.asInstanceOf[Object]))
 
   given mariaText: MariaText[CustomerAddressesRow] = MariaText.from(`_rowParser`)
 }

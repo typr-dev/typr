@@ -108,7 +108,7 @@ case class EmployeeRow(
 }
 
 object EmployeeRow {
-  val `_rowParser`: RowParser[EmployeeRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.bpchar, PgTypes.bpchar, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EmployeeRow.apply, row => Array(row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
+  val `_rowParser`: RowParser[EmployeeRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, TypoLocalDate.pgType, PgTypes.bpchar, PgTypes.bpchar, TypoLocalDate.pgType, Flag.pgType, TypoShort.pgType, TypoShort.pgType, Flag.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, PgTypes.text.opt(), EmployeeRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.nationalidnumber.asInstanceOf[Object], row.loginid.asInstanceOf[Object], row.jobtitle.asInstanceOf[Object], row.birthdate.asInstanceOf[Object], row.maritalstatus.asInstanceOf[Object], row.gender.asInstanceOf[Object], row.hiredate.asInstanceOf[Object], row.salariedflag.asInstanceOf[Object], row.vacationhours.asInstanceOf[Object], row.sickleavehours.asInstanceOf[Object], row.currentflag.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object], row.organizationnode.asInstanceOf[Object]))
 
   given pgText: PgText[EmployeeRow] = PgText.from(`_rowParser`)
 }

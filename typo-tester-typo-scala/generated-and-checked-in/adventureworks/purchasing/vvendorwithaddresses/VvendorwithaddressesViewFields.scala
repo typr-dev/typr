@@ -8,14 +8,16 @@ package adventureworks.purchasing.vvendorwithaddresses
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VvendorwithaddressesViewFields {
+trait VvendorwithaddressesViewFields extends FieldsExpr[VvendorwithaddressesViewRow] {
   def businessentityid: Field[BusinessentityId, VvendorwithaddressesViewRow]
 
   def name: Field[Name, VvendorwithaddressesViewRow]
@@ -33,119 +35,127 @@ trait VvendorwithaddressesViewFields {
   def postalcode: Field[/* max 15 chars */ String, VvendorwithaddressesViewRow]
 
   def countryregionname: Field[Name, VvendorwithaddressesViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VvendorwithaddressesViewRow]]
+
+  override def rowParser: RowParser[VvendorwithaddressesViewRow] = VvendorwithaddressesViewRow._rowParser
 }
 
 object VvendorwithaddressesViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VvendorwithaddressesViewFields, VvendorwithaddressesViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VvendorwithaddressesViewFields with Relation[VvendorwithaddressesViewFields, VvendorwithaddressesViewRow] {
 
-    override lazy val fields: VvendorwithaddressesViewFields = {
-      new VvendorwithaddressesViewFields {
-        override def businessentityid: Field[BusinessentityId, VvendorwithaddressesViewRow] = {
-          new Field[BusinessentityId, VvendorwithaddressesViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def name: Field[Name, VvendorwithaddressesViewRow] = {
-          new Field[Name, VvendorwithaddressesViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def addresstype: Field[Name, VvendorwithaddressesViewRow] = {
-          new Field[Name, VvendorwithaddressesViewRow](
-            _path,
-            "addresstype",
-            _.addresstype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addresstype = value),
-            Name.pgType
-          )
-        }
-        override def addressline1: Field[/* max 60 chars */ String, VvendorwithaddressesViewRow] = {
-          new Field[/* max 60 chars */ String, VvendorwithaddressesViewRow](
-            _path,
-            "addressline1",
-            _.addressline1,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addressline1 = value),
-            PgTypes.text
-          )
-        }
-        override def addressline2: OptField[/* max 60 chars */ String, VvendorwithaddressesViewRow] = {
-          new OptField[/* max 60 chars */ String, VvendorwithaddressesViewRow](
-            _path,
-            "addressline2",
-            _.addressline2,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addressline2 = value),
-            PgTypes.text
-          )
-        }
-        override def city: Field[/* max 30 chars */ String, VvendorwithaddressesViewRow] = {
-          new Field[/* max 30 chars */ String, VvendorwithaddressesViewRow](
-            _path,
-            "city",
-            _.city,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(city = value),
-            PgTypes.text
-          )
-        }
-        override def stateprovincename: Field[Name, VvendorwithaddressesViewRow] = {
-          new Field[Name, VvendorwithaddressesViewRow](
-            _path,
-            "stateprovincename",
-            _.stateprovincename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(stateprovincename = value),
-            Name.pgType
-          )
-        }
-        override def postalcode: Field[/* max 15 chars */ String, VvendorwithaddressesViewRow] = {
-          new Field[/* max 15 chars */ String, VvendorwithaddressesViewRow](
-            _path,
-            "postalcode",
-            _.postalcode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(postalcode = value),
-            PgTypes.text
-          )
-        }
-        override def countryregionname: Field[Name, VvendorwithaddressesViewRow] = {
-          new Field[Name, VvendorwithaddressesViewRow](
-            _path,
-            "countryregionname",
-            _.countryregionname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryregionname = value),
-            Name.pgType
-          )
-        }
-      }
+    override def businessentityid: Field[BusinessentityId, VvendorwithaddressesViewRow] = {
+      new Field[BusinessentityId, VvendorwithaddressesViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VvendorwithaddressesViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.name, this.fields.addresstype, this.fields.addressline1, this.fields.addressline2, this.fields.city, this.fields.stateprovincename, this.fields.postalcode, this.fields.countryregionname)
+    override def name: Field[Name, VvendorwithaddressesViewRow] = {
+      new Field[Name, VvendorwithaddressesViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def addresstype: Field[Name, VvendorwithaddressesViewRow] = {
+      new Field[Name, VvendorwithaddressesViewRow](
+        _path,
+        "addresstype",
+        _.addresstype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addresstype = value),
+        Name.pgType
+      )
+    }
+
+    override def addressline1: Field[/* max 60 chars */ String, VvendorwithaddressesViewRow] = {
+      new Field[/* max 60 chars */ String, VvendorwithaddressesViewRow](
+        _path,
+        "addressline1",
+        _.addressline1,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addressline1 = value),
+        PgTypes.text
+      )
+    }
+
+    override def addressline2: OptField[/* max 60 chars */ String, VvendorwithaddressesViewRow] = {
+      new OptField[/* max 60 chars */ String, VvendorwithaddressesViewRow](
+        _path,
+        "addressline2",
+        _.addressline2,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addressline2 = value),
+        PgTypes.text
+      )
+    }
+
+    override def city: Field[/* max 30 chars */ String, VvendorwithaddressesViewRow] = {
+      new Field[/* max 30 chars */ String, VvendorwithaddressesViewRow](
+        _path,
+        "city",
+        _.city,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(city = value),
+        PgTypes.text
+      )
+    }
+
+    override def stateprovincename: Field[Name, VvendorwithaddressesViewRow] = {
+      new Field[Name, VvendorwithaddressesViewRow](
+        _path,
+        "stateprovincename",
+        _.stateprovincename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(stateprovincename = value),
+        Name.pgType
+      )
+    }
+
+    override def postalcode: Field[/* max 15 chars */ String, VvendorwithaddressesViewRow] = {
+      new Field[/* max 15 chars */ String, VvendorwithaddressesViewRow](
+        _path,
+        "postalcode",
+        _.postalcode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(postalcode = value),
+        PgTypes.text
+      )
+    }
+
+    override def countryregionname: Field[Name, VvendorwithaddressesViewRow] = {
+      new Field[Name, VvendorwithaddressesViewRow](
+        _path,
+        "countryregionname",
+        _.countryregionname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryregionname = value),
+        Name.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VvendorwithaddressesViewRow]] = java.util.List.of(this.businessentityid, this.name, this.addresstype, this.addressline1, this.addressline2, this.city, this.stateprovincename, this.postalcode, this.countryregionname)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VvendorwithaddressesViewFields, VvendorwithaddressesViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VvendorwithaddressesViewFields, VvendorwithaddressesViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

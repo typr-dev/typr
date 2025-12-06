@@ -14,6 +14,7 @@ import adventureworks.sales.salesreason.SalesreasonId;
 import adventureworks.sales.salesreason.SalesreasonRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,43 +24,37 @@ import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface SalesorderheadersalesreasonFields {
-  final class Impl extends Relation<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SalesorderheadersalesreasonFields extends FieldsExpr<SalesorderheadersalesreasonRow> {
+  record Impl(List<Path> _path) implements SalesorderheadersalesreasonFields, Relation<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> {
+    @Override
+    public IdField<SalesorderheaderId, SalesorderheadersalesreasonRow> salesorderid() {
+      return new IdField<SalesorderheaderId, SalesorderheadersalesreasonRow>(_path, "salesorderid", SalesorderheadersalesreasonRow::salesorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
+    };
 
     @Override
-    public SalesorderheadersalesreasonFields fields() {
-      return new SalesorderheadersalesreasonFields() {
-               @Override
-               public IdField<SalesorderheaderId, SalesorderheadersalesreasonRow> salesorderid() {
-                 return new IdField<SalesorderheaderId, SalesorderheadersalesreasonRow>(_path, "salesorderid", SalesorderheadersalesreasonRow::salesorderid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesorderid(value), SalesorderheaderId.pgType);
-               };
-               @Override
-               public IdField<SalesreasonId, SalesorderheadersalesreasonRow> salesreasonid() {
-                 return new IdField<SalesreasonId, SalesorderheadersalesreasonRow>(_path, "salesreasonid", SalesorderheadersalesreasonRow::salesreasonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesreasonid(value), SalesreasonId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SalesorderheadersalesreasonRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SalesorderheadersalesreasonRow>(_path, "modifieddate", SalesorderheadersalesreasonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<SalesreasonId, SalesorderheadersalesreasonRow> salesreasonid() {
+      return new IdField<SalesreasonId, SalesorderheadersalesreasonRow>(_path, "salesreasonid", SalesorderheadersalesreasonRow::salesreasonid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalesreasonid(value), SalesreasonId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SalesorderheadersalesreasonRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SalesorderheadersalesreasonRow>(_path, "modifieddate", SalesorderheadersalesreasonRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SalesorderheadersalesreasonRow>> columns() {
-      return List.of(this.fields().salesorderid(), this.fields().salesreasonid(), this.fields().modifieddate());
+      return List.of(this.salesorderid(), this.salesreasonid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SalesorderheadersalesreasonFields, SalesorderheadersalesreasonRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -83,5 +78,13 @@ public interface SalesorderheadersalesreasonFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<SalesorderheadersalesreasonId> compositeIds) {
     return new CompositeIn(List.of(new Part<SalesorderheaderId, SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow>(salesorderid(), SalesorderheadersalesreasonId::salesorderid, SalesorderheaderId.pgType), new Part<SalesreasonId, SalesorderheadersalesreasonId, SalesorderheadersalesreasonRow>(salesreasonid(), SalesorderheadersalesreasonId::salesreasonid, SalesreasonId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, SalesorderheadersalesreasonRow>> columns();
+
+  @Override
+  default RowParser<SalesorderheadersalesreasonRow> rowParser() {
+    return SalesorderheadersalesreasonRow._rowParser;
   };
 }

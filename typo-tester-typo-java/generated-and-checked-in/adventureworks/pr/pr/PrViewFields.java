@@ -11,73 +11,74 @@ import adventureworks.production.productreview.ProductreviewId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PrViewFields {
-  final class Impl extends Relation<PrViewFields, PrViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PrViewFields extends FieldsExpr<PrViewRow> {
+  record Impl(List<Path> _path) implements PrViewFields, Relation<PrViewFields, PrViewRow> {
+    @Override
+    public Field<ProductreviewId, PrViewRow> id() {
+      return new Field<ProductreviewId, PrViewRow>(_path, "id", PrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductreviewId.pgType);
+    };
 
     @Override
-    public PrViewFields fields() {
-      return new PrViewFields() {
-               @Override
-               public Field<ProductreviewId, PrViewRow> id() {
-                 return new Field<ProductreviewId, PrViewRow>(_path, "id", PrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductreviewId.pgType);
-               };
-               @Override
-               public Field<ProductreviewId, PrViewRow> productreviewid() {
-                 return new Field<ProductreviewId, PrViewRow>(_path, "productreviewid", PrViewRow::productreviewid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductreviewid(value), ProductreviewId.pgType);
-               };
-               @Override
-               public Field<ProductId, PrViewRow> productid() {
-                 return new Field<ProductId, PrViewRow>(_path, "productid", PrViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<Name, PrViewRow> reviewername() {
-                 return new Field<Name, PrViewRow>(_path, "reviewername", PrViewRow::reviewername, Optional.empty(), Optional.empty(), (row, value) -> row.withReviewername(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PrViewRow> reviewdate() {
-                 return new Field<TypoLocalDateTime, PrViewRow>(_path, "reviewdate", PrViewRow::reviewdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withReviewdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field</* max 50 chars */ String, PrViewRow> emailaddress() {
-                 return new Field</* max 50 chars */ String, PrViewRow>(_path, "emailaddress", PrViewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), PgTypes.text);
-               };
-               @Override
-               public Field<Integer, PrViewRow> rating() {
-                 return new Field<Integer, PrViewRow>(_path, "rating", PrViewRow::rating, Optional.empty(), Optional.empty(), (row, value) -> row.withRating(value), PgTypes.int4);
-               };
-               @Override
-               public OptField</* max 3850 chars */ String, PrViewRow> comments() {
-                 return new OptField</* max 3850 chars */ String, PrViewRow>(_path, "comments", PrViewRow::comments, Optional.empty(), Optional.empty(), (row, value) -> row.withComments(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PrViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PrViewRow>(_path, "modifieddate", PrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductreviewId, PrViewRow> productreviewid() {
+      return new Field<ProductreviewId, PrViewRow>(_path, "productreviewid", PrViewRow::productreviewid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductreviewid(value), ProductreviewId.pgType);
+    };
+
+    @Override
+    public Field<ProductId, PrViewRow> productid() {
+      return new Field<ProductId, PrViewRow>(_path, "productid", PrViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<Name, PrViewRow> reviewername() {
+      return new Field<Name, PrViewRow>(_path, "reviewername", PrViewRow::reviewername, Optional.empty(), Optional.empty(), (row, value) -> row.withReviewername(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PrViewRow> reviewdate() {
+      return new Field<TypoLocalDateTime, PrViewRow>(_path, "reviewdate", PrViewRow::reviewdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withReviewdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field</* max 50 chars */ String, PrViewRow> emailaddress() {
+      return new Field</* max 50 chars */ String, PrViewRow>(_path, "emailaddress", PrViewRow::emailaddress, Optional.empty(), Optional.empty(), (row, value) -> row.withEmailaddress(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<Integer, PrViewRow> rating() {
+      return new Field<Integer, PrViewRow>(_path, "rating", PrViewRow::rating, Optional.empty(), Optional.empty(), (row, value) -> row.withRating(value), PgTypes.int4);
+    };
+
+    @Override
+    public OptField</* max 3850 chars */ String, PrViewRow> comments() {
+      return new OptField</* max 3850 chars */ String, PrViewRow>(_path, "comments", PrViewRow::comments, Optional.empty(), Optional.empty(), (row, value) -> row.withComments(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PrViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PrViewRow>(_path, "modifieddate", PrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PrViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().productreviewid(), this.fields().productid(), this.fields().reviewername(), this.fields().reviewdate(), this.fields().emailaddress(), this.fields().rating(), this.fields().comments(), this.fields().modifieddate());
+      return List.of(this.id(), this.productreviewid(), this.productid(), this.reviewername(), this.reviewdate(), this.emailaddress(), this.rating(), this.comments(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PrViewFields, PrViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PrViewFields, PrViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -98,4 +99,12 @@ public interface PrViewFields {
   OptField</* max 3850 chars */ String, PrViewRow> comments();
 
   Field<TypoLocalDateTime, PrViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PrViewRow>> columns();
+
+  @Override
+  default RowParser<PrViewRow> rowParser() {
+    return PrViewRow._rowParser;
+  };
 }

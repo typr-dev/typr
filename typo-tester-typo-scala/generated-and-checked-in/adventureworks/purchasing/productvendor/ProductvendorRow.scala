@@ -84,7 +84,7 @@ case class ProductvendorRow(
 }
 
 object ProductvendorRow {
-  val `_rowParser`: RowParser[ProductvendorRow] = RowParsers.of(ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.int4, PgTypes.int4, PgTypes.int4.opt(), UnitmeasureId.pgType, TypoLocalDateTime.pgType, ProductvendorRow.apply, row => Array(row.productid, row.businessentityid, row.averageleadtime, row.standardprice, row.lastreceiptcost, row.lastreceiptdate, row.minorderqty, row.maxorderqty, row.onorderqty, row.unitmeasurecode, row.modifieddate))
+  val `_rowParser`: RowParser[ProductvendorRow] = RowParsers.of(ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric.opt(), TypoLocalDateTime.pgType.opt(), PgTypes.int4, PgTypes.int4, PgTypes.int4.opt(), UnitmeasureId.pgType, TypoLocalDateTime.pgType, ProductvendorRow.apply, row => Array[Object](row.productid.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.averageleadtime.asInstanceOf[Object], row.standardprice.asInstanceOf[Object], row.lastreceiptcost.asInstanceOf[Object], row.lastreceiptdate.asInstanceOf[Object], row.minorderqty.asInstanceOf[Object], row.maxorderqty.asInstanceOf[Object], row.onorderqty.asInstanceOf[Object], row.unitmeasurecode.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: ProductvendorId,

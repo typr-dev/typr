@@ -20,5 +20,5 @@ case class PersonRowJoinSqlRow(
 )
 
 object PersonRowJoinSqlRow {
-  val `_rowParser`: RowParser[PersonRowJoinSqlRow] = RowParsers.of(BusinessentityId.pgType, TypoRecord.pgTypeArray.opt(), TypoRecord.pgTypeArray.opt(), PersonRowJoinSqlRow.apply, row => Array(row.businessentityid, row.email, row.emails))
+  val `_rowParser`: RowParser[PersonRowJoinSqlRow] = RowParsers.of(BusinessentityId.pgType, TypoRecord.pgTypeArray.opt(), TypoRecord.pgTypeArray.opt(), PersonRowJoinSqlRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.email.asInstanceOf[Object], row.emails.asInstanceOf[Object]))
 }

@@ -10,64 +10,63 @@ import adventureworks.customtypes.TypoShort;
 import adventureworks.userdefined.CustomCreditcardId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface CcViewFields {
-  final class Impl extends Relation<CcViewFields, CcViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CcViewFields extends FieldsExpr<CcViewRow> {
+  record Impl(List<Path> _path) implements CcViewFields, Relation<CcViewFields, CcViewRow> {
+    @Override
+    public Field</* user-picked */ CustomCreditcardId, CcViewRow> id() {
+      return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "id", CcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CustomCreditcardId.pgType);
+    };
 
     @Override
-    public CcViewFields fields() {
-      return new CcViewFields() {
-               @Override
-               public Field</* user-picked */ CustomCreditcardId, CcViewRow> id() {
-                 return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "id", CcViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), CustomCreditcardId.pgType);
-               };
-               @Override
-               public Field</* user-picked */ CustomCreditcardId, CcViewRow> creditcardid() {
-                 return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "creditcardid", CcViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
-               };
-               @Override
-               public Field</* max 50 chars */ String, CcViewRow> cardtype() {
-                 return new Field</* max 50 chars */ String, CcViewRow>(_path, "cardtype", CcViewRow::cardtype, Optional.empty(), Optional.empty(), (row, value) -> row.withCardtype(value), PgTypes.text);
-               };
-               @Override
-               public Field</* max 25 chars */ String, CcViewRow> cardnumber() {
-                 return new Field</* max 25 chars */ String, CcViewRow>(_path, "cardnumber", CcViewRow::cardnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withCardnumber(value), PgTypes.text);
-               };
-               @Override
-               public Field<TypoShort, CcViewRow> expmonth() {
-                 return new Field<TypoShort, CcViewRow>(_path, "expmonth", CcViewRow::expmonth, Optional.empty(), Optional.empty(), (row, value) -> row.withExpmonth(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoShort, CcViewRow> expyear() {
-                 return new Field<TypoShort, CcViewRow>(_path, "expyear", CcViewRow::expyear, Optional.empty(), Optional.empty(), (row, value) -> row.withExpyear(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CcViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CcViewRow>(_path, "modifieddate", CcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field</* user-picked */ CustomCreditcardId, CcViewRow> creditcardid() {
+      return new Field</* user-picked */ CustomCreditcardId, CcViewRow>(_path, "creditcardid", CcViewRow::creditcardid, Optional.empty(), Optional.empty(), (row, value) -> row.withCreditcardid(value), CustomCreditcardId.pgType);
+    };
+
+    @Override
+    public Field</* max 50 chars */ String, CcViewRow> cardtype() {
+      return new Field</* max 50 chars */ String, CcViewRow>(_path, "cardtype", CcViewRow::cardtype, Optional.empty(), Optional.empty(), (row, value) -> row.withCardtype(value), PgTypes.text);
+    };
+
+    @Override
+    public Field</* max 25 chars */ String, CcViewRow> cardnumber() {
+      return new Field</* max 25 chars */ String, CcViewRow>(_path, "cardnumber", CcViewRow::cardnumber, Optional.empty(), Optional.empty(), (row, value) -> row.withCardnumber(value), PgTypes.text);
+    };
+
+    @Override
+    public Field<TypoShort, CcViewRow> expmonth() {
+      return new Field<TypoShort, CcViewRow>(_path, "expmonth", CcViewRow::expmonth, Optional.empty(), Optional.empty(), (row, value) -> row.withExpmonth(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, CcViewRow> expyear() {
+      return new Field<TypoShort, CcViewRow>(_path, "expyear", CcViewRow::expyear, Optional.empty(), Optional.empty(), (row, value) -> row.withExpyear(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CcViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CcViewRow>(_path, "modifieddate", CcViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CcViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().creditcardid(), this.fields().cardtype(), this.fields().cardnumber(), this.fields().expmonth(), this.fields().expyear(), this.fields().modifieddate());
+      return List.of(this.id(), this.creditcardid(), this.cardtype(), this.cardnumber(), this.expmonth(), this.expyear(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CcViewFields, CcViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CcViewFields, CcViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -84,4 +83,12 @@ public interface CcViewFields {
   Field<TypoShort, CcViewRow> expyear();
 
   Field<TypoLocalDateTime, CcViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CcViewRow>> columns();
+
+  @Override
+  default RowParser<CcViewRow> rowParser() {
+    return CcViewRow._rowParser;
+  };
 }

@@ -10,51 +10,47 @@ import adventureworks.customtypes.TypoUUID;
 import adventureworks.person.businessentity.BusinessentityId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface BeViewFields {
-  final class Impl extends Relation<BeViewFields, BeViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface BeViewFields extends FieldsExpr<BeViewRow> {
+  record Impl(List<Path> _path) implements BeViewFields, Relation<BeViewFields, BeViewRow> {
+    @Override
+    public Field<BusinessentityId, BeViewRow> id() {
+      return new Field<BusinessentityId, BeViewRow>(_path, "id", BeViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public BeViewFields fields() {
-      return new BeViewFields() {
-               @Override
-               public Field<BusinessentityId, BeViewRow> id() {
-                 return new Field<BusinessentityId, BeViewRow>(_path, "id", BeViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, BeViewRow> businessentityid() {
-                 return new Field<BusinessentityId, BeViewRow>(_path, "businessentityid", BeViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<TypoUUID, BeViewRow> rowguid() {
-                 return new Field<TypoUUID, BeViewRow>(_path, "rowguid", BeViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, BeViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, BeViewRow>(_path, "modifieddate", BeViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, BeViewRow> businessentityid() {
+      return new Field<BusinessentityId, BeViewRow>(_path, "businessentityid", BeViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, BeViewRow> rowguid() {
+      return new Field<TypoUUID, BeViewRow>(_path, "rowguid", BeViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, BeViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, BeViewRow>(_path, "modifieddate", BeViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, BeViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<BeViewFields, BeViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<BeViewFields, BeViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface BeViewFields {
   Field<TypoUUID, BeViewRow> rowguid();
 
   Field<TypoLocalDateTime, BeViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, BeViewRow>> columns();
+
+  @Override
+  default RowParser<BeViewRow> rowParser() {
+    return BeViewRow._rowParser;
+  };
 }

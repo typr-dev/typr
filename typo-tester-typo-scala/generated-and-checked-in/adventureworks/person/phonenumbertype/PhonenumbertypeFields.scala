@@ -8,65 +8,69 @@ package adventureworks.person.phonenumbertype
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait PhonenumbertypeFields {
+trait PhonenumbertypeFields extends FieldsExpr[PhonenumbertypeRow] {
   def phonenumbertypeid: IdField[PhonenumbertypeId, PhonenumbertypeRow]
 
   def name: Field[Name, PhonenumbertypeRow]
 
   def modifieddate: Field[TypoLocalDateTime, PhonenumbertypeRow]
+
+  override def columns: java.util.List[FieldLike[?, PhonenumbertypeRow]]
+
+  override def rowParser: RowParser[PhonenumbertypeRow] = PhonenumbertypeRow._rowParser
 }
 
 object PhonenumbertypeFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PhonenumbertypeFields, PhonenumbertypeRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PhonenumbertypeFields with Relation[PhonenumbertypeFields, PhonenumbertypeRow] {
 
-    override lazy val fields: PhonenumbertypeFields = {
-      new PhonenumbertypeFields {
-        override def phonenumbertypeid: IdField[PhonenumbertypeId, PhonenumbertypeRow] = {
-          new IdField[PhonenumbertypeId, PhonenumbertypeRow](
-            _path,
-            "phonenumbertypeid",
-            _.phonenumbertypeid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(phonenumbertypeid = value),
-            PhonenumbertypeId.pgType
-          )
-        }
-        override def name: Field[Name, PhonenumbertypeRow] = {
-          new Field[Name, PhonenumbertypeRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PhonenumbertypeRow] = {
-          new Field[TypoLocalDateTime, PhonenumbertypeRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def phonenumbertypeid: IdField[PhonenumbertypeId, PhonenumbertypeRow] = {
+      new IdField[PhonenumbertypeId, PhonenumbertypeRow](
+        _path,
+        "phonenumbertypeid",
+        _.phonenumbertypeid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(phonenumbertypeid = value),
+        PhonenumbertypeId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PhonenumbertypeRow]] = java.util.List.of(this.fields.phonenumbertypeid, this.fields.name, this.fields.modifieddate)
+    override def name: Field[Name, PhonenumbertypeRow] = {
+      new Field[Name, PhonenumbertypeRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, PhonenumbertypeRow] = {
+      new Field[TypoLocalDateTime, PhonenumbertypeRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PhonenumbertypeRow]] = java.util.List.of(this.phonenumbertypeid, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PhonenumbertypeFields, PhonenumbertypeRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PhonenumbertypeFields, PhonenumbertypeRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

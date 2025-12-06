@@ -33,5 +33,5 @@ case class SViewRow(
 )
 
 object SViewRow {
-  val `_rowParser`: RowParser[SViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SViewRow.apply, row => Array(row.id, row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.salespersonid.asInstanceOf[Object], row.demographics.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

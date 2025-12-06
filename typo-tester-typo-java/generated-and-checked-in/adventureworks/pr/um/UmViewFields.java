@@ -10,51 +10,47 @@ import adventureworks.production.unitmeasure.UnitmeasureId;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface UmViewFields {
-  final class Impl extends Relation<UmViewFields, UmViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface UmViewFields extends FieldsExpr<UmViewRow> {
+  record Impl(List<Path> _path) implements UmViewFields, Relation<UmViewFields, UmViewRow> {
+    @Override
+    public Field<UnitmeasureId, UmViewRow> id() {
+      return new Field<UnitmeasureId, UmViewRow>(_path, "id", UmViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), UnitmeasureId.pgType);
+    };
 
     @Override
-    public UmViewFields fields() {
-      return new UmViewFields() {
-               @Override
-               public Field<UnitmeasureId, UmViewRow> id() {
-                 return new Field<UnitmeasureId, UmViewRow>(_path, "id", UmViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public Field<UnitmeasureId, UmViewRow> unitmeasurecode() {
-                 return new Field<UnitmeasureId, UmViewRow>(_path, "unitmeasurecode", UmViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public Field<Name, UmViewRow> name() {
-                 return new Field<Name, UmViewRow>(_path, "name", UmViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, UmViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, UmViewRow>(_path, "modifieddate", UmViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<UnitmeasureId, UmViewRow> unitmeasurecode() {
+      return new Field<UnitmeasureId, UmViewRow>(_path, "unitmeasurecode", UmViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
+    };
+
+    @Override
+    public Field<Name, UmViewRow> name() {
+      return new Field<Name, UmViewRow>(_path, "name", UmViewRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, UmViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, UmViewRow>(_path, "modifieddate", UmViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, UmViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().unitmeasurecode(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.id(), this.unitmeasurecode(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<UmViewFields, UmViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<UmViewFields, UmViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface UmViewFields {
   Field<Name, UmViewRow> name();
 
   Field<TypoLocalDateTime, UmViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, UmViewRow>> columns();
+
+  @Override
+  default RowParser<UmViewRow> rowParser() {
+    return UmViewRow._rowParser;
+  };
 }

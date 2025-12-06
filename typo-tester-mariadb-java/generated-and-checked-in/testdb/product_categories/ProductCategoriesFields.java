@@ -13,6 +13,7 @@ import testdb.categories.CategoriesRow;
 import testdb.products.ProductsFields;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,47 +24,42 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface ProductCategoriesFields {
-  final class Impl extends Relation<ProductCategoriesFields, ProductCategoriesRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductCategoriesFields extends FieldsExpr<ProductCategoriesRow> {
+  record Impl(List<Path> _path) implements ProductCategoriesFields, Relation<ProductCategoriesFields, ProductCategoriesRow> {
+    @Override
+    public IdField<ProductsId, ProductCategoriesRow> productId() {
+      return new IdField<ProductsId, ProductCategoriesRow>(_path, "product_id", ProductCategoriesRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
+    };
 
     @Override
-    public ProductCategoriesFields fields() {
-      return new ProductCategoriesFields() {
-               @Override
-               public IdField<ProductsId, ProductCategoriesRow> productId() {
-                 return new IdField<ProductsId, ProductCategoriesRow>(_path, "product_id", ProductCategoriesRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
-               };
-               @Override
-               public IdField<CategoriesId, ProductCategoriesRow> categoryId() {
-                 return new IdField<CategoriesId, ProductCategoriesRow>(_path, "category_id", ProductCategoriesRow::categoryId, Optional.empty(), Optional.empty(), (row, value) -> row.withCategoryId(value), CategoriesId.pgType);
-               };
-               @Override
-               public Field<Boolean, ProductCategoriesRow> isPrimary() {
-                 return new Field<Boolean, ProductCategoriesRow>(_path, "is_primary", ProductCategoriesRow::isPrimary, Optional.empty(), Optional.empty(), (row, value) -> row.withIsPrimary(value), MariaTypes.bool);
-               };
-               @Override
-               public Field<Short, ProductCategoriesRow> sortOrder() {
-                 return new Field<Short, ProductCategoriesRow>(_path, "sort_order", ProductCategoriesRow::sortOrder, Optional.empty(), Optional.empty(), (row, value) -> row.withSortOrder(value), MariaTypes.smallint);
-               };
-             };
+    public IdField<CategoriesId, ProductCategoriesRow> categoryId() {
+      return new IdField<CategoriesId, ProductCategoriesRow>(_path, "category_id", ProductCategoriesRow::categoryId, Optional.empty(), Optional.empty(), (row, value) -> row.withCategoryId(value), CategoriesId.pgType);
+    };
+
+    @Override
+    public Field<Boolean, ProductCategoriesRow> isPrimary() {
+      return new Field<Boolean, ProductCategoriesRow>(_path, "is_primary", ProductCategoriesRow::isPrimary, Optional.empty(), Optional.empty(), (row, value) -> row.withIsPrimary(value), MariaTypes.bool);
+    };
+
+    @Override
+    public Field<Short, ProductCategoriesRow> sortOrder() {
+      return new Field<Short, ProductCategoriesRow>(_path, "sort_order", ProductCategoriesRow::sortOrder, Optional.empty(), Optional.empty(), (row, value) -> row.withSortOrder(value), MariaTypes.smallint);
     };
 
     @Override
     public List<FieldLike<?, ProductCategoriesRow>> columns() {
-      return List.of(this.fields().productId(), this.fields().categoryId(), this.fields().isPrimary(), this.fields().sortOrder());
+      return List.of(this.productId(), this.categoryId(), this.isPrimary(), this.sortOrder());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductCategoriesFields, ProductCategoriesRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductCategoriesFields, ProductCategoriesRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -89,5 +85,13 @@ public interface ProductCategoriesFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<ProductCategoriesId> compositeIds) {
     return new CompositeIn(List.of(new Part<ProductsId, ProductCategoriesId, ProductCategoriesRow>(productId(), ProductCategoriesId::productId, ProductsId.pgType), new Part<CategoriesId, ProductCategoriesId, ProductCategoriesRow>(categoryId(), ProductCategoriesId::categoryId, CategoriesId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, ProductCategoriesRow>> columns();
+
+  @Override
+  default RowParser<ProductCategoriesRow> rowParser() {
+    return ProductCategoriesRow._rowParser;
   };
 }

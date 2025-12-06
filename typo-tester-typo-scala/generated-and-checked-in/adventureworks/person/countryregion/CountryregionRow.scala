@@ -30,7 +30,7 @@ case class CountryregionRow(
 }
 
 object CountryregionRow {
-  val `_rowParser`: RowParser[CountryregionRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CountryregionRow.apply, row => Array(row.countryregioncode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CountryregionRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, TypoLocalDateTime.pgType, CountryregionRow.apply, row => Array[Object](row.countryregioncode.asInstanceOf[Object], row.name.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[CountryregionRow] = PgText.from(`_rowParser`)
 }

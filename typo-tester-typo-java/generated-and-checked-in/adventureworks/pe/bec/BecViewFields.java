@@ -11,59 +11,57 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.person.contacttype.ContacttypeId;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface BecViewFields {
-  final class Impl extends Relation<BecViewFields, BecViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface BecViewFields extends FieldsExpr<BecViewRow> {
+  record Impl(List<Path> _path) implements BecViewFields, Relation<BecViewFields, BecViewRow> {
+    @Override
+    public Field<BusinessentityId, BecViewRow> id() {
+      return new Field<BusinessentityId, BecViewRow>(_path, "id", BecViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public BecViewFields fields() {
-      return new BecViewFields() {
-               @Override
-               public Field<BusinessentityId, BecViewRow> id() {
-                 return new Field<BusinessentityId, BecViewRow>(_path, "id", BecViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, BecViewRow> businessentityid() {
-                 return new Field<BusinessentityId, BecViewRow>(_path, "businessentityid", BecViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, BecViewRow> personid() {
-                 return new Field<BusinessentityId, BecViewRow>(_path, "personid", BecViewRow::personid, Optional.empty(), Optional.empty(), (row, value) -> row.withPersonid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<ContacttypeId, BecViewRow> contacttypeid() {
-                 return new Field<ContacttypeId, BecViewRow>(_path, "contacttypeid", BecViewRow::contacttypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withContacttypeid(value), ContacttypeId.pgType);
-               };
-               @Override
-               public Field<TypoUUID, BecViewRow> rowguid() {
-                 return new Field<TypoUUID, BecViewRow>(_path, "rowguid", BecViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, BecViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, BecViewRow>(_path, "modifieddate", BecViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<BusinessentityId, BecViewRow> businessentityid() {
+      return new Field<BusinessentityId, BecViewRow>(_path, "businessentityid", BecViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<BusinessentityId, BecViewRow> personid() {
+      return new Field<BusinessentityId, BecViewRow>(_path, "personid", BecViewRow::personid, Optional.empty(), Optional.empty(), (row, value) -> row.withPersonid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<ContacttypeId, BecViewRow> contacttypeid() {
+      return new Field<ContacttypeId, BecViewRow>(_path, "contacttypeid", BecViewRow::contacttypeid, Optional.empty(), Optional.empty(), (row, value) -> row.withContacttypeid(value), ContacttypeId.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, BecViewRow> rowguid() {
+      return new Field<TypoUUID, BecViewRow>(_path, "rowguid", BecViewRow::rowguid, Optional.empty(), Optional.empty(), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, BecViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, BecViewRow>(_path, "modifieddate", BecViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, BecViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().businessentityid(), this.fields().personid(), this.fields().contacttypeid(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.id(), this.businessentityid(), this.personid(), this.contacttypeid(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<BecViewFields, BecViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<BecViewFields, BecViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -78,4 +76,12 @@ public interface BecViewFields {
   Field<TypoUUID, BecViewRow> rowguid();
 
   Field<TypoLocalDateTime, BecViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, BecViewRow>> columns();
+
+  @Override
+  default RowParser<BecViewRow> rowParser() {
+    return BecViewRow._rowParser;
+  };
 }

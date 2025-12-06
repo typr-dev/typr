@@ -84,7 +84,7 @@ case class SalesterritoryRow(
 }
 
 object SalesterritoryRow {
-  val `_rowParser`: RowParser[SalesterritoryRow] = RowParsers.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalesterritoryRow.apply, row => Array(row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SalesterritoryRow] = RowParsers.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SalesterritoryRow.apply, row => Array[Object](row.territoryid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.countryregioncode.asInstanceOf[Object], row.group.asInstanceOf[Object], row.salesytd.asInstanceOf[Object], row.saleslastyear.asInstanceOf[Object], row.costytd.asInstanceOf[Object], row.costlastyear.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[SalesterritoryRow] = PgText.from(`_rowParser`)
 }

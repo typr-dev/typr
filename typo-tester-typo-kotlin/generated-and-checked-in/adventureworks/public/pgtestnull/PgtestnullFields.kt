@@ -34,13 +34,15 @@ import adventureworks.public.Myenum
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface PgtestnullFields {
+interface PgtestnullFields : FieldsExpr<PgtestnullRow> {
   fun bool(): OptField<Boolean, PgtestnullRow>
 
   fun box(): OptField<TypoBox, PgtestnullRow>
@@ -60,6 +62,8 @@ interface PgtestnullFields {
   fun circle(): OptField<TypoCircle, PgtestnullRow>
 
   fun circlees(): OptField<Array<TypoCircle>, PgtestnullRow>
+
+  override fun columns(): List<FieldLike<*, PgtestnullRow>>
 
   fun date(): OptField<TypoLocalDate, PgtestnullRow>
 
@@ -147,6 +151,8 @@ interface PgtestnullFields {
 
   fun polygones(): OptField<Array<TypoPolygon>, PgtestnullRow>
 
+  override fun rowParser(): RowParser<PgtestnullRow> = PgtestnullRow._rowParser
+
   fun text(): OptField<String, PgtestnullRow>
 
   fun textes(): OptField<Array<String>, PgtestnullRow>
@@ -182,85 +188,152 @@ interface PgtestnullFields {
   fun xmles(): OptField<Array<TypoXml>, PgtestnullRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<PgtestnullFields, PgtestnullRow>(path) {
-      override fun fields(): PgtestnullFields = object : PgtestnullFields {
-        override fun bool(): OptField<Boolean, PgtestnullRow> = OptField<Boolean, PgtestnullRow>(_path, "bool", PgtestnullRow::bool, Optional.empty(), Optional.empty(), { row, value -> row.copy(bool = value) }, PgTypes.bool)
-        override fun box(): OptField<TypoBox, PgtestnullRow> = OptField<TypoBox, PgtestnullRow>(_path, "box", PgtestnullRow::box, Optional.empty(), Optional.of("box"), { row, value -> row.copy(box = value) }, TypoBox.pgType)
-        override fun bpchar(): OptField</* bpchar, max 3 chars */ String, PgtestnullRow> = OptField</* bpchar, max 3 chars */ String, PgtestnullRow>(_path, "bpchar", PgtestnullRow::bpchar, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(bpchar = value) }, PgTypes.bpchar)
-        override fun bytea(): OptField<TypoBytea, PgtestnullRow> = OptField<TypoBytea, PgtestnullRow>(_path, "bytea", PgtestnullRow::bytea, Optional.empty(), Optional.of("bytea"), { row, value -> row.copy(bytea = value) }, TypoBytea.pgType)
-        override fun char(): OptField</* bpchar, max 1 chars */ String, PgtestnullRow> = OptField</* bpchar, max 1 chars */ String, PgtestnullRow>(_path, "char", PgtestnullRow::char, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(char = value) }, PgTypes.bpchar)
-        override fun circle(): OptField<TypoCircle, PgtestnullRow> = OptField<TypoCircle, PgtestnullRow>(_path, "circle", PgtestnullRow::circle, Optional.empty(), Optional.of("circle"), { row, value -> row.copy(circle = value) }, TypoCircle.pgType)
-        override fun date(): OptField<TypoLocalDate, PgtestnullRow> = OptField<TypoLocalDate, PgtestnullRow>(_path, "date", PgtestnullRow::date, Optional.of("text"), Optional.of("date"), { row, value -> row.copy(date = value) }, TypoLocalDate.pgType)
-        override fun float4(): OptField<Float, PgtestnullRow> = OptField<Float, PgtestnullRow>(_path, "float4", PgtestnullRow::float4, Optional.empty(), Optional.of("float4"), { row, value -> row.copy(float4 = value) }, PgTypes.float4)
-        override fun float8(): OptField<Double, PgtestnullRow> = OptField<Double, PgtestnullRow>(_path, "float8", PgtestnullRow::float8, Optional.empty(), Optional.of("float8"), { row, value -> row.copy(float8 = value) }, PgTypes.float8)
-        override fun hstore(): OptField<TypoHStore, PgtestnullRow> = OptField<TypoHStore, PgtestnullRow>(_path, "hstore", PgtestnullRow::hstore, Optional.empty(), Optional.of("hstore"), { row, value -> row.copy(hstore = value) }, TypoHStore.pgType)
-        override fun inet(): OptField<TypoInet, PgtestnullRow> = OptField<TypoInet, PgtestnullRow>(_path, "inet", PgtestnullRow::inet, Optional.empty(), Optional.of("inet"), { row, value -> row.copy(inet = value) }, TypoInet.pgType)
-        override fun int2(): OptField<TypoShort, PgtestnullRow> = OptField<TypoShort, PgtestnullRow>(_path, "int2", PgtestnullRow::int2, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(int2 = value) }, TypoShort.pgType)
-        override fun int2vector(): OptField<TypoInt2Vector, PgtestnullRow> = OptField<TypoInt2Vector, PgtestnullRow>(_path, "int2vector", PgtestnullRow::int2vector, Optional.empty(), Optional.of("int2vector"), { row, value -> row.copy(int2vector = value) }, TypoInt2Vector.pgType)
-        override fun int4(): OptField<Int, PgtestnullRow> = OptField<Int, PgtestnullRow>(_path, "int4", PgtestnullRow::int4, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(int4 = value) }, PgTypes.int4)
-        override fun int8(): OptField<Long, PgtestnullRow> = OptField<Long, PgtestnullRow>(_path, "int8", PgtestnullRow::int8, Optional.empty(), Optional.of("int8"), { row, value -> row.copy(int8 = value) }, PgTypes.int8)
-        override fun interval(): OptField<TypoInterval, PgtestnullRow> = OptField<TypoInterval, PgtestnullRow>(_path, "interval", PgtestnullRow::interval, Optional.empty(), Optional.of("interval"), { row, value -> row.copy(interval = value) }, TypoInterval.pgType)
-        override fun json(): OptField<TypoJson, PgtestnullRow> = OptField<TypoJson, PgtestnullRow>(_path, "json", PgtestnullRow::json, Optional.empty(), Optional.of("json"), { row, value -> row.copy(json = value) }, TypoJson.pgType)
-        override fun jsonb(): OptField<TypoJsonb, PgtestnullRow> = OptField<TypoJsonb, PgtestnullRow>(_path, "jsonb", PgtestnullRow::jsonb, Optional.empty(), Optional.of("jsonb"), { row, value -> row.copy(jsonb = value) }, TypoJsonb.pgType)
-        override fun line(): OptField<TypoLine, PgtestnullRow> = OptField<TypoLine, PgtestnullRow>(_path, "line", PgtestnullRow::line, Optional.empty(), Optional.of("line"), { row, value -> row.copy(line = value) }, TypoLine.pgType)
-        override fun lseg(): OptField<TypoLineSegment, PgtestnullRow> = OptField<TypoLineSegment, PgtestnullRow>(_path, "lseg", PgtestnullRow::lseg, Optional.empty(), Optional.of("lseg"), { row, value -> row.copy(lseg = value) }, TypoLineSegment.pgType)
-        override fun money(): OptField<TypoMoney, PgtestnullRow> = OptField<TypoMoney, PgtestnullRow>(_path, "money", PgtestnullRow::money, Optional.of("numeric"), Optional.of("money"), { row, value -> row.copy(money = value) }, TypoMoney.pgType)
-        override fun mydomain(): OptField<Mydomain, PgtestnullRow> = OptField<Mydomain, PgtestnullRow>(_path, "mydomain", PgtestnullRow::mydomain, Optional.empty(), Optional.of("text"), { row, value -> row.copy(mydomain = value) }, Mydomain.pgType)
-        override fun myenum(): OptField<Myenum, PgtestnullRow> = OptField<Myenum, PgtestnullRow>(_path, "myenum", PgtestnullRow::myenum, Optional.empty(), Optional.of("public.myenum"), { row, value -> row.copy(myenum = value) }, Myenum.pgType)
-        override fun name(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "name", PgtestnullRow::name, Optional.empty(), Optional.of("name"), { row, value -> row.copy(name = value) }, PgTypes.name)
-        override fun numeric(): OptField<BigDecimal, PgtestnullRow> = OptField<BigDecimal, PgtestnullRow>(_path, "numeric", PgtestnullRow::numeric, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(numeric = value) }, PgTypes.numeric)
-        override fun path(): OptField<TypoPath, PgtestnullRow> = OptField<TypoPath, PgtestnullRow>(_path, "path", PgtestnullRow::path, Optional.empty(), Optional.of("path"), { row, value -> row.copy(path = value) }, TypoPath.pgType)
-        override fun point(): OptField<TypoPoint, PgtestnullRow> = OptField<TypoPoint, PgtestnullRow>(_path, "point", PgtestnullRow::point, Optional.empty(), Optional.of("point"), { row, value -> row.copy(point = value) }, TypoPoint.pgType)
-        override fun polygon(): OptField<TypoPolygon, PgtestnullRow> = OptField<TypoPolygon, PgtestnullRow>(_path, "polygon", PgtestnullRow::polygon, Optional.empty(), Optional.of("polygon"), { row, value -> row.copy(polygon = value) }, TypoPolygon.pgType)
-        override fun text(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "text", PgtestnullRow::text, Optional.empty(), Optional.empty(), { row, value -> row.copy(text = value) }, PgTypes.text)
-        override fun time(): OptField<TypoLocalTime, PgtestnullRow> = OptField<TypoLocalTime, PgtestnullRow>(_path, "time", PgtestnullRow::time, Optional.of("text"), Optional.of("time"), { row, value -> row.copy(time = value) }, TypoLocalTime.pgType)
-        override fun timestamp(): OptField<TypoLocalDateTime, PgtestnullRow> = OptField<TypoLocalDateTime, PgtestnullRow>(_path, "timestamp", PgtestnullRow::timestamp, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(timestamp = value) }, TypoLocalDateTime.pgType)
-        override fun timestampz(): OptField<TypoInstant, PgtestnullRow> = OptField<TypoInstant, PgtestnullRow>(_path, "timestampz", PgtestnullRow::timestampz, Optional.of("text"), Optional.of("timestamptz"), { row, value -> row.copy(timestampz = value) }, TypoInstant.pgType)
-        override fun timez(): OptField<TypoOffsetTime, PgtestnullRow> = OptField<TypoOffsetTime, PgtestnullRow>(_path, "timez", PgtestnullRow::timez, Optional.of("text"), Optional.of("timetz"), { row, value -> row.copy(timez = value) }, TypoOffsetTime.pgType)
-        override fun uuid(): OptField<TypoUUID, PgtestnullRow> = OptField<TypoUUID, PgtestnullRow>(_path, "uuid", PgtestnullRow::uuid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(uuid = value) }, TypoUUID.pgType)
-        override fun varchar(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "varchar", PgtestnullRow::varchar, Optional.empty(), Optional.empty(), { row, value -> row.copy(varchar = value) }, PgTypes.text)
-        override fun vector(): OptField<TypoVector, PgtestnullRow> = OptField<TypoVector, PgtestnullRow>(_path, "vector", PgtestnullRow::vector, Optional.of("float4[]"), Optional.of("vector"), { row, value -> row.copy(vector = value) }, TypoVector.pgType)
-        override fun xml(): OptField<TypoXml, PgtestnullRow> = OptField<TypoXml, PgtestnullRow>(_path, "xml", PgtestnullRow::xml, Optional.empty(), Optional.of("xml"), { row, value -> row.copy(xml = value) }, TypoXml.pgType)
-        override fun boxes(): OptField<Array<TypoBox>, PgtestnullRow> = OptField<Array<TypoBox>, PgtestnullRow>(_path, "boxes", PgtestnullRow::boxes, Optional.empty(), Optional.of("box[]"), { row, value -> row.copy(boxes = value) }, TypoBox.pgTypeArray)
-        override fun bpchares(): OptField<Array</* bpchar */ String>, PgtestnullRow> = OptField<Array</* bpchar */ String>, PgtestnullRow>(_path, "bpchares", PgtestnullRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), { row, value -> row.copy(bpchares = value) }, PgTypes.bpcharArray)
-        override fun chares(): OptField<Array</* bpchar */ String>, PgtestnullRow> = OptField<Array</* bpchar */ String>, PgtestnullRow>(_path, "chares", PgtestnullRow::chares, Optional.empty(), Optional.of("bpchar[]"), { row, value -> row.copy(chares = value) }, PgTypes.bpcharArray)
-        override fun circlees(): OptField<Array<TypoCircle>, PgtestnullRow> = OptField<Array<TypoCircle>, PgtestnullRow>(_path, "circlees", PgtestnullRow::circlees, Optional.empty(), Optional.of("circle[]"), { row, value -> row.copy(circlees = value) }, TypoCircle.pgTypeArray)
-        override fun datees(): OptField<Array<TypoLocalDate>, PgtestnullRow> = OptField<Array<TypoLocalDate>, PgtestnullRow>(_path, "datees", PgtestnullRow::datees, Optional.of("text[]"), Optional.of("date[]"), { row, value -> row.copy(datees = value) }, TypoLocalDate.pgTypeArray)
-        override fun float4es(): OptField<Array<Float>, PgtestnullRow> = OptField<Array<Float>, PgtestnullRow>(_path, "float4es", PgtestnullRow::float4es, Optional.empty(), Optional.of("float4[]"), { row, value -> row.copy(float4es = value) }, PgTypes.float4Array)
-        override fun float8es(): OptField<Array<Double>, PgtestnullRow> = OptField<Array<Double>, PgtestnullRow>(_path, "float8es", PgtestnullRow::float8es, Optional.empty(), Optional.of("float8[]"), { row, value -> row.copy(float8es = value) }, PgTypes.float8Array)
-        override fun inetes(): OptField<Array<TypoInet>, PgtestnullRow> = OptField<Array<TypoInet>, PgtestnullRow>(_path, "inetes", PgtestnullRow::inetes, Optional.empty(), Optional.of("inet[]"), { row, value -> row.copy(inetes = value) }, TypoInet.pgTypeArray)
-        override fun int2es(): OptField<Array<TypoShort>, PgtestnullRow> = OptField<Array<TypoShort>, PgtestnullRow>(_path, "int2es", PgtestnullRow::int2es, Optional.empty(), Optional.of("int2[]"), { row, value -> row.copy(int2es = value) }, TypoShort.pgTypeArray)
-        override fun int2vectores(): OptField<Array<TypoInt2Vector>, PgtestnullRow> = OptField<Array<TypoInt2Vector>, PgtestnullRow>(_path, "int2vectores", PgtestnullRow::int2vectores, Optional.empty(), Optional.of("int2vector[]"), { row, value -> row.copy(int2vectores = value) }, TypoInt2Vector.pgTypeArray)
-        override fun int4es(): OptField<Array<Int>, PgtestnullRow> = OptField<Array<Int>, PgtestnullRow>(_path, "int4es", PgtestnullRow::int4es, Optional.empty(), Optional.of("int4[]"), { row, value -> row.copy(int4es = value) }, PgTypes.int4Array)
-        override fun int8es(): OptField<Array<Long>, PgtestnullRow> = OptField<Array<Long>, PgtestnullRow>(_path, "int8es", PgtestnullRow::int8es, Optional.empty(), Optional.of("int8[]"), { row, value -> row.copy(int8es = value) }, PgTypes.int8Array)
-        override fun intervales(): OptField<Array<TypoInterval>, PgtestnullRow> = OptField<Array<TypoInterval>, PgtestnullRow>(_path, "intervales", PgtestnullRow::intervales, Optional.empty(), Optional.of("interval[]"), { row, value -> row.copy(intervales = value) }, TypoInterval.pgTypeArray)
-        override fun jsones(): OptField<Array<TypoJson>, PgtestnullRow> = OptField<Array<TypoJson>, PgtestnullRow>(_path, "jsones", PgtestnullRow::jsones, Optional.empty(), Optional.of("json[]"), { row, value -> row.copy(jsones = value) }, TypoJson.pgTypeArray)
-        override fun jsonbes(): OptField<Array<TypoJsonb>, PgtestnullRow> = OptField<Array<TypoJsonb>, PgtestnullRow>(_path, "jsonbes", PgtestnullRow::jsonbes, Optional.empty(), Optional.of("jsonb[]"), { row, value -> row.copy(jsonbes = value) }, TypoJsonb.pgTypeArray)
-        override fun linees(): OptField<Array<TypoLine>, PgtestnullRow> = OptField<Array<TypoLine>, PgtestnullRow>(_path, "linees", PgtestnullRow::linees, Optional.empty(), Optional.of("line[]"), { row, value -> row.copy(linees = value) }, TypoLine.pgTypeArray)
-        override fun lseges(): OptField<Array<TypoLineSegment>, PgtestnullRow> = OptField<Array<TypoLineSegment>, PgtestnullRow>(_path, "lseges", PgtestnullRow::lseges, Optional.empty(), Optional.of("lseg[]"), { row, value -> row.copy(lseges = value) }, TypoLineSegment.pgTypeArray)
-        override fun moneyes(): OptField<Array<TypoMoney>, PgtestnullRow> = OptField<Array<TypoMoney>, PgtestnullRow>(_path, "moneyes", PgtestnullRow::moneyes, Optional.of("numeric[]"), Optional.of("money[]"), { row, value -> row.copy(moneyes = value) }, TypoMoney.pgTypeArray)
-        override fun mydomaines(): OptField<Array<Mydomain>, PgtestnullRow> = OptField<Array<Mydomain>, PgtestnullRow>(_path, "mydomaines", PgtestnullRow::mydomaines, Optional.of("text[]"), Optional.of("mydomain[]"), { row, value -> row.copy(mydomaines = value) }, Mydomain.pgTypeArray)
-        override fun myenumes(): OptField<Array<Myenum>, PgtestnullRow> = OptField<Array<Myenum>, PgtestnullRow>(_path, "myenumes", PgtestnullRow::myenumes, Optional.empty(), Optional.of("myenum[]"), { row, value -> row.copy(myenumes = value) }, Myenum.pgTypeArray)
-        override fun namees(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "namees", PgtestnullRow::namees, Optional.empty(), Optional.of("name[]"), { row, value -> row.copy(namees = value) }, PgTypes.nameArray)
-        override fun numerices(): OptField<Array<BigDecimal>, PgtestnullRow> = OptField<Array<BigDecimal>, PgtestnullRow>(_path, "numerices", PgtestnullRow::numerices, Optional.empty(), Optional.of("numeric[]"), { row, value -> row.copy(numerices = value) }, PgTypes.numericArray)
-        override fun pathes(): OptField<Array<TypoPath>, PgtestnullRow> = OptField<Array<TypoPath>, PgtestnullRow>(_path, "pathes", PgtestnullRow::pathes, Optional.empty(), Optional.of("path[]"), { row, value -> row.copy(pathes = value) }, TypoPath.pgTypeArray)
-        override fun pointes(): OptField<Array<TypoPoint>, PgtestnullRow> = OptField<Array<TypoPoint>, PgtestnullRow>(_path, "pointes", PgtestnullRow::pointes, Optional.empty(), Optional.of("point[]"), { row, value -> row.copy(pointes = value) }, TypoPoint.pgTypeArray)
-        override fun polygones(): OptField<Array<TypoPolygon>, PgtestnullRow> = OptField<Array<TypoPolygon>, PgtestnullRow>(_path, "polygones", PgtestnullRow::polygones, Optional.empty(), Optional.of("polygon[]"), { row, value -> row.copy(polygones = value) }, TypoPolygon.pgTypeArray)
-        override fun textes(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "textes", PgtestnullRow::textes, Optional.empty(), Optional.of("text[]"), { row, value -> row.copy(textes = value) }, PgTypes.textArray)
-        override fun timees(): OptField<Array<TypoLocalTime>, PgtestnullRow> = OptField<Array<TypoLocalTime>, PgtestnullRow>(_path, "timees", PgtestnullRow::timees, Optional.of("text[]"), Optional.of("time[]"), { row, value -> row.copy(timees = value) }, TypoLocalTime.pgTypeArray)
-        override fun timestampes(): OptField<Array<TypoLocalDateTime>, PgtestnullRow> = OptField<Array<TypoLocalDateTime>, PgtestnullRow>(_path, "timestampes", PgtestnullRow::timestampes, Optional.of("text[]"), Optional.of("timestamp[]"), { row, value -> row.copy(timestampes = value) }, TypoLocalDateTime.pgTypeArray)
-        override fun timestampzes(): OptField<Array<TypoInstant>, PgtestnullRow> = OptField<Array<TypoInstant>, PgtestnullRow>(_path, "timestampzes", PgtestnullRow::timestampzes, Optional.of("text[]"), Optional.of("timestamptz[]"), { row, value -> row.copy(timestampzes = value) }, TypoInstant.pgTypeArray)
-        override fun timezes(): OptField<Array<TypoOffsetTime>, PgtestnullRow> = OptField<Array<TypoOffsetTime>, PgtestnullRow>(_path, "timezes", PgtestnullRow::timezes, Optional.of("text[]"), Optional.of("timetz[]"), { row, value -> row.copy(timezes = value) }, TypoOffsetTime.pgTypeArray)
-        override fun uuides(): OptField<Array<TypoUUID>, PgtestnullRow> = OptField<Array<TypoUUID>, PgtestnullRow>(_path, "uuides", PgtestnullRow::uuides, Optional.empty(), Optional.of("uuid[]"), { row, value -> row.copy(uuides = value) }, TypoUUID.pgTypeArray)
-        override fun varchares(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "varchares", PgtestnullRow::varchares, Optional.empty(), Optional.of("varchar[]"), { row, value -> row.copy(varchares = value) }, PgTypes.textArray)
-        override fun xmles(): OptField<Array<TypoXml>, PgtestnullRow> = OptField<Array<TypoXml>, PgtestnullRow>(_path, "xmles", PgtestnullRow::xmles, Optional.empty(), Optional.of("xml[]"), { row, value -> row.copy(xmles = value) }, TypoXml.pgTypeArray)
-      }
+    data class Impl(val _path: List<Path>) : PgtestnullFields, Relation<PgtestnullFields, PgtestnullRow> {
+      override fun bool(): OptField<Boolean, PgtestnullRow> = OptField<Boolean, PgtestnullRow>(_path, "bool", PgtestnullRow::bool, Optional.empty(), Optional.empty(), { row, value -> row.copy(bool = value) }, PgTypes.bool)
 
-      override fun columns(): List<FieldLike<*, PgtestnullRow>> = listOf(this.fields().bool(), this.fields().box(), this.fields().bpchar(), this.fields().bytea(), this.fields().char(), this.fields().circle(), this.fields().date(), this.fields().float4(), this.fields().float8(), this.fields().hstore(), this.fields().inet(), this.fields().int2(), this.fields().int2vector(), this.fields().int4(), this.fields().int8(), this.fields().interval(), this.fields().json(), this.fields().jsonb(), this.fields().line(), this.fields().lseg(), this.fields().money(), this.fields().mydomain(), this.fields().myenum(), this.fields().name(), this.fields().numeric(), this.fields().path(), this.fields().point(), this.fields().polygon(), this.fields().text(), this.fields().time(), this.fields().timestamp(), this.fields().timestampz(), this.fields().timez(), this.fields().uuid(), this.fields().varchar(), this.fields().vector(), this.fields().xml(), this.fields().boxes(), this.fields().bpchares(), this.fields().chares(), this.fields().circlees(), this.fields().datees(), this.fields().float4es(), this.fields().float8es(), this.fields().inetes(), this.fields().int2es(), this.fields().int2vectores(), this.fields().int4es(), this.fields().int8es(), this.fields().intervales(), this.fields().jsones(), this.fields().jsonbes(), this.fields().linees(), this.fields().lseges(), this.fields().moneyes(), this.fields().mydomaines(), this.fields().myenumes(), this.fields().namees(), this.fields().numerices(), this.fields().pathes(), this.fields().pointes(), this.fields().polygones(), this.fields().textes(), this.fields().timees(), this.fields().timestampes(), this.fields().timestampzes(), this.fields().timezes(), this.fields().uuides(), this.fields().varchares(), this.fields().xmles())
+      override fun box(): OptField<TypoBox, PgtestnullRow> = OptField<TypoBox, PgtestnullRow>(_path, "box", PgtestnullRow::box, Optional.empty(), Optional.of("box"), { row, value -> row.copy(box = value) }, TypoBox.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun bpchar(): OptField</* bpchar, max 3 chars */ String, PgtestnullRow> = OptField</* bpchar, max 3 chars */ String, PgtestnullRow>(_path, "bpchar", PgtestnullRow::bpchar, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(bpchar = value) }, PgTypes.bpchar)
+
+      override fun bytea(): OptField<TypoBytea, PgtestnullRow> = OptField<TypoBytea, PgtestnullRow>(_path, "bytea", PgtestnullRow::bytea, Optional.empty(), Optional.of("bytea"), { row, value -> row.copy(bytea = value) }, TypoBytea.pgType)
+
+      override fun char(): OptField</* bpchar, max 1 chars */ String, PgtestnullRow> = OptField</* bpchar, max 1 chars */ String, PgtestnullRow>(_path, "char", PgtestnullRow::char, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(char = value) }, PgTypes.bpchar)
+
+      override fun circle(): OptField<TypoCircle, PgtestnullRow> = OptField<TypoCircle, PgtestnullRow>(_path, "circle", PgtestnullRow::circle, Optional.empty(), Optional.of("circle"), { row, value -> row.copy(circle = value) }, TypoCircle.pgType)
+
+      override fun date(): OptField<TypoLocalDate, PgtestnullRow> = OptField<TypoLocalDate, PgtestnullRow>(_path, "date", PgtestnullRow::date, Optional.of("text"), Optional.of("date"), { row, value -> row.copy(date = value) }, TypoLocalDate.pgType)
+
+      override fun float4(): OptField<Float, PgtestnullRow> = OptField<Float, PgtestnullRow>(_path, "float4", PgtestnullRow::float4, Optional.empty(), Optional.of("float4"), { row, value -> row.copy(float4 = value) }, PgTypes.float4)
+
+      override fun float8(): OptField<Double, PgtestnullRow> = OptField<Double, PgtestnullRow>(_path, "float8", PgtestnullRow::float8, Optional.empty(), Optional.of("float8"), { row, value -> row.copy(float8 = value) }, PgTypes.float8)
+
+      override fun hstore(): OptField<TypoHStore, PgtestnullRow> = OptField<TypoHStore, PgtestnullRow>(_path, "hstore", PgtestnullRow::hstore, Optional.empty(), Optional.of("hstore"), { row, value -> row.copy(hstore = value) }, TypoHStore.pgType)
+
+      override fun inet(): OptField<TypoInet, PgtestnullRow> = OptField<TypoInet, PgtestnullRow>(_path, "inet", PgtestnullRow::inet, Optional.empty(), Optional.of("inet"), { row, value -> row.copy(inet = value) }, TypoInet.pgType)
+
+      override fun int2(): OptField<TypoShort, PgtestnullRow> = OptField<TypoShort, PgtestnullRow>(_path, "int2", PgtestnullRow::int2, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(int2 = value) }, TypoShort.pgType)
+
+      override fun int2vector(): OptField<TypoInt2Vector, PgtestnullRow> = OptField<TypoInt2Vector, PgtestnullRow>(_path, "int2vector", PgtestnullRow::int2vector, Optional.empty(), Optional.of("int2vector"), { row, value -> row.copy(int2vector = value) }, TypoInt2Vector.pgType)
+
+      override fun int4(): OptField<Int, PgtestnullRow> = OptField<Int, PgtestnullRow>(_path, "int4", PgtestnullRow::int4, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(int4 = value) }, PgTypes.int4)
+
+      override fun int8(): OptField<Long, PgtestnullRow> = OptField<Long, PgtestnullRow>(_path, "int8", PgtestnullRow::int8, Optional.empty(), Optional.of("int8"), { row, value -> row.copy(int8 = value) }, PgTypes.int8)
+
+      override fun interval(): OptField<TypoInterval, PgtestnullRow> = OptField<TypoInterval, PgtestnullRow>(_path, "interval", PgtestnullRow::interval, Optional.empty(), Optional.of("interval"), { row, value -> row.copy(interval = value) }, TypoInterval.pgType)
+
+      override fun json(): OptField<TypoJson, PgtestnullRow> = OptField<TypoJson, PgtestnullRow>(_path, "json", PgtestnullRow::json, Optional.empty(), Optional.of("json"), { row, value -> row.copy(json = value) }, TypoJson.pgType)
+
+      override fun jsonb(): OptField<TypoJsonb, PgtestnullRow> = OptField<TypoJsonb, PgtestnullRow>(_path, "jsonb", PgtestnullRow::jsonb, Optional.empty(), Optional.of("jsonb"), { row, value -> row.copy(jsonb = value) }, TypoJsonb.pgType)
+
+      override fun line(): OptField<TypoLine, PgtestnullRow> = OptField<TypoLine, PgtestnullRow>(_path, "line", PgtestnullRow::line, Optional.empty(), Optional.of("line"), { row, value -> row.copy(line = value) }, TypoLine.pgType)
+
+      override fun lseg(): OptField<TypoLineSegment, PgtestnullRow> = OptField<TypoLineSegment, PgtestnullRow>(_path, "lseg", PgtestnullRow::lseg, Optional.empty(), Optional.of("lseg"), { row, value -> row.copy(lseg = value) }, TypoLineSegment.pgType)
+
+      override fun money(): OptField<TypoMoney, PgtestnullRow> = OptField<TypoMoney, PgtestnullRow>(_path, "money", PgtestnullRow::money, Optional.of("numeric"), Optional.of("money"), { row, value -> row.copy(money = value) }, TypoMoney.pgType)
+
+      override fun mydomain(): OptField<Mydomain, PgtestnullRow> = OptField<Mydomain, PgtestnullRow>(_path, "mydomain", PgtestnullRow::mydomain, Optional.empty(), Optional.of("text"), { row, value -> row.copy(mydomain = value) }, Mydomain.pgType)
+
+      override fun myenum(): OptField<Myenum, PgtestnullRow> = OptField<Myenum, PgtestnullRow>(_path, "myenum", PgtestnullRow::myenum, Optional.empty(), Optional.of("public.myenum"), { row, value -> row.copy(myenum = value) }, Myenum.pgType)
+
+      override fun name(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "name", PgtestnullRow::name, Optional.empty(), Optional.of("name"), { row, value -> row.copy(name = value) }, PgTypes.name)
+
+      override fun numeric(): OptField<BigDecimal, PgtestnullRow> = OptField<BigDecimal, PgtestnullRow>(_path, "numeric", PgtestnullRow::numeric, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(numeric = value) }, PgTypes.numeric)
+
+      override fun path(): OptField<TypoPath, PgtestnullRow> = OptField<TypoPath, PgtestnullRow>(_path, "path", PgtestnullRow::path, Optional.empty(), Optional.of("path"), { row, value -> row.copy(path = value) }, TypoPath.pgType)
+
+      override fun point(): OptField<TypoPoint, PgtestnullRow> = OptField<TypoPoint, PgtestnullRow>(_path, "point", PgtestnullRow::point, Optional.empty(), Optional.of("point"), { row, value -> row.copy(point = value) }, TypoPoint.pgType)
+
+      override fun polygon(): OptField<TypoPolygon, PgtestnullRow> = OptField<TypoPolygon, PgtestnullRow>(_path, "polygon", PgtestnullRow::polygon, Optional.empty(), Optional.of("polygon"), { row, value -> row.copy(polygon = value) }, TypoPolygon.pgType)
+
+      override fun text(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "text", PgtestnullRow::text, Optional.empty(), Optional.empty(), { row, value -> row.copy(text = value) }, PgTypes.text)
+
+      override fun time(): OptField<TypoLocalTime, PgtestnullRow> = OptField<TypoLocalTime, PgtestnullRow>(_path, "time", PgtestnullRow::time, Optional.of("text"), Optional.of("time"), { row, value -> row.copy(time = value) }, TypoLocalTime.pgType)
+
+      override fun timestamp(): OptField<TypoLocalDateTime, PgtestnullRow> = OptField<TypoLocalDateTime, PgtestnullRow>(_path, "timestamp", PgtestnullRow::timestamp, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(timestamp = value) }, TypoLocalDateTime.pgType)
+
+      override fun timestampz(): OptField<TypoInstant, PgtestnullRow> = OptField<TypoInstant, PgtestnullRow>(_path, "timestampz", PgtestnullRow::timestampz, Optional.of("text"), Optional.of("timestamptz"), { row, value -> row.copy(timestampz = value) }, TypoInstant.pgType)
+
+      override fun timez(): OptField<TypoOffsetTime, PgtestnullRow> = OptField<TypoOffsetTime, PgtestnullRow>(_path, "timez", PgtestnullRow::timez, Optional.of("text"), Optional.of("timetz"), { row, value -> row.copy(timez = value) }, TypoOffsetTime.pgType)
+
+      override fun uuid(): OptField<TypoUUID, PgtestnullRow> = OptField<TypoUUID, PgtestnullRow>(_path, "uuid", PgtestnullRow::uuid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(uuid = value) }, TypoUUID.pgType)
+
+      override fun varchar(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "varchar", PgtestnullRow::varchar, Optional.empty(), Optional.empty(), { row, value -> row.copy(varchar = value) }, PgTypes.text)
+
+      override fun vector(): OptField<TypoVector, PgtestnullRow> = OptField<TypoVector, PgtestnullRow>(_path, "vector", PgtestnullRow::vector, Optional.of("float4[]"), Optional.of("vector"), { row, value -> row.copy(vector = value) }, TypoVector.pgType)
+
+      override fun xml(): OptField<TypoXml, PgtestnullRow> = OptField<TypoXml, PgtestnullRow>(_path, "xml", PgtestnullRow::xml, Optional.empty(), Optional.of("xml"), { row, value -> row.copy(xml = value) }, TypoXml.pgType)
+
+      override fun boxes(): OptField<Array<TypoBox>, PgtestnullRow> = OptField<Array<TypoBox>, PgtestnullRow>(_path, "boxes", PgtestnullRow::boxes, Optional.empty(), Optional.of("box[]"), { row, value -> row.copy(boxes = value) }, TypoBox.pgTypeArray)
+
+      override fun bpchares(): OptField<Array</* bpchar */ String>, PgtestnullRow> = OptField<Array</* bpchar */ String>, PgtestnullRow>(_path, "bpchares", PgtestnullRow::bpchares, Optional.empty(), Optional.of("bpchar[]"), { row, value -> row.copy(bpchares = value) }, PgTypes.bpcharArray)
+
+      override fun chares(): OptField<Array</* bpchar */ String>, PgtestnullRow> = OptField<Array</* bpchar */ String>, PgtestnullRow>(_path, "chares", PgtestnullRow::chares, Optional.empty(), Optional.of("bpchar[]"), { row, value -> row.copy(chares = value) }, PgTypes.bpcharArray)
+
+      override fun circlees(): OptField<Array<TypoCircle>, PgtestnullRow> = OptField<Array<TypoCircle>, PgtestnullRow>(_path, "circlees", PgtestnullRow::circlees, Optional.empty(), Optional.of("circle[]"), { row, value -> row.copy(circlees = value) }, TypoCircle.pgTypeArray)
+
+      override fun datees(): OptField<Array<TypoLocalDate>, PgtestnullRow> = OptField<Array<TypoLocalDate>, PgtestnullRow>(_path, "datees", PgtestnullRow::datees, Optional.of("text[]"), Optional.of("date[]"), { row, value -> row.copy(datees = value) }, TypoLocalDate.pgTypeArray)
+
+      override fun float4es(): OptField<Array<Float>, PgtestnullRow> = OptField<Array<Float>, PgtestnullRow>(_path, "float4es", PgtestnullRow::float4es, Optional.empty(), Optional.of("float4[]"), { row, value -> row.copy(float4es = value) }, PgTypes.float4Array)
+
+      override fun float8es(): OptField<Array<Double>, PgtestnullRow> = OptField<Array<Double>, PgtestnullRow>(_path, "float8es", PgtestnullRow::float8es, Optional.empty(), Optional.of("float8[]"), { row, value -> row.copy(float8es = value) }, PgTypes.float8Array)
+
+      override fun inetes(): OptField<Array<TypoInet>, PgtestnullRow> = OptField<Array<TypoInet>, PgtestnullRow>(_path, "inetes", PgtestnullRow::inetes, Optional.empty(), Optional.of("inet[]"), { row, value -> row.copy(inetes = value) }, TypoInet.pgTypeArray)
+
+      override fun int2es(): OptField<Array<TypoShort>, PgtestnullRow> = OptField<Array<TypoShort>, PgtestnullRow>(_path, "int2es", PgtestnullRow::int2es, Optional.empty(), Optional.of("int2[]"), { row, value -> row.copy(int2es = value) }, TypoShort.pgTypeArray)
+
+      override fun int2vectores(): OptField<Array<TypoInt2Vector>, PgtestnullRow> = OptField<Array<TypoInt2Vector>, PgtestnullRow>(_path, "int2vectores", PgtestnullRow::int2vectores, Optional.empty(), Optional.of("int2vector[]"), { row, value -> row.copy(int2vectores = value) }, TypoInt2Vector.pgTypeArray)
+
+      override fun int4es(): OptField<Array<Int>, PgtestnullRow> = OptField<Array<Int>, PgtestnullRow>(_path, "int4es", PgtestnullRow::int4es, Optional.empty(), Optional.of("int4[]"), { row, value -> row.copy(int4es = value) }, PgTypes.int4Array)
+
+      override fun int8es(): OptField<Array<Long>, PgtestnullRow> = OptField<Array<Long>, PgtestnullRow>(_path, "int8es", PgtestnullRow::int8es, Optional.empty(), Optional.of("int8[]"), { row, value -> row.copy(int8es = value) }, PgTypes.int8Array)
+
+      override fun intervales(): OptField<Array<TypoInterval>, PgtestnullRow> = OptField<Array<TypoInterval>, PgtestnullRow>(_path, "intervales", PgtestnullRow::intervales, Optional.empty(), Optional.of("interval[]"), { row, value -> row.copy(intervales = value) }, TypoInterval.pgTypeArray)
+
+      override fun jsones(): OptField<Array<TypoJson>, PgtestnullRow> = OptField<Array<TypoJson>, PgtestnullRow>(_path, "jsones", PgtestnullRow::jsones, Optional.empty(), Optional.of("json[]"), { row, value -> row.copy(jsones = value) }, TypoJson.pgTypeArray)
+
+      override fun jsonbes(): OptField<Array<TypoJsonb>, PgtestnullRow> = OptField<Array<TypoJsonb>, PgtestnullRow>(_path, "jsonbes", PgtestnullRow::jsonbes, Optional.empty(), Optional.of("jsonb[]"), { row, value -> row.copy(jsonbes = value) }, TypoJsonb.pgTypeArray)
+
+      override fun linees(): OptField<Array<TypoLine>, PgtestnullRow> = OptField<Array<TypoLine>, PgtestnullRow>(_path, "linees", PgtestnullRow::linees, Optional.empty(), Optional.of("line[]"), { row, value -> row.copy(linees = value) }, TypoLine.pgTypeArray)
+
+      override fun lseges(): OptField<Array<TypoLineSegment>, PgtestnullRow> = OptField<Array<TypoLineSegment>, PgtestnullRow>(_path, "lseges", PgtestnullRow::lseges, Optional.empty(), Optional.of("lseg[]"), { row, value -> row.copy(lseges = value) }, TypoLineSegment.pgTypeArray)
+
+      override fun moneyes(): OptField<Array<TypoMoney>, PgtestnullRow> = OptField<Array<TypoMoney>, PgtestnullRow>(_path, "moneyes", PgtestnullRow::moneyes, Optional.of("numeric[]"), Optional.of("money[]"), { row, value -> row.copy(moneyes = value) }, TypoMoney.pgTypeArray)
+
+      override fun mydomaines(): OptField<Array<Mydomain>, PgtestnullRow> = OptField<Array<Mydomain>, PgtestnullRow>(_path, "mydomaines", PgtestnullRow::mydomaines, Optional.of("text[]"), Optional.of("mydomain[]"), { row, value -> row.copy(mydomaines = value) }, Mydomain.pgTypeArray)
+
+      override fun myenumes(): OptField<Array<Myenum>, PgtestnullRow> = OptField<Array<Myenum>, PgtestnullRow>(_path, "myenumes", PgtestnullRow::myenumes, Optional.empty(), Optional.of("myenum[]"), { row, value -> row.copy(myenumes = value) }, Myenum.pgTypeArray)
+
+      override fun namees(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "namees", PgtestnullRow::namees, Optional.empty(), Optional.of("name[]"), { row, value -> row.copy(namees = value) }, PgTypes.nameArray)
+
+      override fun numerices(): OptField<Array<BigDecimal>, PgtestnullRow> = OptField<Array<BigDecimal>, PgtestnullRow>(_path, "numerices", PgtestnullRow::numerices, Optional.empty(), Optional.of("numeric[]"), { row, value -> row.copy(numerices = value) }, PgTypes.numericArray)
+
+      override fun pathes(): OptField<Array<TypoPath>, PgtestnullRow> = OptField<Array<TypoPath>, PgtestnullRow>(_path, "pathes", PgtestnullRow::pathes, Optional.empty(), Optional.of("path[]"), { row, value -> row.copy(pathes = value) }, TypoPath.pgTypeArray)
+
+      override fun pointes(): OptField<Array<TypoPoint>, PgtestnullRow> = OptField<Array<TypoPoint>, PgtestnullRow>(_path, "pointes", PgtestnullRow::pointes, Optional.empty(), Optional.of("point[]"), { row, value -> row.copy(pointes = value) }, TypoPoint.pgTypeArray)
+
+      override fun polygones(): OptField<Array<TypoPolygon>, PgtestnullRow> = OptField<Array<TypoPolygon>, PgtestnullRow>(_path, "polygones", PgtestnullRow::polygones, Optional.empty(), Optional.of("polygon[]"), { row, value -> row.copy(polygones = value) }, TypoPolygon.pgTypeArray)
+
+      override fun textes(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "textes", PgtestnullRow::textes, Optional.empty(), Optional.of("text[]"), { row, value -> row.copy(textes = value) }, PgTypes.textArray)
+
+      override fun timees(): OptField<Array<TypoLocalTime>, PgtestnullRow> = OptField<Array<TypoLocalTime>, PgtestnullRow>(_path, "timees", PgtestnullRow::timees, Optional.of("text[]"), Optional.of("time[]"), { row, value -> row.copy(timees = value) }, TypoLocalTime.pgTypeArray)
+
+      override fun timestampes(): OptField<Array<TypoLocalDateTime>, PgtestnullRow> = OptField<Array<TypoLocalDateTime>, PgtestnullRow>(_path, "timestampes", PgtestnullRow::timestampes, Optional.of("text[]"), Optional.of("timestamp[]"), { row, value -> row.copy(timestampes = value) }, TypoLocalDateTime.pgTypeArray)
+
+      override fun timestampzes(): OptField<Array<TypoInstant>, PgtestnullRow> = OptField<Array<TypoInstant>, PgtestnullRow>(_path, "timestampzes", PgtestnullRow::timestampzes, Optional.of("text[]"), Optional.of("timestamptz[]"), { row, value -> row.copy(timestampzes = value) }, TypoInstant.pgTypeArray)
+
+      override fun timezes(): OptField<Array<TypoOffsetTime>, PgtestnullRow> = OptField<Array<TypoOffsetTime>, PgtestnullRow>(_path, "timezes", PgtestnullRow::timezes, Optional.of("text[]"), Optional.of("timetz[]"), { row, value -> row.copy(timezes = value) }, TypoOffsetTime.pgTypeArray)
+
+      override fun uuides(): OptField<Array<TypoUUID>, PgtestnullRow> = OptField<Array<TypoUUID>, PgtestnullRow>(_path, "uuides", PgtestnullRow::uuides, Optional.empty(), Optional.of("uuid[]"), { row, value -> row.copy(uuides = value) }, TypoUUID.pgTypeArray)
+
+      override fun varchares(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "varchares", PgtestnullRow::varchares, Optional.empty(), Optional.of("varchar[]"), { row, value -> row.copy(varchares = value) }, PgTypes.textArray)
+
+      override fun xmles(): OptField<Array<TypoXml>, PgtestnullRow> = OptField<Array<TypoXml>, PgtestnullRow>(_path, "xmles", PgtestnullRow::xmles, Optional.empty(), Optional.of("xml[]"), { row, value -> row.copy(xmles = value) }, TypoXml.pgTypeArray)
+
+      override fun columns(): List<FieldLike<*, PgtestnullRow>> = listOf(this.bool(), this.box(), this.bpchar(), this.bytea(), this.char(), this.circle(), this.date(), this.float4(), this.float8(), this.hstore(), this.inet(), this.int2(), this.int2vector(), this.int4(), this.int8(), this.interval(), this.json(), this.jsonb(), this.line(), this.lseg(), this.money(), this.mydomain(), this.myenum(), this.name(), this.numeric(), this.path(), this.point(), this.polygon(), this.text(), this.time(), this.timestamp(), this.timestampz(), this.timez(), this.uuid(), this.varchar(), this.vector(), this.xml(), this.boxes(), this.bpchares(), this.chares(), this.circlees(), this.datees(), this.float4es(), this.float8es(), this.inetes(), this.int2es(), this.int2vectores(), this.int4es(), this.int8es(), this.intervales(), this.jsones(), this.jsonbes(), this.linees(), this.lseges(), this.moneyes(), this.mydomaines(), this.myenumes(), this.namees(), this.numerices(), this.pathes(), this.pointes(), this.polygones(), this.textes(), this.timees(), this.timestampes(), this.timestampzes(), this.timezes(), this.uuides(), this.varchares(), this.xmles())
+
+      override fun copy(_path: List<Path>): Relation<PgtestnullFields, PgtestnullRow> = Impl(_path)
     }
 
-    val structure: Relation<PgtestnullFields, PgtestnullRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -9,12 +9,14 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import adventureworks.sales.salesreason.SalesreasonId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait SrViewFields {
+trait SrViewFields extends FieldsExpr[SrViewRow] {
   def id: Field[SalesreasonId, SrViewRow]
 
   def salesreasonid: Field[SalesreasonId, SrViewRow]
@@ -24,75 +26,79 @@ trait SrViewFields {
   def reasontype: Field[Name, SrViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, SrViewRow]
+
+  override def columns: java.util.List[FieldLike[?, SrViewRow]]
+
+  override def rowParser: RowParser[SrViewRow] = SrViewRow._rowParser
 }
 
 object SrViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SrViewFields, SrViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SrViewFields with Relation[SrViewFields, SrViewRow] {
 
-    override lazy val fields: SrViewFields = {
-      new SrViewFields {
-        override def id: Field[SalesreasonId, SrViewRow] = {
-          new Field[SalesreasonId, SrViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            SalesreasonId.pgType
-          )
-        }
-        override def salesreasonid: Field[SalesreasonId, SrViewRow] = {
-          new Field[SalesreasonId, SrViewRow](
-            _path,
-            "salesreasonid",
-            _.salesreasonid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salesreasonid = value),
-            SalesreasonId.pgType
-          )
-        }
-        override def name: Field[Name, SrViewRow] = {
-          new Field[Name, SrViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def reasontype: Field[Name, SrViewRow] = {
-          new Field[Name, SrViewRow](
-            _path,
-            "reasontype",
-            _.reasontype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(reasontype = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SrViewRow] = {
-          new Field[TypoLocalDateTime, SrViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[SalesreasonId, SrViewRow] = {
+      new Field[SalesreasonId, SrViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        SalesreasonId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SrViewRow]] = java.util.List.of(this.fields.id, this.fields.salesreasonid, this.fields.name, this.fields.reasontype, this.fields.modifieddate)
+    override def salesreasonid: Field[SalesreasonId, SrViewRow] = {
+      new Field[SalesreasonId, SrViewRow](
+        _path,
+        "salesreasonid",
+        _.salesreasonid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salesreasonid = value),
+        SalesreasonId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[Name, SrViewRow] = {
+      new Field[Name, SrViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def reasontype: Field[Name, SrViewRow] = {
+      new Field[Name, SrViewRow](
+        _path,
+        "reasontype",
+        _.reasontype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(reasontype = value),
+        Name.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SrViewRow] = {
+      new Field[TypoLocalDateTime, SrViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SrViewRow]] = java.util.List.of(this.id, this.salesreasonid, this.name, this.reasontype, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SrViewFields, SrViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SrViewFields, SrViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

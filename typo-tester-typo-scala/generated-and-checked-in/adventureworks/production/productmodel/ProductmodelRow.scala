@@ -54,7 +54,7 @@ case class ProductmodelRow(
 }
 
 object ProductmodelRow {
-  val `_rowParser`: RowParser[ProductmodelRow] = RowParsers.of(ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, ProductmodelRow.apply, row => Array(row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[ProductmodelRow] = RowParsers.of(ProductmodelId.pgType, Name.pgType, TypoXml.pgType.opt(), TypoXml.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, ProductmodelRow.apply, row => Array[Object](row.productmodelid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.catalogdescription.asInstanceOf[Object], row.instructions.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[ProductmodelRow] = PgText.from(`_rowParser`)
 }

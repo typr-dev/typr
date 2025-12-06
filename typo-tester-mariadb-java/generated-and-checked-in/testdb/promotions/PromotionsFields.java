@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import typo.data.maria.MariaSet;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
@@ -17,95 +18,102 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface PromotionsFields {
-  final class Impl extends Relation<PromotionsFields, PromotionsRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PromotionsFields extends FieldsExpr<PromotionsRow> {
+  record Impl(List<Path> _path) implements PromotionsFields, Relation<PromotionsFields, PromotionsRow> {
+    @Override
+    public IdField<PromotionsId, PromotionsRow> promotionId() {
+      return new IdField<PromotionsId, PromotionsRow>(_path, "promotion_id", PromotionsRow::promotionId, Optional.empty(), Optional.empty(), (row, value) -> row.withPromotionId(value), PromotionsId.pgType);
+    };
 
     @Override
-    public PromotionsFields fields() {
-      return new PromotionsFields() {
-               @Override
-               public IdField<PromotionsId, PromotionsRow> promotionId() {
-                 return new IdField<PromotionsId, PromotionsRow>(_path, "promotion_id", PromotionsRow::promotionId, Optional.empty(), Optional.empty(), (row, value) -> row.withPromotionId(value), PromotionsId.pgType);
-               };
-               @Override
-               public Field<String, PromotionsRow> code() {
-                 return new Field<String, PromotionsRow>(_path, "code", PromotionsRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, PromotionsRow> name() {
-                 return new Field<String, PromotionsRow>(_path, "name", PromotionsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
-               };
-               @Override
-               public OptField<String, PromotionsRow> description() {
-                 return new OptField<String, PromotionsRow>(_path, "description", PromotionsRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), MariaTypes.text);
-               };
-               @Override
-               public Field<String, PromotionsRow> discountType() {
-                 return new Field<String, PromotionsRow>(_path, "discount_type", PromotionsRow::discountType, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountType(value), MariaTypes.text);
-               };
-               @Override
-               public Field<BigDecimal, PromotionsRow> discountValue() {
-                 return new Field<BigDecimal, PromotionsRow>(_path, "discount_value", PromotionsRow::discountValue, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountValue(value), MariaTypes.decimal);
-               };
-               @Override
-               public OptField<BigDecimal, PromotionsRow> minOrderAmount() {
-                 return new OptField<BigDecimal, PromotionsRow>(_path, "min_order_amount", PromotionsRow::minOrderAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withMinOrderAmount(value), MariaTypes.decimal);
-               };
-               @Override
-               public OptField<Long, PromotionsRow> maxUses() {
-                 return new OptField<Long, PromotionsRow>(_path, "max_uses", PromotionsRow::maxUses, Optional.empty(), Optional.empty(), (row, value) -> row.withMaxUses(value), MariaTypes.intUnsigned);
-               };
-               @Override
-               public Field<Long, PromotionsRow> usesCount() {
-                 return new Field<Long, PromotionsRow>(_path, "uses_count", PromotionsRow::usesCount, Optional.empty(), Optional.empty(), (row, value) -> row.withUsesCount(value), MariaTypes.intUnsigned);
-               };
-               @Override
-               public OptField<Short, PromotionsRow> maxUsesPerCustomer() {
-                 return new OptField<Short, PromotionsRow>(_path, "max_uses_per_customer", PromotionsRow::maxUsesPerCustomer, Optional.empty(), Optional.empty(), (row, value) -> row.withMaxUsesPerCustomer(value), MariaTypes.tinyintUnsigned);
-               };
-               @Override
-               public OptField<MariaSet, PromotionsRow> applicableTo() {
-                 return new OptField<MariaSet, PromotionsRow>(_path, "applicable_to", PromotionsRow::applicableTo, Optional.empty(), Optional.empty(), (row, value) -> row.withApplicableTo(value), MariaTypes.set);
-               };
-               @Override
-               public OptField<String, PromotionsRow> rulesJson() {
-                 return new OptField<String, PromotionsRow>(_path, "rules_json", PromotionsRow::rulesJson, Optional.empty(), Optional.empty(), (row, value) -> row.withRulesJson(value), MariaTypes.longtext);
-               };
-               @Override
-               public Field<LocalDateTime, PromotionsRow> validFrom() {
-                 return new Field<LocalDateTime, PromotionsRow>(_path, "valid_from", PromotionsRow::validFrom, Optional.empty(), Optional.empty(), (row, value) -> row.withValidFrom(value), MariaTypes.datetime);
-               };
-               @Override
-               public Field<LocalDateTime, PromotionsRow> validTo() {
-                 return new Field<LocalDateTime, PromotionsRow>(_path, "valid_to", PromotionsRow::validTo, Optional.empty(), Optional.empty(), (row, value) -> row.withValidTo(value), MariaTypes.datetime);
-               };
-               @Override
-               public Field<Boolean, PromotionsRow> isActive() {
-                 return new Field<Boolean, PromotionsRow>(_path, "is_active", PromotionsRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
-               };
-               @Override
-               public Field<LocalDateTime, PromotionsRow> createdAt() {
-                 return new Field<LocalDateTime, PromotionsRow>(_path, "created_at", PromotionsRow::createdAt, Optional.empty(), Optional.empty(), (row, value) -> row.withCreatedAt(value), MariaTypes.datetime);
-               };
-             };
+    public Field<String, PromotionsRow> code() {
+      return new Field<String, PromotionsRow>(_path, "code", PromotionsRow::code, Optional.empty(), Optional.empty(), (row, value) -> row.withCode(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, PromotionsRow> name() {
+      return new Field<String, PromotionsRow>(_path, "name", PromotionsRow::name, Optional.empty(), Optional.empty(), (row, value) -> row.withName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public OptField<String, PromotionsRow> description() {
+      return new OptField<String, PromotionsRow>(_path, "description", PromotionsRow::description, Optional.empty(), Optional.empty(), (row, value) -> row.withDescription(value), MariaTypes.text);
+    };
+
+    @Override
+    public Field<String, PromotionsRow> discountType() {
+      return new Field<String, PromotionsRow>(_path, "discount_type", PromotionsRow::discountType, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountType(value), MariaTypes.text);
+    };
+
+    @Override
+    public Field<BigDecimal, PromotionsRow> discountValue() {
+      return new Field<BigDecimal, PromotionsRow>(_path, "discount_value", PromotionsRow::discountValue, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountValue(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public OptField<BigDecimal, PromotionsRow> minOrderAmount() {
+      return new OptField<BigDecimal, PromotionsRow>(_path, "min_order_amount", PromotionsRow::minOrderAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withMinOrderAmount(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public OptField<Long, PromotionsRow> maxUses() {
+      return new OptField<Long, PromotionsRow>(_path, "max_uses", PromotionsRow::maxUses, Optional.empty(), Optional.empty(), (row, value) -> row.withMaxUses(value), MariaTypes.intUnsigned);
+    };
+
+    @Override
+    public Field<Long, PromotionsRow> usesCount() {
+      return new Field<Long, PromotionsRow>(_path, "uses_count", PromotionsRow::usesCount, Optional.empty(), Optional.empty(), (row, value) -> row.withUsesCount(value), MariaTypes.intUnsigned);
+    };
+
+    @Override
+    public OptField<Short, PromotionsRow> maxUsesPerCustomer() {
+      return new OptField<Short, PromotionsRow>(_path, "max_uses_per_customer", PromotionsRow::maxUsesPerCustomer, Optional.empty(), Optional.empty(), (row, value) -> row.withMaxUsesPerCustomer(value), MariaTypes.tinyintUnsigned);
+    };
+
+    @Override
+    public OptField<MariaSet, PromotionsRow> applicableTo() {
+      return new OptField<MariaSet, PromotionsRow>(_path, "applicable_to", PromotionsRow::applicableTo, Optional.empty(), Optional.empty(), (row, value) -> row.withApplicableTo(value), MariaTypes.set);
+    };
+
+    @Override
+    public OptField<String, PromotionsRow> rulesJson() {
+      return new OptField<String, PromotionsRow>(_path, "rules_json", PromotionsRow::rulesJson, Optional.empty(), Optional.empty(), (row, value) -> row.withRulesJson(value), MariaTypes.longtext);
+    };
+
+    @Override
+    public Field<LocalDateTime, PromotionsRow> validFrom() {
+      return new Field<LocalDateTime, PromotionsRow>(_path, "valid_from", PromotionsRow::validFrom, Optional.empty(), Optional.empty(), (row, value) -> row.withValidFrom(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public Field<LocalDateTime, PromotionsRow> validTo() {
+      return new Field<LocalDateTime, PromotionsRow>(_path, "valid_to", PromotionsRow::validTo, Optional.empty(), Optional.empty(), (row, value) -> row.withValidTo(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public Field<Boolean, PromotionsRow> isActive() {
+      return new Field<Boolean, PromotionsRow>(_path, "is_active", PromotionsRow::isActive, Optional.empty(), Optional.empty(), (row, value) -> row.withIsActive(value), MariaTypes.bool);
+    };
+
+    @Override
+    public Field<LocalDateTime, PromotionsRow> createdAt() {
+      return new Field<LocalDateTime, PromotionsRow>(_path, "created_at", PromotionsRow::createdAt, Optional.empty(), Optional.empty(), (row, value) -> row.withCreatedAt(value), MariaTypes.datetime);
     };
 
     @Override
     public List<FieldLike<?, PromotionsRow>> columns() {
-      return List.of(this.fields().promotionId(), this.fields().code(), this.fields().name(), this.fields().description(), this.fields().discountType(), this.fields().discountValue(), this.fields().minOrderAmount(), this.fields().maxUses(), this.fields().usesCount(), this.fields().maxUsesPerCustomer(), this.fields().applicableTo(), this.fields().rulesJson(), this.fields().validFrom(), this.fields().validTo(), this.fields().isActive(), this.fields().createdAt());
+      return List.of(this.promotionId(), this.code(), this.name(), this.description(), this.discountType(), this.discountValue(), this.minOrderAmount(), this.maxUses(), this.usesCount(), this.maxUsesPerCustomer(), this.applicableTo(), this.rulesJson(), this.validFrom(), this.validTo(), this.isActive(), this.createdAt());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PromotionsFields, PromotionsRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PromotionsFields, PromotionsRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -140,4 +148,12 @@ public interface PromotionsFields {
   Field<Boolean, PromotionsRow> isActive();
 
   Field<LocalDateTime, PromotionsRow> createdAt();
+
+  @Override
+  List<FieldLike<?, PromotionsRow>> columns();
+
+  @Override
+  default RowParser<PromotionsRow> rowParser() {
+    return PromotionsRow._rowParser;
+  };
 }

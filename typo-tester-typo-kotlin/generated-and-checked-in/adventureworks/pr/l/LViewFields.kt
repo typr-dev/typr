@@ -11,14 +11,18 @@ import adventureworks.public.Name
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface LViewFields {
+interface LViewFields : FieldsExpr<LViewRow> {
   fun availability(): Field<BigDecimal, LViewRow>
+
+  override fun columns(): List<FieldLike<*, LViewRow>>
 
   fun costrate(): Field<BigDecimal, LViewRow>
 
@@ -30,22 +34,27 @@ interface LViewFields {
 
   fun name(): Field<Name, LViewRow>
 
+  override fun rowParser(): RowParser<LViewRow> = LViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<LViewFields, LViewRow>(path) {
-      override fun fields(): LViewFields = object : LViewFields {
-        override fun id(): Field<LocationId, LViewRow> = Field<LocationId, LViewRow>(_path, "id", LViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, LocationId.pgType)
-        override fun locationid(): Field<LocationId, LViewRow> = Field<LocationId, LViewRow>(_path, "locationid", LViewRow::locationid, Optional.empty(), Optional.empty(), { row, value -> row.copy(locationid = value) }, LocationId.pgType)
-        override fun name(): Field<Name, LViewRow> = Field<Name, LViewRow>(_path, "name", LViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun costrate(): Field<BigDecimal, LViewRow> = Field<BigDecimal, LViewRow>(_path, "costrate", LViewRow::costrate, Optional.empty(), Optional.empty(), { row, value -> row.copy(costrate = value) }, PgTypes.numeric)
-        override fun availability(): Field<BigDecimal, LViewRow> = Field<BigDecimal, LViewRow>(_path, "availability", LViewRow::availability, Optional.empty(), Optional.empty(), { row, value -> row.copy(availability = value) }, PgTypes.numeric)
-        override fun modifieddate(): Field<TypoLocalDateTime, LViewRow> = Field<TypoLocalDateTime, LViewRow>(_path, "modifieddate", LViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : LViewFields, Relation<LViewFields, LViewRow> {
+      override fun id(): Field<LocationId, LViewRow> = Field<LocationId, LViewRow>(_path, "id", LViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, LocationId.pgType)
 
-      override fun columns(): List<FieldLike<*, LViewRow>> = listOf(this.fields().id(), this.fields().locationid(), this.fields().name(), this.fields().costrate(), this.fields().availability(), this.fields().modifieddate())
+      override fun locationid(): Field<LocationId, LViewRow> = Field<LocationId, LViewRow>(_path, "locationid", LViewRow::locationid, Optional.empty(), Optional.empty(), { row, value -> row.copy(locationid = value) }, LocationId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, LViewRow> = Field<Name, LViewRow>(_path, "name", LViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun costrate(): Field<BigDecimal, LViewRow> = Field<BigDecimal, LViewRow>(_path, "costrate", LViewRow::costrate, Optional.empty(), Optional.empty(), { row, value -> row.copy(costrate = value) }, PgTypes.numeric)
+
+      override fun availability(): Field<BigDecimal, LViewRow> = Field<BigDecimal, LViewRow>(_path, "availability", LViewRow::availability, Optional.empty(), Optional.empty(), { row, value -> row.copy(availability = value) }, PgTypes.numeric)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, LViewRow> = Field<TypoLocalDateTime, LViewRow>(_path, "modifieddate", LViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, LViewRow>> = listOf(this.id(), this.locationid(), this.name(), this.costrate(), this.availability(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<LViewFields, LViewRow> = Impl(_path)
     }
 
-    val structure: Relation<LViewFields, LViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

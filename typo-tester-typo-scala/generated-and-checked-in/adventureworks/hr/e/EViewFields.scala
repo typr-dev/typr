@@ -12,14 +12,16 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Flag
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait EViewFields {
+trait EViewFields extends FieldsExpr[EViewRow] {
   def id: Field[BusinessentityId, EViewRow]
 
   def businessentityid: Field[BusinessentityId, EViewRow]
@@ -51,196 +53,211 @@ trait EViewFields {
   def modifieddate: Field[TypoLocalDateTime, EViewRow]
 
   def organizationnode: OptField[String, EViewRow]
+
+  override def columns: java.util.List[FieldLike[?, EViewRow]]
+
+  override def rowParser: RowParser[EViewRow] = EViewRow._rowParser
 }
 
 object EViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[EViewFields, EViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends EViewFields with Relation[EViewFields, EViewRow] {
 
-    override lazy val fields: EViewFields = {
-      new EViewFields {
-        override def id: Field[BusinessentityId, EViewRow] = {
-          new Field[BusinessentityId, EViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, EViewRow] = {
-          new Field[BusinessentityId, EViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def nationalidnumber: Field[/* max 15 chars */ String, EViewRow] = {
-          new Field[/* max 15 chars */ String, EViewRow](
-            _path,
-            "nationalidnumber",
-            _.nationalidnumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(nationalidnumber = value),
-            PgTypes.text
-          )
-        }
-        override def loginid: Field[/* max 256 chars */ String, EViewRow] = {
-          new Field[/* max 256 chars */ String, EViewRow](
-            _path,
-            "loginid",
-            _.loginid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(loginid = value),
-            PgTypes.text
-          )
-        }
-        override def jobtitle: Field[/* max 50 chars */ String, EViewRow] = {
-          new Field[/* max 50 chars */ String, EViewRow](
-            _path,
-            "jobtitle",
-            _.jobtitle,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(jobtitle = value),
-            PgTypes.text
-          )
-        }
-        override def birthdate: Field[TypoLocalDate, EViewRow] = {
-          new Field[TypoLocalDate, EViewRow](
-            _path,
-            "birthdate",
-            _.birthdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(birthdate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def maritalstatus: Field[/* bpchar, max 1 chars */ String, EViewRow] = {
-          new Field[/* bpchar, max 1 chars */ String, EViewRow](
-            _path,
-            "maritalstatus",
-            _.maritalstatus,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(maritalstatus = value),
-            PgTypes.bpchar
-          )
-        }
-        override def gender: Field[/* bpchar, max 1 chars */ String, EViewRow] = {
-          new Field[/* bpchar, max 1 chars */ String, EViewRow](
-            _path,
-            "gender",
-            _.gender,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(gender = value),
-            PgTypes.bpchar
-          )
-        }
-        override def hiredate: Field[TypoLocalDate, EViewRow] = {
-          new Field[TypoLocalDate, EViewRow](
-            _path,
-            "hiredate",
-            _.hiredate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(hiredate = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def salariedflag: Field[Flag, EViewRow] = {
-          new Field[Flag, EViewRow](
-            _path,
-            "salariedflag",
-            _.salariedflag,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salariedflag = value),
-            Flag.pgType
-          )
-        }
-        override def vacationhours: Field[TypoShort, EViewRow] = {
-          new Field[TypoShort, EViewRow](
-            _path,
-            "vacationhours",
-            _.vacationhours,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(vacationhours = value),
-            TypoShort.pgType
-          )
-        }
-        override def sickleavehours: Field[TypoShort, EViewRow] = {
-          new Field[TypoShort, EViewRow](
-            _path,
-            "sickleavehours",
-            _.sickleavehours,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(sickleavehours = value),
-            TypoShort.pgType
-          )
-        }
-        override def currentflag: Field[Flag, EViewRow] = {
-          new Field[Flag, EViewRow](
-            _path,
-            "currentflag",
-            _.currentflag,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(currentflag = value),
-            Flag.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, EViewRow] = {
-          new Field[TypoUUID, EViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, EViewRow] = {
-          new Field[TypoLocalDateTime, EViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def organizationnode: OptField[String, EViewRow] = {
-          new OptField[String, EViewRow](
-            _path,
-            "organizationnode",
-            _.organizationnode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(organizationnode = value),
-            PgTypes.text
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, EViewRow] = {
+      new Field[BusinessentityId, EViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, EViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.nationalidnumber, this.fields.loginid, this.fields.jobtitle, this.fields.birthdate, this.fields.maritalstatus, this.fields.gender, this.fields.hiredate, this.fields.salariedflag, this.fields.vacationhours, this.fields.sickleavehours, this.fields.currentflag, this.fields.rowguid, this.fields.modifieddate, this.fields.organizationnode)
+    override def businessentityid: Field[BusinessentityId, EViewRow] = {
+      new Field[BusinessentityId, EViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def nationalidnumber: Field[/* max 15 chars */ String, EViewRow] = {
+      new Field[/* max 15 chars */ String, EViewRow](
+        _path,
+        "nationalidnumber",
+        _.nationalidnumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(nationalidnumber = value),
+        PgTypes.text
+      )
+    }
+
+    override def loginid: Field[/* max 256 chars */ String, EViewRow] = {
+      new Field[/* max 256 chars */ String, EViewRow](
+        _path,
+        "loginid",
+        _.loginid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(loginid = value),
+        PgTypes.text
+      )
+    }
+
+    override def jobtitle: Field[/* max 50 chars */ String, EViewRow] = {
+      new Field[/* max 50 chars */ String, EViewRow](
+        _path,
+        "jobtitle",
+        _.jobtitle,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(jobtitle = value),
+        PgTypes.text
+      )
+    }
+
+    override def birthdate: Field[TypoLocalDate, EViewRow] = {
+      new Field[TypoLocalDate, EViewRow](
+        _path,
+        "birthdate",
+        _.birthdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(birthdate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def maritalstatus: Field[/* bpchar, max 1 chars */ String, EViewRow] = {
+      new Field[/* bpchar, max 1 chars */ String, EViewRow](
+        _path,
+        "maritalstatus",
+        _.maritalstatus,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(maritalstatus = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def gender: Field[/* bpchar, max 1 chars */ String, EViewRow] = {
+      new Field[/* bpchar, max 1 chars */ String, EViewRow](
+        _path,
+        "gender",
+        _.gender,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(gender = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def hiredate: Field[TypoLocalDate, EViewRow] = {
+      new Field[TypoLocalDate, EViewRow](
+        _path,
+        "hiredate",
+        _.hiredate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(hiredate = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def salariedflag: Field[Flag, EViewRow] = {
+      new Field[Flag, EViewRow](
+        _path,
+        "salariedflag",
+        _.salariedflag,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salariedflag = value),
+        Flag.pgType
+      )
+    }
+
+    override def vacationhours: Field[TypoShort, EViewRow] = {
+      new Field[TypoShort, EViewRow](
+        _path,
+        "vacationhours",
+        _.vacationhours,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(vacationhours = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def sickleavehours: Field[TypoShort, EViewRow] = {
+      new Field[TypoShort, EViewRow](
+        _path,
+        "sickleavehours",
+        _.sickleavehours,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(sickleavehours = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def currentflag: Field[Flag, EViewRow] = {
+      new Field[Flag, EViewRow](
+        _path,
+        "currentflag",
+        _.currentflag,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(currentflag = value),
+        Flag.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, EViewRow] = {
+      new Field[TypoUUID, EViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, EViewRow] = {
+      new Field[TypoLocalDateTime, EViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def organizationnode: OptField[String, EViewRow] = {
+      new OptField[String, EViewRow](
+        _path,
+        "organizationnode",
+        _.organizationnode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(organizationnode = value),
+        PgTypes.text
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, EViewRow]] = java.util.List.of(this.id, this.businessentityid, this.nationalidnumber, this.loginid, this.jobtitle, this.birthdate, this.maritalstatus, this.gender, this.hiredate, this.salariedflag, this.vacationhours, this.sickleavehours, this.currentflag, this.rowguid, this.modifieddate, this.organizationnode)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[EViewFields, EViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[EViewFields, EViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

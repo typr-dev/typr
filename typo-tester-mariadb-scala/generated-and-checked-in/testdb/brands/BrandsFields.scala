@@ -6,6 +6,7 @@
 package testdb.brands
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
@@ -13,8 +14,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait BrandsFields {
+trait BrandsFields extends FieldsExpr[BrandsRow] {
   def brandId: IdField[BrandsId, BrandsRow]
 
   def name: Field[String, BrandsRow]
@@ -28,97 +30,103 @@ trait BrandsFields {
   def countryOfOrigin: OptField[String, BrandsRow]
 
   def isActive: Field[java.lang.Boolean, BrandsRow]
+
+  override def columns: java.util.List[FieldLike[?, BrandsRow]]
+
+  override def rowParser: RowParser[BrandsRow] = BrandsRow._rowParser
 }
 
 object BrandsFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[BrandsFields, BrandsRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends BrandsFields with Relation[BrandsFields, BrandsRow] {
 
-    override lazy val fields: BrandsFields = {
-      new BrandsFields {
-        override def brandId: IdField[BrandsId, BrandsRow] = {
-          new IdField[BrandsId, BrandsRow](
-            _path,
-            "brand_id",
-            _.brandId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(brandId = value),
-            BrandsId.pgType
-          )
-        }
-        override def name: Field[String, BrandsRow] = {
-          new Field[String, BrandsRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            MariaTypes.varchar
-          )
-        }
-        override def slug: Field[String, BrandsRow] = {
-          new Field[String, BrandsRow](
-            _path,
-            "slug",
-            _.slug,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(slug = value),
-            MariaTypes.varchar
-          )
-        }
-        override def logoBlob: OptField[Array[Byte], BrandsRow] = {
-          new OptField[Array[Byte], BrandsRow](
-            _path,
-            "logo_blob",
-            _.logoBlob,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(logoBlob = value),
-            MariaTypes.mediumblob
-          )
-        }
-        override def websiteUrl: OptField[String, BrandsRow] = {
-          new OptField[String, BrandsRow](
-            _path,
-            "website_url",
-            _.websiteUrl,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(websiteUrl = value),
-            MariaTypes.varchar
-          )
-        }
-        override def countryOfOrigin: OptField[String, BrandsRow] = {
-          new OptField[String, BrandsRow](
-            _path,
-            "country_of_origin",
-            _.countryOfOrigin,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryOfOrigin = value),
-            MariaTypes.char_
-          )
-        }
-        override def isActive: Field[java.lang.Boolean, BrandsRow] = {
-          new Field[java.lang.Boolean, BrandsRow](
-            _path,
-            "is_active",
-            _.isActive,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(isActive = value),
-            MariaTypes.bool
-          )
-        }
-      }
+    override def brandId: IdField[BrandsId, BrandsRow] = {
+      new IdField[BrandsId, BrandsRow](
+        _path,
+        "brand_id",
+        _.brandId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(brandId = value),
+        BrandsId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, BrandsRow]] = java.util.List.of(this.fields.brandId, this.fields.name, this.fields.slug, this.fields.logoBlob, this.fields.websiteUrl, this.fields.countryOfOrigin, this.fields.isActive)
+    override def name: Field[String, BrandsRow] = {
+      new Field[String, BrandsRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        MariaTypes.varchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def slug: Field[String, BrandsRow] = {
+      new Field[String, BrandsRow](
+        _path,
+        "slug",
+        _.slug,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(slug = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def logoBlob: OptField[Array[Byte], BrandsRow] = {
+      new OptField[Array[Byte], BrandsRow](
+        _path,
+        "logo_blob",
+        _.logoBlob,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(logoBlob = value),
+        MariaTypes.mediumblob
+      )
+    }
+
+    override def websiteUrl: OptField[String, BrandsRow] = {
+      new OptField[String, BrandsRow](
+        _path,
+        "website_url",
+        _.websiteUrl,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(websiteUrl = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def countryOfOrigin: OptField[String, BrandsRow] = {
+      new OptField[String, BrandsRow](
+        _path,
+        "country_of_origin",
+        _.countryOfOrigin,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryOfOrigin = value),
+        MariaTypes.char_
+      )
+    }
+
+    override def isActive: Field[java.lang.Boolean, BrandsRow] = {
+      new Field[java.lang.Boolean, BrandsRow](
+        _path,
+        "is_active",
+        _.isActive,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(isActive = value),
+        MariaTypes.bool
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, BrandsRow]] = java.util.List.of(this.brandId, this.name, this.slug, this.logoBlob, this.websiteUrl, this.countryOfOrigin, this.isActive)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[BrandsFields, BrandsRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[BrandsFields, BrandsRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

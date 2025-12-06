@@ -15,6 +15,7 @@ import adventureworks.production.product.ProductFields
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -25,8 +26,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait ProductinventoryFields {
+trait ProductinventoryFields extends FieldsExpr[ProductinventoryRow] {
   def productid: IdField[ProductId, ProductinventoryRow]
 
   def locationid: IdField[LocationId, ProductinventoryRow]
@@ -48,97 +50,103 @@ trait ProductinventoryFields {
   def compositeIdIs(compositeId: ProductinventoryId): SqlExpr[java.lang.Boolean] = SqlExpr.all(productid.isEqual(compositeId.productid), locationid.isEqual(compositeId.locationid))
 
   def compositeIdIn(compositeIds: java.util.List[ProductinventoryId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[ProductId, ProductinventoryId, ProductinventoryRow](productid, _.productid, ProductId.pgType), new Part[LocationId, ProductinventoryId, ProductinventoryRow](locationid, _.locationid, LocationId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, ProductinventoryRow]]
+
+  override def rowParser: RowParser[ProductinventoryRow] = ProductinventoryRow._rowParser
 }
 
 object ProductinventoryFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductinventoryFields, ProductinventoryRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductinventoryFields with Relation[ProductinventoryFields, ProductinventoryRow] {
 
-    override lazy val fields: ProductinventoryFields = {
-      new ProductinventoryFields {
-        override def productid: IdField[ProductId, ProductinventoryRow] = {
-          new IdField[ProductId, ProductinventoryRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def locationid: IdField[LocationId, ProductinventoryRow] = {
-          new IdField[LocationId, ProductinventoryRow](
-            _path,
-            "locationid",
-            _.locationid,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(locationid = value),
-            LocationId.pgType
-          )
-        }
-        override def shelf: Field[/* max 10 chars */ String, ProductinventoryRow] = {
-          new Field[/* max 10 chars */ String, ProductinventoryRow](
-            _path,
-            "shelf",
-            _.shelf,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shelf = value),
-            PgTypes.text
-          )
-        }
-        override def bin: Field[TypoShort, ProductinventoryRow] = {
-          new Field[TypoShort, ProductinventoryRow](
-            _path,
-            "bin",
-            _.bin,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(bin = value),
-            TypoShort.pgType
-          )
-        }
-        override def quantity: Field[TypoShort, ProductinventoryRow] = {
-          new Field[TypoShort, ProductinventoryRow](
-            _path,
-            "quantity",
-            _.quantity,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(quantity = value),
-            TypoShort.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, ProductinventoryRow] = {
-          new Field[TypoUUID, ProductinventoryRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ProductinventoryRow] = {
-          new Field[TypoLocalDateTime, ProductinventoryRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def productid: IdField[ProductId, ProductinventoryRow] = {
+      new IdField[ProductId, ProductinventoryRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductinventoryRow]] = java.util.List.of(this.fields.productid, this.fields.locationid, this.fields.shelf, this.fields.bin, this.fields.quantity, this.fields.rowguid, this.fields.modifieddate)
+    override def locationid: IdField[LocationId, ProductinventoryRow] = {
+      new IdField[LocationId, ProductinventoryRow](
+        _path,
+        "locationid",
+        _.locationid,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(locationid = value),
+        LocationId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def shelf: Field[/* max 10 chars */ String, ProductinventoryRow] = {
+      new Field[/* max 10 chars */ String, ProductinventoryRow](
+        _path,
+        "shelf",
+        _.shelf,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shelf = value),
+        PgTypes.text
+      )
+    }
+
+    override def bin: Field[TypoShort, ProductinventoryRow] = {
+      new Field[TypoShort, ProductinventoryRow](
+        _path,
+        "bin",
+        _.bin,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(bin = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def quantity: Field[TypoShort, ProductinventoryRow] = {
+      new Field[TypoShort, ProductinventoryRow](
+        _path,
+        "quantity",
+        _.quantity,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(quantity = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, ProductinventoryRow] = {
+      new Field[TypoUUID, ProductinventoryRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, ProductinventoryRow] = {
+      new Field[TypoLocalDateTime, ProductinventoryRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductinventoryRow]] = java.util.List.of(this.productid, this.locationid, this.shelf, this.bin, this.quantity, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductinventoryFields, ProductinventoryRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductinventoryFields, ProductinventoryRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

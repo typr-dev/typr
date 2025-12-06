@@ -17,6 +17,7 @@ import testdb.shipping_carriers.ShippingCarriersRow
 import testdb.warehouses.WarehousesFields
 import testdb.warehouses.WarehousesId
 import testdb.warehouses.WarehousesRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -25,8 +26,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait ShipmentsFields {
+trait ShipmentsFields extends FieldsExpr[ShipmentsRow] {
   def shipmentId: IdField[ShipmentsId, ShipmentsRow]
 
   def orderId: Field[OrdersId, ShipmentsRow]
@@ -66,207 +68,223 @@ trait ShipmentsFields {
   def fkOrders: ForeignKey[OrdersFields, OrdersRow] = ForeignKey.of[OrdersFields, OrdersRow]("fk_ship_order").withColumnPair(orderId, _.orderId)
 
   def fkWarehouses: ForeignKey[WarehousesFields, WarehousesRow] = ForeignKey.of[WarehousesFields, WarehousesRow]("fk_ship_warehouse").withColumnPair(originWarehouseId, _.warehouseId)
+
+  override def columns: java.util.List[FieldLike[?, ShipmentsRow]]
+
+  override def rowParser: RowParser[ShipmentsRow] = ShipmentsRow._rowParser
 }
 
 object ShipmentsFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ShipmentsFields, ShipmentsRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ShipmentsFields with Relation[ShipmentsFields, ShipmentsRow] {
 
-    override lazy val fields: ShipmentsFields = {
-      new ShipmentsFields {
-        override def shipmentId: IdField[ShipmentsId, ShipmentsRow] = {
-          new IdField[ShipmentsId, ShipmentsRow](
-            _path,
-            "shipment_id",
-            _.shipmentId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shipmentId = value),
-            ShipmentsId.pgType
-          )
-        }
-        override def orderId: Field[OrdersId, ShipmentsRow] = {
-          new Field[OrdersId, ShipmentsRow](
-            _path,
-            "order_id",
-            _.orderId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(orderId = value),
-            OrdersId.pgType
-          )
-        }
-        override def carrierId: Field[ShippingCarriersId, ShipmentsRow] = {
-          new Field[ShippingCarriersId, ShipmentsRow](
-            _path,
-            "carrier_id",
-            _.carrierId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(carrierId = value),
-            ShippingCarriersId.pgType
-          )
-        }
-        override def trackingNumber: OptField[String, ShipmentsRow] = {
-          new OptField[String, ShipmentsRow](
-            _path,
-            "tracking_number",
-            _.trackingNumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(trackingNumber = value),
-            MariaTypes.varchar
-          )
-        }
-        override def shippingMethod: Field[String, ShipmentsRow] = {
-          new Field[String, ShipmentsRow](
-            _path,
-            "shipping_method",
-            _.shippingMethod,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shippingMethod = value),
-            MariaTypes.varchar
-          )
-        }
-        override def weightKg: OptField[java.math.BigDecimal, ShipmentsRow] = {
-          new OptField[java.math.BigDecimal, ShipmentsRow](
-            _path,
-            "weight_kg",
-            _.weightKg,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(weightKg = value),
-            MariaTypes.decimal
-          )
-        }
-        override def dimensionsJson: OptField[String, ShipmentsRow] = {
-          new OptField[String, ShipmentsRow](
-            _path,
-            "dimensions_json",
-            _.dimensionsJson,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(dimensionsJson = value),
-            MariaTypes.longtext
-          )
-        }
-        override def labelData: OptField[Array[Byte], ShipmentsRow] = {
-          new OptField[Array[Byte], ShipmentsRow](
-            _path,
-            "label_data",
-            _.labelData,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(labelData = value),
-            MariaTypes.longblob
-          )
-        }
-        override def status: Field[String, ShipmentsRow] = {
-          new Field[String, ShipmentsRow](
-            _path,
-            "status",
-            _.status,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(status = value),
-            MariaTypes.text
-          )
-        }
-        override def estimatedDeliveryDate: OptField[LocalDate, ShipmentsRow] = {
-          new OptField[LocalDate, ShipmentsRow](
-            _path,
-            "estimated_delivery_date",
-            _.estimatedDeliveryDate,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(estimatedDeliveryDate = value),
-            MariaTypes.date
-          )
-        }
-        override def actualDeliveryAt: OptField[LocalDateTime, ShipmentsRow] = {
-          new OptField[LocalDateTime, ShipmentsRow](
-            _path,
-            "actual_delivery_at",
-            _.actualDeliveryAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(actualDeliveryAt = value),
-            MariaTypes.datetime
-          )
-        }
-        override def shippingCost: Field[java.math.BigDecimal, ShipmentsRow] = {
-          new Field[java.math.BigDecimal, ShipmentsRow](
-            _path,
-            "shipping_cost",
-            _.shippingCost,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shippingCost = value),
-            MariaTypes.decimal
-          )
-        }
-        override def insuranceAmount: OptField[java.math.BigDecimal, ShipmentsRow] = {
-          new OptField[java.math.BigDecimal, ShipmentsRow](
-            _path,
-            "insurance_amount",
-            _.insuranceAmount,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(insuranceAmount = value),
-            MariaTypes.decimal
-          )
-        }
-        override def originWarehouseId: OptField[WarehousesId, ShipmentsRow] = {
-          new OptField[WarehousesId, ShipmentsRow](
-            _path,
-            "origin_warehouse_id",
-            _.originWarehouseId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(originWarehouseId = value),
-            WarehousesId.pgType
-          )
-        }
-        override def shippedAt: OptField[LocalDateTime, ShipmentsRow] = {
-          new OptField[LocalDateTime, ShipmentsRow](
-            _path,
-            "shipped_at",
-            _.shippedAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shippedAt = value),
-            MariaTypes.datetime
-          )
-        }
-        override def createdAt: Field[LocalDateTime, ShipmentsRow] = {
-          new Field[LocalDateTime, ShipmentsRow](
-            _path,
-            "created_at",
-            _.createdAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(createdAt = value),
-            MariaTypes.datetime
-          )
-        }
-        override def updatedAt: Field[LocalDateTime, ShipmentsRow] = {
-          new Field[LocalDateTime, ShipmentsRow](
-            _path,
-            "updated_at",
-            _.updatedAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(updatedAt = value),
-            MariaTypes.datetime
-          )
-        }
-      }
+    override def shipmentId: IdField[ShipmentsId, ShipmentsRow] = {
+      new IdField[ShipmentsId, ShipmentsRow](
+        _path,
+        "shipment_id",
+        _.shipmentId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shipmentId = value),
+        ShipmentsId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ShipmentsRow]] = java.util.List.of(this.fields.shipmentId, this.fields.orderId, this.fields.carrierId, this.fields.trackingNumber, this.fields.shippingMethod, this.fields.weightKg, this.fields.dimensionsJson, this.fields.labelData, this.fields.status, this.fields.estimatedDeliveryDate, this.fields.actualDeliveryAt, this.fields.shippingCost, this.fields.insuranceAmount, this.fields.originWarehouseId, this.fields.shippedAt, this.fields.createdAt, this.fields.updatedAt)
+    override def orderId: Field[OrdersId, ShipmentsRow] = {
+      new Field[OrdersId, ShipmentsRow](
+        _path,
+        "order_id",
+        _.orderId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(orderId = value),
+        OrdersId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def carrierId: Field[ShippingCarriersId, ShipmentsRow] = {
+      new Field[ShippingCarriersId, ShipmentsRow](
+        _path,
+        "carrier_id",
+        _.carrierId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(carrierId = value),
+        ShippingCarriersId.pgType
+      )
+    }
+
+    override def trackingNumber: OptField[String, ShipmentsRow] = {
+      new OptField[String, ShipmentsRow](
+        _path,
+        "tracking_number",
+        _.trackingNumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(trackingNumber = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def shippingMethod: Field[String, ShipmentsRow] = {
+      new Field[String, ShipmentsRow](
+        _path,
+        "shipping_method",
+        _.shippingMethod,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shippingMethod = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def weightKg: OptField[java.math.BigDecimal, ShipmentsRow] = {
+      new OptField[java.math.BigDecimal, ShipmentsRow](
+        _path,
+        "weight_kg",
+        _.weightKg,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(weightKg = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def dimensionsJson: OptField[String, ShipmentsRow] = {
+      new OptField[String, ShipmentsRow](
+        _path,
+        "dimensions_json",
+        _.dimensionsJson,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(dimensionsJson = value),
+        MariaTypes.longtext
+      )
+    }
+
+    override def labelData: OptField[Array[Byte], ShipmentsRow] = {
+      new OptField[Array[Byte], ShipmentsRow](
+        _path,
+        "label_data",
+        _.labelData,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(labelData = value),
+        MariaTypes.longblob
+      )
+    }
+
+    override def status: Field[String, ShipmentsRow] = {
+      new Field[String, ShipmentsRow](
+        _path,
+        "status",
+        _.status,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(status = value),
+        MariaTypes.text
+      )
+    }
+
+    override def estimatedDeliveryDate: OptField[LocalDate, ShipmentsRow] = {
+      new OptField[LocalDate, ShipmentsRow](
+        _path,
+        "estimated_delivery_date",
+        _.estimatedDeliveryDate,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(estimatedDeliveryDate = value),
+        MariaTypes.date
+      )
+    }
+
+    override def actualDeliveryAt: OptField[LocalDateTime, ShipmentsRow] = {
+      new OptField[LocalDateTime, ShipmentsRow](
+        _path,
+        "actual_delivery_at",
+        _.actualDeliveryAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(actualDeliveryAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def shippingCost: Field[java.math.BigDecimal, ShipmentsRow] = {
+      new Field[java.math.BigDecimal, ShipmentsRow](
+        _path,
+        "shipping_cost",
+        _.shippingCost,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shippingCost = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def insuranceAmount: OptField[java.math.BigDecimal, ShipmentsRow] = {
+      new OptField[java.math.BigDecimal, ShipmentsRow](
+        _path,
+        "insurance_amount",
+        _.insuranceAmount,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(insuranceAmount = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def originWarehouseId: OptField[WarehousesId, ShipmentsRow] = {
+      new OptField[WarehousesId, ShipmentsRow](
+        _path,
+        "origin_warehouse_id",
+        _.originWarehouseId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(originWarehouseId = value),
+        WarehousesId.pgType
+      )
+    }
+
+    override def shippedAt: OptField[LocalDateTime, ShipmentsRow] = {
+      new OptField[LocalDateTime, ShipmentsRow](
+        _path,
+        "shipped_at",
+        _.shippedAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shippedAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def createdAt: Field[LocalDateTime, ShipmentsRow] = {
+      new Field[LocalDateTime, ShipmentsRow](
+        _path,
+        "created_at",
+        _.createdAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(createdAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def updatedAt: Field[LocalDateTime, ShipmentsRow] = {
+      new Field[LocalDateTime, ShipmentsRow](
+        _path,
+        "updated_at",
+        _.updatedAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(updatedAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ShipmentsRow]] = java.util.List.of(this.shipmentId, this.orderId, this.carrierId, this.trackingNumber, this.shippingMethod, this.weightKg, this.dimensionsJson, this.labelData, this.status, this.estimatedDeliveryDate, this.actualDeliveryAt, this.shippingCost, this.insuranceAmount, this.originWarehouseId, this.shippedAt, this.createdAt, this.updatedAt)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ShipmentsFields, ShipmentsRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ShipmentsFields, ShipmentsRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

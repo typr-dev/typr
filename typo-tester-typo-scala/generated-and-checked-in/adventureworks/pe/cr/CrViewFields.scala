@@ -9,64 +9,68 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait CrViewFields {
+trait CrViewFields extends FieldsExpr[CrViewRow] {
   def countryregioncode: Field[CountryregionId, CrViewRow]
 
   def name: Field[Name, CrViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, CrViewRow]
+
+  override def columns: java.util.List[FieldLike[?, CrViewRow]]
+
+  override def rowParser: RowParser[CrViewRow] = CrViewRow._rowParser
 }
 
 object CrViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CrViewFields, CrViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CrViewFields with Relation[CrViewFields, CrViewRow] {
 
-    override lazy val fields: CrViewFields = {
-      new CrViewFields {
-        override def countryregioncode: Field[CountryregionId, CrViewRow] = {
-          new Field[CountryregionId, CrViewRow](
-            _path,
-            "countryregioncode",
-            _.countryregioncode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryregioncode = value),
-            CountryregionId.pgType
-          )
-        }
-        override def name: Field[Name, CrViewRow] = {
-          new Field[Name, CrViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, CrViewRow] = {
-          new Field[TypoLocalDateTime, CrViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def countryregioncode: Field[CountryregionId, CrViewRow] = {
+      new Field[CountryregionId, CrViewRow](
+        _path,
+        "countryregioncode",
+        _.countryregioncode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryregioncode = value),
+        CountryregionId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CrViewRow]] = java.util.List.of(this.fields.countryregioncode, this.fields.name, this.fields.modifieddate)
+    override def name: Field[Name, CrViewRow] = {
+      new Field[Name, CrViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, CrViewRow] = {
+      new Field[TypoLocalDateTime, CrViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CrViewRow]] = java.util.List.of(this.countryregioncode, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CrViewFields, CrViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CrViewFields, CrViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

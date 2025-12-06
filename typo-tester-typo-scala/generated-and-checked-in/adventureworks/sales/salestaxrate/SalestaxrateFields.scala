@@ -13,6 +13,7 @@ import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRow
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -20,8 +21,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait SalestaxrateFields {
+trait SalestaxrateFields extends FieldsExpr[SalestaxrateRow] {
   def salestaxrateid: IdField[SalestaxrateId, SalestaxrateRow]
 
   def stateprovinceid: Field[StateprovinceId, SalestaxrateRow]
@@ -37,97 +39,103 @@ trait SalestaxrateFields {
   def modifieddate: Field[TypoLocalDateTime, SalestaxrateRow]
 
   def fkPersonStateprovince: ForeignKey[StateprovinceFields, StateprovinceRow] = ForeignKey.of[StateprovinceFields, StateprovinceRow]("sales.FK_SalesTaxRate_StateProvince_StateProvinceID").withColumnPair(stateprovinceid, _.stateprovinceid)
+
+  override def columns: java.util.List[FieldLike[?, SalestaxrateRow]]
+
+  override def rowParser: RowParser[SalestaxrateRow] = SalestaxrateRow._rowParser
 }
 
 object SalestaxrateFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SalestaxrateFields, SalestaxrateRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SalestaxrateFields with Relation[SalestaxrateFields, SalestaxrateRow] {
 
-    override lazy val fields: SalestaxrateFields = {
-      new SalestaxrateFields {
-        override def salestaxrateid: IdField[SalestaxrateId, SalestaxrateRow] = {
-          new IdField[SalestaxrateId, SalestaxrateRow](
-            _path,
-            "salestaxrateid",
-            _.salestaxrateid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(salestaxrateid = value),
-            SalestaxrateId.pgType
-          )
-        }
-        override def stateprovinceid: Field[StateprovinceId, SalestaxrateRow] = {
-          new Field[StateprovinceId, SalestaxrateRow](
-            _path,
-            "stateprovinceid",
-            _.stateprovinceid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(stateprovinceid = value),
-            StateprovinceId.pgType
-          )
-        }
-        override def taxtype: Field[TypoShort, SalestaxrateRow] = {
-          new Field[TypoShort, SalestaxrateRow](
-            _path,
-            "taxtype",
-            _.taxtype,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(taxtype = value),
-            TypoShort.pgType
-          )
-        }
-        override def taxrate: Field[java.math.BigDecimal, SalestaxrateRow] = {
-          new Field[java.math.BigDecimal, SalestaxrateRow](
-            _path,
-            "taxrate",
-            _.taxrate,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(taxrate = value),
-            PgTypes.numeric
-          )
-        }
-        override def name: Field[Name, SalestaxrateRow] = {
-          new Field[Name, SalestaxrateRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("varchar"),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, SalestaxrateRow] = {
-          new Field[TypoUUID, SalestaxrateRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SalestaxrateRow] = {
-          new Field[TypoLocalDateTime, SalestaxrateRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def salestaxrateid: IdField[SalestaxrateId, SalestaxrateRow] = {
+      new IdField[SalestaxrateId, SalestaxrateRow](
+        _path,
+        "salestaxrateid",
+        _.salestaxrateid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(salestaxrateid = value),
+        SalestaxrateId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SalestaxrateRow]] = java.util.List.of(this.fields.salestaxrateid, this.fields.stateprovinceid, this.fields.taxtype, this.fields.taxrate, this.fields.name, this.fields.rowguid, this.fields.modifieddate)
+    override def stateprovinceid: Field[StateprovinceId, SalestaxrateRow] = {
+      new Field[StateprovinceId, SalestaxrateRow](
+        _path,
+        "stateprovinceid",
+        _.stateprovinceid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(stateprovinceid = value),
+        StateprovinceId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def taxtype: Field[TypoShort, SalestaxrateRow] = {
+      new Field[TypoShort, SalestaxrateRow](
+        _path,
+        "taxtype",
+        _.taxtype,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(taxtype = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def taxrate: Field[java.math.BigDecimal, SalestaxrateRow] = {
+      new Field[java.math.BigDecimal, SalestaxrateRow](
+        _path,
+        "taxrate",
+        _.taxrate,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(taxrate = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def name: Field[Name, SalestaxrateRow] = {
+      new Field[Name, SalestaxrateRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("varchar"),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SalestaxrateRow] = {
+      new Field[TypoUUID, SalestaxrateRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SalestaxrateRow] = {
+      new Field[TypoLocalDateTime, SalestaxrateRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SalestaxrateRow]] = java.util.List.of(this.salestaxrateid, this.stateprovinceid, this.taxtype, this.taxrate, this.name, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SalestaxrateFields, SalestaxrateRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SalestaxrateFields, SalestaxrateRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -37,5 +37,5 @@ case class PrViewRow(
 )
 
 object PrViewRow {
-  val `_rowParser`: RowParser[PrViewRow] = RowParsers.of(ProductreviewId.pgType, ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, PrViewRow.apply, row => Array(row.id, row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate))
+  val `_rowParser`: RowParser[PrViewRow] = RowParsers.of(ProductreviewId.pgType, ProductreviewId.pgType, ProductId.pgType, Name.pgType, TypoLocalDateTime.pgType, PgTypes.text, PgTypes.int4, PgTypes.text.opt(), TypoLocalDateTime.pgType, PrViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.productreviewid.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.reviewername.asInstanceOf[Object], row.reviewdate.asInstanceOf[Object], row.emailaddress.asInstanceOf[Object], row.rating.asInstanceOf[Object], row.comments.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

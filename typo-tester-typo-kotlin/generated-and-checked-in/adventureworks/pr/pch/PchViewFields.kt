@@ -10,14 +10,18 @@ import adventureworks.production.product.ProductId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface PchViewFields {
+interface PchViewFields : FieldsExpr<PchViewRow> {
+  override fun columns(): List<FieldLike<*, PchViewRow>>
+
   fun enddate(): OptField<TypoLocalDateTime, PchViewRow>
 
   fun id(): Field<ProductId, PchViewRow>
@@ -26,26 +30,31 @@ interface PchViewFields {
 
   fun productid(): Field<ProductId, PchViewRow>
 
+  override fun rowParser(): RowParser<PchViewRow> = PchViewRow._rowParser
+
   fun standardcost(): Field<BigDecimal, PchViewRow>
 
   fun startdate(): Field<TypoLocalDateTime, PchViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<PchViewFields, PchViewRow>(path) {
-      override fun fields(): PchViewFields = object : PchViewFields {
-        override fun id(): Field<ProductId, PchViewRow> = Field<ProductId, PchViewRow>(_path, "id", PchViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ProductId.pgType)
-        override fun productid(): Field<ProductId, PchViewRow> = Field<ProductId, PchViewRow>(_path, "productid", PchViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun startdate(): Field<TypoLocalDateTime, PchViewRow> = Field<TypoLocalDateTime, PchViewRow>(_path, "startdate", PchViewRow::startdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
-        override fun enddate(): OptField<TypoLocalDateTime, PchViewRow> = OptField<TypoLocalDateTime, PchViewRow>(_path, "enddate", PchViewRow::enddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
-        override fun standardcost(): Field<BigDecimal, PchViewRow> = Field<BigDecimal, PchViewRow>(_path, "standardcost", PchViewRow::standardcost, Optional.empty(), Optional.empty(), { row, value -> row.copy(standardcost = value) }, PgTypes.numeric)
-        override fun modifieddate(): Field<TypoLocalDateTime, PchViewRow> = Field<TypoLocalDateTime, PchViewRow>(_path, "modifieddate", PchViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : PchViewFields, Relation<PchViewFields, PchViewRow> {
+      override fun id(): Field<ProductId, PchViewRow> = Field<ProductId, PchViewRow>(_path, "id", PchViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ProductId.pgType)
 
-      override fun columns(): List<FieldLike<*, PchViewRow>> = listOf(this.fields().id(), this.fields().productid(), this.fields().startdate(), this.fields().enddate(), this.fields().standardcost(), this.fields().modifieddate())
+      override fun productid(): Field<ProductId, PchViewRow> = Field<ProductId, PchViewRow>(_path, "productid", PchViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun startdate(): Field<TypoLocalDateTime, PchViewRow> = Field<TypoLocalDateTime, PchViewRow>(_path, "startdate", PchViewRow::startdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun enddate(): OptField<TypoLocalDateTime, PchViewRow> = OptField<TypoLocalDateTime, PchViewRow>(_path, "enddate", PchViewRow::enddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun standardcost(): Field<BigDecimal, PchViewRow> = Field<BigDecimal, PchViewRow>(_path, "standardcost", PchViewRow::standardcost, Optional.empty(), Optional.empty(), { row, value -> row.copy(standardcost = value) }, PgTypes.numeric)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, PchViewRow> = Field<TypoLocalDateTime, PchViewRow>(_path, "modifieddate", PchViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, PchViewRow>> = listOf(this.id(), this.productid(), this.startdate(), this.enddate(), this.standardcost(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<PchViewFields, PchViewRow> = Impl(_path)
     }
 
-    val structure: Relation<PchViewFields, PchViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

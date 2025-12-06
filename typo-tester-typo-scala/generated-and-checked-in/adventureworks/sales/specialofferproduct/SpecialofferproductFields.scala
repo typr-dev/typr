@@ -14,6 +14,7 @@ import adventureworks.sales.specialoffer.SpecialofferFields
 import adventureworks.sales.specialoffer.SpecialofferId
 import adventureworks.sales.specialoffer.SpecialofferRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -23,8 +24,9 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait SpecialofferproductFields {
+trait SpecialofferproductFields extends FieldsExpr[SpecialofferproductRow] {
   def specialofferid: IdField[SpecialofferId, SpecialofferproductRow]
 
   def productid: IdField[ProductId, SpecialofferproductRow]
@@ -40,64 +42,67 @@ trait SpecialofferproductFields {
   def compositeIdIs(compositeId: SpecialofferproductId): SqlExpr[java.lang.Boolean] = SqlExpr.all(specialofferid.isEqual(compositeId.specialofferid), productid.isEqual(compositeId.productid))
 
   def compositeIdIn(compositeIds: java.util.List[SpecialofferproductId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[SpecialofferId, SpecialofferproductId, SpecialofferproductRow](specialofferid, _.specialofferid, SpecialofferId.pgType), new Part[ProductId, SpecialofferproductId, SpecialofferproductRow](productid, _.productid, ProductId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, SpecialofferproductRow]]
+
+  override def rowParser: RowParser[SpecialofferproductRow] = SpecialofferproductRow._rowParser
 }
 
 object SpecialofferproductFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SpecialofferproductFields, SpecialofferproductRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SpecialofferproductFields with Relation[SpecialofferproductFields, SpecialofferproductRow] {
 
-    override lazy val fields: SpecialofferproductFields = {
-      new SpecialofferproductFields {
-        override def specialofferid: IdField[SpecialofferId, SpecialofferproductRow] = {
-          new IdField[SpecialofferId, SpecialofferproductRow](
-            _path,
-            "specialofferid",
-            _.specialofferid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(specialofferid = value),
-            SpecialofferId.pgType
-          )
-        }
-        override def productid: IdField[ProductId, SpecialofferproductRow] = {
-          new IdField[ProductId, SpecialofferproductRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, SpecialofferproductRow] = {
-          new Field[TypoUUID, SpecialofferproductRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SpecialofferproductRow] = {
-          new Field[TypoLocalDateTime, SpecialofferproductRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def specialofferid: IdField[SpecialofferId, SpecialofferproductRow] = {
+      new IdField[SpecialofferId, SpecialofferproductRow](
+        _path,
+        "specialofferid",
+        _.specialofferid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(specialofferid = value),
+        SpecialofferId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SpecialofferproductRow]] = java.util.List.of(this.fields.specialofferid, this.fields.productid, this.fields.rowguid, this.fields.modifieddate)
+    override def productid: IdField[ProductId, SpecialofferproductRow] = {
+      new IdField[ProductId, SpecialofferproductRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def rowguid: Field[TypoUUID, SpecialofferproductRow] = {
+      new Field[TypoUUID, SpecialofferproductRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SpecialofferproductRow] = {
+      new Field[TypoLocalDateTime, SpecialofferproductRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SpecialofferproductRow]] = java.util.List.of(this.specialofferid, this.productid, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SpecialofferproductFields, SpecialofferproductRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SpecialofferproductFields, SpecialofferproductRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

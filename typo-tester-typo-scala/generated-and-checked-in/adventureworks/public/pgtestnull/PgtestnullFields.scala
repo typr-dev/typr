@@ -32,13 +32,15 @@ import adventureworks.customtypes.TypoXml
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PgtestnullFields {
+trait PgtestnullFields extends FieldsExpr[PgtestnullRow] {
   def bool: OptField[java.lang.Boolean, PgtestnullRow]
 
   def box: OptField[TypoBox, PgtestnullRow]
@@ -178,790 +180,859 @@ trait PgtestnullFields {
   def varchares: OptField[Array[String], PgtestnullRow]
 
   def xmles: OptField[Array[TypoXml], PgtestnullRow]
+
+  override def columns: java.util.List[FieldLike[?, PgtestnullRow]]
+
+  override def rowParser: RowParser[PgtestnullRow] = PgtestnullRow._rowParser
 }
 
 object PgtestnullFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PgtestnullFields, PgtestnullRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PgtestnullFields with Relation[PgtestnullFields, PgtestnullRow] {
 
-    override lazy val fields: PgtestnullFields = {
-      new PgtestnullFields {
-        override def bool: OptField[java.lang.Boolean, PgtestnullRow] = {
-          new OptField[java.lang.Boolean, PgtestnullRow](
-            _path,
-            "bool",
-            _.bool,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(bool = value),
-            PgTypes.bool
-          )
-        }
-        override def box: OptField[TypoBox, PgtestnullRow] = {
-          new OptField[TypoBox, PgtestnullRow](
-            _path,
-            "box",
-            _.box,
-            Optional.empty(),
-            Optional.of("box"),
-            (row, value) => row.copy(box = value),
-            TypoBox.pgType
-          )
-        }
-        override def bpchar: OptField[/* bpchar, max 3 chars */ String, PgtestnullRow] = {
-          new OptField[/* bpchar, max 3 chars */ String, PgtestnullRow](
-            _path,
-            "bpchar",
-            _.bpchar,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(bpchar = value),
-            PgTypes.bpchar
-          )
-        }
-        override def bytea: OptField[TypoBytea, PgtestnullRow] = {
-          new OptField[TypoBytea, PgtestnullRow](
-            _path,
-            "bytea",
-            _.bytea,
-            Optional.empty(),
-            Optional.of("bytea"),
-            (row, value) => row.copy(bytea = value),
-            TypoBytea.pgType
-          )
-        }
-        override def char: OptField[/* bpchar, max 1 chars */ String, PgtestnullRow] = {
-          new OptField[/* bpchar, max 1 chars */ String, PgtestnullRow](
-            _path,
-            "char",
-            _.char,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(char = value),
-            PgTypes.bpchar
-          )
-        }
-        override def circle: OptField[TypoCircle, PgtestnullRow] = {
-          new OptField[TypoCircle, PgtestnullRow](
-            _path,
-            "circle",
-            _.circle,
-            Optional.empty(),
-            Optional.of("circle"),
-            (row, value) => row.copy(circle = value),
-            TypoCircle.pgType
-          )
-        }
-        override def date: OptField[TypoLocalDate, PgtestnullRow] = {
-          new OptField[TypoLocalDate, PgtestnullRow](
-            _path,
-            "date",
-            _.date,
-            Optional.of("text"),
-            Optional.of("date"),
-            (row, value) => row.copy(date = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def float4: OptField[java.lang.Float, PgtestnullRow] = {
-          new OptField[java.lang.Float, PgtestnullRow](
-            _path,
-            "float4",
-            _.float4,
-            Optional.empty(),
-            Optional.of("float4"),
-            (row, value) => row.copy(float4 = value),
-            PgTypes.float4
-          )
-        }
-        override def float8: OptField[java.lang.Double, PgtestnullRow] = {
-          new OptField[java.lang.Double, PgtestnullRow](
-            _path,
-            "float8",
-            _.float8,
-            Optional.empty(),
-            Optional.of("float8"),
-            (row, value) => row.copy(float8 = value),
-            PgTypes.float8
-          )
-        }
-        override def hstore: OptField[TypoHStore, PgtestnullRow] = {
-          new OptField[TypoHStore, PgtestnullRow](
-            _path,
-            "hstore",
-            _.hstore,
-            Optional.empty(),
-            Optional.of("hstore"),
-            (row, value) => row.copy(hstore = value),
-            TypoHStore.pgType
-          )
-        }
-        override def inet: OptField[TypoInet, PgtestnullRow] = {
-          new OptField[TypoInet, PgtestnullRow](
-            _path,
-            "inet",
-            _.inet,
-            Optional.empty(),
-            Optional.of("inet"),
-            (row, value) => row.copy(inet = value),
-            TypoInet.pgType
-          )
-        }
-        override def int2: OptField[TypoShort, PgtestnullRow] = {
-          new OptField[TypoShort, PgtestnullRow](
-            _path,
-            "int2",
-            _.int2,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(int2 = value),
-            TypoShort.pgType
-          )
-        }
-        override def int2vector: OptField[TypoInt2Vector, PgtestnullRow] = {
-          new OptField[TypoInt2Vector, PgtestnullRow](
-            _path,
-            "int2vector",
-            _.int2vector,
-            Optional.empty(),
-            Optional.of("int2vector"),
-            (row, value) => row.copy(int2vector = value),
-            TypoInt2Vector.pgType
-          )
-        }
-        override def int4: OptField[Integer, PgtestnullRow] = {
-          new OptField[Integer, PgtestnullRow](
-            _path,
-            "int4",
-            _.int4,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(int4 = value),
-            PgTypes.int4
-          )
-        }
-        override def int8: OptField[java.lang.Long, PgtestnullRow] = {
-          new OptField[java.lang.Long, PgtestnullRow](
-            _path,
-            "int8",
-            _.int8,
-            Optional.empty(),
-            Optional.of("int8"),
-            (row, value) => row.copy(int8 = value),
-            PgTypes.int8
-          )
-        }
-        override def interval: OptField[TypoInterval, PgtestnullRow] = {
-          new OptField[TypoInterval, PgtestnullRow](
-            _path,
-            "interval",
-            _.interval,
-            Optional.empty(),
-            Optional.of("interval"),
-            (row, value) => row.copy(interval = value),
-            TypoInterval.pgType
-          )
-        }
-        override def json: OptField[TypoJson, PgtestnullRow] = {
-          new OptField[TypoJson, PgtestnullRow](
-            _path,
-            "json",
-            _.json,
-            Optional.empty(),
-            Optional.of("json"),
-            (row, value) => row.copy(json = value),
-            TypoJson.pgType
-          )
-        }
-        override def jsonb: OptField[TypoJsonb, PgtestnullRow] = {
-          new OptField[TypoJsonb, PgtestnullRow](
-            _path,
-            "jsonb",
-            _.jsonb,
-            Optional.empty(),
-            Optional.of("jsonb"),
-            (row, value) => row.copy(jsonb = value),
-            TypoJsonb.pgType
-          )
-        }
-        override def line: OptField[TypoLine, PgtestnullRow] = {
-          new OptField[TypoLine, PgtestnullRow](
-            _path,
-            "line",
-            _.line,
-            Optional.empty(),
-            Optional.of("line"),
-            (row, value) => row.copy(line = value),
-            TypoLine.pgType
-          )
-        }
-        override def lseg: OptField[TypoLineSegment, PgtestnullRow] = {
-          new OptField[TypoLineSegment, PgtestnullRow](
-            _path,
-            "lseg",
-            _.lseg,
-            Optional.empty(),
-            Optional.of("lseg"),
-            (row, value) => row.copy(lseg = value),
-            TypoLineSegment.pgType
-          )
-        }
-        override def money: OptField[TypoMoney, PgtestnullRow] = {
-          new OptField[TypoMoney, PgtestnullRow](
-            _path,
-            "money",
-            _.money,
-            Optional.of("numeric"),
-            Optional.of("money"),
-            (row, value) => row.copy(money = value),
-            TypoMoney.pgType
-          )
-        }
-        override def mydomain: OptField[Mydomain, PgtestnullRow] = {
-          new OptField[Mydomain, PgtestnullRow](
-            _path,
-            "mydomain",
-            _.mydomain,
-            Optional.empty(),
-            Optional.of("text"),
-            (row, value) => row.copy(mydomain = value),
-            Mydomain.pgType
-          )
-        }
-        override def myenum: OptField[Myenum, PgtestnullRow] = {
-          new OptField[Myenum, PgtestnullRow](
-            _path,
-            "myenum",
-            _.myenum,
-            Optional.empty(),
-            Optional.of("public.myenum"),
-            (row, value) => row.copy(myenum = value),
-            Myenum.pgType
-          )
-        }
-        override def name: OptField[String, PgtestnullRow] = {
-          new OptField[String, PgtestnullRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("name"),
-            (row, value) => row.copy(name = value),
-            PgTypes.name
-          )
-        }
-        override def numeric: OptField[java.math.BigDecimal, PgtestnullRow] = {
-          new OptField[java.math.BigDecimal, PgtestnullRow](
-            _path,
-            "numeric",
-            _.numeric,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(numeric = value),
-            PgTypes.numeric
-          )
-        }
-        override def path: OptField[TypoPath, PgtestnullRow] = {
-          new OptField[TypoPath, PgtestnullRow](
-            _path,
-            "path",
-            _.path,
-            Optional.empty(),
-            Optional.of("path"),
-            (row, value) => row.copy(path = value),
-            TypoPath.pgType
-          )
-        }
-        override def point: OptField[TypoPoint, PgtestnullRow] = {
-          new OptField[TypoPoint, PgtestnullRow](
-            _path,
-            "point",
-            _.point,
-            Optional.empty(),
-            Optional.of("point"),
-            (row, value) => row.copy(point = value),
-            TypoPoint.pgType
-          )
-        }
-        override def polygon: OptField[TypoPolygon, PgtestnullRow] = {
-          new OptField[TypoPolygon, PgtestnullRow](
-            _path,
-            "polygon",
-            _.polygon,
-            Optional.empty(),
-            Optional.of("polygon"),
-            (row, value) => row.copy(polygon = value),
-            TypoPolygon.pgType
-          )
-        }
-        override def text: OptField[String, PgtestnullRow] = {
-          new OptField[String, PgtestnullRow](
-            _path,
-            "text",
-            _.text,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(text = value),
-            PgTypes.text
-          )
-        }
-        override def time: OptField[TypoLocalTime, PgtestnullRow] = {
-          new OptField[TypoLocalTime, PgtestnullRow](
-            _path,
-            "time",
-            _.time,
-            Optional.of("text"),
-            Optional.of("time"),
-            (row, value) => row.copy(time = value),
-            TypoLocalTime.pgType
-          )
-        }
-        override def timestamp: OptField[TypoLocalDateTime, PgtestnullRow] = {
-          new OptField[TypoLocalDateTime, PgtestnullRow](
-            _path,
-            "timestamp",
-            _.timestamp,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(timestamp = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def timestampz: OptField[TypoInstant, PgtestnullRow] = {
-          new OptField[TypoInstant, PgtestnullRow](
-            _path,
-            "timestampz",
-            _.timestampz,
-            Optional.of("text"),
-            Optional.of("timestamptz"),
-            (row, value) => row.copy(timestampz = value),
-            TypoInstant.pgType
-          )
-        }
-        override def timez: OptField[TypoOffsetTime, PgtestnullRow] = {
-          new OptField[TypoOffsetTime, PgtestnullRow](
-            _path,
-            "timez",
-            _.timez,
-            Optional.of("text"),
-            Optional.of("timetz"),
-            (row, value) => row.copy(timez = value),
-            TypoOffsetTime.pgType
-          )
-        }
-        override def uuid: OptField[TypoUUID, PgtestnullRow] = {
-          new OptField[TypoUUID, PgtestnullRow](
-            _path,
-            "uuid",
-            _.uuid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(uuid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def varchar: OptField[String, PgtestnullRow] = {
-          new OptField[String, PgtestnullRow](
-            _path,
-            "varchar",
-            _.varchar,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(varchar = value),
-            PgTypes.text
-          )
-        }
-        override def vector: OptField[TypoVector, PgtestnullRow] = {
-          new OptField[TypoVector, PgtestnullRow](
-            _path,
-            "vector",
-            _.vector,
-            Optional.of("float4[]"),
-            Optional.of("vector"),
-            (row, value) => row.copy(vector = value),
-            TypoVector.pgType
-          )
-        }
-        override def xml: OptField[TypoXml, PgtestnullRow] = {
-          new OptField[TypoXml, PgtestnullRow](
-            _path,
-            "xml",
-            _.xml,
-            Optional.empty(),
-            Optional.of("xml"),
-            (row, value) => row.copy(xml = value),
-            TypoXml.pgType
-          )
-        }
-        override def boxes: OptField[Array[TypoBox], PgtestnullRow] = {
-          new OptField[Array[TypoBox], PgtestnullRow](
-            _path,
-            "boxes",
-            _.boxes,
-            Optional.empty(),
-            Optional.of("box[]"),
-            (row, value) => row.copy(boxes = value),
-            TypoBox.pgTypeArray
-          )
-        }
-        override def bpchares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
-          new OptField[Array[/* bpchar */ String], PgtestnullRow](
-            _path,
-            "bpchares",
-            _.bpchares,
-            Optional.empty(),
-            Optional.of("bpchar[]"),
-            (row, value) => row.copy(bpchares = value),
-            PgTypes.bpcharArray
-          )
-        }
-        override def chares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
-          new OptField[Array[/* bpchar */ String], PgtestnullRow](
-            _path,
-            "chares",
-            _.chares,
-            Optional.empty(),
-            Optional.of("bpchar[]"),
-            (row, value) => row.copy(chares = value),
-            PgTypes.bpcharArray
-          )
-        }
-        override def circlees: OptField[Array[TypoCircle], PgtestnullRow] = {
-          new OptField[Array[TypoCircle], PgtestnullRow](
-            _path,
-            "circlees",
-            _.circlees,
-            Optional.empty(),
-            Optional.of("circle[]"),
-            (row, value) => row.copy(circlees = value),
-            TypoCircle.pgTypeArray
-          )
-        }
-        override def datees: OptField[Array[TypoLocalDate], PgtestnullRow] = {
-          new OptField[Array[TypoLocalDate], PgtestnullRow](
-            _path,
-            "datees",
-            _.datees,
-            Optional.of("text[]"),
-            Optional.of("date[]"),
-            (row, value) => row.copy(datees = value),
-            TypoLocalDate.pgTypeArray
-          )
-        }
-        override def float4es: OptField[Array[java.lang.Float], PgtestnullRow] = {
-          new OptField[Array[java.lang.Float], PgtestnullRow](
-            _path,
-            "float4es",
-            _.float4es,
-            Optional.empty(),
-            Optional.of("float4[]"),
-            (row, value) => row.copy(float4es = value),
-            PgTypes.float4Array
-          )
-        }
-        override def float8es: OptField[Array[java.lang.Double], PgtestnullRow] = {
-          new OptField[Array[java.lang.Double], PgtestnullRow](
-            _path,
-            "float8es",
-            _.float8es,
-            Optional.empty(),
-            Optional.of("float8[]"),
-            (row, value) => row.copy(float8es = value),
-            PgTypes.float8Array
-          )
-        }
-        override def inetes: OptField[Array[TypoInet], PgtestnullRow] = {
-          new OptField[Array[TypoInet], PgtestnullRow](
-            _path,
-            "inetes",
-            _.inetes,
-            Optional.empty(),
-            Optional.of("inet[]"),
-            (row, value) => row.copy(inetes = value),
-            TypoInet.pgTypeArray
-          )
-        }
-        override def int2es: OptField[Array[TypoShort], PgtestnullRow] = {
-          new OptField[Array[TypoShort], PgtestnullRow](
-            _path,
-            "int2es",
-            _.int2es,
-            Optional.empty(),
-            Optional.of("int2[]"),
-            (row, value) => row.copy(int2es = value),
-            TypoShort.pgTypeArray
-          )
-        }
-        override def int2vectores: OptField[Array[TypoInt2Vector], PgtestnullRow] = {
-          new OptField[Array[TypoInt2Vector], PgtestnullRow](
-            _path,
-            "int2vectores",
-            _.int2vectores,
-            Optional.empty(),
-            Optional.of("int2vector[]"),
-            (row, value) => row.copy(int2vectores = value),
-            TypoInt2Vector.pgTypeArray
-          )
-        }
-        override def int4es: OptField[Array[Integer], PgtestnullRow] = {
-          new OptField[Array[Integer], PgtestnullRow](
-            _path,
-            "int4es",
-            _.int4es,
-            Optional.empty(),
-            Optional.of("int4[]"),
-            (row, value) => row.copy(int4es = value),
-            PgTypes.int4Array
-          )
-        }
-        override def int8es: OptField[Array[java.lang.Long], PgtestnullRow] = {
-          new OptField[Array[java.lang.Long], PgtestnullRow](
-            _path,
-            "int8es",
-            _.int8es,
-            Optional.empty(),
-            Optional.of("int8[]"),
-            (row, value) => row.copy(int8es = value),
-            PgTypes.int8Array
-          )
-        }
-        override def intervales: OptField[Array[TypoInterval], PgtestnullRow] = {
-          new OptField[Array[TypoInterval], PgtestnullRow](
-            _path,
-            "intervales",
-            _.intervales,
-            Optional.empty(),
-            Optional.of("interval[]"),
-            (row, value) => row.copy(intervales = value),
-            TypoInterval.pgTypeArray
-          )
-        }
-        override def jsones: OptField[Array[TypoJson], PgtestnullRow] = {
-          new OptField[Array[TypoJson], PgtestnullRow](
-            _path,
-            "jsones",
-            _.jsones,
-            Optional.empty(),
-            Optional.of("json[]"),
-            (row, value) => row.copy(jsones = value),
-            TypoJson.pgTypeArray
-          )
-        }
-        override def jsonbes: OptField[Array[TypoJsonb], PgtestnullRow] = {
-          new OptField[Array[TypoJsonb], PgtestnullRow](
-            _path,
-            "jsonbes",
-            _.jsonbes,
-            Optional.empty(),
-            Optional.of("jsonb[]"),
-            (row, value) => row.copy(jsonbes = value),
-            TypoJsonb.pgTypeArray
-          )
-        }
-        override def linees: OptField[Array[TypoLine], PgtestnullRow] = {
-          new OptField[Array[TypoLine], PgtestnullRow](
-            _path,
-            "linees",
-            _.linees,
-            Optional.empty(),
-            Optional.of("line[]"),
-            (row, value) => row.copy(linees = value),
-            TypoLine.pgTypeArray
-          )
-        }
-        override def lseges: OptField[Array[TypoLineSegment], PgtestnullRow] = {
-          new OptField[Array[TypoLineSegment], PgtestnullRow](
-            _path,
-            "lseges",
-            _.lseges,
-            Optional.empty(),
-            Optional.of("lseg[]"),
-            (row, value) => row.copy(lseges = value),
-            TypoLineSegment.pgTypeArray
-          )
-        }
-        override def moneyes: OptField[Array[TypoMoney], PgtestnullRow] = {
-          new OptField[Array[TypoMoney], PgtestnullRow](
-            _path,
-            "moneyes",
-            _.moneyes,
-            Optional.of("numeric[]"),
-            Optional.of("money[]"),
-            (row, value) => row.copy(moneyes = value),
-            TypoMoney.pgTypeArray
-          )
-        }
-        override def mydomaines: OptField[Array[Mydomain], PgtestnullRow] = {
-          new OptField[Array[Mydomain], PgtestnullRow](
-            _path,
-            "mydomaines",
-            _.mydomaines,
-            Optional.of("text[]"),
-            Optional.of("mydomain[]"),
-            (row, value) => row.copy(mydomaines = value),
-            Mydomain.pgTypeArray
-          )
-        }
-        override def myenumes: OptField[Array[Myenum], PgtestnullRow] = {
-          new OptField[Array[Myenum], PgtestnullRow](
-            _path,
-            "myenumes",
-            _.myenumes,
-            Optional.empty(),
-            Optional.of("myenum[]"),
-            (row, value) => row.copy(myenumes = value),
-            Myenum.pgTypeArray
-          )
-        }
-        override def namees: OptField[Array[String], PgtestnullRow] = {
-          new OptField[Array[String], PgtestnullRow](
-            _path,
-            "namees",
-            _.namees,
-            Optional.empty(),
-            Optional.of("name[]"),
-            (row, value) => row.copy(namees = value),
-            PgTypes.nameArray
-          )
-        }
-        override def numerices: OptField[Array[java.math.BigDecimal], PgtestnullRow] = {
-          new OptField[Array[java.math.BigDecimal], PgtestnullRow](
-            _path,
-            "numerices",
-            _.numerices,
-            Optional.empty(),
-            Optional.of("numeric[]"),
-            (row, value) => row.copy(numerices = value),
-            PgTypes.numericArray
-          )
-        }
-        override def pathes: OptField[Array[TypoPath], PgtestnullRow] = {
-          new OptField[Array[TypoPath], PgtestnullRow](
-            _path,
-            "pathes",
-            _.pathes,
-            Optional.empty(),
-            Optional.of("path[]"),
-            (row, value) => row.copy(pathes = value),
-            TypoPath.pgTypeArray
-          )
-        }
-        override def pointes: OptField[Array[TypoPoint], PgtestnullRow] = {
-          new OptField[Array[TypoPoint], PgtestnullRow](
-            _path,
-            "pointes",
-            _.pointes,
-            Optional.empty(),
-            Optional.of("point[]"),
-            (row, value) => row.copy(pointes = value),
-            TypoPoint.pgTypeArray
-          )
-        }
-        override def polygones: OptField[Array[TypoPolygon], PgtestnullRow] = {
-          new OptField[Array[TypoPolygon], PgtestnullRow](
-            _path,
-            "polygones",
-            _.polygones,
-            Optional.empty(),
-            Optional.of("polygon[]"),
-            (row, value) => row.copy(polygones = value),
-            TypoPolygon.pgTypeArray
-          )
-        }
-        override def textes: OptField[Array[String], PgtestnullRow] = {
-          new OptField[Array[String], PgtestnullRow](
-            _path,
-            "textes",
-            _.textes,
-            Optional.empty(),
-            Optional.of("text[]"),
-            (row, value) => row.copy(textes = value),
-            PgTypes.textArray
-          )
-        }
-        override def timees: OptField[Array[TypoLocalTime], PgtestnullRow] = {
-          new OptField[Array[TypoLocalTime], PgtestnullRow](
-            _path,
-            "timees",
-            _.timees,
-            Optional.of("text[]"),
-            Optional.of("time[]"),
-            (row, value) => row.copy(timees = value),
-            TypoLocalTime.pgTypeArray
-          )
-        }
-        override def timestampes: OptField[Array[TypoLocalDateTime], PgtestnullRow] = {
-          new OptField[Array[TypoLocalDateTime], PgtestnullRow](
-            _path,
-            "timestampes",
-            _.timestampes,
-            Optional.of("text[]"),
-            Optional.of("timestamp[]"),
-            (row, value) => row.copy(timestampes = value),
-            TypoLocalDateTime.pgTypeArray
-          )
-        }
-        override def timestampzes: OptField[Array[TypoInstant], PgtestnullRow] = {
-          new OptField[Array[TypoInstant], PgtestnullRow](
-            _path,
-            "timestampzes",
-            _.timestampzes,
-            Optional.of("text[]"),
-            Optional.of("timestamptz[]"),
-            (row, value) => row.copy(timestampzes = value),
-            TypoInstant.pgTypeArray
-          )
-        }
-        override def timezes: OptField[Array[TypoOffsetTime], PgtestnullRow] = {
-          new OptField[Array[TypoOffsetTime], PgtestnullRow](
-            _path,
-            "timezes",
-            _.timezes,
-            Optional.of("text[]"),
-            Optional.of("timetz[]"),
-            (row, value) => row.copy(timezes = value),
-            TypoOffsetTime.pgTypeArray
-          )
-        }
-        override def uuides: OptField[Array[TypoUUID], PgtestnullRow] = {
-          new OptField[Array[TypoUUID], PgtestnullRow](
-            _path,
-            "uuides",
-            _.uuides,
-            Optional.empty(),
-            Optional.of("uuid[]"),
-            (row, value) => row.copy(uuides = value),
-            TypoUUID.pgTypeArray
-          )
-        }
-        override def varchares: OptField[Array[String], PgtestnullRow] = {
-          new OptField[Array[String], PgtestnullRow](
-            _path,
-            "varchares",
-            _.varchares,
-            Optional.empty(),
-            Optional.of("varchar[]"),
-            (row, value) => row.copy(varchares = value),
-            PgTypes.textArray
-          )
-        }
-        override def xmles: OptField[Array[TypoXml], PgtestnullRow] = {
-          new OptField[Array[TypoXml], PgtestnullRow](
-            _path,
-            "xmles",
-            _.xmles,
-            Optional.empty(),
-            Optional.of("xml[]"),
-            (row, value) => row.copy(xmles = value),
-            TypoXml.pgTypeArray
-          )
-        }
-      }
+    override def bool: OptField[java.lang.Boolean, PgtestnullRow] = {
+      new OptField[java.lang.Boolean, PgtestnullRow](
+        _path,
+        "bool",
+        _.bool,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(bool = value),
+        PgTypes.bool
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PgtestnullRow]] = java.util.List.of(this.fields.bool, this.fields.box, this.fields.bpchar, this.fields.bytea, this.fields.char, this.fields.circle, this.fields.date, this.fields.float4, this.fields.float8, this.fields.hstore, this.fields.inet, this.fields.int2, this.fields.int2vector, this.fields.int4, this.fields.int8, this.fields.interval, this.fields.json, this.fields.jsonb, this.fields.line, this.fields.lseg, this.fields.money, this.fields.mydomain, this.fields.myenum, this.fields.name, this.fields.numeric, this.fields.path, this.fields.point, this.fields.polygon, this.fields.text, this.fields.time, this.fields.timestamp, this.fields.timestampz, this.fields.timez, this.fields.uuid, this.fields.varchar, this.fields.vector, this.fields.xml, this.fields.boxes, this.fields.bpchares, this.fields.chares, this.fields.circlees, this.fields.datees, this.fields.float4es, this.fields.float8es, this.fields.inetes, this.fields.int2es, this.fields.int2vectores, this.fields.int4es, this.fields.int8es, this.fields.intervales, this.fields.jsones, this.fields.jsonbes, this.fields.linees, this.fields.lseges, this.fields.moneyes, this.fields.mydomaines, this.fields.myenumes, this.fields.namees, this.fields.numerices, this.fields.pathes, this.fields.pointes, this.fields.polygones, this.fields.textes, this.fields.timees, this.fields.timestampes, this.fields.timestampzes, this.fields.timezes, this.fields.uuides, this.fields.varchares, this.fields.xmles)
+    override def box: OptField[TypoBox, PgtestnullRow] = {
+      new OptField[TypoBox, PgtestnullRow](
+        _path,
+        "box",
+        _.box,
+        Optional.empty(),
+        Optional.of("box"),
+        (row, value) => row.copy(box = value),
+        TypoBox.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def bpchar: OptField[/* bpchar, max 3 chars */ String, PgtestnullRow] = {
+      new OptField[/* bpchar, max 3 chars */ String, PgtestnullRow](
+        _path,
+        "bpchar",
+        _.bpchar,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(bpchar = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def bytea: OptField[TypoBytea, PgtestnullRow] = {
+      new OptField[TypoBytea, PgtestnullRow](
+        _path,
+        "bytea",
+        _.bytea,
+        Optional.empty(),
+        Optional.of("bytea"),
+        (row, value) => row.copy(bytea = value),
+        TypoBytea.pgType
+      )
+    }
+
+    override def char: OptField[/* bpchar, max 1 chars */ String, PgtestnullRow] = {
+      new OptField[/* bpchar, max 1 chars */ String, PgtestnullRow](
+        _path,
+        "char",
+        _.char,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(char = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def circle: OptField[TypoCircle, PgtestnullRow] = {
+      new OptField[TypoCircle, PgtestnullRow](
+        _path,
+        "circle",
+        _.circle,
+        Optional.empty(),
+        Optional.of("circle"),
+        (row, value) => row.copy(circle = value),
+        TypoCircle.pgType
+      )
+    }
+
+    override def date: OptField[TypoLocalDate, PgtestnullRow] = {
+      new OptField[TypoLocalDate, PgtestnullRow](
+        _path,
+        "date",
+        _.date,
+        Optional.of("text"),
+        Optional.of("date"),
+        (row, value) => row.copy(date = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def float4: OptField[java.lang.Float, PgtestnullRow] = {
+      new OptField[java.lang.Float, PgtestnullRow](
+        _path,
+        "float4",
+        _.float4,
+        Optional.empty(),
+        Optional.of("float4"),
+        (row, value) => row.copy(float4 = value),
+        PgTypes.float4
+      )
+    }
+
+    override def float8: OptField[java.lang.Double, PgtestnullRow] = {
+      new OptField[java.lang.Double, PgtestnullRow](
+        _path,
+        "float8",
+        _.float8,
+        Optional.empty(),
+        Optional.of("float8"),
+        (row, value) => row.copy(float8 = value),
+        PgTypes.float8
+      )
+    }
+
+    override def hstore: OptField[TypoHStore, PgtestnullRow] = {
+      new OptField[TypoHStore, PgtestnullRow](
+        _path,
+        "hstore",
+        _.hstore,
+        Optional.empty(),
+        Optional.of("hstore"),
+        (row, value) => row.copy(hstore = value),
+        TypoHStore.pgType
+      )
+    }
+
+    override def inet: OptField[TypoInet, PgtestnullRow] = {
+      new OptField[TypoInet, PgtestnullRow](
+        _path,
+        "inet",
+        _.inet,
+        Optional.empty(),
+        Optional.of("inet"),
+        (row, value) => row.copy(inet = value),
+        TypoInet.pgType
+      )
+    }
+
+    override def int2: OptField[TypoShort, PgtestnullRow] = {
+      new OptField[TypoShort, PgtestnullRow](
+        _path,
+        "int2",
+        _.int2,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(int2 = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def int2vector: OptField[TypoInt2Vector, PgtestnullRow] = {
+      new OptField[TypoInt2Vector, PgtestnullRow](
+        _path,
+        "int2vector",
+        _.int2vector,
+        Optional.empty(),
+        Optional.of("int2vector"),
+        (row, value) => row.copy(int2vector = value),
+        TypoInt2Vector.pgType
+      )
+    }
+
+    override def int4: OptField[Integer, PgtestnullRow] = {
+      new OptField[Integer, PgtestnullRow](
+        _path,
+        "int4",
+        _.int4,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(int4 = value),
+        PgTypes.int4
+      )
+    }
+
+    override def int8: OptField[java.lang.Long, PgtestnullRow] = {
+      new OptField[java.lang.Long, PgtestnullRow](
+        _path,
+        "int8",
+        _.int8,
+        Optional.empty(),
+        Optional.of("int8"),
+        (row, value) => row.copy(int8 = value),
+        PgTypes.int8
+      )
+    }
+
+    override def interval: OptField[TypoInterval, PgtestnullRow] = {
+      new OptField[TypoInterval, PgtestnullRow](
+        _path,
+        "interval",
+        _.interval,
+        Optional.empty(),
+        Optional.of("interval"),
+        (row, value) => row.copy(interval = value),
+        TypoInterval.pgType
+      )
+    }
+
+    override def json: OptField[TypoJson, PgtestnullRow] = {
+      new OptField[TypoJson, PgtestnullRow](
+        _path,
+        "json",
+        _.json,
+        Optional.empty(),
+        Optional.of("json"),
+        (row, value) => row.copy(json = value),
+        TypoJson.pgType
+      )
+    }
+
+    override def jsonb: OptField[TypoJsonb, PgtestnullRow] = {
+      new OptField[TypoJsonb, PgtestnullRow](
+        _path,
+        "jsonb",
+        _.jsonb,
+        Optional.empty(),
+        Optional.of("jsonb"),
+        (row, value) => row.copy(jsonb = value),
+        TypoJsonb.pgType
+      )
+    }
+
+    override def line: OptField[TypoLine, PgtestnullRow] = {
+      new OptField[TypoLine, PgtestnullRow](
+        _path,
+        "line",
+        _.line,
+        Optional.empty(),
+        Optional.of("line"),
+        (row, value) => row.copy(line = value),
+        TypoLine.pgType
+      )
+    }
+
+    override def lseg: OptField[TypoLineSegment, PgtestnullRow] = {
+      new OptField[TypoLineSegment, PgtestnullRow](
+        _path,
+        "lseg",
+        _.lseg,
+        Optional.empty(),
+        Optional.of("lseg"),
+        (row, value) => row.copy(lseg = value),
+        TypoLineSegment.pgType
+      )
+    }
+
+    override def money: OptField[TypoMoney, PgtestnullRow] = {
+      new OptField[TypoMoney, PgtestnullRow](
+        _path,
+        "money",
+        _.money,
+        Optional.of("numeric"),
+        Optional.of("money"),
+        (row, value) => row.copy(money = value),
+        TypoMoney.pgType
+      )
+    }
+
+    override def mydomain: OptField[Mydomain, PgtestnullRow] = {
+      new OptField[Mydomain, PgtestnullRow](
+        _path,
+        "mydomain",
+        _.mydomain,
+        Optional.empty(),
+        Optional.of("text"),
+        (row, value) => row.copy(mydomain = value),
+        Mydomain.pgType
+      )
+    }
+
+    override def myenum: OptField[Myenum, PgtestnullRow] = {
+      new OptField[Myenum, PgtestnullRow](
+        _path,
+        "myenum",
+        _.myenum,
+        Optional.empty(),
+        Optional.of("public.myenum"),
+        (row, value) => row.copy(myenum = value),
+        Myenum.pgType
+      )
+    }
+
+    override def name: OptField[String, PgtestnullRow] = {
+      new OptField[String, PgtestnullRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("name"),
+        (row, value) => row.copy(name = value),
+        PgTypes.name
+      )
+    }
+
+    override def numeric: OptField[java.math.BigDecimal, PgtestnullRow] = {
+      new OptField[java.math.BigDecimal, PgtestnullRow](
+        _path,
+        "numeric",
+        _.numeric,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(numeric = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def path: OptField[TypoPath, PgtestnullRow] = {
+      new OptField[TypoPath, PgtestnullRow](
+        _path,
+        "path",
+        _.path,
+        Optional.empty(),
+        Optional.of("path"),
+        (row, value) => row.copy(path = value),
+        TypoPath.pgType
+      )
+    }
+
+    override def point: OptField[TypoPoint, PgtestnullRow] = {
+      new OptField[TypoPoint, PgtestnullRow](
+        _path,
+        "point",
+        _.point,
+        Optional.empty(),
+        Optional.of("point"),
+        (row, value) => row.copy(point = value),
+        TypoPoint.pgType
+      )
+    }
+
+    override def polygon: OptField[TypoPolygon, PgtestnullRow] = {
+      new OptField[TypoPolygon, PgtestnullRow](
+        _path,
+        "polygon",
+        _.polygon,
+        Optional.empty(),
+        Optional.of("polygon"),
+        (row, value) => row.copy(polygon = value),
+        TypoPolygon.pgType
+      )
+    }
+
+    override def text: OptField[String, PgtestnullRow] = {
+      new OptField[String, PgtestnullRow](
+        _path,
+        "text",
+        _.text,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(text = value),
+        PgTypes.text
+      )
+    }
+
+    override def time: OptField[TypoLocalTime, PgtestnullRow] = {
+      new OptField[TypoLocalTime, PgtestnullRow](
+        _path,
+        "time",
+        _.time,
+        Optional.of("text"),
+        Optional.of("time"),
+        (row, value) => row.copy(time = value),
+        TypoLocalTime.pgType
+      )
+    }
+
+    override def timestamp: OptField[TypoLocalDateTime, PgtestnullRow] = {
+      new OptField[TypoLocalDateTime, PgtestnullRow](
+        _path,
+        "timestamp",
+        _.timestamp,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(timestamp = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def timestampz: OptField[TypoInstant, PgtestnullRow] = {
+      new OptField[TypoInstant, PgtestnullRow](
+        _path,
+        "timestampz",
+        _.timestampz,
+        Optional.of("text"),
+        Optional.of("timestamptz"),
+        (row, value) => row.copy(timestampz = value),
+        TypoInstant.pgType
+      )
+    }
+
+    override def timez: OptField[TypoOffsetTime, PgtestnullRow] = {
+      new OptField[TypoOffsetTime, PgtestnullRow](
+        _path,
+        "timez",
+        _.timez,
+        Optional.of("text"),
+        Optional.of("timetz"),
+        (row, value) => row.copy(timez = value),
+        TypoOffsetTime.pgType
+      )
+    }
+
+    override def uuid: OptField[TypoUUID, PgtestnullRow] = {
+      new OptField[TypoUUID, PgtestnullRow](
+        _path,
+        "uuid",
+        _.uuid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(uuid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def varchar: OptField[String, PgtestnullRow] = {
+      new OptField[String, PgtestnullRow](
+        _path,
+        "varchar",
+        _.varchar,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(varchar = value),
+        PgTypes.text
+      )
+    }
+
+    override def vector: OptField[TypoVector, PgtestnullRow] = {
+      new OptField[TypoVector, PgtestnullRow](
+        _path,
+        "vector",
+        _.vector,
+        Optional.of("float4[]"),
+        Optional.of("vector"),
+        (row, value) => row.copy(vector = value),
+        TypoVector.pgType
+      )
+    }
+
+    override def xml: OptField[TypoXml, PgtestnullRow] = {
+      new OptField[TypoXml, PgtestnullRow](
+        _path,
+        "xml",
+        _.xml,
+        Optional.empty(),
+        Optional.of("xml"),
+        (row, value) => row.copy(xml = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def boxes: OptField[Array[TypoBox], PgtestnullRow] = {
+      new OptField[Array[TypoBox], PgtestnullRow](
+        _path,
+        "boxes",
+        _.boxes,
+        Optional.empty(),
+        Optional.of("box[]"),
+        (row, value) => row.copy(boxes = value),
+        TypoBox.pgTypeArray
+      )
+    }
+
+    override def bpchares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
+      new OptField[Array[/* bpchar */ String], PgtestnullRow](
+        _path,
+        "bpchares",
+        _.bpchares,
+        Optional.empty(),
+        Optional.of("bpchar[]"),
+        (row, value) => row.copy(bpchares = value),
+        PgTypes.bpcharArray
+      )
+    }
+
+    override def chares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
+      new OptField[Array[/* bpchar */ String], PgtestnullRow](
+        _path,
+        "chares",
+        _.chares,
+        Optional.empty(),
+        Optional.of("bpchar[]"),
+        (row, value) => row.copy(chares = value),
+        PgTypes.bpcharArray
+      )
+    }
+
+    override def circlees: OptField[Array[TypoCircle], PgtestnullRow] = {
+      new OptField[Array[TypoCircle], PgtestnullRow](
+        _path,
+        "circlees",
+        _.circlees,
+        Optional.empty(),
+        Optional.of("circle[]"),
+        (row, value) => row.copy(circlees = value),
+        TypoCircle.pgTypeArray
+      )
+    }
+
+    override def datees: OptField[Array[TypoLocalDate], PgtestnullRow] = {
+      new OptField[Array[TypoLocalDate], PgtestnullRow](
+        _path,
+        "datees",
+        _.datees,
+        Optional.of("text[]"),
+        Optional.of("date[]"),
+        (row, value) => row.copy(datees = value),
+        TypoLocalDate.pgTypeArray
+      )
+    }
+
+    override def float4es: OptField[Array[java.lang.Float], PgtestnullRow] = {
+      new OptField[Array[java.lang.Float], PgtestnullRow](
+        _path,
+        "float4es",
+        _.float4es,
+        Optional.empty(),
+        Optional.of("float4[]"),
+        (row, value) => row.copy(float4es = value),
+        PgTypes.float4Array
+      )
+    }
+
+    override def float8es: OptField[Array[java.lang.Double], PgtestnullRow] = {
+      new OptField[Array[java.lang.Double], PgtestnullRow](
+        _path,
+        "float8es",
+        _.float8es,
+        Optional.empty(),
+        Optional.of("float8[]"),
+        (row, value) => row.copy(float8es = value),
+        PgTypes.float8Array
+      )
+    }
+
+    override def inetes: OptField[Array[TypoInet], PgtestnullRow] = {
+      new OptField[Array[TypoInet], PgtestnullRow](
+        _path,
+        "inetes",
+        _.inetes,
+        Optional.empty(),
+        Optional.of("inet[]"),
+        (row, value) => row.copy(inetes = value),
+        TypoInet.pgTypeArray
+      )
+    }
+
+    override def int2es: OptField[Array[TypoShort], PgtestnullRow] = {
+      new OptField[Array[TypoShort], PgtestnullRow](
+        _path,
+        "int2es",
+        _.int2es,
+        Optional.empty(),
+        Optional.of("int2[]"),
+        (row, value) => row.copy(int2es = value),
+        TypoShort.pgTypeArray
+      )
+    }
+
+    override def int2vectores: OptField[Array[TypoInt2Vector], PgtestnullRow] = {
+      new OptField[Array[TypoInt2Vector], PgtestnullRow](
+        _path,
+        "int2vectores",
+        _.int2vectores,
+        Optional.empty(),
+        Optional.of("int2vector[]"),
+        (row, value) => row.copy(int2vectores = value),
+        TypoInt2Vector.pgTypeArray
+      )
+    }
+
+    override def int4es: OptField[Array[Integer], PgtestnullRow] = {
+      new OptField[Array[Integer], PgtestnullRow](
+        _path,
+        "int4es",
+        _.int4es,
+        Optional.empty(),
+        Optional.of("int4[]"),
+        (row, value) => row.copy(int4es = value),
+        PgTypes.int4Array
+      )
+    }
+
+    override def int8es: OptField[Array[java.lang.Long], PgtestnullRow] = {
+      new OptField[Array[java.lang.Long], PgtestnullRow](
+        _path,
+        "int8es",
+        _.int8es,
+        Optional.empty(),
+        Optional.of("int8[]"),
+        (row, value) => row.copy(int8es = value),
+        PgTypes.int8Array
+      )
+    }
+
+    override def intervales: OptField[Array[TypoInterval], PgtestnullRow] = {
+      new OptField[Array[TypoInterval], PgtestnullRow](
+        _path,
+        "intervales",
+        _.intervales,
+        Optional.empty(),
+        Optional.of("interval[]"),
+        (row, value) => row.copy(intervales = value),
+        TypoInterval.pgTypeArray
+      )
+    }
+
+    override def jsones: OptField[Array[TypoJson], PgtestnullRow] = {
+      new OptField[Array[TypoJson], PgtestnullRow](
+        _path,
+        "jsones",
+        _.jsones,
+        Optional.empty(),
+        Optional.of("json[]"),
+        (row, value) => row.copy(jsones = value),
+        TypoJson.pgTypeArray
+      )
+    }
+
+    override def jsonbes: OptField[Array[TypoJsonb], PgtestnullRow] = {
+      new OptField[Array[TypoJsonb], PgtestnullRow](
+        _path,
+        "jsonbes",
+        _.jsonbes,
+        Optional.empty(),
+        Optional.of("jsonb[]"),
+        (row, value) => row.copy(jsonbes = value),
+        TypoJsonb.pgTypeArray
+      )
+    }
+
+    override def linees: OptField[Array[TypoLine], PgtestnullRow] = {
+      new OptField[Array[TypoLine], PgtestnullRow](
+        _path,
+        "linees",
+        _.linees,
+        Optional.empty(),
+        Optional.of("line[]"),
+        (row, value) => row.copy(linees = value),
+        TypoLine.pgTypeArray
+      )
+    }
+
+    override def lseges: OptField[Array[TypoLineSegment], PgtestnullRow] = {
+      new OptField[Array[TypoLineSegment], PgtestnullRow](
+        _path,
+        "lseges",
+        _.lseges,
+        Optional.empty(),
+        Optional.of("lseg[]"),
+        (row, value) => row.copy(lseges = value),
+        TypoLineSegment.pgTypeArray
+      )
+    }
+
+    override def moneyes: OptField[Array[TypoMoney], PgtestnullRow] = {
+      new OptField[Array[TypoMoney], PgtestnullRow](
+        _path,
+        "moneyes",
+        _.moneyes,
+        Optional.of("numeric[]"),
+        Optional.of("money[]"),
+        (row, value) => row.copy(moneyes = value),
+        TypoMoney.pgTypeArray
+      )
+    }
+
+    override def mydomaines: OptField[Array[Mydomain], PgtestnullRow] = {
+      new OptField[Array[Mydomain], PgtestnullRow](
+        _path,
+        "mydomaines",
+        _.mydomaines,
+        Optional.of("text[]"),
+        Optional.of("mydomain[]"),
+        (row, value) => row.copy(mydomaines = value),
+        Mydomain.pgTypeArray
+      )
+    }
+
+    override def myenumes: OptField[Array[Myenum], PgtestnullRow] = {
+      new OptField[Array[Myenum], PgtestnullRow](
+        _path,
+        "myenumes",
+        _.myenumes,
+        Optional.empty(),
+        Optional.of("myenum[]"),
+        (row, value) => row.copy(myenumes = value),
+        Myenum.pgTypeArray
+      )
+    }
+
+    override def namees: OptField[Array[String], PgtestnullRow] = {
+      new OptField[Array[String], PgtestnullRow](
+        _path,
+        "namees",
+        _.namees,
+        Optional.empty(),
+        Optional.of("name[]"),
+        (row, value) => row.copy(namees = value),
+        PgTypes.nameArray
+      )
+    }
+
+    override def numerices: OptField[Array[java.math.BigDecimal], PgtestnullRow] = {
+      new OptField[Array[java.math.BigDecimal], PgtestnullRow](
+        _path,
+        "numerices",
+        _.numerices,
+        Optional.empty(),
+        Optional.of("numeric[]"),
+        (row, value) => row.copy(numerices = value),
+        PgTypes.numericArray
+      )
+    }
+
+    override def pathes: OptField[Array[TypoPath], PgtestnullRow] = {
+      new OptField[Array[TypoPath], PgtestnullRow](
+        _path,
+        "pathes",
+        _.pathes,
+        Optional.empty(),
+        Optional.of("path[]"),
+        (row, value) => row.copy(pathes = value),
+        TypoPath.pgTypeArray
+      )
+    }
+
+    override def pointes: OptField[Array[TypoPoint], PgtestnullRow] = {
+      new OptField[Array[TypoPoint], PgtestnullRow](
+        _path,
+        "pointes",
+        _.pointes,
+        Optional.empty(),
+        Optional.of("point[]"),
+        (row, value) => row.copy(pointes = value),
+        TypoPoint.pgTypeArray
+      )
+    }
+
+    override def polygones: OptField[Array[TypoPolygon], PgtestnullRow] = {
+      new OptField[Array[TypoPolygon], PgtestnullRow](
+        _path,
+        "polygones",
+        _.polygones,
+        Optional.empty(),
+        Optional.of("polygon[]"),
+        (row, value) => row.copy(polygones = value),
+        TypoPolygon.pgTypeArray
+      )
+    }
+
+    override def textes: OptField[Array[String], PgtestnullRow] = {
+      new OptField[Array[String], PgtestnullRow](
+        _path,
+        "textes",
+        _.textes,
+        Optional.empty(),
+        Optional.of("text[]"),
+        (row, value) => row.copy(textes = value),
+        PgTypes.textArray
+      )
+    }
+
+    override def timees: OptField[Array[TypoLocalTime], PgtestnullRow] = {
+      new OptField[Array[TypoLocalTime], PgtestnullRow](
+        _path,
+        "timees",
+        _.timees,
+        Optional.of("text[]"),
+        Optional.of("time[]"),
+        (row, value) => row.copy(timees = value),
+        TypoLocalTime.pgTypeArray
+      )
+    }
+
+    override def timestampes: OptField[Array[TypoLocalDateTime], PgtestnullRow] = {
+      new OptField[Array[TypoLocalDateTime], PgtestnullRow](
+        _path,
+        "timestampes",
+        _.timestampes,
+        Optional.of("text[]"),
+        Optional.of("timestamp[]"),
+        (row, value) => row.copy(timestampes = value),
+        TypoLocalDateTime.pgTypeArray
+      )
+    }
+
+    override def timestampzes: OptField[Array[TypoInstant], PgtestnullRow] = {
+      new OptField[Array[TypoInstant], PgtestnullRow](
+        _path,
+        "timestampzes",
+        _.timestampzes,
+        Optional.of("text[]"),
+        Optional.of("timestamptz[]"),
+        (row, value) => row.copy(timestampzes = value),
+        TypoInstant.pgTypeArray
+      )
+    }
+
+    override def timezes: OptField[Array[TypoOffsetTime], PgtestnullRow] = {
+      new OptField[Array[TypoOffsetTime], PgtestnullRow](
+        _path,
+        "timezes",
+        _.timezes,
+        Optional.of("text[]"),
+        Optional.of("timetz[]"),
+        (row, value) => row.copy(timezes = value),
+        TypoOffsetTime.pgTypeArray
+      )
+    }
+
+    override def uuides: OptField[Array[TypoUUID], PgtestnullRow] = {
+      new OptField[Array[TypoUUID], PgtestnullRow](
+        _path,
+        "uuides",
+        _.uuides,
+        Optional.empty(),
+        Optional.of("uuid[]"),
+        (row, value) => row.copy(uuides = value),
+        TypoUUID.pgTypeArray
+      )
+    }
+
+    override def varchares: OptField[Array[String], PgtestnullRow] = {
+      new OptField[Array[String], PgtestnullRow](
+        _path,
+        "varchares",
+        _.varchares,
+        Optional.empty(),
+        Optional.of("varchar[]"),
+        (row, value) => row.copy(varchares = value),
+        PgTypes.textArray
+      )
+    }
+
+    override def xmles: OptField[Array[TypoXml], PgtestnullRow] = {
+      new OptField[Array[TypoXml], PgtestnullRow](
+        _path,
+        "xmles",
+        _.xmles,
+        Optional.empty(),
+        Optional.of("xml[]"),
+        (row, value) => row.copy(xmles = value),
+        TypoXml.pgTypeArray
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PgtestnullRow]] = java.util.List.of(this.bool, this.box, this.bpchar, this.bytea, this.char, this.circle, this.date, this.float4, this.float8, this.hstore, this.inet, this.int2, this.int2vector, this.int4, this.int8, this.interval, this.json, this.jsonb, this.line, this.lseg, this.money, this.mydomain, this.myenum, this.name, this.numeric, this.path, this.point, this.polygon, this.text, this.time, this.timestamp, this.timestampz, this.timez, this.uuid, this.varchar, this.vector, this.xml, this.boxes, this.bpchares, this.chares, this.circlees, this.datees, this.float4es, this.float8es, this.inetes, this.int2es, this.int2vectores, this.int4es, this.int8es, this.intervales, this.jsones, this.jsonbes, this.linees, this.lseges, this.moneyes, this.mydomaines, this.myenumes, this.namees, this.numerices, this.pathes, this.pointes, this.polygones, this.textes, this.timees, this.timestampes, this.timestampzes, this.timezes, this.uuides, this.varchares, this.xmles)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PgtestnullFields, PgtestnullRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PgtestnullFields, PgtestnullRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

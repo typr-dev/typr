@@ -9,12 +9,14 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CustomCreditcardId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait PccViewFields {
+trait PccViewFields extends FieldsExpr[PccViewRow] {
   def id: Field[BusinessentityId, PccViewRow]
 
   def businessentityid: Field[BusinessentityId, PccViewRow]
@@ -22,64 +24,67 @@ trait PccViewFields {
   def creditcardid: Field[/* user-picked */ CustomCreditcardId, PccViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PccViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PccViewRow]]
+
+  override def rowParser: RowParser[PccViewRow] = PccViewRow._rowParser
 }
 
 object PccViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PccViewFields, PccViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PccViewFields with Relation[PccViewFields, PccViewRow] {
 
-    override lazy val fields: PccViewFields = {
-      new PccViewFields {
-        override def id: Field[BusinessentityId, PccViewRow] = {
-          new Field[BusinessentityId, PccViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, PccViewRow] = {
-          new Field[BusinessentityId, PccViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def creditcardid: Field[/* user-picked */ CustomCreditcardId, PccViewRow] = {
-          new Field[/* user-picked */ CustomCreditcardId, PccViewRow](
-            _path,
-            "creditcardid",
-            _.creditcardid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(creditcardid = value),
-            CustomCreditcardId.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PccViewRow] = {
-          new Field[TypoLocalDateTime, PccViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, PccViewRow] = {
+      new Field[BusinessentityId, PccViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PccViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.creditcardid, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, PccViewRow] = {
+      new Field[BusinessentityId, PccViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def creditcardid: Field[/* user-picked */ CustomCreditcardId, PccViewRow] = {
+      new Field[/* user-picked */ CustomCreditcardId, PccViewRow](
+        _path,
+        "creditcardid",
+        _.creditcardid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(creditcardid = value),
+        CustomCreditcardId.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PccViewRow] = {
+      new Field[TypoLocalDateTime, PccViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PccViewRow]] = java.util.List.of(this.id, this.businessentityid, this.creditcardid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PccViewFields, PccViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PccViewFields, PccViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

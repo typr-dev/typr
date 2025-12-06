@@ -163,6 +163,10 @@ object minimize {
               extends_.foreach(goTree)
               superArgs.foreach(goTree)
               members.foreach(goTree)
+            case jvm.NestedRecord(_, _, params, implements, members) =>
+              params.foreach(goTree)
+              implements.foreach(goTree)
+              members.foreach(goTree)
             case jvm.Adt.Record(_, _, _, _, _, tparams, params, implicitParams, extends_, implements, members, staticMembers) =>
               tparams.foreach(goTree)
               params.foreach(goTree)

@@ -31,5 +31,5 @@ case class SciViewRow(
 )
 
 object SciViewRow {
-  val `_rowParser`: RowParser[SciViewRow] = RowParsers.of(ShoppingcartitemId.pgType, ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, SciViewRow.apply, row => Array(row.id, row.shoppingcartitemid, row.shoppingcartid, row.quantity, row.productid, row.datecreated, row.modifieddate))
+  val `_rowParser`: RowParser[SciViewRow] = RowParsers.of(ShoppingcartitemId.pgType, ShoppingcartitemId.pgType, PgTypes.text, PgTypes.int4, ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType, SciViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.shoppingcartitemid.asInstanceOf[Object], row.shoppingcartid.asInstanceOf[Object], row.quantity.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.datecreated.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

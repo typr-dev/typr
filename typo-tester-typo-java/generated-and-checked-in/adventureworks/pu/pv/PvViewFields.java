@@ -12,85 +12,89 @@ import adventureworks.production.unitmeasure.UnitmeasureId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface PvViewFields {
-  final class Impl extends Relation<PvViewFields, PvViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface PvViewFields extends FieldsExpr<PvViewRow> {
+  record Impl(List<Path> _path) implements PvViewFields, Relation<PvViewFields, PvViewRow> {
+    @Override
+    public Field<ProductId, PvViewRow> id() {
+      return new Field<ProductId, PvViewRow>(_path, "id", PvViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
+    };
 
     @Override
-    public PvViewFields fields() {
-      return new PvViewFields() {
-               @Override
-               public Field<ProductId, PvViewRow> id() {
-                 return new Field<ProductId, PvViewRow>(_path, "id", PvViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), ProductId.pgType);
-               };
-               @Override
-               public Field<ProductId, PvViewRow> productid() {
-                 return new Field<ProductId, PvViewRow>(_path, "productid", PvViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public Field<BusinessentityId, PvViewRow> businessentityid() {
-                 return new Field<BusinessentityId, PvViewRow>(_path, "businessentityid", PvViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<Integer, PvViewRow> averageleadtime() {
-                 return new Field<Integer, PvViewRow>(_path, "averageleadtime", PvViewRow::averageleadtime, Optional.empty(), Optional.empty(), (row, value) -> row.withAverageleadtime(value), PgTypes.int4);
-               };
-               @Override
-               public Field<BigDecimal, PvViewRow> standardprice() {
-                 return new Field<BigDecimal, PvViewRow>(_path, "standardprice", PvViewRow::standardprice, Optional.empty(), Optional.empty(), (row, value) -> row.withStandardprice(value), PgTypes.numeric);
-               };
-               @Override
-               public OptField<BigDecimal, PvViewRow> lastreceiptcost() {
-                 return new OptField<BigDecimal, PvViewRow>(_path, "lastreceiptcost", PvViewRow::lastreceiptcost, Optional.empty(), Optional.empty(), (row, value) -> row.withLastreceiptcost(value), PgTypes.numeric);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, PvViewRow> lastreceiptdate() {
-                 return new OptField<TypoLocalDateTime, PvViewRow>(_path, "lastreceiptdate", PvViewRow::lastreceiptdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withLastreceiptdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<Integer, PvViewRow> minorderqty() {
-                 return new Field<Integer, PvViewRow>(_path, "minorderqty", PvViewRow::minorderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withMinorderqty(value), PgTypes.int4);
-               };
-               @Override
-               public Field<Integer, PvViewRow> maxorderqty() {
-                 return new Field<Integer, PvViewRow>(_path, "maxorderqty", PvViewRow::maxorderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withMaxorderqty(value), PgTypes.int4);
-               };
-               @Override
-               public OptField<Integer, PvViewRow> onorderqty() {
-                 return new OptField<Integer, PvViewRow>(_path, "onorderqty", PvViewRow::onorderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withOnorderqty(value), PgTypes.int4);
-               };
-               @Override
-               public Field<UnitmeasureId, PvViewRow> unitmeasurecode() {
-                 return new Field<UnitmeasureId, PvViewRow>(_path, "unitmeasurecode", PvViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, PvViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, PvViewRow>(_path, "modifieddate", PvViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<ProductId, PvViewRow> productid() {
+      return new Field<ProductId, PvViewRow>(_path, "productid", PvViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
+
+    @Override
+    public Field<BusinessentityId, PvViewRow> businessentityid() {
+      return new Field<BusinessentityId, PvViewRow>(_path, "businessentityid", PvViewRow::businessentityid, Optional.empty(), Optional.empty(), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<Integer, PvViewRow> averageleadtime() {
+      return new Field<Integer, PvViewRow>(_path, "averageleadtime", PvViewRow::averageleadtime, Optional.empty(), Optional.empty(), (row, value) -> row.withAverageleadtime(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<BigDecimal, PvViewRow> standardprice() {
+      return new Field<BigDecimal, PvViewRow>(_path, "standardprice", PvViewRow::standardprice, Optional.empty(), Optional.empty(), (row, value) -> row.withStandardprice(value), PgTypes.numeric);
+    };
+
+    @Override
+    public OptField<BigDecimal, PvViewRow> lastreceiptcost() {
+      return new OptField<BigDecimal, PvViewRow>(_path, "lastreceiptcost", PvViewRow::lastreceiptcost, Optional.empty(), Optional.empty(), (row, value) -> row.withLastreceiptcost(value), PgTypes.numeric);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, PvViewRow> lastreceiptdate() {
+      return new OptField<TypoLocalDateTime, PvViewRow>(_path, "lastreceiptdate", PvViewRow::lastreceiptdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withLastreceiptdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<Integer, PvViewRow> minorderqty() {
+      return new Field<Integer, PvViewRow>(_path, "minorderqty", PvViewRow::minorderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withMinorderqty(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<Integer, PvViewRow> maxorderqty() {
+      return new Field<Integer, PvViewRow>(_path, "maxorderqty", PvViewRow::maxorderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withMaxorderqty(value), PgTypes.int4);
+    };
+
+    @Override
+    public OptField<Integer, PvViewRow> onorderqty() {
+      return new OptField<Integer, PvViewRow>(_path, "onorderqty", PvViewRow::onorderqty, Optional.empty(), Optional.empty(), (row, value) -> row.withOnorderqty(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<UnitmeasureId, PvViewRow> unitmeasurecode() {
+      return new Field<UnitmeasureId, PvViewRow>(_path, "unitmeasurecode", PvViewRow::unitmeasurecode, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, PvViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, PvViewRow>(_path, "modifieddate", PvViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, PvViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().productid(), this.fields().businessentityid(), this.fields().averageleadtime(), this.fields().standardprice(), this.fields().lastreceiptcost(), this.fields().lastreceiptdate(), this.fields().minorderqty(), this.fields().maxorderqty(), this.fields().onorderqty(), this.fields().unitmeasurecode(), this.fields().modifieddate());
+      return List.of(this.id(), this.productid(), this.businessentityid(), this.averageleadtime(), this.standardprice(), this.lastreceiptcost(), this.lastreceiptdate(), this.minorderqty(), this.maxorderqty(), this.onorderqty(), this.unitmeasurecode(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<PvViewFields, PvViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<PvViewFields, PvViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -117,4 +121,12 @@ public interface PvViewFields {
   Field<UnitmeasureId, PvViewRow> unitmeasurecode();
 
   Field<TypoLocalDateTime, PvViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, PvViewRow>> columns();
+
+  @Override
+  default RowParser<PvViewRow> rowParser() {
+    return PvViewRow._rowParser;
+  };
 }

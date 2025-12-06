@@ -115,7 +115,22 @@ public sealed interface OrderByOrSeek<Fields, T> {
     record ExpandResult(
         List<SqlExpr<Boolean>> filters,
         List<SortOrder<?>> orderBys
-    ) {}
+    ) {
+        /**
+         * Combine all filters into a single expression using AND.
+         * Returns Optional.empty() if there are no filters.
+         */
+        public Optional<SqlExpr<Boolean>> combinedFilter() {
+            if (filters.isEmpty()) {
+                return Optional.empty();
+            }
+            SqlExpr<Boolean> combined = filters.getFirst();
+            for (int i = 1; i < filters.size(); i++) {
+                combined = combined.and(filters.get(i), Bijection.asBool());
+            }
+            return Optional.of(combined);
+        }
+    }
     
     // Helper methods that work with wildcards by delegating to properly typed methods
     @SuppressWarnings("unchecked")

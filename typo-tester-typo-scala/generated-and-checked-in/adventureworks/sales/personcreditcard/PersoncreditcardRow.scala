@@ -37,7 +37,7 @@ case class PersoncreditcardRow(
 }
 
 object PersoncreditcardRow {
-  val `_rowParser`: RowParser[PersoncreditcardRow] = RowParsers.of(BusinessentityId.pgType, CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PersoncreditcardRow.apply, row => Array(row.businessentityid, row.creditcardid, row.modifieddate))
+  val `_rowParser`: RowParser[PersoncreditcardRow] = RowParsers.of(BusinessentityId.pgType, CustomCreditcardId.pgType, TypoLocalDateTime.pgType, PersoncreditcardRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.creditcardid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: PersoncreditcardId,

@@ -15,6 +15,7 @@ import adventureworks.sales.salesterritory.SalesterritoryId;
 import adventureworks.sales.salesterritory.SalesterritoryRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -25,55 +26,52 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface SalesterritoryhistoryFields {
-  final class Impl extends Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SalesterritoryhistoryFields extends FieldsExpr<SalesterritoryhistoryRow> {
+  record Impl(List<Path> _path) implements SalesterritoryhistoryFields, Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> {
+    @Override
+    public IdField<BusinessentityId, SalesterritoryhistoryRow> businessentityid() {
+      return new IdField<BusinessentityId, SalesterritoryhistoryRow>(_path, "businessentityid", SalesterritoryhistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
 
     @Override
-    public SalesterritoryhistoryFields fields() {
-      return new SalesterritoryhistoryFields() {
-               @Override
-               public IdField<BusinessentityId, SalesterritoryhistoryRow> businessentityid() {
-                 return new IdField<BusinessentityId, SalesterritoryhistoryRow>(_path, "businessentityid", SalesterritoryhistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public IdField<SalesterritoryId, SalesterritoryhistoryRow> territoryid() {
-                 return new IdField<SalesterritoryId, SalesterritoryhistoryRow>(_path, "territoryid", SalesterritoryhistoryRow::territoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
-               };
-               @Override
-               public IdField<TypoLocalDateTime, SalesterritoryhistoryRow> startdate() {
-                 return new IdField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "startdate", SalesterritoryhistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, SalesterritoryhistoryRow> enddate() {
-                 return new OptField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "enddate", SalesterritoryhistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<TypoUUID, SalesterritoryhistoryRow> rowguid() {
-                 return new Field<TypoUUID, SalesterritoryhistoryRow>(_path, "rowguid", SalesterritoryhistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SalesterritoryhistoryRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "modifieddate", SalesterritoryhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<SalesterritoryId, SalesterritoryhistoryRow> territoryid() {
+      return new IdField<SalesterritoryId, SalesterritoryhistoryRow>(_path, "territoryid", SalesterritoryhistoryRow::territoryid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withTerritoryid(value), SalesterritoryId.pgType);
+    };
+
+    @Override
+    public IdField<TypoLocalDateTime, SalesterritoryhistoryRow> startdate() {
+      return new IdField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "startdate", SalesterritoryhistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, SalesterritoryhistoryRow> enddate() {
+      return new OptField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "enddate", SalesterritoryhistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, SalesterritoryhistoryRow> rowguid() {
+      return new Field<TypoUUID, SalesterritoryhistoryRow>(_path, "rowguid", SalesterritoryhistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SalesterritoryhistoryRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "modifieddate", SalesterritoryhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SalesterritoryhistoryRow>> columns() {
-      return List.of(this.fields().businessentityid(), this.fields().territoryid(), this.fields().startdate(), this.fields().enddate(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.businessentityid(), this.territoryid(), this.startdate(), this.enddate(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -103,5 +101,13 @@ public interface SalesterritoryhistoryFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<SalesterritoryhistoryId> compositeIds) {
     return new CompositeIn(List.of(new Part<BusinessentityId, SalesterritoryhistoryId, SalesterritoryhistoryRow>(businessentityid(), SalesterritoryhistoryId::businessentityid, BusinessentityId.pgType), new Part<TypoLocalDateTime, SalesterritoryhistoryId, SalesterritoryhistoryRow>(startdate(), SalesterritoryhistoryId::startdate, TypoLocalDateTime.pgType), new Part<SalesterritoryId, SalesterritoryhistoryId, SalesterritoryhistoryRow>(territoryid(), SalesterritoryhistoryId::territoryid, SalesterritoryId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, SalesterritoryhistoryRow>> columns();
+
+  @Override
+  default RowParser<SalesterritoryhistoryRow> rowParser() {
+    return SalesterritoryhistoryRow._rowParser;
   };
 }

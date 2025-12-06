@@ -9,14 +9,16 @@ import java.time.LocalDateTime
 import java.util.Optional
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait VCustomerSummaryViewFields {
+trait VCustomerSummaryViewFields extends FieldsExpr[VCustomerSummaryViewRow] {
   def customerId: Field[CustomersId, VCustomerSummaryViewRow]
 
   def email: Field[String, VCustomerSummaryViewRow]
@@ -36,130 +38,139 @@ trait VCustomerSummaryViewFields {
   def lifetimeValue: Field[java.math.BigDecimal, VCustomerSummaryViewRow]
 
   def lastOrderDate: OptField[LocalDateTime, VCustomerSummaryViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VCustomerSummaryViewRow]]
+
+  override def rowParser: RowParser[VCustomerSummaryViewRow] = VCustomerSummaryViewRow._rowParser
 }
 
 object VCustomerSummaryViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VCustomerSummaryViewFields, VCustomerSummaryViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VCustomerSummaryViewFields with Relation[VCustomerSummaryViewFields, VCustomerSummaryViewRow] {
 
-    override lazy val fields: VCustomerSummaryViewFields = {
-      new VCustomerSummaryViewFields {
-        override def customerId: Field[CustomersId, VCustomerSummaryViewRow] = {
-          new Field[CustomersId, VCustomerSummaryViewRow](
-            _path,
-            "customer_id",
-            _.customerId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(customerId = value),
-            CustomersId.pgType
-          )
-        }
-        override def email: Field[String, VCustomerSummaryViewRow] = {
-          new Field[String, VCustomerSummaryViewRow](
-            _path,
-            "email",
-            _.email,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(email = value),
-            MariaTypes.varchar
-          )
-        }
-        override def fullName: OptField[String, VCustomerSummaryViewRow] = {
-          new OptField[String, VCustomerSummaryViewRow](
-            _path,
-            "full_name",
-            _.fullName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(fullName = value),
-            MariaTypes.varchar
-          )
-        }
-        override def tier: Field[String, VCustomerSummaryViewRow] = {
-          new Field[String, VCustomerSummaryViewRow](
-            _path,
-            "tier",
-            _.tier,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(tier = value),
-            MariaTypes.text
-          )
-        }
-        override def status: Field[CustomerStatusId, VCustomerSummaryViewRow] = {
-          new Field[CustomerStatusId, VCustomerSummaryViewRow](
-            _path,
-            "status",
-            _.status,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(status = value),
-            CustomerStatusId.pgType
-          )
-        }
-        override def createdAt: Field[LocalDateTime, VCustomerSummaryViewRow] = {
-          new Field[LocalDateTime, VCustomerSummaryViewRow](
-            _path,
-            "created_at",
-            _.createdAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(createdAt = value),
-            MariaTypes.datetime
-          )
-        }
-        override def lastLoginAt: OptField[LocalDateTime, VCustomerSummaryViewRow] = {
-          new OptField[LocalDateTime, VCustomerSummaryViewRow](
-            _path,
-            "last_login_at",
-            _.lastLoginAt,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastLoginAt = value),
-            MariaTypes.datetime
-          )
-        }
-        override def totalOrders: Field[java.lang.Long, VCustomerSummaryViewRow] = {
-          new Field[java.lang.Long, VCustomerSummaryViewRow](
-            _path,
-            "total_orders",
-            _.totalOrders,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(totalOrders = value),
-            MariaTypes.bigint
-          )
-        }
-        override def lifetimeValue: Field[java.math.BigDecimal, VCustomerSummaryViewRow] = {
-          new Field[java.math.BigDecimal, VCustomerSummaryViewRow](
-            _path,
-            "lifetime_value",
-            _.lifetimeValue,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lifetimeValue = value),
-            MariaTypes.decimal
-          )
-        }
-        override def lastOrderDate: OptField[LocalDateTime, VCustomerSummaryViewRow] = {
-          new OptField[LocalDateTime, VCustomerSummaryViewRow](
-            _path,
-            "last_order_date",
-            _.lastOrderDate,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastOrderDate = value),
-            MariaTypes.datetime
-          )
-        }
-      }
+    override def customerId: Field[CustomersId, VCustomerSummaryViewRow] = {
+      new Field[CustomersId, VCustomerSummaryViewRow](
+        _path,
+        "customer_id",
+        _.customerId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(customerId = value),
+        CustomersId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VCustomerSummaryViewRow]] = java.util.List.of(this.fields.customerId, this.fields.email, this.fields.fullName, this.fields.tier, this.fields.status, this.fields.createdAt, this.fields.lastLoginAt, this.fields.totalOrders, this.fields.lifetimeValue, this.fields.lastOrderDate)
+    override def email: Field[String, VCustomerSummaryViewRow] = {
+      new Field[String, VCustomerSummaryViewRow](
+        _path,
+        "email",
+        _.email,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(email = value),
+        MariaTypes.varchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def fullName: OptField[String, VCustomerSummaryViewRow] = {
+      new OptField[String, VCustomerSummaryViewRow](
+        _path,
+        "full_name",
+        _.fullName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(fullName = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def tier: Field[String, VCustomerSummaryViewRow] = {
+      new Field[String, VCustomerSummaryViewRow](
+        _path,
+        "tier",
+        _.tier,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(tier = value),
+        MariaTypes.text
+      )
+    }
+
+    override def status: Field[CustomerStatusId, VCustomerSummaryViewRow] = {
+      new Field[CustomerStatusId, VCustomerSummaryViewRow](
+        _path,
+        "status",
+        _.status,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(status = value),
+        CustomerStatusId.pgType
+      )
+    }
+
+    override def createdAt: Field[LocalDateTime, VCustomerSummaryViewRow] = {
+      new Field[LocalDateTime, VCustomerSummaryViewRow](
+        _path,
+        "created_at",
+        _.createdAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(createdAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def lastLoginAt: OptField[LocalDateTime, VCustomerSummaryViewRow] = {
+      new OptField[LocalDateTime, VCustomerSummaryViewRow](
+        _path,
+        "last_login_at",
+        _.lastLoginAt,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastLoginAt = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def totalOrders: Field[java.lang.Long, VCustomerSummaryViewRow] = {
+      new Field[java.lang.Long, VCustomerSummaryViewRow](
+        _path,
+        "total_orders",
+        _.totalOrders,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(totalOrders = value),
+        MariaTypes.bigint
+      )
+    }
+
+    override def lifetimeValue: Field[java.math.BigDecimal, VCustomerSummaryViewRow] = {
+      new Field[java.math.BigDecimal, VCustomerSummaryViewRow](
+        _path,
+        "lifetime_value",
+        _.lifetimeValue,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lifetimeValue = value),
+        MariaTypes.decimal
+      )
+    }
+
+    override def lastOrderDate: OptField[LocalDateTime, VCustomerSummaryViewRow] = {
+      new OptField[LocalDateTime, VCustomerSummaryViewRow](
+        _path,
+        "last_order_date",
+        _.lastOrderDate,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastOrderDate = value),
+        MariaTypes.datetime
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VCustomerSummaryViewRow]] = java.util.List.of(this.customerId, this.email, this.fullName, this.tier, this.status, this.createdAt, this.lastLoginAt, this.totalOrders, this.lifetimeValue, this.lastOrderDate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VCustomerSummaryViewFields, VCustomerSummaryViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VCustomerSummaryViewFields, VCustomerSummaryViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

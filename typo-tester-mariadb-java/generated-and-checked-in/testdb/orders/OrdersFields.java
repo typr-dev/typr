@@ -19,6 +19,7 @@ import testdb.promotions.PromotionsFields;
 import testdb.promotions.PromotionsId;
 import testdb.promotions.PromotionsRow;
 import typo.data.maria.Inet6;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -27,119 +28,132 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface OrdersFields {
-  final class Impl extends Relation<OrdersFields, OrdersRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface OrdersFields extends FieldsExpr<OrdersRow> {
+  record Impl(List<Path> _path) implements OrdersFields, Relation<OrdersFields, OrdersRow> {
+    @Override
+    public IdField<OrdersId, OrdersRow> orderId() {
+      return new IdField<OrdersId, OrdersRow>(_path, "order_id", OrdersRow::orderId, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderId(value), OrdersId.pgType);
+    };
 
     @Override
-    public OrdersFields fields() {
-      return new OrdersFields() {
-               @Override
-               public IdField<OrdersId, OrdersRow> orderId() {
-                 return new IdField<OrdersId, OrdersRow>(_path, "order_id", OrdersRow::orderId, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderId(value), OrdersId.pgType);
-               };
-               @Override
-               public Field<String, OrdersRow> orderNumber() {
-                 return new Field<String, OrdersRow>(_path, "order_number", OrdersRow::orderNumber, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderNumber(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<CustomersId, OrdersRow> customerId() {
-                 return new Field<CustomersId, OrdersRow>(_path, "customer_id", OrdersRow::customerId, Optional.empty(), Optional.empty(), (row, value) -> row.withCustomerId(value), CustomersId.pgType);
-               };
-               @Override
-               public Field<String, OrdersRow> orderStatus() {
-                 return new Field<String, OrdersRow>(_path, "order_status", OrdersRow::orderStatus, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderStatus(value), MariaTypes.text);
-               };
-               @Override
-               public Field<String, OrdersRow> paymentStatus() {
-                 return new Field<String, OrdersRow>(_path, "payment_status", OrdersRow::paymentStatus, Optional.empty(), Optional.empty(), (row, value) -> row.withPaymentStatus(value), MariaTypes.text);
-               };
-               @Override
-               public OptField<CustomerAddressesId, OrdersRow> shippingAddressId() {
-                 return new OptField<CustomerAddressesId, OrdersRow>(_path, "shipping_address_id", OrdersRow::shippingAddressId, Optional.empty(), Optional.empty(), (row, value) -> row.withShippingAddressId(value), CustomerAddressesId.pgType);
-               };
-               @Override
-               public OptField<CustomerAddressesId, OrdersRow> billingAddressId() {
-                 return new OptField<CustomerAddressesId, OrdersRow>(_path, "billing_address_id", OrdersRow::billingAddressId, Optional.empty(), Optional.empty(), (row, value) -> row.withBillingAddressId(value), CustomerAddressesId.pgType);
-               };
-               @Override
-               public Field<BigDecimal, OrdersRow> subtotal() {
-                 return new Field<BigDecimal, OrdersRow>(_path, "subtotal", OrdersRow::subtotal, Optional.empty(), Optional.empty(), (row, value) -> row.withSubtotal(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<BigDecimal, OrdersRow> shippingCost() {
-                 return new Field<BigDecimal, OrdersRow>(_path, "shipping_cost", OrdersRow::shippingCost, Optional.empty(), Optional.empty(), (row, value) -> row.withShippingCost(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<BigDecimal, OrdersRow> taxAmount() {
-                 return new Field<BigDecimal, OrdersRow>(_path, "tax_amount", OrdersRow::taxAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxAmount(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<BigDecimal, OrdersRow> discountAmount() {
-                 return new Field<BigDecimal, OrdersRow>(_path, "discount_amount", OrdersRow::discountAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountAmount(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<BigDecimal, OrdersRow> totalAmount() {
-                 return new Field<BigDecimal, OrdersRow>(_path, "total_amount", OrdersRow::totalAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withTotalAmount(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<String, OrdersRow> currencyCode() {
-                 return new Field<String, OrdersRow>(_path, "currency_code", OrdersRow::currencyCode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencyCode(value), MariaTypes.char_);
-               };
-               @Override
-               public OptField<PromotionsId, OrdersRow> promotionId() {
-                 return new OptField<PromotionsId, OrdersRow>(_path, "promotion_id", OrdersRow::promotionId, Optional.empty(), Optional.empty(), (row, value) -> row.withPromotionId(value), PromotionsId.pgType);
-               };
-               @Override
-               public OptField<String, OrdersRow> notes() {
-                 return new OptField<String, OrdersRow>(_path, "notes", OrdersRow::notes, Optional.empty(), Optional.empty(), (row, value) -> row.withNotes(value), MariaTypes.text);
-               };
-               @Override
-               public OptField<String, OrdersRow> internalNotes() {
-                 return new OptField<String, OrdersRow>(_path, "internal_notes", OrdersRow::internalNotes, Optional.empty(), Optional.empty(), (row, value) -> row.withInternalNotes(value), MariaTypes.mediumtext);
-               };
-               @Override
-               public OptField<Inet6, OrdersRow> ipAddress() {
-                 return new OptField<Inet6, OrdersRow>(_path, "ip_address", OrdersRow::ipAddress, Optional.empty(), Optional.empty(), (row, value) -> row.withIpAddress(value), MariaTypes.inet6);
-               };
-               @Override
-               public OptField<String, OrdersRow> userAgent() {
-                 return new OptField<String, OrdersRow>(_path, "user_agent", OrdersRow::userAgent, Optional.empty(), Optional.empty(), (row, value) -> row.withUserAgent(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<LocalDateTime, OrdersRow> orderedAt() {
-                 return new Field<LocalDateTime, OrdersRow>(_path, "ordered_at", OrdersRow::orderedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderedAt(value), MariaTypes.datetime);
-               };
-               @Override
-               public OptField<LocalDateTime, OrdersRow> confirmedAt() {
-                 return new OptField<LocalDateTime, OrdersRow>(_path, "confirmed_at", OrdersRow::confirmedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withConfirmedAt(value), MariaTypes.datetime);
-               };
-               @Override
-               public OptField<LocalDateTime, OrdersRow> shippedAt() {
-                 return new OptField<LocalDateTime, OrdersRow>(_path, "shipped_at", OrdersRow::shippedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withShippedAt(value), MariaTypes.datetime);
-               };
-               @Override
-               public OptField<LocalDateTime, OrdersRow> deliveredAt() {
-                 return new OptField<LocalDateTime, OrdersRow>(_path, "delivered_at", OrdersRow::deliveredAt, Optional.empty(), Optional.empty(), (row, value) -> row.withDeliveredAt(value), MariaTypes.datetime);
-               };
-             };
+    public Field<String, OrdersRow> orderNumber() {
+      return new Field<String, OrdersRow>(_path, "order_number", OrdersRow::orderNumber, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderNumber(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<CustomersId, OrdersRow> customerId() {
+      return new Field<CustomersId, OrdersRow>(_path, "customer_id", OrdersRow::customerId, Optional.empty(), Optional.empty(), (row, value) -> row.withCustomerId(value), CustomersId.pgType);
+    };
+
+    @Override
+    public Field<String, OrdersRow> orderStatus() {
+      return new Field<String, OrdersRow>(_path, "order_status", OrdersRow::orderStatus, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderStatus(value), MariaTypes.text);
+    };
+
+    @Override
+    public Field<String, OrdersRow> paymentStatus() {
+      return new Field<String, OrdersRow>(_path, "payment_status", OrdersRow::paymentStatus, Optional.empty(), Optional.empty(), (row, value) -> row.withPaymentStatus(value), MariaTypes.text);
+    };
+
+    @Override
+    public OptField<CustomerAddressesId, OrdersRow> shippingAddressId() {
+      return new OptField<CustomerAddressesId, OrdersRow>(_path, "shipping_address_id", OrdersRow::shippingAddressId, Optional.empty(), Optional.empty(), (row, value) -> row.withShippingAddressId(value), CustomerAddressesId.pgType);
+    };
+
+    @Override
+    public OptField<CustomerAddressesId, OrdersRow> billingAddressId() {
+      return new OptField<CustomerAddressesId, OrdersRow>(_path, "billing_address_id", OrdersRow::billingAddressId, Optional.empty(), Optional.empty(), (row, value) -> row.withBillingAddressId(value), CustomerAddressesId.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, OrdersRow> subtotal() {
+      return new Field<BigDecimal, OrdersRow>(_path, "subtotal", OrdersRow::subtotal, Optional.empty(), Optional.empty(), (row, value) -> row.withSubtotal(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<BigDecimal, OrdersRow> shippingCost() {
+      return new Field<BigDecimal, OrdersRow>(_path, "shipping_cost", OrdersRow::shippingCost, Optional.empty(), Optional.empty(), (row, value) -> row.withShippingCost(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<BigDecimal, OrdersRow> taxAmount() {
+      return new Field<BigDecimal, OrdersRow>(_path, "tax_amount", OrdersRow::taxAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxAmount(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<BigDecimal, OrdersRow> discountAmount() {
+      return new Field<BigDecimal, OrdersRow>(_path, "discount_amount", OrdersRow::discountAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountAmount(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<BigDecimal, OrdersRow> totalAmount() {
+      return new Field<BigDecimal, OrdersRow>(_path, "total_amount", OrdersRow::totalAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withTotalAmount(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<String, OrdersRow> currencyCode() {
+      return new Field<String, OrdersRow>(_path, "currency_code", OrdersRow::currencyCode, Optional.empty(), Optional.empty(), (row, value) -> row.withCurrencyCode(value), MariaTypes.char_);
+    };
+
+    @Override
+    public OptField<PromotionsId, OrdersRow> promotionId() {
+      return new OptField<PromotionsId, OrdersRow>(_path, "promotion_id", OrdersRow::promotionId, Optional.empty(), Optional.empty(), (row, value) -> row.withPromotionId(value), PromotionsId.pgType);
+    };
+
+    @Override
+    public OptField<String, OrdersRow> notes() {
+      return new OptField<String, OrdersRow>(_path, "notes", OrdersRow::notes, Optional.empty(), Optional.empty(), (row, value) -> row.withNotes(value), MariaTypes.text);
+    };
+
+    @Override
+    public OptField<String, OrdersRow> internalNotes() {
+      return new OptField<String, OrdersRow>(_path, "internal_notes", OrdersRow::internalNotes, Optional.empty(), Optional.empty(), (row, value) -> row.withInternalNotes(value), MariaTypes.mediumtext);
+    };
+
+    @Override
+    public OptField<Inet6, OrdersRow> ipAddress() {
+      return new OptField<Inet6, OrdersRow>(_path, "ip_address", OrdersRow::ipAddress, Optional.empty(), Optional.empty(), (row, value) -> row.withIpAddress(value), MariaTypes.inet6);
+    };
+
+    @Override
+    public OptField<String, OrdersRow> userAgent() {
+      return new OptField<String, OrdersRow>(_path, "user_agent", OrdersRow::userAgent, Optional.empty(), Optional.empty(), (row, value) -> row.withUserAgent(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<LocalDateTime, OrdersRow> orderedAt() {
+      return new Field<LocalDateTime, OrdersRow>(_path, "ordered_at", OrdersRow::orderedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderedAt(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public OptField<LocalDateTime, OrdersRow> confirmedAt() {
+      return new OptField<LocalDateTime, OrdersRow>(_path, "confirmed_at", OrdersRow::confirmedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withConfirmedAt(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public OptField<LocalDateTime, OrdersRow> shippedAt() {
+      return new OptField<LocalDateTime, OrdersRow>(_path, "shipped_at", OrdersRow::shippedAt, Optional.empty(), Optional.empty(), (row, value) -> row.withShippedAt(value), MariaTypes.datetime);
+    };
+
+    @Override
+    public OptField<LocalDateTime, OrdersRow> deliveredAt() {
+      return new OptField<LocalDateTime, OrdersRow>(_path, "delivered_at", OrdersRow::deliveredAt, Optional.empty(), Optional.empty(), (row, value) -> row.withDeliveredAt(value), MariaTypes.datetime);
     };
 
     @Override
     public List<FieldLike<?, OrdersRow>> columns() {
-      return List.of(this.fields().orderId(), this.fields().orderNumber(), this.fields().customerId(), this.fields().orderStatus(), this.fields().paymentStatus(), this.fields().shippingAddressId(), this.fields().billingAddressId(), this.fields().subtotal(), this.fields().shippingCost(), this.fields().taxAmount(), this.fields().discountAmount(), this.fields().totalAmount(), this.fields().currencyCode(), this.fields().promotionId(), this.fields().notes(), this.fields().internalNotes(), this.fields().ipAddress(), this.fields().userAgent(), this.fields().orderedAt(), this.fields().confirmedAt(), this.fields().shippedAt(), this.fields().deliveredAt());
+      return List.of(this.orderId(), this.orderNumber(), this.customerId(), this.orderStatus(), this.paymentStatus(), this.shippingAddressId(), this.billingAddressId(), this.subtotal(), this.shippingCost(), this.taxAmount(), this.discountAmount(), this.totalAmount(), this.currencyCode(), this.promotionId(), this.notes(), this.internalNotes(), this.ipAddress(), this.userAgent(), this.orderedAt(), this.confirmedAt(), this.shippedAt(), this.deliveredAt());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<OrdersFields, OrdersRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<OrdersFields, OrdersRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -201,5 +215,13 @@ public interface OrdersFields {
 
   default ForeignKey<CustomerAddressesFields, CustomerAddressesRow> fkCustomerAddressesShippingAddressId() {
     return ForeignKey.<CustomerAddressesFields, CustomerAddressesRow>of("fk_order_shipping_addr").withColumnPair(shippingAddressId(), CustomerAddressesFields::addressId);
+  };
+
+  @Override
+  List<FieldLike<?, OrdersRow>> columns();
+
+  @Override
+  default RowParser<OrdersRow> rowParser() {
+    return OrdersRow._rowParser;
   };
 }

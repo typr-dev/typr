@@ -31,5 +31,5 @@ case class CrViewRow(
 )
 
 object CrViewRow {
-  val `_rowParser`: RowParser[CrViewRow] = RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CrViewRow.apply, row => Array(row.currencyrateid, row.currencyratedate, row.fromcurrencycode, row.tocurrencycode, row.averagerate, row.endofdayrate, row.modifieddate))
+  val `_rowParser`: RowParser[CrViewRow] = RowParsers.of(CurrencyrateId.pgType, TypoLocalDateTime.pgType, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, CrViewRow.apply, row => Array[Object](row.currencyrateid.asInstanceOf[Object], row.currencyratedate.asInstanceOf[Object], row.fromcurrencycode.asInstanceOf[Object], row.tocurrencycode.asInstanceOf[Object], row.averagerate.asInstanceOf[Object], row.endofdayrate.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

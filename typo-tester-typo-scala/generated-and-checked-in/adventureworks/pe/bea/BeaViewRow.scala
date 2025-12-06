@@ -30,5 +30,5 @@ case class BeaViewRow(
 )
 
 object BeaViewRow {
-  val `_rowParser`: RowParser[BeaViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BeaViewRow.apply, row => Array(row.id, row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[BeaViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, TypoUUID.pgType, TypoLocalDateTime.pgType, BeaViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.addressid.asInstanceOf[Object], row.addresstypeid.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

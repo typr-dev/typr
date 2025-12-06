@@ -35,7 +35,7 @@ case class ScrapreasonRow(
 }
 
 object ScrapreasonRow {
-  val `_rowParser`: RowParser[ScrapreasonRow] = RowParsers.of(ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, ScrapreasonRow.apply, row => Array(row.scrapreasonid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[ScrapreasonRow] = RowParsers.of(ScrapreasonId.pgType, Name.pgType, TypoLocalDateTime.pgType, ScrapreasonRow.apply, row => Array[Object](row.scrapreasonid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   given pgText: PgText[ScrapreasonRow] = PgText.from(`_rowParser`)
 }

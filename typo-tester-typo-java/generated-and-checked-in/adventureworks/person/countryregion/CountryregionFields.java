@@ -9,48 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CountryregionFields {
-  final class Impl extends Relation<CountryregionFields, CountryregionRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CountryregionFields extends FieldsExpr<CountryregionRow> {
+  record Impl(List<Path> _path) implements CountryregionFields, Relation<CountryregionFields, CountryregionRow> {
+    @Override
+    public IdField<CountryregionId, CountryregionRow> countryregioncode() {
+      return new IdField<CountryregionId, CountryregionRow>(_path, "countryregioncode", CountryregionRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
+    };
 
     @Override
-    public CountryregionFields fields() {
-      return new CountryregionFields() {
-               @Override
-               public IdField<CountryregionId, CountryregionRow> countryregioncode() {
-                 return new IdField<CountryregionId, CountryregionRow>(_path, "countryregioncode", CountryregionRow::countryregioncode, Optional.empty(), Optional.empty(), (row, value) -> row.withCountryregioncode(value), CountryregionId.pgType);
-               };
-               @Override
-               public Field<Name, CountryregionRow> name() {
-                 return new Field<Name, CountryregionRow>(_path, "name", CountryregionRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CountryregionRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CountryregionRow>(_path, "modifieddate", CountryregionRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, CountryregionRow> name() {
+      return new Field<Name, CountryregionRow>(_path, "name", CountryregionRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CountryregionRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CountryregionRow>(_path, "modifieddate", CountryregionRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CountryregionRow>> columns() {
-      return List.of(this.fields().countryregioncode(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.countryregioncode(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CountryregionFields, CountryregionRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CountryregionFields, CountryregionRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface CountryregionFields {
   Field<Name, CountryregionRow> name();
 
   Field<TypoLocalDateTime, CountryregionRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CountryregionRow>> columns();
+
+  @Override
+  default RowParser<CountryregionRow> rowParser() {
+    return CountryregionRow._rowParser;
+  };
 }

@@ -18,6 +18,7 @@ import adventureworks.purchasing.vendor.VendorRow;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -29,75 +30,77 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface ProductvendorFields {
-  final class Impl extends Relation<ProductvendorFields, ProductvendorRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductvendorFields extends FieldsExpr<ProductvendorRow> {
+  record Impl(List<Path> _path) implements ProductvendorFields, Relation<ProductvendorFields, ProductvendorRow> {
+    @Override
+    public IdField<ProductId, ProductvendorRow> productid() {
+      return new IdField<ProductId, ProductvendorRow>(_path, "productid", ProductvendorRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
 
     @Override
-    public ProductvendorFields fields() {
-      return new ProductvendorFields() {
-               @Override
-               public IdField<ProductId, ProductvendorRow> productid() {
-                 return new IdField<ProductId, ProductvendorRow>(_path, "productid", ProductvendorRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public IdField<BusinessentityId, ProductvendorRow> businessentityid() {
-                 return new IdField<BusinessentityId, ProductvendorRow>(_path, "businessentityid", ProductvendorRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
-               };
-               @Override
-               public Field<Integer, ProductvendorRow> averageleadtime() {
-                 return new Field<Integer, ProductvendorRow>(_path, "averageleadtime", ProductvendorRow::averageleadtime, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAverageleadtime(value), PgTypes.int4);
-               };
-               @Override
-               public Field<BigDecimal, ProductvendorRow> standardprice() {
-                 return new Field<BigDecimal, ProductvendorRow>(_path, "standardprice", ProductvendorRow::standardprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withStandardprice(value), PgTypes.numeric);
-               };
-               @Override
-               public OptField<BigDecimal, ProductvendorRow> lastreceiptcost() {
-                 return new OptField<BigDecimal, ProductvendorRow>(_path, "lastreceiptcost", ProductvendorRow::lastreceiptcost, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withLastreceiptcost(value), PgTypes.numeric);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, ProductvendorRow> lastreceiptdate() {
-                 return new OptField<TypoLocalDateTime, ProductvendorRow>(_path, "lastreceiptdate", ProductvendorRow::lastreceiptdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withLastreceiptdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<Integer, ProductvendorRow> minorderqty() {
-                 return new Field<Integer, ProductvendorRow>(_path, "minorderqty", ProductvendorRow::minorderqty, Optional.empty(), Optional.of("int4"), (row, value) -> row.withMinorderqty(value), PgTypes.int4);
-               };
-               @Override
-               public Field<Integer, ProductvendorRow> maxorderqty() {
-                 return new Field<Integer, ProductvendorRow>(_path, "maxorderqty", ProductvendorRow::maxorderqty, Optional.empty(), Optional.of("int4"), (row, value) -> row.withMaxorderqty(value), PgTypes.int4);
-               };
-               @Override
-               public OptField<Integer, ProductvendorRow> onorderqty() {
-                 return new OptField<Integer, ProductvendorRow>(_path, "onorderqty", ProductvendorRow::onorderqty, Optional.empty(), Optional.of("int4"), (row, value) -> row.withOnorderqty(value), PgTypes.int4);
-               };
-               @Override
-               public Field<UnitmeasureId, ProductvendorRow> unitmeasurecode() {
-                 return new Field<UnitmeasureId, ProductvendorRow>(_path, "unitmeasurecode", ProductvendorRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductvendorRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductvendorRow>(_path, "modifieddate", ProductvendorRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<BusinessentityId, ProductvendorRow> businessentityid() {
+      return new IdField<BusinessentityId, ProductvendorRow>(_path, "businessentityid", ProductvendorRow::businessentityid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withBusinessentityid(value), BusinessentityId.pgType);
+    };
+
+    @Override
+    public Field<Integer, ProductvendorRow> averageleadtime() {
+      return new Field<Integer, ProductvendorRow>(_path, "averageleadtime", ProductvendorRow::averageleadtime, Optional.empty(), Optional.of("int4"), (row, value) -> row.withAverageleadtime(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<BigDecimal, ProductvendorRow> standardprice() {
+      return new Field<BigDecimal, ProductvendorRow>(_path, "standardprice", ProductvendorRow::standardprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withStandardprice(value), PgTypes.numeric);
+    };
+
+    @Override
+    public OptField<BigDecimal, ProductvendorRow> lastreceiptcost() {
+      return new OptField<BigDecimal, ProductvendorRow>(_path, "lastreceiptcost", ProductvendorRow::lastreceiptcost, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withLastreceiptcost(value), PgTypes.numeric);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, ProductvendorRow> lastreceiptdate() {
+      return new OptField<TypoLocalDateTime, ProductvendorRow>(_path, "lastreceiptdate", ProductvendorRow::lastreceiptdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withLastreceiptdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<Integer, ProductvendorRow> minorderqty() {
+      return new Field<Integer, ProductvendorRow>(_path, "minorderqty", ProductvendorRow::minorderqty, Optional.empty(), Optional.of("int4"), (row, value) -> row.withMinorderqty(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<Integer, ProductvendorRow> maxorderqty() {
+      return new Field<Integer, ProductvendorRow>(_path, "maxorderqty", ProductvendorRow::maxorderqty, Optional.empty(), Optional.of("int4"), (row, value) -> row.withMaxorderqty(value), PgTypes.int4);
+    };
+
+    @Override
+    public OptField<Integer, ProductvendorRow> onorderqty() {
+      return new OptField<Integer, ProductvendorRow>(_path, "onorderqty", ProductvendorRow::onorderqty, Optional.empty(), Optional.of("int4"), (row, value) -> row.withOnorderqty(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<UnitmeasureId, ProductvendorRow> unitmeasurecode() {
+      return new Field<UnitmeasureId, ProductvendorRow>(_path, "unitmeasurecode", ProductvendorRow::unitmeasurecode, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withUnitmeasurecode(value), UnitmeasureId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ProductvendorRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductvendorRow>(_path, "modifieddate", ProductvendorRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductvendorRow>> columns() {
-      return List.of(this.fields().productid(), this.fields().businessentityid(), this.fields().averageleadtime(), this.fields().standardprice(), this.fields().lastreceiptcost(), this.fields().lastreceiptdate(), this.fields().minorderqty(), this.fields().maxorderqty(), this.fields().onorderqty(), this.fields().unitmeasurecode(), this.fields().modifieddate());
+      return List.of(this.productid(), this.businessentityid(), this.averageleadtime(), this.standardprice(), this.lastreceiptcost(), this.lastreceiptdate(), this.minorderqty(), this.maxorderqty(), this.onorderqty(), this.unitmeasurecode(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductvendorFields, ProductvendorRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductvendorFields, ProductvendorRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -141,5 +144,13 @@ public interface ProductvendorFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<ProductvendorId> compositeIds) {
     return new CompositeIn(List.of(new Part<ProductId, ProductvendorId, ProductvendorRow>(productid(), ProductvendorId::productid, ProductId.pgType), new Part<BusinessentityId, ProductvendorId, ProductvendorRow>(businessentityid(), ProductvendorId::businessentityid, BusinessentityId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, ProductvendorRow>> columns();
+
+  @Override
+  default RowParser<ProductvendorRow> rowParser() {
+    return ProductvendorRow._rowParser;
   };
 }

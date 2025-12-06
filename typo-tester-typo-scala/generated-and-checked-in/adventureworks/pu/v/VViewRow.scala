@@ -39,5 +39,5 @@ case class VViewRow(
 )
 
 object VViewRow {
-  val `_rowParser`: RowParser[VViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VViewRow.apply, row => Array(row.id, row.businessentityid, row.accountnumber, row.name, row.creditrating, row.preferredvendorstatus, row.activeflag, row.purchasingwebserviceurl, row.modifieddate))
+  val `_rowParser`: RowParser[VViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, TypoShort.pgType, Flag.pgType, Flag.pgType, PgTypes.text.opt(), TypoLocalDateTime.pgType, VViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.accountnumber.asInstanceOf[Object], row.name.asInstanceOf[Object], row.creditrating.asInstanceOf[Object], row.preferredvendorstatus.asInstanceOf[Object], row.activeflag.asInstanceOf[Object], row.purchasingwebserviceurl.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

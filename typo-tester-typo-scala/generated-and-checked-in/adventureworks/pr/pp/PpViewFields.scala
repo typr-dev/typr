@@ -9,14 +9,16 @@ import adventureworks.customtypes.TypoBytea
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.production.productphoto.ProductphotoId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PpViewFields {
+trait PpViewFields extends FieldsExpr[PpViewRow] {
   def id: Field[ProductphotoId, PpViewRow]
 
   def productphotoid: Field[ProductphotoId, PpViewRow]
@@ -30,97 +32,103 @@ trait PpViewFields {
   def largephotofilename: OptField[/* max 50 chars */ String, PpViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PpViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PpViewRow]]
+
+  override def rowParser: RowParser[PpViewRow] = PpViewRow._rowParser
 }
 
 object PpViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PpViewFields, PpViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PpViewFields with Relation[PpViewFields, PpViewRow] {
 
-    override lazy val fields: PpViewFields = {
-      new PpViewFields {
-        override def id: Field[ProductphotoId, PpViewRow] = {
-          new Field[ProductphotoId, PpViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            ProductphotoId.pgType
-          )
-        }
-        override def productphotoid: Field[ProductphotoId, PpViewRow] = {
-          new Field[ProductphotoId, PpViewRow](
-            _path,
-            "productphotoid",
-            _.productphotoid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productphotoid = value),
-            ProductphotoId.pgType
-          )
-        }
-        override def thumbnailphoto: OptField[TypoBytea, PpViewRow] = {
-          new OptField[TypoBytea, PpViewRow](
-            _path,
-            "thumbnailphoto",
-            _.thumbnailphoto,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(thumbnailphoto = value),
-            TypoBytea.pgType
-          )
-        }
-        override def thumbnailphotofilename: OptField[/* max 50 chars */ String, PpViewRow] = {
-          new OptField[/* max 50 chars */ String, PpViewRow](
-            _path,
-            "thumbnailphotofilename",
-            _.thumbnailphotofilename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(thumbnailphotofilename = value),
-            PgTypes.text
-          )
-        }
-        override def largephoto: OptField[TypoBytea, PpViewRow] = {
-          new OptField[TypoBytea, PpViewRow](
-            _path,
-            "largephoto",
-            _.largephoto,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(largephoto = value),
-            TypoBytea.pgType
-          )
-        }
-        override def largephotofilename: OptField[/* max 50 chars */ String, PpViewRow] = {
-          new OptField[/* max 50 chars */ String, PpViewRow](
-            _path,
-            "largephotofilename",
-            _.largephotofilename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(largephotofilename = value),
-            PgTypes.text
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PpViewRow] = {
-          new Field[TypoLocalDateTime, PpViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[ProductphotoId, PpViewRow] = {
+      new Field[ProductphotoId, PpViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        ProductphotoId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PpViewRow]] = java.util.List.of(this.fields.id, this.fields.productphotoid, this.fields.thumbnailphoto, this.fields.thumbnailphotofilename, this.fields.largephoto, this.fields.largephotofilename, this.fields.modifieddate)
+    override def productphotoid: Field[ProductphotoId, PpViewRow] = {
+      new Field[ProductphotoId, PpViewRow](
+        _path,
+        "productphotoid",
+        _.productphotoid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productphotoid = value),
+        ProductphotoId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def thumbnailphoto: OptField[TypoBytea, PpViewRow] = {
+      new OptField[TypoBytea, PpViewRow](
+        _path,
+        "thumbnailphoto",
+        _.thumbnailphoto,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(thumbnailphoto = value),
+        TypoBytea.pgType
+      )
+    }
+
+    override def thumbnailphotofilename: OptField[/* max 50 chars */ String, PpViewRow] = {
+      new OptField[/* max 50 chars */ String, PpViewRow](
+        _path,
+        "thumbnailphotofilename",
+        _.thumbnailphotofilename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(thumbnailphotofilename = value),
+        PgTypes.text
+      )
+    }
+
+    override def largephoto: OptField[TypoBytea, PpViewRow] = {
+      new OptField[TypoBytea, PpViewRow](
+        _path,
+        "largephoto",
+        _.largephoto,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(largephoto = value),
+        TypoBytea.pgType
+      )
+    }
+
+    override def largephotofilename: OptField[/* max 50 chars */ String, PpViewRow] = {
+      new OptField[/* max 50 chars */ String, PpViewRow](
+        _path,
+        "largephotofilename",
+        _.largephotofilename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(largephotofilename = value),
+        PgTypes.text
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PpViewRow] = {
+      new Field[TypoLocalDateTime, PpViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PpViewRow]] = java.util.List.of(this.id, this.productphotoid, this.thumbnailphoto, this.thumbnailphotofilename, this.largephoto, this.largephotofilename, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PpViewFields, PpViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PpViewFields, PpViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

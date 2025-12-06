@@ -10,57 +10,54 @@ import adventureworks.public_.Name;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface LocationFields {
-  final class Impl extends Relation<LocationFields, LocationRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface LocationFields extends FieldsExpr<LocationRow> {
+  record Impl(List<Path> _path) implements LocationFields, Relation<LocationFields, LocationRow> {
+    @Override
+    public IdField<LocationId, LocationRow> locationid() {
+      return new IdField<LocationId, LocationRow>(_path, "locationid", LocationRow::locationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withLocationid(value), LocationId.pgType);
+    };
 
     @Override
-    public LocationFields fields() {
-      return new LocationFields() {
-               @Override
-               public IdField<LocationId, LocationRow> locationid() {
-                 return new IdField<LocationId, LocationRow>(_path, "locationid", LocationRow::locationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withLocationid(value), LocationId.pgType);
-               };
-               @Override
-               public Field<Name, LocationRow> name() {
-                 return new Field<Name, LocationRow>(_path, "name", LocationRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<BigDecimal, LocationRow> costrate() {
-                 return new Field<BigDecimal, LocationRow>(_path, "costrate", LocationRow::costrate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withCostrate(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, LocationRow> availability() {
-                 return new Field<BigDecimal, LocationRow>(_path, "availability", LocationRow::availability, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withAvailability(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, LocationRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, LocationRow>(_path, "modifieddate", LocationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, LocationRow> name() {
+      return new Field<Name, LocationRow>(_path, "name", LocationRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, LocationRow> costrate() {
+      return new Field<BigDecimal, LocationRow>(_path, "costrate", LocationRow::costrate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withCostrate(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, LocationRow> availability() {
+      return new Field<BigDecimal, LocationRow>(_path, "availability", LocationRow::availability, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withAvailability(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, LocationRow> modifieddate() {
+      return new Field<TypoLocalDateTime, LocationRow>(_path, "modifieddate", LocationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, LocationRow>> columns() {
-      return List.of(this.fields().locationid(), this.fields().name(), this.fields().costrate(), this.fields().availability(), this.fields().modifieddate());
+      return List.of(this.locationid(), this.name(), this.costrate(), this.availability(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<LocationFields, LocationRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<LocationFields, LocationRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -73,4 +70,12 @@ public interface LocationFields {
   Field<BigDecimal, LocationRow> availability();
 
   Field<TypoLocalDateTime, LocationRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, LocationRow>> columns();
+
+  @Override
+  default RowParser<LocationRow> rowParser() {
+    return LocationRow._rowParser;
+  };
 }

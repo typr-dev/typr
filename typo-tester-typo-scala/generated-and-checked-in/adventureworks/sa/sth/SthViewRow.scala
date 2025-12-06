@@ -32,5 +32,5 @@ case class SthViewRow(
 )
 
 object SthViewRow {
-  val `_rowParser`: RowParser[SthViewRow] = RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SthViewRow.apply, row => Array(row.id, row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SthViewRow] = RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), TypoUUID.pgType, TypoLocalDateTime.pgType, SthViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.territoryid.asInstanceOf[Object], row.startdate.asInstanceOf[Object], row.enddate.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

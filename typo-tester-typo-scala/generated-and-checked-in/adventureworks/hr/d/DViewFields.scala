@@ -9,12 +9,14 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait DViewFields {
+trait DViewFields extends FieldsExpr[DViewRow] {
   def id: Field[DepartmentId, DViewRow]
 
   def departmentid: Field[DepartmentId, DViewRow]
@@ -24,75 +26,79 @@ trait DViewFields {
   def groupname: Field[Name, DViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, DViewRow]
+
+  override def columns: java.util.List[FieldLike[?, DViewRow]]
+
+  override def rowParser: RowParser[DViewRow] = DViewRow._rowParser
 }
 
 object DViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[DViewFields, DViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends DViewFields with Relation[DViewFields, DViewRow] {
 
-    override lazy val fields: DViewFields = {
-      new DViewFields {
-        override def id: Field[DepartmentId, DViewRow] = {
-          new Field[DepartmentId, DViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            DepartmentId.pgType
-          )
-        }
-        override def departmentid: Field[DepartmentId, DViewRow] = {
-          new Field[DepartmentId, DViewRow](
-            _path,
-            "departmentid",
-            _.departmentid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(departmentid = value),
-            DepartmentId.pgType
-          )
-        }
-        override def name: Field[Name, DViewRow] = {
-          new Field[Name, DViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def groupname: Field[Name, DViewRow] = {
-          new Field[Name, DViewRow](
-            _path,
-            "groupname",
-            _.groupname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(groupname = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, DViewRow] = {
-          new Field[TypoLocalDateTime, DViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[DepartmentId, DViewRow] = {
+      new Field[DepartmentId, DViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        DepartmentId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, DViewRow]] = java.util.List.of(this.fields.id, this.fields.departmentid, this.fields.name, this.fields.groupname, this.fields.modifieddate)
+    override def departmentid: Field[DepartmentId, DViewRow] = {
+      new Field[DepartmentId, DViewRow](
+        _path,
+        "departmentid",
+        _.departmentid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(departmentid = value),
+        DepartmentId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[Name, DViewRow] = {
+      new Field[Name, DViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def groupname: Field[Name, DViewRow] = {
+      new Field[Name, DViewRow](
+        _path,
+        "groupname",
+        _.groupname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(groupname = value),
+        Name.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, DViewRow] = {
+      new Field[TypoLocalDateTime, DViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, DViewRow]] = java.util.List.of(this.id, this.departmentid, this.name, this.groupname, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[DViewFields, DViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[DViewFields, DViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

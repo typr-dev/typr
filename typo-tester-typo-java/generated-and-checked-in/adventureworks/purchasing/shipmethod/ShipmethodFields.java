@@ -11,61 +11,59 @@ import adventureworks.public_.Name;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface ShipmethodFields {
-  final class Impl extends Relation<ShipmethodFields, ShipmethodRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ShipmethodFields extends FieldsExpr<ShipmethodRow> {
+  record Impl(List<Path> _path) implements ShipmethodFields, Relation<ShipmethodFields, ShipmethodRow> {
+    @Override
+    public IdField<ShipmethodId, ShipmethodRow> shipmethodid() {
+      return new IdField<ShipmethodId, ShipmethodRow>(_path, "shipmethodid", ShipmethodRow::shipmethodid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
+    };
 
     @Override
-    public ShipmethodFields fields() {
-      return new ShipmethodFields() {
-               @Override
-               public IdField<ShipmethodId, ShipmethodRow> shipmethodid() {
-                 return new IdField<ShipmethodId, ShipmethodRow>(_path, "shipmethodid", ShipmethodRow::shipmethodid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withShipmethodid(value), ShipmethodId.pgType);
-               };
-               @Override
-               public Field<Name, ShipmethodRow> name() {
-                 return new Field<Name, ShipmethodRow>(_path, "name", ShipmethodRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<BigDecimal, ShipmethodRow> shipbase() {
-                 return new Field<BigDecimal, ShipmethodRow>(_path, "shipbase", ShipmethodRow::shipbase, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withShipbase(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, ShipmethodRow> shiprate() {
-                 return new Field<BigDecimal, ShipmethodRow>(_path, "shiprate", ShipmethodRow::shiprate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withShiprate(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoUUID, ShipmethodRow> rowguid() {
-                 return new Field<TypoUUID, ShipmethodRow>(_path, "rowguid", ShipmethodRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ShipmethodRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ShipmethodRow>(_path, "modifieddate", ShipmethodRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, ShipmethodRow> name() {
+      return new Field<Name, ShipmethodRow>(_path, "name", ShipmethodRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, ShipmethodRow> shipbase() {
+      return new Field<BigDecimal, ShipmethodRow>(_path, "shipbase", ShipmethodRow::shipbase, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withShipbase(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, ShipmethodRow> shiprate() {
+      return new Field<BigDecimal, ShipmethodRow>(_path, "shiprate", ShipmethodRow::shiprate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withShiprate(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoUUID, ShipmethodRow> rowguid() {
+      return new Field<TypoUUID, ShipmethodRow>(_path, "rowguid", ShipmethodRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ShipmethodRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ShipmethodRow>(_path, "modifieddate", ShipmethodRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ShipmethodRow>> columns() {
-      return List.of(this.fields().shipmethodid(), this.fields().name(), this.fields().shipbase(), this.fields().shiprate(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.shipmethodid(), this.name(), this.shipbase(), this.shiprate(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ShipmethodFields, ShipmethodRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ShipmethodFields, ShipmethodRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -80,4 +78,12 @@ public interface ShipmethodFields {
   Field<TypoUUID, ShipmethodRow> rowguid();
 
   Field<TypoLocalDateTime, ShipmethodRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, ShipmethodRow>> columns();
+
+  @Override
+  default RowParser<ShipmethodRow> rowParser() {
+    return ShipmethodRow._rowParser;
+  };
 }

@@ -10,6 +10,7 @@ import adventureworks.production.product.ProductFields
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -17,8 +18,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait ShoppingcartitemFields {
+trait ShoppingcartitemFields extends FieldsExpr[ShoppingcartitemRow] {
   def shoppingcartitemid: IdField[ShoppingcartitemId, ShoppingcartitemRow]
 
   def shoppingcartid: Field[/* max 50 chars */ String, ShoppingcartitemRow]
@@ -32,86 +34,91 @@ trait ShoppingcartitemFields {
   def modifieddate: Field[TypoLocalDateTime, ShoppingcartitemRow]
 
   def fkProductionProduct: ForeignKey[ProductFields, ProductRow] = ForeignKey.of[ProductFields, ProductRow]("sales.FK_ShoppingCartItem_Product_ProductID").withColumnPair(productid, _.productid)
+
+  override def columns: java.util.List[FieldLike[?, ShoppingcartitemRow]]
+
+  override def rowParser: RowParser[ShoppingcartitemRow] = ShoppingcartitemRow._rowParser
 }
 
 object ShoppingcartitemFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ShoppingcartitemFields, ShoppingcartitemRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ShoppingcartitemFields with Relation[ShoppingcartitemFields, ShoppingcartitemRow] {
 
-    override lazy val fields: ShoppingcartitemFields = {
-      new ShoppingcartitemFields {
-        override def shoppingcartitemid: IdField[ShoppingcartitemId, ShoppingcartitemRow] = {
-          new IdField[ShoppingcartitemId, ShoppingcartitemRow](
-            _path,
-            "shoppingcartitemid",
-            _.shoppingcartitemid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(shoppingcartitemid = value),
-            ShoppingcartitemId.pgType
-          )
-        }
-        override def shoppingcartid: Field[/* max 50 chars */ String, ShoppingcartitemRow] = {
-          new Field[/* max 50 chars */ String, ShoppingcartitemRow](
-            _path,
-            "shoppingcartid",
-            _.shoppingcartid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(shoppingcartid = value),
-            PgTypes.text
-          )
-        }
-        override def quantity: Field[Integer, ShoppingcartitemRow] = {
-          new Field[Integer, ShoppingcartitemRow](
-            _path,
-            "quantity",
-            _.quantity,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(quantity = value),
-            PgTypes.int4
-          )
-        }
-        override def productid: Field[ProductId, ShoppingcartitemRow] = {
-          new Field[ProductId, ShoppingcartitemRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def datecreated: Field[TypoLocalDateTime, ShoppingcartitemRow] = {
-          new Field[TypoLocalDateTime, ShoppingcartitemRow](
-            _path,
-            "datecreated",
-            _.datecreated,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(datecreated = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ShoppingcartitemRow] = {
-          new Field[TypoLocalDateTime, ShoppingcartitemRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def shoppingcartitemid: IdField[ShoppingcartitemId, ShoppingcartitemRow] = {
+      new IdField[ShoppingcartitemId, ShoppingcartitemRow](
+        _path,
+        "shoppingcartitemid",
+        _.shoppingcartitemid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(shoppingcartitemid = value),
+        ShoppingcartitemId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ShoppingcartitemRow]] = java.util.List.of(this.fields.shoppingcartitemid, this.fields.shoppingcartid, this.fields.quantity, this.fields.productid, this.fields.datecreated, this.fields.modifieddate)
+    override def shoppingcartid: Field[/* max 50 chars */ String, ShoppingcartitemRow] = {
+      new Field[/* max 50 chars */ String, ShoppingcartitemRow](
+        _path,
+        "shoppingcartid",
+        _.shoppingcartid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(shoppingcartid = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def quantity: Field[Integer, ShoppingcartitemRow] = {
+      new Field[Integer, ShoppingcartitemRow](
+        _path,
+        "quantity",
+        _.quantity,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(quantity = value),
+        PgTypes.int4
+      )
+    }
+
+    override def productid: Field[ProductId, ShoppingcartitemRow] = {
+      new Field[ProductId, ShoppingcartitemRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
+    }
+
+    override def datecreated: Field[TypoLocalDateTime, ShoppingcartitemRow] = {
+      new Field[TypoLocalDateTime, ShoppingcartitemRow](
+        _path,
+        "datecreated",
+        _.datecreated,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(datecreated = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, ShoppingcartitemRow] = {
+      new Field[TypoLocalDateTime, ShoppingcartitemRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ShoppingcartitemRow]] = java.util.List.of(this.shoppingcartitemid, this.shoppingcartid, this.quantity, this.productid, this.datecreated, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ShoppingcartitemFields, ShoppingcartitemRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ShoppingcartitemFields, ShoppingcartitemRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

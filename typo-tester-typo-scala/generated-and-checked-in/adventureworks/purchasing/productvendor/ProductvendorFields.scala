@@ -16,6 +16,7 @@ import adventureworks.production.unitmeasure.UnitmeasureRow
 import adventureworks.purchasing.vendor.VendorFields
 import adventureworks.purchasing.vendor.VendorRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -27,8 +28,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait ProductvendorFields {
+trait ProductvendorFields extends FieldsExpr[ProductvendorRow] {
   def productid: IdField[ProductId, ProductvendorRow]
 
   def businessentityid: IdField[BusinessentityId, ProductvendorRow]
@@ -60,141 +62,151 @@ trait ProductvendorFields {
   def compositeIdIs(compositeId: ProductvendorId): SqlExpr[java.lang.Boolean] = SqlExpr.all(productid.isEqual(compositeId.productid), businessentityid.isEqual(compositeId.businessentityid))
 
   def compositeIdIn(compositeIds: java.util.List[ProductvendorId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[ProductId, ProductvendorId, ProductvendorRow](productid, _.productid, ProductId.pgType), new Part[BusinessentityId, ProductvendorId, ProductvendorRow](businessentityid, _.businessentityid, BusinessentityId.pgType)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, ProductvendorRow]]
+
+  override def rowParser: RowParser[ProductvendorRow] = ProductvendorRow._rowParser
 }
 
 object ProductvendorFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[ProductvendorFields, ProductvendorRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends ProductvendorFields with Relation[ProductvendorFields, ProductvendorRow] {
 
-    override lazy val fields: ProductvendorFields = {
-      new ProductvendorFields {
-        override def productid: IdField[ProductId, ProductvendorRow] = {
-          new IdField[ProductId, ProductvendorRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def businessentityid: IdField[BusinessentityId, ProductvendorRow] = {
-          new IdField[BusinessentityId, ProductvendorRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def averageleadtime: Field[Integer, ProductvendorRow] = {
-          new Field[Integer, ProductvendorRow](
-            _path,
-            "averageleadtime",
-            _.averageleadtime,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(averageleadtime = value),
-            PgTypes.int4
-          )
-        }
-        override def standardprice: Field[java.math.BigDecimal, ProductvendorRow] = {
-          new Field[java.math.BigDecimal, ProductvendorRow](
-            _path,
-            "standardprice",
-            _.standardprice,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(standardprice = value),
-            PgTypes.numeric
-          )
-        }
-        override def lastreceiptcost: OptField[java.math.BigDecimal, ProductvendorRow] = {
-          new OptField[java.math.BigDecimal, ProductvendorRow](
-            _path,
-            "lastreceiptcost",
-            _.lastreceiptcost,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(lastreceiptcost = value),
-            PgTypes.numeric
-          )
-        }
-        override def lastreceiptdate: OptField[TypoLocalDateTime, ProductvendorRow] = {
-          new OptField[TypoLocalDateTime, ProductvendorRow](
-            _path,
-            "lastreceiptdate",
-            _.lastreceiptdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(lastreceiptdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def minorderqty: Field[Integer, ProductvendorRow] = {
-          new Field[Integer, ProductvendorRow](
-            _path,
-            "minorderqty",
-            _.minorderqty,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(minorderqty = value),
-            PgTypes.int4
-          )
-        }
-        override def maxorderqty: Field[Integer, ProductvendorRow] = {
-          new Field[Integer, ProductvendorRow](
-            _path,
-            "maxorderqty",
-            _.maxorderqty,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(maxorderqty = value),
-            PgTypes.int4
-          )
-        }
-        override def onorderqty: OptField[Integer, ProductvendorRow] = {
-          new OptField[Integer, ProductvendorRow](
-            _path,
-            "onorderqty",
-            _.onorderqty,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(onorderqty = value),
-            PgTypes.int4
-          )
-        }
-        override def unitmeasurecode: Field[UnitmeasureId, ProductvendorRow] = {
-          new Field[UnitmeasureId, ProductvendorRow](
-            _path,
-            "unitmeasurecode",
-            _.unitmeasurecode,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(unitmeasurecode = value),
-            UnitmeasureId.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, ProductvendorRow] = {
-          new Field[TypoLocalDateTime, ProductvendorRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def productid: IdField[ProductId, ProductvendorRow] = {
+      new IdField[ProductId, ProductvendorRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, ProductvendorRow]] = java.util.List.of(this.fields.productid, this.fields.businessentityid, this.fields.averageleadtime, this.fields.standardprice, this.fields.lastreceiptcost, this.fields.lastreceiptdate, this.fields.minorderqty, this.fields.maxorderqty, this.fields.onorderqty, this.fields.unitmeasurecode, this.fields.modifieddate)
+    override def businessentityid: IdField[BusinessentityId, ProductvendorRow] = {
+      new IdField[BusinessentityId, ProductvendorRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def averageleadtime: Field[Integer, ProductvendorRow] = {
+      new Field[Integer, ProductvendorRow](
+        _path,
+        "averageleadtime",
+        _.averageleadtime,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(averageleadtime = value),
+        PgTypes.int4
+      )
+    }
+
+    override def standardprice: Field[java.math.BigDecimal, ProductvendorRow] = {
+      new Field[java.math.BigDecimal, ProductvendorRow](
+        _path,
+        "standardprice",
+        _.standardprice,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(standardprice = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def lastreceiptcost: OptField[java.math.BigDecimal, ProductvendorRow] = {
+      new OptField[java.math.BigDecimal, ProductvendorRow](
+        _path,
+        "lastreceiptcost",
+        _.lastreceiptcost,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(lastreceiptcost = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def lastreceiptdate: OptField[TypoLocalDateTime, ProductvendorRow] = {
+      new OptField[TypoLocalDateTime, ProductvendorRow](
+        _path,
+        "lastreceiptdate",
+        _.lastreceiptdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(lastreceiptdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def minorderqty: Field[Integer, ProductvendorRow] = {
+      new Field[Integer, ProductvendorRow](
+        _path,
+        "minorderqty",
+        _.minorderqty,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(minorderqty = value),
+        PgTypes.int4
+      )
+    }
+
+    override def maxorderqty: Field[Integer, ProductvendorRow] = {
+      new Field[Integer, ProductvendorRow](
+        _path,
+        "maxorderqty",
+        _.maxorderqty,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(maxorderqty = value),
+        PgTypes.int4
+      )
+    }
+
+    override def onorderqty: OptField[Integer, ProductvendorRow] = {
+      new OptField[Integer, ProductvendorRow](
+        _path,
+        "onorderqty",
+        _.onorderqty,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(onorderqty = value),
+        PgTypes.int4
+      )
+    }
+
+    override def unitmeasurecode: Field[UnitmeasureId, ProductvendorRow] = {
+      new Field[UnitmeasureId, ProductvendorRow](
+        _path,
+        "unitmeasurecode",
+        _.unitmeasurecode,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(unitmeasurecode = value),
+        UnitmeasureId.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, ProductvendorRow] = {
+      new Field[TypoLocalDateTime, ProductvendorRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, ProductvendorRow]] = java.util.List.of(this.productid, this.businessentityid, this.averageleadtime, this.standardprice, this.lastreceiptcost, this.lastreceiptdate, this.minorderqty, this.maxorderqty, this.onorderqty, this.unitmeasurecode, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[ProductvendorFields, ProductvendorRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[ProductvendorFields, ProductvendorRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -30,7 +30,7 @@ case class TableWithGeneratedColumnsRow(
 }
 
 object TableWithGeneratedColumnsRow {
-  val `_rowParser`: RowParser[TableWithGeneratedColumnsRow] = RowParsers.of(TableWithGeneratedColumnsId.pgType, PgTypes.text, TableWithGeneratedColumnsRow.apply, row => Array(row.name, row.nameTypeAlways))
+  val `_rowParser`: RowParser[TableWithGeneratedColumnsRow] = RowParsers.of(TableWithGeneratedColumnsId.pgType, PgTypes.text, TableWithGeneratedColumnsRow.apply, row => Array[Object](row.name.asInstanceOf[Object], row.nameTypeAlways.asInstanceOf[Object]))
 
   given pgText: PgText[TableWithGeneratedColumnsRow] = PgText.from(`_rowParser`)
 }

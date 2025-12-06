@@ -1,0 +1,2 @@
+select personperson0."firstname" , CASE WHEN (personperson0."persontype"  = ?::bpchar) THEN personperson0."lastname"  ELSE NULL END
+from (SELECT * FROM "person"."person" personperson0 WHERE (((personperson0)."businessentityid"  = ?::int4) OR ((personperson0)."businessentityid"  = ?::int4)) ORDER BY (personperson0)."firstname"  ASC) personperson0

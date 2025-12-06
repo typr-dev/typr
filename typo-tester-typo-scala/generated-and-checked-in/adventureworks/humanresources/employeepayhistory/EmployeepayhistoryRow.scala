@@ -52,7 +52,7 @@ case class EmployeepayhistoryRow(
 }
 
 object EmployeepayhistoryRow {
-  val `_rowParser`: RowParser[EmployeepayhistoryRow] = RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EmployeepayhistoryRow.apply, row => Array(row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate))
+  val `_rowParser`: RowParser[EmployeepayhistoryRow] = RowParsers.of(BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoShort.pgType, TypoLocalDateTime.pgType, EmployeepayhistoryRow.apply, row => Array[Object](row.businessentityid.asInstanceOf[Object], row.ratechangedate.asInstanceOf[Object], row.rate.asInstanceOf[Object], row.payfrequency.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 
   def apply(
     compositeId: EmployeepayhistoryId,

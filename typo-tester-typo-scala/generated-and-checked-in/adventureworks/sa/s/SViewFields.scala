@@ -11,13 +11,15 @@ import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait SViewFields {
+trait SViewFields extends FieldsExpr[SViewRow] {
   def id: Field[BusinessentityId, SViewRow]
 
   def businessentityid: Field[BusinessentityId, SViewRow]
@@ -31,97 +33,103 @@ trait SViewFields {
   def rowguid: Field[TypoUUID, SViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, SViewRow]
+
+  override def columns: java.util.List[FieldLike[?, SViewRow]]
+
+  override def rowParser: RowParser[SViewRow] = SViewRow._rowParser
 }
 
 object SViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[SViewFields, SViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends SViewFields with Relation[SViewFields, SViewRow] {
 
-    override lazy val fields: SViewFields = {
-      new SViewFields {
-        override def id: Field[BusinessentityId, SViewRow] = {
-          new Field[BusinessentityId, SViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def businessentityid: Field[BusinessentityId, SViewRow] = {
-          new Field[BusinessentityId, SViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def name: Field[Name, SViewRow] = {
-          new Field[Name, SViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def salespersonid: OptField[BusinessentityId, SViewRow] = {
-          new OptField[BusinessentityId, SViewRow](
-            _path,
-            "salespersonid",
-            _.salespersonid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(salespersonid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def demographics: OptField[TypoXml, SViewRow] = {
-          new OptField[TypoXml, SViewRow](
-            _path,
-            "demographics",
-            _.demographics,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(demographics = value),
-            TypoXml.pgType
-          )
-        }
-        override def rowguid: Field[TypoUUID, SViewRow] = {
-          new Field[TypoUUID, SViewRow](
-            _path,
-            "rowguid",
-            _.rowguid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(rowguid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, SViewRow] = {
-          new Field[TypoLocalDateTime, SViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[BusinessentityId, SViewRow] = {
+      new Field[BusinessentityId, SViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, SViewRow]] = java.util.List.of(this.fields.id, this.fields.businessentityid, this.fields.name, this.fields.salespersonid, this.fields.demographics, this.fields.rowguid, this.fields.modifieddate)
+    override def businessentityid: Field[BusinessentityId, SViewRow] = {
+      new Field[BusinessentityId, SViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[Name, SViewRow] = {
+      new Field[Name, SViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def salespersonid: OptField[BusinessentityId, SViewRow] = {
+      new OptField[BusinessentityId, SViewRow](
+        _path,
+        "salespersonid",
+        _.salespersonid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(salespersonid = value),
+        BusinessentityId.pgType
+      )
+    }
+
+    override def demographics: OptField[TypoXml, SViewRow] = {
+      new OptField[TypoXml, SViewRow](
+        _path,
+        "demographics",
+        _.demographics,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(demographics = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def rowguid: Field[TypoUUID, SViewRow] = {
+      new Field[TypoUUID, SViewRow](
+        _path,
+        "rowguid",
+        _.rowguid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(rowguid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, SViewRow] = {
+      new Field[TypoLocalDateTime, SViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, SViewRow]] = java.util.List.of(this.id, this.businessentityid, this.name, this.salespersonid, this.demographics, this.rowguid, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[SViewFields, SViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[SViewFields, SViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

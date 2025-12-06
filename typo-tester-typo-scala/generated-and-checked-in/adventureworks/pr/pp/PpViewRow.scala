@@ -32,5 +32,5 @@ case class PpViewRow(
 )
 
 object PpViewRow {
-  val `_rowParser`: RowParser[PpViewRow] = RowParsers.of(ProductphotoId.pgType, ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, PpViewRow.apply, row => Array(row.id, row.productphotoid, row.thumbnailphoto, row.thumbnailphotofilename, row.largephoto, row.largephotofilename, row.modifieddate))
+  val `_rowParser`: RowParser[PpViewRow] = RowParsers.of(ProductphotoId.pgType, ProductphotoId.pgType, TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoBytea.pgType.opt(), PgTypes.text.opt(), TypoLocalDateTime.pgType, PpViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.productphotoid.asInstanceOf[Object], row.thumbnailphoto.asInstanceOf[Object], row.thumbnailphotofilename.asInstanceOf[Object], row.largephoto.asInstanceOf[Object], row.largephotofilename.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

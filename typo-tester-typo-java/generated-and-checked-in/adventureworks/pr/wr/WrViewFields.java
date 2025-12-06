@@ -12,89 +12,94 @@ import adventureworks.production.workorder.WorkorderId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface WrViewFields {
-  final class Impl extends Relation<WrViewFields, WrViewRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface WrViewFields extends FieldsExpr<WrViewRow> {
+  record Impl(List<Path> _path) implements WrViewFields, Relation<WrViewFields, WrViewRow> {
+    @Override
+    public Field<WorkorderId, WrViewRow> id() {
+      return new Field<WorkorderId, WrViewRow>(_path, "id", WrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), WorkorderId.pgType);
+    };
 
     @Override
-    public WrViewFields fields() {
-      return new WrViewFields() {
-               @Override
-               public Field<WorkorderId, WrViewRow> id() {
-                 return new Field<WorkorderId, WrViewRow>(_path, "id", WrViewRow::id, Optional.empty(), Optional.empty(), (row, value) -> row.withId(value), WorkorderId.pgType);
-               };
-               @Override
-               public Field<WorkorderId, WrViewRow> workorderid() {
-                 return new Field<WorkorderId, WrViewRow>(_path, "workorderid", WrViewRow::workorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withWorkorderid(value), WorkorderId.pgType);
-               };
-               @Override
-               public Field<Integer, WrViewRow> productid() {
-                 return new Field<Integer, WrViewRow>(_path, "productid", WrViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), PgTypes.int4);
-               };
-               @Override
-               public Field<TypoShort, WrViewRow> operationsequence() {
-                 return new Field<TypoShort, WrViewRow>(_path, "operationsequence", WrViewRow::operationsequence, Optional.empty(), Optional.empty(), (row, value) -> row.withOperationsequence(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<LocationId, WrViewRow> locationid() {
-                 return new Field<LocationId, WrViewRow>(_path, "locationid", WrViewRow::locationid, Optional.empty(), Optional.empty(), (row, value) -> row.withLocationid(value), LocationId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, WrViewRow> scheduledstartdate() {
-                 return new Field<TypoLocalDateTime, WrViewRow>(_path, "scheduledstartdate", WrViewRow::scheduledstartdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withScheduledstartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, WrViewRow> scheduledenddate() {
-                 return new Field<TypoLocalDateTime, WrViewRow>(_path, "scheduledenddate", WrViewRow::scheduledenddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withScheduledenddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, WrViewRow> actualstartdate() {
-                 return new OptField<TypoLocalDateTime, WrViewRow>(_path, "actualstartdate", WrViewRow::actualstartdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withActualstartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, WrViewRow> actualenddate() {
-                 return new OptField<TypoLocalDateTime, WrViewRow>(_path, "actualenddate", WrViewRow::actualenddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withActualenddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<BigDecimal, WrViewRow> actualresourcehrs() {
-                 return new OptField<BigDecimal, WrViewRow>(_path, "actualresourcehrs", WrViewRow::actualresourcehrs, Optional.empty(), Optional.empty(), (row, value) -> row.withActualresourcehrs(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<BigDecimal, WrViewRow> plannedcost() {
-                 return new Field<BigDecimal, WrViewRow>(_path, "plannedcost", WrViewRow::plannedcost, Optional.empty(), Optional.empty(), (row, value) -> row.withPlannedcost(value), PgTypes.numeric);
-               };
-               @Override
-               public OptField<BigDecimal, WrViewRow> actualcost() {
-                 return new OptField<BigDecimal, WrViewRow>(_path, "actualcost", WrViewRow::actualcost, Optional.empty(), Optional.empty(), (row, value) -> row.withActualcost(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, WrViewRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, WrViewRow>(_path, "modifieddate", WrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<WorkorderId, WrViewRow> workorderid() {
+      return new Field<WorkorderId, WrViewRow>(_path, "workorderid", WrViewRow::workorderid, Optional.empty(), Optional.empty(), (row, value) -> row.withWorkorderid(value), WorkorderId.pgType);
+    };
+
+    @Override
+    public Field<Integer, WrViewRow> productid() {
+      return new Field<Integer, WrViewRow>(_path, "productid", WrViewRow::productid, Optional.empty(), Optional.empty(), (row, value) -> row.withProductid(value), PgTypes.int4);
+    };
+
+    @Override
+    public Field<TypoShort, WrViewRow> operationsequence() {
+      return new Field<TypoShort, WrViewRow>(_path, "operationsequence", WrViewRow::operationsequence, Optional.empty(), Optional.empty(), (row, value) -> row.withOperationsequence(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<LocationId, WrViewRow> locationid() {
+      return new Field<LocationId, WrViewRow>(_path, "locationid", WrViewRow::locationid, Optional.empty(), Optional.empty(), (row, value) -> row.withLocationid(value), LocationId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, WrViewRow> scheduledstartdate() {
+      return new Field<TypoLocalDateTime, WrViewRow>(_path, "scheduledstartdate", WrViewRow::scheduledstartdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withScheduledstartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, WrViewRow> scheduledenddate() {
+      return new Field<TypoLocalDateTime, WrViewRow>(_path, "scheduledenddate", WrViewRow::scheduledenddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withScheduledenddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, WrViewRow> actualstartdate() {
+      return new OptField<TypoLocalDateTime, WrViewRow>(_path, "actualstartdate", WrViewRow::actualstartdate, Optional.of("text"), Optional.empty(), (row, value) -> row.withActualstartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, WrViewRow> actualenddate() {
+      return new OptField<TypoLocalDateTime, WrViewRow>(_path, "actualenddate", WrViewRow::actualenddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withActualenddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<BigDecimal, WrViewRow> actualresourcehrs() {
+      return new OptField<BigDecimal, WrViewRow>(_path, "actualresourcehrs", WrViewRow::actualresourcehrs, Optional.empty(), Optional.empty(), (row, value) -> row.withActualresourcehrs(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<BigDecimal, WrViewRow> plannedcost() {
+      return new Field<BigDecimal, WrViewRow>(_path, "plannedcost", WrViewRow::plannedcost, Optional.empty(), Optional.empty(), (row, value) -> row.withPlannedcost(value), PgTypes.numeric);
+    };
+
+    @Override
+    public OptField<BigDecimal, WrViewRow> actualcost() {
+      return new OptField<BigDecimal, WrViewRow>(_path, "actualcost", WrViewRow::actualcost, Optional.empty(), Optional.empty(), (row, value) -> row.withActualcost(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, WrViewRow> modifieddate() {
+      return new Field<TypoLocalDateTime, WrViewRow>(_path, "modifieddate", WrViewRow::modifieddate, Optional.of("text"), Optional.empty(), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, WrViewRow>> columns() {
-      return List.of(this.fields().id(), this.fields().workorderid(), this.fields().productid(), this.fields().operationsequence(), this.fields().locationid(), this.fields().scheduledstartdate(), this.fields().scheduledenddate(), this.fields().actualstartdate(), this.fields().actualenddate(), this.fields().actualresourcehrs(), this.fields().plannedcost(), this.fields().actualcost(), this.fields().modifieddate());
+      return List.of(this.id(), this.workorderid(), this.productid(), this.operationsequence(), this.locationid(), this.scheduledstartdate(), this.scheduledenddate(), this.actualstartdate(), this.actualenddate(), this.actualresourcehrs(), this.plannedcost(), this.actualcost(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<WrViewFields, WrViewRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<WrViewFields, WrViewRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -123,4 +128,12 @@ public interface WrViewFields {
   OptField<BigDecimal, WrViewRow> actualcost();
 
   Field<TypoLocalDateTime, WrViewRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, WrViewRow>> columns();
+
+  @Override
+  default RowParser<WrViewRow> rowParser() {
+    return WrViewRow._rowParser;
+  };
 }

@@ -9,48 +9,43 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface CultureFields {
-  final class Impl extends Relation<CultureFields, CultureRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface CultureFields extends FieldsExpr<CultureRow> {
+  record Impl(List<Path> _path) implements CultureFields, Relation<CultureFields, CultureRow> {
+    @Override
+    public IdField<CultureId, CultureRow> cultureid() {
+      return new IdField<CultureId, CultureRow>(_path, "cultureid", CultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCultureid(value), CultureId.pgType);
+    };
 
     @Override
-    public CultureFields fields() {
-      return new CultureFields() {
-               @Override
-               public IdField<CultureId, CultureRow> cultureid() {
-                 return new IdField<CultureId, CultureRow>(_path, "cultureid", CultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCultureid(value), CultureId.pgType);
-               };
-               @Override
-               public Field<Name, CultureRow> name() {
-                 return new Field<Name, CultureRow>(_path, "name", CultureRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, CultureRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, CultureRow>(_path, "modifieddate", CultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, CultureRow> name() {
+      return new Field<Name, CultureRow>(_path, "name", CultureRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, CultureRow> modifieddate() {
+      return new Field<TypoLocalDateTime, CultureRow>(_path, "modifieddate", CultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, CultureRow>> columns() {
-      return List.of(this.fields().cultureid(), this.fields().name(), this.fields().modifieddate());
+      return List.of(this.cultureid(), this.name(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<CultureFields, CultureRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<CultureFields, CultureRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -59,4 +54,12 @@ public interface CultureFields {
   Field<Name, CultureRow> name();
 
   Field<TypoLocalDateTime, CultureRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, CultureRow>> columns();
+
+  @Override
+  default RowParser<CultureRow> rowParser() {
+    return CultureRow._rowParser;
+  };
 }

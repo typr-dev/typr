@@ -11,14 +11,16 @@ import adventureworks.public.Name
 import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VindividualcustomerViewFields {
+trait VindividualcustomerViewFields extends FieldsExpr[VindividualcustomerViewRow] {
   def businessentityid: Field[BusinessentityId, VindividualcustomerViewRow]
 
   def title: OptField[/* max 8 chars */ String, VindividualcustomerViewRow]
@@ -54,218 +56,235 @@ trait VindividualcustomerViewFields {
   def countryregionname: Field[Name, VindividualcustomerViewRow]
 
   def demographics: OptField[TypoXml, VindividualcustomerViewRow]
+
+  override def columns: java.util.List[FieldLike[?, VindividualcustomerViewRow]]
+
+  override def rowParser: RowParser[VindividualcustomerViewRow] = VindividualcustomerViewRow._rowParser
 }
 
 object VindividualcustomerViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VindividualcustomerViewFields, VindividualcustomerViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VindividualcustomerViewFields with Relation[VindividualcustomerViewFields, VindividualcustomerViewRow] {
 
-    override lazy val fields: VindividualcustomerViewFields = {
-      new VindividualcustomerViewFields {
-        override def businessentityid: Field[BusinessentityId, VindividualcustomerViewRow] = {
-          new Field[BusinessentityId, VindividualcustomerViewRow](
-            _path,
-            "businessentityid",
-            _.businessentityid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(businessentityid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def title: OptField[/* max 8 chars */ String, VindividualcustomerViewRow] = {
-          new OptField[/* max 8 chars */ String, VindividualcustomerViewRow](
-            _path,
-            "title",
-            _.title,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(title = value),
-            PgTypes.text
-          )
-        }
-        override def firstname: Field[/* user-picked */ FirstName, VindividualcustomerViewRow] = {
-          new Field[/* user-picked */ FirstName, VindividualcustomerViewRow](
-            _path,
-            "firstname",
-            _.firstname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(firstname = value),
-            FirstName.pgType
-          )
-        }
-        override def middlename: OptField[Name, VindividualcustomerViewRow] = {
-          new OptField[Name, VindividualcustomerViewRow](
-            _path,
-            "middlename",
-            _.middlename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(middlename = value),
-            Name.pgType
-          )
-        }
-        override def lastname: Field[Name, VindividualcustomerViewRow] = {
-          new Field[Name, VindividualcustomerViewRow](
-            _path,
-            "lastname",
-            _.lastname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(lastname = value),
-            Name.pgType
-          )
-        }
-        override def suffix: OptField[/* max 10 chars */ String, VindividualcustomerViewRow] = {
-          new OptField[/* max 10 chars */ String, VindividualcustomerViewRow](
-            _path,
-            "suffix",
-            _.suffix,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(suffix = value),
-            PgTypes.text
-          )
-        }
-        override def phonenumber: OptField[Phone, VindividualcustomerViewRow] = {
-          new OptField[Phone, VindividualcustomerViewRow](
-            _path,
-            "phonenumber",
-            _.phonenumber,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(phonenumber = value),
-            Phone.pgType
-          )
-        }
-        override def phonenumbertype: OptField[Name, VindividualcustomerViewRow] = {
-          new OptField[Name, VindividualcustomerViewRow](
-            _path,
-            "phonenumbertype",
-            _.phonenumbertype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(phonenumbertype = value),
-            Name.pgType
-          )
-        }
-        override def emailaddress: OptField[/* max 50 chars */ String, VindividualcustomerViewRow] = {
-          new OptField[/* max 50 chars */ String, VindividualcustomerViewRow](
-            _path,
-            "emailaddress",
-            _.emailaddress,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailaddress = value),
-            PgTypes.text
-          )
-        }
-        override def emailpromotion: Field[Integer, VindividualcustomerViewRow] = {
-          new Field[Integer, VindividualcustomerViewRow](
-            _path,
-            "emailpromotion",
-            _.emailpromotion,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(emailpromotion = value),
-            PgTypes.int4
-          )
-        }
-        override def addresstype: Field[Name, VindividualcustomerViewRow] = {
-          new Field[Name, VindividualcustomerViewRow](
-            _path,
-            "addresstype",
-            _.addresstype,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addresstype = value),
-            Name.pgType
-          )
-        }
-        override def addressline1: Field[/* max 60 chars */ String, VindividualcustomerViewRow] = {
-          new Field[/* max 60 chars */ String, VindividualcustomerViewRow](
-            _path,
-            "addressline1",
-            _.addressline1,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addressline1 = value),
-            PgTypes.text
-          )
-        }
-        override def addressline2: OptField[/* max 60 chars */ String, VindividualcustomerViewRow] = {
-          new OptField[/* max 60 chars */ String, VindividualcustomerViewRow](
-            _path,
-            "addressline2",
-            _.addressline2,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(addressline2 = value),
-            PgTypes.text
-          )
-        }
-        override def city: Field[/* max 30 chars */ String, VindividualcustomerViewRow] = {
-          new Field[/* max 30 chars */ String, VindividualcustomerViewRow](
-            _path,
-            "city",
-            _.city,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(city = value),
-            PgTypes.text
-          )
-        }
-        override def stateprovincename: Field[Name, VindividualcustomerViewRow] = {
-          new Field[Name, VindividualcustomerViewRow](
-            _path,
-            "stateprovincename",
-            _.stateprovincename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(stateprovincename = value),
-            Name.pgType
-          )
-        }
-        override def postalcode: Field[/* max 15 chars */ String, VindividualcustomerViewRow] = {
-          new Field[/* max 15 chars */ String, VindividualcustomerViewRow](
-            _path,
-            "postalcode",
-            _.postalcode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(postalcode = value),
-            PgTypes.text
-          )
-        }
-        override def countryregionname: Field[Name, VindividualcustomerViewRow] = {
-          new Field[Name, VindividualcustomerViewRow](
-            _path,
-            "countryregionname",
-            _.countryregionname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryregionname = value),
-            Name.pgType
-          )
-        }
-        override def demographics: OptField[TypoXml, VindividualcustomerViewRow] = {
-          new OptField[TypoXml, VindividualcustomerViewRow](
-            _path,
-            "demographics",
-            _.demographics,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(demographics = value),
-            TypoXml.pgType
-          )
-        }
-      }
+    override def businessentityid: Field[BusinessentityId, VindividualcustomerViewRow] = {
+      new Field[BusinessentityId, VindividualcustomerViewRow](
+        _path,
+        "businessentityid",
+        _.businessentityid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(businessentityid = value),
+        BusinessentityId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VindividualcustomerViewRow]] = java.util.List.of(this.fields.businessentityid, this.fields.title, this.fields.firstname, this.fields.middlename, this.fields.lastname, this.fields.suffix, this.fields.phonenumber, this.fields.phonenumbertype, this.fields.emailaddress, this.fields.emailpromotion, this.fields.addresstype, this.fields.addressline1, this.fields.addressline2, this.fields.city, this.fields.stateprovincename, this.fields.postalcode, this.fields.countryregionname, this.fields.demographics)
+    override def title: OptField[/* max 8 chars */ String, VindividualcustomerViewRow] = {
+      new OptField[/* max 8 chars */ String, VindividualcustomerViewRow](
+        _path,
+        "title",
+        _.title,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(title = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def firstname: Field[/* user-picked */ FirstName, VindividualcustomerViewRow] = {
+      new Field[/* user-picked */ FirstName, VindividualcustomerViewRow](
+        _path,
+        "firstname",
+        _.firstname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(firstname = value),
+        FirstName.pgType
+      )
+    }
+
+    override def middlename: OptField[Name, VindividualcustomerViewRow] = {
+      new OptField[Name, VindividualcustomerViewRow](
+        _path,
+        "middlename",
+        _.middlename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(middlename = value),
+        Name.pgType
+      )
+    }
+
+    override def lastname: Field[Name, VindividualcustomerViewRow] = {
+      new Field[Name, VindividualcustomerViewRow](
+        _path,
+        "lastname",
+        _.lastname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(lastname = value),
+        Name.pgType
+      )
+    }
+
+    override def suffix: OptField[/* max 10 chars */ String, VindividualcustomerViewRow] = {
+      new OptField[/* max 10 chars */ String, VindividualcustomerViewRow](
+        _path,
+        "suffix",
+        _.suffix,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(suffix = value),
+        PgTypes.text
+      )
+    }
+
+    override def phonenumber: OptField[Phone, VindividualcustomerViewRow] = {
+      new OptField[Phone, VindividualcustomerViewRow](
+        _path,
+        "phonenumber",
+        _.phonenumber,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(phonenumber = value),
+        Phone.pgType
+      )
+    }
+
+    override def phonenumbertype: OptField[Name, VindividualcustomerViewRow] = {
+      new OptField[Name, VindividualcustomerViewRow](
+        _path,
+        "phonenumbertype",
+        _.phonenumbertype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(phonenumbertype = value),
+        Name.pgType
+      )
+    }
+
+    override def emailaddress: OptField[/* max 50 chars */ String, VindividualcustomerViewRow] = {
+      new OptField[/* max 50 chars */ String, VindividualcustomerViewRow](
+        _path,
+        "emailaddress",
+        _.emailaddress,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailaddress = value),
+        PgTypes.text
+      )
+    }
+
+    override def emailpromotion: Field[Integer, VindividualcustomerViewRow] = {
+      new Field[Integer, VindividualcustomerViewRow](
+        _path,
+        "emailpromotion",
+        _.emailpromotion,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(emailpromotion = value),
+        PgTypes.int4
+      )
+    }
+
+    override def addresstype: Field[Name, VindividualcustomerViewRow] = {
+      new Field[Name, VindividualcustomerViewRow](
+        _path,
+        "addresstype",
+        _.addresstype,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addresstype = value),
+        Name.pgType
+      )
+    }
+
+    override def addressline1: Field[/* max 60 chars */ String, VindividualcustomerViewRow] = {
+      new Field[/* max 60 chars */ String, VindividualcustomerViewRow](
+        _path,
+        "addressline1",
+        _.addressline1,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addressline1 = value),
+        PgTypes.text
+      )
+    }
+
+    override def addressline2: OptField[/* max 60 chars */ String, VindividualcustomerViewRow] = {
+      new OptField[/* max 60 chars */ String, VindividualcustomerViewRow](
+        _path,
+        "addressline2",
+        _.addressline2,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(addressline2 = value),
+        PgTypes.text
+      )
+    }
+
+    override def city: Field[/* max 30 chars */ String, VindividualcustomerViewRow] = {
+      new Field[/* max 30 chars */ String, VindividualcustomerViewRow](
+        _path,
+        "city",
+        _.city,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(city = value),
+        PgTypes.text
+      )
+    }
+
+    override def stateprovincename: Field[Name, VindividualcustomerViewRow] = {
+      new Field[Name, VindividualcustomerViewRow](
+        _path,
+        "stateprovincename",
+        _.stateprovincename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(stateprovincename = value),
+        Name.pgType
+      )
+    }
+
+    override def postalcode: Field[/* max 15 chars */ String, VindividualcustomerViewRow] = {
+      new Field[/* max 15 chars */ String, VindividualcustomerViewRow](
+        _path,
+        "postalcode",
+        _.postalcode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(postalcode = value),
+        PgTypes.text
+      )
+    }
+
+    override def countryregionname: Field[Name, VindividualcustomerViewRow] = {
+      new Field[Name, VindividualcustomerViewRow](
+        _path,
+        "countryregionname",
+        _.countryregionname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryregionname = value),
+        Name.pgType
+      )
+    }
+
+    override def demographics: OptField[TypoXml, VindividualcustomerViewRow] = {
+      new OptField[TypoXml, VindividualcustomerViewRow](
+        _path,
+        "demographics",
+        _.demographics,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(demographics = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VindividualcustomerViewRow]] = java.util.List.of(this.businessentityid, this.title, this.firstname, this.middlename, this.lastname, this.suffix, this.phonenumber, this.phonenumbertype, this.emailaddress, this.emailpromotion, this.addresstype, this.addressline1, this.addressline2, this.city, this.stateprovincename, this.postalcode, this.countryregionname, this.demographics)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VindividualcustomerViewFields, VindividualcustomerViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VindividualcustomerViewFields, VindividualcustomerViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

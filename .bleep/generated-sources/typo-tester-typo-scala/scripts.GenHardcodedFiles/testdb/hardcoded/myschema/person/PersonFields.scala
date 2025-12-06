@@ -14,6 +14,7 @@ import testdb.hardcoded.myschema.football_club.FootballClubRow
 import testdb.hardcoded.myschema.marital_status.MaritalStatusFields
 import testdb.hardcoded.myschema.marital_status.MaritalStatusId
 import testdb.hardcoded.myschema.marital_status.MaritalStatusRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -22,8 +23,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PersonFields {
+trait PersonFields extends FieldsExpr[PersonRow] {
   def id: IdField[PersonId, PersonRow]
 
   def favouriteFootballClubId: Field[FootballClubId, PersonRow]
@@ -51,152 +53,163 @@ trait PersonFields {
   def fkFootballClub: ForeignKey[FootballClubFields, FootballClubRow] = ForeignKey.of[FootballClubFields, FootballClubRow]("myschema.person_favourite_football_club_id_fkey").withColumnPair(favouriteFootballClubId, _.id)
 
   def fkMaritalStatus: ForeignKey[MaritalStatusFields, MaritalStatusRow] = ForeignKey.of[MaritalStatusFields, MaritalStatusRow]("myschema.person_marital_status_id_fkey").withColumnPair(maritalStatusId, _.id)
+
+  override def columns: java.util.List[FieldLike[?, PersonRow]]
+
+  override def rowParser: RowParser[PersonRow] = PersonRow._rowParser
 }
 
 object PersonFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PersonFields, PersonRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PersonFields with Relation[PersonFields, PersonRow] {
 
-    override lazy val fields: PersonFields = {
-      new PersonFields {
-        override def id: IdField[PersonId, PersonRow] = {
-          new IdField[PersonId, PersonRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.of("int8"),
-            (row, value) => row.copy(id = value),
-            PersonId.pgType
-          )
-        }
-        override def favouriteFootballClubId: Field[FootballClubId, PersonRow] = {
-          new Field[FootballClubId, PersonRow](
-            _path,
-            "favourite_football_club_id",
-            _.favouriteFootballClubId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(favouriteFootballClubId = value),
-            FootballClubId.pgType
-          )
-        }
-        override def name: Field[/* max 100 chars */ String, PersonRow] = {
-          new Field[/* max 100 chars */ String, PersonRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            PgTypes.text
-          )
-        }
-        override def nickName: OptField[/* max 30 chars */ String, PersonRow] = {
-          new OptField[/* max 30 chars */ String, PersonRow](
-            _path,
-            "nick_name",
-            _.nickName,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(nickName = value),
-            PgTypes.text
-          )
-        }
-        override def blogUrl: OptField[/* max 100 chars */ String, PersonRow] = {
-          new OptField[/* max 100 chars */ String, PersonRow](
-            _path,
-            "blog_url",
-            _.blogUrl,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(blogUrl = value),
-            PgTypes.text
-          )
-        }
-        override def email: Field[/* max 254 chars */ String, PersonRow] = {
-          new Field[/* max 254 chars */ String, PersonRow](
-            _path,
-            "email",
-            _.email,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(email = value),
-            PgTypes.text
-          )
-        }
-        override def phone: Field[/* max 8 chars */ String, PersonRow] = {
-          new Field[/* max 8 chars */ String, PersonRow](
-            _path,
-            "phone",
-            _.phone,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(phone = value),
-            PgTypes.text
-          )
-        }
-        override def likesPizza: Field[java.lang.Boolean, PersonRow] = {
-          new Field[java.lang.Boolean, PersonRow](
-            _path,
-            "likes_pizza",
-            _.likesPizza,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(likesPizza = value),
-            PgTypes.bool
-          )
-        }
-        override def maritalStatusId: Field[MaritalStatusId, PersonRow] = {
-          new Field[MaritalStatusId, PersonRow](
-            _path,
-            "marital_status_id",
-            _.maritalStatusId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(maritalStatusId = value),
-            MaritalStatusId.pgType
-          )
-        }
-        override def workEmail: OptField[/* max 254 chars */ String, PersonRow] = {
-          new OptField[/* max 254 chars */ String, PersonRow](
-            _path,
-            "work_email",
-            _.workEmail,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(workEmail = value),
-            PgTypes.text
-          )
-        }
-        override def sector: Field[Sector, PersonRow] = {
-          new Field[Sector, PersonRow](
-            _path,
-            "sector",
-            _.sector,
-            Optional.empty(),
-            Optional.of("myschema.sector"),
-            (row, value) => row.copy(sector = value),
-            Sector.pgType
-          )
-        }
-        override def favoriteNumber: Field[Number, PersonRow] = {
-          new Field[Number, PersonRow](
-            _path,
-            "favorite_number",
-            _.favoriteNumber,
-            Optional.empty(),
-            Optional.of("myschema.number"),
-            (row, value) => row.copy(favoriteNumber = value),
-            Number.pgType
-          )
-        }
-      }
+    override def id: IdField[PersonId, PersonRow] = {
+      new IdField[PersonId, PersonRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.of("int8"),
+        (row, value) => row.copy(id = value),
+        PersonId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PersonRow]] = java.util.List.of(this.fields.id, this.fields.favouriteFootballClubId, this.fields.name, this.fields.nickName, this.fields.blogUrl, this.fields.email, this.fields.phone, this.fields.likesPizza, this.fields.maritalStatusId, this.fields.workEmail, this.fields.sector, this.fields.favoriteNumber)
+    override def favouriteFootballClubId: Field[FootballClubId, PersonRow] = {
+      new Field[FootballClubId, PersonRow](
+        _path,
+        "favourite_football_club_id",
+        _.favouriteFootballClubId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(favouriteFootballClubId = value),
+        FootballClubId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[/* max 100 chars */ String, PersonRow] = {
+      new Field[/* max 100 chars */ String, PersonRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        PgTypes.text
+      )
+    }
+
+    override def nickName: OptField[/* max 30 chars */ String, PersonRow] = {
+      new OptField[/* max 30 chars */ String, PersonRow](
+        _path,
+        "nick_name",
+        _.nickName,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(nickName = value),
+        PgTypes.text
+      )
+    }
+
+    override def blogUrl: OptField[/* max 100 chars */ String, PersonRow] = {
+      new OptField[/* max 100 chars */ String, PersonRow](
+        _path,
+        "blog_url",
+        _.blogUrl,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(blogUrl = value),
+        PgTypes.text
+      )
+    }
+
+    override def email: Field[/* max 254 chars */ String, PersonRow] = {
+      new Field[/* max 254 chars */ String, PersonRow](
+        _path,
+        "email",
+        _.email,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(email = value),
+        PgTypes.text
+      )
+    }
+
+    override def phone: Field[/* max 8 chars */ String, PersonRow] = {
+      new Field[/* max 8 chars */ String, PersonRow](
+        _path,
+        "phone",
+        _.phone,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(phone = value),
+        PgTypes.text
+      )
+    }
+
+    override def likesPizza: Field[java.lang.Boolean, PersonRow] = {
+      new Field[java.lang.Boolean, PersonRow](
+        _path,
+        "likes_pizza",
+        _.likesPizza,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(likesPizza = value),
+        PgTypes.bool
+      )
+    }
+
+    override def maritalStatusId: Field[MaritalStatusId, PersonRow] = {
+      new Field[MaritalStatusId, PersonRow](
+        _path,
+        "marital_status_id",
+        _.maritalStatusId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(maritalStatusId = value),
+        MaritalStatusId.pgType
+      )
+    }
+
+    override def workEmail: OptField[/* max 254 chars */ String, PersonRow] = {
+      new OptField[/* max 254 chars */ String, PersonRow](
+        _path,
+        "work_email",
+        _.workEmail,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(workEmail = value),
+        PgTypes.text
+      )
+    }
+
+    override def sector: Field[Sector, PersonRow] = {
+      new Field[Sector, PersonRow](
+        _path,
+        "sector",
+        _.sector,
+        Optional.empty(),
+        Optional.of("myschema.sector"),
+        (row, value) => row.copy(sector = value),
+        Sector.pgType
+      )
+    }
+
+    override def favoriteNumber: Field[Number, PersonRow] = {
+      new Field[Number, PersonRow](
+        _path,
+        "favorite_number",
+        _.favoriteNumber,
+        Optional.empty(),
+        Optional.of("myschema.number"),
+        (row, value) => row.copy(favoriteNumber = value),
+        Number.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PersonRow]] = java.util.List.of(this.id, this.favouriteFootballClubId, this.name, this.nickName, this.blogUrl, this.email, this.phone, this.likesPizza, this.maritalStatusId, this.workEmail, this.sector, this.favoriteNumber)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PersonFields, PersonRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PersonFields, PersonRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

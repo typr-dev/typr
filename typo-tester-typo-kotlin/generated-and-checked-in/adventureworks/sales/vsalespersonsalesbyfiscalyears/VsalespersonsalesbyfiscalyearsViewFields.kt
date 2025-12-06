@@ -8,44 +8,54 @@ package adventureworks.sales.vsalespersonsalesbyfiscalyears
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface VsalespersonsalesbyfiscalyearsViewFields {
+interface VsalespersonsalesbyfiscalyearsViewFields : FieldsExpr<VsalespersonsalesbyfiscalyearsViewRow> {
   fun _2012(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>
 
   fun _2013(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>
 
   fun _2014(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>
 
+  override fun columns(): List<FieldLike<*, VsalespersonsalesbyfiscalyearsViewRow>>
+
   fun fullName(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow>
 
   fun jobTitle(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow>
+
+  override fun rowParser(): RowParser<VsalespersonsalesbyfiscalyearsViewRow> = VsalespersonsalesbyfiscalyearsViewRow._rowParser
 
   fun salesPersonID(): OptField<Int, VsalespersonsalesbyfiscalyearsViewRow>
 
   fun salesTerritory(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow>(path) {
-      override fun fields(): VsalespersonsalesbyfiscalyearsViewFields = object : VsalespersonsalesbyfiscalyearsViewFields {
-        override fun salesPersonID(): OptField<Int, VsalespersonsalesbyfiscalyearsViewRow> = OptField<Int, VsalespersonsalesbyfiscalyearsViewRow>(_path, "SalesPersonID", VsalespersonsalesbyfiscalyearsViewRow::salesPersonID, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesPersonID = value) }, PgTypes.int4)
-        override fun fullName(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow> = OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "FullName", VsalespersonsalesbyfiscalyearsViewRow::fullName, Optional.empty(), Optional.empty(), { row, value -> row.copy(fullName = value) }, PgTypes.text)
-        override fun jobTitle(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow> = OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "JobTitle", VsalespersonsalesbyfiscalyearsViewRow::jobTitle, Optional.empty(), Optional.empty(), { row, value -> row.copy(jobTitle = value) }, PgTypes.text)
-        override fun salesTerritory(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow> = OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "SalesTerritory", VsalespersonsalesbyfiscalyearsViewRow::salesTerritory, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesTerritory = value) }, PgTypes.text)
-        override fun _2012(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> = OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2012", VsalespersonsalesbyfiscalyearsViewRow::_2012, Optional.empty(), Optional.empty(), { row, value -> row.copy(_2012 = value) }, PgTypes.numeric)
-        override fun _2013(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> = OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2013", VsalespersonsalesbyfiscalyearsViewRow::_2013, Optional.empty(), Optional.empty(), { row, value -> row.copy(_2013 = value) }, PgTypes.numeric)
-        override fun _2014(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> = OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2014", VsalespersonsalesbyfiscalyearsViewRow::_2014, Optional.empty(), Optional.empty(), { row, value -> row.copy(_2014 = value) }, PgTypes.numeric)
-      }
+    data class Impl(val _path: List<Path>) : VsalespersonsalesbyfiscalyearsViewFields, Relation<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow> {
+      override fun salesPersonID(): OptField<Int, VsalespersonsalesbyfiscalyearsViewRow> = OptField<Int, VsalespersonsalesbyfiscalyearsViewRow>(_path, "SalesPersonID", VsalespersonsalesbyfiscalyearsViewRow::salesPersonID, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesPersonID = value) }, PgTypes.int4)
 
-      override fun columns(): List<FieldLike<*, VsalespersonsalesbyfiscalyearsViewRow>> = listOf(this.fields().salesPersonID(), this.fields().fullName(), this.fields().jobTitle(), this.fields().salesTerritory(), this.fields()._2012(), this.fields()._2013(), this.fields()._2014())
+      override fun fullName(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow> = OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "FullName", VsalespersonsalesbyfiscalyearsViewRow::fullName, Optional.empty(), Optional.empty(), { row, value -> row.copy(fullName = value) }, PgTypes.text)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun jobTitle(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow> = OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "JobTitle", VsalespersonsalesbyfiscalyearsViewRow::jobTitle, Optional.empty(), Optional.empty(), { row, value -> row.copy(jobTitle = value) }, PgTypes.text)
+
+      override fun salesTerritory(): OptField<String, VsalespersonsalesbyfiscalyearsViewRow> = OptField<String, VsalespersonsalesbyfiscalyearsViewRow>(_path, "SalesTerritory", VsalespersonsalesbyfiscalyearsViewRow::salesTerritory, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesTerritory = value) }, PgTypes.text)
+
+      override fun _2012(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> = OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2012", VsalespersonsalesbyfiscalyearsViewRow::_2012, Optional.empty(), Optional.empty(), { row, value -> row.copy(_2012 = value) }, PgTypes.numeric)
+
+      override fun _2013(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> = OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2013", VsalespersonsalesbyfiscalyearsViewRow::_2013, Optional.empty(), Optional.empty(), { row, value -> row.copy(_2013 = value) }, PgTypes.numeric)
+
+      override fun _2014(): OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow> = OptField<BigDecimal, VsalespersonsalesbyfiscalyearsViewRow>(_path, "2014", VsalespersonsalesbyfiscalyearsViewRow::_2014, Optional.empty(), Optional.empty(), { row, value -> row.copy(_2014 = value) }, PgTypes.numeric)
+
+      override fun columns(): List<FieldLike<*, VsalespersonsalesbyfiscalyearsViewRow>> = listOf(this.salesPersonID(), this.fullName(), this.jobTitle(), this.salesTerritory(), this._2012(), this._2013(), this._2014())
+
+      override fun copy(_path: List<Path>): Relation<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow> = Impl(_path)
     }
 
-    val structure: Relation<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

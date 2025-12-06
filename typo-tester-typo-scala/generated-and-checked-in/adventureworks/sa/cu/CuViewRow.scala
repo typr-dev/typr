@@ -24,5 +24,5 @@ case class CuViewRow(
 )
 
 object CuViewRow {
-  val `_rowParser`: RowParser[CuViewRow] = RowParsers.of(CurrencyId.pgType, CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CuViewRow.apply, row => Array(row.id, row.currencycode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CuViewRow] = RowParsers.of(CurrencyId.pgType, CurrencyId.pgType, Name.pgType, TypoLocalDateTime.pgType, CuViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.currencycode.asInstanceOf[Object], row.name.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

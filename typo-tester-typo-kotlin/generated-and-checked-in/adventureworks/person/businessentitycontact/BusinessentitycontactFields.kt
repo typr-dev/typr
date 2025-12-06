@@ -17,6 +17,7 @@ import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -26,9 +27,12 @@ import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface BusinessentitycontactFields {
+interface BusinessentitycontactFields : FieldsExpr<BusinessentitycontactRow> {
   fun businessentityid(): IdField<BusinessentityId, BusinessentitycontactRow>
+
+  override fun columns(): List<FieldLike<*, BusinessentitycontactRow>>
 
   fun compositeIdIn(compositeIds: List<BusinessentitycontactId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<BusinessentityId, BusinessentitycontactId, BusinessentitycontactRow>(businessentityid(), BusinessentitycontactId::businessentityid, BusinessentityId.pgType), Part<BusinessentityId, BusinessentitycontactId, BusinessentitycontactRow>(personid(), BusinessentitycontactId::personid, BusinessentityId.pgType), Part<ContacttypeId, BusinessentitycontactId, BusinessentitycontactRow>(contacttypeid(), BusinessentitycontactId::contacttypeid, ContacttypeId.pgType)), compositeIds)
 
@@ -46,23 +50,27 @@ interface BusinessentitycontactFields {
 
   fun personid(): IdField<BusinessentityId, BusinessentitycontactRow>
 
+  override fun rowParser(): RowParser<BusinessentitycontactRow> = BusinessentitycontactRow._rowParser
+
   fun rowguid(): Field<TypoUUID, BusinessentitycontactRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<BusinessentitycontactFields, BusinessentitycontactRow>(path) {
-      override fun fields(): BusinessentitycontactFields = object : BusinessentitycontactFields {
-        override fun businessentityid(): IdField<BusinessentityId, BusinessentitycontactRow> = IdField<BusinessentityId, BusinessentitycontactRow>(_path, "businessentityid", BusinessentitycontactRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun personid(): IdField<BusinessentityId, BusinessentitycontactRow> = IdField<BusinessentityId, BusinessentitycontactRow>(_path, "personid", BusinessentitycontactRow::personid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(personid = value) }, BusinessentityId.pgType)
-        override fun contacttypeid(): IdField<ContacttypeId, BusinessentitycontactRow> = IdField<ContacttypeId, BusinessentitycontactRow>(_path, "contacttypeid", BusinessentitycontactRow::contacttypeid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(contacttypeid = value) }, ContacttypeId.pgType)
-        override fun rowguid(): Field<TypoUUID, BusinessentitycontactRow> = Field<TypoUUID, BusinessentitycontactRow>(_path, "rowguid", BusinessentitycontactRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, BusinessentitycontactRow> = Field<TypoLocalDateTime, BusinessentitycontactRow>(_path, "modifieddate", BusinessentitycontactRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : BusinessentitycontactFields, Relation<BusinessentitycontactFields, BusinessentitycontactRow> {
+      override fun businessentityid(): IdField<BusinessentityId, BusinessentitycontactRow> = IdField<BusinessentityId, BusinessentitycontactRow>(_path, "businessentityid", BusinessentitycontactRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, BusinessentitycontactRow>> = listOf(this.fields().businessentityid(), this.fields().personid(), this.fields().contacttypeid(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun personid(): IdField<BusinessentityId, BusinessentitycontactRow> = IdField<BusinessentityId, BusinessentitycontactRow>(_path, "personid", BusinessentitycontactRow::personid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(personid = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun contacttypeid(): IdField<ContacttypeId, BusinessentitycontactRow> = IdField<ContacttypeId, BusinessentitycontactRow>(_path, "contacttypeid", BusinessentitycontactRow::contacttypeid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(contacttypeid = value) }, ContacttypeId.pgType)
+
+      override fun rowguid(): Field<TypoUUID, BusinessentitycontactRow> = Field<TypoUUID, BusinessentitycontactRow>(_path, "rowguid", BusinessentitycontactRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, BusinessentitycontactRow> = Field<TypoLocalDateTime, BusinessentitycontactRow>(_path, "modifieddate", BusinessentitycontactRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, BusinessentitycontactRow>> = listOf(this.businessentityid(), this.personid(), this.contacttypeid(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<BusinessentitycontactFields, BusinessentitycontactRow> = Impl(_path)
     }
 
-    val structure: Relation<BusinessentitycontactFields, BusinessentitycontactRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

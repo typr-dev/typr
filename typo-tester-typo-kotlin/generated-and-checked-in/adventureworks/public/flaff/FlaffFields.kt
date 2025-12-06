@@ -8,6 +8,7 @@ package adventureworks.public.flaff
 import adventureworks.public.ShortText
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -18,11 +19,14 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface FlaffFields {
+interface FlaffFields : FieldsExpr<FlaffRow> {
   fun anotherCode(): IdField</* max 20 chars */ String, FlaffRow>
 
   fun code(): IdField<ShortText, FlaffRow>
+
+  override fun columns(): List<FieldLike<*, FlaffRow>>
 
   fun compositeIdIn(compositeIds: List<FlaffId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<ShortText, FlaffId, FlaffRow>(code(), FlaffId::code, ShortText.pgType), Part</* max 20 chars */ String, FlaffId, FlaffRow>(anotherCode(), FlaffId::anotherCode, PgTypes.text), Part<Int, FlaffId, FlaffRow>(someNumber(), FlaffId::someNumber, PgTypes.int4), Part<ShortText, FlaffId, FlaffRow>(specifier(), FlaffId::specifier, ShortText.pgType)), compositeIds)
 
@@ -35,25 +39,29 @@ interface FlaffFields {
 
   fun parentspecifier(): OptField<ShortText, FlaffRow>
 
+  override fun rowParser(): RowParser<FlaffRow> = FlaffRow._rowParser
+
   fun someNumber(): IdField<Int, FlaffRow>
 
   fun specifier(): IdField<ShortText, FlaffRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<FlaffFields, FlaffRow>(path) {
-      override fun fields(): FlaffFields = object : FlaffFields {
-        override fun code(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, Optional.empty(), Optional.of("text"), { row, value -> row.copy(code = value) }, ShortText.pgType)
-        override fun anotherCode(): IdField</* max 20 chars */ String, FlaffRow> = IdField</* max 20 chars */ String, FlaffRow>(_path, "another_code", FlaffRow::anotherCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(anotherCode = value) }, PgTypes.text)
-        override fun someNumber(): IdField<Int, FlaffRow> = IdField<Int, FlaffRow>(_path, "some_number", FlaffRow::someNumber, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(someNumber = value) }, PgTypes.int4)
-        override fun specifier(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, Optional.empty(), Optional.of("text"), { row, value -> row.copy(specifier = value) }, ShortText.pgType)
-        override fun parentspecifier(): OptField<ShortText, FlaffRow> = OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, Optional.empty(), Optional.of("text"), { row, value -> row.copy(parentspecifier = value) }, ShortText.pgType)
-      }
+    data class Impl(val _path: List<Path>) : FlaffFields, Relation<FlaffFields, FlaffRow> {
+      override fun code(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, Optional.empty(), Optional.of("text"), { row, value -> row.copy(code = value) }, ShortText.pgType)
 
-      override fun columns(): List<FieldLike<*, FlaffRow>> = listOf(this.fields().code(), this.fields().anotherCode(), this.fields().someNumber(), this.fields().specifier(), this.fields().parentspecifier())
+      override fun anotherCode(): IdField</* max 20 chars */ String, FlaffRow> = IdField</* max 20 chars */ String, FlaffRow>(_path, "another_code", FlaffRow::anotherCode, Optional.empty(), Optional.empty(), { row, value -> row.copy(anotherCode = value) }, PgTypes.text)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun someNumber(): IdField<Int, FlaffRow> = IdField<Int, FlaffRow>(_path, "some_number", FlaffRow::someNumber, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(someNumber = value) }, PgTypes.int4)
+
+      override fun specifier(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, Optional.empty(), Optional.of("text"), { row, value -> row.copy(specifier = value) }, ShortText.pgType)
+
+      override fun parentspecifier(): OptField<ShortText, FlaffRow> = OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, Optional.empty(), Optional.of("text"), { row, value -> row.copy(parentspecifier = value) }, ShortText.pgType)
+
+      override fun columns(): List<FieldLike<*, FlaffRow>> = listOf(this.code(), this.anotherCode(), this.someNumber(), this.specifier(), this.parentspecifier())
+
+      override fun copy(_path: List<Path>): Relation<FlaffFields, FlaffRow> = Impl(_path)
     }
 
-    val structure: Relation<FlaffFields, FlaffRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

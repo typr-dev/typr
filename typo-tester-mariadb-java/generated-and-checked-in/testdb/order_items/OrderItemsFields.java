@@ -17,6 +17,7 @@ import testdb.products.ProductsRow;
 import testdb.warehouses.WarehousesFields;
 import testdb.warehouses.WarehousesId;
 import testdb.warehouses.WarehousesRow;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -25,83 +26,87 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.MariaTypes;
+import typo.runtime.RowParser;
 
-public interface OrderItemsFields {
-  final class Impl extends Relation<OrderItemsFields, OrderItemsRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface OrderItemsFields extends FieldsExpr<OrderItemsRow> {
+  record Impl(List<Path> _path) implements OrderItemsFields, Relation<OrderItemsFields, OrderItemsRow> {
+    @Override
+    public IdField<OrderItemsId, OrderItemsRow> itemId() {
+      return new IdField<OrderItemsId, OrderItemsRow>(_path, "item_id", OrderItemsRow::itemId, Optional.empty(), Optional.empty(), (row, value) -> row.withItemId(value), OrderItemsId.pgType);
+    };
 
     @Override
-    public OrderItemsFields fields() {
-      return new OrderItemsFields() {
-               @Override
-               public IdField<OrderItemsId, OrderItemsRow> itemId() {
-                 return new IdField<OrderItemsId, OrderItemsRow>(_path, "item_id", OrderItemsRow::itemId, Optional.empty(), Optional.empty(), (row, value) -> row.withItemId(value), OrderItemsId.pgType);
-               };
-               @Override
-               public Field<OrdersId, OrderItemsRow> orderId() {
-                 return new Field<OrdersId, OrderItemsRow>(_path, "order_id", OrderItemsRow::orderId, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderId(value), OrdersId.pgType);
-               };
-               @Override
-               public Field<ProductsId, OrderItemsRow> productId() {
-                 return new Field<ProductsId, OrderItemsRow>(_path, "product_id", OrderItemsRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
-               };
-               @Override
-               public Field<String, OrderItemsRow> sku() {
-                 return new Field<String, OrderItemsRow>(_path, "sku", OrderItemsRow::sku, Optional.empty(), Optional.empty(), (row, value) -> row.withSku(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<String, OrderItemsRow> productName() {
-                 return new Field<String, OrderItemsRow>(_path, "product_name", OrderItemsRow::productName, Optional.empty(), Optional.empty(), (row, value) -> row.withProductName(value), MariaTypes.varchar);
-               };
-               @Override
-               public Field<Integer, OrderItemsRow> quantity() {
-                 return new Field<Integer, OrderItemsRow>(_path, "quantity", OrderItemsRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), MariaTypes.smallintUnsigned);
-               };
-               @Override
-               public Field<BigDecimal, OrderItemsRow> unitPrice() {
-                 return new Field<BigDecimal, OrderItemsRow>(_path, "unit_price", OrderItemsRow::unitPrice, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitPrice(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<BigDecimal, OrderItemsRow> discountAmount() {
-                 return new Field<BigDecimal, OrderItemsRow>(_path, "discount_amount", OrderItemsRow::discountAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountAmount(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<BigDecimal, OrderItemsRow> taxAmount() {
-                 return new Field<BigDecimal, OrderItemsRow>(_path, "tax_amount", OrderItemsRow::taxAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxAmount(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<BigDecimal, OrderItemsRow> lineTotal() {
-                 return new Field<BigDecimal, OrderItemsRow>(_path, "line_total", OrderItemsRow::lineTotal, Optional.empty(), Optional.empty(), (row, value) -> row.withLineTotal(value), MariaTypes.decimal);
-               };
-               @Override
-               public Field<String, OrderItemsRow> fulfillmentStatus() {
-                 return new Field<String, OrderItemsRow>(_path, "fulfillment_status", OrderItemsRow::fulfillmentStatus, Optional.empty(), Optional.empty(), (row, value) -> row.withFulfillmentStatus(value), MariaTypes.text);
-               };
-               @Override
-               public OptField<WarehousesId, OrderItemsRow> warehouseId() {
-                 return new OptField<WarehousesId, OrderItemsRow>(_path, "warehouse_id", OrderItemsRow::warehouseId, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseId(value), WarehousesId.pgType);
-               };
-               @Override
-               public OptField<String, OrderItemsRow> notes() {
-                 return new OptField<String, OrderItemsRow>(_path, "notes", OrderItemsRow::notes, Optional.empty(), Optional.empty(), (row, value) -> row.withNotes(value), MariaTypes.tinytext);
-               };
-             };
+    public Field<OrdersId, OrderItemsRow> orderId() {
+      return new Field<OrdersId, OrderItemsRow>(_path, "order_id", OrderItemsRow::orderId, Optional.empty(), Optional.empty(), (row, value) -> row.withOrderId(value), OrdersId.pgType);
+    };
+
+    @Override
+    public Field<ProductsId, OrderItemsRow> productId() {
+      return new Field<ProductsId, OrderItemsRow>(_path, "product_id", OrderItemsRow::productId, Optional.empty(), Optional.empty(), (row, value) -> row.withProductId(value), ProductsId.pgType);
+    };
+
+    @Override
+    public Field<String, OrderItemsRow> sku() {
+      return new Field<String, OrderItemsRow>(_path, "sku", OrderItemsRow::sku, Optional.empty(), Optional.empty(), (row, value) -> row.withSku(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<String, OrderItemsRow> productName() {
+      return new Field<String, OrderItemsRow>(_path, "product_name", OrderItemsRow::productName, Optional.empty(), Optional.empty(), (row, value) -> row.withProductName(value), MariaTypes.varchar);
+    };
+
+    @Override
+    public Field<Integer, OrderItemsRow> quantity() {
+      return new Field<Integer, OrderItemsRow>(_path, "quantity", OrderItemsRow::quantity, Optional.empty(), Optional.empty(), (row, value) -> row.withQuantity(value), MariaTypes.smallintUnsigned);
+    };
+
+    @Override
+    public Field<BigDecimal, OrderItemsRow> unitPrice() {
+      return new Field<BigDecimal, OrderItemsRow>(_path, "unit_price", OrderItemsRow::unitPrice, Optional.empty(), Optional.empty(), (row, value) -> row.withUnitPrice(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<BigDecimal, OrderItemsRow> discountAmount() {
+      return new Field<BigDecimal, OrderItemsRow>(_path, "discount_amount", OrderItemsRow::discountAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withDiscountAmount(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<BigDecimal, OrderItemsRow> taxAmount() {
+      return new Field<BigDecimal, OrderItemsRow>(_path, "tax_amount", OrderItemsRow::taxAmount, Optional.empty(), Optional.empty(), (row, value) -> row.withTaxAmount(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<BigDecimal, OrderItemsRow> lineTotal() {
+      return new Field<BigDecimal, OrderItemsRow>(_path, "line_total", OrderItemsRow::lineTotal, Optional.empty(), Optional.empty(), (row, value) -> row.withLineTotal(value), MariaTypes.decimal);
+    };
+
+    @Override
+    public Field<String, OrderItemsRow> fulfillmentStatus() {
+      return new Field<String, OrderItemsRow>(_path, "fulfillment_status", OrderItemsRow::fulfillmentStatus, Optional.empty(), Optional.empty(), (row, value) -> row.withFulfillmentStatus(value), MariaTypes.text);
+    };
+
+    @Override
+    public OptField<WarehousesId, OrderItemsRow> warehouseId() {
+      return new OptField<WarehousesId, OrderItemsRow>(_path, "warehouse_id", OrderItemsRow::warehouseId, Optional.empty(), Optional.empty(), (row, value) -> row.withWarehouseId(value), WarehousesId.pgType);
+    };
+
+    @Override
+    public OptField<String, OrderItemsRow> notes() {
+      return new OptField<String, OrderItemsRow>(_path, "notes", OrderItemsRow::notes, Optional.empty(), Optional.empty(), (row, value) -> row.withNotes(value), MariaTypes.tinytext);
     };
 
     @Override
     public List<FieldLike<?, OrderItemsRow>> columns() {
-      return List.of(this.fields().itemId(), this.fields().orderId(), this.fields().productId(), this.fields().sku(), this.fields().productName(), this.fields().quantity(), this.fields().unitPrice(), this.fields().discountAmount(), this.fields().taxAmount(), this.fields().lineTotal(), this.fields().fulfillmentStatus(), this.fields().warehouseId(), this.fields().notes());
+      return List.of(this.itemId(), this.orderId(), this.productId(), this.sku(), this.productName(), this.quantity(), this.unitPrice(), this.discountAmount(), this.taxAmount(), this.lineTotal(), this.fulfillmentStatus(), this.warehouseId(), this.notes());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<OrderItemsFields, OrderItemsRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<OrderItemsFields, OrderItemsRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -141,5 +146,13 @@ public interface OrderItemsFields {
 
   default ForeignKey<WarehousesFields, WarehousesRow> fkWarehouses() {
     return ForeignKey.<WarehousesFields, WarehousesRow>of("fk_oi_warehouse").withColumnPair(warehouseId(), WarehousesFields::warehouseId);
+  };
+
+  @Override
+  List<FieldLike<?, OrderItemsRow>> columns();
+
+  @Override
+  default RowParser<OrderItemsRow> rowParser() {
+    return OrderItemsRow._rowParser;
   };
 }

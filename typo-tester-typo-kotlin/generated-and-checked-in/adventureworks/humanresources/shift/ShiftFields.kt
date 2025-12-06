@@ -10,38 +10,46 @@ import adventureworks.customtypes.TypoLocalTime
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface ShiftFields {
+interface ShiftFields : FieldsExpr<ShiftRow> {
+  override fun columns(): List<FieldLike<*, ShiftRow>>
+
   fun endtime(): Field<TypoLocalTime, ShiftRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, ShiftRow>
 
   fun name(): Field<Name, ShiftRow>
 
+  override fun rowParser(): RowParser<ShiftRow> = ShiftRow._rowParser
+
   fun shiftid(): IdField<ShiftId, ShiftRow>
 
   fun starttime(): Field<TypoLocalTime, ShiftRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<ShiftFields, ShiftRow>(path) {
-      override fun fields(): ShiftFields = object : ShiftFields {
-        override fun shiftid(): IdField<ShiftId, ShiftRow> = IdField<ShiftId, ShiftRow>(_path, "shiftid", ShiftRow::shiftid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(shiftid = value) }, ShiftId.pgType)
-        override fun name(): Field<Name, ShiftRow> = Field<Name, ShiftRow>(_path, "name", ShiftRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun starttime(): Field<TypoLocalTime, ShiftRow> = Field<TypoLocalTime, ShiftRow>(_path, "starttime", ShiftRow::starttime, Optional.of("text"), Optional.of("time"), { row, value -> row.copy(starttime = value) }, TypoLocalTime.pgType)
-        override fun endtime(): Field<TypoLocalTime, ShiftRow> = Field<TypoLocalTime, ShiftRow>(_path, "endtime", ShiftRow::endtime, Optional.of("text"), Optional.of("time"), { row, value -> row.copy(endtime = value) }, TypoLocalTime.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, ShiftRow> = Field<TypoLocalDateTime, ShiftRow>(_path, "modifieddate", ShiftRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : ShiftFields, Relation<ShiftFields, ShiftRow> {
+      override fun shiftid(): IdField<ShiftId, ShiftRow> = IdField<ShiftId, ShiftRow>(_path, "shiftid", ShiftRow::shiftid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(shiftid = value) }, ShiftId.pgType)
 
-      override fun columns(): List<FieldLike<*, ShiftRow>> = listOf(this.fields().shiftid(), this.fields().name(), this.fields().starttime(), this.fields().endtime(), this.fields().modifieddate())
+      override fun name(): Field<Name, ShiftRow> = Field<Name, ShiftRow>(_path, "name", ShiftRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun starttime(): Field<TypoLocalTime, ShiftRow> = Field<TypoLocalTime, ShiftRow>(_path, "starttime", ShiftRow::starttime, Optional.of("text"), Optional.of("time"), { row, value -> row.copy(starttime = value) }, TypoLocalTime.pgType)
+
+      override fun endtime(): Field<TypoLocalTime, ShiftRow> = Field<TypoLocalTime, ShiftRow>(_path, "endtime", ShiftRow::endtime, Optional.of("text"), Optional.of("time"), { row, value -> row.copy(endtime = value) }, TypoLocalTime.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, ShiftRow> = Field<TypoLocalDateTime, ShiftRow>(_path, "modifieddate", ShiftRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, ShiftRow>> = listOf(this.shiftid(), this.name(), this.starttime(), this.endtime(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<ShiftFields, ShiftRow> = Impl(_path)
     }
 
-    val structure: Relation<ShiftFields, ShiftRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

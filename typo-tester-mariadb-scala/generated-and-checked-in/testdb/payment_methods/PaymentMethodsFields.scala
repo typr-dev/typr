@@ -6,6 +6,7 @@
 package testdb.payment_methods
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
@@ -13,8 +14,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-trait PaymentMethodsFields {
+trait PaymentMethodsFields extends FieldsExpr[PaymentMethodsRow] {
   def methodId: IdField[PaymentMethodsId, PaymentMethodsRow]
 
   def code: Field[String, PaymentMethodsRow]
@@ -28,97 +30,103 @@ trait PaymentMethodsFields {
   def isActive: Field[java.lang.Boolean, PaymentMethodsRow]
 
   def sortOrder: Field[java.lang.Byte, PaymentMethodsRow]
+
+  override def columns: java.util.List[FieldLike[?, PaymentMethodsRow]]
+
+  override def rowParser: RowParser[PaymentMethodsRow] = PaymentMethodsRow._rowParser
 }
 
 object PaymentMethodsFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PaymentMethodsFields, PaymentMethodsRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PaymentMethodsFields with Relation[PaymentMethodsFields, PaymentMethodsRow] {
 
-    override lazy val fields: PaymentMethodsFields = {
-      new PaymentMethodsFields {
-        override def methodId: IdField[PaymentMethodsId, PaymentMethodsRow] = {
-          new IdField[PaymentMethodsId, PaymentMethodsRow](
-            _path,
-            "method_id",
-            _.methodId,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(methodId = value),
-            PaymentMethodsId.pgType
-          )
-        }
-        override def code: Field[String, PaymentMethodsRow] = {
-          new Field[String, PaymentMethodsRow](
-            _path,
-            "code",
-            _.code,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(code = value),
-            MariaTypes.varchar
-          )
-        }
-        override def name: Field[String, PaymentMethodsRow] = {
-          new Field[String, PaymentMethodsRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            MariaTypes.varchar
-          )
-        }
-        override def methodType: Field[String, PaymentMethodsRow] = {
-          new Field[String, PaymentMethodsRow](
-            _path,
-            "method_type",
-            _.methodType,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(methodType = value),
-            MariaTypes.text
-          )
-        }
-        override def processorConfig: OptField[String, PaymentMethodsRow] = {
-          new OptField[String, PaymentMethodsRow](
-            _path,
-            "processor_config",
-            _.processorConfig,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(processorConfig = value),
-            MariaTypes.longtext
-          )
-        }
-        override def isActive: Field[java.lang.Boolean, PaymentMethodsRow] = {
-          new Field[java.lang.Boolean, PaymentMethodsRow](
-            _path,
-            "is_active",
-            _.isActive,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(isActive = value),
-            MariaTypes.bool
-          )
-        }
-        override def sortOrder: Field[java.lang.Byte, PaymentMethodsRow] = {
-          new Field[java.lang.Byte, PaymentMethodsRow](
-            _path,
-            "sort_order",
-            _.sortOrder,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(sortOrder = value),
-            MariaTypes.tinyint
-          )
-        }
-      }
+    override def methodId: IdField[PaymentMethodsId, PaymentMethodsRow] = {
+      new IdField[PaymentMethodsId, PaymentMethodsRow](
+        _path,
+        "method_id",
+        _.methodId,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(methodId = value),
+        PaymentMethodsId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PaymentMethodsRow]] = java.util.List.of(this.fields.methodId, this.fields.code, this.fields.name, this.fields.methodType, this.fields.processorConfig, this.fields.isActive, this.fields.sortOrder)
+    override def code: Field[String, PaymentMethodsRow] = {
+      new Field[String, PaymentMethodsRow](
+        _path,
+        "code",
+        _.code,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(code = value),
+        MariaTypes.varchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[String, PaymentMethodsRow] = {
+      new Field[String, PaymentMethodsRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        MariaTypes.varchar
+      )
+    }
+
+    override def methodType: Field[String, PaymentMethodsRow] = {
+      new Field[String, PaymentMethodsRow](
+        _path,
+        "method_type",
+        _.methodType,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(methodType = value),
+        MariaTypes.text
+      )
+    }
+
+    override def processorConfig: OptField[String, PaymentMethodsRow] = {
+      new OptField[String, PaymentMethodsRow](
+        _path,
+        "processor_config",
+        _.processorConfig,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(processorConfig = value),
+        MariaTypes.longtext
+      )
+    }
+
+    override def isActive: Field[java.lang.Boolean, PaymentMethodsRow] = {
+      new Field[java.lang.Boolean, PaymentMethodsRow](
+        _path,
+        "is_active",
+        _.isActive,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(isActive = value),
+        MariaTypes.bool
+      )
+    }
+
+    override def sortOrder: Field[java.lang.Byte, PaymentMethodsRow] = {
+      new Field[java.lang.Byte, PaymentMethodsRow](
+        _path,
+        "sort_order",
+        _.sortOrder,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(sortOrder = value),
+        MariaTypes.tinyint
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PaymentMethodsRow]] = java.util.List.of(this.methodId, this.code, this.name, this.methodType, this.processorConfig, this.isActive, this.sortOrder)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PaymentMethodsFields, PaymentMethodsRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PaymentMethodsFields, PaymentMethodsRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

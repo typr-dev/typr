@@ -76,7 +76,7 @@ case class WarehousesRow(
 }
 
 object WarehousesRow {
-  val `_rowParser`: RowParser[WarehousesRow] = RowParsers.of(WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.opt(), MariaTypes.varchar, MariaTypes.bool, MariaTypes.varchar.opt(), MariaTypes.varchar.opt(), WarehousesRow.apply, row => Array(row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone))
+  val `_rowParser`: RowParser[WarehousesRow] = RowParsers.of(WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.opt(), MariaTypes.varchar, MariaTypes.bool, MariaTypes.varchar.opt(), MariaTypes.varchar.opt(), WarehousesRow.apply, row => Array[Object](row.warehouseId.asInstanceOf[Object], row.code.asInstanceOf[Object], row.name.asInstanceOf[Object], row.address.asInstanceOf[Object], row.location.asInstanceOf[Object], row.serviceArea.asInstanceOf[Object], row.timezone.asInstanceOf[Object], row.isActive.asInstanceOf[Object], row.contactEmail.asInstanceOf[Object], row.contactPhone.asInstanceOf[Object]))
 
   given mariaText: MariaText[WarehousesRow] = MariaText.from(`_rowParser`)
 }

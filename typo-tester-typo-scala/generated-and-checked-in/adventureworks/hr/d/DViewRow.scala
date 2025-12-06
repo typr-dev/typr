@@ -26,5 +26,5 @@ case class DViewRow(
 )
 
 object DViewRow {
-  val `_rowParser`: RowParser[DViewRow] = RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DViewRow.apply, row => Array(row.id, row.departmentid, row.name, row.groupname, row.modifieddate))
+  val `_rowParser`: RowParser[DViewRow] = RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, TypoLocalDateTime.pgType, DViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.departmentid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.groupname.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

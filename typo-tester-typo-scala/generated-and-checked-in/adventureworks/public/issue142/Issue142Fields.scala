@@ -6,38 +6,40 @@
 package adventureworks.public.issue142
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait Issue142Fields {
+trait Issue142Fields extends FieldsExpr[Issue142Row] {
   def tabellkode: IdField[Issue142Id, Issue142Row]
+
+  override def columns: java.util.List[FieldLike[?, Issue142Row]]
+
+  override def rowParser: RowParser[Issue142Row] = Issue142Row._rowParser
 }
 
 object Issue142Fields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[Issue142Fields, Issue142Row](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends Issue142Fields with Relation[Issue142Fields, Issue142Row] {
 
-    override lazy val fields: Issue142Fields = {
-      new Issue142Fields {
-        override def tabellkode: IdField[Issue142Id, Issue142Row] = {
-          new IdField[Issue142Id, Issue142Row](
-            _path,
-            "tabellkode",
-            _.tabellkode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(tabellkode = value),
-            Issue142Id.pgType
-          )
-        }
-      }
+    override def tabellkode: IdField[Issue142Id, Issue142Row] = {
+      new IdField[Issue142Id, Issue142Row](
+        _path,
+        "tabellkode",
+        _.tabellkode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(tabellkode = value),
+        Issue142Id.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, Issue142Row]] = java.util.List.of(this.fields.tabellkode)
+    override def columns: java.util.List[FieldLike[?, Issue142Row]] = java.util.List.of(this.tabellkode)
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(`_path`: java.util.List[Path]): Relation[Issue142Fields, Issue142Row] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[Issue142Fields, Issue142Row] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -9,49 +9,44 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.customtypes.TypoXml;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface IllustrationFields {
-  final class Impl extends Relation<IllustrationFields, IllustrationRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface IllustrationFields extends FieldsExpr<IllustrationRow> {
+  record Impl(List<Path> _path) implements IllustrationFields, Relation<IllustrationFields, IllustrationRow> {
+    @Override
+    public IdField<IllustrationId, IllustrationRow> illustrationid() {
+      return new IdField<IllustrationId, IllustrationRow>(_path, "illustrationid", IllustrationRow::illustrationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
+    };
 
     @Override
-    public IllustrationFields fields() {
-      return new IllustrationFields() {
-               @Override
-               public IdField<IllustrationId, IllustrationRow> illustrationid() {
-                 return new IdField<IllustrationId, IllustrationRow>(_path, "illustrationid", IllustrationRow::illustrationid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withIllustrationid(value), IllustrationId.pgType);
-               };
-               @Override
-               public OptField<TypoXml, IllustrationRow> diagram() {
-                 return new OptField<TypoXml, IllustrationRow>(_path, "diagram", IllustrationRow::diagram, Optional.empty(), Optional.of("xml"), (row, value) -> row.withDiagram(value), TypoXml.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, IllustrationRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, IllustrationRow>(_path, "modifieddate", IllustrationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public OptField<TypoXml, IllustrationRow> diagram() {
+      return new OptField<TypoXml, IllustrationRow>(_path, "diagram", IllustrationRow::diagram, Optional.empty(), Optional.of("xml"), (row, value) -> row.withDiagram(value), TypoXml.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, IllustrationRow> modifieddate() {
+      return new Field<TypoLocalDateTime, IllustrationRow>(_path, "modifieddate", IllustrationRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, IllustrationRow>> columns() {
-      return List.of(this.fields().illustrationid(), this.fields().diagram(), this.fields().modifieddate());
+      return List.of(this.illustrationid(), this.diagram(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<IllustrationFields, IllustrationRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<IllustrationFields, IllustrationRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -60,4 +55,12 @@ public interface IllustrationFields {
   OptField<TypoXml, IllustrationRow> diagram();
 
   Field<TypoLocalDateTime, IllustrationRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, IllustrationRow>> columns();
+
+  @Override
+  default RowParser<IllustrationRow> rowParser() {
+    return IllustrationRow._rowParser;
+  };
 }

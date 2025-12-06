@@ -32,13 +32,15 @@ import adventureworks.customtypes.TypoXml
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PgtestFields {
+trait PgtestFields extends FieldsExpr[PgtestRow] {
   def bool: Field[java.lang.Boolean, PgtestRow]
 
   def box: Field[TypoBox, PgtestRow]
@@ -178,790 +180,859 @@ trait PgtestFields {
   def varchares: Field[Array[String], PgtestRow]
 
   def xmles: Field[Array[TypoXml], PgtestRow]
+
+  override def columns: java.util.List[FieldLike[?, PgtestRow]]
+
+  override def rowParser: RowParser[PgtestRow] = PgtestRow._rowParser
 }
 
 object PgtestFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PgtestFields, PgtestRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PgtestFields with Relation[PgtestFields, PgtestRow] {
 
-    override lazy val fields: PgtestFields = {
-      new PgtestFields {
-        override def bool: Field[java.lang.Boolean, PgtestRow] = {
-          new Field[java.lang.Boolean, PgtestRow](
-            _path,
-            "bool",
-            _.bool,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(bool = value),
-            PgTypes.bool
-          )
-        }
-        override def box: Field[TypoBox, PgtestRow] = {
-          new Field[TypoBox, PgtestRow](
-            _path,
-            "box",
-            _.box,
-            Optional.empty(),
-            Optional.of("box"),
-            (row, value) => row.copy(box = value),
-            TypoBox.pgType
-          )
-        }
-        override def bpchar: Field[/* bpchar, max 3 chars */ String, PgtestRow] = {
-          new Field[/* bpchar, max 3 chars */ String, PgtestRow](
-            _path,
-            "bpchar",
-            _.bpchar,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(bpchar = value),
-            PgTypes.bpchar
-          )
-        }
-        override def bytea: Field[TypoBytea, PgtestRow] = {
-          new Field[TypoBytea, PgtestRow](
-            _path,
-            "bytea",
-            _.bytea,
-            Optional.empty(),
-            Optional.of("bytea"),
-            (row, value) => row.copy(bytea = value),
-            TypoBytea.pgType
-          )
-        }
-        override def char: Field[/* bpchar, max 1 chars */ String, PgtestRow] = {
-          new Field[/* bpchar, max 1 chars */ String, PgtestRow](
-            _path,
-            "char",
-            _.char,
-            Optional.empty(),
-            Optional.of("bpchar"),
-            (row, value) => row.copy(char = value),
-            PgTypes.bpchar
-          )
-        }
-        override def circle: Field[TypoCircle, PgtestRow] = {
-          new Field[TypoCircle, PgtestRow](
-            _path,
-            "circle",
-            _.circle,
-            Optional.empty(),
-            Optional.of("circle"),
-            (row, value) => row.copy(circle = value),
-            TypoCircle.pgType
-          )
-        }
-        override def date: Field[TypoLocalDate, PgtestRow] = {
-          new Field[TypoLocalDate, PgtestRow](
-            _path,
-            "date",
-            _.date,
-            Optional.of("text"),
-            Optional.of("date"),
-            (row, value) => row.copy(date = value),
-            TypoLocalDate.pgType
-          )
-        }
-        override def float4: Field[java.lang.Float, PgtestRow] = {
-          new Field[java.lang.Float, PgtestRow](
-            _path,
-            "float4",
-            _.float4,
-            Optional.empty(),
-            Optional.of("float4"),
-            (row, value) => row.copy(float4 = value),
-            PgTypes.float4
-          )
-        }
-        override def float8: Field[java.lang.Double, PgtestRow] = {
-          new Field[java.lang.Double, PgtestRow](
-            _path,
-            "float8",
-            _.float8,
-            Optional.empty(),
-            Optional.of("float8"),
-            (row, value) => row.copy(float8 = value),
-            PgTypes.float8
-          )
-        }
-        override def hstore: Field[TypoHStore, PgtestRow] = {
-          new Field[TypoHStore, PgtestRow](
-            _path,
-            "hstore",
-            _.hstore,
-            Optional.empty(),
-            Optional.of("hstore"),
-            (row, value) => row.copy(hstore = value),
-            TypoHStore.pgType
-          )
-        }
-        override def inet: Field[TypoInet, PgtestRow] = {
-          new Field[TypoInet, PgtestRow](
-            _path,
-            "inet",
-            _.inet,
-            Optional.empty(),
-            Optional.of("inet"),
-            (row, value) => row.copy(inet = value),
-            TypoInet.pgType
-          )
-        }
-        override def int2: Field[TypoShort, PgtestRow] = {
-          new Field[TypoShort, PgtestRow](
-            _path,
-            "int2",
-            _.int2,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(int2 = value),
-            TypoShort.pgType
-          )
-        }
-        override def int2vector: Field[TypoInt2Vector, PgtestRow] = {
-          new Field[TypoInt2Vector, PgtestRow](
-            _path,
-            "int2vector",
-            _.int2vector,
-            Optional.empty(),
-            Optional.of("int2vector"),
-            (row, value) => row.copy(int2vector = value),
-            TypoInt2Vector.pgType
-          )
-        }
-        override def int4: Field[Integer, PgtestRow] = {
-          new Field[Integer, PgtestRow](
-            _path,
-            "int4",
-            _.int4,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(int4 = value),
-            PgTypes.int4
-          )
-        }
-        override def int8: Field[java.lang.Long, PgtestRow] = {
-          new Field[java.lang.Long, PgtestRow](
-            _path,
-            "int8",
-            _.int8,
-            Optional.empty(),
-            Optional.of("int8"),
-            (row, value) => row.copy(int8 = value),
-            PgTypes.int8
-          )
-        }
-        override def interval: Field[TypoInterval, PgtestRow] = {
-          new Field[TypoInterval, PgtestRow](
-            _path,
-            "interval",
-            _.interval,
-            Optional.empty(),
-            Optional.of("interval"),
-            (row, value) => row.copy(interval = value),
-            TypoInterval.pgType
-          )
-        }
-        override def json: Field[TypoJson, PgtestRow] = {
-          new Field[TypoJson, PgtestRow](
-            _path,
-            "json",
-            _.json,
-            Optional.empty(),
-            Optional.of("json"),
-            (row, value) => row.copy(json = value),
-            TypoJson.pgType
-          )
-        }
-        override def jsonb: Field[TypoJsonb, PgtestRow] = {
-          new Field[TypoJsonb, PgtestRow](
-            _path,
-            "jsonb",
-            _.jsonb,
-            Optional.empty(),
-            Optional.of("jsonb"),
-            (row, value) => row.copy(jsonb = value),
-            TypoJsonb.pgType
-          )
-        }
-        override def line: Field[TypoLine, PgtestRow] = {
-          new Field[TypoLine, PgtestRow](
-            _path,
-            "line",
-            _.line,
-            Optional.empty(),
-            Optional.of("line"),
-            (row, value) => row.copy(line = value),
-            TypoLine.pgType
-          )
-        }
-        override def lseg: Field[TypoLineSegment, PgtestRow] = {
-          new Field[TypoLineSegment, PgtestRow](
-            _path,
-            "lseg",
-            _.lseg,
-            Optional.empty(),
-            Optional.of("lseg"),
-            (row, value) => row.copy(lseg = value),
-            TypoLineSegment.pgType
-          )
-        }
-        override def money: Field[TypoMoney, PgtestRow] = {
-          new Field[TypoMoney, PgtestRow](
-            _path,
-            "money",
-            _.money,
-            Optional.of("numeric"),
-            Optional.of("money"),
-            (row, value) => row.copy(money = value),
-            TypoMoney.pgType
-          )
-        }
-        override def mydomain: Field[Mydomain, PgtestRow] = {
-          new Field[Mydomain, PgtestRow](
-            _path,
-            "mydomain",
-            _.mydomain,
-            Optional.empty(),
-            Optional.of("text"),
-            (row, value) => row.copy(mydomain = value),
-            Mydomain.pgType
-          )
-        }
-        override def myenum: Field[Myenum, PgtestRow] = {
-          new Field[Myenum, PgtestRow](
-            _path,
-            "myenum",
-            _.myenum,
-            Optional.empty(),
-            Optional.of("public.myenum"),
-            (row, value) => row.copy(myenum = value),
-            Myenum.pgType
-          )
-        }
-        override def name: Field[String, PgtestRow] = {
-          new Field[String, PgtestRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.of("name"),
-            (row, value) => row.copy(name = value),
-            PgTypes.name
-          )
-        }
-        override def numeric: Field[java.math.BigDecimal, PgtestRow] = {
-          new Field[java.math.BigDecimal, PgtestRow](
-            _path,
-            "numeric",
-            _.numeric,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(numeric = value),
-            PgTypes.numeric
-          )
-        }
-        override def path: Field[TypoPath, PgtestRow] = {
-          new Field[TypoPath, PgtestRow](
-            _path,
-            "path",
-            _.path,
-            Optional.empty(),
-            Optional.of("path"),
-            (row, value) => row.copy(path = value),
-            TypoPath.pgType
-          )
-        }
-        override def point: Field[TypoPoint, PgtestRow] = {
-          new Field[TypoPoint, PgtestRow](
-            _path,
-            "point",
-            _.point,
-            Optional.empty(),
-            Optional.of("point"),
-            (row, value) => row.copy(point = value),
-            TypoPoint.pgType
-          )
-        }
-        override def polygon: Field[TypoPolygon, PgtestRow] = {
-          new Field[TypoPolygon, PgtestRow](
-            _path,
-            "polygon",
-            _.polygon,
-            Optional.empty(),
-            Optional.of("polygon"),
-            (row, value) => row.copy(polygon = value),
-            TypoPolygon.pgType
-          )
-        }
-        override def text: Field[String, PgtestRow] = {
-          new Field[String, PgtestRow](
-            _path,
-            "text",
-            _.text,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(text = value),
-            PgTypes.text
-          )
-        }
-        override def time: Field[TypoLocalTime, PgtestRow] = {
-          new Field[TypoLocalTime, PgtestRow](
-            _path,
-            "time",
-            _.time,
-            Optional.of("text"),
-            Optional.of("time"),
-            (row, value) => row.copy(time = value),
-            TypoLocalTime.pgType
-          )
-        }
-        override def timestamp: Field[TypoLocalDateTime, PgtestRow] = {
-          new Field[TypoLocalDateTime, PgtestRow](
-            _path,
-            "timestamp",
-            _.timestamp,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(timestamp = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def timestampz: Field[TypoInstant, PgtestRow] = {
-          new Field[TypoInstant, PgtestRow](
-            _path,
-            "timestampz",
-            _.timestampz,
-            Optional.of("text"),
-            Optional.of("timestamptz"),
-            (row, value) => row.copy(timestampz = value),
-            TypoInstant.pgType
-          )
-        }
-        override def timez: Field[TypoOffsetTime, PgtestRow] = {
-          new Field[TypoOffsetTime, PgtestRow](
-            _path,
-            "timez",
-            _.timez,
-            Optional.of("text"),
-            Optional.of("timetz"),
-            (row, value) => row.copy(timez = value),
-            TypoOffsetTime.pgType
-          )
-        }
-        override def uuid: Field[TypoUUID, PgtestRow] = {
-          new Field[TypoUUID, PgtestRow](
-            _path,
-            "uuid",
-            _.uuid,
-            Optional.empty(),
-            Optional.of("uuid"),
-            (row, value) => row.copy(uuid = value),
-            TypoUUID.pgType
-          )
-        }
-        override def varchar: Field[String, PgtestRow] = {
-          new Field[String, PgtestRow](
-            _path,
-            "varchar",
-            _.varchar,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(varchar = value),
-            PgTypes.text
-          )
-        }
-        override def vector: Field[TypoVector, PgtestRow] = {
-          new Field[TypoVector, PgtestRow](
-            _path,
-            "vector",
-            _.vector,
-            Optional.of("float4[]"),
-            Optional.of("vector"),
-            (row, value) => row.copy(vector = value),
-            TypoVector.pgType
-          )
-        }
-        override def xml: Field[TypoXml, PgtestRow] = {
-          new Field[TypoXml, PgtestRow](
-            _path,
-            "xml",
-            _.xml,
-            Optional.empty(),
-            Optional.of("xml"),
-            (row, value) => row.copy(xml = value),
-            TypoXml.pgType
-          )
-        }
-        override def boxes: Field[Array[TypoBox], PgtestRow] = {
-          new Field[Array[TypoBox], PgtestRow](
-            _path,
-            "boxes",
-            _.boxes,
-            Optional.empty(),
-            Optional.of("box[]"),
-            (row, value) => row.copy(boxes = value),
-            TypoBox.pgTypeArray
-          )
-        }
-        override def bpchares: Field[Array[/* bpchar */ String], PgtestRow] = {
-          new Field[Array[/* bpchar */ String], PgtestRow](
-            _path,
-            "bpchares",
-            _.bpchares,
-            Optional.empty(),
-            Optional.of("bpchar[]"),
-            (row, value) => row.copy(bpchares = value),
-            PgTypes.bpcharArray
-          )
-        }
-        override def chares: Field[Array[/* bpchar */ String], PgtestRow] = {
-          new Field[Array[/* bpchar */ String], PgtestRow](
-            _path,
-            "chares",
-            _.chares,
-            Optional.empty(),
-            Optional.of("bpchar[]"),
-            (row, value) => row.copy(chares = value),
-            PgTypes.bpcharArray
-          )
-        }
-        override def circlees: Field[Array[TypoCircle], PgtestRow] = {
-          new Field[Array[TypoCircle], PgtestRow](
-            _path,
-            "circlees",
-            _.circlees,
-            Optional.empty(),
-            Optional.of("circle[]"),
-            (row, value) => row.copy(circlees = value),
-            TypoCircle.pgTypeArray
-          )
-        }
-        override def datees: Field[Array[TypoLocalDate], PgtestRow] = {
-          new Field[Array[TypoLocalDate], PgtestRow](
-            _path,
-            "datees",
-            _.datees,
-            Optional.of("text[]"),
-            Optional.of("date[]"),
-            (row, value) => row.copy(datees = value),
-            TypoLocalDate.pgTypeArray
-          )
-        }
-        override def float4es: Field[Array[java.lang.Float], PgtestRow] = {
-          new Field[Array[java.lang.Float], PgtestRow](
-            _path,
-            "float4es",
-            _.float4es,
-            Optional.empty(),
-            Optional.of("float4[]"),
-            (row, value) => row.copy(float4es = value),
-            PgTypes.float4Array
-          )
-        }
-        override def float8es: Field[Array[java.lang.Double], PgtestRow] = {
-          new Field[Array[java.lang.Double], PgtestRow](
-            _path,
-            "float8es",
-            _.float8es,
-            Optional.empty(),
-            Optional.of("float8[]"),
-            (row, value) => row.copy(float8es = value),
-            PgTypes.float8Array
-          )
-        }
-        override def inetes: Field[Array[TypoInet], PgtestRow] = {
-          new Field[Array[TypoInet], PgtestRow](
-            _path,
-            "inetes",
-            _.inetes,
-            Optional.empty(),
-            Optional.of("inet[]"),
-            (row, value) => row.copy(inetes = value),
-            TypoInet.pgTypeArray
-          )
-        }
-        override def int2es: Field[Array[TypoShort], PgtestRow] = {
-          new Field[Array[TypoShort], PgtestRow](
-            _path,
-            "int2es",
-            _.int2es,
-            Optional.empty(),
-            Optional.of("int2[]"),
-            (row, value) => row.copy(int2es = value),
-            TypoShort.pgTypeArray
-          )
-        }
-        override def int2vectores: Field[Array[TypoInt2Vector], PgtestRow] = {
-          new Field[Array[TypoInt2Vector], PgtestRow](
-            _path,
-            "int2vectores",
-            _.int2vectores,
-            Optional.empty(),
-            Optional.of("int2vector[]"),
-            (row, value) => row.copy(int2vectores = value),
-            TypoInt2Vector.pgTypeArray
-          )
-        }
-        override def int4es: Field[Array[Integer], PgtestRow] = {
-          new Field[Array[Integer], PgtestRow](
-            _path,
-            "int4es",
-            _.int4es,
-            Optional.empty(),
-            Optional.of("int4[]"),
-            (row, value) => row.copy(int4es = value),
-            PgTypes.int4Array
-          )
-        }
-        override def int8es: Field[Array[java.lang.Long], PgtestRow] = {
-          new Field[Array[java.lang.Long], PgtestRow](
-            _path,
-            "int8es",
-            _.int8es,
-            Optional.empty(),
-            Optional.of("int8[]"),
-            (row, value) => row.copy(int8es = value),
-            PgTypes.int8Array
-          )
-        }
-        override def intervales: Field[Array[TypoInterval], PgtestRow] = {
-          new Field[Array[TypoInterval], PgtestRow](
-            _path,
-            "intervales",
-            _.intervales,
-            Optional.empty(),
-            Optional.of("interval[]"),
-            (row, value) => row.copy(intervales = value),
-            TypoInterval.pgTypeArray
-          )
-        }
-        override def jsones: Field[Array[TypoJson], PgtestRow] = {
-          new Field[Array[TypoJson], PgtestRow](
-            _path,
-            "jsones",
-            _.jsones,
-            Optional.empty(),
-            Optional.of("json[]"),
-            (row, value) => row.copy(jsones = value),
-            TypoJson.pgTypeArray
-          )
-        }
-        override def jsonbes: Field[Array[TypoJsonb], PgtestRow] = {
-          new Field[Array[TypoJsonb], PgtestRow](
-            _path,
-            "jsonbes",
-            _.jsonbes,
-            Optional.empty(),
-            Optional.of("jsonb[]"),
-            (row, value) => row.copy(jsonbes = value),
-            TypoJsonb.pgTypeArray
-          )
-        }
-        override def linees: Field[Array[TypoLine], PgtestRow] = {
-          new Field[Array[TypoLine], PgtestRow](
-            _path,
-            "linees",
-            _.linees,
-            Optional.empty(),
-            Optional.of("line[]"),
-            (row, value) => row.copy(linees = value),
-            TypoLine.pgTypeArray
-          )
-        }
-        override def lseges: Field[Array[TypoLineSegment], PgtestRow] = {
-          new Field[Array[TypoLineSegment], PgtestRow](
-            _path,
-            "lseges",
-            _.lseges,
-            Optional.empty(),
-            Optional.of("lseg[]"),
-            (row, value) => row.copy(lseges = value),
-            TypoLineSegment.pgTypeArray
-          )
-        }
-        override def moneyes: Field[Array[TypoMoney], PgtestRow] = {
-          new Field[Array[TypoMoney], PgtestRow](
-            _path,
-            "moneyes",
-            _.moneyes,
-            Optional.of("numeric[]"),
-            Optional.of("money[]"),
-            (row, value) => row.copy(moneyes = value),
-            TypoMoney.pgTypeArray
-          )
-        }
-        override def mydomaines: Field[Array[Mydomain], PgtestRow] = {
-          new Field[Array[Mydomain], PgtestRow](
-            _path,
-            "mydomaines",
-            _.mydomaines,
-            Optional.of("text[]"),
-            Optional.of("mydomain[]"),
-            (row, value) => row.copy(mydomaines = value),
-            Mydomain.pgTypeArray
-          )
-        }
-        override def myenumes: Field[Array[Myenum], PgtestRow] = {
-          new Field[Array[Myenum], PgtestRow](
-            _path,
-            "myenumes",
-            _.myenumes,
-            Optional.empty(),
-            Optional.of("myenum[]"),
-            (row, value) => row.copy(myenumes = value),
-            Myenum.pgTypeArray
-          )
-        }
-        override def namees: Field[Array[String], PgtestRow] = {
-          new Field[Array[String], PgtestRow](
-            _path,
-            "namees",
-            _.namees,
-            Optional.empty(),
-            Optional.of("name[]"),
-            (row, value) => row.copy(namees = value),
-            PgTypes.nameArray
-          )
-        }
-        override def numerices: Field[Array[java.math.BigDecimal], PgtestRow] = {
-          new Field[Array[java.math.BigDecimal], PgtestRow](
-            _path,
-            "numerices",
-            _.numerices,
-            Optional.empty(),
-            Optional.of("numeric[]"),
-            (row, value) => row.copy(numerices = value),
-            PgTypes.numericArray
-          )
-        }
-        override def pathes: Field[Array[TypoPath], PgtestRow] = {
-          new Field[Array[TypoPath], PgtestRow](
-            _path,
-            "pathes",
-            _.pathes,
-            Optional.empty(),
-            Optional.of("path[]"),
-            (row, value) => row.copy(pathes = value),
-            TypoPath.pgTypeArray
-          )
-        }
-        override def pointes: Field[Array[TypoPoint], PgtestRow] = {
-          new Field[Array[TypoPoint], PgtestRow](
-            _path,
-            "pointes",
-            _.pointes,
-            Optional.empty(),
-            Optional.of("point[]"),
-            (row, value) => row.copy(pointes = value),
-            TypoPoint.pgTypeArray
-          )
-        }
-        override def polygones: Field[Array[TypoPolygon], PgtestRow] = {
-          new Field[Array[TypoPolygon], PgtestRow](
-            _path,
-            "polygones",
-            _.polygones,
-            Optional.empty(),
-            Optional.of("polygon[]"),
-            (row, value) => row.copy(polygones = value),
-            TypoPolygon.pgTypeArray
-          )
-        }
-        override def textes: Field[Array[String], PgtestRow] = {
-          new Field[Array[String], PgtestRow](
-            _path,
-            "textes",
-            _.textes,
-            Optional.empty(),
-            Optional.of("text[]"),
-            (row, value) => row.copy(textes = value),
-            PgTypes.textArray
-          )
-        }
-        override def timees: Field[Array[TypoLocalTime], PgtestRow] = {
-          new Field[Array[TypoLocalTime], PgtestRow](
-            _path,
-            "timees",
-            _.timees,
-            Optional.of("text[]"),
-            Optional.of("time[]"),
-            (row, value) => row.copy(timees = value),
-            TypoLocalTime.pgTypeArray
-          )
-        }
-        override def timestampes: Field[Array[TypoLocalDateTime], PgtestRow] = {
-          new Field[Array[TypoLocalDateTime], PgtestRow](
-            _path,
-            "timestampes",
-            _.timestampes,
-            Optional.of("text[]"),
-            Optional.of("timestamp[]"),
-            (row, value) => row.copy(timestampes = value),
-            TypoLocalDateTime.pgTypeArray
-          )
-        }
-        override def timestampzes: Field[Array[TypoInstant], PgtestRow] = {
-          new Field[Array[TypoInstant], PgtestRow](
-            _path,
-            "timestampzes",
-            _.timestampzes,
-            Optional.of("text[]"),
-            Optional.of("timestamptz[]"),
-            (row, value) => row.copy(timestampzes = value),
-            TypoInstant.pgTypeArray
-          )
-        }
-        override def timezes: Field[Array[TypoOffsetTime], PgtestRow] = {
-          new Field[Array[TypoOffsetTime], PgtestRow](
-            _path,
-            "timezes",
-            _.timezes,
-            Optional.of("text[]"),
-            Optional.of("timetz[]"),
-            (row, value) => row.copy(timezes = value),
-            TypoOffsetTime.pgTypeArray
-          )
-        }
-        override def uuides: Field[Array[TypoUUID], PgtestRow] = {
-          new Field[Array[TypoUUID], PgtestRow](
-            _path,
-            "uuides",
-            _.uuides,
-            Optional.empty(),
-            Optional.of("uuid[]"),
-            (row, value) => row.copy(uuides = value),
-            TypoUUID.pgTypeArray
-          )
-        }
-        override def varchares: Field[Array[String], PgtestRow] = {
-          new Field[Array[String], PgtestRow](
-            _path,
-            "varchares",
-            _.varchares,
-            Optional.empty(),
-            Optional.of("varchar[]"),
-            (row, value) => row.copy(varchares = value),
-            PgTypes.textArray
-          )
-        }
-        override def xmles: Field[Array[TypoXml], PgtestRow] = {
-          new Field[Array[TypoXml], PgtestRow](
-            _path,
-            "xmles",
-            _.xmles,
-            Optional.empty(),
-            Optional.of("xml[]"),
-            (row, value) => row.copy(xmles = value),
-            TypoXml.pgTypeArray
-          )
-        }
-      }
+    override def bool: Field[java.lang.Boolean, PgtestRow] = {
+      new Field[java.lang.Boolean, PgtestRow](
+        _path,
+        "bool",
+        _.bool,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(bool = value),
+        PgTypes.bool
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PgtestRow]] = java.util.List.of(this.fields.bool, this.fields.box, this.fields.bpchar, this.fields.bytea, this.fields.char, this.fields.circle, this.fields.date, this.fields.float4, this.fields.float8, this.fields.hstore, this.fields.inet, this.fields.int2, this.fields.int2vector, this.fields.int4, this.fields.int8, this.fields.interval, this.fields.json, this.fields.jsonb, this.fields.line, this.fields.lseg, this.fields.money, this.fields.mydomain, this.fields.myenum, this.fields.name, this.fields.numeric, this.fields.path, this.fields.point, this.fields.polygon, this.fields.text, this.fields.time, this.fields.timestamp, this.fields.timestampz, this.fields.timez, this.fields.uuid, this.fields.varchar, this.fields.vector, this.fields.xml, this.fields.boxes, this.fields.bpchares, this.fields.chares, this.fields.circlees, this.fields.datees, this.fields.float4es, this.fields.float8es, this.fields.inetes, this.fields.int2es, this.fields.int2vectores, this.fields.int4es, this.fields.int8es, this.fields.intervales, this.fields.jsones, this.fields.jsonbes, this.fields.linees, this.fields.lseges, this.fields.moneyes, this.fields.mydomaines, this.fields.myenumes, this.fields.namees, this.fields.numerices, this.fields.pathes, this.fields.pointes, this.fields.polygones, this.fields.textes, this.fields.timees, this.fields.timestampes, this.fields.timestampzes, this.fields.timezes, this.fields.uuides, this.fields.varchares, this.fields.xmles)
+    override def box: Field[TypoBox, PgtestRow] = {
+      new Field[TypoBox, PgtestRow](
+        _path,
+        "box",
+        _.box,
+        Optional.empty(),
+        Optional.of("box"),
+        (row, value) => row.copy(box = value),
+        TypoBox.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def bpchar: Field[/* bpchar, max 3 chars */ String, PgtestRow] = {
+      new Field[/* bpchar, max 3 chars */ String, PgtestRow](
+        _path,
+        "bpchar",
+        _.bpchar,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(bpchar = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def bytea: Field[TypoBytea, PgtestRow] = {
+      new Field[TypoBytea, PgtestRow](
+        _path,
+        "bytea",
+        _.bytea,
+        Optional.empty(),
+        Optional.of("bytea"),
+        (row, value) => row.copy(bytea = value),
+        TypoBytea.pgType
+      )
+    }
+
+    override def char: Field[/* bpchar, max 1 chars */ String, PgtestRow] = {
+      new Field[/* bpchar, max 1 chars */ String, PgtestRow](
+        _path,
+        "char",
+        _.char,
+        Optional.empty(),
+        Optional.of("bpchar"),
+        (row, value) => row.copy(char = value),
+        PgTypes.bpchar
+      )
+    }
+
+    override def circle: Field[TypoCircle, PgtestRow] = {
+      new Field[TypoCircle, PgtestRow](
+        _path,
+        "circle",
+        _.circle,
+        Optional.empty(),
+        Optional.of("circle"),
+        (row, value) => row.copy(circle = value),
+        TypoCircle.pgType
+      )
+    }
+
+    override def date: Field[TypoLocalDate, PgtestRow] = {
+      new Field[TypoLocalDate, PgtestRow](
+        _path,
+        "date",
+        _.date,
+        Optional.of("text"),
+        Optional.of("date"),
+        (row, value) => row.copy(date = value),
+        TypoLocalDate.pgType
+      )
+    }
+
+    override def float4: Field[java.lang.Float, PgtestRow] = {
+      new Field[java.lang.Float, PgtestRow](
+        _path,
+        "float4",
+        _.float4,
+        Optional.empty(),
+        Optional.of("float4"),
+        (row, value) => row.copy(float4 = value),
+        PgTypes.float4
+      )
+    }
+
+    override def float8: Field[java.lang.Double, PgtestRow] = {
+      new Field[java.lang.Double, PgtestRow](
+        _path,
+        "float8",
+        _.float8,
+        Optional.empty(),
+        Optional.of("float8"),
+        (row, value) => row.copy(float8 = value),
+        PgTypes.float8
+      )
+    }
+
+    override def hstore: Field[TypoHStore, PgtestRow] = {
+      new Field[TypoHStore, PgtestRow](
+        _path,
+        "hstore",
+        _.hstore,
+        Optional.empty(),
+        Optional.of("hstore"),
+        (row, value) => row.copy(hstore = value),
+        TypoHStore.pgType
+      )
+    }
+
+    override def inet: Field[TypoInet, PgtestRow] = {
+      new Field[TypoInet, PgtestRow](
+        _path,
+        "inet",
+        _.inet,
+        Optional.empty(),
+        Optional.of("inet"),
+        (row, value) => row.copy(inet = value),
+        TypoInet.pgType
+      )
+    }
+
+    override def int2: Field[TypoShort, PgtestRow] = {
+      new Field[TypoShort, PgtestRow](
+        _path,
+        "int2",
+        _.int2,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(int2 = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def int2vector: Field[TypoInt2Vector, PgtestRow] = {
+      new Field[TypoInt2Vector, PgtestRow](
+        _path,
+        "int2vector",
+        _.int2vector,
+        Optional.empty(),
+        Optional.of("int2vector"),
+        (row, value) => row.copy(int2vector = value),
+        TypoInt2Vector.pgType
+      )
+    }
+
+    override def int4: Field[Integer, PgtestRow] = {
+      new Field[Integer, PgtestRow](
+        _path,
+        "int4",
+        _.int4,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(int4 = value),
+        PgTypes.int4
+      )
+    }
+
+    override def int8: Field[java.lang.Long, PgtestRow] = {
+      new Field[java.lang.Long, PgtestRow](
+        _path,
+        "int8",
+        _.int8,
+        Optional.empty(),
+        Optional.of("int8"),
+        (row, value) => row.copy(int8 = value),
+        PgTypes.int8
+      )
+    }
+
+    override def interval: Field[TypoInterval, PgtestRow] = {
+      new Field[TypoInterval, PgtestRow](
+        _path,
+        "interval",
+        _.interval,
+        Optional.empty(),
+        Optional.of("interval"),
+        (row, value) => row.copy(interval = value),
+        TypoInterval.pgType
+      )
+    }
+
+    override def json: Field[TypoJson, PgtestRow] = {
+      new Field[TypoJson, PgtestRow](
+        _path,
+        "json",
+        _.json,
+        Optional.empty(),
+        Optional.of("json"),
+        (row, value) => row.copy(json = value),
+        TypoJson.pgType
+      )
+    }
+
+    override def jsonb: Field[TypoJsonb, PgtestRow] = {
+      new Field[TypoJsonb, PgtestRow](
+        _path,
+        "jsonb",
+        _.jsonb,
+        Optional.empty(),
+        Optional.of("jsonb"),
+        (row, value) => row.copy(jsonb = value),
+        TypoJsonb.pgType
+      )
+    }
+
+    override def line: Field[TypoLine, PgtestRow] = {
+      new Field[TypoLine, PgtestRow](
+        _path,
+        "line",
+        _.line,
+        Optional.empty(),
+        Optional.of("line"),
+        (row, value) => row.copy(line = value),
+        TypoLine.pgType
+      )
+    }
+
+    override def lseg: Field[TypoLineSegment, PgtestRow] = {
+      new Field[TypoLineSegment, PgtestRow](
+        _path,
+        "lseg",
+        _.lseg,
+        Optional.empty(),
+        Optional.of("lseg"),
+        (row, value) => row.copy(lseg = value),
+        TypoLineSegment.pgType
+      )
+    }
+
+    override def money: Field[TypoMoney, PgtestRow] = {
+      new Field[TypoMoney, PgtestRow](
+        _path,
+        "money",
+        _.money,
+        Optional.of("numeric"),
+        Optional.of("money"),
+        (row, value) => row.copy(money = value),
+        TypoMoney.pgType
+      )
+    }
+
+    override def mydomain: Field[Mydomain, PgtestRow] = {
+      new Field[Mydomain, PgtestRow](
+        _path,
+        "mydomain",
+        _.mydomain,
+        Optional.empty(),
+        Optional.of("text"),
+        (row, value) => row.copy(mydomain = value),
+        Mydomain.pgType
+      )
+    }
+
+    override def myenum: Field[Myenum, PgtestRow] = {
+      new Field[Myenum, PgtestRow](
+        _path,
+        "myenum",
+        _.myenum,
+        Optional.empty(),
+        Optional.of("public.myenum"),
+        (row, value) => row.copy(myenum = value),
+        Myenum.pgType
+      )
+    }
+
+    override def name: Field[String, PgtestRow] = {
+      new Field[String, PgtestRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.of("name"),
+        (row, value) => row.copy(name = value),
+        PgTypes.name
+      )
+    }
+
+    override def numeric: Field[java.math.BigDecimal, PgtestRow] = {
+      new Field[java.math.BigDecimal, PgtestRow](
+        _path,
+        "numeric",
+        _.numeric,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(numeric = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def path: Field[TypoPath, PgtestRow] = {
+      new Field[TypoPath, PgtestRow](
+        _path,
+        "path",
+        _.path,
+        Optional.empty(),
+        Optional.of("path"),
+        (row, value) => row.copy(path = value),
+        TypoPath.pgType
+      )
+    }
+
+    override def point: Field[TypoPoint, PgtestRow] = {
+      new Field[TypoPoint, PgtestRow](
+        _path,
+        "point",
+        _.point,
+        Optional.empty(),
+        Optional.of("point"),
+        (row, value) => row.copy(point = value),
+        TypoPoint.pgType
+      )
+    }
+
+    override def polygon: Field[TypoPolygon, PgtestRow] = {
+      new Field[TypoPolygon, PgtestRow](
+        _path,
+        "polygon",
+        _.polygon,
+        Optional.empty(),
+        Optional.of("polygon"),
+        (row, value) => row.copy(polygon = value),
+        TypoPolygon.pgType
+      )
+    }
+
+    override def text: Field[String, PgtestRow] = {
+      new Field[String, PgtestRow](
+        _path,
+        "text",
+        _.text,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(text = value),
+        PgTypes.text
+      )
+    }
+
+    override def time: Field[TypoLocalTime, PgtestRow] = {
+      new Field[TypoLocalTime, PgtestRow](
+        _path,
+        "time",
+        _.time,
+        Optional.of("text"),
+        Optional.of("time"),
+        (row, value) => row.copy(time = value),
+        TypoLocalTime.pgType
+      )
+    }
+
+    override def timestamp: Field[TypoLocalDateTime, PgtestRow] = {
+      new Field[TypoLocalDateTime, PgtestRow](
+        _path,
+        "timestamp",
+        _.timestamp,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(timestamp = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def timestampz: Field[TypoInstant, PgtestRow] = {
+      new Field[TypoInstant, PgtestRow](
+        _path,
+        "timestampz",
+        _.timestampz,
+        Optional.of("text"),
+        Optional.of("timestamptz"),
+        (row, value) => row.copy(timestampz = value),
+        TypoInstant.pgType
+      )
+    }
+
+    override def timez: Field[TypoOffsetTime, PgtestRow] = {
+      new Field[TypoOffsetTime, PgtestRow](
+        _path,
+        "timez",
+        _.timez,
+        Optional.of("text"),
+        Optional.of("timetz"),
+        (row, value) => row.copy(timez = value),
+        TypoOffsetTime.pgType
+      )
+    }
+
+    override def uuid: Field[TypoUUID, PgtestRow] = {
+      new Field[TypoUUID, PgtestRow](
+        _path,
+        "uuid",
+        _.uuid,
+        Optional.empty(),
+        Optional.of("uuid"),
+        (row, value) => row.copy(uuid = value),
+        TypoUUID.pgType
+      )
+    }
+
+    override def varchar: Field[String, PgtestRow] = {
+      new Field[String, PgtestRow](
+        _path,
+        "varchar",
+        _.varchar,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(varchar = value),
+        PgTypes.text
+      )
+    }
+
+    override def vector: Field[TypoVector, PgtestRow] = {
+      new Field[TypoVector, PgtestRow](
+        _path,
+        "vector",
+        _.vector,
+        Optional.of("float4[]"),
+        Optional.of("vector"),
+        (row, value) => row.copy(vector = value),
+        TypoVector.pgType
+      )
+    }
+
+    override def xml: Field[TypoXml, PgtestRow] = {
+      new Field[TypoXml, PgtestRow](
+        _path,
+        "xml",
+        _.xml,
+        Optional.empty(),
+        Optional.of("xml"),
+        (row, value) => row.copy(xml = value),
+        TypoXml.pgType
+      )
+    }
+
+    override def boxes: Field[Array[TypoBox], PgtestRow] = {
+      new Field[Array[TypoBox], PgtestRow](
+        _path,
+        "boxes",
+        _.boxes,
+        Optional.empty(),
+        Optional.of("box[]"),
+        (row, value) => row.copy(boxes = value),
+        TypoBox.pgTypeArray
+      )
+    }
+
+    override def bpchares: Field[Array[/* bpchar */ String], PgtestRow] = {
+      new Field[Array[/* bpchar */ String], PgtestRow](
+        _path,
+        "bpchares",
+        _.bpchares,
+        Optional.empty(),
+        Optional.of("bpchar[]"),
+        (row, value) => row.copy(bpchares = value),
+        PgTypes.bpcharArray
+      )
+    }
+
+    override def chares: Field[Array[/* bpchar */ String], PgtestRow] = {
+      new Field[Array[/* bpchar */ String], PgtestRow](
+        _path,
+        "chares",
+        _.chares,
+        Optional.empty(),
+        Optional.of("bpchar[]"),
+        (row, value) => row.copy(chares = value),
+        PgTypes.bpcharArray
+      )
+    }
+
+    override def circlees: Field[Array[TypoCircle], PgtestRow] = {
+      new Field[Array[TypoCircle], PgtestRow](
+        _path,
+        "circlees",
+        _.circlees,
+        Optional.empty(),
+        Optional.of("circle[]"),
+        (row, value) => row.copy(circlees = value),
+        TypoCircle.pgTypeArray
+      )
+    }
+
+    override def datees: Field[Array[TypoLocalDate], PgtestRow] = {
+      new Field[Array[TypoLocalDate], PgtestRow](
+        _path,
+        "datees",
+        _.datees,
+        Optional.of("text[]"),
+        Optional.of("date[]"),
+        (row, value) => row.copy(datees = value),
+        TypoLocalDate.pgTypeArray
+      )
+    }
+
+    override def float4es: Field[Array[java.lang.Float], PgtestRow] = {
+      new Field[Array[java.lang.Float], PgtestRow](
+        _path,
+        "float4es",
+        _.float4es,
+        Optional.empty(),
+        Optional.of("float4[]"),
+        (row, value) => row.copy(float4es = value),
+        PgTypes.float4Array
+      )
+    }
+
+    override def float8es: Field[Array[java.lang.Double], PgtestRow] = {
+      new Field[Array[java.lang.Double], PgtestRow](
+        _path,
+        "float8es",
+        _.float8es,
+        Optional.empty(),
+        Optional.of("float8[]"),
+        (row, value) => row.copy(float8es = value),
+        PgTypes.float8Array
+      )
+    }
+
+    override def inetes: Field[Array[TypoInet], PgtestRow] = {
+      new Field[Array[TypoInet], PgtestRow](
+        _path,
+        "inetes",
+        _.inetes,
+        Optional.empty(),
+        Optional.of("inet[]"),
+        (row, value) => row.copy(inetes = value),
+        TypoInet.pgTypeArray
+      )
+    }
+
+    override def int2es: Field[Array[TypoShort], PgtestRow] = {
+      new Field[Array[TypoShort], PgtestRow](
+        _path,
+        "int2es",
+        _.int2es,
+        Optional.empty(),
+        Optional.of("int2[]"),
+        (row, value) => row.copy(int2es = value),
+        TypoShort.pgTypeArray
+      )
+    }
+
+    override def int2vectores: Field[Array[TypoInt2Vector], PgtestRow] = {
+      new Field[Array[TypoInt2Vector], PgtestRow](
+        _path,
+        "int2vectores",
+        _.int2vectores,
+        Optional.empty(),
+        Optional.of("int2vector[]"),
+        (row, value) => row.copy(int2vectores = value),
+        TypoInt2Vector.pgTypeArray
+      )
+    }
+
+    override def int4es: Field[Array[Integer], PgtestRow] = {
+      new Field[Array[Integer], PgtestRow](
+        _path,
+        "int4es",
+        _.int4es,
+        Optional.empty(),
+        Optional.of("int4[]"),
+        (row, value) => row.copy(int4es = value),
+        PgTypes.int4Array
+      )
+    }
+
+    override def int8es: Field[Array[java.lang.Long], PgtestRow] = {
+      new Field[Array[java.lang.Long], PgtestRow](
+        _path,
+        "int8es",
+        _.int8es,
+        Optional.empty(),
+        Optional.of("int8[]"),
+        (row, value) => row.copy(int8es = value),
+        PgTypes.int8Array
+      )
+    }
+
+    override def intervales: Field[Array[TypoInterval], PgtestRow] = {
+      new Field[Array[TypoInterval], PgtestRow](
+        _path,
+        "intervales",
+        _.intervales,
+        Optional.empty(),
+        Optional.of("interval[]"),
+        (row, value) => row.copy(intervales = value),
+        TypoInterval.pgTypeArray
+      )
+    }
+
+    override def jsones: Field[Array[TypoJson], PgtestRow] = {
+      new Field[Array[TypoJson], PgtestRow](
+        _path,
+        "jsones",
+        _.jsones,
+        Optional.empty(),
+        Optional.of("json[]"),
+        (row, value) => row.copy(jsones = value),
+        TypoJson.pgTypeArray
+      )
+    }
+
+    override def jsonbes: Field[Array[TypoJsonb], PgtestRow] = {
+      new Field[Array[TypoJsonb], PgtestRow](
+        _path,
+        "jsonbes",
+        _.jsonbes,
+        Optional.empty(),
+        Optional.of("jsonb[]"),
+        (row, value) => row.copy(jsonbes = value),
+        TypoJsonb.pgTypeArray
+      )
+    }
+
+    override def linees: Field[Array[TypoLine], PgtestRow] = {
+      new Field[Array[TypoLine], PgtestRow](
+        _path,
+        "linees",
+        _.linees,
+        Optional.empty(),
+        Optional.of("line[]"),
+        (row, value) => row.copy(linees = value),
+        TypoLine.pgTypeArray
+      )
+    }
+
+    override def lseges: Field[Array[TypoLineSegment], PgtestRow] = {
+      new Field[Array[TypoLineSegment], PgtestRow](
+        _path,
+        "lseges",
+        _.lseges,
+        Optional.empty(),
+        Optional.of("lseg[]"),
+        (row, value) => row.copy(lseges = value),
+        TypoLineSegment.pgTypeArray
+      )
+    }
+
+    override def moneyes: Field[Array[TypoMoney], PgtestRow] = {
+      new Field[Array[TypoMoney], PgtestRow](
+        _path,
+        "moneyes",
+        _.moneyes,
+        Optional.of("numeric[]"),
+        Optional.of("money[]"),
+        (row, value) => row.copy(moneyes = value),
+        TypoMoney.pgTypeArray
+      )
+    }
+
+    override def mydomaines: Field[Array[Mydomain], PgtestRow] = {
+      new Field[Array[Mydomain], PgtestRow](
+        _path,
+        "mydomaines",
+        _.mydomaines,
+        Optional.of("text[]"),
+        Optional.of("mydomain[]"),
+        (row, value) => row.copy(mydomaines = value),
+        Mydomain.pgTypeArray
+      )
+    }
+
+    override def myenumes: Field[Array[Myenum], PgtestRow] = {
+      new Field[Array[Myenum], PgtestRow](
+        _path,
+        "myenumes",
+        _.myenumes,
+        Optional.empty(),
+        Optional.of("myenum[]"),
+        (row, value) => row.copy(myenumes = value),
+        Myenum.pgTypeArray
+      )
+    }
+
+    override def namees: Field[Array[String], PgtestRow] = {
+      new Field[Array[String], PgtestRow](
+        _path,
+        "namees",
+        _.namees,
+        Optional.empty(),
+        Optional.of("name[]"),
+        (row, value) => row.copy(namees = value),
+        PgTypes.nameArray
+      )
+    }
+
+    override def numerices: Field[Array[java.math.BigDecimal], PgtestRow] = {
+      new Field[Array[java.math.BigDecimal], PgtestRow](
+        _path,
+        "numerices",
+        _.numerices,
+        Optional.empty(),
+        Optional.of("numeric[]"),
+        (row, value) => row.copy(numerices = value),
+        PgTypes.numericArray
+      )
+    }
+
+    override def pathes: Field[Array[TypoPath], PgtestRow] = {
+      new Field[Array[TypoPath], PgtestRow](
+        _path,
+        "pathes",
+        _.pathes,
+        Optional.empty(),
+        Optional.of("path[]"),
+        (row, value) => row.copy(pathes = value),
+        TypoPath.pgTypeArray
+      )
+    }
+
+    override def pointes: Field[Array[TypoPoint], PgtestRow] = {
+      new Field[Array[TypoPoint], PgtestRow](
+        _path,
+        "pointes",
+        _.pointes,
+        Optional.empty(),
+        Optional.of("point[]"),
+        (row, value) => row.copy(pointes = value),
+        TypoPoint.pgTypeArray
+      )
+    }
+
+    override def polygones: Field[Array[TypoPolygon], PgtestRow] = {
+      new Field[Array[TypoPolygon], PgtestRow](
+        _path,
+        "polygones",
+        _.polygones,
+        Optional.empty(),
+        Optional.of("polygon[]"),
+        (row, value) => row.copy(polygones = value),
+        TypoPolygon.pgTypeArray
+      )
+    }
+
+    override def textes: Field[Array[String], PgtestRow] = {
+      new Field[Array[String], PgtestRow](
+        _path,
+        "textes",
+        _.textes,
+        Optional.empty(),
+        Optional.of("text[]"),
+        (row, value) => row.copy(textes = value),
+        PgTypes.textArray
+      )
+    }
+
+    override def timees: Field[Array[TypoLocalTime], PgtestRow] = {
+      new Field[Array[TypoLocalTime], PgtestRow](
+        _path,
+        "timees",
+        _.timees,
+        Optional.of("text[]"),
+        Optional.of("time[]"),
+        (row, value) => row.copy(timees = value),
+        TypoLocalTime.pgTypeArray
+      )
+    }
+
+    override def timestampes: Field[Array[TypoLocalDateTime], PgtestRow] = {
+      new Field[Array[TypoLocalDateTime], PgtestRow](
+        _path,
+        "timestampes",
+        _.timestampes,
+        Optional.of("text[]"),
+        Optional.of("timestamp[]"),
+        (row, value) => row.copy(timestampes = value),
+        TypoLocalDateTime.pgTypeArray
+      )
+    }
+
+    override def timestampzes: Field[Array[TypoInstant], PgtestRow] = {
+      new Field[Array[TypoInstant], PgtestRow](
+        _path,
+        "timestampzes",
+        _.timestampzes,
+        Optional.of("text[]"),
+        Optional.of("timestamptz[]"),
+        (row, value) => row.copy(timestampzes = value),
+        TypoInstant.pgTypeArray
+      )
+    }
+
+    override def timezes: Field[Array[TypoOffsetTime], PgtestRow] = {
+      new Field[Array[TypoOffsetTime], PgtestRow](
+        _path,
+        "timezes",
+        _.timezes,
+        Optional.of("text[]"),
+        Optional.of("timetz[]"),
+        (row, value) => row.copy(timezes = value),
+        TypoOffsetTime.pgTypeArray
+      )
+    }
+
+    override def uuides: Field[Array[TypoUUID], PgtestRow] = {
+      new Field[Array[TypoUUID], PgtestRow](
+        _path,
+        "uuides",
+        _.uuides,
+        Optional.empty(),
+        Optional.of("uuid[]"),
+        (row, value) => row.copy(uuides = value),
+        TypoUUID.pgTypeArray
+      )
+    }
+
+    override def varchares: Field[Array[String], PgtestRow] = {
+      new Field[Array[String], PgtestRow](
+        _path,
+        "varchares",
+        _.varchares,
+        Optional.empty(),
+        Optional.of("varchar[]"),
+        (row, value) => row.copy(varchares = value),
+        PgTypes.textArray
+      )
+    }
+
+    override def xmles: Field[Array[TypoXml], PgtestRow] = {
+      new Field[Array[TypoXml], PgtestRow](
+        _path,
+        "xmles",
+        _.xmles,
+        Optional.empty(),
+        Optional.of("xml[]"),
+        (row, value) => row.copy(xmles = value),
+        TypoXml.pgTypeArray
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PgtestRow]] = java.util.List.of(this.bool, this.box, this.bpchar, this.bytea, this.char, this.circle, this.date, this.float4, this.float8, this.hstore, this.inet, this.int2, this.int2vector, this.int4, this.int8, this.interval, this.json, this.jsonb, this.line, this.lseg, this.money, this.mydomain, this.myenum, this.name, this.numeric, this.path, this.point, this.polygon, this.text, this.time, this.timestamp, this.timestampz, this.timez, this.uuid, this.varchar, this.vector, this.xml, this.boxes, this.bpchares, this.chares, this.circlees, this.datees, this.float4es, this.float8es, this.inetes, this.int2es, this.int2vectores, this.int4es, this.int8es, this.intervales, this.jsones, this.jsonbes, this.linees, this.lseges, this.moneyes, this.mydomaines, this.myenumes, this.namees, this.numerices, this.pathes, this.pointes, this.polygones, this.textes, this.timees, this.timestampes, this.timestampzes, this.timezes, this.uuides, this.varchares, this.xmles)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PgtestFields, PgtestRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PgtestFields, PgtestRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

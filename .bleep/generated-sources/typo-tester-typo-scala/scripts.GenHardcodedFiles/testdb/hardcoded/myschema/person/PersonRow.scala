@@ -65,7 +65,7 @@ case class PersonRow(
 }
 
 object PersonRow {
-  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(PersonId.pgType, FootballClubId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PgTypes.text, PgTypes.bool, MaritalStatusId.pgType, PgTypes.text.opt(), Sector.pgType, Number.pgType, PersonRow.apply, row => Array(row.id, row.favouriteFootballClubId, row.name, row.nickName, row.blogUrl, row.email, row.phone, row.likesPizza, row.maritalStatusId, row.workEmail, row.sector, row.favoriteNumber))
+  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(PersonId.pgType, FootballClubId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PgTypes.text, PgTypes.bool, MaritalStatusId.pgType, PgTypes.text.opt(), Sector.pgType, Number.pgType, PersonRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.favouriteFootballClubId.asInstanceOf[Object], row.name.asInstanceOf[Object], row.nickName.asInstanceOf[Object], row.blogUrl.asInstanceOf[Object], row.email.asInstanceOf[Object], row.phone.asInstanceOf[Object], row.likesPizza.asInstanceOf[Object], row.maritalStatusId.asInstanceOf[Object], row.workEmail.asInstanceOf[Object], row.sector.asInstanceOf[Object], row.favoriteNumber.asInstanceOf[Object]))
 
   given pgText: PgText[PersonRow] = PgText.from(`_rowParser`)
 }

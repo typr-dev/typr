@@ -9,12 +9,14 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.contacttype.ContacttypeId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait CtViewFields {
+trait CtViewFields extends FieldsExpr[CtViewRow] {
   def id: Field[ContacttypeId, CtViewRow]
 
   def contacttypeid: Field[ContacttypeId, CtViewRow]
@@ -22,64 +24,67 @@ trait CtViewFields {
   def name: Field[Name, CtViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, CtViewRow]
+
+  override def columns: java.util.List[FieldLike[?, CtViewRow]]
+
+  override def rowParser: RowParser[CtViewRow] = CtViewRow._rowParser
 }
 
 object CtViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[CtViewFields, CtViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends CtViewFields with Relation[CtViewFields, CtViewRow] {
 
-    override lazy val fields: CtViewFields = {
-      new CtViewFields {
-        override def id: Field[ContacttypeId, CtViewRow] = {
-          new Field[ContacttypeId, CtViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            ContacttypeId.pgType
-          )
-        }
-        override def contacttypeid: Field[ContacttypeId, CtViewRow] = {
-          new Field[ContacttypeId, CtViewRow](
-            _path,
-            "contacttypeid",
-            _.contacttypeid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(contacttypeid = value),
-            ContacttypeId.pgType
-          )
-        }
-        override def name: Field[Name, CtViewRow] = {
-          new Field[Name, CtViewRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, CtViewRow] = {
-          new Field[TypoLocalDateTime, CtViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[ContacttypeId, CtViewRow] = {
+      new Field[ContacttypeId, CtViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        ContacttypeId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, CtViewRow]] = java.util.List.of(this.fields.id, this.fields.contacttypeid, this.fields.name, this.fields.modifieddate)
+    override def contacttypeid: Field[ContacttypeId, CtViewRow] = {
+      new Field[ContacttypeId, CtViewRow](
+        _path,
+        "contacttypeid",
+        _.contacttypeid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(contacttypeid = value),
+        ContacttypeId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def name: Field[Name, CtViewRow] = {
+      new Field[Name, CtViewRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, CtViewRow] = {
+      new Field[TypoLocalDateTime, CtViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, CtViewRow]] = java.util.List.of(this.id, this.contacttypeid, this.name, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[CtViewFields, CtViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[CtViewFields, CtViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -11,13 +11,15 @@ import adventureworks.public.Flag
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VstateprovincecountryregionMVFields {
+trait VstateprovincecountryregionMVFields extends FieldsExpr[VstateprovincecountryregionMVRow] {
   def stateprovinceid: Field[StateprovinceId, VstateprovincecountryregionMVRow]
 
   def stateprovincecode: Field[/* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow]
@@ -31,97 +33,103 @@ trait VstateprovincecountryregionMVFields {
   def countryregioncode: Field[CountryregionId, VstateprovincecountryregionMVRow]
 
   def countryregionname: Field[Name, VstateprovincecountryregionMVRow]
+
+  override def columns: java.util.List[FieldLike[?, VstateprovincecountryregionMVRow]]
+
+  override def rowParser: RowParser[VstateprovincecountryregionMVRow] = VstateprovincecountryregionMVRow._rowParser
 }
 
 object VstateprovincecountryregionMVFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VstateprovincecountryregionMVFields with Relation[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] {
 
-    override lazy val fields: VstateprovincecountryregionMVFields = {
-      new VstateprovincecountryregionMVFields {
-        override def stateprovinceid: Field[StateprovinceId, VstateprovincecountryregionMVRow] = {
-          new Field[StateprovinceId, VstateprovincecountryregionMVRow](
-            _path,
-            "stateprovinceid",
-            _.stateprovinceid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(stateprovinceid = value),
-            StateprovinceId.pgType
-          )
-        }
-        override def stateprovincecode: Field[/* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow] = {
-          new Field[/* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow](
-            _path,
-            "stateprovincecode",
-            _.stateprovincecode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(stateprovincecode = value),
-            PgTypes.bpchar
-          )
-        }
-        override def isonlystateprovinceflag: Field[Flag, VstateprovincecountryregionMVRow] = {
-          new Field[Flag, VstateprovincecountryregionMVRow](
-            _path,
-            "isonlystateprovinceflag",
-            _.isonlystateprovinceflag,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(isonlystateprovinceflag = value),
-            Flag.pgType
-          )
-        }
-        override def stateprovincename: Field[Name, VstateprovincecountryregionMVRow] = {
-          new Field[Name, VstateprovincecountryregionMVRow](
-            _path,
-            "stateprovincename",
-            _.stateprovincename,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(stateprovincename = value),
-            Name.pgType
-          )
-        }
-        override def territoryid: Field[SalesterritoryId, VstateprovincecountryregionMVRow] = {
-          new Field[SalesterritoryId, VstateprovincecountryregionMVRow](
-            _path,
-            "territoryid",
-            _.territoryid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(territoryid = value),
-            SalesterritoryId.pgType
-          )
-        }
-        override def countryregioncode: Field[CountryregionId, VstateprovincecountryregionMVRow] = {
-          new Field[CountryregionId, VstateprovincecountryregionMVRow](
-            _path,
-            "countryregioncode",
-            _.countryregioncode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryregioncode = value),
-            CountryregionId.pgType
-          )
-        }
-        override def countryregionname: Field[Name, VstateprovincecountryregionMVRow] = {
-          new Field[Name, VstateprovincecountryregionMVRow](
-            _path,
-            "countryregionname",
-            _.countryregionname,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(countryregionname = value),
-            Name.pgType
-          )
-        }
-      }
+    override def stateprovinceid: Field[StateprovinceId, VstateprovincecountryregionMVRow] = {
+      new Field[StateprovinceId, VstateprovincecountryregionMVRow](
+        _path,
+        "stateprovinceid",
+        _.stateprovinceid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(stateprovinceid = value),
+        StateprovinceId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VstateprovincecountryregionMVRow]] = java.util.List.of(this.fields.stateprovinceid, this.fields.stateprovincecode, this.fields.isonlystateprovinceflag, this.fields.stateprovincename, this.fields.territoryid, this.fields.countryregioncode, this.fields.countryregionname)
+    override def stateprovincecode: Field[/* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow] = {
+      new Field[/* bpchar, max 3 chars */ String, VstateprovincecountryregionMVRow](
+        _path,
+        "stateprovincecode",
+        _.stateprovincecode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(stateprovincecode = value),
+        PgTypes.bpchar
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def isonlystateprovinceflag: Field[Flag, VstateprovincecountryregionMVRow] = {
+      new Field[Flag, VstateprovincecountryregionMVRow](
+        _path,
+        "isonlystateprovinceflag",
+        _.isonlystateprovinceflag,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(isonlystateprovinceflag = value),
+        Flag.pgType
+      )
+    }
+
+    override def stateprovincename: Field[Name, VstateprovincecountryregionMVRow] = {
+      new Field[Name, VstateprovincecountryregionMVRow](
+        _path,
+        "stateprovincename",
+        _.stateprovincename,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(stateprovincename = value),
+        Name.pgType
+      )
+    }
+
+    override def territoryid: Field[SalesterritoryId, VstateprovincecountryregionMVRow] = {
+      new Field[SalesterritoryId, VstateprovincecountryregionMVRow](
+        _path,
+        "territoryid",
+        _.territoryid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(territoryid = value),
+        SalesterritoryId.pgType
+      )
+    }
+
+    override def countryregioncode: Field[CountryregionId, VstateprovincecountryregionMVRow] = {
+      new Field[CountryregionId, VstateprovincecountryregionMVRow](
+        _path,
+        "countryregioncode",
+        _.countryregioncode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryregioncode = value),
+        CountryregionId.pgType
+      )
+    }
+
+    override def countryregionname: Field[Name, VstateprovincecountryregionMVRow] = {
+      new Field[Name, VstateprovincecountryregionMVRow](
+        _path,
+        "countryregionname",
+        _.countryregionname,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(countryregionname = value),
+        Name.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VstateprovincecountryregionMVRow]] = java.util.List.of(this.stateprovinceid, this.stateprovincecode, this.isonlystateprovinceflag, this.stateprovincename, this.territoryid, this.countryregioncode, this.countryregionname)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VstateprovincecountryregionMVFields, VstateprovincecountryregionMVRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

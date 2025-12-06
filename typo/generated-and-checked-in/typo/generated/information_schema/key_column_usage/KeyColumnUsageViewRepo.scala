@@ -5,10 +5,7 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package information_schema
-package key_column_usage
+package typo.generated.information_schema.key_column_usage
 
 import java.sql.Connection
 

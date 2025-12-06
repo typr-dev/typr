@@ -6,38 +6,40 @@
 package adventureworks.public.title_domain
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait TitleDomainFields {
+trait TitleDomainFields extends FieldsExpr[TitleDomainRow] {
   def code: IdField[TitleDomainId, TitleDomainRow]
+
+  override def columns: java.util.List[FieldLike[?, TitleDomainRow]]
+
+  override def rowParser: RowParser[TitleDomainRow] = TitleDomainRow._rowParser
 }
 
 object TitleDomainFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[TitleDomainFields, TitleDomainRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends TitleDomainFields with Relation[TitleDomainFields, TitleDomainRow] {
 
-    override lazy val fields: TitleDomainFields = {
-      new TitleDomainFields {
-        override def code: IdField[TitleDomainId, TitleDomainRow] = {
-          new IdField[TitleDomainId, TitleDomainRow](
-            _path,
-            "code",
-            _.code,
-            Optional.empty(),
-            Optional.of("text"),
-            (row, value) => row.copy(code = value),
-            TitleDomainId.pgType
-          )
-        }
-      }
+    override def code: IdField[TitleDomainId, TitleDomainRow] = {
+      new IdField[TitleDomainId, TitleDomainRow](
+        _path,
+        "code",
+        _.code,
+        Optional.empty(),
+        Optional.of("text"),
+        (row, value) => row.copy(code = value),
+        TitleDomainId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, TitleDomainRow]] = java.util.List.of(this.fields.code)
+    override def columns: java.util.List[FieldLike[?, TitleDomainRow]] = java.util.List.of(this.code)
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def copy(`_path`: java.util.List[Path]): Relation[TitleDomainFields, TitleDomainRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[TitleDomainFields, TitleDomainRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

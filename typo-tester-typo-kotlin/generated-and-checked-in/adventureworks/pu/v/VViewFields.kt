@@ -13,19 +13,23 @@ import adventureworks.public.Flag
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface VViewFields {
+interface VViewFields : FieldsExpr<VViewRow> {
   fun accountnumber(): Field<AccountNumber, VViewRow>
 
   fun activeflag(): Field<Flag, VViewRow>
 
   fun businessentityid(): Field<BusinessentityId, VViewRow>
+
+  override fun columns(): List<FieldLike<*, VViewRow>>
 
   fun creditrating(): Field<TypoShort, VViewRow>
 
@@ -39,25 +43,33 @@ interface VViewFields {
 
   fun purchasingwebserviceurl(): OptField</* max 1024 chars */ String, VViewRow>
 
+  override fun rowParser(): RowParser<VViewRow> = VViewRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<VViewFields, VViewRow>(path) {
-      override fun fields(): VViewFields = object : VViewFields {
-        override fun id(): Field<BusinessentityId, VViewRow> = Field<BusinessentityId, VViewRow>(_path, "id", VViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
-        override fun businessentityid(): Field<BusinessentityId, VViewRow> = Field<BusinessentityId, VViewRow>(_path, "businessentityid", VViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun accountnumber(): Field<AccountNumber, VViewRow> = Field<AccountNumber, VViewRow>(_path, "accountnumber", VViewRow::accountnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(accountnumber = value) }, AccountNumber.pgType)
-        override fun name(): Field<Name, VViewRow> = Field<Name, VViewRow>(_path, "name", VViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun creditrating(): Field<TypoShort, VViewRow> = Field<TypoShort, VViewRow>(_path, "creditrating", VViewRow::creditrating, Optional.empty(), Optional.empty(), { row, value -> row.copy(creditrating = value) }, TypoShort.pgType)
-        override fun preferredvendorstatus(): Field<Flag, VViewRow> = Field<Flag, VViewRow>(_path, "preferredvendorstatus", VViewRow::preferredvendorstatus, Optional.empty(), Optional.empty(), { row, value -> row.copy(preferredvendorstatus = value) }, Flag.pgType)
-        override fun activeflag(): Field<Flag, VViewRow> = Field<Flag, VViewRow>(_path, "activeflag", VViewRow::activeflag, Optional.empty(), Optional.empty(), { row, value -> row.copy(activeflag = value) }, Flag.pgType)
-        override fun purchasingwebserviceurl(): OptField</* max 1024 chars */ String, VViewRow> = OptField</* max 1024 chars */ String, VViewRow>(_path, "purchasingwebserviceurl", VViewRow::purchasingwebserviceurl, Optional.empty(), Optional.empty(), { row, value -> row.copy(purchasingwebserviceurl = value) }, PgTypes.text)
-        override fun modifieddate(): Field<TypoLocalDateTime, VViewRow> = Field<TypoLocalDateTime, VViewRow>(_path, "modifieddate", VViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : VViewFields, Relation<VViewFields, VViewRow> {
+      override fun id(): Field<BusinessentityId, VViewRow> = Field<BusinessentityId, VViewRow>(_path, "id", VViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, VViewRow>> = listOf(this.fields().id(), this.fields().businessentityid(), this.fields().accountnumber(), this.fields().name(), this.fields().creditrating(), this.fields().preferredvendorstatus(), this.fields().activeflag(), this.fields().purchasingwebserviceurl(), this.fields().modifieddate())
+      override fun businessentityid(): Field<BusinessentityId, VViewRow> = Field<BusinessentityId, VViewRow>(_path, "businessentityid", VViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun accountnumber(): Field<AccountNumber, VViewRow> = Field<AccountNumber, VViewRow>(_path, "accountnumber", VViewRow::accountnumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(accountnumber = value) }, AccountNumber.pgType)
+
+      override fun name(): Field<Name, VViewRow> = Field<Name, VViewRow>(_path, "name", VViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun creditrating(): Field<TypoShort, VViewRow> = Field<TypoShort, VViewRow>(_path, "creditrating", VViewRow::creditrating, Optional.empty(), Optional.empty(), { row, value -> row.copy(creditrating = value) }, TypoShort.pgType)
+
+      override fun preferredvendorstatus(): Field<Flag, VViewRow> = Field<Flag, VViewRow>(_path, "preferredvendorstatus", VViewRow::preferredvendorstatus, Optional.empty(), Optional.empty(), { row, value -> row.copy(preferredvendorstatus = value) }, Flag.pgType)
+
+      override fun activeflag(): Field<Flag, VViewRow> = Field<Flag, VViewRow>(_path, "activeflag", VViewRow::activeflag, Optional.empty(), Optional.empty(), { row, value -> row.copy(activeflag = value) }, Flag.pgType)
+
+      override fun purchasingwebserviceurl(): OptField</* max 1024 chars */ String, VViewRow> = OptField</* max 1024 chars */ String, VViewRow>(_path, "purchasingwebserviceurl", VViewRow::purchasingwebserviceurl, Optional.empty(), Optional.empty(), { row, value -> row.copy(purchasingwebserviceurl = value) }, PgTypes.text)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, VViewRow> = Field<TypoLocalDateTime, VViewRow>(_path, "modifieddate", VViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, VViewRow>> = listOf(this.id(), this.businessentityid(), this.accountnumber(), this.name(), this.creditrating(), this.preferredvendorstatus(), this.activeflag(), this.purchasingwebserviceurl(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<VViewFields, VViewRow> = Impl(_path)
     }
 
-    val structure: Relation<VViewFields, VViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

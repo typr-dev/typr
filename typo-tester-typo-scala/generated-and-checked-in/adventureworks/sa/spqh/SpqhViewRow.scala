@@ -29,5 +29,5 @@ case class SpqhViewRow(
 )
 
 object SpqhViewRow {
-  val `_rowParser`: RowParser[SpqhViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpqhViewRow.apply, row => Array(row.id, row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SpqhViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, TypoLocalDateTime.pgType, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, SpqhViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.businessentityid.asInstanceOf[Object], row.quotadate.asInstanceOf[Object], row.salesquota.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

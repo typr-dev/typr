@@ -6,53 +6,56 @@
 package adventureworks.public.table_with_generated_columns
 
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait TableWithGeneratedColumnsFields {
+trait TableWithGeneratedColumnsFields extends FieldsExpr[TableWithGeneratedColumnsRow] {
   def name: IdField[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow]
 
   def nameTypeAlways: Field[String, TableWithGeneratedColumnsRow]
+
+  override def columns: java.util.List[FieldLike[?, TableWithGeneratedColumnsRow]]
+
+  override def rowParser: RowParser[TableWithGeneratedColumnsRow] = TableWithGeneratedColumnsRow._rowParser
 }
 
 object TableWithGeneratedColumnsFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends TableWithGeneratedColumnsFields with Relation[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] {
 
-    override lazy val fields: TableWithGeneratedColumnsFields = {
-      new TableWithGeneratedColumnsFields {
-        override def name: IdField[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
-          new IdField[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            TableWithGeneratedColumnsId.pgType
-          )
-        }
-        override def nameTypeAlways: Field[String, TableWithGeneratedColumnsRow] = {
-          new Field[String, TableWithGeneratedColumnsRow](
-            _path,
-            "name-type-always",
-            _.nameTypeAlways,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(nameTypeAlways = value),
-            PgTypes.text
-          )
-        }
-      }
+    override def name: IdField[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow] = {
+      new IdField[TableWithGeneratedColumnsId, TableWithGeneratedColumnsRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        TableWithGeneratedColumnsId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, TableWithGeneratedColumnsRow]] = java.util.List.of(this.fields.name, this.fields.nameTypeAlways)
+    override def nameTypeAlways: Field[String, TableWithGeneratedColumnsRow] = {
+      new Field[String, TableWithGeneratedColumnsRow](
+        _path,
+        "name-type-always",
+        _.nameTypeAlways,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(nameTypeAlways = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def columns: java.util.List[FieldLike[?, TableWithGeneratedColumnsRow]] = java.util.List.of(this.name, this.nameTypeAlways)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[TableWithGeneratedColumnsFields, TableWithGeneratedColumnsRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

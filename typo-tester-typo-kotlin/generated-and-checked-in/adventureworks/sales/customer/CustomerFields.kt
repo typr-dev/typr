@@ -17,6 +17,7 @@ import adventureworks.sales.store.StoreFields
 import adventureworks.sales.store.StoreRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -24,8 +25,11 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface CustomerFields {
+interface CustomerFields : FieldsExpr<CustomerRow> {
+  override fun columns(): List<FieldLike<*, CustomerRow>>
+
   fun customerid(): IdField<CustomerId, CustomerRow>
 
   fun fkPersonPerson(): ForeignKey<PersonFields, PersonRow> = ForeignKey.of<PersonFields, PersonRow>("sales.FK_Customer_Person_PersonID").withColumnPair(personid(), PersonFields::businessentityid)
@@ -38,6 +42,8 @@ interface CustomerFields {
 
   fun personid(): OptField<BusinessentityId, CustomerRow>
 
+  override fun rowParser(): RowParser<CustomerRow> = CustomerRow._rowParser
+
   fun rowguid(): Field<TypoUUID, CustomerRow>
 
   fun storeid(): OptField<BusinessentityId, CustomerRow>
@@ -45,21 +51,24 @@ interface CustomerFields {
   fun territoryid(): OptField<SalesterritoryId, CustomerRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<CustomerFields, CustomerRow>(path) {
-      override fun fields(): CustomerFields = object : CustomerFields {
-        override fun customerid(): IdField<CustomerId, CustomerRow> = IdField<CustomerId, CustomerRow>(_path, "customerid", CustomerRow::customerid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(customerid = value) }, CustomerId.pgType)
-        override fun personid(): OptField<BusinessentityId, CustomerRow> = OptField<BusinessentityId, CustomerRow>(_path, "personid", CustomerRow::personid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(personid = value) }, BusinessentityId.pgType)
-        override fun storeid(): OptField<BusinessentityId, CustomerRow> = OptField<BusinessentityId, CustomerRow>(_path, "storeid", CustomerRow::storeid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(storeid = value) }, BusinessentityId.pgType)
-        override fun territoryid(): OptField<SalesterritoryId, CustomerRow> = OptField<SalesterritoryId, CustomerRow>(_path, "territoryid", CustomerRow::territoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
-        override fun rowguid(): Field<TypoUUID, CustomerRow> = Field<TypoUUID, CustomerRow>(_path, "rowguid", CustomerRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, CustomerRow> = Field<TypoLocalDateTime, CustomerRow>(_path, "modifieddate", CustomerRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : CustomerFields, Relation<CustomerFields, CustomerRow> {
+      override fun customerid(): IdField<CustomerId, CustomerRow> = IdField<CustomerId, CustomerRow>(_path, "customerid", CustomerRow::customerid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(customerid = value) }, CustomerId.pgType)
 
-      override fun columns(): List<FieldLike<*, CustomerRow>> = listOf(this.fields().customerid(), this.fields().personid(), this.fields().storeid(), this.fields().territoryid(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun personid(): OptField<BusinessentityId, CustomerRow> = OptField<BusinessentityId, CustomerRow>(_path, "personid", CustomerRow::personid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(personid = value) }, BusinessentityId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun storeid(): OptField<BusinessentityId, CustomerRow> = OptField<BusinessentityId, CustomerRow>(_path, "storeid", CustomerRow::storeid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(storeid = value) }, BusinessentityId.pgType)
+
+      override fun territoryid(): OptField<SalesterritoryId, CustomerRow> = OptField<SalesterritoryId, CustomerRow>(_path, "territoryid", CustomerRow::territoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
+
+      override fun rowguid(): Field<TypoUUID, CustomerRow> = Field<TypoUUID, CustomerRow>(_path, "rowguid", CustomerRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, CustomerRow> = Field<TypoLocalDateTime, CustomerRow>(_path, "modifieddate", CustomerRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, CustomerRow>> = listOf(this.customerid(), this.personid(), this.storeid(), this.territoryid(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<CustomerFields, CustomerRow> = Impl(_path)
     }
 
-    val structure: Relation<CustomerFields, CustomerRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

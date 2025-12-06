@@ -39,5 +39,5 @@ case class BomViewRow(
 )
 
 object BomViewRow {
-  val `_rowParser`: RowParser[BomViewRow] = RowParsers.of(PgTypes.int4, PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BomViewRow.apply, row => Array(row.id, row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate))
+  val `_rowParser`: RowParser[BomViewRow] = RowParsers.of(PgTypes.int4, PgTypes.int4, ProductId.pgType.opt(), ProductId.pgType, TypoLocalDateTime.pgType, TypoLocalDateTime.pgType.opt(), UnitmeasureId.pgType, TypoShort.pgType, PgTypes.numeric, TypoLocalDateTime.pgType, BomViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.billofmaterialsid.asInstanceOf[Object], row.productassemblyid.asInstanceOf[Object], row.componentid.asInstanceOf[Object], row.startdate.asInstanceOf[Object], row.enddate.asInstanceOf[Object], row.unitmeasurecode.asInstanceOf[Object], row.bomlevel.asInstanceOf[Object], row.perassemblyqty.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

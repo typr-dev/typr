@@ -13,13 +13,17 @@ import adventureworks.sales.salesterritory.SalesterritoryId
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface StViewFields {
+interface StViewFields : FieldsExpr<StViewRow> {
+  override fun columns(): List<FieldLike<*, StViewRow>>
+
   fun costlastyear(): Field<BigDecimal, StViewRow>
 
   fun costytd(): Field<BigDecimal, StViewRow>
@@ -34,6 +38,8 @@ interface StViewFields {
 
   fun name(): Field<Name, StViewRow>
 
+  override fun rowParser(): RowParser<StViewRow> = StViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, StViewRow>
 
   fun saleslastyear(): Field<BigDecimal, StViewRow>
@@ -43,26 +49,34 @@ interface StViewFields {
   fun territoryid(): Field<SalesterritoryId, StViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<StViewFields, StViewRow>(path) {
-      override fun fields(): StViewFields = object : StViewFields {
-        override fun id(): Field<SalesterritoryId, StViewRow> = Field<SalesterritoryId, StViewRow>(_path, "id", StViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, SalesterritoryId.pgType)
-        override fun territoryid(): Field<SalesterritoryId, StViewRow> = Field<SalesterritoryId, StViewRow>(_path, "territoryid", StViewRow::territoryid, Optional.empty(), Optional.empty(), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
-        override fun name(): Field<Name, StViewRow> = Field<Name, StViewRow>(_path, "name", StViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun countryregioncode(): Field<CountryregionId, StViewRow> = Field<CountryregionId, StViewRow>(_path, "countryregioncode", StViewRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
-        override fun group(): Field</* max 50 chars */ String, StViewRow> = Field</* max 50 chars */ String, StViewRow>(_path, "group", StViewRow::group, Optional.empty(), Optional.empty(), { row, value -> row.copy(group = value) }, PgTypes.text)
-        override fun salesytd(): Field<BigDecimal, StViewRow> = Field<BigDecimal, StViewRow>(_path, "salesytd", StViewRow::salesytd, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesytd = value) }, PgTypes.numeric)
-        override fun saleslastyear(): Field<BigDecimal, StViewRow> = Field<BigDecimal, StViewRow>(_path, "saleslastyear", StViewRow::saleslastyear, Optional.empty(), Optional.empty(), { row, value -> row.copy(saleslastyear = value) }, PgTypes.numeric)
-        override fun costytd(): Field<BigDecimal, StViewRow> = Field<BigDecimal, StViewRow>(_path, "costytd", StViewRow::costytd, Optional.empty(), Optional.empty(), { row, value -> row.copy(costytd = value) }, PgTypes.numeric)
-        override fun costlastyear(): Field<BigDecimal, StViewRow> = Field<BigDecimal, StViewRow>(_path, "costlastyear", StViewRow::costlastyear, Optional.empty(), Optional.empty(), { row, value -> row.copy(costlastyear = value) }, PgTypes.numeric)
-        override fun rowguid(): Field<TypoUUID, StViewRow> = Field<TypoUUID, StViewRow>(_path, "rowguid", StViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, StViewRow> = Field<TypoLocalDateTime, StViewRow>(_path, "modifieddate", StViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : StViewFields, Relation<StViewFields, StViewRow> {
+      override fun id(): Field<SalesterritoryId, StViewRow> = Field<SalesterritoryId, StViewRow>(_path, "id", StViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, SalesterritoryId.pgType)
 
-      override fun columns(): List<FieldLike<*, StViewRow>> = listOf(this.fields().id(), this.fields().territoryid(), this.fields().name(), this.fields().countryregioncode(), this.fields().group(), this.fields().salesytd(), this.fields().saleslastyear(), this.fields().costytd(), this.fields().costlastyear(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun territoryid(): Field<SalesterritoryId, StViewRow> = Field<SalesterritoryId, StViewRow>(_path, "territoryid", StViewRow::territoryid, Optional.empty(), Optional.empty(), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<Name, StViewRow> = Field<Name, StViewRow>(_path, "name", StViewRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun countryregioncode(): Field<CountryregionId, StViewRow> = Field<CountryregionId, StViewRow>(_path, "countryregioncode", StViewRow::countryregioncode, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
+
+      override fun group(): Field</* max 50 chars */ String, StViewRow> = Field</* max 50 chars */ String, StViewRow>(_path, "group", StViewRow::group, Optional.empty(), Optional.empty(), { row, value -> row.copy(group = value) }, PgTypes.text)
+
+      override fun salesytd(): Field<BigDecimal, StViewRow> = Field<BigDecimal, StViewRow>(_path, "salesytd", StViewRow::salesytd, Optional.empty(), Optional.empty(), { row, value -> row.copy(salesytd = value) }, PgTypes.numeric)
+
+      override fun saleslastyear(): Field<BigDecimal, StViewRow> = Field<BigDecimal, StViewRow>(_path, "saleslastyear", StViewRow::saleslastyear, Optional.empty(), Optional.empty(), { row, value -> row.copy(saleslastyear = value) }, PgTypes.numeric)
+
+      override fun costytd(): Field<BigDecimal, StViewRow> = Field<BigDecimal, StViewRow>(_path, "costytd", StViewRow::costytd, Optional.empty(), Optional.empty(), { row, value -> row.copy(costytd = value) }, PgTypes.numeric)
+
+      override fun costlastyear(): Field<BigDecimal, StViewRow> = Field<BigDecimal, StViewRow>(_path, "costlastyear", StViewRow::costlastyear, Optional.empty(), Optional.empty(), { row, value -> row.copy(costlastyear = value) }, PgTypes.numeric)
+
+      override fun rowguid(): Field<TypoUUID, StViewRow> = Field<TypoUUID, StViewRow>(_path, "rowguid", StViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, StViewRow> = Field<TypoLocalDateTime, StViewRow>(_path, "modifieddate", StViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, StViewRow>> = listOf(this.id(), this.territoryid(), this.name(), this.countryregioncode(), this.group(), this.salesytd(), this.saleslastyear(), this.costytd(), this.costlastyear(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<StViewFields, StViewRow> = Impl(_path)
     }
 
-    val structure: Relation<StViewFields, StViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

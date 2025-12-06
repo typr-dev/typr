@@ -9,32 +9,38 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.public.Name
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface CultureFields {
+interface CultureFields : FieldsExpr<CultureRow> {
+  override fun columns(): List<FieldLike<*, CultureRow>>
+
   fun cultureid(): IdField<CultureId, CultureRow>
 
   fun modifieddate(): Field<TypoLocalDateTime, CultureRow>
 
   fun name(): Field<Name, CultureRow>
 
+  override fun rowParser(): RowParser<CultureRow> = CultureRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<CultureFields, CultureRow>(path) {
-      override fun fields(): CultureFields = object : CultureFields {
-        override fun cultureid(): IdField<CultureId, CultureRow> = IdField<CultureId, CultureRow>(_path, "cultureid", CultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(cultureid = value) }, CultureId.pgType)
-        override fun name(): Field<Name, CultureRow> = Field<Name, CultureRow>(_path, "name", CultureRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, CultureRow> = Field<TypoLocalDateTime, CultureRow>(_path, "modifieddate", CultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : CultureFields, Relation<CultureFields, CultureRow> {
+      override fun cultureid(): IdField<CultureId, CultureRow> = IdField<CultureId, CultureRow>(_path, "cultureid", CultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), { row, value -> row.copy(cultureid = value) }, CultureId.pgType)
 
-      override fun columns(): List<FieldLike<*, CultureRow>> = listOf(this.fields().cultureid(), this.fields().name(), this.fields().modifieddate())
+      override fun name(): Field<Name, CultureRow> = Field<Name, CultureRow>(_path, "name", CultureRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun modifieddate(): Field<TypoLocalDateTime, CultureRow> = Field<TypoLocalDateTime, CultureRow>(_path, "modifieddate", CultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, CultureRow>> = listOf(this.cultureid(), this.name(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<CultureFields, CultureRow> = Impl(_path)
     }
 
-    val structure: Relation<CultureFields, CultureRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

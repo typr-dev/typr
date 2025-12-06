@@ -13,37 +13,43 @@ import adventureworks.public.title_domain.TitleDomainId
 import adventureworks.public.title_domain.TitleDomainRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface TitledpersonFields {
+interface TitledpersonFields : FieldsExpr<TitledpersonRow> {
+  override fun columns(): List<FieldLike<*, TitledpersonRow>>
+
   fun fkTitle(): ForeignKey<TitleFields, TitleRow> = ForeignKey.of<TitleFields, TitleRow>("public.titledperson_title_fkey").withColumnPair(title(), TitleFields::code)
 
   fun fkTitleDomain(): ForeignKey<TitleDomainFields, TitleDomainRow> = ForeignKey.of<TitleDomainFields, TitleDomainRow>("public.titledperson_title_short_fkey").withColumnPair(titleShort(), TitleDomainFields::code)
 
   fun name(): Field<String, TitledpersonRow>
 
+  override fun rowParser(): RowParser<TitledpersonRow> = TitledpersonRow._rowParser
+
   fun title(): Field<TitleId, TitledpersonRow>
 
   fun titleShort(): Field<TitleDomainId, TitledpersonRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<TitledpersonFields, TitledpersonRow>(path) {
-      override fun fields(): TitledpersonFields = object : TitledpersonFields {
-        override fun titleShort(): Field<TitleDomainId, TitledpersonRow> = Field<TitleDomainId, TitledpersonRow>(_path, "title_short", TitledpersonRow::titleShort, Optional.empty(), Optional.of("text"), { row, value -> row.copy(titleShort = value) }, TitleDomainId.pgType)
-        override fun title(): Field<TitleId, TitledpersonRow> = Field<TitleId, TitledpersonRow>(_path, "title", TitledpersonRow::title, Optional.empty(), Optional.empty(), { row, value -> row.copy(title = value) }, TitleId.pgType)
-        override fun name(): Field<String, TitledpersonRow> = Field<String, TitledpersonRow>(_path, "name", TitledpersonRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, PgTypes.text)
-      }
+    data class Impl(val _path: List<Path>) : TitledpersonFields, Relation<TitledpersonFields, TitledpersonRow> {
+      override fun titleShort(): Field<TitleDomainId, TitledpersonRow> = Field<TitleDomainId, TitledpersonRow>(_path, "title_short", TitledpersonRow::titleShort, Optional.empty(), Optional.of("text"), { row, value -> row.copy(titleShort = value) }, TitleDomainId.pgType)
 
-      override fun columns(): List<FieldLike<*, TitledpersonRow>> = listOf(this.fields().titleShort(), this.fields().title(), this.fields().name())
+      override fun title(): Field<TitleId, TitledpersonRow> = Field<TitleId, TitledpersonRow>(_path, "title", TitledpersonRow::title, Optional.empty(), Optional.empty(), { row, value -> row.copy(title = value) }, TitleId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): Field<String, TitledpersonRow> = Field<String, TitledpersonRow>(_path, "name", TitledpersonRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, PgTypes.text)
+
+      override fun columns(): List<FieldLike<*, TitledpersonRow>> = listOf(this.titleShort(), this.title(), this.name())
+
+      override fun copy(_path: List<Path>): Relation<TitledpersonFields, TitledpersonRow> = Impl(_path)
     }
 
-    val structure: Relation<TitledpersonFields, TitledpersonRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -16,6 +16,7 @@ import adventureworks.purchasing.shipmethod.ShipmethodRow
 import adventureworks.purchasing.vendor.VendorFields
 import adventureworks.purchasing.vendor.VendorRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -24,8 +25,9 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PurchaseorderheaderFields {
+trait PurchaseorderheaderFields extends FieldsExpr[PurchaseorderheaderRow] {
   def purchaseorderid: IdField[PurchaseorderheaderId, PurchaseorderheaderRow]
 
   def revisionnumber: Field[TypoShort, PurchaseorderheaderRow]
@@ -55,152 +57,163 @@ trait PurchaseorderheaderFields {
   def fkShipmethod: ForeignKey[ShipmethodFields, ShipmethodRow] = ForeignKey.of[ShipmethodFields, ShipmethodRow]("purchasing.FK_PurchaseOrderHeader_ShipMethod_ShipMethodID").withColumnPair(shipmethodid, _.shipmethodid)
 
   def fkVendor: ForeignKey[VendorFields, VendorRow] = ForeignKey.of[VendorFields, VendorRow]("purchasing.FK_PurchaseOrderHeader_Vendor_VendorID").withColumnPair(vendorid, _.businessentityid)
+
+  override def columns: java.util.List[FieldLike[?, PurchaseorderheaderRow]]
+
+  override def rowParser: RowParser[PurchaseorderheaderRow] = PurchaseorderheaderRow._rowParser
 }
 
 object PurchaseorderheaderFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PurchaseorderheaderFields, PurchaseorderheaderRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PurchaseorderheaderFields with Relation[PurchaseorderheaderFields, PurchaseorderheaderRow] {
 
-    override lazy val fields: PurchaseorderheaderFields = {
-      new PurchaseorderheaderFields {
-        override def purchaseorderid: IdField[PurchaseorderheaderId, PurchaseorderheaderRow] = {
-          new IdField[PurchaseorderheaderId, PurchaseorderheaderRow](
-            _path,
-            "purchaseorderid",
-            _.purchaseorderid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(purchaseorderid = value),
-            PurchaseorderheaderId.pgType
-          )
-        }
-        override def revisionnumber: Field[TypoShort, PurchaseorderheaderRow] = {
-          new Field[TypoShort, PurchaseorderheaderRow](
-            _path,
-            "revisionnumber",
-            _.revisionnumber,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(revisionnumber = value),
-            TypoShort.pgType
-          )
-        }
-        override def status: Field[TypoShort, PurchaseorderheaderRow] = {
-          new Field[TypoShort, PurchaseorderheaderRow](
-            _path,
-            "status",
-            _.status,
-            Optional.empty(),
-            Optional.of("int2"),
-            (row, value) => row.copy(status = value),
-            TypoShort.pgType
-          )
-        }
-        override def employeeid: Field[BusinessentityId, PurchaseorderheaderRow] = {
-          new Field[BusinessentityId, PurchaseorderheaderRow](
-            _path,
-            "employeeid",
-            _.employeeid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(employeeid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def vendorid: Field[BusinessentityId, PurchaseorderheaderRow] = {
-          new Field[BusinessentityId, PurchaseorderheaderRow](
-            _path,
-            "vendorid",
-            _.vendorid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(vendorid = value),
-            BusinessentityId.pgType
-          )
-        }
-        override def shipmethodid: Field[ShipmethodId, PurchaseorderheaderRow] = {
-          new Field[ShipmethodId, PurchaseorderheaderRow](
-            _path,
-            "shipmethodid",
-            _.shipmethodid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(shipmethodid = value),
-            ShipmethodId.pgType
-          )
-        }
-        override def orderdate: Field[TypoLocalDateTime, PurchaseorderheaderRow] = {
-          new Field[TypoLocalDateTime, PurchaseorderheaderRow](
-            _path,
-            "orderdate",
-            _.orderdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(orderdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def shipdate: OptField[TypoLocalDateTime, PurchaseorderheaderRow] = {
-          new OptField[TypoLocalDateTime, PurchaseorderheaderRow](
-            _path,
-            "shipdate",
-            _.shipdate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(shipdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def subtotal: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
-          new Field[java.math.BigDecimal, PurchaseorderheaderRow](
-            _path,
-            "subtotal",
-            _.subtotal,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(subtotal = value),
-            PgTypes.numeric
-          )
-        }
-        override def taxamt: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
-          new Field[java.math.BigDecimal, PurchaseorderheaderRow](
-            _path,
-            "taxamt",
-            _.taxamt,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(taxamt = value),
-            PgTypes.numeric
-          )
-        }
-        override def freight: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
-          new Field[java.math.BigDecimal, PurchaseorderheaderRow](
-            _path,
-            "freight",
-            _.freight,
-            Optional.empty(),
-            Optional.of("numeric"),
-            (row, value) => row.copy(freight = value),
-            PgTypes.numeric
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PurchaseorderheaderRow] = {
-          new Field[TypoLocalDateTime, PurchaseorderheaderRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def purchaseorderid: IdField[PurchaseorderheaderId, PurchaseorderheaderRow] = {
+      new IdField[PurchaseorderheaderId, PurchaseorderheaderRow](
+        _path,
+        "purchaseorderid",
+        _.purchaseorderid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(purchaseorderid = value),
+        PurchaseorderheaderId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PurchaseorderheaderRow]] = java.util.List.of(this.fields.purchaseorderid, this.fields.revisionnumber, this.fields.status, this.fields.employeeid, this.fields.vendorid, this.fields.shipmethodid, this.fields.orderdate, this.fields.shipdate, this.fields.subtotal, this.fields.taxamt, this.fields.freight, this.fields.modifieddate)
+    override def revisionnumber: Field[TypoShort, PurchaseorderheaderRow] = {
+      new Field[TypoShort, PurchaseorderheaderRow](
+        _path,
+        "revisionnumber",
+        _.revisionnumber,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(revisionnumber = value),
+        TypoShort.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def status: Field[TypoShort, PurchaseorderheaderRow] = {
+      new Field[TypoShort, PurchaseorderheaderRow](
+        _path,
+        "status",
+        _.status,
+        Optional.empty(),
+        Optional.of("int2"),
+        (row, value) => row.copy(status = value),
+        TypoShort.pgType
+      )
+    }
+
+    override def employeeid: Field[BusinessentityId, PurchaseorderheaderRow] = {
+      new Field[BusinessentityId, PurchaseorderheaderRow](
+        _path,
+        "employeeid",
+        _.employeeid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(employeeid = value),
+        BusinessentityId.pgType
+      )
+    }
+
+    override def vendorid: Field[BusinessentityId, PurchaseorderheaderRow] = {
+      new Field[BusinessentityId, PurchaseorderheaderRow](
+        _path,
+        "vendorid",
+        _.vendorid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(vendorid = value),
+        BusinessentityId.pgType
+      )
+    }
+
+    override def shipmethodid: Field[ShipmethodId, PurchaseorderheaderRow] = {
+      new Field[ShipmethodId, PurchaseorderheaderRow](
+        _path,
+        "shipmethodid",
+        _.shipmethodid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(shipmethodid = value),
+        ShipmethodId.pgType
+      )
+    }
+
+    override def orderdate: Field[TypoLocalDateTime, PurchaseorderheaderRow] = {
+      new Field[TypoLocalDateTime, PurchaseorderheaderRow](
+        _path,
+        "orderdate",
+        _.orderdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(orderdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def shipdate: OptField[TypoLocalDateTime, PurchaseorderheaderRow] = {
+      new OptField[TypoLocalDateTime, PurchaseorderheaderRow](
+        _path,
+        "shipdate",
+        _.shipdate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(shipdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def subtotal: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
+      new Field[java.math.BigDecimal, PurchaseorderheaderRow](
+        _path,
+        "subtotal",
+        _.subtotal,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(subtotal = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def taxamt: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
+      new Field[java.math.BigDecimal, PurchaseorderheaderRow](
+        _path,
+        "taxamt",
+        _.taxamt,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(taxamt = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def freight: Field[java.math.BigDecimal, PurchaseorderheaderRow] = {
+      new Field[java.math.BigDecimal, PurchaseorderheaderRow](
+        _path,
+        "freight",
+        _.freight,
+        Optional.empty(),
+        Optional.of("numeric"),
+        (row, value) => row.copy(freight = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PurchaseorderheaderRow] = {
+      new Field[TypoLocalDateTime, PurchaseorderheaderRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PurchaseorderheaderRow]] = java.util.List.of(this.purchaseorderid, this.revisionnumber, this.status, this.employeeid, this.vendorid, this.shipmethodid, this.orderdate, this.shipdate, this.subtotal, this.taxamt, this.freight, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PurchaseorderheaderFields, PurchaseorderheaderRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PurchaseorderheaderFields, PurchaseorderheaderRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

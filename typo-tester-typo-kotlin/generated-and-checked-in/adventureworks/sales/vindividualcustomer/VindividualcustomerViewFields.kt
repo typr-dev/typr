@@ -12,14 +12,16 @@ import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface VindividualcustomerViewFields {
+interface VindividualcustomerViewFields : FieldsExpr<VindividualcustomerViewRow> {
   fun addressline1(): Field</* max 60 chars */ String, VindividualcustomerViewRow>
 
   fun addressline2(): OptField</* max 60 chars */ String, VindividualcustomerViewRow>
@@ -29,6 +31,8 @@ interface VindividualcustomerViewFields {
   fun businessentityid(): Field<BusinessentityId, VindividualcustomerViewRow>
 
   fun city(): Field</* max 30 chars */ String, VindividualcustomerViewRow>
+
+  override fun columns(): List<FieldLike<*, VindividualcustomerViewRow>>
 
   fun countryregionname(): Field<Name, VindividualcustomerViewRow>
 
@@ -50,6 +54,8 @@ interface VindividualcustomerViewFields {
 
   fun postalcode(): Field</* max 15 chars */ String, VindividualcustomerViewRow>
 
+  override fun rowParser(): RowParser<VindividualcustomerViewRow> = VindividualcustomerViewRow._rowParser
+
   fun stateprovincename(): Field<Name, VindividualcustomerViewRow>
 
   fun suffix(): OptField</* max 10 chars */ String, VindividualcustomerViewRow>
@@ -57,33 +63,48 @@ interface VindividualcustomerViewFields {
   fun title(): OptField</* max 8 chars */ String, VindividualcustomerViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<VindividualcustomerViewFields, VindividualcustomerViewRow>(path) {
-      override fun fields(): VindividualcustomerViewFields = object : VindividualcustomerViewFields {
-        override fun businessentityid(): Field<BusinessentityId, VindividualcustomerViewRow> = Field<BusinessentityId, VindividualcustomerViewRow>(_path, "businessentityid", VindividualcustomerViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun title(): OptField</* max 8 chars */ String, VindividualcustomerViewRow> = OptField</* max 8 chars */ String, VindividualcustomerViewRow>(_path, "title", VindividualcustomerViewRow::title, Optional.empty(), Optional.empty(), { row, value -> row.copy(title = value) }, PgTypes.text)
-        override fun firstname(): Field</* user-picked */ FirstName, VindividualcustomerViewRow> = Field</* user-picked */ FirstName, VindividualcustomerViewRow>(_path, "firstname", VindividualcustomerViewRow::firstname, Optional.empty(), Optional.empty(), { row, value -> row.copy(firstname = value) }, FirstName.pgType)
-        override fun middlename(): OptField<Name, VindividualcustomerViewRow> = OptField<Name, VindividualcustomerViewRow>(_path, "middlename", VindividualcustomerViewRow::middlename, Optional.empty(), Optional.empty(), { row, value -> row.copy(middlename = value) }, Name.pgType)
-        override fun lastname(): Field<Name, VindividualcustomerViewRow> = Field<Name, VindividualcustomerViewRow>(_path, "lastname", VindividualcustomerViewRow::lastname, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastname = value) }, Name.pgType)
-        override fun suffix(): OptField</* max 10 chars */ String, VindividualcustomerViewRow> = OptField</* max 10 chars */ String, VindividualcustomerViewRow>(_path, "suffix", VindividualcustomerViewRow::suffix, Optional.empty(), Optional.empty(), { row, value -> row.copy(suffix = value) }, PgTypes.text)
-        override fun phonenumber(): OptField<Phone, VindividualcustomerViewRow> = OptField<Phone, VindividualcustomerViewRow>(_path, "phonenumber", VindividualcustomerViewRow::phonenumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(phonenumber = value) }, Phone.pgType)
-        override fun phonenumbertype(): OptField<Name, VindividualcustomerViewRow> = OptField<Name, VindividualcustomerViewRow>(_path, "phonenumbertype", VindividualcustomerViewRow::phonenumbertype, Optional.empty(), Optional.empty(), { row, value -> row.copy(phonenumbertype = value) }, Name.pgType)
-        override fun emailaddress(): OptField</* max 50 chars */ String, VindividualcustomerViewRow> = OptField</* max 50 chars */ String, VindividualcustomerViewRow>(_path, "emailaddress", VindividualcustomerViewRow::emailaddress, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailaddress = value) }, PgTypes.text)
-        override fun emailpromotion(): Field<Int, VindividualcustomerViewRow> = Field<Int, VindividualcustomerViewRow>(_path, "emailpromotion", VindividualcustomerViewRow::emailpromotion, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailpromotion = value) }, PgTypes.int4)
-        override fun addresstype(): Field<Name, VindividualcustomerViewRow> = Field<Name, VindividualcustomerViewRow>(_path, "addresstype", VindividualcustomerViewRow::addresstype, Optional.empty(), Optional.empty(), { row, value -> row.copy(addresstype = value) }, Name.pgType)
-        override fun addressline1(): Field</* max 60 chars */ String, VindividualcustomerViewRow> = Field</* max 60 chars */ String, VindividualcustomerViewRow>(_path, "addressline1", VindividualcustomerViewRow::addressline1, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressline1 = value) }, PgTypes.text)
-        override fun addressline2(): OptField</* max 60 chars */ String, VindividualcustomerViewRow> = OptField</* max 60 chars */ String, VindividualcustomerViewRow>(_path, "addressline2", VindividualcustomerViewRow::addressline2, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressline2 = value) }, PgTypes.text)
-        override fun city(): Field</* max 30 chars */ String, VindividualcustomerViewRow> = Field</* max 30 chars */ String, VindividualcustomerViewRow>(_path, "city", VindividualcustomerViewRow::city, Optional.empty(), Optional.empty(), { row, value -> row.copy(city = value) }, PgTypes.text)
-        override fun stateprovincename(): Field<Name, VindividualcustomerViewRow> = Field<Name, VindividualcustomerViewRow>(_path, "stateprovincename", VindividualcustomerViewRow::stateprovincename, Optional.empty(), Optional.empty(), { row, value -> row.copy(stateprovincename = value) }, Name.pgType)
-        override fun postalcode(): Field</* max 15 chars */ String, VindividualcustomerViewRow> = Field</* max 15 chars */ String, VindividualcustomerViewRow>(_path, "postalcode", VindividualcustomerViewRow::postalcode, Optional.empty(), Optional.empty(), { row, value -> row.copy(postalcode = value) }, PgTypes.text)
-        override fun countryregionname(): Field<Name, VindividualcustomerViewRow> = Field<Name, VindividualcustomerViewRow>(_path, "countryregionname", VindividualcustomerViewRow::countryregionname, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregionname = value) }, Name.pgType)
-        override fun demographics(): OptField<TypoXml, VindividualcustomerViewRow> = OptField<TypoXml, VindividualcustomerViewRow>(_path, "demographics", VindividualcustomerViewRow::demographics, Optional.empty(), Optional.empty(), { row, value -> row.copy(demographics = value) }, TypoXml.pgType)
-      }
+    data class Impl(val _path: List<Path>) : VindividualcustomerViewFields, Relation<VindividualcustomerViewFields, VindividualcustomerViewRow> {
+      override fun businessentityid(): Field<BusinessentityId, VindividualcustomerViewRow> = Field<BusinessentityId, VindividualcustomerViewRow>(_path, "businessentityid", VindividualcustomerViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, VindividualcustomerViewRow>> = listOf(this.fields().businessentityid(), this.fields().title(), this.fields().firstname(), this.fields().middlename(), this.fields().lastname(), this.fields().suffix(), this.fields().phonenumber(), this.fields().phonenumbertype(), this.fields().emailaddress(), this.fields().emailpromotion(), this.fields().addresstype(), this.fields().addressline1(), this.fields().addressline2(), this.fields().city(), this.fields().stateprovincename(), this.fields().postalcode(), this.fields().countryregionname(), this.fields().demographics())
+      override fun title(): OptField</* max 8 chars */ String, VindividualcustomerViewRow> = OptField</* max 8 chars */ String, VindividualcustomerViewRow>(_path, "title", VindividualcustomerViewRow::title, Optional.empty(), Optional.empty(), { row, value -> row.copy(title = value) }, PgTypes.text)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun firstname(): Field</* user-picked */ FirstName, VindividualcustomerViewRow> = Field</* user-picked */ FirstName, VindividualcustomerViewRow>(_path, "firstname", VindividualcustomerViewRow::firstname, Optional.empty(), Optional.empty(), { row, value -> row.copy(firstname = value) }, FirstName.pgType)
+
+      override fun middlename(): OptField<Name, VindividualcustomerViewRow> = OptField<Name, VindividualcustomerViewRow>(_path, "middlename", VindividualcustomerViewRow::middlename, Optional.empty(), Optional.empty(), { row, value -> row.copy(middlename = value) }, Name.pgType)
+
+      override fun lastname(): Field<Name, VindividualcustomerViewRow> = Field<Name, VindividualcustomerViewRow>(_path, "lastname", VindividualcustomerViewRow::lastname, Optional.empty(), Optional.empty(), { row, value -> row.copy(lastname = value) }, Name.pgType)
+
+      override fun suffix(): OptField</* max 10 chars */ String, VindividualcustomerViewRow> = OptField</* max 10 chars */ String, VindividualcustomerViewRow>(_path, "suffix", VindividualcustomerViewRow::suffix, Optional.empty(), Optional.empty(), { row, value -> row.copy(suffix = value) }, PgTypes.text)
+
+      override fun phonenumber(): OptField<Phone, VindividualcustomerViewRow> = OptField<Phone, VindividualcustomerViewRow>(_path, "phonenumber", VindividualcustomerViewRow::phonenumber, Optional.empty(), Optional.empty(), { row, value -> row.copy(phonenumber = value) }, Phone.pgType)
+
+      override fun phonenumbertype(): OptField<Name, VindividualcustomerViewRow> = OptField<Name, VindividualcustomerViewRow>(_path, "phonenumbertype", VindividualcustomerViewRow::phonenumbertype, Optional.empty(), Optional.empty(), { row, value -> row.copy(phonenumbertype = value) }, Name.pgType)
+
+      override fun emailaddress(): OptField</* max 50 chars */ String, VindividualcustomerViewRow> = OptField</* max 50 chars */ String, VindividualcustomerViewRow>(_path, "emailaddress", VindividualcustomerViewRow::emailaddress, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailaddress = value) }, PgTypes.text)
+
+      override fun emailpromotion(): Field<Int, VindividualcustomerViewRow> = Field<Int, VindividualcustomerViewRow>(_path, "emailpromotion", VindividualcustomerViewRow::emailpromotion, Optional.empty(), Optional.empty(), { row, value -> row.copy(emailpromotion = value) }, PgTypes.int4)
+
+      override fun addresstype(): Field<Name, VindividualcustomerViewRow> = Field<Name, VindividualcustomerViewRow>(_path, "addresstype", VindividualcustomerViewRow::addresstype, Optional.empty(), Optional.empty(), { row, value -> row.copy(addresstype = value) }, Name.pgType)
+
+      override fun addressline1(): Field</* max 60 chars */ String, VindividualcustomerViewRow> = Field</* max 60 chars */ String, VindividualcustomerViewRow>(_path, "addressline1", VindividualcustomerViewRow::addressline1, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressline1 = value) }, PgTypes.text)
+
+      override fun addressline2(): OptField</* max 60 chars */ String, VindividualcustomerViewRow> = OptField</* max 60 chars */ String, VindividualcustomerViewRow>(_path, "addressline2", VindividualcustomerViewRow::addressline2, Optional.empty(), Optional.empty(), { row, value -> row.copy(addressline2 = value) }, PgTypes.text)
+
+      override fun city(): Field</* max 30 chars */ String, VindividualcustomerViewRow> = Field</* max 30 chars */ String, VindividualcustomerViewRow>(_path, "city", VindividualcustomerViewRow::city, Optional.empty(), Optional.empty(), { row, value -> row.copy(city = value) }, PgTypes.text)
+
+      override fun stateprovincename(): Field<Name, VindividualcustomerViewRow> = Field<Name, VindividualcustomerViewRow>(_path, "stateprovincename", VindividualcustomerViewRow::stateprovincename, Optional.empty(), Optional.empty(), { row, value -> row.copy(stateprovincename = value) }, Name.pgType)
+
+      override fun postalcode(): Field</* max 15 chars */ String, VindividualcustomerViewRow> = Field</* max 15 chars */ String, VindividualcustomerViewRow>(_path, "postalcode", VindividualcustomerViewRow::postalcode, Optional.empty(), Optional.empty(), { row, value -> row.copy(postalcode = value) }, PgTypes.text)
+
+      override fun countryregionname(): Field<Name, VindividualcustomerViewRow> = Field<Name, VindividualcustomerViewRow>(_path, "countryregionname", VindividualcustomerViewRow::countryregionname, Optional.empty(), Optional.empty(), { row, value -> row.copy(countryregionname = value) }, Name.pgType)
+
+      override fun demographics(): OptField<TypoXml, VindividualcustomerViewRow> = OptField<TypoXml, VindividualcustomerViewRow>(_path, "demographics", VindividualcustomerViewRow::demographics, Optional.empty(), Optional.empty(), { row, value -> row.copy(demographics = value) }, TypoXml.pgType)
+
+      override fun columns(): List<FieldLike<*, VindividualcustomerViewRow>> = listOf(this.businessentityid(), this.title(), this.firstname(), this.middlename(), this.lastname(), this.suffix(), this.phonenumber(), this.phonenumbertype(), this.emailaddress(), this.emailpromotion(), this.addresstype(), this.addressline1(), this.addressline2(), this.city(), this.stateprovincename(), this.postalcode(), this.countryregionname(), this.demographics())
+
+      override fun copy(_path: List<Path>): Relation<VindividualcustomerViewFields, VindividualcustomerViewRow> = Impl(_path)
     }
 
-    val structure: Relation<VindividualcustomerViewFields, VindividualcustomerViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

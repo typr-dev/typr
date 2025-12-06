@@ -15,6 +15,7 @@ import adventureworks.public_.Name;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
@@ -22,59 +23,57 @@ import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface SalestaxrateFields {
-  final class Impl extends Relation<SalestaxrateFields, SalestaxrateRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface SalestaxrateFields extends FieldsExpr<SalestaxrateRow> {
+  record Impl(List<Path> _path) implements SalestaxrateFields, Relation<SalestaxrateFields, SalestaxrateRow> {
+    @Override
+    public IdField<SalestaxrateId, SalestaxrateRow> salestaxrateid() {
+      return new IdField<SalestaxrateId, SalestaxrateRow>(_path, "salestaxrateid", SalestaxrateRow::salestaxrateid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalestaxrateid(value), SalestaxrateId.pgType);
+    };
 
     @Override
-    public SalestaxrateFields fields() {
-      return new SalestaxrateFields() {
-               @Override
-               public IdField<SalestaxrateId, SalestaxrateRow> salestaxrateid() {
-                 return new IdField<SalestaxrateId, SalestaxrateRow>(_path, "salestaxrateid", SalestaxrateRow::salestaxrateid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withSalestaxrateid(value), SalestaxrateId.pgType);
-               };
-               @Override
-               public Field<StateprovinceId, SalestaxrateRow> stateprovinceid() {
-                 return new Field<StateprovinceId, SalestaxrateRow>(_path, "stateprovinceid", SalestaxrateRow::stateprovinceid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
-               };
-               @Override
-               public Field<TypoShort, SalestaxrateRow> taxtype() {
-                 return new Field<TypoShort, SalestaxrateRow>(_path, "taxtype", SalestaxrateRow::taxtype, Optional.empty(), Optional.of("int2"), (row, value) -> row.withTaxtype(value), TypoShort.pgType);
-               };
-               @Override
-               public Field<BigDecimal, SalestaxrateRow> taxrate() {
-                 return new Field<BigDecimal, SalestaxrateRow>(_path, "taxrate", SalestaxrateRow::taxrate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withTaxrate(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<Name, SalestaxrateRow> name() {
-                 return new Field<Name, SalestaxrateRow>(_path, "name", SalestaxrateRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoUUID, SalestaxrateRow> rowguid() {
-                 return new Field<TypoUUID, SalestaxrateRow>(_path, "rowguid", SalestaxrateRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, SalestaxrateRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, SalestaxrateRow>(_path, "modifieddate", SalestaxrateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<StateprovinceId, SalestaxrateRow> stateprovinceid() {
+      return new Field<StateprovinceId, SalestaxrateRow>(_path, "stateprovinceid", SalestaxrateRow::stateprovinceid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withStateprovinceid(value), StateprovinceId.pgType);
+    };
+
+    @Override
+    public Field<TypoShort, SalestaxrateRow> taxtype() {
+      return new Field<TypoShort, SalestaxrateRow>(_path, "taxtype", SalestaxrateRow::taxtype, Optional.empty(), Optional.of("int2"), (row, value) -> row.withTaxtype(value), TypoShort.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, SalestaxrateRow> taxrate() {
+      return new Field<BigDecimal, SalestaxrateRow>(_path, "taxrate", SalestaxrateRow::taxrate, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withTaxrate(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<Name, SalestaxrateRow> name() {
+      return new Field<Name, SalestaxrateRow>(_path, "name", SalestaxrateRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoUUID, SalestaxrateRow> rowguid() {
+      return new Field<TypoUUID, SalestaxrateRow>(_path, "rowguid", SalestaxrateRow::rowguid, Optional.empty(), Optional.of("uuid"), (row, value) -> row.withRowguid(value), TypoUUID.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, SalestaxrateRow> modifieddate() {
+      return new Field<TypoLocalDateTime, SalestaxrateRow>(_path, "modifieddate", SalestaxrateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, SalestaxrateRow>> columns() {
-      return List.of(this.fields().salestaxrateid(), this.fields().stateprovinceid(), this.fields().taxtype(), this.fields().taxrate(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate());
+      return List.of(this.salestaxrateid(), this.stateprovinceid(), this.taxtype(), this.taxrate(), this.name(), this.rowguid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<SalestaxrateFields, SalestaxrateRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<SalestaxrateFields, SalestaxrateRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -94,5 +93,13 @@ public interface SalestaxrateFields {
 
   default ForeignKey<StateprovinceFields, StateprovinceRow> fkPersonStateprovince() {
     return ForeignKey.<StateprovinceFields, StateprovinceRow>of("sales.FK_SalesTaxRate_StateProvince_StateProvinceID").withColumnPair(stateprovinceid(), StateprovinceFields::stateprovinceid);
+  };
+
+  @Override
+  List<FieldLike<?, SalestaxrateRow>> columns();
+
+  @Override
+  default RowParser<SalestaxrateRow> rowParser() {
+    return SalestaxrateRow._rowParser;
   };
 }

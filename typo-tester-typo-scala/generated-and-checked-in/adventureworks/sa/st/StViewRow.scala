@@ -41,5 +41,5 @@ case class StViewRow(
 )
 
 object StViewRow {
-  val `_rowParser`: RowParser[StViewRow] = RowParsers.of(SalesterritoryId.pgType, SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, StViewRow.apply, row => Array(row.id, row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[StViewRow] = RowParsers.of(SalesterritoryId.pgType, SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, TypoUUID.pgType, TypoLocalDateTime.pgType, StViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.territoryid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.countryregioncode.asInstanceOf[Object], row.group.asInstanceOf[Object], row.salesytd.asInstanceOf[Object], row.saleslastyear.asInstanceOf[Object], row.costytd.asInstanceOf[Object], row.costlastyear.asInstanceOf[Object], row.rowguid.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

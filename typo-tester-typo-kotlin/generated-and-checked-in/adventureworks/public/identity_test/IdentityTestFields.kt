@@ -7,33 +7,39 @@ package adventureworks.public.identity_test
 
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface IdentityTestFields {
+interface IdentityTestFields : FieldsExpr<IdentityTestRow> {
   fun alwaysGenerated(): Field<Int, IdentityTestRow>
+
+  override fun columns(): List<FieldLike<*, IdentityTestRow>>
 
   fun defaultGenerated(): Field<Int, IdentityTestRow>
 
   fun name(): IdField<IdentityTestId, IdentityTestRow>
 
+  override fun rowParser(): RowParser<IdentityTestRow> = IdentityTestRow._rowParser
+
   companion object {
-    private class Impl(path: List<Path>) : Relation<IdentityTestFields, IdentityTestRow>(path) {
-      override fun fields(): IdentityTestFields = object : IdentityTestFields {
-        override fun alwaysGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "always_generated", IdentityTestRow::alwaysGenerated, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(alwaysGenerated = value) }, PgTypes.int4)
-        override fun defaultGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "default_generated", IdentityTestRow::defaultGenerated, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(defaultGenerated = value) }, PgTypes.int4)
-        override fun name(): IdField<IdentityTestId, IdentityTestRow> = IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, IdentityTestId.pgType)
-      }
+    data class Impl(val _path: List<Path>) : IdentityTestFields, Relation<IdentityTestFields, IdentityTestRow> {
+      override fun alwaysGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "always_generated", IdentityTestRow::alwaysGenerated, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(alwaysGenerated = value) }, PgTypes.int4)
 
-      override fun columns(): List<FieldLike<*, IdentityTestRow>> = listOf(this.fields().alwaysGenerated(), this.fields().defaultGenerated(), this.fields().name())
+      override fun defaultGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "default_generated", IdentityTestRow::defaultGenerated, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(defaultGenerated = value) }, PgTypes.int4)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun name(): IdField<IdentityTestId, IdentityTestRow> = IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, Optional.empty(), Optional.empty(), { row, value -> row.copy(name = value) }, IdentityTestId.pgType)
+
+      override fun columns(): List<FieldLike<*, IdentityTestRow>> = listOf(this.alwaysGenerated(), this.defaultGenerated(), this.name())
+
+      override fun copy(_path: List<Path>): Relation<IdentityTestFields, IdentityTestRow> = Impl(_path)
     }
 
-    val structure: Relation<IdentityTestFields, IdentityTestRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

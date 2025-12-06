@@ -8,14 +8,16 @@ package adventureworks.pr.plph
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.production.product.ProductId
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait PlphViewFields {
+trait PlphViewFields extends FieldsExpr[PlphViewRow] {
   def id: Field[ProductId, PlphViewRow]
 
   def productid: Field[ProductId, PlphViewRow]
@@ -27,86 +29,91 @@ trait PlphViewFields {
   def listprice: Field[java.math.BigDecimal, PlphViewRow]
 
   def modifieddate: Field[TypoLocalDateTime, PlphViewRow]
+
+  override def columns: java.util.List[FieldLike[?, PlphViewRow]]
+
+  override def rowParser: RowParser[PlphViewRow] = PlphViewRow._rowParser
 }
 
 object PlphViewFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[PlphViewFields, PlphViewRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends PlphViewFields with Relation[PlphViewFields, PlphViewRow] {
 
-    override lazy val fields: PlphViewFields = {
-      new PlphViewFields {
-        override def id: Field[ProductId, PlphViewRow] = {
-          new Field[ProductId, PlphViewRow](
-            _path,
-            "id",
-            _.id,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(id = value),
-            ProductId.pgType
-          )
-        }
-        override def productid: Field[ProductId, PlphViewRow] = {
-          new Field[ProductId, PlphViewRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def startdate: Field[TypoLocalDateTime, PlphViewRow] = {
-          new Field[TypoLocalDateTime, PlphViewRow](
-            _path,
-            "startdate",
-            _.startdate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(startdate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def enddate: OptField[TypoLocalDateTime, PlphViewRow] = {
-          new OptField[TypoLocalDateTime, PlphViewRow](
-            _path,
-            "enddate",
-            _.enddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(enddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-        override def listprice: Field[java.math.BigDecimal, PlphViewRow] = {
-          new Field[java.math.BigDecimal, PlphViewRow](
-            _path,
-            "listprice",
-            _.listprice,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(listprice = value),
-            PgTypes.numeric
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, PlphViewRow] = {
-          new Field[TypoLocalDateTime, PlphViewRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.empty(),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def id: Field[ProductId, PlphViewRow] = {
+      new Field[ProductId, PlphViewRow](
+        _path,
+        "id",
+        _.id,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(id = value),
+        ProductId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, PlphViewRow]] = java.util.List.of(this.fields.id, this.fields.productid, this.fields.startdate, this.fields.enddate, this.fields.listprice, this.fields.modifieddate)
+    override def productid: Field[ProductId, PlphViewRow] = {
+      new Field[ProductId, PlphViewRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def startdate: Field[TypoLocalDateTime, PlphViewRow] = {
+      new Field[TypoLocalDateTime, PlphViewRow](
+        _path,
+        "startdate",
+        _.startdate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(startdate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def enddate: OptField[TypoLocalDateTime, PlphViewRow] = {
+      new OptField[TypoLocalDateTime, PlphViewRow](
+        _path,
+        "enddate",
+        _.enddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(enddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def listprice: Field[java.math.BigDecimal, PlphViewRow] = {
+      new Field[java.math.BigDecimal, PlphViewRow](
+        _path,
+        "listprice",
+        _.listprice,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(listprice = value),
+        PgTypes.numeric
+      )
+    }
+
+    override def modifieddate: Field[TypoLocalDateTime, PlphViewRow] = {
+      new Field[TypoLocalDateTime, PlphViewRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.empty(),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, PlphViewRow]] = java.util.List.of(this.id, this.productid, this.startdate, this.enddate, this.listprice, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[PlphViewFields, PlphViewRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[PlphViewFields, PlphViewRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

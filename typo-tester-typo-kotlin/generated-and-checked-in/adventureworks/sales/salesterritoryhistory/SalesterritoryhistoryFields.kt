@@ -15,6 +15,7 @@ import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -25,9 +26,12 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface SalesterritoryhistoryFields {
+interface SalesterritoryhistoryFields : FieldsExpr<SalesterritoryhistoryRow> {
   fun businessentityid(): IdField<BusinessentityId, SalesterritoryhistoryRow>
+
+  override fun columns(): List<FieldLike<*, SalesterritoryhistoryRow>>
 
   fun compositeIdIn(compositeIds: List<SalesterritoryhistoryId>): SqlExpr<Boolean> = CompositeIn(listOf(Part<BusinessentityId, SalesterritoryhistoryId, SalesterritoryhistoryRow>(businessentityid(), SalesterritoryhistoryId::businessentityid, BusinessentityId.pgType), Part<TypoLocalDateTime, SalesterritoryhistoryId, SalesterritoryhistoryRow>(startdate(), SalesterritoryhistoryId::startdate, TypoLocalDateTime.pgType), Part<SalesterritoryId, SalesterritoryhistoryId, SalesterritoryhistoryRow>(territoryid(), SalesterritoryhistoryId::territoryid, SalesterritoryId.pgType)), compositeIds)
 
@@ -41,6 +45,8 @@ interface SalesterritoryhistoryFields {
 
   fun modifieddate(): Field<TypoLocalDateTime, SalesterritoryhistoryRow>
 
+  override fun rowParser(): RowParser<SalesterritoryhistoryRow> = SalesterritoryhistoryRow._rowParser
+
   fun rowguid(): Field<TypoUUID, SalesterritoryhistoryRow>
 
   fun startdate(): IdField<TypoLocalDateTime, SalesterritoryhistoryRow>
@@ -48,21 +54,24 @@ interface SalesterritoryhistoryFields {
   fun territoryid(): IdField<SalesterritoryId, SalesterritoryhistoryRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow>(path) {
-      override fun fields(): SalesterritoryhistoryFields = object : SalesterritoryhistoryFields {
-        override fun businessentityid(): IdField<BusinessentityId, SalesterritoryhistoryRow> = IdField<BusinessentityId, SalesterritoryhistoryRow>(_path, "businessentityid", SalesterritoryhistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun territoryid(): IdField<SalesterritoryId, SalesterritoryhistoryRow> = IdField<SalesterritoryId, SalesterritoryhistoryRow>(_path, "territoryid", SalesterritoryhistoryRow::territoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
-        override fun startdate(): IdField<TypoLocalDateTime, SalesterritoryhistoryRow> = IdField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "startdate", SalesterritoryhistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
-        override fun enddate(): OptField<TypoLocalDateTime, SalesterritoryhistoryRow> = OptField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "enddate", SalesterritoryhistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
-        override fun rowguid(): Field<TypoUUID, SalesterritoryhistoryRow> = Field<TypoUUID, SalesterritoryhistoryRow>(_path, "rowguid", SalesterritoryhistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SalesterritoryhistoryRow> = Field<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "modifieddate", SalesterritoryhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SalesterritoryhistoryFields, Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> {
+      override fun businessentityid(): IdField<BusinessentityId, SalesterritoryhistoryRow> = IdField<BusinessentityId, SalesterritoryhistoryRow>(_path, "businessentityid", SalesterritoryhistoryRow::businessentityid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, SalesterritoryhistoryRow>> = listOf(this.fields().businessentityid(), this.fields().territoryid(), this.fields().startdate(), this.fields().enddate(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun territoryid(): IdField<SalesterritoryId, SalesterritoryhistoryRow> = IdField<SalesterritoryId, SalesterritoryhistoryRow>(_path, "territoryid", SalesterritoryhistoryRow::territoryid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun startdate(): IdField<TypoLocalDateTime, SalesterritoryhistoryRow> = IdField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "startdate", SalesterritoryhistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(startdate = value) }, TypoLocalDateTime.pgType)
+
+      override fun enddate(): OptField<TypoLocalDateTime, SalesterritoryhistoryRow> = OptField<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "enddate", SalesterritoryhistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(enddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun rowguid(): Field<TypoUUID, SalesterritoryhistoryRow> = Field<TypoUUID, SalesterritoryhistoryRow>(_path, "rowguid", SalesterritoryhistoryRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SalesterritoryhistoryRow> = Field<TypoLocalDateTime, SalesterritoryhistoryRow>(_path, "modifieddate", SalesterritoryhistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SalesterritoryhistoryRow>> = listOf(this.businessentityid(), this.territoryid(), this.startdate(), this.enddate(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> = Impl(_path)
     }
 
-    val structure: Relation<SalesterritoryhistoryFields, SalesterritoryhistoryRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

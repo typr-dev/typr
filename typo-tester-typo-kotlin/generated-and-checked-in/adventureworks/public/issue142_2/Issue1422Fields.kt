@@ -10,28 +10,32 @@ import adventureworks.public.issue142.Issue142Id
 import adventureworks.public.issue142.Issue142Row
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-interface Issue1422Fields {
+interface Issue1422Fields : FieldsExpr<Issue1422Row> {
+  override fun columns(): List<FieldLike<*, Issue1422Row>>
+
   fun fkIssue142(): ForeignKey<Issue142Fields, Issue142Row> = ForeignKey.of<Issue142Fields, Issue142Row>("public.tabell2_tabell_fk").withColumnPair(tabellkode(), Issue142Fields::tabellkode)
+
+  override fun rowParser(): RowParser<Issue1422Row> = Issue1422Row._rowParser
 
   fun tabellkode(): IdField<Issue142Id, Issue1422Row>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<Issue1422Fields, Issue1422Row>(path) {
-      override fun fields(): Issue1422Fields = object : Issue1422Fields {
-        override fun tabellkode(): IdField<Issue142Id, Issue1422Row> = IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, Optional.empty(), Optional.empty(), { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType)
-      }
+    data class Impl(val _path: List<Path>) : Issue1422Fields, Relation<Issue1422Fields, Issue1422Row> {
+      override fun tabellkode(): IdField<Issue142Id, Issue1422Row> = IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, Optional.empty(), Optional.empty(), { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType)
 
-      override fun columns(): List<FieldLike<*, Issue1422Row>> = listOf(this.fields().tabellkode())
+      override fun columns(): List<FieldLike<*, Issue1422Row>> = listOf(this.tabellkode())
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun copy(_path: List<Path>): Relation<Issue1422Fields, Issue1422Row> = Impl(_path)
     }
 
-    val structure: Relation<Issue1422Fields, Issue1422Row> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

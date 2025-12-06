@@ -16,22 +16,12 @@ import java.util.function.Function;
 /**
  * SQL implementation of DeleteBuilder that generates and executes DELETE queries.
  */
-public class DeleteBuilderSql<Fields, Row> implements DeleteBuilder<Fields, Row> {
-    private final String tableName;
-    private final RenderCtx renderCtx;
-    private final Structure<Fields, Row> structure;
-    private final DeleteParams<Fields> params;
-
-    public DeleteBuilderSql(
-            String tableName,
-            RenderCtx renderCtx,
-            Structure<Fields, Row> structure,
-            DeleteParams<Fields> params) {
-        this.tableName = tableName;
-        this.renderCtx = renderCtx;
-        this.structure = structure;
-        this.params = params;
-    }
+public record DeleteBuilderSql<Fields, Row>(
+        String tableName,
+        RenderCtx renderCtx,
+        Structure<Fields, Row> structure,
+        DeleteParams<Fields> params
+) implements DeleteBuilder<Fields, Row> {
 
     @Override
     public DeleteBuilder<Fields, Row> where(Function<Fields, SqlExpr<Boolean>> predicate) {

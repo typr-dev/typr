@@ -36,5 +36,5 @@ case class ThaViewRow(
 )
 
 object ThaViewRow {
-  val `_rowParser`: RowParser[ThaViewRow] = RowParsers.of(TransactionhistoryarchiveId.pgType, TransactionhistoryarchiveId.pgType, PgTypes.int4, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.bpchar, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, ThaViewRow.apply, row => Array(row.id, row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate))
+  val `_rowParser`: RowParser[ThaViewRow] = RowParsers.of(TransactionhistoryarchiveId.pgType, TransactionhistoryarchiveId.pgType, PgTypes.int4, PgTypes.int4, PgTypes.int4, TypoLocalDateTime.pgType, PgTypes.bpchar, PgTypes.int4, PgTypes.numeric, TypoLocalDateTime.pgType, ThaViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.transactionid.asInstanceOf[Object], row.productid.asInstanceOf[Object], row.referenceorderid.asInstanceOf[Object], row.referenceorderlineid.asInstanceOf[Object], row.transactiondate.asInstanceOf[Object], row.transactiontype.asInstanceOf[Object], row.quantity.asInstanceOf[Object], row.actualcost.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

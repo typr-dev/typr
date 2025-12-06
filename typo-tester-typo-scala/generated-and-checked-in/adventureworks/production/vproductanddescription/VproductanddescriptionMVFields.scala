@@ -9,13 +9,15 @@ import adventureworks.production.culture.CultureId
 import adventureworks.production.product.ProductId
 import adventureworks.public.Name
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait VproductanddescriptionMVFields {
+trait VproductanddescriptionMVFields extends FieldsExpr[VproductanddescriptionMVRow] {
   def productid: Field[ProductId, VproductanddescriptionMVRow]
 
   def name: Field[Name, VproductanddescriptionMVRow]
@@ -25,75 +27,79 @@ trait VproductanddescriptionMVFields {
   def cultureid: Field[CultureId, VproductanddescriptionMVRow]
 
   def description: Field[/* max 400 chars */ String, VproductanddescriptionMVRow]
+
+  override def columns: java.util.List[FieldLike[?, VproductanddescriptionMVRow]]
+
+  override def rowParser: RowParser[VproductanddescriptionMVRow] = VproductanddescriptionMVRow._rowParser
 }
 
 object VproductanddescriptionMVFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[VproductanddescriptionMVFields, VproductanddescriptionMVRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends VproductanddescriptionMVFields with Relation[VproductanddescriptionMVFields, VproductanddescriptionMVRow] {
 
-    override lazy val fields: VproductanddescriptionMVFields = {
-      new VproductanddescriptionMVFields {
-        override def productid: Field[ProductId, VproductanddescriptionMVRow] = {
-          new Field[ProductId, VproductanddescriptionMVRow](
-            _path,
-            "productid",
-            _.productid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productid = value),
-            ProductId.pgType
-          )
-        }
-        override def name: Field[Name, VproductanddescriptionMVRow] = {
-          new Field[Name, VproductanddescriptionMVRow](
-            _path,
-            "name",
-            _.name,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(name = value),
-            Name.pgType
-          )
-        }
-        override def productmodel: Field[Name, VproductanddescriptionMVRow] = {
-          new Field[Name, VproductanddescriptionMVRow](
-            _path,
-            "productmodel",
-            _.productmodel,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(productmodel = value),
-            Name.pgType
-          )
-        }
-        override def cultureid: Field[CultureId, VproductanddescriptionMVRow] = {
-          new Field[CultureId, VproductanddescriptionMVRow](
-            _path,
-            "cultureid",
-            _.cultureid,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(cultureid = value),
-            CultureId.pgType
-          )
-        }
-        override def description: Field[/* max 400 chars */ String, VproductanddescriptionMVRow] = {
-          new Field[/* max 400 chars */ String, VproductanddescriptionMVRow](
-            _path,
-            "description",
-            _.description,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(description = value),
-            PgTypes.text
-          )
-        }
-      }
+    override def productid: Field[ProductId, VproductanddescriptionMVRow] = {
+      new Field[ProductId, VproductanddescriptionMVRow](
+        _path,
+        "productid",
+        _.productid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productid = value),
+        ProductId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, VproductanddescriptionMVRow]] = java.util.List.of(this.fields.productid, this.fields.name, this.fields.productmodel, this.fields.cultureid, this.fields.description)
+    override def name: Field[Name, VproductanddescriptionMVRow] = {
+      new Field[Name, VproductanddescriptionMVRow](
+        _path,
+        "name",
+        _.name,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(name = value),
+        Name.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def productmodel: Field[Name, VproductanddescriptionMVRow] = {
+      new Field[Name, VproductanddescriptionMVRow](
+        _path,
+        "productmodel",
+        _.productmodel,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(productmodel = value),
+        Name.pgType
+      )
+    }
+
+    override def cultureid: Field[CultureId, VproductanddescriptionMVRow] = {
+      new Field[CultureId, VproductanddescriptionMVRow](
+        _path,
+        "cultureid",
+        _.cultureid,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(cultureid = value),
+        CultureId.pgType
+      )
+    }
+
+    override def description: Field[/* max 400 chars */ String, VproductanddescriptionMVRow] = {
+      new Field[/* max 400 chars */ String, VproductanddescriptionMVRow](
+        _path,
+        "description",
+        _.description,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(description = value),
+        PgTypes.text
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, VproductanddescriptionMVRow]] = java.util.List.of(this.productid, this.name, this.productmodel, this.cultureid, this.description)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[VproductanddescriptionMVFields, VproductanddescriptionMVRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

@@ -10,6 +10,7 @@ import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudFields
 import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudId
 import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRow
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr
@@ -20,8 +21,9 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-trait TestSakSoknadsalternativFields {
+trait TestSakSoknadsalternativFields extends FieldsExpr[TestSakSoknadsalternativRow] {
   def organisasjonskodeSaksbehandler: IdField[String, TestSakSoknadsalternativRow]
 
   def utdanningsmulighetKode: IdField[String, TestSakSoknadsalternativRow]
@@ -40,53 +42,55 @@ trait TestSakSoknadsalternativFields {
   def compositeIdIs(compositeId: TestSakSoknadsalternativId): SqlExpr[java.lang.Boolean] = SqlExpr.all(organisasjonskodeSaksbehandler.isEqual(compositeId.organisasjonskodeSaksbehandler), utdanningsmulighetKode.isEqual(compositeId.utdanningsmulighetKode))
 
   def compositeIdIn(compositeIds: java.util.List[TestSakSoknadsalternativId]): SqlExpr[java.lang.Boolean] = new CompositeIn(java.util.List.of(new Part[String, TestSakSoknadsalternativId, TestSakSoknadsalternativRow](organisasjonskodeSaksbehandler, _.organisasjonskodeSaksbehandler, PgTypes.text), new Part[String, TestSakSoknadsalternativId, TestSakSoknadsalternativRow](utdanningsmulighetKode, _.utdanningsmulighetKode, PgTypes.text)), compositeIds)
+
+  override def columns: java.util.List[FieldLike[?, TestSakSoknadsalternativRow]]
+
+  override def rowParser: RowParser[TestSakSoknadsalternativRow] = TestSakSoknadsalternativRow._rowParser
 }
 
 object TestSakSoknadsalternativFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends TestSakSoknadsalternativFields with Relation[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] {
 
-    override lazy val fields: TestSakSoknadsalternativFields = {
-      new TestSakSoknadsalternativFields {
-        override def organisasjonskodeSaksbehandler: IdField[String, TestSakSoknadsalternativRow] = {
-          new IdField[String, TestSakSoknadsalternativRow](
-            _path,
-            "organisasjonskode_saksbehandler",
-            _.organisasjonskodeSaksbehandler,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(organisasjonskodeSaksbehandler = value),
-            PgTypes.text
-          )
-        }
-        override def utdanningsmulighetKode: IdField[String, TestSakSoknadsalternativRow] = {
-          new IdField[String, TestSakSoknadsalternativRow](
-            _path,
-            "utdanningsmulighet_kode",
-            _.utdanningsmulighetKode,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(utdanningsmulighetKode = value),
-            PgTypes.text
-          )
-        }
-        override def organisasjonskodeTilbyder: Field[TestOrganisasjonId, TestSakSoknadsalternativRow] = {
-          new Field[TestOrganisasjonId, TestSakSoknadsalternativRow](
-            _path,
-            "organisasjonskode_tilbyder",
-            _.organisasjonskodeTilbyder,
-            Optional.empty(),
-            Optional.empty(),
-            (row, value) => row.copy(organisasjonskodeTilbyder = value),
-            TestOrganisasjonId.pgType
-          )
-        }
-      }
+    override def organisasjonskodeSaksbehandler: IdField[String, TestSakSoknadsalternativRow] = {
+      new IdField[String, TestSakSoknadsalternativRow](
+        _path,
+        "organisasjonskode_saksbehandler",
+        _.organisasjonskodeSaksbehandler,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(organisasjonskodeSaksbehandler = value),
+        PgTypes.text
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, TestSakSoknadsalternativRow]] = java.util.List.of(this.fields.organisasjonskodeSaksbehandler, this.fields.utdanningsmulighetKode, this.fields.organisasjonskodeTilbyder)
+    override def utdanningsmulighetKode: IdField[String, TestSakSoknadsalternativRow] = {
+      new IdField[String, TestSakSoknadsalternativRow](
+        _path,
+        "utdanningsmulighet_kode",
+        _.utdanningsmulighetKode,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(utdanningsmulighetKode = value),
+        PgTypes.text
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def organisasjonskodeTilbyder: Field[TestOrganisasjonId, TestSakSoknadsalternativRow] = {
+      new Field[TestOrganisasjonId, TestSakSoknadsalternativRow](
+        _path,
+        "organisasjonskode_tilbyder",
+        _.organisasjonskodeTilbyder,
+        Optional.empty(),
+        Optional.empty(),
+        (row, value) => row.copy(organisasjonskodeTilbyder = value),
+        TestOrganisasjonId.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, TestSakSoknadsalternativRow]] = java.util.List.of(this.organisasjonskodeSaksbehandler, this.utdanningsmulighetKode, this.organisasjonskodeTilbyder)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[TestSakSoknadsalternativFields, TestSakSoknadsalternativRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

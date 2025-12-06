@@ -91,7 +91,7 @@ case class OrderItemsRow(
 }
 
 object OrderItemsRow {
-  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrderItemsId.pgType, OrdersId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, MariaTypes.decimal, MariaTypes.decimal, MariaTypes.decimal, MariaTypes.decimal, MariaTypes.text, WarehousesId.pgType.opt(), MariaTypes.tinytext.opt(), OrderItemsRow.apply, row => Array(row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes))
+  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrderItemsId.pgType, OrdersId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, MariaTypes.decimal, MariaTypes.decimal, MariaTypes.decimal, MariaTypes.decimal, MariaTypes.text, WarehousesId.pgType.opt(), MariaTypes.tinytext.opt(), OrderItemsRow.apply, row => Array[Object](row.itemId.asInstanceOf[Object], row.orderId.asInstanceOf[Object], row.productId.asInstanceOf[Object], row.sku.asInstanceOf[Object], row.productName.asInstanceOf[Object], row.quantity.asInstanceOf[Object], row.unitPrice.asInstanceOf[Object], row.discountAmount.asInstanceOf[Object], row.taxAmount.asInstanceOf[Object], row.lineTotal.asInstanceOf[Object], row.fulfillmentStatus.asInstanceOf[Object], row.warehouseId.asInstanceOf[Object], row.notes.asInstanceOf[Object]))
 
   given mariaText: MariaText[OrderItemsRow] = MariaText.from(`_rowParser`)
 }

@@ -8,66 +8,70 @@ package adventureworks.production.illustration
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoXml
 import java.util.Optional
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
+import typo.runtime.RowParser
 
-trait IllustrationFields {
+trait IllustrationFields extends FieldsExpr[IllustrationRow] {
   def illustrationid: IdField[IllustrationId, IllustrationRow]
 
   def diagram: OptField[TypoXml, IllustrationRow]
 
   def modifieddate: Field[TypoLocalDateTime, IllustrationRow]
+
+  override def columns: java.util.List[FieldLike[?, IllustrationRow]]
+
+  override def rowParser: RowParser[IllustrationRow] = IllustrationRow._rowParser
 }
 
 object IllustrationFields {
-  private final class Impl(path: java.util.List[Path]) extends Relation[IllustrationFields, IllustrationRow](path) {
+  case class Impl(val `_path`: java.util.List[Path]) extends IllustrationFields with Relation[IllustrationFields, IllustrationRow] {
 
-    override lazy val fields: IllustrationFields = {
-      new IllustrationFields {
-        override def illustrationid: IdField[IllustrationId, IllustrationRow] = {
-          new IdField[IllustrationId, IllustrationRow](
-            _path,
-            "illustrationid",
-            _.illustrationid,
-            Optional.empty(),
-            Optional.of("int4"),
-            (row, value) => row.copy(illustrationid = value),
-            IllustrationId.pgType
-          )
-        }
-        override def diagram: OptField[TypoXml, IllustrationRow] = {
-          new OptField[TypoXml, IllustrationRow](
-            _path,
-            "diagram",
-            _.diagram,
-            Optional.empty(),
-            Optional.of("xml"),
-            (row, value) => row.copy(diagram = value),
-            TypoXml.pgType
-          )
-        }
-        override def modifieddate: Field[TypoLocalDateTime, IllustrationRow] = {
-          new Field[TypoLocalDateTime, IllustrationRow](
-            _path,
-            "modifieddate",
-            _.modifieddate,
-            Optional.of("text"),
-            Optional.of("timestamp"),
-            (row, value) => row.copy(modifieddate = value),
-            TypoLocalDateTime.pgType
-          )
-        }
-      }
+    override def illustrationid: IdField[IllustrationId, IllustrationRow] = {
+      new IdField[IllustrationId, IllustrationRow](
+        _path,
+        "illustrationid",
+        _.illustrationid,
+        Optional.empty(),
+        Optional.of("int4"),
+        (row, value) => row.copy(illustrationid = value),
+        IllustrationId.pgType
+      )
     }
 
-    override lazy val columns: java.util.List[FieldLike[?, IllustrationRow]] = java.util.List.of(this.fields.illustrationid, this.fields.diagram, this.fields.modifieddate)
+    override def diagram: OptField[TypoXml, IllustrationRow] = {
+      new OptField[TypoXml, IllustrationRow](
+        _path,
+        "diagram",
+        _.diagram,
+        Optional.empty(),
+        Optional.of("xml"),
+        (row, value) => row.copy(diagram = value),
+        TypoXml.pgType
+      )
+    }
 
-    override def copy(path: java.util.List[Path]): Impl = new Impl(path)
+    override def modifieddate: Field[TypoLocalDateTime, IllustrationRow] = {
+      new Field[TypoLocalDateTime, IllustrationRow](
+        _path,
+        "modifieddate",
+        _.modifieddate,
+        Optional.of("text"),
+        Optional.of("timestamp"),
+        (row, value) => row.copy(modifieddate = value),
+        TypoLocalDateTime.pgType
+      )
+    }
+
+    override def columns: java.util.List[FieldLike[?, IllustrationRow]] = java.util.List.of(this.illustrationid, this.diagram, this.modifieddate)
+
+    override def copy(`_path`: java.util.List[Path]): Relation[IllustrationFields, IllustrationRow] = new Impl(`_path`)
   }
 
-  lazy val structure: Relation[IllustrationFields, IllustrationRow] = new Impl(java.util.List.of())
+  def structure: Impl = new Impl(java.util.List.of())
 }

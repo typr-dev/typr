@@ -15,6 +15,7 @@ import adventureworks.production.productphoto.ProductphotoRow;
 import adventureworks.public_.Flag;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -24,47 +25,42 @@ import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface ProductproductphotoFields {
-  final class Impl extends Relation<ProductproductphotoFields, ProductproductphotoRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductproductphotoFields extends FieldsExpr<ProductproductphotoRow> {
+  record Impl(List<Path> _path) implements ProductproductphotoFields, Relation<ProductproductphotoFields, ProductproductphotoRow> {
+    @Override
+    public IdField<ProductId, ProductproductphotoRow> productid() {
+      return new IdField<ProductId, ProductproductphotoRow>(_path, "productid", ProductproductphotoRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
 
     @Override
-    public ProductproductphotoFields fields() {
-      return new ProductproductphotoFields() {
-               @Override
-               public IdField<ProductId, ProductproductphotoRow> productid() {
-                 return new IdField<ProductId, ProductproductphotoRow>(_path, "productid", ProductproductphotoRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public IdField<ProductphotoId, ProductproductphotoRow> productphotoid() {
-                 return new IdField<ProductphotoId, ProductproductphotoRow>(_path, "productphotoid", ProductproductphotoRow::productphotoid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductphotoid(value), ProductphotoId.pgType);
-               };
-               @Override
-               public Field<Flag, ProductproductphotoRow> primary() {
-                 return new Field<Flag, ProductproductphotoRow>(_path, "primary", ProductproductphotoRow::primary, Optional.empty(), Optional.of("bool"), (row, value) -> row.withPrimary(value), Flag.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductproductphotoRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductproductphotoRow>(_path, "modifieddate", ProductproductphotoRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<ProductphotoId, ProductproductphotoRow> productphotoid() {
+      return new IdField<ProductphotoId, ProductproductphotoRow>(_path, "productphotoid", ProductproductphotoRow::productphotoid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductphotoid(value), ProductphotoId.pgType);
+    };
+
+    @Override
+    public Field<Flag, ProductproductphotoRow> primary() {
+      return new Field<Flag, ProductproductphotoRow>(_path, "primary", ProductproductphotoRow::primary, Optional.empty(), Optional.of("bool"), (row, value) -> row.withPrimary(value), Flag.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ProductproductphotoRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductproductphotoRow>(_path, "modifieddate", ProductproductphotoRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductproductphotoRow>> columns() {
-      return List.of(this.fields().productid(), this.fields().productphotoid(), this.fields().primary(), this.fields().modifieddate());
+      return List.of(this.productid(), this.productphotoid(), this.primary(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductproductphotoFields, ProductproductphotoRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductproductphotoFields, ProductproductphotoRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -90,5 +86,13 @@ public interface ProductproductphotoFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<ProductproductphotoId> compositeIds) {
     return new CompositeIn(List.of(new Part<ProductId, ProductproductphotoId, ProductproductphotoRow>(productid(), ProductproductphotoId::productid, ProductId.pgType), new Part<ProductphotoId, ProductproductphotoId, ProductproductphotoRow>(productphotoid(), ProductproductphotoId::productphotoid, ProductphotoId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, ProductproductphotoRow>> columns();
+
+  @Override
+  default RowParser<ProductproductphotoRow> rowParser() {
+    return ProductproductphotoRow._rowParser;
   };
 }

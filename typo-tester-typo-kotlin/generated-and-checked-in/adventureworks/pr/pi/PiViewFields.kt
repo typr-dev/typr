@@ -12,14 +12,18 @@ import adventureworks.production.location.LocationId
 import adventureworks.production.product.ProductId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface PiViewFields {
+interface PiViewFields : FieldsExpr<PiViewRow> {
   fun bin(): Field<TypoShort, PiViewRow>
+
+  override fun columns(): List<FieldLike<*, PiViewRow>>
 
   fun id(): Field<ProductId, PiViewRow>
 
@@ -31,28 +35,35 @@ interface PiViewFields {
 
   fun quantity(): Field<TypoShort, PiViewRow>
 
+  override fun rowParser(): RowParser<PiViewRow> = PiViewRow._rowParser
+
   fun rowguid(): Field<TypoUUID, PiViewRow>
 
   fun shelf(): Field</* max 10 chars */ String, PiViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<PiViewFields, PiViewRow>(path) {
-      override fun fields(): PiViewFields = object : PiViewFields {
-        override fun id(): Field<ProductId, PiViewRow> = Field<ProductId, PiViewRow>(_path, "id", PiViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ProductId.pgType)
-        override fun productid(): Field<ProductId, PiViewRow> = Field<ProductId, PiViewRow>(_path, "productid", PiViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
-        override fun locationid(): Field<LocationId, PiViewRow> = Field<LocationId, PiViewRow>(_path, "locationid", PiViewRow::locationid, Optional.empty(), Optional.empty(), { row, value -> row.copy(locationid = value) }, LocationId.pgType)
-        override fun shelf(): Field</* max 10 chars */ String, PiViewRow> = Field</* max 10 chars */ String, PiViewRow>(_path, "shelf", PiViewRow::shelf, Optional.empty(), Optional.empty(), { row, value -> row.copy(shelf = value) }, PgTypes.text)
-        override fun bin(): Field<TypoShort, PiViewRow> = Field<TypoShort, PiViewRow>(_path, "bin", PiViewRow::bin, Optional.empty(), Optional.empty(), { row, value -> row.copy(bin = value) }, TypoShort.pgType)
-        override fun quantity(): Field<TypoShort, PiViewRow> = Field<TypoShort, PiViewRow>(_path, "quantity", PiViewRow::quantity, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantity = value) }, TypoShort.pgType)
-        override fun rowguid(): Field<TypoUUID, PiViewRow> = Field<TypoUUID, PiViewRow>(_path, "rowguid", PiViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, PiViewRow> = Field<TypoLocalDateTime, PiViewRow>(_path, "modifieddate", PiViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : PiViewFields, Relation<PiViewFields, PiViewRow> {
+      override fun id(): Field<ProductId, PiViewRow> = Field<ProductId, PiViewRow>(_path, "id", PiViewRow::id, Optional.empty(), Optional.empty(), { row, value -> row.copy(id = value) }, ProductId.pgType)
 
-      override fun columns(): List<FieldLike<*, PiViewRow>> = listOf(this.fields().id(), this.fields().productid(), this.fields().locationid(), this.fields().shelf(), this.fields().bin(), this.fields().quantity(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun productid(): Field<ProductId, PiViewRow> = Field<ProductId, PiViewRow>(_path, "productid", PiViewRow::productid, Optional.empty(), Optional.empty(), { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun locationid(): Field<LocationId, PiViewRow> = Field<LocationId, PiViewRow>(_path, "locationid", PiViewRow::locationid, Optional.empty(), Optional.empty(), { row, value -> row.copy(locationid = value) }, LocationId.pgType)
+
+      override fun shelf(): Field</* max 10 chars */ String, PiViewRow> = Field</* max 10 chars */ String, PiViewRow>(_path, "shelf", PiViewRow::shelf, Optional.empty(), Optional.empty(), { row, value -> row.copy(shelf = value) }, PgTypes.text)
+
+      override fun bin(): Field<TypoShort, PiViewRow> = Field<TypoShort, PiViewRow>(_path, "bin", PiViewRow::bin, Optional.empty(), Optional.empty(), { row, value -> row.copy(bin = value) }, TypoShort.pgType)
+
+      override fun quantity(): Field<TypoShort, PiViewRow> = Field<TypoShort, PiViewRow>(_path, "quantity", PiViewRow::quantity, Optional.empty(), Optional.empty(), { row, value -> row.copy(quantity = value) }, TypoShort.pgType)
+
+      override fun rowguid(): Field<TypoUUID, PiViewRow> = Field<TypoUUID, PiViewRow>(_path, "rowguid", PiViewRow::rowguid, Optional.empty(), Optional.empty(), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, PiViewRow> = Field<TypoLocalDateTime, PiViewRow>(_path, "modifieddate", PiViewRow::modifieddate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, PiViewRow>> = listOf(this.id(), this.productid(), this.locationid(), this.shelf(), this.bin(), this.quantity(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<PiViewFields, PiViewRow> = Impl(_path)
     }
 
-    val structure: Relation<PiViewFields, PiViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

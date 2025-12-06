@@ -10,17 +10,21 @@ import adventureworks.customtypes.TypoMoney
 import adventureworks.person.businessentity.BusinessentityId
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
 import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface VpersondemographicsViewFields {
+interface VpersondemographicsViewFields : FieldsExpr<VpersondemographicsViewRow> {
   fun birthdate(): OptField<TypoLocalDate, VpersondemographicsViewRow>
 
   fun businessentityid(): Field<BusinessentityId, VpersondemographicsViewRow>
+
+  override fun columns(): List<FieldLike<*, VpersondemographicsViewRow>>
 
   fun datefirstpurchase(): OptField<TypoLocalDate, VpersondemographicsViewRow>
 
@@ -38,6 +42,8 @@ interface VpersondemographicsViewFields {
 
   fun occupation(): OptField</* max 30 chars */ String, VpersondemographicsViewRow>
 
+  override fun rowParser(): RowParser<VpersondemographicsViewRow> = VpersondemographicsViewRow._rowParser
+
   fun totalchildren(): OptField<Int, VpersondemographicsViewRow>
 
   fun totalpurchaseytd(): OptField<TypoMoney, VpersondemographicsViewRow>
@@ -45,28 +51,38 @@ interface VpersondemographicsViewFields {
   fun yearlyincome(): OptField</* max 30 chars */ String, VpersondemographicsViewRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<VpersondemographicsViewFields, VpersondemographicsViewRow>(path) {
-      override fun fields(): VpersondemographicsViewFields = object : VpersondemographicsViewFields {
-        override fun businessentityid(): Field<BusinessentityId, VpersondemographicsViewRow> = Field<BusinessentityId, VpersondemographicsViewRow>(_path, "businessentityid", VpersondemographicsViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
-        override fun totalpurchaseytd(): OptField<TypoMoney, VpersondemographicsViewRow> = OptField<TypoMoney, VpersondemographicsViewRow>(_path, "totalpurchaseytd", VpersondemographicsViewRow::totalpurchaseytd, Optional.of("numeric"), Optional.empty(), { row, value -> row.copy(totalpurchaseytd = value) }, TypoMoney.pgType)
-        override fun datefirstpurchase(): OptField<TypoLocalDate, VpersondemographicsViewRow> = OptField<TypoLocalDate, VpersondemographicsViewRow>(_path, "datefirstpurchase", VpersondemographicsViewRow::datefirstpurchase, Optional.of("text"), Optional.empty(), { row, value -> row.copy(datefirstpurchase = value) }, TypoLocalDate.pgType)
-        override fun birthdate(): OptField<TypoLocalDate, VpersondemographicsViewRow> = OptField<TypoLocalDate, VpersondemographicsViewRow>(_path, "birthdate", VpersondemographicsViewRow::birthdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(birthdate = value) }, TypoLocalDate.pgType)
-        override fun maritalstatus(): OptField</* max 1 chars */ String, VpersondemographicsViewRow> = OptField</* max 1 chars */ String, VpersondemographicsViewRow>(_path, "maritalstatus", VpersondemographicsViewRow::maritalstatus, Optional.empty(), Optional.empty(), { row, value -> row.copy(maritalstatus = value) }, PgTypes.text)
-        override fun yearlyincome(): OptField</* max 30 chars */ String, VpersondemographicsViewRow> = OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "yearlyincome", VpersondemographicsViewRow::yearlyincome, Optional.empty(), Optional.empty(), { row, value -> row.copy(yearlyincome = value) }, PgTypes.text)
-        override fun gender(): OptField</* max 1 chars */ String, VpersondemographicsViewRow> = OptField</* max 1 chars */ String, VpersondemographicsViewRow>(_path, "gender", VpersondemographicsViewRow::gender, Optional.empty(), Optional.empty(), { row, value -> row.copy(gender = value) }, PgTypes.text)
-        override fun totalchildren(): OptField<Int, VpersondemographicsViewRow> = OptField<Int, VpersondemographicsViewRow>(_path, "totalchildren", VpersondemographicsViewRow::totalchildren, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalchildren = value) }, PgTypes.int4)
-        override fun numberchildrenathome(): OptField<Int, VpersondemographicsViewRow> = OptField<Int, VpersondemographicsViewRow>(_path, "numberchildrenathome", VpersondemographicsViewRow::numberchildrenathome, Optional.empty(), Optional.empty(), { row, value -> row.copy(numberchildrenathome = value) }, PgTypes.int4)
-        override fun education(): OptField</* max 30 chars */ String, VpersondemographicsViewRow> = OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "education", VpersondemographicsViewRow::education, Optional.empty(), Optional.empty(), { row, value -> row.copy(education = value) }, PgTypes.text)
-        override fun occupation(): OptField</* max 30 chars */ String, VpersondemographicsViewRow> = OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "occupation", VpersondemographicsViewRow::occupation, Optional.empty(), Optional.empty(), { row, value -> row.copy(occupation = value) }, PgTypes.text)
-        override fun homeownerflag(): OptField<Boolean, VpersondemographicsViewRow> = OptField<Boolean, VpersondemographicsViewRow>(_path, "homeownerflag", VpersondemographicsViewRow::homeownerflag, Optional.empty(), Optional.empty(), { row, value -> row.copy(homeownerflag = value) }, PgTypes.bool)
-        override fun numbercarsowned(): OptField<Int, VpersondemographicsViewRow> = OptField<Int, VpersondemographicsViewRow>(_path, "numbercarsowned", VpersondemographicsViewRow::numbercarsowned, Optional.empty(), Optional.empty(), { row, value -> row.copy(numbercarsowned = value) }, PgTypes.int4)
-      }
+    data class Impl(val _path: List<Path>) : VpersondemographicsViewFields, Relation<VpersondemographicsViewFields, VpersondemographicsViewRow> {
+      override fun businessentityid(): Field<BusinessentityId, VpersondemographicsViewRow> = Field<BusinessentityId, VpersondemographicsViewRow>(_path, "businessentityid", VpersondemographicsViewRow::businessentityid, Optional.empty(), Optional.empty(), { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
-      override fun columns(): List<FieldLike<*, VpersondemographicsViewRow>> = listOf(this.fields().businessentityid(), this.fields().totalpurchaseytd(), this.fields().datefirstpurchase(), this.fields().birthdate(), this.fields().maritalstatus(), this.fields().yearlyincome(), this.fields().gender(), this.fields().totalchildren(), this.fields().numberchildrenathome(), this.fields().education(), this.fields().occupation(), this.fields().homeownerflag(), this.fields().numbercarsowned())
+      override fun totalpurchaseytd(): OptField<TypoMoney, VpersondemographicsViewRow> = OptField<TypoMoney, VpersondemographicsViewRow>(_path, "totalpurchaseytd", VpersondemographicsViewRow::totalpurchaseytd, Optional.of("numeric"), Optional.empty(), { row, value -> row.copy(totalpurchaseytd = value) }, TypoMoney.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun datefirstpurchase(): OptField<TypoLocalDate, VpersondemographicsViewRow> = OptField<TypoLocalDate, VpersondemographicsViewRow>(_path, "datefirstpurchase", VpersondemographicsViewRow::datefirstpurchase, Optional.of("text"), Optional.empty(), { row, value -> row.copy(datefirstpurchase = value) }, TypoLocalDate.pgType)
+
+      override fun birthdate(): OptField<TypoLocalDate, VpersondemographicsViewRow> = OptField<TypoLocalDate, VpersondemographicsViewRow>(_path, "birthdate", VpersondemographicsViewRow::birthdate, Optional.of("text"), Optional.empty(), { row, value -> row.copy(birthdate = value) }, TypoLocalDate.pgType)
+
+      override fun maritalstatus(): OptField</* max 1 chars */ String, VpersondemographicsViewRow> = OptField</* max 1 chars */ String, VpersondemographicsViewRow>(_path, "maritalstatus", VpersondemographicsViewRow::maritalstatus, Optional.empty(), Optional.empty(), { row, value -> row.copy(maritalstatus = value) }, PgTypes.text)
+
+      override fun yearlyincome(): OptField</* max 30 chars */ String, VpersondemographicsViewRow> = OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "yearlyincome", VpersondemographicsViewRow::yearlyincome, Optional.empty(), Optional.empty(), { row, value -> row.copy(yearlyincome = value) }, PgTypes.text)
+
+      override fun gender(): OptField</* max 1 chars */ String, VpersondemographicsViewRow> = OptField</* max 1 chars */ String, VpersondemographicsViewRow>(_path, "gender", VpersondemographicsViewRow::gender, Optional.empty(), Optional.empty(), { row, value -> row.copy(gender = value) }, PgTypes.text)
+
+      override fun totalchildren(): OptField<Int, VpersondemographicsViewRow> = OptField<Int, VpersondemographicsViewRow>(_path, "totalchildren", VpersondemographicsViewRow::totalchildren, Optional.empty(), Optional.empty(), { row, value -> row.copy(totalchildren = value) }, PgTypes.int4)
+
+      override fun numberchildrenathome(): OptField<Int, VpersondemographicsViewRow> = OptField<Int, VpersondemographicsViewRow>(_path, "numberchildrenathome", VpersondemographicsViewRow::numberchildrenathome, Optional.empty(), Optional.empty(), { row, value -> row.copy(numberchildrenathome = value) }, PgTypes.int4)
+
+      override fun education(): OptField</* max 30 chars */ String, VpersondemographicsViewRow> = OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "education", VpersondemographicsViewRow::education, Optional.empty(), Optional.empty(), { row, value -> row.copy(education = value) }, PgTypes.text)
+
+      override fun occupation(): OptField</* max 30 chars */ String, VpersondemographicsViewRow> = OptField</* max 30 chars */ String, VpersondemographicsViewRow>(_path, "occupation", VpersondemographicsViewRow::occupation, Optional.empty(), Optional.empty(), { row, value -> row.copy(occupation = value) }, PgTypes.text)
+
+      override fun homeownerflag(): OptField<Boolean, VpersondemographicsViewRow> = OptField<Boolean, VpersondemographicsViewRow>(_path, "homeownerflag", VpersondemographicsViewRow::homeownerflag, Optional.empty(), Optional.empty(), { row, value -> row.copy(homeownerflag = value) }, PgTypes.bool)
+
+      override fun numbercarsowned(): OptField<Int, VpersondemographicsViewRow> = OptField<Int, VpersondemographicsViewRow>(_path, "numbercarsowned", VpersondemographicsViewRow::numbercarsowned, Optional.empty(), Optional.empty(), { row, value -> row.copy(numbercarsowned = value) }, PgTypes.int4)
+
+      override fun columns(): List<FieldLike<*, VpersondemographicsViewRow>> = listOf(this.businessentityid(), this.totalpurchaseytd(), this.datefirstpurchase(), this.birthdate(), this.maritalstatus(), this.yearlyincome(), this.gender(), this.totalchildren(), this.numberchildrenathome(), this.education(), this.occupation(), this.homeownerflag(), this.numbercarsowned())
+
+      override fun copy(_path: List<Path>): Relation<VpersondemographicsViewFields, VpersondemographicsViewRow> = Impl(_path)
     }
 
-    val structure: Relation<VpersondemographicsViewFields, VpersondemographicsViewRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

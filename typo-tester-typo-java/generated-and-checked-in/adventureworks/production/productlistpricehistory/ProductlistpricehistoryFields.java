@@ -12,6 +12,7 @@ import adventureworks.production.product.ProductRow;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -23,51 +24,47 @@ import typo.dsl.SqlExpr.IdField;
 import typo.dsl.SqlExpr.OptField;
 import typo.dsl.Structure.Relation;
 import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
 
-public interface ProductlistpricehistoryFields {
-  final class Impl extends Relation<ProductlistpricehistoryFields, ProductlistpricehistoryRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductlistpricehistoryFields extends FieldsExpr<ProductlistpricehistoryRow> {
+  record Impl(List<Path> _path) implements ProductlistpricehistoryFields, Relation<ProductlistpricehistoryFields, ProductlistpricehistoryRow> {
+    @Override
+    public IdField<ProductId, ProductlistpricehistoryRow> productid() {
+      return new IdField<ProductId, ProductlistpricehistoryRow>(_path, "productid", ProductlistpricehistoryRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
+    };
 
     @Override
-    public ProductlistpricehistoryFields fields() {
-      return new ProductlistpricehistoryFields() {
-               @Override
-               public IdField<ProductId, ProductlistpricehistoryRow> productid() {
-                 return new IdField<ProductId, ProductlistpricehistoryRow>(_path, "productid", ProductlistpricehistoryRow::productid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductid(value), ProductId.pgType);
-               };
-               @Override
-               public IdField<TypoLocalDateTime, ProductlistpricehistoryRow> startdate() {
-                 return new IdField<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "startdate", ProductlistpricehistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public OptField<TypoLocalDateTime, ProductlistpricehistoryRow> enddate() {
-                 return new OptField<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "enddate", ProductlistpricehistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
-               };
-               @Override
-               public Field<BigDecimal, ProductlistpricehistoryRow> listprice() {
-                 return new Field<BigDecimal, ProductlistpricehistoryRow>(_path, "listprice", ProductlistpricehistoryRow::listprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withListprice(value), PgTypes.numeric);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductlistpricehistoryRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "modifieddate", ProductlistpricehistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<TypoLocalDateTime, ProductlistpricehistoryRow> startdate() {
+      return new IdField<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "startdate", ProductlistpricehistoryRow::startdate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withStartdate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public OptField<TypoLocalDateTime, ProductlistpricehistoryRow> enddate() {
+      return new OptField<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "enddate", ProductlistpricehistoryRow::enddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withEnddate(value), TypoLocalDateTime.pgType);
+    };
+
+    @Override
+    public Field<BigDecimal, ProductlistpricehistoryRow> listprice() {
+      return new Field<BigDecimal, ProductlistpricehistoryRow>(_path, "listprice", ProductlistpricehistoryRow::listprice, Optional.empty(), Optional.of("numeric"), (row, value) -> row.withListprice(value), PgTypes.numeric);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ProductlistpricehistoryRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductlistpricehistoryRow>(_path, "modifieddate", ProductlistpricehistoryRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductlistpricehistoryRow>> columns() {
-      return List.of(this.fields().productid(), this.fields().startdate(), this.fields().enddate(), this.fields().listprice(), this.fields().modifieddate());
+      return List.of(this.productid(), this.startdate(), this.enddate(), this.listprice(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductlistpricehistoryFields, ProductlistpricehistoryRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductlistpricehistoryFields, ProductlistpricehistoryRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -91,5 +88,13 @@ public interface ProductlistpricehistoryFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<ProductlistpricehistoryId> compositeIds) {
     return new CompositeIn(List.of(new Part<ProductId, ProductlistpricehistoryId, ProductlistpricehistoryRow>(productid(), ProductlistpricehistoryId::productid, ProductId.pgType), new Part<TypoLocalDateTime, ProductlistpricehistoryId, ProductlistpricehistoryRow>(startdate(), ProductlistpricehistoryId::startdate, TypoLocalDateTime.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, ProductlistpricehistoryRow>> columns();
+
+  @Override
+  default RowParser<ProductlistpricehistoryRow> rowParser() {
+    return ProductlistpricehistoryRow._rowParser;
   };
 }

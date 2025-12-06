@@ -53,7 +53,7 @@ case class ProductCategoriesRow(
 }
 
 object ProductCategoriesRow {
-  val `_rowParser`: RowParser[ProductCategoriesRow] = RowParsers.of(ProductsId.pgType, CategoriesId.pgType, MariaTypes.bool, MariaTypes.smallint, ProductCategoriesRow.apply, row => Array(row.productId, row.categoryId, row.isPrimary, row.sortOrder))
+  val `_rowParser`: RowParser[ProductCategoriesRow] = RowParsers.of(ProductsId.pgType, CategoriesId.pgType, MariaTypes.bool, MariaTypes.smallint, ProductCategoriesRow.apply, row => Array[Object](row.productId.asInstanceOf[Object], row.categoryId.asInstanceOf[Object], row.isPrimary.asInstanceOf[Object], row.sortOrder.asInstanceOf[Object]))
 
   def apply(
     compositeId: ProductCategoriesId,

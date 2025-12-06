@@ -17,6 +17,7 @@ import adventureworks.production.productmodel.ProductmodelId;
 import adventureworks.production.productmodel.ProductmodelRow;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.ForeignKey;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr;
@@ -26,47 +27,42 @@ import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface ProductmodelproductdescriptioncultureFields {
-  final class Impl extends Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface ProductmodelproductdescriptioncultureFields extends FieldsExpr<ProductmodelproductdescriptioncultureRow> {
+  record Impl(List<Path> _path) implements ProductmodelproductdescriptioncultureFields, Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> {
+    @Override
+    public IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow> productmodelid() {
+      return new IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow>(_path, "productmodelid", ProductmodelproductdescriptioncultureRow::productmodelid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
+    };
 
     @Override
-    public ProductmodelproductdescriptioncultureFields fields() {
-      return new ProductmodelproductdescriptioncultureFields() {
-               @Override
-               public IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow> productmodelid() {
-                 return new IdField<ProductmodelId, ProductmodelproductdescriptioncultureRow>(_path, "productmodelid", ProductmodelproductdescriptioncultureRow::productmodelid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductmodelid(value), ProductmodelId.pgType);
-               };
-               @Override
-               public IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow> productdescriptionid() {
-                 return new IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow>(_path, "productdescriptionid", ProductmodelproductdescriptioncultureRow::productdescriptionid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductdescriptionid(value), ProductdescriptionId.pgType);
-               };
-               @Override
-               public IdField<CultureId, ProductmodelproductdescriptioncultureRow> cultureid() {
-                 return new IdField<CultureId, ProductmodelproductdescriptioncultureRow>(_path, "cultureid", ProductmodelproductdescriptioncultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCultureid(value), CultureId.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow>(_path, "modifieddate", ProductmodelproductdescriptioncultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow> productdescriptionid() {
+      return new IdField<ProductdescriptionId, ProductmodelproductdescriptioncultureRow>(_path, "productdescriptionid", ProductmodelproductdescriptioncultureRow::productdescriptionid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withProductdescriptionid(value), ProductdescriptionId.pgType);
+    };
+
+    @Override
+    public IdField<CultureId, ProductmodelproductdescriptioncultureRow> cultureid() {
+      return new IdField<CultureId, ProductmodelproductdescriptioncultureRow>(_path, "cultureid", ProductmodelproductdescriptioncultureRow::cultureid, Optional.empty(), Optional.of("bpchar"), (row, value) -> row.withCultureid(value), CultureId.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow> modifieddate() {
+      return new Field<TypoLocalDateTime, ProductmodelproductdescriptioncultureRow>(_path, "modifieddate", ProductmodelproductdescriptioncultureRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, ProductmodelproductdescriptioncultureRow>> columns() {
-      return List.of(this.fields().productmodelid(), this.fields().productdescriptionid(), this.fields().cultureid(), this.fields().modifieddate());
+      return List.of(this.productmodelid(), this.productdescriptionid(), this.cultureid(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<ProductmodelproductdescriptioncultureFields, ProductmodelproductdescriptioncultureRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -96,5 +92,13 @@ public interface ProductmodelproductdescriptioncultureFields {
 
   default SqlExpr<Boolean> compositeIdIn(List<ProductmodelproductdescriptioncultureId> compositeIds) {
     return new CompositeIn(List.of(new Part<ProductmodelId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(productmodelid(), ProductmodelproductdescriptioncultureId::productmodelid, ProductmodelId.pgType), new Part<ProductdescriptionId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(productdescriptionid(), ProductmodelproductdescriptioncultureId::productdescriptionid, ProductdescriptionId.pgType), new Part<CultureId, ProductmodelproductdescriptioncultureId, ProductmodelproductdescriptioncultureRow>(cultureid(), ProductmodelproductdescriptioncultureId::cultureid, CultureId.pgType)), compositeIds);
+  };
+
+  @Override
+  List<FieldLike<?, ProductmodelproductdescriptioncultureRow>> columns();
+
+  @Override
+  default RowParser<ProductmodelproductdescriptioncultureRow> rowParser() {
+    return ProductmodelproductdescriptioncultureRow._rowParser;
   };
 }

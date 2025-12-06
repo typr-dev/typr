@@ -25,5 +25,5 @@ case class IViewRow(
 )
 
 object IViewRow {
-  val `_rowParser`: RowParser[IViewRow] = RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IViewRow.apply, row => Array(row.id, row.illustrationid, row.diagram, row.modifieddate))
+  val `_rowParser`: RowParser[IViewRow] = RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, TypoXml.pgType.opt(), TypoLocalDateTime.pgType, IViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.illustrationid.asInstanceOf[Object], row.diagram.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

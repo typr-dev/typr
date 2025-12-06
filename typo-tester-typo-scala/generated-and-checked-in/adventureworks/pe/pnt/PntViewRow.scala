@@ -24,5 +24,5 @@ case class PntViewRow(
 )
 
 object PntViewRow {
-  val `_rowParser`: RowParser[PntViewRow] = RowParsers.of(PhonenumbertypeId.pgType, PhonenumbertypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, PntViewRow.apply, row => Array(row.id, row.phonenumbertypeid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[PntViewRow] = RowParsers.of(PhonenumbertypeId.pgType, PhonenumbertypeId.pgType, Name.pgType, TypoLocalDateTime.pgType, PntViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.phonenumbertypeid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

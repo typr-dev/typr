@@ -10,6 +10,7 @@ import kotlin.collections.List
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -18,9 +19,12 @@ import typo.dsl.SqlExpr.IdField
 import typo.dsl.SqlExpr.OptField
 import typo.dsl.Structure.Relation
 import typo.runtime.MariaTypes
+import typo.runtime.RowParser
 
-interface ProductImagesFields {
+interface ProductImagesFields : FieldsExpr<ProductImagesRow> {
   fun altText(): OptField<String, ProductImagesRow>
+
+  override fun columns(): List<FieldLike<*, ProductImagesRow>>
 
   fun fkProducts(): ForeignKey<ProductsFields, ProductsRow> = ForeignKey.of<ProductsFields, ProductsRow>("fk_pi_product").withColumnPair(productId(), ProductsFields::productId)
 
@@ -34,28 +38,35 @@ interface ProductImagesFields {
 
   fun productId(): Field<ProductsId, ProductImagesRow>
 
+  override fun rowParser(): RowParser<ProductImagesRow> = ProductImagesRow._rowParser
+
   fun sortOrder(): Field<Short, ProductImagesRow>
 
   fun thumbnailUrl(): OptField<String, ProductImagesRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<ProductImagesFields, ProductImagesRow>(path) {
-      override fun fields(): ProductImagesFields = object : ProductImagesFields {
-        override fun imageId(): IdField<ProductImagesId, ProductImagesRow> = IdField<ProductImagesId, ProductImagesRow>(_path, "image_id", ProductImagesRow::imageId, Optional.empty(), Optional.empty(), { row, value -> row.copy(imageId = value) }, ProductImagesId.pgType)
-        override fun productId(): Field<ProductsId, ProductImagesRow> = Field<ProductsId, ProductImagesRow>(_path, "product_id", ProductImagesRow::productId, Optional.empty(), Optional.empty(), { row, value -> row.copy(productId = value) }, ProductsId.pgType)
-        override fun imageUrl(): Field<String, ProductImagesRow> = Field<String, ProductImagesRow>(_path, "image_url", ProductImagesRow::imageUrl, Optional.empty(), Optional.empty(), { row, value -> row.copy(imageUrl = value) }, MariaTypes.varchar)
-        override fun thumbnailUrl(): OptField<String, ProductImagesRow> = OptField<String, ProductImagesRow>(_path, "thumbnail_url", ProductImagesRow::thumbnailUrl, Optional.empty(), Optional.empty(), { row, value -> row.copy(thumbnailUrl = value) }, MariaTypes.varchar)
-        override fun altText(): OptField<String, ProductImagesRow> = OptField<String, ProductImagesRow>(_path, "alt_text", ProductImagesRow::altText, Optional.empty(), Optional.empty(), { row, value -> row.copy(altText = value) }, MariaTypes.varchar)
-        override fun sortOrder(): Field<Short, ProductImagesRow> = Field<Short, ProductImagesRow>(_path, "sort_order", ProductImagesRow::sortOrder, Optional.empty(), Optional.empty(), { row, value -> row.copy(sortOrder = value) }, MariaTypes.tinyintUnsigned)
-        override fun isPrimary(): Field<Boolean, ProductImagesRow> = Field<Boolean, ProductImagesRow>(_path, "is_primary", ProductImagesRow::isPrimary, Optional.empty(), Optional.empty(), { row, value -> row.copy(isPrimary = value) }, MariaTypes.bool)
-        override fun imageData(): OptField<ByteArray, ProductImagesRow> = OptField<ByteArray, ProductImagesRow>(_path, "image_data", ProductImagesRow::imageData, Optional.empty(), Optional.empty(), { row, value -> row.copy(imageData = value) }, MariaTypes.longblob)
-      }
+    data class Impl(val _path: List<Path>) : ProductImagesFields, Relation<ProductImagesFields, ProductImagesRow> {
+      override fun imageId(): IdField<ProductImagesId, ProductImagesRow> = IdField<ProductImagesId, ProductImagesRow>(_path, "image_id", ProductImagesRow::imageId, Optional.empty(), Optional.empty(), { row, value -> row.copy(imageId = value) }, ProductImagesId.pgType)
 
-      override fun columns(): List<FieldLike<*, ProductImagesRow>> = listOf(this.fields().imageId(), this.fields().productId(), this.fields().imageUrl(), this.fields().thumbnailUrl(), this.fields().altText(), this.fields().sortOrder(), this.fields().isPrimary(), this.fields().imageData())
+      override fun productId(): Field<ProductsId, ProductImagesRow> = Field<ProductsId, ProductImagesRow>(_path, "product_id", ProductImagesRow::productId, Optional.empty(), Optional.empty(), { row, value -> row.copy(productId = value) }, ProductsId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun imageUrl(): Field<String, ProductImagesRow> = Field<String, ProductImagesRow>(_path, "image_url", ProductImagesRow::imageUrl, Optional.empty(), Optional.empty(), { row, value -> row.copy(imageUrl = value) }, MariaTypes.varchar)
+
+      override fun thumbnailUrl(): OptField<String, ProductImagesRow> = OptField<String, ProductImagesRow>(_path, "thumbnail_url", ProductImagesRow::thumbnailUrl, Optional.empty(), Optional.empty(), { row, value -> row.copy(thumbnailUrl = value) }, MariaTypes.varchar)
+
+      override fun altText(): OptField<String, ProductImagesRow> = OptField<String, ProductImagesRow>(_path, "alt_text", ProductImagesRow::altText, Optional.empty(), Optional.empty(), { row, value -> row.copy(altText = value) }, MariaTypes.varchar)
+
+      override fun sortOrder(): Field<Short, ProductImagesRow> = Field<Short, ProductImagesRow>(_path, "sort_order", ProductImagesRow::sortOrder, Optional.empty(), Optional.empty(), { row, value -> row.copy(sortOrder = value) }, MariaTypes.tinyintUnsigned)
+
+      override fun isPrimary(): Field<Boolean, ProductImagesRow> = Field<Boolean, ProductImagesRow>(_path, "is_primary", ProductImagesRow::isPrimary, Optional.empty(), Optional.empty(), { row, value -> row.copy(isPrimary = value) }, MariaTypes.bool)
+
+      override fun imageData(): OptField<ByteArray, ProductImagesRow> = OptField<ByteArray, ProductImagesRow>(_path, "image_data", ProductImagesRow::imageData, Optional.empty(), Optional.empty(), { row, value -> row.copy(imageData = value) }, MariaTypes.longblob)
+
+      override fun columns(): List<FieldLike<*, ProductImagesRow>> = listOf(this.imageId(), this.productId(), this.imageUrl(), this.thumbnailUrl(), this.altText(), this.sortOrder(), this.isPrimary(), this.imageData())
+
+      override fun copy(_path: List<Path>): Relation<ProductImagesFields, ProductImagesRow> = Impl(_path)
     }
 
-    val structure: Relation<ProductImagesFields, ProductImagesRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

@@ -15,6 +15,7 @@ import adventureworks.public.Name
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.collections.List
+import typo.dsl.FieldsExpr
 import typo.dsl.ForeignKey
 import typo.dsl.Path
 import typo.dsl.SqlExpr.Field
@@ -22,13 +23,18 @@ import typo.dsl.SqlExpr.FieldLike
 import typo.dsl.SqlExpr.IdField
 import typo.dsl.Structure.Relation
 import typo.runtime.PgTypes
+import typo.runtime.RowParser
 
-interface SalestaxrateFields {
+interface SalestaxrateFields : FieldsExpr<SalestaxrateRow> {
+  override fun columns(): List<FieldLike<*, SalestaxrateRow>>
+
   fun fkPersonStateprovince(): ForeignKey<StateprovinceFields, StateprovinceRow> = ForeignKey.of<StateprovinceFields, StateprovinceRow>("sales.FK_SalesTaxRate_StateProvince_StateProvinceID").withColumnPair(stateprovinceid(), StateprovinceFields::stateprovinceid)
 
   fun modifieddate(): Field<TypoLocalDateTime, SalestaxrateRow>
 
   fun name(): Field<Name, SalestaxrateRow>
+
+  override fun rowParser(): RowParser<SalestaxrateRow> = SalestaxrateRow._rowParser
 
   fun rowguid(): Field<TypoUUID, SalestaxrateRow>
 
@@ -41,22 +47,26 @@ interface SalestaxrateFields {
   fun taxtype(): Field<TypoShort, SalestaxrateRow>
 
   companion object {
-    private class Impl(path: List<Path>) : Relation<SalestaxrateFields, SalestaxrateRow>(path) {
-      override fun fields(): SalestaxrateFields = object : SalestaxrateFields {
-        override fun salestaxrateid(): IdField<SalestaxrateId, SalestaxrateRow> = IdField<SalestaxrateId, SalestaxrateRow>(_path, "salestaxrateid", SalestaxrateRow::salestaxrateid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salestaxrateid = value) }, SalestaxrateId.pgType)
-        override fun stateprovinceid(): Field<StateprovinceId, SalestaxrateRow> = Field<StateprovinceId, SalestaxrateRow>(_path, "stateprovinceid", SalestaxrateRow::stateprovinceid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
-        override fun taxtype(): Field<TypoShort, SalestaxrateRow> = Field<TypoShort, SalestaxrateRow>(_path, "taxtype", SalestaxrateRow::taxtype, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(taxtype = value) }, TypoShort.pgType)
-        override fun taxrate(): Field<BigDecimal, SalestaxrateRow> = Field<BigDecimal, SalestaxrateRow>(_path, "taxrate", SalestaxrateRow::taxrate, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(taxrate = value) }, PgTypes.numeric)
-        override fun name(): Field<Name, SalestaxrateRow> = Field<Name, SalestaxrateRow>(_path, "name", SalestaxrateRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
-        override fun rowguid(): Field<TypoUUID, SalestaxrateRow> = Field<TypoUUID, SalestaxrateRow>(_path, "rowguid", SalestaxrateRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
-        override fun modifieddate(): Field<TypoLocalDateTime, SalestaxrateRow> = Field<TypoLocalDateTime, SalestaxrateRow>(_path, "modifieddate", SalestaxrateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
-      }
+    data class Impl(val _path: List<Path>) : SalestaxrateFields, Relation<SalestaxrateFields, SalestaxrateRow> {
+      override fun salestaxrateid(): IdField<SalestaxrateId, SalestaxrateRow> = IdField<SalestaxrateId, SalestaxrateRow>(_path, "salestaxrateid", SalestaxrateRow::salestaxrateid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(salestaxrateid = value) }, SalestaxrateId.pgType)
 
-      override fun columns(): List<FieldLike<*, SalestaxrateRow>> = listOf(this.fields().salestaxrateid(), this.fields().stateprovinceid(), this.fields().taxtype(), this.fields().taxrate(), this.fields().name(), this.fields().rowguid(), this.fields().modifieddate())
+      override fun stateprovinceid(): Field<StateprovinceId, SalestaxrateRow> = Field<StateprovinceId, SalestaxrateRow>(_path, "stateprovinceid", SalestaxrateRow::stateprovinceid, Optional.empty(), Optional.of("int4"), { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
 
-      override fun copy(path: List<Path>): Impl = Impl(path)
+      override fun taxtype(): Field<TypoShort, SalestaxrateRow> = Field<TypoShort, SalestaxrateRow>(_path, "taxtype", SalestaxrateRow::taxtype, Optional.empty(), Optional.of("int2"), { row, value -> row.copy(taxtype = value) }, TypoShort.pgType)
+
+      override fun taxrate(): Field<BigDecimal, SalestaxrateRow> = Field<BigDecimal, SalestaxrateRow>(_path, "taxrate", SalestaxrateRow::taxrate, Optional.empty(), Optional.of("numeric"), { row, value -> row.copy(taxrate = value) }, PgTypes.numeric)
+
+      override fun name(): Field<Name, SalestaxrateRow> = Field<Name, SalestaxrateRow>(_path, "name", SalestaxrateRow::name, Optional.empty(), Optional.of("varchar"), { row, value -> row.copy(name = value) }, Name.pgType)
+
+      override fun rowguid(): Field<TypoUUID, SalestaxrateRow> = Field<TypoUUID, SalestaxrateRow>(_path, "rowguid", SalestaxrateRow::rowguid, Optional.empty(), Optional.of("uuid"), { row, value -> row.copy(rowguid = value) }, TypoUUID.pgType)
+
+      override fun modifieddate(): Field<TypoLocalDateTime, SalestaxrateRow> = Field<TypoLocalDateTime, SalestaxrateRow>(_path, "modifieddate", SalestaxrateRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), { row, value -> row.copy(modifieddate = value) }, TypoLocalDateTime.pgType)
+
+      override fun columns(): List<FieldLike<*, SalestaxrateRow>> = listOf(this.salestaxrateid(), this.stateprovinceid(), this.taxtype(), this.taxrate(), this.name(), this.rowguid(), this.modifieddate())
+
+      override fun copy(_path: List<Path>): Relation<SalestaxrateFields, SalestaxrateRow> = Impl(_path)
     }
 
-    val structure: Relation<SalestaxrateFields, SalestaxrateRow> = Impl(listOf())
+    fun structure(): Impl = Impl(listOf())
   }
 }

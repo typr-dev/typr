@@ -9,52 +9,48 @@ import adventureworks.customtypes.TypoLocalDateTime;
 import adventureworks.public_.Name;
 import java.util.List;
 import java.util.Optional;
+import typo.dsl.FieldsExpr;
 import typo.dsl.Path;
 import typo.dsl.SqlExpr.Field;
 import typo.dsl.SqlExpr.FieldLike;
 import typo.dsl.SqlExpr.IdField;
 import typo.dsl.Structure.Relation;
+import typo.runtime.RowParser;
 
-public interface DepartmentFields {
-  final class Impl extends Relation<DepartmentFields, DepartmentRow> {
-    Impl(List<Path> path) {
-      super(path);
-    }
+public interface DepartmentFields extends FieldsExpr<DepartmentRow> {
+  record Impl(List<Path> _path) implements DepartmentFields, Relation<DepartmentFields, DepartmentRow> {
+    @Override
+    public IdField<DepartmentId, DepartmentRow> departmentid() {
+      return new IdField<DepartmentId, DepartmentRow>(_path, "departmentid", DepartmentRow::departmentid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
+    };
 
     @Override
-    public DepartmentFields fields() {
-      return new DepartmentFields() {
-               @Override
-               public IdField<DepartmentId, DepartmentRow> departmentid() {
-                 return new IdField<DepartmentId, DepartmentRow>(_path, "departmentid", DepartmentRow::departmentid, Optional.empty(), Optional.of("int4"), (row, value) -> row.withDepartmentid(value), DepartmentId.pgType);
-               };
-               @Override
-               public Field<Name, DepartmentRow> name() {
-                 return new Field<Name, DepartmentRow>(_path, "name", DepartmentRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
-               };
-               @Override
-               public Field<Name, DepartmentRow> groupname() {
-                 return new Field<Name, DepartmentRow>(_path, "groupname", DepartmentRow::groupname, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withGroupname(value), Name.pgType);
-               };
-               @Override
-               public Field<TypoLocalDateTime, DepartmentRow> modifieddate() {
-                 return new Field<TypoLocalDateTime, DepartmentRow>(_path, "modifieddate", DepartmentRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
-               };
-             };
+    public Field<Name, DepartmentRow> name() {
+      return new Field<Name, DepartmentRow>(_path, "name", DepartmentRow::name, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withName(value), Name.pgType);
+    };
+
+    @Override
+    public Field<Name, DepartmentRow> groupname() {
+      return new Field<Name, DepartmentRow>(_path, "groupname", DepartmentRow::groupname, Optional.empty(), Optional.of("varchar"), (row, value) -> row.withGroupname(value), Name.pgType);
+    };
+
+    @Override
+    public Field<TypoLocalDateTime, DepartmentRow> modifieddate() {
+      return new Field<TypoLocalDateTime, DepartmentRow>(_path, "modifieddate", DepartmentRow::modifieddate, Optional.of("text"), Optional.of("timestamp"), (row, value) -> row.withModifieddate(value), TypoLocalDateTime.pgType);
     };
 
     @Override
     public List<FieldLike<?, DepartmentRow>> columns() {
-      return List.of(this.fields().departmentid(), this.fields().name(), this.fields().groupname(), this.fields().modifieddate());
+      return List.of(this.departmentid(), this.name(), this.groupname(), this.modifieddate());
     };
 
     @Override
-    public Impl copy(List<Path> path) {
-      return new Impl(path);
+    public Relation<DepartmentFields, DepartmentRow> copy(List<Path> _path) {
+      return new Impl(_path);
     };
   };
 
-  static Relation<DepartmentFields, DepartmentRow> structure() {
+  static Impl structure() {
     return new Impl(List.of());
   };
 
@@ -65,4 +61,12 @@ public interface DepartmentFields {
   Field<Name, DepartmentRow> groupname();
 
   Field<TypoLocalDateTime, DepartmentRow> modifieddate();
+
+  @Override
+  List<FieldLike<?, DepartmentRow>> columns();
+
+  @Override
+  default RowParser<DepartmentRow> rowParser() {
+    return DepartmentRow._rowParser;
+  };
 }

@@ -29,5 +29,5 @@ case class LViewRow(
 )
 
 object LViewRow {
-  val `_rowParser`: RowParser[LViewRow] = RowParsers.of(LocationId.pgType, LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LViewRow.apply, row => Array(row.id, row.locationid, row.name, row.costrate, row.availability, row.modifieddate))
+  val `_rowParser`: RowParser[LViewRow] = RowParsers.of(LocationId.pgType, LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, TypoLocalDateTime.pgType, LViewRow.apply, row => Array[Object](row.id.asInstanceOf[Object], row.locationid.asInstanceOf[Object], row.name.asInstanceOf[Object], row.costrate.asInstanceOf[Object], row.availability.asInstanceOf[Object], row.modifieddate.asInstanceOf[Object]))
 }

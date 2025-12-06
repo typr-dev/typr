@@ -79,7 +79,7 @@ case class AuditLogRow(
 }
 
 object AuditLogRow {
-  val `_rowParser`: RowParser[AuditLogRow] = RowParsers.of(AuditLogId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.longtext.opt(), MariaTypes.longtext.opt(), MariaTypes.varchar.opt(), MariaTypes.datetime, MariaTypes.inet6.opt(), MariaTypes.varbinary.opt(), AuditLogRow.apply, row => Array(row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId))
+  val `_rowParser`: RowParser[AuditLogRow] = RowParsers.of(AuditLogId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.longtext.opt(), MariaTypes.longtext.opt(), MariaTypes.varchar.opt(), MariaTypes.datetime, MariaTypes.inet6.opt(), MariaTypes.varbinary.opt(), AuditLogRow.apply, row => Array[Object](row.logId.asInstanceOf[Object], row.tableName.asInstanceOf[Object], row.recordId.asInstanceOf[Object], row.action.asInstanceOf[Object], row.oldValues.asInstanceOf[Object], row.newValues.asInstanceOf[Object], row.changedBy.asInstanceOf[Object], row.changedAt.asInstanceOf[Object], row.clientIp.asInstanceOf[Object], row.sessionId.asInstanceOf[Object]))
 
   given mariaText: MariaText[AuditLogRow] = MariaText.from(`_rowParser`)
 }

@@ -5,13 +5,10 @@
  *
  * (If you're developing `typo` and want to change it: run `bleep generate-sources`)
  */
-package typo
-package generated
-package custom
-package table_comments
+package typo.generated.custom.table_comments
 
 import java.sql.Connection
 
 trait TableCommentsSqlRepo {
-  def apply()(implicit c: Connection): List[TableCommentsSqlRow]
+  def apply(implicit c: Connection): List[TableCommentsSqlRow]
 }
