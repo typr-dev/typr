@@ -2,10 +2,10 @@ package typo
 package internal
 package mariadb
 
-import anorm.*
-import typo.internal.analysis.*
-import typo.internal.sqlfiles.SqlFile
-import typo.internal.sqlglot.*
+import _root_.anorm.*
+import _root_.typo.internal.analysis.*
+import _root_.typo.internal.sqlfiles.SqlFile
+import _root_.typo.internal.sqlglot.*
 
 import java.nio.file.{Files, Path}
 import java.sql.Connection

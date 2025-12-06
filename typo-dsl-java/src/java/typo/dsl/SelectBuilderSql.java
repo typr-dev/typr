@@ -1,6 +1,5 @@
 package typo.dsl;
 
-import typo.data.Json;
 import typo.runtime.And;
 import typo.runtime.DbType;
 import typo.runtime.Fragment;
@@ -440,7 +439,7 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
 
     @Override
     @SuppressWarnings("unchecked")
-    public <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Json>>
+    public <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, List<Row2>>>
     multisetOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred) {
         if (!(other instanceof SelectBuilderSql<Fields2, Row2> otherSql)) {
             throw new IllegalArgumentException("Can only use multiset with SQL-based SelectBuilder");
@@ -1393,7 +1392,7 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
     }
 
     /**
-     * SelectBuilder for multiset (one-to-many) joins that aggregate the right side into JSON.
+     * SelectBuilder for multiset (one-to-many) joins that aggregate the right side into a typed List.
      *
      * <p>Generates SQL like:
      * <pre>
@@ -1402,20 +1401,22 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
      *         FROM emails e WHERE e.person_id = p.id) as child_data
      * FROM persons p
      * </pre>
+     *
+     * <p>The JSON is then parsed at runtime using the child RowParser to produce typed Row2 objects.
      */
     static class MultisetSelectBuilder<Fields1, Row1, Fields2, Row2>
-            extends SelectBuilderSql<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> {
+            extends SelectBuilderSql<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> {
 
         private final SelectBuilderSql<Fields1, Row1> parentBuilder;
         private final SelectBuilderSql<Fields2, Row2> childBuilder;
         private final Function<Structure.Tuple2<Fields1, Fields2>, SqlExpr<Boolean>> correlationPred;
-        private final SelectParams<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> params;
+        private final SelectParams<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> params;
 
         MultisetSelectBuilder(
                 SelectBuilderSql<Fields1, Row1> parentBuilder,
                 SelectBuilderSql<Fields2, Row2> childBuilder,
                 Function<Structure.Tuple2<Fields1, Fields2>, SqlExpr<Boolean>> correlationPred,
-                SelectParams<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> params) {
+                SelectParams<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> params) {
             this.parentBuilder = parentBuilder;
             this.childBuilder = childBuilder;
             this.correlationPred = correlationPred;
@@ -1428,7 +1429,7 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
         }
 
         @Override
-        public Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> structure() {
+        public Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> structure() {
             return new MultisetStructure<>(
                     parentBuilder.structure(),
                     childBuilder.structure()
@@ -1436,18 +1437,18 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
         }
 
         @Override
-        public SelectParams<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> params() {
+        public SelectParams<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> params() {
             return params;
         }
 
         @Override
-        public SelectBuilder<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> withParams(
-                SelectParams<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> newParams) {
+        public SelectBuilder<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> withParams(
+                SelectParams<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> newParams) {
             return new MultisetSelectBuilder<>(parentBuilder, childBuilder, correlationPred, newParams);
         }
 
         @Override
-        public SelectBuilderSql<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> withPath(Path path) {
+        public SelectBuilderSql<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> withPath(Path path) {
             return new MultisetSelectBuilder<>(
                     parentBuilder.withPath(path),
                     childBuilder.withPath(path),
@@ -1456,38 +1457,68 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
             );
         }
 
+        /**
+         * Get the child column names in order for JSON parsing.
+         */
+        private List<String> getChildColumnNames() {
+            RenderCtx childCtx = RenderCtx.from(childBuilder, dialect());
+            Query<Fields2, Row2> childQuery = childBuilder.collectQuery(childCtx, new AtomicInteger(0));
+            List<String> columnNames = new ArrayList<>();
+            for (TableState table : childQuery.allTables()) {
+                for (ColumnTuple col : table.columns()) {
+                    columnNames.add(col.column().column());
+                }
+            }
+            return columnNames;
+        }
+
+        /**
+         * Get the child row parser for JSON parsing.
+         */
+        private RowParser<Row2> getChildRowParser() {
+            RenderCtx childCtx = RenderCtx.from(childBuilder, dialect());
+            Query<Fields2, Row2> childQuery = childBuilder.collectQuery(childCtx, new AtomicInteger(0));
+            return childQuery.rowParser().apply(1);
+        }
+
         @Override
-        public Query<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> collectQuery(
+        public Query<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> collectQuery(
                 RenderCtx ctx, AtomicInteger counter) {
             // For multiset, we collect the parent query normally,
             // but the SQL rendering is custom (done in getSqlAndRowParser)
             Query<Fields1, Row1> parentQuery = parentBuilder.collectQuery(ctx, counter);
 
-            // Create a row parser that parses parent rows plus a JSON column
+            // Get child parser info for JSON decoding
+            RowParser<Row2> childRowParser = getChildRowParser();
+            List<String> childColumnNames = getChildColumnNames();
+
+            // Create a row parser that parses parent rows plus JSON decoded to List<Row2>
             Function<Integer, RowParser<Row1>> parentParser = parentQuery.rowParser();
             int parentColCount = computeColumnCount(parentQuery.allTables());
 
-            Function<Integer, RowParser<Structure.Tuple2<Row1, Json>>> combinedParser = startCol -> {
+            Function<Integer, RowParser<Structure.Tuple2<Row1, List<Row2>>>> combinedParser = startCol -> {
                 RowParser<Row1> r1Parser = parentParser.apply(startCol);
 
-                // Add the JSON column at the end
+                // Add the JSON column at the end (we read as text then parse)
                 List<DbType<?>> allDbTypes = new ArrayList<>(r1Parser.columns());
-                allDbTypes.add(typo.runtime.PgTypes.json);
+                allDbTypes.add(typo.runtime.PgTypes.text);
 
-                Function<Object[], Structure.Tuple2<Row1, Json>> decode = values -> {
-                    // Parent values are 0 to parentColCount-1, JSON is at parentColCount
+                Function<Object[], Structure.Tuple2<Row1, List<Row2>>> decode = values -> {
+                    // Parent values are 0 to parentColCount-1, JSON text is at parentColCount
                     Object[] parentValues = new Object[parentColCount];
                     System.arraycopy(values, 0, parentValues, 0, parentColCount);
                     Row1 parentRow = r1Parser.decode().apply(parentValues);
-                    Json jsonValue = (Json) values[parentColCount];
-                    return Structure.Tuple2.of(parentRow, jsonValue);
+                    String jsonStr = (String) values[parentColCount];
+                    List<Row2> childRows = childRowParser.parseJsonArray(jsonStr, childColumnNames);
+                    return Structure.Tuple2.of(parentRow, childRows);
                 };
 
-                Function<Structure.Tuple2<Row1, Json>, Object[]> encode = tuple -> {
+                Function<Structure.Tuple2<Row1, List<Row2>>, Object[]> encode = tuple -> {
                     Object[] parentValues = r1Parser.encode().apply(tuple._1());
                     Object[] allValues = new Object[parentValues.length + 1];
                     System.arraycopy(parentValues, 0, allValues, 0, parentValues.length);
-                    allValues[parentValues.length] = tuple._2();
+                    // Can't easily encode List<Row2> back to JSON, so we just store null
+                    allValues[parentValues.length] = null;
                     return allValues;
                 };
 
@@ -1504,7 +1535,7 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
         }
 
         @Override
-        protected Tuple2<Fragment, RowParser<Structure.Tuple2<Row1, Json>>> getSqlAndRowParser() {
+        protected Tuple2<Fragment, RowParser<Structure.Tuple2<Row1, List<Row2>>>> getSqlAndRowParser() {
             RenderCtx parentCtx = RenderCtx.from(parentBuilder, dialect());
             AtomicInteger counter = new AtomicInteger(0);
 
@@ -1621,9 +1652,9 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
             Fragment sql = select.append(from).append(joins).append(whereFrag).append(orderByFrag).append(offsetFrag).append(limitFrag);
 
             // Build row parser
-            Query<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> fullQuery =
+            Query<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> fullQuery =
                     collectQuery(parentCtx, new AtomicInteger(0));
-            RowParser<Structure.Tuple2<Row1, Json>> rowParser = fullQuery.rowParser().apply(1);
+            RowParser<Structure.Tuple2<Row1, List<Row2>>> rowParser = fullQuery.rowParser().apply(1);
 
             return new Tuple2<>(sql, rowParser);
         }
@@ -1898,12 +1929,17 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
     }
 
     /**
-     * Structure for multiset queries where the right side becomes a Json column.
+     * Structure for multiset queries where the right side becomes a typed List column.
      */
-    record MultisetStructure<Fields1, Row1, Fields2>(
+    record MultisetStructure<Fields1, Row1, Fields2, Row2>(
             Structure<Fields1, Row1> parentStructure,
-            Structure<Fields2, ?> childStructure
-    ) implements Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> {
+            Structure<Fields2, Row2> childStructure
+    ) implements Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> {
+
+        MultisetStructure(Structure<Fields1, Row1> parentStructure, Structure<Fields2, Row2> childStructure) {
+            this.parentStructure = parentStructure;
+            this.childStructure = childStructure;
+        }
 
         @Override
         public Structure.Tuple2<Fields1, Fields2> fields() {
@@ -1912,7 +1948,7 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
 
         @Override
         public List<SqlExpr.FieldLike<?, ?>> allFields() {
-            // Return parent fields (the Json column is synthetic and not backed by a field)
+            // Return parent fields (the child list column is synthetic and not backed by a field)
             return new ArrayList<>(parentStructure.allFields());
         }
 
@@ -1922,12 +1958,12 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
         }
 
         @Override
-        public Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> withPath(Path _path) {
+        public Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> withPath(Path _path) {
             return new MultisetStructure<>(parentStructure.withPath(_path), childStructure.withPath(_path));
         }
 
         @Override
-        public <T> Optional<T> untypedGetFieldValue(SqlExpr.FieldLike<T, ?> field, Structure.Tuple2<Row1, Json> row) {
+        public <T> Optional<T> untypedGetFieldValue(SqlExpr.FieldLike<T, ?> field, Structure.Tuple2<Row1, List<Row2>> row) {
             // Try to get from parent structure
             return parentStructure.untypedGetFieldValue(field, row._1());
         }

@@ -3,7 +3,7 @@ package typo.data;
 import java.util.Arrays;
 
 public record OidVector(int[] values) {
-    static typo.data.OidVector parse(String value) {
+    public static typo.data.OidVector parse(String value) {
         var values = value.split(" ");
         var ret = new int[values.length];
         for (var i = 0; i < values.length; i++) {

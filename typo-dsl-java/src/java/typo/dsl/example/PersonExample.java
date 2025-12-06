@@ -147,7 +147,7 @@ public class PersonExample {
 
         // Using LIKE operator
         List<PersonRow> johnsAndJanes = repo.select()
-                .where(p -> p.firstName().like("Jo%", Bijection.identity()))
+                .where(p -> p.firstName().like("Jo%", Bijection.asString()))
                 .toList(conn);
 
         // Complex boolean logic

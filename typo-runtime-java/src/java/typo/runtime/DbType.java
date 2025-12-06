@@ -26,6 +26,12 @@ public interface DbType<A> {
     DbText<A> text();
 
     /**
+     * Get the JSON codec for converting values to/from JSON format
+     * that the database can produce/consume.
+     */
+    DbJson<A> json();
+
+    /**
      * Create an optional version of this type.
      */
     DbType<java.util.Optional<A>> opt();

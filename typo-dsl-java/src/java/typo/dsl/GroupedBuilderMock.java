@@ -206,7 +206,7 @@ public class GroupedBuilderMock<Fields, Row> implements GroupedBuilder<Fields, R
         }
 
         @Override
-        public <Fields2, Row2> SelectBuilder<Structure.Tuple2<NewFields, Fields2>, Structure.Tuple2<NewRow, typo.data.Json>>
+        public <Fields2, Row2> SelectBuilder<Structure.Tuple2<NewFields, Fields2>, Structure.Tuple2<NewRow, List<Row2>>>
         multisetOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<NewFields, Fields2>, SqlExpr<Boolean>> pred) {
             // Convert to regular SelectBuilderMock and delegate
             return toSelectBuilderMock().multisetOn(other, pred);

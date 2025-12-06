@@ -40,16 +40,16 @@ object GeneratedAdventureWorks {
           ),
           Duration.Inf
         )
-        val variants: Seq[(Lang, DbLibName, Option[JsonLibName], String, String)] = List(
-          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Anorm, Some(JsonLibName.PlayJson), "typo-tester-anorm", "-2.13"),
-          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Anorm, Some(JsonLibName.PlayJson), "typo-tester-anorm", "-3"),
-          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Doobie, Some(JsonLibName.Circe), "typo-tester-doobie", "-2.13"),
-          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, Some(JsonLibName.Circe), "typo-tester-doobie", "-3"),
-          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, Some(JsonLibName.ZioJson), "typo-tester-zio-jdbc", "-2.13"),
-          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, Some(JsonLibName.ZioJson), "typo-tester-zio-jdbc", "-3"),
-          (LangJava, DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-typo-java", ""),
-          (LangScala(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-typo-scala", ""),
-          (LangKotlin, DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-typo-kotlin", "")
+        val variants: Seq[(Lang, DbLibName, JsonLibName, String, String)] = List(
+          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "typo-tester-anorm", "-2.13"),
+          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "typo-tester-anorm", "-3"),
+          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "typo-tester-doobie", "-2.13"),
+          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "typo-tester-doobie", "-3"),
+          (LangScala(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "typo-tester-zio-jdbc", "-2.13"),
+          (LangScala(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "typo-tester-zio-jdbc", "-3"),
+          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "typo-tester-typo-java", ""),
+          (LangScala(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, JsonLibName.Jackson, "typo-tester-typo-scala", ""),
+          (LangKotlin, DbLibName.Typo, JsonLibName.Jackson, "typo-tester-typo-kotlin", "")
         )
 
         def go(): Unit = {
@@ -60,7 +60,7 @@ object GeneratedAdventureWorks {
               pkg = "adventureworks",
               lang = lang,
               dbLib = Some(dbLib),
-              jsonLibs = jsonLib.toList,
+              jsonLibs = List(jsonLib),
               typeOverride = TypeOverride.relation {
                 case (_, "firstname")                     => "adventureworks.userdefined.FirstName"
                 case ("sales.creditcard", "creditcardid") => "adventureworks.userdefined.CustomCreditcardId"

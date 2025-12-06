@@ -27,7 +27,7 @@ case class TypoLocalDateTime(value: LocalDateTime)
 object TypoLocalDateTime {
   def apply(value: LocalDateTime): TypoLocalDateTime = new TypoLocalDateTime(value.truncatedTo(ChronoUnit.MICROS))
 
-  def apply(str: String): TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.parse(str, parser))
+  def apply(str: String): TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.parse(str, (if (str.contains("T")) jsonParser else parser)))
 
   given arrayColumn: Column[Array[TypoLocalDateTime]] = {
     Column.nonNull[Array[TypoLocalDateTime]]((v1: Any, _) =>
@@ -35,7 +35,7 @@ object TypoLocalDateTime {
           case v: PgArray =>
            v.getArray match {
              case v: Array[?] =>
-               Right(v.map(v => TypoLocalDateTime.apply(LocalDateTime.parse(v.asInstanceOf[String], parser))))
+               Right(v.map(v => TypoLocalDateTime.apply(v.asInstanceOf[String])))
              case other => Left(TypeDoesNotMatch(s"Expected one-dimensional array from JDBC to produce an array of TypoLocalDateTime, got ${other.getClass.getName}"))
            }
         case other => Left(TypeDoesNotMatch(s"Expected instance of org.postgresql.jdbc.PgArray, got ${other.getClass.getName}"))
@@ -50,11 +50,13 @@ object TypoLocalDateTime {
   given column: Column[TypoLocalDateTime] = {
     Column.nonNull[TypoLocalDateTime]((v1: Any, _) =>
       v1 match {
-        case v: String => Right(TypoLocalDateTime.apply(LocalDateTime.parse(v, parser)))
+        case v: String => Right(TypoLocalDateTime.apply(v))
         case other => Left(TypeDoesNotMatch(s"Expected instance of java.lang.String, got ${other.getClass.getName}"))
       }
     )
   }
+
+  val jsonParser: DateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).toFormatter()
 
   def now: TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.now())
 

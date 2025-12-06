@@ -1,5 +1,7 @@
 package typo.runtime;
 
+import typo.data.JsonValue;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -173,5 +175,77 @@ public record RowParser<Row>(List<DbType<?>> columns,
 
     public <Row2> RowParser<And<Optional<Row>, Optional<Row2>>> fullJoined(RowParser<Row2> other) {
         return opt().joined(other.opt());
+    }
+
+    /**
+     * Parse a list of rows from a JSON array.
+     * This is used for typed MULTISET support where the database returns JSON.
+     *
+     * <p>The JSON array format can be:
+     * <ul>
+     *   <li>Array of objects: [{"col1": val1, "col2": val2}, ...]</li>
+     *   <li>Compact array of arrays: [[val1, val2], [val3, val4], ...]</li>
+     * </ul>
+     *
+     * @param jsonStr JSON string from database
+     * @param columnNames names of columns in order (for object format lookup)
+     * @return list of parsed rows
+     */
+    @SuppressWarnings("unchecked")
+    public List<Row> parseJsonArray(String jsonStr, List<String> columnNames) {
+        if (jsonStr == null || jsonStr.isEmpty()) {
+            return List.of();
+        }
+
+        JsonValue json = JsonValue.parse(jsonStr);
+        if (!(json instanceof JsonValue.JArray(List<JsonValue> values))) {
+            throw new IllegalArgumentException("Expected JSON array, got: " + json.getClass().getSimpleName());
+        }
+
+        List<Row> result = new ArrayList<>(values.size());
+        for (JsonValue elem : values) {
+            Row row = parseJsonRow(elem, columnNames);
+            result.add(row);
+        }
+        return result;
+    }
+
+    /**
+     * Parse a single row from a JSON value.
+     * Supports both object format {"col": val} and array format [val1, val2].
+     */
+    @SuppressWarnings("unchecked")
+    private Row parseJsonRow(JsonValue json, List<String> columnNames) {
+        Object[] values = new Object[columns.size()];
+
+        if (json instanceof JsonValue.JArray(List<JsonValue> values1)) {
+            // Compact array format: values in column order
+            if (values1.size() != columns.size()) {
+                throw new IllegalArgumentException("JSON array size " + values1.size() +
+                        " doesn't match column count " + columns.size());
+            }
+            for (int i = 0; i < columns.size(); i++) {
+                DbJson<Object> jsonCodec = (DbJson<Object>) columns.get(i).json();
+                values[i] = jsonCodec.fromJson(values1.get(i));
+            }
+        } else if (json instanceof JsonValue.JObject(java.util.Map<String, JsonValue> fields)) {
+            // Object format: lookup by column name
+            for (int i = 0; i < columns.size(); i++) {
+                String colName = columnNames.get(i);
+                JsonValue colValue = fields.get(colName);
+                if (colValue == null) {
+                    // Column not present in JSON - use null
+                    values[i] = null;
+                } else {
+                    DbJson<Object> jsonCodec = (DbJson<Object>) columns.get(i).json();
+                    values[i] = jsonCodec.fromJson(colValue);
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Expected JSON object or array for row, got: " +
+                    json.getClass().getSimpleName());
+        }
+
+        return decode.apply(values);
     }
 }

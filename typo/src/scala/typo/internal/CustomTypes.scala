@@ -245,8 +245,9 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     ),
     toTypo = CustomType.ToTypo(
       // Use lang.String for Kotlin compatibility
+      // Use apply(String) to handle both JDBC (space-delimited) and JSON (ISO with 'T') formats
       jdbcType = lang.String,
-      toTypo = (expr, target) => code"$target.apply(${TypesJava.LocalDateTime}.parse($expr, parser))"
+      toTypo = (expr, target) => code"$target.apply($expr)"
     ),
     fromTypo = CustomType.FromTypo(
       jdbcType = lang.String,
@@ -255,12 +256,23 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     toText = CustomType.Text.string(expr => prop(expr, "value").invoke("toString")),
     objBody = target =>
       List(
+        // Parser for JDBC format (space-delimited)
         jvm.Value(
           annotations = Nil,
           name = jvm.Ident("parser"),
           tpe = TypesJava.DateTimeFormatter,
           body =
             Some(code"""${TypesJava.DateTimeFormatterBuilder.construct()}.appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(${TypesJava.ChronoField}.MICRO_OF_SECOND, 0, 6, true).toFormatter()"""),
+          isLazy = false,
+          isOverride = false
+        ),
+        // Parser for JSON format (ISO with 'T' delimiter)
+        jvm.Value(
+          annotations = Nil,
+          name = jvm.Ident("jsonParser"),
+          tpe = TypesJava.DateTimeFormatter,
+          body =
+            Some(code"""${TypesJava.DateTimeFormatterBuilder.construct()}.appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(${TypesJava.ChronoField}.MICRO_OF_SECOND, 0, 6, true).toFormatter()"""),
           isLazy = false,
           isOverride = false
         ),
@@ -287,7 +299,11 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
           implicitParams = Nil,
           tpe = target,
           throws = Nil,
-          body = jvm.Body.Expr(code"$target.apply(${TypesJava.LocalDateTime}.parse(str, parser))"),
+          // Parse both formats: ISO with 'T' or space-delimited
+          body = jvm.Body.Expr {
+            val chosenParser = lang.ternary(code"""str.contains("T")""", code"jsonParser", code"parser")
+            code"$target.apply(${TypesJava.LocalDateTime}.parse(str, $chosenParser))"
+          },
           isOverride = false,
           isDefault = false
         ),
@@ -326,6 +342,7 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
     toText = CustomType.Text.string(expr => prop(expr, "value").invoke("toString")),
     objBody = target =>
       List(
+        // Parser for JDBC format (space-delimited with timezone)
         jvm.Value(
           annotations = Nil,
           name = jvm.Ident("parser"),
@@ -333,6 +350,18 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
           body = Some(
             code"""${TypesJava.DateTimeFormatterBuilder
                 .construct()}.appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(${TypesJava.ChronoField}.MICRO_OF_SECOND, 0, 6, true).appendPattern("X").toFormatter()"""
+          ),
+          isLazy = false,
+          isOverride = false
+        ),
+        // Parser for JSON format (ISO with 'T' delimiter and optional Z suffix)
+        jvm.Value(
+          annotations = Nil,
+          name = jvm.Ident("jsonParser"),
+          tpe = TypesJava.DateTimeFormatter,
+          body = Some(
+            code"""${TypesJava.DateTimeFormatterBuilder
+                .construct()}.appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(${TypesJava.ChronoField}.MICRO_OF_SECOND, 0, 6, true).appendPattern("X").toFormatter()"""
           ),
           isLazy = false,
           isOverride = false
@@ -360,7 +389,11 @@ class CustomTypes(pkg: jvm.QIdent, lang: Lang) {
           implicitParams = Nil,
           tpe = target,
           throws = Nil,
-          body = jvm.Body.Expr(code"$target.apply(${TypesJava.OffsetDateTime}.parse(str, parser).toInstant())"),
+          // Parse both formats: ISO with 'T' or space-delimited
+          body = jvm.Body.Expr {
+            val chosenParser = lang.ternary(code"""str.contains("T")""", code"jsonParser", code"parser")
+            code"$target.apply(${TypesJava.OffsetDateTime}.parse(str, $chosenParser).toInstant())"
+          },
           isOverride = false,
           isDefault = false
         ),

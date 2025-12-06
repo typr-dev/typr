@@ -28,7 +28,7 @@ case class TypoInstant(value: Instant)
 object TypoInstant {
   def apply(value: Instant): TypoInstant = new TypoInstant(value.truncatedTo(ChronoUnit.MICROS))
 
-  def apply(str: String): TypoInstant = TypoInstant.apply(OffsetDateTime.parse(str, parser).toInstant())
+  def apply(str: String): TypoInstant = TypoInstant.apply(OffsetDateTime.parse(str, (if (str.contains("T")) jsonParser else parser)).toInstant())
 
   implicit lazy val arrayJdbcDecoder: JdbcDecoder[Array[TypoInstant]] = {
     JdbcDecoder[Array[TypoInstant]]((rs: ResultSet) => (i: Int) =>
@@ -74,6 +74,8 @@ object TypoInstant {
   implicit lazy val jsonDecoder: JsonDecoder[TypoInstant] = JsonDecoder.instant.map(TypoInstant.apply)
 
   implicit lazy val jsonEncoder: JsonEncoder[TypoInstant] = JsonEncoder.instant.contramap(_.value)
+
+  val jsonParser: DateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).appendPattern("X").toFormatter()
 
   def now: TypoInstant = TypoInstant.apply(Instant.now())
 

@@ -5,6 +5,7 @@
  */
 package testdb.hardcoded.myschema.person
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import testdb.hardcoded.customtypes.Defaulted
 import testdb.hardcoded.myschema.Number
@@ -24,24 +25,24 @@ case class PersonRow(
   /** Default: auto-increment */
   id: PersonId,
   /** Points to [[testdb.hardcoded.myschema.football_club.FootballClubRow.id]] */
-  favouriteFootballClubId: FootballClubId,
+  @JsonProperty("favourite_football_club_id") favouriteFootballClubId: FootballClubId,
   name: /* max 100 chars */ String,
-  nickName: Optional[/* max 30 chars */ String],
-  blogUrl: Optional[/* max 100 chars */ String],
+  @JsonProperty("nick_name") nickName: Optional[/* max 30 chars */ String],
+  @JsonProperty("blog_url") blogUrl: Optional[/* max 100 chars */ String],
   email: /* max 254 chars */ String,
   phone: /* max 8 chars */ String,
-  likesPizza: java.lang.Boolean,
+  @JsonProperty("likes_pizza") likesPizza: java.lang.Boolean,
   /** Default: some-value
    * Points to [[testdb.hardcoded.myschema.marital_status.MaritalStatusRow.id]]
    */
-  maritalStatusId: MaritalStatusId,
-  workEmail: Optional[/* max 254 chars */ String],
+  @JsonProperty("marital_status_id") maritalStatusId: MaritalStatusId,
+  @JsonProperty("work_email") workEmail: Optional[/* max 254 chars */ String],
   /** Default: PUBLIC
    * Identity ALWAYS
    */
   sector: Sector,
   /** Default: one */
-  favoriteNumber: Number
+  @JsonProperty("favorite_number") favoriteNumber: Number
 ) {
   def toUnsavedRow(
     id: Defaulted[PersonId],

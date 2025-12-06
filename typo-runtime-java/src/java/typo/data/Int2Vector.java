@@ -3,7 +3,7 @@ package typo.data;
 import java.util.Arrays;
 
 public record Int2Vector(short[] values) {
-    static Int2Vector parse(String value) {
+    public static Int2Vector parse(String value) {
         var values = value.split(" ");
         var ret = new short[values.length];
         for (var i = 0; i < values.length; i++) {

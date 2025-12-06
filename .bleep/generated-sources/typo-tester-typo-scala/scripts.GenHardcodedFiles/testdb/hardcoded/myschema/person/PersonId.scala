@@ -5,12 +5,13 @@
  */
 package testdb.hardcoded.myschema.person
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `myschema.person` */
-case class PersonId(value: java.lang.Long) extends scala.AnyVal
+case class PersonId(@JsonValue value: java.lang.Long) extends scala.AnyVal
 
 object PersonId {
   given bijection: Bijection[PersonId, java.lang.Long] = Bijection.apply[PersonId, java.lang.Long](_.value)(PersonId.apply)

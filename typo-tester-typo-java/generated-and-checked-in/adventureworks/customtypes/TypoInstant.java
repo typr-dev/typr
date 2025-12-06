@@ -31,11 +31,13 @@ public record TypoInstant(@JsonValue Instant value) {
   };
 
   static public TypoInstant apply(String str) {
-    return TypoInstant.apply(OffsetDateTime.parse(str, parser).toInstant());
+    return TypoInstant.apply(OffsetDateTime.parse(str, (str.contains("T") ? jsonParser : parser)).toInstant());
   };
 
   static public Bijection<TypoInstant, Instant> bijection =
     Bijection.of(TypoInstant::value, TypoInstant::new);
+
+  static DateTimeFormatter jsonParser = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).appendPattern("X").toFormatter();;
 
   static public TypoInstant now() {
     return TypoInstant.apply(Instant.now());
