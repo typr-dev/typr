@@ -24,11 +24,11 @@ case class TypoLocalDateTime(value: LocalDateTime)
 object TypoLocalDateTime {
   def apply(value: LocalDateTime): TypoLocalDateTime = new TypoLocalDateTime(value.truncatedTo(ChronoUnit.MICROS))
 
-  def apply(str: String): TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.parse(str, parser))
+  def apply(str: String): TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.parse(str, (if (str.contains("T")) jsonParser else parser)))
 
   given arrayGet: Get[Array[TypoLocalDateTime]] = {
     Get.Advanced.array[AnyRef](NonEmptyList.one("timestamp[]"))
-      .map(_.map(v => TypoLocalDateTime.apply(LocalDateTime.parse(v.asInstanceOf[String], parser))))
+      .map(_.map(v => TypoLocalDateTime.apply(v.asInstanceOf[String])))
   }
 
   given arrayPut: Put[Array[TypoLocalDateTime]] = {
@@ -44,8 +44,10 @@ object TypoLocalDateTime {
 
   given get: Get[TypoLocalDateTime] = {
     Get.Advanced.other[String](NonEmptyList.one("timestamp"))
-      .map(v => TypoLocalDateTime.apply(LocalDateTime.parse(v, parser)))
+      .map(v => TypoLocalDateTime.apply(v))
   }
+
+  val jsonParser: DateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).toFormatter()
 
   def now: TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.now())
 

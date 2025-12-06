@@ -237,7 +237,7 @@ public class GroupedBuilderSql<Fields, Row> implements GroupedBuilder<Fields, Ro
         }
 
         @Override
-        public <Fields2, Row2> SelectBuilder<Structure.Tuple2<NewFields, Fields2>, Structure.Tuple2<NewRow, typo.data.Json>>
+        public <Fields2, Row2> SelectBuilder<Structure.Tuple2<NewFields, Fields2>, Structure.Tuple2<NewRow, List<Row2>>>
         multisetOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<NewFields, Fields2>, SqlExpr<Boolean>> pred) {
             if (!(other instanceof SelectBuilderSql<Fields2, Row2> otherSql)) {
                 throw new IllegalArgumentException("Can only use multiset with SQL-based SelectBuilder");

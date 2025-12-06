@@ -5,6 +5,7 @@
  */
 package testdb.hardcoded.myschema.person
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
 import testdb.hardcoded.customtypes.Defaulted
 import testdb.hardcoded.customtypes.Defaulted.UseDefault
@@ -18,22 +19,22 @@ import typo.runtime.PgTypes
 /** This class corresponds to a row in table `myschema.person` which has not been persisted yet */
 case class PersonRowUnsaved(
   /** Points to [[testdb.hardcoded.myschema.football_club.FootballClubRow.id]] */
-  favouriteFootballClubId: FootballClubId,
+  @JsonProperty("favourite_football_club_id") favouriteFootballClubId: FootballClubId,
   name: /* max 100 chars */ String,
-  nickName: Optional[/* max 30 chars */ String] = Optional.empty(),
-  blogUrl: Optional[/* max 100 chars */ String] = Optional.empty(),
+  @JsonProperty("nick_name") nickName: Optional[/* max 30 chars */ String] = Optional.empty(),
+  @JsonProperty("blog_url") blogUrl: Optional[/* max 100 chars */ String] = Optional.empty(),
   email: /* max 254 chars */ String,
   phone: /* max 8 chars */ String,
-  likesPizza: java.lang.Boolean,
-  workEmail: Optional[/* max 254 chars */ String] = Optional.empty(),
+  @JsonProperty("likes_pizza") likesPizza: java.lang.Boolean,
+  @JsonProperty("work_email") workEmail: Optional[/* max 254 chars */ String] = Optional.empty(),
   /** Default: auto-increment */
   id: Defaulted[PersonId] = new UseDefault(),
   /** Default: some-value
    * Points to [[testdb.hardcoded.myschema.marital_status.MaritalStatusRow.id]]
    */
-  maritalStatusId: Defaulted[MaritalStatusId] = new UseDefault(),
+  @JsonProperty("marital_status_id") maritalStatusId: Defaulted[MaritalStatusId] = new UseDefault(),
   /** Default: one */
-  favoriteNumber: Defaulted[Number] = new UseDefault()
+  @JsonProperty("favorite_number") favoriteNumber: Defaulted[Number] = new UseDefault()
 ) {
   def toRow(
     idDefault: => PersonId,

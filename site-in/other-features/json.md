@@ -21,7 +21,7 @@ import typo.internal.codegen.LangScala
 val options = Options(
   pkg = "org.foo",
   lang = LangScala(Dialect.Scala3, TypeSupportScala),
-  jsonLibs = List(JsonLibName.PlayJson), // or `Nil` if you don't want json
+  jsonLib = JsonLibName.PlayJson,
   dbLib = Some(DbLibName.Anorm)
 )
 ```

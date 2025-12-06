@@ -36,10 +36,10 @@ object GeneratedMariaDb {
 
         val metadb = Await.result(MetaDb.fromDb(typoLogger, ds, selector, schemaMode = SchemaMode.SingleSchema("typo")), Duration.Inf)
 
-        val variants: Seq[(Lang, DbLibName, Option[JsonLibName], String, String)] = List(
-          (LangJava, DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-mariadb-java", ""),
-          (LangScala(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-mariadb-scala", ""),
-          (LangKotlin, DbLibName.Typo, Some(JsonLibName.Jackson), "typo-tester-mariadb-kotlin", "")
+        val variants: Seq[(Lang, DbLibName, JsonLibName, String, String)] = List(
+          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "typo-tester-mariadb-java", ""),
+          (LangScala(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, JsonLibName.Jackson, "typo-tester-mariadb-scala", ""),
+          (LangKotlin, DbLibName.Typo, JsonLibName.Jackson, "typo-tester-mariadb-kotlin", "")
         )
 
         def go(): Unit = {
@@ -50,7 +50,7 @@ object GeneratedMariaDb {
               pkg = "testdb",
               lang = lang,
               dbLib = Some(dbLib),
-              jsonLibs = jsonLib.toList,
+              jsonLibs = List(jsonLib),
               generateMockRepos = Selector.All,
               enablePrimaryKeyType = Selector.All,
               enableTestInserts = Selector.All,

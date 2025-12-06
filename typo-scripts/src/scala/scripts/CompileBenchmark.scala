@@ -37,14 +37,14 @@ object CompileBenchmark extends BleepScript("CompileBenchmark") {
       "jvm3"
     ).map(str => model.CrossId(str))
     val variants = List(
-      ("baseline (only case class)", None, Nil, "typo-tester-none", true),
-      ("zio-jdbc", Some(DbLibName.ZioJdbc), Nil, "typo-tester-zio-jdbc", true),
-      ("doobie (with fix)", Some(DbLibName.Doobie), Nil, "typo-tester-doobie", true),
-      ("doobie (without fix)", Some(DbLibName.Doobie), Nil, "typo-tester-doobie", false),
-      ("anorm", Some(DbLibName.Anorm), Nil, "typo-tester-anorm", true),
-      ("zio-json", None, List(JsonLibName.ZioJson), "typo-tester-zio-jdbc", true),
-      ("circe", None, List(JsonLibName.Circe), "typo-tester-doobie", true),
-      ("play-json", None, List(JsonLibName.PlayJson), "typo-tester-anorm", true)
+      ("baseline (only case class)", None, JsonLibName.PlayJson, "typo-tester-none", true),
+      ("zio-jdbc", Some(DbLibName.ZioJdbc), JsonLibName.ZioJson, "typo-tester-zio-jdbc", true),
+      ("doobie (with fix)", Some(DbLibName.Doobie), JsonLibName.Circe, "typo-tester-doobie", true),
+      ("doobie (without fix)", Some(DbLibName.Doobie), JsonLibName.Circe, "typo-tester-doobie", false),
+      ("anorm", Some(DbLibName.Anorm), JsonLibName.PlayJson, "typo-tester-anorm", true),
+      ("zio-json", None, JsonLibName.ZioJson, "typo-tester-zio-jdbc", true),
+      ("circe", None, JsonLibName.Circe, "typo-tester-doobie", true),
+      ("play-json", None, JsonLibName.PlayJson, "typo-tester-anorm", true)
     )
     val GeneratedAndCheckedIn = Path.of("generated-and-checked-in")
 
@@ -57,7 +57,7 @@ object CompileBenchmark extends BleepScript("CompileBenchmark") {
             pkg = "adventureworks",
             lang = LangScala(Dialect.Scala2XSource3, TypeSupportScala),
             dbLib = dbLib,
-            jsonLibs = jsonLib,
+            jsonLibs = List(jsonLib),
             enableTestInserts = Selector.All,
             enableStreamingInserts = false,
             enableDsl = dbLib.nonEmpty,

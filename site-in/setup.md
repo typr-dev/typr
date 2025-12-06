@@ -59,7 +59,7 @@ val options = Options(
   lang = LangScala(Dialect.Scala3, TypeSupportScala),
   // pick your database library
   dbLib = Some(DbLibName.Anorm),
-  jsonLibs = Nil,
+  jsonLib = JsonLibName.PlayJson,
   // many more possibilities for customization here
   // ...
 )

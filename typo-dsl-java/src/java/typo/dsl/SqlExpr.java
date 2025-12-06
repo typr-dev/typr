@@ -290,6 +290,38 @@ public sealed interface SqlExpr<T> permits
         default DbType<T> dbType() {
             return pgType();
         }
+
+        /**
+         * Render this field reference as SQL.
+         * Default implementation for Field, OptField, and IdField.
+         */
+        @Override
+        default Fragment render(RenderCtx ctx, AtomicInteger counter) {
+            // Check if this field is a projected expression - if so, use the projected column reference
+            Optional<String> projectedRef = ctx.projectedColumnRef(this);
+            if (projectedRef.isPresent()) {
+                return Fragment.lit(projectedRef.get() + " ");
+            }
+
+            String colRef = ctx.alias(_path())
+                .map(alias -> {
+                    if (ctx.inJoinContext()) {
+                        // In join context, reference columns via resolved table alias
+                        String tableAlias = ctx.resolveCte(alias);
+                        // If alias maps to a different table (CTE), use unique column format
+                        if (!tableAlias.equals(alias)) {
+                            // Column is in a CTE/composite - use alias_column format
+                            return tableAlias + "." + alias + "_" + column();
+                        }
+                        return tableAlias + "." + ctx.dialect().quoteIdent(column());
+                    } else {
+                        // In base context, reference actual table columns: (alias)."column"
+                        return ctx.dialect().columnRef(alias, ctx.dialect().quoteIdent(column()));
+                    }
+                })
+                .orElse(ctx.dialect().quoteIdent(column()));
+            return Fragment.lit(colRef + " ");
+        }
         
         // Convenience methods for type-safe value comparisons
         default SqlExpr<Boolean> isEqual(T value) {
@@ -366,7 +398,7 @@ public sealed interface SqlExpr<T> permits
     ) implements FieldLikeNotId<T, R> {
         @Override
         public Optional<T> get(R row) {
-            return Optional.of(get.apply(row));
+            return Optional.ofNullable(get.apply(row));
         }
 
         @Override
@@ -376,34 +408,6 @@ public sealed interface SqlExpr<T> permits
             } else {
                 return Either.left("Expected non-null value for " + column());
             }
-        }
-
-        @Override
-        public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-            // Check if this field is a projected expression - if so, use the projected column reference
-            Optional<String> projectedRef = ctx.projectedColumnRef(this);
-            if (projectedRef.isPresent()) {
-                return Fragment.lit(projectedRef.get() + " ");
-            }
-
-            String colRef = ctx.alias(_path())
-                .map(alias -> {
-                    if (ctx.inJoinContext()) {
-                        // In join context, reference columns via resolved table alias
-                        String tableAlias = ctx.resolveCte(alias);
-                        // If alias maps to a different table (CTE), use unique column format
-                        if (!tableAlias.equals(alias)) {
-                            // Column is in a CTE/composite - use alias_column format
-                            return tableAlias + "." + alias + "_" + column();
-                        }
-                        return tableAlias + "." + ctx.dialect().quoteIdent(column());
-                    } else {
-                        // In base context, reference actual table columns: (alias)."column"
-                        return ctx.dialect().columnRef(alias, ctx.dialect().quoteIdent(column()));
-                    }
-                })
-                .orElse(ctx.dialect().quoteIdent(column()));
-            return Fragment.lit(colRef + " ");
         }
     }
 
@@ -425,34 +429,6 @@ public sealed interface SqlExpr<T> permits
         public Either<String, R> set(R row, Optional<T> value) {
             return Either.right(setter.apply(row, value));
         }
-
-        @Override
-        public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-            // Check if this field is a projected expression - if so, use the projected column reference
-            Optional<String> projectedRef = ctx.projectedColumnRef(this);
-            if (projectedRef.isPresent()) {
-                return Fragment.lit(projectedRef.get() + " ");
-            }
-
-            String colRef = ctx.alias(_path())
-                .map(alias -> {
-                    if (ctx.inJoinContext()) {
-                        // In join context, reference columns via resolved table alias
-                        String tableAlias = ctx.resolveCte(alias);
-                        // If alias maps to a different table (CTE), use unique column format
-                        if (!tableAlias.equals(alias)) {
-                            // Column is in a CTE/composite - use alias_column format
-                            return tableAlias + "." + alias + "_" + column();
-                        }
-                        return tableAlias + "." + ctx.dialect().quoteIdent(column());
-                    } else {
-                        // In base context, reference actual table columns: (alias)."column"
-                        return ctx.dialect().columnRef(alias, ctx.dialect().quoteIdent(column()));
-                    }
-                })
-                .orElse(ctx.dialect().quoteIdent(column()));
-            return Fragment.lit(colRef + " ");
-        }
     }
 
     record IdField<T, R>(
@@ -466,7 +442,7 @@ public sealed interface SqlExpr<T> permits
     ) implements FieldLike<T, R> {
         @Override
         public Optional<T> get(R row) {
-            return Optional.of(get.apply(row));
+            return Optional.ofNullable(get.apply(row));
         }
 
         @Override
@@ -476,34 +452,6 @@ public sealed interface SqlExpr<T> permits
             } else {
                 return Either.left("Expected non-null value for " + column());
             }
-        }
-
-        @Override
-        public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-            // Check if this field is a projected expression - if so, use the projected column reference
-            Optional<String> projectedRef = ctx.projectedColumnRef(this);
-            if (projectedRef.isPresent()) {
-                return Fragment.lit(projectedRef.get() + " ");
-            }
-
-            String colRef = ctx.alias(_path())
-                .map(alias -> {
-                    if (ctx.inJoinContext()) {
-                        // In join context, reference columns via resolved table alias
-                        String tableAlias = ctx.resolveCte(alias);
-                        // If alias maps to a different table (CTE), use unique column format
-                        if (!tableAlias.equals(alias)) {
-                            // Column is in a CTE/composite - use alias_column format
-                            return tableAlias + "." + alias + "_" + column();
-                        }
-                        return tableAlias + "." + ctx.dialect().quoteIdent(column());
-                    } else {
-                        // In base context, reference actual table columns: (alias)."column"
-                        return ctx.dialect().columnRef(alias, ctx.dialect().quoteIdent(column()));
-                    }
-                })
-                .orElse(ctx.dialect().quoteIdent(column()));
-            return Fragment.lit(colRef + " ");
         }
     }
 

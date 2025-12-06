@@ -462,16 +462,6 @@ case class FilesRelation(
       jvm.ApplyNullary(code"this", c.name).code
     })
 
-    /* fields: lazy override val (Scala) / @Override public Type fields() (Java) */
-    val fieldsValue = jvm.Value(
-      Nil,
-      jvm.Ident("fields"),
-      fieldsName,
-      Some(jvm.NewWithBody(extendsClass = None, implementsInterface = Some(fieldsName), fieldImplMethods).code),
-      isLazy = true,
-      isOverride = true
-    )
-
     val columnsImplMethod = jvm.Method(
       annotations = Nil,
       comments = jvm.Comments.Empty,

@@ -75,6 +75,30 @@ public interface Bijection<T, TT> {
         return identity();
     }
 
+    /**
+     * Type witness proving that T is String.
+     *
+     * <p>This is used for type-safe string operations on {@link SqlExpr}.
+     * The method only compiles when called in a context where T = String,
+     * providing compile-time type safety.
+     *
+     * <p>Example usage:
+     * <pre>{@code
+     * SqlExpr<String> nameField = ...;
+     * SqlExpr<Boolean> matched = nameField.like("Jo%", Bijection.asString());
+     * SqlExpr<String> upper = nameField.upper(Bijection.asString());
+     *
+     * // This won't compile - Integer is not String:
+     * // SqlExpr<Integer> intExpr = ...;
+     * // intExpr.like("Jo%", Bijection.asString()); // compile error!
+     * }</pre>
+     *
+     * @return an identity bijection for String
+     */
+    static Bijection<String, String> asString() {
+        return identity();
+    }
+
     static <T, TT> Bijection<T, TT> of(Function<T, TT> to, Function<TT, T> from) {
         return new Bijection<T, TT>() {
             @Override

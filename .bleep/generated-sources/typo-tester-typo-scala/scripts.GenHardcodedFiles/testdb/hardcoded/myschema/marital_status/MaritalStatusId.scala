@@ -5,12 +5,13 @@
  */
 package testdb.hardcoded.myschema.marital_status
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `myschema.marital_status` */
-case class MaritalStatusId(value: java.lang.Long) extends scala.AnyVal
+case class MaritalStatusId(@JsonValue value: java.lang.Long) extends scala.AnyVal
 
 object MaritalStatusId {
   given bijection: Bijection[MaritalStatusId, java.lang.Long] = Bijection.apply[MaritalStatusId, java.lang.Long](_.value)(MaritalStatusId.apply)

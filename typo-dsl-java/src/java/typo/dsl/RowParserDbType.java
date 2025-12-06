@@ -1,5 +1,7 @@
 package typo.dsl;
 
+import typo.data.JsonValue;
+import typo.runtime.DbJson;
 import typo.runtime.DbRead;
 import typo.runtime.DbText;
 import typo.runtime.DbType;
@@ -41,6 +43,21 @@ public record RowParserDbType<Row>(RowParser<Row> rowParser) implements DbType<R
     public DbText<Row> text() {
         return (value, sb) -> {
             throw new UnsupportedOperationException("Text encoding not supported for row types");
+        };
+    }
+
+    @Override
+    public DbJson<Row> json() {
+        return new DbJson<>() {
+            @Override
+            public JsonValue toJson(Row value) {
+                throw new UnsupportedOperationException("JSON encoding not supported for row types via RowParserDbType");
+            }
+
+            @Override
+            public Row fromJson(JsonValue json) {
+                throw new UnsupportedOperationException("JSON decoding not supported for row types via RowParserDbType");
+            }
         };
     }
 

@@ -30,11 +30,13 @@ public record TypoLocalDateTime(@JsonValue LocalDateTime value) {
   };
 
   static public TypoLocalDateTime apply(String str) {
-    return TypoLocalDateTime.apply(LocalDateTime.parse(str, parser));
+    return TypoLocalDateTime.apply(LocalDateTime.parse(str, (str.contains("T") ? jsonParser : parser)));
   };
 
   static public Bijection<TypoLocalDateTime, LocalDateTime> bijection =
     Bijection.of(TypoLocalDateTime::value, TypoLocalDateTime::new);
+
+  static DateTimeFormatter jsonParser = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).toFormatter();;
 
   static public TypoLocalDateTime now() {
     return TypoLocalDateTime.apply(LocalDateTime.now());
@@ -46,8 +48,8 @@ public record TypoLocalDateTime(@JsonValue LocalDateTime value) {
     PgText.textString.contramap(v -> v.value().toString());
 
   static public PgType<TypoLocalDateTime> pgType =
-    PgTypes.text.bimap((String v) -> TypoLocalDateTime.apply(LocalDateTime.parse(v, parser)), (TypoLocalDateTime v) -> v.value().toString()).renamed("timestamp");
+    PgTypes.text.bimap((String v) -> TypoLocalDateTime.apply(v), (TypoLocalDateTime v) -> v.value().toString()).renamed("timestamp");
 
   static public PgType<TypoLocalDateTime[]> pgTypeArray =
-    TypoLocalDateTime.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map((String[] xs) -> arrayMap.map(xs, (String v) -> TypoLocalDateTime.apply(LocalDateTime.parse(v, parser)), TypoLocalDateTime.class)), PgWrite.<String>passObjectToJdbc().array(TypoLocalDateTime.pgType.typename().<String>as()).contramap((TypoLocalDateTime[] xs) -> arrayMap.map(xs, (TypoLocalDateTime v) -> v.value().toString(), String.class)));
+    TypoLocalDateTime.pgType.array(PgRead.massageJdbcArrayTo(String[].class).map((String[] xs) -> arrayMap.map(xs, (String v) -> TypoLocalDateTime.apply(v), TypoLocalDateTime.class)), PgWrite.<String>passObjectToJdbc().array(TypoLocalDateTime.pgType.typename().<String>as()).contramap((TypoLocalDateTime[] xs) -> arrayMap.map(xs, (TypoLocalDateTime v) -> v.value().toString(), String.class)));
 }

@@ -327,12 +327,16 @@ public class DSLTest extends SnapshotTest {
             assertEquals(new FirstName("Bob"), parent.firstname());
             assertEquals(new Name("Wilson"), parent.lastname());
 
-            // The child JSON should contain both email addresses
-            var childJson = results.get(0)._2();
-            assertNotNull(childJson);
-            String jsonStr = childJson.value();
-            assertTrue("JSON should contain bob@work.com", jsonStr.contains("bob@work.com"));
-            assertTrue("JSON should contain bob@home.com", jsonStr.contains("bob@home.com"));
+            // The child should be a typed list of emails
+            var childEmails = results.get(0)._2();
+            assertNotNull(childEmails);
+            assertEquals(2, childEmails.size());
+            var emailStrings = childEmails.stream()
+                    .map(e -> e.emailaddress().orElse(""))
+                    .sorted()
+                    .toList();
+            assertEquals("bob@home.com", emailStrings.get(0));
+            assertEquals("bob@work.com", emailStrings.get(1));
         });
     }
 
@@ -386,10 +390,10 @@ public class DSLTest extends SnapshotTest {
             var parent = results.get(0)._1();
             assertEquals(new FirstName("NoEmail"), parent.firstname());
 
-            // The child JSON should be an empty array
-            var childJson = results.get(0)._2();
-            assertNotNull(childJson);
-            assertEquals("[]", childJson.value());
+            // The child list should be empty
+            var childEmails = results.get(0)._2();
+            assertNotNull(childEmails);
+            assertTrue("Child list should be empty", childEmails.isEmpty());
         });
     }
 
@@ -470,12 +474,16 @@ public class DSLTest extends SnapshotTest {
             assertEquals(new FirstName("Alice"), nameTuple._1());
             assertEquals(new Name("Johnson"), nameTuple._2());
 
-            // The child JSON should contain both email addresses
-            var childJson = results.get(0)._2();
-            assertNotNull(childJson);
-            String jsonStr = childJson.value();
-            assertTrue("JSON should contain alice@work.com", jsonStr.contains("alice@work.com"));
-            assertTrue("JSON should contain alice@home.com", jsonStr.contains("alice@home.com"));
+            // The child should be a typed list of emails
+            var childEmails = results.get(0)._2();
+            assertNotNull(childEmails);
+            assertEquals(2, childEmails.size());
+            var emailStrings = childEmails.stream()
+                    .map(e -> e.emailaddress().orElse(""))
+                    .sorted()
+                    .toList();
+            assertEquals("alice@home.com", emailStrings.get(0));
+            assertEquals("alice@work.com", emailStrings.get(1));
         });
     }
 

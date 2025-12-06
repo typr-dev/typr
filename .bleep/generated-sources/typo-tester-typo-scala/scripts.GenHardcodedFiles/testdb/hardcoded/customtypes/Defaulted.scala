@@ -5,8 +5,14 @@
  */
 package testdb.hardcoded.customtypes
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import testdb.hardcoded.DefaultedDeserializer
+import testdb.hardcoded.DefaultedSerializer
 import typo.runtime.PgText
 
+@JsonSerialize(`using` = classOf[DefaultedSerializer])
+@JsonDeserialize(`using` = classOf[DefaultedDeserializer])
 /** This signals a value where if you don't provide it, postgres will generate it for you */
 sealed trait Defaulted[T] {
   def fold[U](

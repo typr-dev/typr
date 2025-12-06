@@ -1,6 +1,5 @@
 package typo.dsl;
 
-import typo.data.Json;
 import typo.runtime.Fragment;
 import typo.runtime.RowParser;
 
@@ -158,23 +157,25 @@ public interface SelectBuilder<Fields, Row> extends SelectBuilderMap<Fields, Row
         leftJoinOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred);
 
     /**
-     * Join and aggregate the right side into a JSON array (one-to-many relationship).
+     * Join and aggregate the right side into a typed list (one-to-many relationship).
      *
      * This avoids the "rectangular explosion" problem where joining one-to-many
-     * would multiply rows. Instead, the right side is aggregated into a JSON array.
+     * would multiply rows. Instead, the right side is aggregated via JSON and
+     * parsed into typed Row objects.
      *
      * Example:
      * <pre>
      * person.multisetOn(email, (p, e) -> p.id().isEqual(e.personId()))
+     * // Returns Tuple2<PersonRow, List<EmailRow>>
      * </pre>
      *
-     * Returns a SelectBuilder where the right side becomes a Json column.
+     * Returns a SelectBuilder where the right side becomes a typed List of rows.
      *
      * @param other The right side of the join (the "many" side)
      * @param pred The join predicate (correlation)
-     * @return SelectBuilder with the right side as Json
+     * @return SelectBuilder with the right side as List<Row2>
      */
-    <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Json>>
+    <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, List<Row2>>>
         multisetOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred);
 
     // ========== GROUP BY Methods ==========

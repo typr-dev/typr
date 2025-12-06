@@ -141,14 +141,14 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
       val isTypoScala = target.project.value.contains("typo-scala")
       val (language, dbLib, jsonLib, dslEnabled) =
         if (target.project.value.contains("doobie"))
-          (LangScala(dialect, TypeSupportScala), Some(DbLibName.Doobie), Some(JsonLibName.Circe), true)
+          (LangScala(dialect, TypeSupportScala), Some(DbLibName.Doobie), JsonLibName.Circe, true)
         else if (target.project.value.contains("zio-jdbc"))
-          (LangScala(dialect, TypeSupportScala), Some(DbLibName.ZioJdbc), Some(JsonLibName.ZioJson), true)
+          (LangScala(dialect, TypeSupportScala), Some(DbLibName.ZioJdbc), JsonLibName.ZioJson, true)
         else if (target.project.value.contains("typo-java"))
-          (LangJava, Some(DbLibName.Typo), Some(JsonLibName.Jackson), true)
+          (LangJava, Some(DbLibName.Typo), JsonLibName.Jackson, true)
         else if (isTypoScala)
-          (LangScala(Dialect.Scala3, TypeSupportJava), Some(DbLibName.Typo), None, true)
-        else (LangScala(dialect, TypeSupportScala), Some(DbLibName.Anorm), Some(JsonLibName.PlayJson), true)
+          (LangScala(Dialect.Scala3, TypeSupportJava), Some(DbLibName.Typo), JsonLibName.Jackson, true)
+        else (LangScala(dialect, TypeSupportScala), Some(DbLibName.Anorm), JsonLibName.PlayJson, true)
       // Mock repos use Scala idioms not compatible with Java types
       val mockSelector = if (isTypoScala) Selector.None else Selector.All
       val domains = Nil
@@ -160,8 +160,8 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
           Options(
             pkg = "testdb.hardcoded",
             lang = language,
-            dbLib,
-            jsonLib.toList,
+            dbLib = dbLib,
+            jsonLibs = List(jsonLib),
             generateMockRepos = mockSelector,
             silentBanner = true,
             fileHeader = header,

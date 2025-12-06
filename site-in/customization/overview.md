@@ -11,7 +11,7 @@ import typo.internal.codegen.LangScala
 val options = Options(
   pkg = "org.foo",
   lang = LangScala(Dialect.Scala3, TypeSupportScala),
-  jsonLibs = List(JsonLibName.PlayJson),
+  jsonLib = JsonLibName.PlayJson,
   dbLib = Some(DbLibName.Anorm),
   // .. more options here
 )
@@ -24,7 +24,7 @@ val options = Options(
 |--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `pkg`                    | Specifies the package name for the generated code.                                                                                                                                                            |
 | `dbLib`                  | Defines the database library to use for code generation (anorm, doobie, zio-jdbc or `None`).                                                                                                                  |
-| `jsonLibs`               | JSON libraries to generate codecs for (default is empty).                                                                                                                                                     |
+| `jsonLib`                | JSON library to generate codecs for (play-json, circe, zio-json, or jackson).                                                                                                                                 |
 | `silentBanner`           | Controls whether to suppress the Typo banner while running Typo (default is `false`).                                                                                                                         |
 | `fileHeader`             | Sets the header text that appears at the top of generated files.                                                                                                                                              |
 | `naming`                 | Configures naming conventions for generated code. See section below                                                                                                                                           |

@@ -1,6 +1,5 @@
 package typo.dsl;
 
-import typo.data.Json;
 import typo.dsl.internal.RowComparator;
 import typo.runtime.Fragment;
 
@@ -290,7 +289,7 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
     }
 
     @Override
-    public <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, Json>>
+    public <Fields2, Row2> SelectBuilder<Structure.Tuple2<Fields, Fields2>, Structure.Tuple2<Row, List<Row2>>>
     multisetOn(SelectBuilder<Fields2, Row2> other, Function<Structure.Tuple2<Fields, Fields2>, SqlExpr<Boolean>> pred) {
 
         if (!(other instanceof SelectBuilderMock<Fields2, Row2> otherMock)) {
@@ -305,12 +304,12 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
             self.structure.join(child.structure);
 
         // Create a multiset structure
-        MultisetMockStructure<Fields, Row, Fields2> multisetStructure =
+        MultisetMockStructure<Fields, Row, Fields2, Row2> multisetStructure =
             new MultisetMockStructure<>(self.structure, child.structure);
 
-        // Create supplier that for each parent row, collects matching child rows as JSON
-        Supplier<List<Structure.Tuple2<Row, Json>>> resultSupplier = () -> {
-            List<Structure.Tuple2<Row, Json>> result = new ArrayList<>();
+        // Create supplier that for each parent row, collects matching child rows
+        Supplier<List<Structure.Tuple2<Row, List<Row2>>>> resultSupplier = () -> {
+            List<Structure.Tuple2<Row, List<Row2>>> result = new ArrayList<>();
             List<Row> parentRows = self.toList(null);
             List<Row2> childRows = child.toList(null);
 
@@ -326,70 +325,12 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
                     }
                 }
 
-                // Convert matching children to JSON array
-                Json jsonArray = childRowsToJson(matchingChildren, child.structure);
-                result.add(Structure.Tuple2.of(parentRow, jsonArray));
+                result.add(Structure.Tuple2.of(parentRow, matchingChildren));
             }
             return result;
         };
 
         return new SelectBuilderMock<>(multisetStructure, resultSupplier, SelectParams.empty());
-    }
-
-    /**
-     * Convert a list of child rows to a JSON array string.
-     */
-    private static <Row2> Json childRowsToJson(List<Row2> rows, Structure<?, Row2> structure) {
-        StringBuilder sb = new StringBuilder("[");
-        boolean first = true;
-        for (Row2 row : rows) {
-            if (!first) {
-                sb.append(",");
-            }
-            first = false;
-            sb.append("{");
-            boolean firstCol = true;
-            for (SqlExpr.FieldLike<?, ?> col : structure.allFields()) {
-                if (!firstCol) {
-                    sb.append(",");
-                }
-                firstCol = false;
-                Optional<?> value = structure.untypedGetFieldValue(col, row);
-                sb.append("\"").append(escapeJsonString(col.column())).append("\":");
-                appendJsonValue(sb, value.orElse(null));
-            }
-            sb.append("}");
-        }
-        sb.append("]");
-        return new Json(sb.toString());
-    }
-
-    /**
-     * Escape a string for JSON.
-     */
-    private static String escapeJsonString(String s) {
-        if (s == null) return "";
-        return s.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
-    }
-
-    /**
-     * Append a value as JSON to the StringBuilder.
-     */
-    private static void appendJsonValue(StringBuilder sb, Object value) {
-        if (value == null) {
-            sb.append("null");
-        } else if (value instanceof String s) {
-            sb.append("\"").append(escapeJsonString(s)).append("\"");
-        } else if (value instanceof Number || value instanceof Boolean) {
-            sb.append(value);
-        } else {
-            // For other types, convert to string
-            sb.append("\"").append(escapeJsonString(value.toString())).append("\"");
-        }
     }
 
     @Override
@@ -400,13 +341,13 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
     /**
      * Structure implementation for multiset results.
      */
-    record MultisetMockStructure<Fields1, Row1, Fields2>(
+    record MultisetMockStructure<Fields1, Row1, Fields2, Row2>(
             Structure<Fields1, Row1> parentStructure,
-            Structure<Fields2, ?> childStructure,
+            Structure<Fields2, Row2> childStructure,
             List<Path> path
-    ) implements Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> {
+    ) implements Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> {
 
-        MultisetMockStructure(Structure<Fields1, Row1> parentStructure, Structure<Fields2, ?> childStructure) {
+        MultisetMockStructure(Structure<Fields1, Row1> parentStructure, Structure<Fields2, Row2> childStructure) {
             this(parentStructure, childStructure, List.of());
         }
 
@@ -417,7 +358,7 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
 
         @Override
         public List<SqlExpr.FieldLike<?, ?>> allFields() {
-            // Return parent fields (Json column is synthetic)
+            // Return parent fields (child list column is synthetic)
             return new ArrayList<>(parentStructure.allFields());
         }
 
@@ -427,7 +368,7 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
         }
 
         @Override
-        public Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, Json>> withPath(Path newPath) {
+        public Structure<Structure.Tuple2<Fields1, Fields2>, Structure.Tuple2<Row1, List<Row2>>> withPath(Path newPath) {
             List<Path> newPaths = new ArrayList<>();
             newPaths.add(newPath);
             newPaths.addAll(path);
@@ -435,7 +376,7 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
         }
 
         @Override
-        public <T> Optional<T> untypedGetFieldValue(SqlExpr.FieldLike<T, ?> field, Structure.Tuple2<Row1, Json> row) {
+        public <T> Optional<T> untypedGetFieldValue(SqlExpr.FieldLike<T, ?> field, Structure.Tuple2<Row1, List<Row2>> row) {
             // Try to get from parent structure
             return parentStructure.untypedGetFieldValue(field, row._1());
         }

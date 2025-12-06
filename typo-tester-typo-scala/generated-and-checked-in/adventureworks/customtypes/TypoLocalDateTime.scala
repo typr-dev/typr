@@ -24,9 +24,11 @@ case class TypoLocalDateTime(@JsonValue value: LocalDateTime)
 object TypoLocalDateTime {
   def apply(value: LocalDateTime): TypoLocalDateTime = new TypoLocalDateTime(value.truncatedTo(ChronoUnit.MICROS))
 
-  def apply(str: String): TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.parse(str, parser))
+  def apply(str: String): TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.parse(str, (if (str.contains("T")) jsonParser else parser)))
 
   given bijection: Bijection[TypoLocalDateTime, LocalDateTime] = Bijection.apply[TypoLocalDateTime, LocalDateTime](_.value)(TypoLocalDateTime.apply)
+
+  val jsonParser: DateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).toFormatter()
 
   def now: TypoLocalDateTime = TypoLocalDateTime.apply(LocalDateTime.now())
 
@@ -34,7 +36,7 @@ object TypoLocalDateTime {
 
   given pgText: PgText[TypoLocalDateTime] = PgText.textString.contramap(v => v.value.toString())
 
-  given pgType: PgType[TypoLocalDateTime] = PgTypes.text.bimap((v: String) => TypoLocalDateTime.apply(LocalDateTime.parse(v, parser)), (v: TypoLocalDateTime) => v.value.toString()).renamed("timestamp")
+  given pgType: PgType[TypoLocalDateTime] = PgTypes.text.bimap((v: String) => TypoLocalDateTime.apply(v), (v: TypoLocalDateTime) => v.value.toString()).renamed("timestamp")
 
-  given pgTypeArray: PgType[Array[TypoLocalDateTime]] = TypoLocalDateTime.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map((xs: Array[String]) => xs.map((v: String) => TypoLocalDateTime.apply(LocalDateTime.parse(v, parser)))), PgWrite.passObjectToJdbc[String]().array(TypoLocalDateTime.pgType.typename().as[String]()).contramap((xs: Array[TypoLocalDateTime]) => xs.map((v: TypoLocalDateTime) => v.value.toString())))
+  given pgTypeArray: PgType[Array[TypoLocalDateTime]] = TypoLocalDateTime.pgType.array(PgRead.massageJdbcArrayTo(classOf[Array[String]]).map((xs: Array[String]) => xs.map((v: String) => TypoLocalDateTime.apply(v))), PgWrite.passObjectToJdbc[String]().array(TypoLocalDateTime.pgType.typename().as[String]()).contramap((xs: Array[TypoLocalDateTime]) => xs.map((v: TypoLocalDateTime) => v.value.toString())))
 }

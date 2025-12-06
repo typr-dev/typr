@@ -25,10 +25,12 @@ data class TypoInstant(@JsonValue val value: Instant) {
   companion object {
     fun apply(value: Instant): TypoInstant = TypoInstant(value.truncatedTo(ChronoUnit.MICROS))
 
-    fun apply(str: String): TypoInstant = TypoInstant.apply(OffsetDateTime.parse(str, parser).toInstant())
+    fun apply(str: String): TypoInstant = TypoInstant.apply(OffsetDateTime.parse(str, if (str.contains("T")) jsonParser else parser).toInstant())
 
     val bijection: Bijection<TypoInstant, Instant> =
       Bijection.of(TypoInstant::value, ::TypoInstant)
+
+    val jsonParser: DateTimeFormatter = DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss").appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true).appendPattern("X").toFormatter()
 
     fun now(): TypoInstant = TypoInstant.apply(Instant.now())
 

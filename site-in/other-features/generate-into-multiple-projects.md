@@ -26,7 +26,7 @@ def generate(ds: TypoDataSource): String = {
   val options = Options(
       pkg = "org.mypkg",
       lang = LangScala(Dialect.Scala3, TypeSupportScala),
-      jsonLibs = Nil,
+      jsonLib = JsonLibName.ZioJson,
       dbLib = Some(DbLibName.ZioJdbc)
     )
 

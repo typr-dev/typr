@@ -5,12 +5,13 @@
  */
 package testdb.hardcoded.myschema.football_club
 
+import com.fasterxml.jackson.annotation.JsonValue
 import typo.dsl.Bijection
 import typo.runtime.PgType
 import typo.runtime.PgTypes
 
 /** Type for the primary key of table `myschema.football_club` */
-case class FootballClubId(value: java.lang.Long) extends scala.AnyVal
+case class FootballClubId(@JsonValue value: java.lang.Long) extends scala.AnyVal
 
 object FootballClubId {
   given bijection: Bijection[FootballClubId, java.lang.Long] = Bijection.apply[FootballClubId, java.lang.Long](_.value)(FootballClubId.apply)
