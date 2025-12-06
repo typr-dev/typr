@@ -1855,7 +1855,7 @@ $ifElseCode"""
       responseName: String,
       variants: List[ResponseVariant],
       clientSupport: FrameworkSupport,
-      inLambdaContext: Boolean = false
+      inLambdaContext: Boolean
   ): jvm.Code = {
     val statusCodeExpr = clientSupport.getStatusCode(responseExpr)
 
