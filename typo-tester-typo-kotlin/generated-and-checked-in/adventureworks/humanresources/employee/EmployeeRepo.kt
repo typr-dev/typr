@@ -7,9 +7,9 @@ package adventureworks.humanresources.employee
 
 import adventureworks.person.businessentity.BusinessentityId
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -38,14 +38,14 @@ interface EmployeeRepo {
   ): EmployeeRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<EmployeeRow>,
+    unsaved: Iterator<EmployeeRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<EmployeeRowUnsaved>,
+    unsaved: Iterator<EmployeeRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -82,13 +82,13 @@ interface EmployeeRepo {
   ): EmployeeRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<EmployeeRow>,
+    unsaved: Iterator<EmployeeRow>,
     c: Connection
   ): List<EmployeeRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<EmployeeRow>,
+    unsaved: Iterator<EmployeeRow>,
     batchSize: Int,
     c: Connection
   ): Int

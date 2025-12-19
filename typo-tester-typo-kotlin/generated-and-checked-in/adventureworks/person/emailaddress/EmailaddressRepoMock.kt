@@ -8,9 +8,9 @@ package adventureworks.person.emailaddress
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -63,7 +63,7 @@ data class EmailaddressRepoMock(
   ): EmailaddressRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<EmailaddressRow>,
+    unsaved: Iterator<EmailaddressRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -78,7 +78,7 @@ data class EmailaddressRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<EmailaddressRowUnsaved>,
+    unsaved: Iterator<EmailaddressRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -142,7 +142,7 @@ data class EmailaddressRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<EmailaddressRow>,
+    unsaved: Iterator<EmailaddressRow>,
     c: Connection
   ): List<EmailaddressRow> {
     val result = ArrayList<EmailaddressRow>()
@@ -156,7 +156,7 @@ data class EmailaddressRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<EmailaddressRow>,
+    unsaved: Iterator<EmailaddressRow>,
     batchSize: Int,
     c: Connection
   ): Int {

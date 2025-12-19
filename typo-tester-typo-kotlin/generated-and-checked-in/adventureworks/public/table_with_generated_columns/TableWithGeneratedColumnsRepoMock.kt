@@ -8,9 +8,9 @@ package adventureworks.public.table_with_generated_columns
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -63,7 +63,7 @@ data class TableWithGeneratedColumnsRepoMock(
   ): TableWithGeneratedColumnsRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<TableWithGeneratedColumnsRow>,
+    unsaved: Iterator<TableWithGeneratedColumnsRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -78,7 +78,7 @@ data class TableWithGeneratedColumnsRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<TableWithGeneratedColumnsRowUnsaved>,
+    unsaved: Iterator<TableWithGeneratedColumnsRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -131,7 +131,7 @@ data class TableWithGeneratedColumnsRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<TableWithGeneratedColumnsRow>,
+    unsaved: Iterator<TableWithGeneratedColumnsRow>,
     c: Connection
   ): List<TableWithGeneratedColumnsRow> {
     val result = ArrayList<TableWithGeneratedColumnsRow>()
@@ -145,7 +145,7 @@ data class TableWithGeneratedColumnsRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<TableWithGeneratedColumnsRow>,
+    unsaved: Iterator<TableWithGeneratedColumnsRow>,
     batchSize: Int,
     c: Connection
   ): Int {

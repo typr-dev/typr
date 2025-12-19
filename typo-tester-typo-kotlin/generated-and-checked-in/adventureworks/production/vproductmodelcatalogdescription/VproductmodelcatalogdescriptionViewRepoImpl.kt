@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VproductmodelcatalogdescriptionViewRepoImpl() : VproductmodelcatalogdescriptionViewRepo {
   override fun select(): SelectBuilder<VproductmodelcatalogdescriptionViewFields, VproductmodelcatalogdescriptionViewRow> = SelectBuilder.of("\"production\".\"vproductmodelcatalogdescription\"", VproductmodelcatalogdescriptionViewFields.structure, VproductmodelcatalogdescriptionViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VproductmodelcatalogdescriptionViewRow> = interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"Summary\", \"manufacturer\", \"copyright\", \"producturl\", \"warrantyperiod\", \"warrantydescription\", \"noofyears\", \"maintenancedescription\", \"wheel\", \"saddle\", \"pedal\", \"bikeframe\", \"crankset\", \"pictureangle\", \"picturesize\", \"productphotoid\", \"material\", \"color\", \"productline\", \"style\", \"riderexperience\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"vproductmodelcatalogdescription\"\n")).query(VproductmodelcatalogdescriptionViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VproductmodelcatalogdescriptionViewRow> = Fragment.interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"Summary\", \"manufacturer\", \"copyright\", \"producturl\", \"warrantyperiod\", \"warrantydescription\", \"noofyears\", \"maintenancedescription\", \"wheel\", \"saddle\", \"pedal\", \"bikeframe\", \"crankset\", \"pictureangle\", \"picturesize\", \"productphotoid\", \"material\", \"color\", \"productline\", \"style\", \"riderexperience\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"vproductmodelcatalogdescription\"\n")).query(VproductmodelcatalogdescriptionViewRow._rowParser.all()).runUnchecked(c)
 }

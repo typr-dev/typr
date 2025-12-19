@@ -6,9 +6,9 @@
 package adventureworks.public.test_sak_soknadsalternativ
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -32,7 +32,7 @@ interface TestSakSoknadsalternativRepo {
   ): TestSakSoknadsalternativRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<TestSakSoknadsalternativRow>,
+    unsaved: Iterator<TestSakSoknadsalternativRow>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -69,13 +69,13 @@ interface TestSakSoknadsalternativRepo {
   ): TestSakSoknadsalternativRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<TestSakSoknadsalternativRow>,
+    unsaved: Iterator<TestSakSoknadsalternativRow>,
     c: Connection
   ): List<TestSakSoknadsalternativRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<TestSakSoknadsalternativRow>,
+    unsaved: Iterator<TestSakSoknadsalternativRow>,
     batchSize: Int,
     c: Connection
   ): Int

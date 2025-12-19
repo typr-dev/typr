@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VsalespersonViewRepoImpl() : VsalespersonViewRepo {
   override fun select(): SelectBuilder<VsalespersonViewFields, VsalespersonViewRow> = SelectBuilder.of("\"sales\".\"vsalesperson\"", VsalespersonViewFields.structure, VsalespersonViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VsalespersonViewRow> = interpolate(Fragment.lit("select \"businessentityid\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"jobtitle\", \"phonenumber\", \"phonenumbertype\", \"emailaddress\", \"emailpromotion\", \"addressline1\", \"addressline2\", \"city\", \"stateprovincename\", \"postalcode\", \"countryregionname\", \"territoryname\", \"territorygroup\", \"salesquota\", \"salesytd\", \"saleslastyear\"\nfrom \"sales\".\"vsalesperson\"\n")).query(VsalespersonViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VsalespersonViewRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"jobtitle\", \"phonenumber\", \"phonenumbertype\", \"emailaddress\", \"emailpromotion\", \"addressline1\", \"addressline2\", \"city\", \"stateprovincename\", \"postalcode\", \"countryregionname\", \"territoryname\", \"territorygroup\", \"salesquota\", \"salesytd\", \"saleslastyear\"\nfrom \"sales\".\"vsalesperson\"\n")).query(VsalespersonViewRow._rowParser.all()).runUnchecked(c)
 }

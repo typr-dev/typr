@@ -6,9 +6,9 @@
 package adventureworks.humanresources.shift
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface ShiftRepo {
   ): ShiftRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<ShiftRow>,
+    unsaved: Iterator<ShiftRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ShiftRowUnsaved>,
+    unsaved: Iterator<ShiftRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface ShiftRepo {
   ): ShiftRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<ShiftRow>,
+    unsaved: Iterator<ShiftRow>,
     c: Connection
   ): List<ShiftRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<ShiftRow>,
+    unsaved: Iterator<ShiftRow>,
     batchSize: Int,
     c: Connection
   ): Int

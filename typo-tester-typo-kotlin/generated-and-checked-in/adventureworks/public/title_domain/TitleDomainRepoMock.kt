@@ -8,9 +8,9 @@ package adventureworks.public.title_domain
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -55,7 +55,7 @@ data class TitleDomainRepoMock(val map: MutableMap<TitleDomainId, TitleDomainRow
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<TitleDomainRow>,
+    unsaved: Iterator<TitleDomainRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -107,7 +107,7 @@ data class TitleDomainRepoMock(val map: MutableMap<TitleDomainId, TitleDomainRow
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<TitleDomainRow>,
+    unsaved: Iterator<TitleDomainRow>,
     c: Connection
   ): List<TitleDomainRow> {
     val result = ArrayList<TitleDomainRow>()
@@ -121,7 +121,7 @@ data class TitleDomainRepoMock(val map: MutableMap<TitleDomainId, TitleDomainRow
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<TitleDomainRow>,
+    unsaved: Iterator<TitleDomainRow>,
     batchSize: Int,
     c: Connection
   ): Int {

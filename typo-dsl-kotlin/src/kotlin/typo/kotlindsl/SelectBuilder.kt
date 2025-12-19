@@ -3,13 +3,11 @@ package typo.kotlindsl
 import typo.dsl.SelectBuilder as JavaSelectBuilder
 import typo.dsl.Structure
 import typo.dsl.SqlExpr
-import typo.dsl.ForeignKey
 import typo.dsl.SortOrder
 import typo.dsl.RenderCtx
 import typo.dsl.Tuple2
 import typo.dsl.Dialect
 import typo.runtime.Fragment
-import typo.runtime.RowParser
 import java.sql.Connection
 import java.util.Optional
 
@@ -57,6 +55,23 @@ class SelectBuilder<Fields, Row> internal constructor(
 
     /**
      * Conditionally add a seek predicate or just order by.
+     * Convenience overload that automatically creates the Const from the field's DbType.
+     */
+    fun <T> maybeSeek(
+        orderFunc: (Fields) -> SortOrder<T>,
+        maybeValue: T?
+    ): SelectBuilder<Fields, Row> {
+        return SelectBuilder(javaBuilder.maybeSeek(orderFunc, Optional.ofNullable(maybeValue)) { value ->
+            val sortOrder = orderFunc(javaBuilder.structure().fields())
+            val fieldLike = sortOrder.expr() as? typo.dsl.SqlExpr.FieldLike<T, *>
+            val pgType = fieldLike?.pgType() ?: throw IllegalArgumentException("Cannot extract DbType from SortOrder expression")
+            typo.dsl.SqlExpr.ConstReq(value, pgType)
+        })
+    }
+
+    /**
+     * Conditionally add a seek predicate or just order by.
+     * Overload that allows providing a custom asConst function.
      */
     fun <T> maybeSeek(
         orderFunc: (Fields) -> SortOrder<T>,
@@ -108,7 +123,7 @@ class SelectBuilder<Fields, Row> internal constructor(
         fkFunc: (Fields) -> ForeignKey<Fields2, Row2>,
         other: SelectBuilder<Fields2, Row2>
     ): SelectBuilder<Tuple2<Fields, Fields2>, Tuple2<Row, Row2>> {
-        return SelectBuilder(javaBuilder.joinFk(fkFunc, other.javaBuilder))
+        return SelectBuilder(javaBuilder.joinFk({ fields -> fkFunc(fields).underlying }, other.javaBuilder))
     }
 
     /**
@@ -221,10 +236,10 @@ class SelectBuilder<Fields, Row> internal constructor(
         fun <Fields, Row> of(
             name: String,
             structure: RelationStructure<Fields, Row>,
-            rowParser: RowParser<Row>,
+            rowParser: typo.kotlindsl.RowParser<Row>,
             dialect: Dialect
         ): SelectBuilder<Fields, Row> {
-            return SelectBuilder(JavaSelectBuilder.of(name, structure, rowParser, dialect))
+            return SelectBuilder(JavaSelectBuilder.of(name, structure, rowParser.underlying, dialect))
         }
     }
 }

@@ -8,9 +8,9 @@ package adventureworks.person.password
 import adventureworks.person.businessentity.BusinessentityId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class PasswordRepoImpl() : PasswordRepo {
   override fun delete(): DeleteBuilder<PasswordFields, PasswordRow> = DeleteBuilder.of("\"person\".\"password\"", PasswordFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class PasswordRepoImpl() : PasswordRepo {
   override fun deleteById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"person\".\"password\" where \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"password\" where \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     businessentityids: Array<BusinessentityId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"person\".\"password\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"password\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: PasswordRow,
     c: Connection
-  ): PasswordRow = interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\n"))
+  ): PasswordRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(PasswordRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,51 +48,51 @@ class PasswordRepoImpl() : PasswordRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"businessentityid\""))
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"passwordhash\""))
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit("")))
     columns.add(Fragment.lit("\"passwordsalt\""))
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit("")))
     unsaved.rowguid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"person\".\"password\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(PasswordRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<PasswordRow>,
+    unsaved: Iterator<PasswordRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, PasswordRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<PasswordRowUnsaved>,
+    unsaved: Iterator<PasswordRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, PasswordRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<PasswordFields, PasswordRow> = SelectBuilder.of("\"person\".\"password\"", PasswordFields.structure, PasswordRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<PasswordRow> = interpolate(Fragment.lit("select \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"password\"\n")).query(PasswordRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<PasswordRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"password\"\n")).query(PasswordRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): PasswordRow? = interpolate(Fragment.lit("select \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"password\"\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(PasswordRow._rowParser.first()).runUnchecked(c)
+  ): PasswordRow? = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"password\"\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(PasswordRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     businessentityids: Array<BusinessentityId>,
     c: Connection
-  ): List<PasswordRow> = interpolate(Fragment.lit("select \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"password\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(PasswordRow._rowParser.all()).runUnchecked(c)
+  ): List<PasswordRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"password\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(PasswordRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     businessentityids: Array<BusinessentityId>,
@@ -111,31 +110,31 @@ class PasswordRepoImpl() : PasswordRepo {
     c: Connection
   ): Boolean {
     val businessentityid: BusinessentityId = row.businessentityid
-    return interpolate(Fragment.lit("update \"person\".\"password\"\nset \"passwordhash\" = "), Fragment.encode(PgTypes.text, row.passwordhash), Fragment.lit(",\n\"passwordsalt\" = "), Fragment.encode(PgTypes.text, row.passwordsalt), Fragment.lit(",\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"person\".\"password\"\nset \"passwordhash\" = "), Fragment.encode(PgTypes.text, row.passwordhash), Fragment.lit(",\n\"passwordsalt\" = "), Fragment.encode(PgTypes.text, row.passwordsalt), Fragment.lit(",\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: PasswordRow,
     c: Connection
-  ): PasswordRow = interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"businessentityid\")\ndo update set\n  \"passwordhash\" = EXCLUDED.\"passwordhash\",\n\"passwordsalt\" = EXCLUDED.\"passwordsalt\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\""))
+  ): PasswordRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"businessentityid\")\ndo update set\n  \"passwordhash\" = EXCLUDED.\"passwordhash\",\n\"passwordsalt\" = EXCLUDED.\"passwordsalt\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\""))
     .updateReturning(PasswordRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<PasswordRow>,
+    unsaved: Iterator<PasswordRow>,
     c: Connection
-  ): List<PasswordRow> = interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?, ?, ?::uuid, ?::timestamp)\non conflict (\"businessentityid\")\ndo update set\n  \"passwordhash\" = EXCLUDED.\"passwordhash\",\n\"passwordsalt\" = EXCLUDED.\"passwordsalt\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\""))
+  ): List<PasswordRow> = Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?, ?, ?::uuid, ?::timestamp)\non conflict (\"businessentityid\")\ndo update set\n  \"passwordhash\" = EXCLUDED.\"passwordhash\",\n\"passwordsalt\" = EXCLUDED.\"passwordsalt\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\""))
     .updateManyReturning(PasswordRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<PasswordRow>,
+    unsaved: Iterator<PasswordRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table password_TEMP (like \"person\".\"password\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table password_TEMP (like \"person\".\"password\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy password_TEMP(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, PasswordRow.pgText)
-    return interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nselect * from password_TEMP\non conflict (\"businessentityid\")\ndo update set\n  \"passwordhash\" = EXCLUDED.\"passwordhash\",\n\"passwordsalt\" = EXCLUDED.\"passwordsalt\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table password_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nselect * from password_TEMP\non conflict (\"businessentityid\")\ndo update set\n  \"passwordhash\" = EXCLUDED.\"passwordhash\",\n\"passwordsalt\" = EXCLUDED.\"passwordsalt\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table password_TEMP;")).update().runUnchecked(c)
   }
 }

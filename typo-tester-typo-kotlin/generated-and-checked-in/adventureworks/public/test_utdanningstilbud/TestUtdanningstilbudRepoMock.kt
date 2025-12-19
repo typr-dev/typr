@@ -8,9 +8,9 @@ package adventureworks.public.test_utdanningstilbud
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -55,7 +55,7 @@ data class TestUtdanningstilbudRepoMock(val map: MutableMap<TestUtdanningstilbud
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<TestUtdanningstilbudRow>,
+    unsaved: Iterator<TestUtdanningstilbudRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -107,7 +107,7 @@ data class TestUtdanningstilbudRepoMock(val map: MutableMap<TestUtdanningstilbud
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<TestUtdanningstilbudRow>,
+    unsaved: Iterator<TestUtdanningstilbudRow>,
     c: Connection
   ): List<TestUtdanningstilbudRow> {
     val result = ArrayList<TestUtdanningstilbudRow>()
@@ -121,7 +121,7 @@ data class TestUtdanningstilbudRepoMock(val map: MutableMap<TestUtdanningstilbud
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<TestUtdanningstilbudRow>,
+    unsaved: Iterator<TestUtdanningstilbudRow>,
     batchSize: Int,
     c: Connection
   ): Int {

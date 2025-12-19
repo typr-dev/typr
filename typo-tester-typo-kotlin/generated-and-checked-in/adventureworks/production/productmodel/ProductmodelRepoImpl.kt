@@ -8,9 +8,9 @@ package adventureworks.production.productmodel
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -20,7 +20,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class ProductmodelRepoImpl() : ProductmodelRepo {
   override fun delete(): DeleteBuilder<ProductmodelFields, ProductmodelRow> = DeleteBuilder.of("\"production\".\"productmodel\"", ProductmodelFields.structure, Dialect.POSTGRESQL)
@@ -28,19 +27,19 @@ class ProductmodelRepoImpl() : ProductmodelRepo {
   override fun deleteById(
     productmodelid: ProductmodelId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"productmodel\" where \"productmodelid\" = "), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"productmodel\" where \"productmodelid\" = "), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     productmodelids: Array<ProductmodelId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"productmodel\"\nwhere \"productmodelid\" = ANY("), Fragment.encode(ProductmodelId.pgTypeArray, productmodelids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"productmodel\"\nwhere \"productmodelid\" = ANY("), Fragment.encode(ProductmodelId.pgTypeArray, productmodelids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: ProductmodelRow,
     c: Connection
-  ): ProductmodelRow = interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.catalogdescription), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.instructions), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\n"))
+  ): ProductmodelRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.catalogdescription), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.instructions), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(ProductmodelRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -50,56 +49,56 @@ class ProductmodelRepoImpl() : ProductmodelRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     columns.add(Fragment.lit("\"catalogdescription\""))
-    values.add(interpolate(Fragment.encode(PgTypes.xml.nullable(), unsaved.catalogdescription), Fragment.lit("::xml")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.xml.nullable(), unsaved.catalogdescription), Fragment.lit("::xml")))
     columns.add(Fragment.lit("\"instructions\""))
-    values.add(interpolate(Fragment.encode(PgTypes.xml.nullable(), unsaved.instructions), Fragment.lit("::xml")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.xml.nullable(), unsaved.instructions), Fragment.lit("::xml")))
     unsaved.productmodelid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"productmodelid\""))
-      values.add(interpolate(Fragment.encode(ProductmodelId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(ProductmodelId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.rowguid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"productmodel\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(ProductmodelRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ProductmodelRow>,
+    unsaved: Iterator<ProductmodelRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ProductmodelRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ProductmodelRowUnsaved>,
+    unsaved: Iterator<ProductmodelRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productmodel\"(\"name\", \"catalogdescription\", \"instructions\", \"productmodelid\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ProductmodelRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<ProductmodelFields, ProductmodelRow> = SelectBuilder.of("\"production\".\"productmodel\"", ProductmodelFields.structure, ProductmodelRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ProductmodelRow> = interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"productmodel\"\n")).query(ProductmodelRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ProductmodelRow> = Fragment.interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"productmodel\"\n")).query(ProductmodelRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     productmodelid: ProductmodelId,
     c: Connection
-  ): ProductmodelRow? = interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"productmodel\"\nwhere \"productmodelid\" = "), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).query(ProductmodelRow._rowParser.first()).runUnchecked(c)
+  ): ProductmodelRow? = Fragment.interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"productmodel\"\nwhere \"productmodelid\" = "), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).query(ProductmodelRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     productmodelids: Array<ProductmodelId>,
     c: Connection
-  ): List<ProductmodelRow> = interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"productmodel\"\nwhere \"productmodelid\" = ANY("), Fragment.encode(ProductmodelId.pgTypeArray, productmodelids), Fragment.lit(")")).query(ProductmodelRow._rowParser.all()).runUnchecked(c)
+  ): List<ProductmodelRow> = Fragment.interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"productmodel\"\nwhere \"productmodelid\" = ANY("), Fragment.encode(ProductmodelId.pgTypeArray, productmodelids), Fragment.lit(")")).query(ProductmodelRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     productmodelids: Array<ProductmodelId>,
@@ -117,31 +116,31 @@ class ProductmodelRepoImpl() : ProductmodelRepo {
     c: Connection
   ): Boolean {
     val productmodelid: ProductmodelId = row.productmodelid
-    return interpolate(Fragment.lit("update \"production\".\"productmodel\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"catalogdescription\" = "), Fragment.encode(PgTypes.xml.nullable(), row.catalogdescription), Fragment.lit("::xml,\n\"instructions\" = "), Fragment.encode(PgTypes.xml.nullable(), row.instructions), Fragment.lit("::xml,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productmodelid\" = "), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"productmodel\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"catalogdescription\" = "), Fragment.encode(PgTypes.xml.nullable(), row.catalogdescription), Fragment.lit("::xml,\n\"instructions\" = "), Fragment.encode(PgTypes.xml.nullable(), row.instructions), Fragment.lit("::xml,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productmodelid\" = "), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductmodelRow,
     c: Connection
-  ): ProductmodelRow = interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.catalogdescription), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.instructions), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"productmodelid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"catalogdescription\" = EXCLUDED.\"catalogdescription\",\n\"instructions\" = EXCLUDED.\"instructions\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\""))
+  ): ProductmodelRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.catalogdescription), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.instructions), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"productmodelid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"catalogdescription\" = EXCLUDED.\"catalogdescription\",\n\"instructions\" = EXCLUDED.\"instructions\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\""))
     .updateReturning(ProductmodelRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ProductmodelRow>,
+    unsaved: Iterator<ProductmodelRow>,
     c: Connection
-  ): List<ProductmodelRow> = interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::xml, ?::xml, ?::uuid, ?::timestamp)\non conflict (\"productmodelid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"catalogdescription\" = EXCLUDED.\"catalogdescription\",\n\"instructions\" = EXCLUDED.\"instructions\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\""))
+  ): List<ProductmodelRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::xml, ?::xml, ?::uuid, ?::timestamp)\non conflict (\"productmodelid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"catalogdescription\" = EXCLUDED.\"catalogdescription\",\n\"instructions\" = EXCLUDED.\"instructions\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\""))
     .updateManyReturning(ProductmodelRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ProductmodelRow>,
+    unsaved: Iterator<ProductmodelRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table productmodel_TEMP (like \"production\".\"productmodel\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table productmodel_TEMP (like \"production\".\"productmodel\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy productmodel_TEMP(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, ProductmodelRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nselect * from productmodel_TEMP\non conflict (\"productmodelid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"catalogdescription\" = EXCLUDED.\"catalogdescription\",\n\"instructions\" = EXCLUDED.\"instructions\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productmodel_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nselect * from productmodel_TEMP\non conflict (\"productmodelid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"catalogdescription\" = EXCLUDED.\"catalogdescription\",\n\"instructions\" = EXCLUDED.\"instructions\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productmodel_TEMP;")).update().runUnchecked(c)
   }
 }

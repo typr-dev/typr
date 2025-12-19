@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class JcViewRepoImpl() : JcViewRepo {
   override fun select(): SelectBuilder<JcViewFields, JcViewRow> = SelectBuilder.of("\"hr\".\"jc\"", JcViewFields.structure, JcViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<JcViewRow> = interpolate(Fragment.lit("select \"id\", \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\nfrom \"hr\".\"jc\"\n")).query(JcViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<JcViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\nfrom \"hr\".\"jc\"\n")).query(JcViewRow._rowParser.all()).runUnchecked(c)
 }

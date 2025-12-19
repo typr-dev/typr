@@ -6,9 +6,9 @@
 package adventureworks.person.address
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface AddressRepo {
   ): AddressRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<AddressRow>,
+    unsaved: Iterator<AddressRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<AddressRowUnsaved>,
+    unsaved: Iterator<AddressRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface AddressRepo {
   ): AddressRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<AddressRow>,
+    unsaved: Iterator<AddressRow>,
     c: Connection
   ): List<AddressRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<AddressRow>,
+    unsaved: Iterator<AddressRow>,
     batchSize: Int,
     c: Connection
   ): Int

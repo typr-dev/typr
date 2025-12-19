@@ -9,9 +9,9 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.contacttype.ContacttypeId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -21,7 +21,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
   override fun delete(): DeleteBuilder<BusinessentitycontactFields, BusinessentitycontactRow> = DeleteBuilder.of("\"person\".\"businessentitycontact\"", BusinessentitycontactFields.structure, Dialect.POSTGRESQL)
@@ -29,7 +28,7 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
   override fun deleteById(
     compositeId: BusinessentitycontactId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"person\".\"businessentitycontact\" where \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(" AND \"personid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.personid), Fragment.lit(" AND \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, compositeId.contacttypeid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"businessentitycontact\" where \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(" AND \"personid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.personid), Fragment.lit(" AND \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, compositeId.contacttypeid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<BusinessentitycontactId>,
@@ -38,13 +37,13 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
     val businessentityid: Array<BusinessentityId> = arrayMap.map(compositeIds, BusinessentitycontactId::businessentityid, BusinessentityId::class.java)
     val personid: Array<BusinessentityId> = arrayMap.map(compositeIds, BusinessentitycontactId::personid, BusinessentityId::class.java)
     val contacttypeid: Array<ContacttypeId> = arrayMap.map(compositeIds, BusinessentitycontactId::contacttypeid, ContacttypeId::class.java)
-    return interpolate(Fragment.lit("delete\nfrom \"person\".\"businessentitycontact\"\nwhere (\"businessentityid\", \"personid\", \"contacttypeid\")\nin (select unnest("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit("::int4[]), unnest("), Fragment.encode(BusinessentityId.pgTypeArray, personid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ContacttypeId.pgTypeArray, contacttypeid), Fragment.lit("::int4[]))\n")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"businessentitycontact\"\nwhere (\"businessentityid\", \"personid\", \"contacttypeid\")\nin (select unnest("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit("::int4[]), unnest("), Fragment.encode(BusinessentityId.pgTypeArray, personid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ContacttypeId.pgTypeArray, contacttypeid), Fragment.lit("::int4[]))\n")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: BusinessentitycontactRow,
     c: Connection
-  ): BusinessentitycontactRow = interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\n"))
+  ): BusinessentitycontactRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(BusinessentitycontactRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -54,46 +53,46 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"businessentityid\""))
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"personid\""))
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.personid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.personid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"contacttypeid\""))
-    values.add(interpolate(Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4")))
     unsaved.rowguid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(BusinessentitycontactRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<BusinessentitycontactRow>,
+    unsaved: Iterator<BusinessentitycontactRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, BusinessentitycontactRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<BusinessentitycontactRowUnsaved>,
+    unsaved: Iterator<BusinessentitycontactRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, BusinessentitycontactRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<BusinessentitycontactFields, BusinessentitycontactRow> = SelectBuilder.of("\"person\".\"businessentitycontact\"", BusinessentitycontactFields.structure, BusinessentitycontactRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<BusinessentitycontactRow> = interpolate(Fragment.lit("select \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentitycontact\"\n")).query(BusinessentitycontactRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<BusinessentitycontactRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentitycontact\"\n")).query(BusinessentitycontactRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     compositeId: BusinessentitycontactId,
     c: Connection
-  ): BusinessentitycontactRow? = interpolate(Fragment.lit("select \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentitycontact\"\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(" AND \"personid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.personid), Fragment.lit(" AND \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, compositeId.contacttypeid), Fragment.lit("")).query(BusinessentitycontactRow._rowParser.first()).runUnchecked(c)
+  ): BusinessentitycontactRow? = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentitycontact\"\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(" AND \"personid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.personid), Fragment.lit(" AND \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, compositeId.contacttypeid), Fragment.lit("")).query(BusinessentitycontactRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     compositeIds: Array<BusinessentitycontactId>,
@@ -102,7 +101,7 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
     val businessentityid: Array<BusinessentityId> = arrayMap.map(compositeIds, BusinessentitycontactId::businessentityid, BusinessentityId::class.java)
     val personid: Array<BusinessentityId> = arrayMap.map(compositeIds, BusinessentitycontactId::personid, BusinessentityId::class.java)
     val contacttypeid: Array<ContacttypeId> = arrayMap.map(compositeIds, BusinessentitycontactId::contacttypeid, ContacttypeId::class.java)
-    return interpolate(Fragment.lit("select \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentitycontact\"\nwhere (\"businessentityid\", \"personid\", \"contacttypeid\")\nin (select unnest("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit("::int4[]), unnest("), Fragment.encode(BusinessentityId.pgTypeArray, personid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ContacttypeId.pgTypeArray, contacttypeid), Fragment.lit("::int4[]))\n")).query(BusinessentitycontactRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentitycontact\"\nwhere (\"businessentityid\", \"personid\", \"contacttypeid\")\nin (select unnest("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit("::int4[]), unnest("), Fragment.encode(BusinessentityId.pgTypeArray, personid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ContacttypeId.pgTypeArray, contacttypeid), Fragment.lit("::int4[]))\n")).query(BusinessentitycontactRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(
@@ -121,31 +120,31 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
     c: Connection
   ): Boolean {
     val compositeId: BusinessentitycontactId = row.compositeId()
-    return interpolate(Fragment.lit("update \"person\".\"businessentitycontact\"\nset \"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(" AND \"personid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.personid), Fragment.lit(" AND \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, compositeId.contacttypeid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"person\".\"businessentitycontact\"\nset \"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(" AND \"personid\" = "), Fragment.encode(BusinessentityId.pgType, compositeId.personid), Fragment.lit(" AND \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, compositeId.contacttypeid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: BusinessentitycontactRow,
     c: Connection
-  ): BusinessentitycontactRow = interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"businessentityid\", \"personid\", \"contacttypeid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\""))
+  ): BusinessentitycontactRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"businessentityid\", \"personid\", \"contacttypeid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\""))
     .updateReturning(BusinessentitycontactRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<BusinessentitycontactRow>,
+    unsaved: Iterator<BusinessentitycontactRow>,
     c: Connection
-  ): List<BusinessentitycontactRow> = interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int4, ?::uuid, ?::timestamp)\non conflict (\"businessentityid\", \"personid\", \"contacttypeid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\""))
+  ): List<BusinessentitycontactRow> = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int4, ?::uuid, ?::timestamp)\non conflict (\"businessentityid\", \"personid\", \"contacttypeid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\""))
     .updateManyReturning(BusinessentitycontactRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<BusinessentitycontactRow>,
+    unsaved: Iterator<BusinessentitycontactRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table businessentitycontact_TEMP (like \"person\".\"businessentitycontact\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table businessentitycontact_TEMP (like \"person\".\"businessentitycontact\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy businessentitycontact_TEMP(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, BusinessentitycontactRow.pgText)
-    return interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nselect * from businessentitycontact_TEMP\non conflict (\"businessentityid\", \"personid\", \"contacttypeid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table businessentitycontact_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nselect * from businessentitycontact_TEMP\non conflict (\"businessentityid\", \"personid\", \"contacttypeid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table businessentitycontact_TEMP;")).update().runUnchecked(c)
   }
 }

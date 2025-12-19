@@ -6,9 +6,9 @@
 package adventureworks.sales.salestaxrate
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface SalestaxrateRepo {
   ): SalestaxrateRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<SalestaxrateRow>,
+    unsaved: Iterator<SalestaxrateRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SalestaxrateRowUnsaved>,
+    unsaved: Iterator<SalestaxrateRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface SalestaxrateRepo {
   ): SalestaxrateRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<SalestaxrateRow>,
+    unsaved: Iterator<SalestaxrateRow>,
     c: Connection
   ): List<SalestaxrateRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<SalestaxrateRow>,
+    unsaved: Iterator<SalestaxrateRow>,
     batchSize: Int,
     c: Connection
   ): Int

@@ -8,9 +8,9 @@ package adventureworks.sales.salesorderheader
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -63,7 +63,7 @@ data class SalesorderheaderRepoMock(
   ): SalesorderheaderRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<SalesorderheaderRow>,
+    unsaved: Iterator<SalesorderheaderRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -78,7 +78,7 @@ data class SalesorderheaderRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SalesorderheaderRowUnsaved>,
+    unsaved: Iterator<SalesorderheaderRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -142,7 +142,7 @@ data class SalesorderheaderRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<SalesorderheaderRow>,
+    unsaved: Iterator<SalesorderheaderRow>,
     c: Connection
   ): List<SalesorderheaderRow> {
     val result = ArrayList<SalesorderheaderRow>()
@@ -156,7 +156,7 @@ data class SalesorderheaderRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<SalesorderheaderRow>,
+    unsaved: Iterator<SalesorderheaderRow>,
     batchSize: Int,
     c: Connection
   ): Int {

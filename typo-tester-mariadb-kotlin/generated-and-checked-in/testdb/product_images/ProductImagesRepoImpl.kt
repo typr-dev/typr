@@ -20,7 +20,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.MariaTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class ProductImagesRepoImpl() : ProductImagesRepo {
   override fun delete(): DeleteBuilder<ProductImagesFields, ProductImagesRow> = DeleteBuilder.of("`product_images`", ProductImagesFields.structure, Dialect.MARIADB)
@@ -28,7 +27,7 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
   override fun deleteById(
     imageId: ProductImagesId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from `product_images` where `image_id` = "), Fragment.encode(ProductImagesId.pgType, imageId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `product_images` where `image_id` = "), Fragment.encode(ProductImagesId.pgType, imageId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     imageIds: Array<ProductImagesId>,
@@ -42,7 +41,7 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
   override fun insert(
     unsaved: ProductImagesRow,
     c: Connection
-  ): ProductImagesRow = interpolate(Fragment.lit("insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nvalues ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.thumbnailUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.altText), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.imageData), Fragment.lit(")\nreturning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
+  ): ProductImagesRow = Fragment.interpolate(Fragment.lit("insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nvalues ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.thumbnailUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.altText), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.imageData), Fragment.lit(")\nreturning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
     .updateReturning(ProductImagesRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -52,46 +51,46 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`product_id`"))
-    values.add(interpolate(Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit("")))
     columns.add(Fragment.lit("`image_url`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit("")))
     unsaved.thumbnailUrl.visit(
       {  },
       { value -> columns.add(Fragment.lit("`thumbnail_url`"))
-      values.add(interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
     );
     unsaved.altText.visit(
       {  },
       { value -> columns.add(Fragment.lit("`alt_text`"))
-      values.add(interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
     );
     unsaved.sortOrder.visit(
       {  },
       { value -> columns.add(Fragment.lit("`sort_order`"))
-      values.add(interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, value), Fragment.lit(""))) }
     );
     unsaved.isPrimary.visit(
       {  },
       { value -> columns.add(Fragment.lit("`is_primary`"))
-      values.add(interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
     );
     unsaved.imageData.visit(
       {  },
       { value -> columns.add(Fragment.lit("`image_data`"))
-      values.add(interpolate(Fragment.encode(MariaTypes.longblob.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.longblob.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into `product_images`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_images`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
     return q.updateReturning(ProductImagesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun select(): SelectBuilder<ProductImagesFields, ProductImagesRow> = SelectBuilder.of("`product_images`", ProductImagesFields.structure, ProductImagesRow._rowParser, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<ProductImagesRow> = interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\nfrom `product_images`\n")).query(ProductImagesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ProductImagesRow> = Fragment.interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\nfrom `product_images`\n")).query(ProductImagesRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     imageId: ProductImagesId,
     c: Connection
-  ): ProductImagesRow? = interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\nfrom `product_images`\nwhere `image_id` = "), Fragment.encode(ProductImagesId.pgType, imageId), Fragment.lit("")).query(ProductImagesRow._rowParser.first()).runUnchecked(c)
+  ): ProductImagesRow? = Fragment.interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\nfrom `product_images`\nwhere `image_id` = "), Fragment.encode(ProductImagesId.pgType, imageId), Fragment.lit("")).query(ProductImagesRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     imageIds: Array<ProductImagesId>,
@@ -118,20 +117,20 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
     c: Connection
   ): Boolean {
     val imageId: ProductImagesId = row.imageId
-    return interpolate(Fragment.lit("update `product_images`\nset `product_id` = "), Fragment.encode(ProductsId.pgType, row.productId), Fragment.lit(",\n`image_url` = "), Fragment.encode(MariaTypes.varchar, row.imageUrl), Fragment.lit(",\n`thumbnail_url` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.thumbnailUrl), Fragment.lit(",\n`alt_text` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.altText), Fragment.lit(",\n`sort_order` = "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, row.sortOrder), Fragment.lit(",\n`is_primary` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isPrimary), Fragment.lit(",\n`image_data` = "), Fragment.encode(MariaTypes.longblob.nullable(), row.imageData), Fragment.lit("\nwhere `image_id` = "), Fragment.encode(ProductImagesId.pgType, imageId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `product_images`\nset `product_id` = "), Fragment.encode(ProductsId.pgType, row.productId), Fragment.lit(",\n`image_url` = "), Fragment.encode(MariaTypes.varchar, row.imageUrl), Fragment.lit(",\n`thumbnail_url` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.thumbnailUrl), Fragment.lit(",\n`alt_text` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.altText), Fragment.lit(",\n`sort_order` = "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, row.sortOrder), Fragment.lit(",\n`is_primary` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isPrimary), Fragment.lit(",\n`image_data` = "), Fragment.encode(MariaTypes.longblob.nullable(), row.imageData), Fragment.lit("\nwhere `image_id` = "), Fragment.encode(ProductImagesId.pgType, imageId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductImagesRow,
     c: Connection
-  ): ProductImagesRow = interpolate(Fragment.lit("INSERT INTO `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nVALUES ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.thumbnailUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.altText), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.imageData), Fragment.lit(")\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`image_url` = VALUES(`image_url`),\n`thumbnail_url` = VALUES(`thumbnail_url`),\n`alt_text` = VALUES(`alt_text`),\n`sort_order` = VALUES(`sort_order`),\n`is_primary` = VALUES(`is_primary`),\n`image_data` = VALUES(`image_data`)\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`"))
+  ): ProductImagesRow = Fragment.interpolate(Fragment.lit("INSERT INTO `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nVALUES ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.thumbnailUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.altText), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.imageData), Fragment.lit(")\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`image_url` = VALUES(`image_url`),\n`thumbnail_url` = VALUES(`thumbnail_url`),\n`alt_text` = VALUES(`alt_text`),\n`sort_order` = VALUES(`sort_order`),\n`is_primary` = VALUES(`is_primary`),\n`image_data` = VALUES(`image_data`)\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`"))
     .updateReturning(ProductImagesRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
     unsaved: MutableIterator<ProductImagesRow>,
     c: Connection
-  ): List<ProductImagesRow> = interpolate(Fragment.lit("INSERT INTO `product_images`(`image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`image_url` = VALUES(`image_url`),\n`thumbnail_url` = VALUES(`thumbnail_url`),\n`alt_text` = VALUES(`alt_text`),\n`sort_order` = VALUES(`sort_order`),\n`is_primary` = VALUES(`is_primary`),\n`image_data` = VALUES(`image_data`)\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`"))
+  ): List<ProductImagesRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `product_images`(`image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`image_url` = VALUES(`image_url`),\n`thumbnail_url` = VALUES(`thumbnail_url`),\n`alt_text` = VALUES(`alt_text`),\n`sort_order` = VALUES(`sort_order`),\n`is_primary` = VALUES(`is_primary`),\n`image_data` = VALUES(`image_data`)\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`"))
     .updateReturningEach(ProductImagesRow._rowParser, unsaved)
   .runUnchecked(c)
 }

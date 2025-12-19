@@ -9,9 +9,9 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.purchasing.shipmethod.ShipmethodId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -22,7 +22,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
   override fun delete(): DeleteBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> = DeleteBuilder.of("\"purchasing\".\"purchaseorderheader\"", PurchaseorderheaderFields.structure, Dialect.POSTGRESQL)
@@ -30,19 +29,19 @@ class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
   override fun deleteById(
     purchaseorderid: PurchaseorderheaderId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"purchasing\".\"purchaseorderheader\" where \"purchaseorderid\" = "), Fragment.encode(PurchaseorderheaderId.pgType, purchaseorderid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"purchasing\".\"purchaseorderheader\" where \"purchaseorderid\" = "), Fragment.encode(PurchaseorderheaderId.pgType, purchaseorderid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     purchaseorderids: Array<PurchaseorderheaderId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"purchasing\".\"purchaseorderheader\"\nwhere \"purchaseorderid\" = ANY("), Fragment.encode(PurchaseorderheaderId.pgTypeArray, purchaseorderids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"purchasing\".\"purchaseorderheader\"\nwhere \"purchaseorderid\" = ANY("), Fragment.encode(PurchaseorderheaderId.pgTypeArray, purchaseorderids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: PurchaseorderheaderRow,
     c: Connection
-  ): PurchaseorderheaderRow = interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\")\nvalues ("), Fragment.encode(PurchaseorderheaderId.pgType, unsaved.purchaseorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.revisionnumber), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.status), Fragment.lit("::int2, "), Fragment.encode(BusinessentityId.pgType, unsaved.employeeid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.vendorid), Fragment.lit("::int4, "), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.orderdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.shipdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.subtotal), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.taxamt), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.freight), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\n"))
+  ): PurchaseorderheaderRow = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\")\nvalues ("), Fragment.encode(PurchaseorderheaderId.pgType, unsaved.purchaseorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.revisionnumber), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.status), Fragment.lit("::int2, "), Fragment.encode(BusinessentityId.pgType, unsaved.employeeid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.vendorid), Fragment.lit("::int4, "), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.orderdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.shipdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.subtotal), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.taxamt), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.freight), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\n"))
     .updateReturning(PurchaseorderheaderRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -52,83 +51,83 @@ class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"employeeid\""))
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.employeeid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.employeeid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"vendorid\""))
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.vendorid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.vendorid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"shipmethodid\""))
-    values.add(interpolate(Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"shipdate\""))
-    values.add(interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.shipdate), Fragment.lit("::timestamp")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.shipdate), Fragment.lit("::timestamp")))
     unsaved.purchaseorderid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"purchaseorderid\""))
-      values.add(interpolate(Fragment.encode(PurchaseorderheaderId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PurchaseorderheaderId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.revisionnumber.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"revisionnumber\""))
-      values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, value), Fragment.lit("::int2"))) }
+      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, value), Fragment.lit("::int2"))) }
     );
     unsaved.status.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"status\""))
-      values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, value), Fragment.lit("::int2"))) }
+      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, value), Fragment.lit("::int2"))) }
     );
     unsaved.orderdate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"orderdate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
     unsaved.subtotal.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"subtotal\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.taxamt.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"taxamt\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.freight.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"freight\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\n"))
     return q.updateReturning(PurchaseorderheaderRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<PurchaseorderheaderRow>,
+    unsaved: Iterator<PurchaseorderheaderRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, PurchaseorderheaderRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<PurchaseorderheaderRowUnsaved>,
+    unsaved: Iterator<PurchaseorderheaderRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"purchasing\".\"purchaseorderheader\"(\"employeeid\", \"vendorid\", \"shipmethodid\", \"shipdate\", \"purchaseorderid\", \"revisionnumber\", \"status\", \"orderdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, PurchaseorderheaderRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<PurchaseorderheaderFields, PurchaseorderheaderRow> = SelectBuilder.of("\"purchasing\".\"purchaseorderheader\"", PurchaseorderheaderFields.structure, PurchaseorderheaderRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<PurchaseorderheaderRow> = interpolate(Fragment.lit("select \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderheader\"\n")).query(PurchaseorderheaderRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<PurchaseorderheaderRow> = Fragment.interpolate(Fragment.lit("select \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderheader\"\n")).query(PurchaseorderheaderRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     purchaseorderid: PurchaseorderheaderId,
     c: Connection
-  ): PurchaseorderheaderRow? = interpolate(Fragment.lit("select \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderheader\"\nwhere \"purchaseorderid\" = "), Fragment.encode(PurchaseorderheaderId.pgType, purchaseorderid), Fragment.lit("")).query(PurchaseorderheaderRow._rowParser.first()).runUnchecked(c)
+  ): PurchaseorderheaderRow? = Fragment.interpolate(Fragment.lit("select \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderheader\"\nwhere \"purchaseorderid\" = "), Fragment.encode(PurchaseorderheaderId.pgType, purchaseorderid), Fragment.lit("")).query(PurchaseorderheaderRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     purchaseorderids: Array<PurchaseorderheaderId>,
     c: Connection
-  ): List<PurchaseorderheaderRow> = interpolate(Fragment.lit("select \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderheader\"\nwhere \"purchaseorderid\" = ANY("), Fragment.encode(PurchaseorderheaderId.pgTypeArray, purchaseorderids), Fragment.lit(")")).query(PurchaseorderheaderRow._rowParser.all()).runUnchecked(c)
+  ): List<PurchaseorderheaderRow> = Fragment.interpolate(Fragment.lit("select \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderheader\"\nwhere \"purchaseorderid\" = ANY("), Fragment.encode(PurchaseorderheaderId.pgTypeArray, purchaseorderids), Fragment.lit(")")).query(PurchaseorderheaderRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     purchaseorderids: Array<PurchaseorderheaderId>,
@@ -146,31 +145,31 @@ class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
     c: Connection
   ): Boolean {
     val purchaseorderid: PurchaseorderheaderId = row.purchaseorderid
-    return interpolate(Fragment.lit("update \"purchasing\".\"purchaseorderheader\"\nset \"revisionnumber\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.revisionnumber), Fragment.lit("::int2,\n\"status\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.status), Fragment.lit("::int2,\n\"employeeid\" = "), Fragment.encode(BusinessentityId.pgType, row.employeeid), Fragment.lit("::int4,\n\"vendorid\" = "), Fragment.encode(BusinessentityId.pgType, row.vendorid), Fragment.lit("::int4,\n\"shipmethodid\" = "), Fragment.encode(ShipmethodId.pgType, row.shipmethodid), Fragment.lit("::int4,\n\"orderdate\" = "), Fragment.encode(PgTypes.timestamp, row.orderdate), Fragment.lit("::timestamp,\n\"shipdate\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.shipdate), Fragment.lit("::timestamp,\n\"subtotal\" = "), Fragment.encode(PgTypes.numeric, row.subtotal), Fragment.lit("::numeric,\n\"taxamt\" = "), Fragment.encode(PgTypes.numeric, row.taxamt), Fragment.lit("::numeric,\n\"freight\" = "), Fragment.encode(PgTypes.numeric, row.freight), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"purchaseorderid\" = "), Fragment.encode(PurchaseorderheaderId.pgType, purchaseorderid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"purchasing\".\"purchaseorderheader\"\nset \"revisionnumber\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.revisionnumber), Fragment.lit("::int2,\n\"status\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.status), Fragment.lit("::int2,\n\"employeeid\" = "), Fragment.encode(BusinessentityId.pgType, row.employeeid), Fragment.lit("::int4,\n\"vendorid\" = "), Fragment.encode(BusinessentityId.pgType, row.vendorid), Fragment.lit("::int4,\n\"shipmethodid\" = "), Fragment.encode(ShipmethodId.pgType, row.shipmethodid), Fragment.lit("::int4,\n\"orderdate\" = "), Fragment.encode(PgTypes.timestamp, row.orderdate), Fragment.lit("::timestamp,\n\"shipdate\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.shipdate), Fragment.lit("::timestamp,\n\"subtotal\" = "), Fragment.encode(PgTypes.numeric, row.subtotal), Fragment.lit("::numeric,\n\"taxamt\" = "), Fragment.encode(PgTypes.numeric, row.taxamt), Fragment.lit("::numeric,\n\"freight\" = "), Fragment.encode(PgTypes.numeric, row.freight), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"purchaseorderid\" = "), Fragment.encode(PurchaseorderheaderId.pgType, purchaseorderid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: PurchaseorderheaderRow,
     c: Connection
-  ): PurchaseorderheaderRow = interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\")\nvalues ("), Fragment.encode(PurchaseorderheaderId.pgType, unsaved.purchaseorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.revisionnumber), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.status), Fragment.lit("::int2, "), Fragment.encode(BusinessentityId.pgType, unsaved.employeeid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.vendorid), Fragment.lit("::int4, "), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.orderdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.shipdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.subtotal), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.taxamt), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.freight), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"purchaseorderid\")\ndo update set\n  \"revisionnumber\" = EXCLUDED.\"revisionnumber\",\n\"status\" = EXCLUDED.\"status\",\n\"employeeid\" = EXCLUDED.\"employeeid\",\n\"vendorid\" = EXCLUDED.\"vendorid\",\n\"shipmethodid\" = EXCLUDED.\"shipmethodid\",\n\"orderdate\" = EXCLUDED.\"orderdate\",\n\"shipdate\" = EXCLUDED.\"shipdate\",\n\"subtotal\" = EXCLUDED.\"subtotal\",\n\"taxamt\" = EXCLUDED.\"taxamt\",\n\"freight\" = EXCLUDED.\"freight\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\""))
+  ): PurchaseorderheaderRow = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\")\nvalues ("), Fragment.encode(PurchaseorderheaderId.pgType, unsaved.purchaseorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.revisionnumber), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.status), Fragment.lit("::int2, "), Fragment.encode(BusinessentityId.pgType, unsaved.employeeid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.vendorid), Fragment.lit("::int4, "), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.orderdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.shipdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.subtotal), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.taxamt), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.freight), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"purchaseorderid\")\ndo update set\n  \"revisionnumber\" = EXCLUDED.\"revisionnumber\",\n\"status\" = EXCLUDED.\"status\",\n\"employeeid\" = EXCLUDED.\"employeeid\",\n\"vendorid\" = EXCLUDED.\"vendorid\",\n\"shipmethodid\" = EXCLUDED.\"shipmethodid\",\n\"orderdate\" = EXCLUDED.\"orderdate\",\n\"shipdate\" = EXCLUDED.\"shipdate\",\n\"subtotal\" = EXCLUDED.\"subtotal\",\n\"taxamt\" = EXCLUDED.\"taxamt\",\n\"freight\" = EXCLUDED.\"freight\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\""))
     .updateReturning(PurchaseorderheaderRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<PurchaseorderheaderRow>,
+    unsaved: Iterator<PurchaseorderheaderRow>,
     c: Connection
-  ): List<PurchaseorderheaderRow> = interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\")\nvalues (?::int4, ?::int2, ?::int2, ?::int4, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::numeric, ?::numeric, ?::numeric, ?::timestamp)\non conflict (\"purchaseorderid\")\ndo update set\n  \"revisionnumber\" = EXCLUDED.\"revisionnumber\",\n\"status\" = EXCLUDED.\"status\",\n\"employeeid\" = EXCLUDED.\"employeeid\",\n\"vendorid\" = EXCLUDED.\"vendorid\",\n\"shipmethodid\" = EXCLUDED.\"shipmethodid\",\n\"orderdate\" = EXCLUDED.\"orderdate\",\n\"shipdate\" = EXCLUDED.\"shipdate\",\n\"subtotal\" = EXCLUDED.\"subtotal\",\n\"taxamt\" = EXCLUDED.\"taxamt\",\n\"freight\" = EXCLUDED.\"freight\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\""))
+  ): List<PurchaseorderheaderRow> = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\")\nvalues (?::int4, ?::int2, ?::int2, ?::int4, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::numeric, ?::numeric, ?::numeric, ?::timestamp)\non conflict (\"purchaseorderid\")\ndo update set\n  \"revisionnumber\" = EXCLUDED.\"revisionnumber\",\n\"status\" = EXCLUDED.\"status\",\n\"employeeid\" = EXCLUDED.\"employeeid\",\n\"vendorid\" = EXCLUDED.\"vendorid\",\n\"shipmethodid\" = EXCLUDED.\"shipmethodid\",\n\"orderdate\" = EXCLUDED.\"orderdate\",\n\"shipdate\" = EXCLUDED.\"shipdate\",\n\"subtotal\" = EXCLUDED.\"subtotal\",\n\"taxamt\" = EXCLUDED.\"taxamt\",\n\"freight\" = EXCLUDED.\"freight\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\""))
     .updateManyReturning(PurchaseorderheaderRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<PurchaseorderheaderRow>,
+    unsaved: Iterator<PurchaseorderheaderRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table purchaseorderheader_TEMP (like \"purchasing\".\"purchaseorderheader\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table purchaseorderheader_TEMP (like \"purchasing\".\"purchaseorderheader\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy purchaseorderheader_TEMP(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\") from stdin", batchSize, unsaved, c, PurchaseorderheaderRow.pgText)
-    return interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\")\nselect * from purchaseorderheader_TEMP\non conflict (\"purchaseorderid\")\ndo update set\n  \"revisionnumber\" = EXCLUDED.\"revisionnumber\",\n\"status\" = EXCLUDED.\"status\",\n\"employeeid\" = EXCLUDED.\"employeeid\",\n\"vendorid\" = EXCLUDED.\"vendorid\",\n\"shipmethodid\" = EXCLUDED.\"shipmethodid\",\n\"orderdate\" = EXCLUDED.\"orderdate\",\n\"shipdate\" = EXCLUDED.\"shipdate\",\n\"subtotal\" = EXCLUDED.\"subtotal\",\n\"taxamt\" = EXCLUDED.\"taxamt\",\n\"freight\" = EXCLUDED.\"freight\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table purchaseorderheader_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"(\"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\")\nselect * from purchaseorderheader_TEMP\non conflict (\"purchaseorderid\")\ndo update set\n  \"revisionnumber\" = EXCLUDED.\"revisionnumber\",\n\"status\" = EXCLUDED.\"status\",\n\"employeeid\" = EXCLUDED.\"employeeid\",\n\"vendorid\" = EXCLUDED.\"vendorid\",\n\"shipmethodid\" = EXCLUDED.\"shipmethodid\",\n\"orderdate\" = EXCLUDED.\"orderdate\",\n\"shipdate\" = EXCLUDED.\"shipdate\",\n\"subtotal\" = EXCLUDED.\"subtotal\",\n\"taxamt\" = EXCLUDED.\"taxamt\",\n\"freight\" = EXCLUDED.\"freight\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table purchaseorderheader_TEMP;")).update().runUnchecked(c)
   }
 }

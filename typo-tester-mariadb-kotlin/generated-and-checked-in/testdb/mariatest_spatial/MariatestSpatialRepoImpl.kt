@@ -17,7 +17,6 @@ import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.MariaTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class MariatestSpatialRepoImpl() : MariatestSpatialRepo {
   override fun delete(): DeleteBuilder<MariatestSpatialFields, MariatestSpatialRow> = DeleteBuilder.of("`mariatest_spatial`", MariatestSpatialFields.structure, Dialect.MARIADB)
@@ -25,7 +24,7 @@ class MariatestSpatialRepoImpl() : MariatestSpatialRepo {
   override fun deleteById(
     id: MariatestSpatialId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from `mariatest_spatial` where `id` = "), Fragment.encode(MariatestSpatialId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `mariatest_spatial` where `id` = "), Fragment.encode(MariatestSpatialId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     ids: Array<MariatestSpatialId>,
@@ -39,7 +38,7 @@ class MariatestSpatialRepoImpl() : MariatestSpatialRepo {
   override fun insert(
     unsaved: MariatestSpatialRow,
     c: Connection
-  ): MariatestSpatialRow = interpolate(Fragment.lit("insert into `mariatest_spatial`(`geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)\nvalues ("), Fragment.encode(MariaTypes.geometry, unsaved.geometryCol), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.pointCol), Fragment.lit(", "), Fragment.encode(MariaTypes.linestring, unsaved.linestringCol), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon, unsaved.polygonCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multipoint, unsaved.multipointCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multilinestring, unsaved.multilinestringCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multipolygon, unsaved.multipolygonCol), Fragment.lit(", "), Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol), Fragment.lit(")\nreturning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\n"))
+  ): MariatestSpatialRow = Fragment.interpolate(Fragment.lit("insert into `mariatest_spatial`(`geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)\nvalues ("), Fragment.encode(MariaTypes.geometry, unsaved.geometryCol), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.pointCol), Fragment.lit(", "), Fragment.encode(MariaTypes.linestring, unsaved.linestringCol), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon, unsaved.polygonCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multipoint, unsaved.multipointCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multilinestring, unsaved.multilinestringCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multipolygon, unsaved.multipolygonCol), Fragment.lit(", "), Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol), Fragment.lit(")\nreturning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\n"))
     .updateReturning(MariatestSpatialRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,33 +48,33 @@ class MariatestSpatialRepoImpl() : MariatestSpatialRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`geometry_col`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.geometry, unsaved.geometryCol), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.geometry, unsaved.geometryCol), Fragment.lit("")))
     columns.add(Fragment.lit("`point_col`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.point, unsaved.pointCol), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.point, unsaved.pointCol), Fragment.lit("")))
     columns.add(Fragment.lit("`linestring_col`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.linestring, unsaved.linestringCol), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.linestring, unsaved.linestringCol), Fragment.lit("")))
     columns.add(Fragment.lit("`polygon_col`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.polygon, unsaved.polygonCol), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.polygon, unsaved.polygonCol), Fragment.lit("")))
     columns.add(Fragment.lit("`multipoint_col`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.multipoint, unsaved.multipointCol), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.multipoint, unsaved.multipointCol), Fragment.lit("")))
     columns.add(Fragment.lit("`multilinestring_col`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.multilinestring, unsaved.multilinestringCol), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.multilinestring, unsaved.multilinestringCol), Fragment.lit("")))
     columns.add(Fragment.lit("`multipolygon_col`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.multipolygon, unsaved.multipolygonCol), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.multipolygon, unsaved.multipolygonCol), Fragment.lit("")))
     columns.add(Fragment.lit("`geometrycollection_col`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol), Fragment.lit("")))
-    val q: Fragment = interpolate(Fragment.lit("insert into `mariatest_spatial`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\n"))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol), Fragment.lit("")))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_spatial`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\n"))
     return q.updateReturning(MariatestSpatialRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun select(): SelectBuilder<MariatestSpatialFields, MariatestSpatialRow> = SelectBuilder.of("`mariatest_spatial`", MariatestSpatialFields.structure, MariatestSpatialRow._rowParser, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<MariatestSpatialRow> = interpolate(Fragment.lit("select `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\nfrom `mariatest_spatial`\n")).query(MariatestSpatialRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<MariatestSpatialRow> = Fragment.interpolate(Fragment.lit("select `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\nfrom `mariatest_spatial`\n")).query(MariatestSpatialRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     id: MariatestSpatialId,
     c: Connection
-  ): MariatestSpatialRow? = interpolate(Fragment.lit("select `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\nfrom `mariatest_spatial`\nwhere `id` = "), Fragment.encode(MariatestSpatialId.pgType, id), Fragment.lit("")).query(MariatestSpatialRow._rowParser.first()).runUnchecked(c)
+  ): MariatestSpatialRow? = Fragment.interpolate(Fragment.lit("select `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\nfrom `mariatest_spatial`\nwhere `id` = "), Fragment.encode(MariatestSpatialId.pgType, id), Fragment.lit("")).query(MariatestSpatialRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     ids: Array<MariatestSpatialId>,
@@ -102,20 +101,20 @@ class MariatestSpatialRepoImpl() : MariatestSpatialRepo {
     c: Connection
   ): Boolean {
     val id: MariatestSpatialId = row.id
-    return interpolate(Fragment.lit("update `mariatest_spatial`\nset `geometry_col` = "), Fragment.encode(MariaTypes.geometry, row.geometryCol), Fragment.lit(",\n`point_col` = "), Fragment.encode(MariaTypes.point, row.pointCol), Fragment.lit(",\n`linestring_col` = "), Fragment.encode(MariaTypes.linestring, row.linestringCol), Fragment.lit(",\n`polygon_col` = "), Fragment.encode(MariaTypes.polygon, row.polygonCol), Fragment.lit(",\n`multipoint_col` = "), Fragment.encode(MariaTypes.multipoint, row.multipointCol), Fragment.lit(",\n`multilinestring_col` = "), Fragment.encode(MariaTypes.multilinestring, row.multilinestringCol), Fragment.lit(",\n`multipolygon_col` = "), Fragment.encode(MariaTypes.multipolygon, row.multipolygonCol), Fragment.lit(",\n`geometrycollection_col` = "), Fragment.encode(MariaTypes.geometrycollection, row.geometrycollectionCol), Fragment.lit("\nwhere `id` = "), Fragment.encode(MariatestSpatialId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `mariatest_spatial`\nset `geometry_col` = "), Fragment.encode(MariaTypes.geometry, row.geometryCol), Fragment.lit(",\n`point_col` = "), Fragment.encode(MariaTypes.point, row.pointCol), Fragment.lit(",\n`linestring_col` = "), Fragment.encode(MariaTypes.linestring, row.linestringCol), Fragment.lit(",\n`polygon_col` = "), Fragment.encode(MariaTypes.polygon, row.polygonCol), Fragment.lit(",\n`multipoint_col` = "), Fragment.encode(MariaTypes.multipoint, row.multipointCol), Fragment.lit(",\n`multilinestring_col` = "), Fragment.encode(MariaTypes.multilinestring, row.multilinestringCol), Fragment.lit(",\n`multipolygon_col` = "), Fragment.encode(MariaTypes.multipolygon, row.multipolygonCol), Fragment.lit(",\n`geometrycollection_col` = "), Fragment.encode(MariaTypes.geometrycollection, row.geometrycollectionCol), Fragment.lit("\nwhere `id` = "), Fragment.encode(MariatestSpatialId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: MariatestSpatialRow,
     c: Connection
-  ): MariatestSpatialRow = interpolate(Fragment.lit("INSERT INTO `mariatest_spatial`(`geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)\nVALUES ("), Fragment.encode(MariaTypes.geometry, unsaved.geometryCol), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.pointCol), Fragment.lit(", "), Fragment.encode(MariaTypes.linestring, unsaved.linestringCol), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon, unsaved.polygonCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multipoint, unsaved.multipointCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multilinestring, unsaved.multilinestringCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multipolygon, unsaved.multipolygonCol), Fragment.lit(", "), Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol), Fragment.lit(")\nON DUPLICATE KEY UPDATE `geometry_col` = VALUES(`geometry_col`),\n`point_col` = VALUES(`point_col`),\n`linestring_col` = VALUES(`linestring_col`),\n`polygon_col` = VALUES(`polygon_col`),\n`multipoint_col` = VALUES(`multipoint_col`),\n`multilinestring_col` = VALUES(`multilinestring_col`),\n`multipolygon_col` = VALUES(`multipolygon_col`),\n`geometrycollection_col` = VALUES(`geometrycollection_col`)\nRETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`"))
+  ): MariatestSpatialRow = Fragment.interpolate(Fragment.lit("INSERT INTO `mariatest_spatial`(`geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)\nVALUES ("), Fragment.encode(MariaTypes.geometry, unsaved.geometryCol), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.pointCol), Fragment.lit(", "), Fragment.encode(MariaTypes.linestring, unsaved.linestringCol), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon, unsaved.polygonCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multipoint, unsaved.multipointCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multilinestring, unsaved.multilinestringCol), Fragment.lit(", "), Fragment.encode(MariaTypes.multipolygon, unsaved.multipolygonCol), Fragment.lit(", "), Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol), Fragment.lit(")\nON DUPLICATE KEY UPDATE `geometry_col` = VALUES(`geometry_col`),\n`point_col` = VALUES(`point_col`),\n`linestring_col` = VALUES(`linestring_col`),\n`polygon_col` = VALUES(`polygon_col`),\n`multipoint_col` = VALUES(`multipoint_col`),\n`multilinestring_col` = VALUES(`multilinestring_col`),\n`multipolygon_col` = VALUES(`multipolygon_col`),\n`geometrycollection_col` = VALUES(`geometrycollection_col`)\nRETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`"))
     .updateReturning(MariatestSpatialRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
     unsaved: MutableIterator<MariatestSpatialRow>,
     c: Connection
-  ): List<MariatestSpatialRow> = interpolate(Fragment.lit("INSERT INTO `mariatest_spatial`(`id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `geometry_col` = VALUES(`geometry_col`),\n`point_col` = VALUES(`point_col`),\n`linestring_col` = VALUES(`linestring_col`),\n`polygon_col` = VALUES(`polygon_col`),\n`multipoint_col` = VALUES(`multipoint_col`),\n`multilinestring_col` = VALUES(`multilinestring_col`),\n`multipolygon_col` = VALUES(`multipolygon_col`),\n`geometrycollection_col` = VALUES(`geometrycollection_col`)\nRETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`"))
+  ): List<MariatestSpatialRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `mariatest_spatial`(`id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `geometry_col` = VALUES(`geometry_col`),\n`point_col` = VALUES(`point_col`),\n`linestring_col` = VALUES(`linestring_col`),\n`polygon_col` = VALUES(`polygon_col`),\n`multipoint_col` = VALUES(`multipoint_col`),\n`multilinestring_col` = VALUES(`multilinestring_col`),\n`multipolygon_col` = VALUES(`multipolygon_col`),\n`geometrycollection_col` = VALUES(`geometrycollection_col`)\nRETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`"))
     .updateReturningEach(MariatestSpatialRow._rowParser, unsaved)
   .runUnchecked(c)
 }

@@ -98,54 +98,54 @@ object Types {
  * Fragment factory methods.
  */
 object Fragments {
-    val EMPTY: Fragment get() = typo.runtime.Fragment.EMPTY
+    val EMPTY: Fragment get() = Fragment(typo.runtime.Fragment.EMPTY)
 
-    fun lit(value: String): typo.runtime.Fragment.Literal {
-        return typo.runtime.Fragment.lit(value)
+    fun lit(value: String): Fragment {
+        return Fragment(typo.runtime.Fragment.lit(value))
     }
 
     fun empty(): Fragment {
-        return typo.runtime.Fragment.empty()
+        return Fragment(typo.runtime.Fragment.empty())
     }
 
-    fun quotedDouble(value: String): typo.runtime.Fragment.Literal {
-        return typo.runtime.Fragment.quotedDouble(value)
+    fun quotedDouble(value: String): Fragment {
+        return Fragment(typo.runtime.Fragment.quotedDouble(value))
     }
 
-    fun quotedSingle(value: String): typo.runtime.Fragment.Literal {
-        return typo.runtime.Fragment.quotedSingle(value)
+    fun quotedSingle(value: String): Fragment {
+        return Fragment(typo.runtime.Fragment.quotedSingle(value))
     }
 
-    fun <A> value(value: A, type: PgType<A>): typo.runtime.Fragment.Value<A> {
-        return typo.runtime.Fragment.value(value, type)
+    fun <A> value(value: A, type: PgType<A>): Fragment {
+        return Fragment(typo.runtime.Fragment.value(value, type))
     }
 
     fun and(vararg fragments: Fragment): Fragment {
-        return typo.runtime.Fragment.and(*fragments)
+        return Fragment(typo.runtime.Fragment.and(*fragments.map { it.underlying }.toTypedArray()))
     }
 
     fun and(fragments: List<Fragment>): Fragment {
-        return typo.runtime.Fragment.and(fragments)
+        return Fragment(typo.runtime.Fragment.and(fragments.map { it.underlying }))
     }
 
     fun or(vararg fragments: Fragment): Fragment {
-        return typo.runtime.Fragment.or(*fragments)
+        return Fragment(typo.runtime.Fragment.or(*fragments.map { it.underlying }.toTypedArray()))
     }
 
     fun or(fragments: List<Fragment>): Fragment {
-        return typo.runtime.Fragment.or(fragments)
+        return Fragment(typo.runtime.Fragment.or(fragments.map { it.underlying }))
     }
 
     fun join(fragments: List<Fragment>, separator: Fragment): Fragment {
-        return typo.runtime.Fragment.join(fragments, separator)
+        return Fragment(typo.runtime.Fragment.join(fragments.map { it.underlying }, separator.underlying))
     }
 
-    fun interpolate(initial: String): typo.runtime.Fragment.Builder {
-        return typo.runtime.Fragment.interpolate(initial)
+    fun interpolate(initial: String): Fragment.Builder {
+        return Fragment.Builder(typo.runtime.Fragment.interpolate(initial))
     }
 
     fun concat(vararg fragments: Fragment): Fragment {
-        return typo.runtime.Fragment.concat(*fragments)
+        return Fragment(typo.runtime.Fragment.concat(*fragments.map { it.underlying }.toTypedArray()))
     }
 }
 

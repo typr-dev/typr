@@ -116,7 +116,7 @@ fun <T : Comparable<T>> Range<T>.finiteOrNull(): RangeFinite<T>? {
 inline fun buildFragment(block: typo.runtime.Fragment.Builder.() -> Unit): Fragment {
     val builder = typo.runtime.Fragment.Builder()
     builder.block()
-    return builder.done()
+    return Fragment(builder.done())
 }
 
 /**

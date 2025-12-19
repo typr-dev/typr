@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class PntViewRepoImpl() : PntViewRepo {
   override fun select(): SelectBuilder<PntViewFields, PntViewRow> = SelectBuilder.of("\"pe\".\"pnt\"", PntViewFields.structure, PntViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<PntViewRow> = interpolate(Fragment.lit("select \"id\", \"phonenumbertypeid\", \"name\", \"modifieddate\"\nfrom \"pe\".\"pnt\"\n")).query(PntViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<PntViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"phonenumbertypeid\", \"name\", \"modifieddate\"\nfrom \"pe\".\"pnt\"\n")).query(PntViewRow._rowParser.all()).runUnchecked(c)
 }

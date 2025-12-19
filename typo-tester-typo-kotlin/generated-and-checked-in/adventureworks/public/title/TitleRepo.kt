@@ -6,9 +6,9 @@
 package adventureworks.public.title
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -32,7 +32,7 @@ interface TitleRepo {
   ): TitleRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<TitleRow>,
+    unsaved: Iterator<TitleRow>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -64,13 +64,13 @@ interface TitleRepo {
   ): TitleRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<TitleRow>,
+    unsaved: Iterator<TitleRow>,
     c: Connection
   ): List<TitleRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<TitleRow>,
+    unsaved: Iterator<TitleRow>,
     batchSize: Int,
     c: Connection
   ): Int

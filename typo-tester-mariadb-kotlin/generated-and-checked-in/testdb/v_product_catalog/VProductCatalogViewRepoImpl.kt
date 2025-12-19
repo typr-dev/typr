@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VProductCatalogViewRepoImpl() : VProductCatalogViewRepo {
   override fun select(): SelectBuilder<VProductCatalogViewFields, VProductCatalogViewRow> = SelectBuilder.of("`v_product_catalog`", VProductCatalogViewFields.structure, VProductCatalogViewRow._rowParser, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<VProductCatalogViewRow> = interpolate(Fragment.lit("select `product_id`, `sku`, `name`, `short_description`, `base_price`, `status`, `tags`, `brand_name`, `available_quantity`, `avg_rating`, `review_count`\nfrom `v_product_catalog`\n")).query(VProductCatalogViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VProductCatalogViewRow> = Fragment.interpolate(Fragment.lit("select `product_id`, `sku`, `name`, `short_description`, `base_price`, `status`, `tags`, `brand_name`, `available_quantity`, `avg_rating`, `review_count`\nfrom `v_product_catalog`\n")).query(VProductCatalogViewRow._rowParser.all()).runUnchecked(c)
 }

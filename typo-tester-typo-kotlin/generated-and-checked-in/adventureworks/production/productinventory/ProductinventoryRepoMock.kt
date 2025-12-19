@@ -8,9 +8,9 @@ package adventureworks.production.productinventory
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -63,7 +63,7 @@ data class ProductinventoryRepoMock(
   ): ProductinventoryRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ProductinventoryRow>,
+    unsaved: Iterator<ProductinventoryRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -78,7 +78,7 @@ data class ProductinventoryRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ProductinventoryRowUnsaved>,
+    unsaved: Iterator<ProductinventoryRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -142,7 +142,7 @@ data class ProductinventoryRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ProductinventoryRow>,
+    unsaved: Iterator<ProductinventoryRow>,
     c: Connection
   ): List<ProductinventoryRow> {
     val result = ArrayList<ProductinventoryRow>()
@@ -156,7 +156,7 @@ data class ProductinventoryRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ProductinventoryRow>,
+    unsaved: Iterator<ProductinventoryRow>,
     batchSize: Int,
     c: Connection
   ): Int {

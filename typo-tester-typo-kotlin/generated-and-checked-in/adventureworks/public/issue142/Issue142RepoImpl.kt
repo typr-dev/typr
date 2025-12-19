@@ -6,9 +6,9 @@
 package adventureworks.public.issue142
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -16,7 +16,6 @@ import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class Issue142RepoImpl() : Issue142Repo {
   override fun delete(): DeleteBuilder<Issue142Fields, Issue142Row> = DeleteBuilder.of("\"public\".\"issue142\"", Issue142Fields.structure, Dialect.POSTGRESQL)
@@ -24,40 +23,40 @@ class Issue142RepoImpl() : Issue142Repo {
   override fun deleteById(
     tabellkode: Issue142Id,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"public\".\"issue142\" where \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"issue142\" where \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     tabellkodes: Array<Issue142Id>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: Issue142Row,
     c: Connection
-  ): Issue142Row = interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\nreturning \"tabellkode\"\n"))
+  ): Issue142Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\nreturning \"tabellkode\"\n"))
     .updateReturning(Issue142Row._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<Issue142Row>,
+    unsaved: Iterator<Issue142Row>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"issue142\"(\"tabellkode\") FROM STDIN", batchSize, unsaved, c, Issue142Row.pgText)
 
   override fun select(): SelectBuilder<Issue142Fields, Issue142Row> = SelectBuilder.of("\"public\".\"issue142\"", Issue142Fields.structure, Issue142Row._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<Issue142Row> = interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142\"\n")).query(Issue142Row._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<Issue142Row> = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142\"\n")).query(Issue142Row._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     tabellkode: Issue142Id,
     c: Connection
-  ): Issue142Row? = interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).query(Issue142Row._rowParser.first()).runUnchecked(c)
+  ): Issue142Row? = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).query(Issue142Row._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     tabellkodes: Array<Issue142Id>,
     c: Connection
-  ): List<Issue142Row> = interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")")).query(Issue142Row._rowParser.all()).runUnchecked(c)
+  ): List<Issue142Row> = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")")).query(Issue142Row._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     tabellkodes: Array<Issue142Id>,
@@ -73,25 +72,25 @@ class Issue142RepoImpl() : Issue142Repo {
   override fun upsert(
     unsaved: Issue142Row,
     c: Connection
-  ): Issue142Row = interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
+  ): Issue142Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
     .updateReturning(Issue142Row._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<Issue142Row>,
+    unsaved: Iterator<Issue142Row>,
     c: Connection
-  ): List<Issue142Row> = interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues (?)\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
+  ): List<Issue142Row> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues (?)\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
     .updateManyReturning(Issue142Row._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<Issue142Row>,
+    unsaved: Iterator<Issue142Row>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table issue142_TEMP (like \"public\".\"issue142\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table issue142_TEMP (like \"public\".\"issue142\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy issue142_TEMP(\"tabellkode\") from stdin", batchSize, unsaved, c, Issue142Row.pgText)
-    return interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nselect * from issue142_TEMP\non conflict (\"tabellkode\")\ndo nothing\n;\ndrop table issue142_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nselect * from issue142_TEMP\non conflict (\"tabellkode\")\ndo nothing\n;\ndrop table issue142_TEMP;")).update().runUnchecked(c)
   }
 }

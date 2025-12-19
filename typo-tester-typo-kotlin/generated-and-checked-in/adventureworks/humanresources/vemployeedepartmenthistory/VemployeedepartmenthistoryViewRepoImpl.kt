@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VemployeedepartmenthistoryViewRepoImpl() : VemployeedepartmenthistoryViewRepo {
   override fun select(): SelectBuilder<VemployeedepartmenthistoryViewFields, VemployeedepartmenthistoryViewRow> = SelectBuilder.of("\"humanresources\".\"vemployeedepartmenthistory\"", VemployeedepartmenthistoryViewFields.structure, VemployeedepartmenthistoryViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VemployeedepartmenthistoryViewRow> = interpolate(Fragment.lit("select \"businessentityid\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"shift\", \"department\", \"groupname\", \"startdate\", \"enddate\"\nfrom \"humanresources\".\"vemployeedepartmenthistory\"\n")).query(VemployeedepartmenthistoryViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VemployeedepartmenthistoryViewRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"shift\", \"department\", \"groupname\", \"startdate\", \"enddate\"\nfrom \"humanresources\".\"vemployeedepartmenthistory\"\n")).query(VemployeedepartmenthistoryViewRow._rowParser.all()).runUnchecked(c)
 }

@@ -8,9 +8,9 @@ package adventureworks.production.productmodelproductdescriptionculture
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -63,7 +63,7 @@ data class ProductmodelproductdescriptioncultureRepoMock(
   ): ProductmodelproductdescriptioncultureRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ProductmodelproductdescriptioncultureRow>,
+    unsaved: Iterator<ProductmodelproductdescriptioncultureRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -78,7 +78,7 @@ data class ProductmodelproductdescriptioncultureRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ProductmodelproductdescriptioncultureRowUnsaved>,
+    unsaved: Iterator<ProductmodelproductdescriptioncultureRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -142,7 +142,7 @@ data class ProductmodelproductdescriptioncultureRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ProductmodelproductdescriptioncultureRow>,
+    unsaved: Iterator<ProductmodelproductdescriptioncultureRow>,
     c: Connection
   ): List<ProductmodelproductdescriptioncultureRow> {
     val result = ArrayList<ProductmodelproductdescriptioncultureRow>()
@@ -156,7 +156,7 @@ data class ProductmodelproductdescriptioncultureRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ProductmodelproductdescriptioncultureRow>,
+    unsaved: Iterator<ProductmodelproductdescriptioncultureRow>,
     batchSize: Int,
     c: Connection
   ): Int {

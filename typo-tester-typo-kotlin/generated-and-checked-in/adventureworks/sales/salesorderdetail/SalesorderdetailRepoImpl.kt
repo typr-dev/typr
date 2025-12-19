@@ -10,9 +10,9 @@ import adventureworks.sales.salesorderheader.SalesorderheaderId
 import adventureworks.sales.specialoffer.SpecialofferId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -24,7 +24,6 @@ import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
   override fun delete(): DeleteBuilder<SalesorderdetailFields, SalesorderdetailRow> = DeleteBuilder.of("\"sales\".\"salesorderdetail\"", SalesorderdetailFields.structure, Dialect.POSTGRESQL)
@@ -32,7 +31,7 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
   override fun deleteById(
     compositeId: SalesorderdetailId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"sales\".\"salesorderdetail\" where \"salesorderid\" = "), Fragment.encode(SalesorderheaderId.pgType, compositeId.salesorderid), Fragment.lit(" AND \"salesorderdetailid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.salesorderdetailid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"sales\".\"salesorderdetail\" where \"salesorderid\" = "), Fragment.encode(SalesorderheaderId.pgType, compositeId.salesorderid), Fragment.lit(" AND \"salesorderdetailid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.salesorderdetailid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<SalesorderdetailId>,
@@ -40,13 +39,13 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
   ): Int {
     val salesorderid: Array<SalesorderheaderId> = arrayMap.map(compositeIds, SalesorderdetailId::salesorderid, SalesorderheaderId::class.java)
     val salesorderdetailid: Array<Int> = arrayMap.map(compositeIds, SalesorderdetailId::salesorderdetailid, Int::class.javaObjectType)
-    return interpolate(Fragment.lit("delete\nfrom \"sales\".\"salesorderdetail\"\nwhere (\"salesorderid\", \"salesorderdetailid\")\nin (select unnest("), Fragment.encode(SalesorderheaderId.pgTypeArray, salesorderid), Fragment.lit("::int4[]), unnest("), Fragment.encode(PgTypes.int4Array, salesorderdetailid), Fragment.lit("::int4[]))\n")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete\nfrom \"sales\".\"salesorderdetail\"\nwhere (\"salesorderid\", \"salesorderdetailid\")\nin (select unnest("), Fragment.encode(SalesorderheaderId.pgTypeArray, salesorderid), Fragment.lit("::int4[]), unnest("), Fragment.encode(PgTypes.int4Array, salesorderdetailid), Fragment.lit("::int4[]))\n")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: SalesorderdetailRow,
     c: Connection
-  ): SalesorderdetailRow = interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.salesorderdetailid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.nullable(), unsaved.carriertrackingnumber), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.orderqty), Fragment.lit("::int2, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.unitprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.unitpricediscount), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\n"))
+  ): SalesorderdetailRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.salesorderdetailid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.nullable(), unsaved.carriertrackingnumber), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.orderqty), Fragment.lit("::int2, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.unitprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.unitpricediscount), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(SalesorderdetailRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -56,62 +55,62 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"salesorderid\""))
-    values.add(interpolate(Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"carriertrackingnumber\""))
-    values.add(interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.carriertrackingnumber), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.carriertrackingnumber), Fragment.lit("")))
     columns.add(Fragment.lit("\"orderqty\""))
-    values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.orderqty), Fragment.lit("::int2")))
+    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.orderqty), Fragment.lit("::int2")))
     columns.add(Fragment.lit("\"productid\""))
-    values.add(interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"specialofferid\""))
-    values.add(interpolate(Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"unitprice\""))
-    values.add(interpolate(Fragment.encode(PgTypes.numeric, unsaved.unitprice), Fragment.lit("::numeric")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, unsaved.unitprice), Fragment.lit("::numeric")))
     unsaved.salesorderdetailid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"salesorderdetailid\""))
-      values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
     );
     unsaved.unitpricediscount.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"unitpricediscount\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.rowguid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(SalesorderdetailRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<SalesorderdetailRow>,
+    unsaved: Iterator<SalesorderdetailRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, SalesorderdetailRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SalesorderdetailRowUnsaved>,
+    unsaved: Iterator<SalesorderdetailRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"salesorderdetail\"(\"salesorderid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"salesorderdetailid\", \"unitpricediscount\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, SalesorderdetailRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<SalesorderdetailFields, SalesorderdetailRow> = SelectBuilder.of("\"sales\".\"salesorderdetail\"", SalesorderdetailFields.structure, SalesorderdetailRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<SalesorderdetailRow> = interpolate(Fragment.lit("select \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesorderdetail\"\n")).query(SalesorderdetailRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<SalesorderdetailRow> = Fragment.interpolate(Fragment.lit("select \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesorderdetail\"\n")).query(SalesorderdetailRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     compositeId: SalesorderdetailId,
     c: Connection
-  ): SalesorderdetailRow? = interpolate(Fragment.lit("select \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesorderdetail\"\nwhere \"salesorderid\" = "), Fragment.encode(SalesorderheaderId.pgType, compositeId.salesorderid), Fragment.lit(" AND \"salesorderdetailid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.salesorderdetailid), Fragment.lit("")).query(SalesorderdetailRow._rowParser.first()).runUnchecked(c)
+  ): SalesorderdetailRow? = Fragment.interpolate(Fragment.lit("select \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesorderdetail\"\nwhere \"salesorderid\" = "), Fragment.encode(SalesorderheaderId.pgType, compositeId.salesorderid), Fragment.lit(" AND \"salesorderdetailid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.salesorderdetailid), Fragment.lit("")).query(SalesorderdetailRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     compositeIds: Array<SalesorderdetailId>,
@@ -119,7 +118,7 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
   ): List<SalesorderdetailRow> {
     val salesorderid: Array<SalesorderheaderId> = arrayMap.map(compositeIds, SalesorderdetailId::salesorderid, SalesorderheaderId::class.java)
     val salesorderdetailid: Array<Int> = arrayMap.map(compositeIds, SalesorderdetailId::salesorderdetailid, Int::class.javaObjectType)
-    return interpolate(Fragment.lit("select \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesorderdetail\"\nwhere (\"salesorderid\", \"salesorderdetailid\")\nin (select unnest("), Fragment.encode(SalesorderheaderId.pgTypeArray, salesorderid), Fragment.lit("::int4[]), unnest("), Fragment.encode(PgTypes.int4Array, salesorderdetailid), Fragment.lit("::int4[]))\n")).query(SalesorderdetailRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesorderdetail\"\nwhere (\"salesorderid\", \"salesorderdetailid\")\nin (select unnest("), Fragment.encode(SalesorderheaderId.pgTypeArray, salesorderid), Fragment.lit("::int4[]), unnest("), Fragment.encode(PgTypes.int4Array, salesorderdetailid), Fragment.lit("::int4[]))\n")).query(SalesorderdetailRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(
@@ -138,31 +137,31 @@ class SalesorderdetailRepoImpl() : SalesorderdetailRepo {
     c: Connection
   ): Boolean {
     val compositeId: SalesorderdetailId = row.compositeId()
-    return interpolate(Fragment.lit("update \"sales\".\"salesorderdetail\"\nset \"carriertrackingnumber\" = "), Fragment.encode(PgTypes.text.nullable(), row.carriertrackingnumber), Fragment.lit(",\n\"orderqty\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.orderqty), Fragment.lit("::int2,\n\"productid\" = "), Fragment.encode(ProductId.pgType, row.productid), Fragment.lit("::int4,\n\"specialofferid\" = "), Fragment.encode(SpecialofferId.pgType, row.specialofferid), Fragment.lit("::int4,\n\"unitprice\" = "), Fragment.encode(PgTypes.numeric, row.unitprice), Fragment.lit("::numeric,\n\"unitpricediscount\" = "), Fragment.encode(PgTypes.numeric, row.unitpricediscount), Fragment.lit("::numeric,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"salesorderid\" = "), Fragment.encode(SalesorderheaderId.pgType, compositeId.salesorderid), Fragment.lit(" AND \"salesorderdetailid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.salesorderdetailid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"sales\".\"salesorderdetail\"\nset \"carriertrackingnumber\" = "), Fragment.encode(PgTypes.text.nullable(), row.carriertrackingnumber), Fragment.lit(",\n\"orderqty\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.orderqty), Fragment.lit("::int2,\n\"productid\" = "), Fragment.encode(ProductId.pgType, row.productid), Fragment.lit("::int4,\n\"specialofferid\" = "), Fragment.encode(SpecialofferId.pgType, row.specialofferid), Fragment.lit("::int4,\n\"unitprice\" = "), Fragment.encode(PgTypes.numeric, row.unitprice), Fragment.lit("::numeric,\n\"unitpricediscount\" = "), Fragment.encode(PgTypes.numeric, row.unitpricediscount), Fragment.lit("::numeric,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"salesorderid\" = "), Fragment.encode(SalesorderheaderId.pgType, compositeId.salesorderid), Fragment.lit(" AND \"salesorderdetailid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.salesorderdetailid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: SalesorderdetailRow,
     c: Connection
-  ): SalesorderdetailRow = interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.salesorderdetailid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.nullable(), unsaved.carriertrackingnumber), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.orderqty), Fragment.lit("::int2, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.unitprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.unitpricediscount), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"salesorderid\", \"salesorderdetailid\")\ndo update set\n  \"carriertrackingnumber\" = EXCLUDED.\"carriertrackingnumber\",\n\"orderqty\" = EXCLUDED.\"orderqty\",\n\"productid\" = EXCLUDED.\"productid\",\n\"specialofferid\" = EXCLUDED.\"specialofferid\",\n\"unitprice\" = EXCLUDED.\"unitprice\",\n\"unitpricediscount\" = EXCLUDED.\"unitpricediscount\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\""))
+  ): SalesorderdetailRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.salesorderdetailid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.nullable(), unsaved.carriertrackingnumber), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.orderqty), Fragment.lit("::int2, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.unitprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.unitpricediscount), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"salesorderid\", \"salesorderdetailid\")\ndo update set\n  \"carriertrackingnumber\" = EXCLUDED.\"carriertrackingnumber\",\n\"orderqty\" = EXCLUDED.\"orderqty\",\n\"productid\" = EXCLUDED.\"productid\",\n\"specialofferid\" = EXCLUDED.\"specialofferid\",\n\"unitprice\" = EXCLUDED.\"unitprice\",\n\"unitpricediscount\" = EXCLUDED.\"unitpricediscount\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\""))
     .updateReturning(SalesorderdetailRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<SalesorderdetailRow>,
+    unsaved: Iterator<SalesorderdetailRow>,
     c: Connection
-  ): List<SalesorderdetailRow> = interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?, ?::int2, ?::int4, ?::int4, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)\non conflict (\"salesorderid\", \"salesorderdetailid\")\ndo update set\n  \"carriertrackingnumber\" = EXCLUDED.\"carriertrackingnumber\",\n\"orderqty\" = EXCLUDED.\"orderqty\",\n\"productid\" = EXCLUDED.\"productid\",\n\"specialofferid\" = EXCLUDED.\"specialofferid\",\n\"unitprice\" = EXCLUDED.\"unitprice\",\n\"unitpricediscount\" = EXCLUDED.\"unitpricediscount\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\""))
+  ): List<SalesorderdetailRow> = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?, ?::int2, ?::int4, ?::int4, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)\non conflict (\"salesorderid\", \"salesorderdetailid\")\ndo update set\n  \"carriertrackingnumber\" = EXCLUDED.\"carriertrackingnumber\",\n\"orderqty\" = EXCLUDED.\"orderqty\",\n\"productid\" = EXCLUDED.\"productid\",\n\"specialofferid\" = EXCLUDED.\"specialofferid\",\n\"unitprice\" = EXCLUDED.\"unitprice\",\n\"unitpricediscount\" = EXCLUDED.\"unitpricediscount\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\""))
     .updateManyReturning(SalesorderdetailRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<SalesorderdetailRow>,
+    unsaved: Iterator<SalesorderdetailRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table salesorderdetail_TEMP (like \"sales\".\"salesorderdetail\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table salesorderdetail_TEMP (like \"sales\".\"salesorderdetail\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy salesorderdetail_TEMP(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, SalesorderdetailRow.pgText)
-    return interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\")\nselect * from salesorderdetail_TEMP\non conflict (\"salesorderid\", \"salesorderdetailid\")\ndo update set\n  \"carriertrackingnumber\" = EXCLUDED.\"carriertrackingnumber\",\n\"orderqty\" = EXCLUDED.\"orderqty\",\n\"productid\" = EXCLUDED.\"productid\",\n\"specialofferid\" = EXCLUDED.\"specialofferid\",\n\"unitprice\" = EXCLUDED.\"unitprice\",\n\"unitpricediscount\" = EXCLUDED.\"unitpricediscount\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table salesorderdetail_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderdetail\"(\"salesorderid\", \"salesorderdetailid\", \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\", \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\")\nselect * from salesorderdetail_TEMP\non conflict (\"salesorderid\", \"salesorderdetailid\")\ndo update set\n  \"carriertrackingnumber\" = EXCLUDED.\"carriertrackingnumber\",\n\"orderqty\" = EXCLUDED.\"orderqty\",\n\"productid\" = EXCLUDED.\"productid\",\n\"specialofferid\" = EXCLUDED.\"specialofferid\",\n\"unitprice\" = EXCLUDED.\"unitprice\",\n\"unitpricediscount\" = EXCLUDED.\"unitpricediscount\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table salesorderdetail_TEMP;")).update().runUnchecked(c)
   }
 }

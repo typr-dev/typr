@@ -5,7 +5,7 @@ package typo.kotlindsl
 // ================================
 
 // Core utility types
-typealias Fragment = typo.runtime.Fragment
+// Fragment wrapper is defined in Fragment.kt
 typealias Either<L, R> = typo.runtime.Either<L, R>
 typealias And<T1, T2> = typo.runtime.And<T1, T2>
 
@@ -53,8 +53,8 @@ typealias PgWrite<A> = typo.runtime.PgWrite<A>
 typealias PgText<A> = typo.runtime.PgText<A>
 
 // Database access types
-// RowParser and ResultSetParser are wrapper classes (see RowParser.kt and ResultSetParser.kt)
-typealias Operation<Out> = typo.runtime.Operation<Out>
+// RowParser, ResultSetParser, and Operation are wrapper classes (see RowParser.kt, ResultSetParser.kt, and Operation.kt)
+// Operation wrapper is defined in Operation.kt
 typealias Transactor = typo.runtime.Transactor
 
 // Functional interfaces for SQL exceptions

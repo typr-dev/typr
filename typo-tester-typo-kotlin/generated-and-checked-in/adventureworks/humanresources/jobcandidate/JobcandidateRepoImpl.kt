@@ -8,9 +8,9 @@ package adventureworks.humanresources.jobcandidate
 import adventureworks.person.businessentity.BusinessentityId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -20,7 +20,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class JobcandidateRepoImpl() : JobcandidateRepo {
   override fun delete(): DeleteBuilder<JobcandidateFields, JobcandidateRow> = DeleteBuilder.of("\"humanresources\".\"jobcandidate\"", JobcandidateFields.structure, Dialect.POSTGRESQL)
@@ -28,19 +27,19 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
   override fun deleteById(
     jobcandidateid: JobcandidateId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"humanresources\".\"jobcandidate\" where \"jobcandidateid\" = "), Fragment.encode(JobcandidateId.pgType, jobcandidateid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"humanresources\".\"jobcandidate\" where \"jobcandidateid\" = "), Fragment.encode(JobcandidateId.pgType, jobcandidateid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     jobcandidateids: Array<JobcandidateId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"humanresources\".\"jobcandidate\"\nwhere \"jobcandidateid\" = ANY("), Fragment.encode(JobcandidateId.pgTypeArray, jobcandidateids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"humanresources\".\"jobcandidate\"\nwhere \"jobcandidateid\" = ANY("), Fragment.encode(JobcandidateId.pgTypeArray, jobcandidateids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: JobcandidateRow,
     c: Connection
-  ): JobcandidateRow = interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nvalues ("), Fragment.encode(JobcandidateId.pgType, unsaved.jobcandidateid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.resume), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\n"))
+  ): JobcandidateRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nvalues ("), Fragment.encode(JobcandidateId.pgType, unsaved.jobcandidateid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.resume), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\n"))
     .updateReturning(JobcandidateRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -50,49 +49,49 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"businessentityid\""))
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.businessentityid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.businessentityid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"resume\""))
-    values.add(interpolate(Fragment.encode(PgTypes.xml.nullable(), unsaved.resume), Fragment.lit("::xml")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.xml.nullable(), unsaved.resume), Fragment.lit("::xml")))
     unsaved.jobcandidateid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"jobcandidateid\""))
-      values.add(interpolate(Fragment.encode(JobcandidateId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(JobcandidateId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\n"))
     return q.updateReturning(JobcandidateRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<JobcandidateRow>,
+    unsaved: Iterator<JobcandidateRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, JobcandidateRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<JobcandidateRowUnsaved>,
+    unsaved: Iterator<JobcandidateRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"humanresources\".\"jobcandidate\"(\"businessentityid\", \"resume\", \"jobcandidateid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, JobcandidateRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<JobcandidateFields, JobcandidateRow> = SelectBuilder.of("\"humanresources\".\"jobcandidate\"", JobcandidateFields.structure, JobcandidateRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<JobcandidateRow> = interpolate(Fragment.lit("select \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\nfrom \"humanresources\".\"jobcandidate\"\n")).query(JobcandidateRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<JobcandidateRow> = Fragment.interpolate(Fragment.lit("select \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\nfrom \"humanresources\".\"jobcandidate\"\n")).query(JobcandidateRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     jobcandidateid: JobcandidateId,
     c: Connection
-  ): JobcandidateRow? = interpolate(Fragment.lit("select \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\nfrom \"humanresources\".\"jobcandidate\"\nwhere \"jobcandidateid\" = "), Fragment.encode(JobcandidateId.pgType, jobcandidateid), Fragment.lit("")).query(JobcandidateRow._rowParser.first()).runUnchecked(c)
+  ): JobcandidateRow? = Fragment.interpolate(Fragment.lit("select \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\nfrom \"humanresources\".\"jobcandidate\"\nwhere \"jobcandidateid\" = "), Fragment.encode(JobcandidateId.pgType, jobcandidateid), Fragment.lit("")).query(JobcandidateRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     jobcandidateids: Array<JobcandidateId>,
     c: Connection
-  ): List<JobcandidateRow> = interpolate(Fragment.lit("select \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\nfrom \"humanresources\".\"jobcandidate\"\nwhere \"jobcandidateid\" = ANY("), Fragment.encode(JobcandidateId.pgTypeArray, jobcandidateids), Fragment.lit(")")).query(JobcandidateRow._rowParser.all()).runUnchecked(c)
+  ): List<JobcandidateRow> = Fragment.interpolate(Fragment.lit("select \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\nfrom \"humanresources\".\"jobcandidate\"\nwhere \"jobcandidateid\" = ANY("), Fragment.encode(JobcandidateId.pgTypeArray, jobcandidateids), Fragment.lit(")")).query(JobcandidateRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     jobcandidateids: Array<JobcandidateId>,
@@ -110,31 +109,31 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
     c: Connection
   ): Boolean {
     val jobcandidateid: JobcandidateId = row.jobcandidateid
-    return interpolate(Fragment.lit("update \"humanresources\".\"jobcandidate\"\nset \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType.nullable(), row.businessentityid), Fragment.lit("::int4,\n\"resume\" = "), Fragment.encode(PgTypes.xml.nullable(), row.resume), Fragment.lit("::xml,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"jobcandidateid\" = "), Fragment.encode(JobcandidateId.pgType, jobcandidateid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"humanresources\".\"jobcandidate\"\nset \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType.nullable(), row.businessentityid), Fragment.lit("::int4,\n\"resume\" = "), Fragment.encode(PgTypes.xml.nullable(), row.resume), Fragment.lit("::xml,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"jobcandidateid\" = "), Fragment.encode(JobcandidateId.pgType, jobcandidateid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: JobcandidateRow,
     c: Connection
-  ): JobcandidateRow = interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nvalues ("), Fragment.encode(JobcandidateId.pgType, unsaved.jobcandidateid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.resume), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"jobcandidateid\")\ndo update set\n  \"businessentityid\" = EXCLUDED.\"businessentityid\",\n\"resume\" = EXCLUDED.\"resume\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\""))
+  ): JobcandidateRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nvalues ("), Fragment.encode(JobcandidateId.pgType, unsaved.jobcandidateid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.resume), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"jobcandidateid\")\ndo update set\n  \"businessentityid\" = EXCLUDED.\"businessentityid\",\n\"resume\" = EXCLUDED.\"resume\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\""))
     .updateReturning(JobcandidateRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<JobcandidateRow>,
+    unsaved: Iterator<JobcandidateRow>,
     c: Connection
-  ): List<JobcandidateRow> = interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::xml, ?::timestamp)\non conflict (\"jobcandidateid\")\ndo update set\n  \"businessentityid\" = EXCLUDED.\"businessentityid\",\n\"resume\" = EXCLUDED.\"resume\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\""))
+  ): List<JobcandidateRow> = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::xml, ?::timestamp)\non conflict (\"jobcandidateid\")\ndo update set\n  \"businessentityid\" = EXCLUDED.\"businessentityid\",\n\"resume\" = EXCLUDED.\"resume\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\""))
     .updateManyReturning(JobcandidateRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<JobcandidateRow>,
+    unsaved: Iterator<JobcandidateRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table jobcandidate_TEMP (like \"humanresources\".\"jobcandidate\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table jobcandidate_TEMP (like \"humanresources\".\"jobcandidate\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy jobcandidate_TEMP(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\") from stdin", batchSize, unsaved, c, JobcandidateRow.pgText)
-    return interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nselect * from jobcandidate_TEMP\non conflict (\"jobcandidateid\")\ndo update set\n  \"businessentityid\" = EXCLUDED.\"businessentityid\",\n\"resume\" = EXCLUDED.\"resume\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table jobcandidate_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nselect * from jobcandidate_TEMP\non conflict (\"jobcandidateid\")\ndo update set\n  \"businessentityid\" = EXCLUDED.\"businessentityid\",\n\"resume\" = EXCLUDED.\"resume\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table jobcandidate_TEMP;")).update().runUnchecked(c)
   }
 }

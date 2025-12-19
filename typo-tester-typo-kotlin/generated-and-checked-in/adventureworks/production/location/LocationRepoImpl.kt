@@ -8,9 +8,9 @@ package adventureworks.production.location
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class LocationRepoImpl() : LocationRepo {
   override fun delete(): DeleteBuilder<LocationFields, LocationRow> = DeleteBuilder.of("\"production\".\"location\"", LocationFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class LocationRepoImpl() : LocationRepo {
   override fun deleteById(
     locationid: LocationId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"location\" where \"locationid\" = "), Fragment.encode(LocationId.pgType, locationid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"location\" where \"locationid\" = "), Fragment.encode(LocationId.pgType, locationid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     locationids: Array<LocationId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"location\"\nwhere \"locationid\" = ANY("), Fragment.encode(LocationId.pgTypeArray, locationids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"location\"\nwhere \"locationid\" = ANY("), Fragment.encode(LocationId.pgTypeArray, locationids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: LocationRow,
     c: Connection
-  ): LocationRow = interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nvalues ("), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.costrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.availability), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\n"))
+  ): LocationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nvalues ("), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.costrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.availability), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\n"))
     .updateReturning(LocationRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,57 +48,57 @@ class LocationRepoImpl() : LocationRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.locationid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"locationid\""))
-      values.add(interpolate(Fragment.encode(LocationId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(LocationId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.costrate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"costrate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.availability.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"availability\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"location\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\n"))
     return q.updateReturning(LocationRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, LocationRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<LocationRowUnsaved>,
+    unsaved: Iterator<LocationRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"location\"(\"name\", \"locationid\", \"costrate\", \"availability\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, LocationRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<LocationFields, LocationRow> = SelectBuilder.of("\"production\".\"location\"", LocationFields.structure, LocationRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<LocationRow> = interpolate(Fragment.lit("select \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\nfrom \"production\".\"location\"\n")).query(LocationRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<LocationRow> = Fragment.interpolate(Fragment.lit("select \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\nfrom \"production\".\"location\"\n")).query(LocationRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     locationid: LocationId,
     c: Connection
-  ): LocationRow? = interpolate(Fragment.lit("select \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\nfrom \"production\".\"location\"\nwhere \"locationid\" = "), Fragment.encode(LocationId.pgType, locationid), Fragment.lit("")).query(LocationRow._rowParser.first()).runUnchecked(c)
+  ): LocationRow? = Fragment.interpolate(Fragment.lit("select \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\nfrom \"production\".\"location\"\nwhere \"locationid\" = "), Fragment.encode(LocationId.pgType, locationid), Fragment.lit("")).query(LocationRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     locationids: Array<LocationId>,
     c: Connection
-  ): List<LocationRow> = interpolate(Fragment.lit("select \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\nfrom \"production\".\"location\"\nwhere \"locationid\" = ANY("), Fragment.encode(LocationId.pgTypeArray, locationids), Fragment.lit(")")).query(LocationRow._rowParser.all()).runUnchecked(c)
+  ): List<LocationRow> = Fragment.interpolate(Fragment.lit("select \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\nfrom \"production\".\"location\"\nwhere \"locationid\" = ANY("), Fragment.encode(LocationId.pgTypeArray, locationids), Fragment.lit(")")).query(LocationRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     locationids: Array<LocationId>,
@@ -117,31 +116,31 @@ class LocationRepoImpl() : LocationRepo {
     c: Connection
   ): Boolean {
     val locationid: LocationId = row.locationid
-    return interpolate(Fragment.lit("update \"production\".\"location\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"costrate\" = "), Fragment.encode(PgTypes.numeric, row.costrate), Fragment.lit("::numeric,\n\"availability\" = "), Fragment.encode(PgTypes.numeric, row.availability), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"locationid\" = "), Fragment.encode(LocationId.pgType, locationid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"location\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"costrate\" = "), Fragment.encode(PgTypes.numeric, row.costrate), Fragment.lit("::numeric,\n\"availability\" = "), Fragment.encode(PgTypes.numeric, row.availability), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"locationid\" = "), Fragment.encode(LocationId.pgType, locationid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: LocationRow,
     c: Connection
-  ): LocationRow = interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nvalues ("), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.costrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.availability), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"locationid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"costrate\" = EXCLUDED.\"costrate\",\n\"availability\" = EXCLUDED.\"availability\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\""))
+  ): LocationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nvalues ("), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.costrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.availability), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"locationid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"costrate\" = EXCLUDED.\"costrate\",\n\"availability\" = EXCLUDED.\"availability\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\""))
     .updateReturning(LocationRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     c: Connection
-  ): List<LocationRow> = interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::numeric, ?::numeric, ?::timestamp)\non conflict (\"locationid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"costrate\" = EXCLUDED.\"costrate\",\n\"availability\" = EXCLUDED.\"availability\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\""))
+  ): List<LocationRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::numeric, ?::numeric, ?::timestamp)\non conflict (\"locationid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"costrate\" = EXCLUDED.\"costrate\",\n\"availability\" = EXCLUDED.\"availability\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\""))
     .updateManyReturning(LocationRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table location_TEMP (like \"production\".\"location\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table location_TEMP (like \"production\".\"location\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy location_TEMP(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\") from stdin", batchSize, unsaved, c, LocationRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nselect * from location_TEMP\non conflict (\"locationid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"costrate\" = EXCLUDED.\"costrate\",\n\"availability\" = EXCLUDED.\"availability\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table location_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nselect * from location_TEMP\non conflict (\"locationid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"costrate\" = EXCLUDED.\"costrate\",\n\"availability\" = EXCLUDED.\"availability\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table location_TEMP;")).update().runUnchecked(c)
   }
 }

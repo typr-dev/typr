@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VsalespersonsalesbyfiscalyearsViewRepoImpl() : VsalespersonsalesbyfiscalyearsViewRepo {
   override fun select(): SelectBuilder<VsalespersonsalesbyfiscalyearsViewFields, VsalespersonsalesbyfiscalyearsViewRow> = SelectBuilder.of("\"sales\".\"vsalespersonsalesbyfiscalyears\"", VsalespersonsalesbyfiscalyearsViewFields.structure, VsalespersonsalesbyfiscalyearsViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VsalespersonsalesbyfiscalyearsViewRow> = interpolate(Fragment.lit("select \"SalesPersonID\", \"FullName\", \"JobTitle\", \"SalesTerritory\", \"2012\", \"2013\", \"2014\"\nfrom \"sales\".\"vsalespersonsalesbyfiscalyears\"\n")).query(VsalespersonsalesbyfiscalyearsViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VsalespersonsalesbyfiscalyearsViewRow> = Fragment.interpolate(Fragment.lit("select \"SalesPersonID\", \"FullName\", \"JobTitle\", \"SalesTerritory\", \"2012\", \"2013\", \"2014\"\nfrom \"sales\".\"vsalespersonsalesbyfiscalyears\"\n")).query(VsalespersonsalesbyfiscalyearsViewRow._rowParser.all()).runUnchecked(c)
 }

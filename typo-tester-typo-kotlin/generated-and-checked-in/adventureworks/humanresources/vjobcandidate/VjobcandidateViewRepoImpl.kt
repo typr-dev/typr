@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VjobcandidateViewRepoImpl() : VjobcandidateViewRepo {
   override fun select(): SelectBuilder<VjobcandidateViewFields, VjobcandidateViewRow> = SelectBuilder.of("\"humanresources\".\"vjobcandidate\"", VjobcandidateViewFields.structure, VjobcandidateViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VjobcandidateViewRow> = interpolate(Fragment.lit("select \"jobcandidateid\", \"businessentityid\", \"Name.Prefix\", \"Name.First\", \"Name.Middle\", \"Name.Last\", \"Name.Suffix\", \"Skills\", \"Addr.Type\", \"Addr.Loc.CountryRegion\", \"Addr.Loc.State\", \"Addr.Loc.City\", \"Addr.PostalCode\", \"EMail\", \"WebSite\", \"modifieddate\"\nfrom \"humanresources\".\"vjobcandidate\"\n")).query(VjobcandidateViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VjobcandidateViewRow> = Fragment.interpolate(Fragment.lit("select \"jobcandidateid\", \"businessentityid\", \"Name.Prefix\", \"Name.First\", \"Name.Middle\", \"Name.Last\", \"Name.Suffix\", \"Skills\", \"Addr.Type\", \"Addr.Loc.CountryRegion\", \"Addr.Loc.State\", \"Addr.Loc.City\", \"Addr.PostalCode\", \"EMail\", \"WebSite\", \"modifieddate\"\nfrom \"humanresources\".\"vjobcandidate\"\n")).query(VjobcandidateViewRow._rowParser.all()).runUnchecked(c)
 }

@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class PViewRepoImpl() : PViewRepo {
   override fun select(): SelectBuilder<PViewFields, PViewRow> = SelectBuilder.of("\"pr\".\"p\"", PViewFields.structure, PViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<PViewRow> = interpolate(Fragment.lit("select \"id\", \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\nfrom \"pr\".\"p\"\n")).query(PViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<PViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\nfrom \"pr\".\"p\"\n")).query(PViewRow._rowParser.all()).runUnchecked(c)
 }

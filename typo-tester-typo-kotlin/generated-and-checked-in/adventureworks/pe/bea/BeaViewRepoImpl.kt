@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class BeaViewRepoImpl() : BeaViewRepo {
   override fun select(): SelectBuilder<BeaViewFields, BeaViewRow> = SelectBuilder.of("\"pe\".\"bea\"", BeaViewFields.structure, BeaViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<BeaViewRow> = interpolate(Fragment.lit("select \"id\", \"businessentityid\", \"addressid\", \"addresstypeid\", \"rowguid\", \"modifieddate\"\nfrom \"pe\".\"bea\"\n")).query(BeaViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<BeaViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"businessentityid\", \"addressid\", \"addresstypeid\", \"rowguid\", \"modifieddate\"\nfrom \"pe\".\"bea\"\n")).query(BeaViewRow._rowParser.all()).runUnchecked(c)
 }

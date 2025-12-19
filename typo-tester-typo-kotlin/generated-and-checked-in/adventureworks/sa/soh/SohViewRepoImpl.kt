@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class SohViewRepoImpl() : SohViewRepo {
   override fun select(): SelectBuilder<SohViewFields, SohViewRow> = SelectBuilder.of("\"sa\".\"soh\"", SohViewFields.structure, SohViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<SohViewRow> = interpolate(Fragment.lit("select \"id\", \"salesorderid\", \"revisionnumber\", \"orderdate\", \"duedate\", \"shipdate\", \"status\", \"onlineorderflag\", \"purchaseordernumber\", \"accountnumber\", \"customerid\", \"salespersonid\", \"territoryid\", \"billtoaddressid\", \"shiptoaddressid\", \"shipmethodid\", \"creditcardid\", \"creditcardapprovalcode\", \"currencyrateid\", \"subtotal\", \"taxamt\", \"freight\", \"totaldue\", \"comment\", \"rowguid\", \"modifieddate\"\nfrom \"sa\".\"soh\"\n")).query(SohViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<SohViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"salesorderid\", \"revisionnumber\", \"orderdate\", \"duedate\", \"shipdate\", \"status\", \"onlineorderflag\", \"purchaseordernumber\", \"accountnumber\", \"customerid\", \"salespersonid\", \"territoryid\", \"billtoaddressid\", \"shiptoaddressid\", \"shipmethodid\", \"creditcardid\", \"creditcardapprovalcode\", \"currencyrateid\", \"subtotal\", \"taxamt\", \"freight\", \"totaldue\", \"comment\", \"rowguid\", \"modifieddate\"\nfrom \"sa\".\"soh\"\n")).query(SohViewRow._rowParser.all()).runUnchecked(c)
 }

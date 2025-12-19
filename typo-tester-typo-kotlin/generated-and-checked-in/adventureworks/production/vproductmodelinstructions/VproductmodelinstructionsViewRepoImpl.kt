@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VproductmodelinstructionsViewRepoImpl() : VproductmodelinstructionsViewRepo {
   override fun select(): SelectBuilder<VproductmodelinstructionsViewFields, VproductmodelinstructionsViewRow> = SelectBuilder.of("\"production\".\"vproductmodelinstructions\"", VproductmodelinstructionsViewFields.structure, VproductmodelinstructionsViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VproductmodelinstructionsViewRow> = interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"instructions\", \"LocationID\", \"SetupHours\", \"MachineHours\", \"LaborHours\", \"LotSize\", \"Step\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"vproductmodelinstructions\"\n")).query(VproductmodelinstructionsViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VproductmodelinstructionsViewRow> = Fragment.interpolate(Fragment.lit("select \"productmodelid\", \"name\", \"instructions\", \"LocationID\", \"SetupHours\", \"MachineHours\", \"LaborHours\", \"LotSize\", \"Step\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"vproductmodelinstructions\"\n")).query(VproductmodelinstructionsViewRow._rowParser.all()).runUnchecked(c)
 }

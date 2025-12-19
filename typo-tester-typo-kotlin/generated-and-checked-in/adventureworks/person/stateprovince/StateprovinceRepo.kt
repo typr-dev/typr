@@ -6,9 +6,9 @@
 package adventureworks.person.stateprovince
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface StateprovinceRepo {
   ): StateprovinceRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<StateprovinceRow>,
+    unsaved: Iterator<StateprovinceRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<StateprovinceRowUnsaved>,
+    unsaved: Iterator<StateprovinceRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface StateprovinceRepo {
   ): StateprovinceRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<StateprovinceRow>,
+    unsaved: Iterator<StateprovinceRow>,
     c: Connection
   ): List<StateprovinceRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<StateprovinceRow>,
+    unsaved: Iterator<StateprovinceRow>,
     batchSize: Int,
     c: Connection
   ): Int

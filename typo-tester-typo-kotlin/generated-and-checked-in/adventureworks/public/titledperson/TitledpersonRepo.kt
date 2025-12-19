@@ -6,8 +6,8 @@
 package adventureworks.public.titledperson
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -21,7 +21,7 @@ interface TitledpersonRepo {
   ): TitledpersonRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<TitledpersonRow>,
+    unsaved: Iterator<TitledpersonRow>,
     batchSize: Int,
     c: Connection
   ): Long

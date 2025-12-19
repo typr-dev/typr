@@ -1,17 +1,17 @@
 package adventureworks.production.product
 
 import adventureworks.WithConnection
-import adventureworks.customtypes.TypoLocalDateTime
+import java.time.LocalDateTime
 import adventureworks.production.unitmeasure.*
-import adventureworks.public_.Name
+import adventureworks.public.Name
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class RepoTest {
     private fun upsertStreaming(unitmeasureRepo: UnitmeasureRepo) {
         WithConnection.run { c ->
-            val um1 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg1"), name = Name("name1"), modifieddate = TypoLocalDateTime.now)
-            val um2 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg2"), name = Name("name2"), modifieddate = TypoLocalDateTime.now)
+            val um1 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg1"), name = Name("name1"), modifieddate = LocalDateTime.now())
+            val um2 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg2"), name = Name("name2"), modifieddate = LocalDateTime.now())
             unitmeasureRepo.upsertStreaming(listOf(um1, um2).iterator(), 1000, c)
             assertEquals(listOf(um1, um2), unitmeasureRepo.selectAll(c).sortedBy { it.name.value })
             val um1a = um1.copy(name = Name("name1a"))
@@ -23,8 +23,8 @@ class RepoTest {
 
     private fun upsertBatch(unitmeasureRepo: UnitmeasureRepo) {
         WithConnection.run { c ->
-            val um1 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg1"), name = Name("name1"), modifieddate = TypoLocalDateTime.now)
-            val um2 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg2"), name = Name("name2"), modifieddate = TypoLocalDateTime.now)
+            val um1 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg1"), name = Name("name1"), modifieddate = LocalDateTime.now())
+            val um2 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg2"), name = Name("name2"), modifieddate = LocalDateTime.now())
             val initial = unitmeasureRepo.upsertBatch(listOf(um1, um2).iterator(), c)
             assertEquals(listOf(um1, um2), initial.sortedBy { it.name.value })
             val um1a = um1.copy(name = Name("name1a"))
@@ -38,7 +38,7 @@ class RepoTest {
 
     @Test
     fun upsertStreamingInMemory() {
-        upsertStreaming(UnitmeasureRepoMock { it.toRow(TypoLocalDateTime.now) })
+        upsertStreaming(UnitmeasureRepoMock(toRow = { it.toRow(modifieddateDefault = { LocalDateTime.now() }) }))
     }
 
     @Test
@@ -48,7 +48,7 @@ class RepoTest {
 
     @Test
     fun upsertBatchInMemory() {
-        upsertBatch(UnitmeasureRepoMock { it.toRow(TypoLocalDateTime.now) })
+        upsertBatch(UnitmeasureRepoMock(toRow = { it.toRow(modifieddateDefault = { LocalDateTime.now() }) }))
     }
 
     @Test

@@ -9,9 +9,9 @@ import adventureworks.production.product.ProductId
 import adventureworks.sales.specialoffer.SpecialofferId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -21,7 +21,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class SpecialofferproductRepoImpl() : SpecialofferproductRepo {
   override fun delete(): DeleteBuilder<SpecialofferproductFields, SpecialofferproductRow> = DeleteBuilder.of("\"sales\".\"specialofferproduct\"", SpecialofferproductFields.structure, Dialect.POSTGRESQL)
@@ -29,7 +28,7 @@ class SpecialofferproductRepoImpl() : SpecialofferproductRepo {
   override fun deleteById(
     compositeId: SpecialofferproductId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"sales\".\"specialofferproduct\" where \"specialofferid\" = "), Fragment.encode(SpecialofferId.pgType, compositeId.specialofferid), Fragment.lit(" AND \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"sales\".\"specialofferproduct\" where \"specialofferid\" = "), Fragment.encode(SpecialofferId.pgType, compositeId.specialofferid), Fragment.lit(" AND \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<SpecialofferproductId>,
@@ -37,13 +36,13 @@ class SpecialofferproductRepoImpl() : SpecialofferproductRepo {
   ): Int {
     val specialofferid: Array<SpecialofferId> = arrayMap.map(compositeIds, SpecialofferproductId::specialofferid, SpecialofferId::class.java)
     val productid: Array<ProductId> = arrayMap.map(compositeIds, SpecialofferproductId::productid, ProductId::class.java)
-    return interpolate(Fragment.lit("delete\nfrom \"sales\".\"specialofferproduct\"\nwhere (\"specialofferid\", \"productid\")\nin (select unnest("), Fragment.encode(SpecialofferId.pgTypeArray, specialofferid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]))\n")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete\nfrom \"sales\".\"specialofferproduct\"\nwhere (\"specialofferid\", \"productid\")\nin (select unnest("), Fragment.encode(SpecialofferId.pgTypeArray, specialofferid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]))\n")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: SpecialofferproductRow,
     c: Connection
-  ): SpecialofferproductRow = interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"))
+  ): SpecialofferproductRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(SpecialofferproductRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -53,44 +52,44 @@ class SpecialofferproductRepoImpl() : SpecialofferproductRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"specialofferid\""))
-    values.add(interpolate(Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"productid\""))
-    values.add(interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
     unsaved.rowguid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(SpecialofferproductRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<SpecialofferproductRow>,
+    unsaved: Iterator<SpecialofferproductRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, SpecialofferproductRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SpecialofferproductRowUnsaved>,
+    unsaved: Iterator<SpecialofferproductRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, SpecialofferproductRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<SpecialofferproductFields, SpecialofferproductRow> = SelectBuilder.of("\"sales\".\"specialofferproduct\"", SpecialofferproductFields.structure, SpecialofferproductRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<SpecialofferproductRow> = interpolate(Fragment.lit("select \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"specialofferproduct\"\n")).query(SpecialofferproductRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<SpecialofferproductRow> = Fragment.interpolate(Fragment.lit("select \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"specialofferproduct\"\n")).query(SpecialofferproductRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     compositeId: SpecialofferproductId,
     c: Connection
-  ): SpecialofferproductRow? = interpolate(Fragment.lit("select \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"specialofferproduct\"\nwhere \"specialofferid\" = "), Fragment.encode(SpecialofferId.pgType, compositeId.specialofferid), Fragment.lit(" AND \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit("")).query(SpecialofferproductRow._rowParser.first()).runUnchecked(c)
+  ): SpecialofferproductRow? = Fragment.interpolate(Fragment.lit("select \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"specialofferproduct\"\nwhere \"specialofferid\" = "), Fragment.encode(SpecialofferId.pgType, compositeId.specialofferid), Fragment.lit(" AND \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit("")).query(SpecialofferproductRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     compositeIds: Array<SpecialofferproductId>,
@@ -98,7 +97,7 @@ class SpecialofferproductRepoImpl() : SpecialofferproductRepo {
   ): List<SpecialofferproductRow> {
     val specialofferid: Array<SpecialofferId> = arrayMap.map(compositeIds, SpecialofferproductId::specialofferid, SpecialofferId::class.java)
     val productid: Array<ProductId> = arrayMap.map(compositeIds, SpecialofferproductId::productid, ProductId::class.java)
-    return interpolate(Fragment.lit("select \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"specialofferproduct\"\nwhere (\"specialofferid\", \"productid\")\nin (select unnest("), Fragment.encode(SpecialofferId.pgTypeArray, specialofferid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]))\n")).query(SpecialofferproductRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"specialofferproduct\"\nwhere (\"specialofferid\", \"productid\")\nin (select unnest("), Fragment.encode(SpecialofferId.pgTypeArray, specialofferid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]))\n")).query(SpecialofferproductRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(
@@ -117,31 +116,31 @@ class SpecialofferproductRepoImpl() : SpecialofferproductRepo {
     c: Connection
   ): Boolean {
     val compositeId: SpecialofferproductId = row.compositeId()
-    return interpolate(Fragment.lit("update \"sales\".\"specialofferproduct\"\nset \"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"specialofferid\" = "), Fragment.encode(SpecialofferId.pgType, compositeId.specialofferid), Fragment.lit(" AND \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"sales\".\"specialofferproduct\"\nset \"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"specialofferid\" = "), Fragment.encode(SpecialofferId.pgType, compositeId.specialofferid), Fragment.lit(" AND \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: SpecialofferproductRow,
     c: Connection
-  ): SpecialofferproductRow = interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"specialofferid\", \"productid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\""))
+  ): SpecialofferproductRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"specialofferid\", \"productid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\""))
     .updateReturning(SpecialofferproductRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<SpecialofferproductRow>,
+    unsaved: Iterator<SpecialofferproductRow>,
     c: Connection
-  ): List<SpecialofferproductRow> = interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::uuid, ?::timestamp)\non conflict (\"specialofferid\", \"productid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\""))
+  ): List<SpecialofferproductRow> = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::uuid, ?::timestamp)\non conflict (\"specialofferid\", \"productid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\""))
     .updateManyReturning(SpecialofferproductRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<SpecialofferproductRow>,
+    unsaved: Iterator<SpecialofferproductRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table specialofferproduct_TEMP (like \"sales\".\"specialofferproduct\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table specialofferproduct_TEMP (like \"sales\".\"specialofferproduct\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy specialofferproduct_TEMP(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, SpecialofferproductRow.pgText)
-    return interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nselect * from specialofferproduct_TEMP\non conflict (\"specialofferid\", \"productid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table specialofferproduct_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nselect * from specialofferproduct_TEMP\non conflict (\"specialofferid\", \"productid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table specialofferproduct_TEMP;")).update().runUnchecked(c)
   }
 }

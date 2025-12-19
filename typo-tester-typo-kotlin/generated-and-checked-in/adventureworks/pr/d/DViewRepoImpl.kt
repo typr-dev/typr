@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class DViewRepoImpl() : DViewRepo {
   override fun select(): SelectBuilder<DViewFields, DViewRow> = SelectBuilder.of("\"pr\".\"d\"", DViewFields.structure, DViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<DViewRow> = interpolate(Fragment.lit("select \"title\", \"owner\", \"folderflag\", \"filename\", \"fileextension\", \"revision\", \"changenumber\", \"status\", \"documentsummary\", \"document\", \"rowguid\", \"modifieddate\", \"documentnode\"\nfrom \"pr\".\"d\"\n")).query(DViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<DViewRow> = Fragment.interpolate(Fragment.lit("select \"title\", \"owner\", \"folderflag\", \"filename\", \"fileextension\", \"revision\", \"changenumber\", \"status\", \"documentsummary\", \"document\", \"rowguid\", \"modifieddate\", \"documentnode\"\nfrom \"pr\".\"d\"\n")).query(DViewRow._rowParser.all()).runUnchecked(c)
 }

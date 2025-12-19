@@ -6,9 +6,9 @@
 package adventureworks.public.identity_test
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface IdentityTestRepo {
   ): IdentityTestRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<IdentityTestRow>,
+    unsaved: Iterator<IdentityTestRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<IdentityTestRowUnsaved>,
+    unsaved: Iterator<IdentityTestRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface IdentityTestRepo {
   ): IdentityTestRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<IdentityTestRow>,
+    unsaved: Iterator<IdentityTestRow>,
     c: Connection
   ): List<IdentityTestRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<IdentityTestRow>,
+    unsaved: Iterator<IdentityTestRow>,
     batchSize: Int,
     c: Connection
   ): Int

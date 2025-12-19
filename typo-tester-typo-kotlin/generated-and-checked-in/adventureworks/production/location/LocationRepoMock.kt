@@ -8,9 +8,9 @@ package adventureworks.production.location
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -63,7 +63,7 @@ data class LocationRepoMock(
   ): LocationRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -78,7 +78,7 @@ data class LocationRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<LocationRowUnsaved>,
+    unsaved: Iterator<LocationRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -142,7 +142,7 @@ data class LocationRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     c: Connection
   ): List<LocationRow> {
     val result = ArrayList<LocationRow>()
@@ -156,7 +156,7 @@ data class LocationRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     batchSize: Int,
     c: Connection
   ): Int {

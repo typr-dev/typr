@@ -33,7 +33,7 @@ public record InventoryCheckSqlRow(
     @JsonProperty("quantity_on_hand") Integer quantityOnHand,
     /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
     @JsonProperty("quantity_reserved") Integer quantityReserved,
-    /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
+    /** Points to {@link testdb.inventory.InventoryRow#quantityOnHand()} */
     Integer available,
     /** Points to {@link testdb.inventory.InventoryRow#reorderPoint()} */
     @JsonProperty("reorder_point") Integer reorderPoint,
@@ -201,7 +201,7 @@ public record InventoryCheckSqlRow(
   }
   ;
 
-  /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
+  /** Points to {@link testdb.inventory.InventoryRow#quantityOnHand()} */
   public InventoryCheckSqlRow withAvailable(Integer available) {
     return new InventoryCheckSqlRow(
         inventoryId,

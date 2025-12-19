@@ -1,11 +1,11 @@
-package adventureworks.public_
+package adventureworks.public
 
 import adventureworks.WithConnection
 import adventureworks.customtypes.Defaulted
-import adventureworks.customtypes.TypoInstant
-import adventureworks.customtypes.TypoUnknownCitext
-import adventureworks.customtypes.TypoUUID
-import adventureworks.public_.users.*
+import java.time.Instant
+import typo.data.Unknown
+import java.util.UUID
+import adventureworks.public.users.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -15,29 +15,29 @@ class UsersRepoTest {
     private fun testRoundtrip(usersRepo: UsersRepo) {
         WithConnection.run { c ->
             val before = UsersRowUnsaved(
-                userId = UsersId(TypoUUID.randomUUID()),
+                userId = UsersId(UUID.randomUUID()),
                 name = "name",
                 lastName = "last_name",
-                email = TypoUnknownCitext("email@asd.no"),
+                email = Unknown("email@asd.no"),
                 password = "password",
-                verifiedOn = TypoInstant.now,
-                createdAt = Defaulted.Provided(TypoInstant.now)
+                verifiedOn = Instant.now(),
+                createdAt = Defaulted.Provided(Instant.now())
             )
             usersRepo.insert(before, c)
             val after = usersRepo.select().where { it.userId().isEqual(before.userId) }.toList(c).first()
-            assertEquals(before.toRow(after.createdAt), after)
+            assertEquals(before.toRow { after.createdAt }, after)
         }
     }
 
     private fun testInsertUnsavedStreaming(usersRepo: UsersRepo) {
         val before = (0 until 10).map { idx ->
             UsersRowUnsaved(
-                userId = UsersId(TypoUUID.randomUUID()),
+                userId = UsersId(UUID.randomUUID()),
                 name = "name",
                 lastName = "last_name",
-                email = TypoUnknownCitext("email-$idx@asd.no"),
+                email = Unknown("email-$idx@asd.no"),
                 password = "password",
-                verifiedOn = TypoInstant.now
+                verifiedOn = Instant.now()
             )
         }
 
@@ -46,14 +46,14 @@ class UsersRepoTest {
             val after = usersRepo.selectByIds(before.map { it.userId }.toTypedArray(), c)
             val beforeById = before.associateBy { it.userId }
             after.forEach { afterRow ->
-                assertEquals(beforeById[afterRow.userId]?.toRow(afterRow.createdAt), afterRow)
+                assertEquals(beforeById[afterRow.userId]?.toRow { afterRow.createdAt }, afterRow)
             }
         }
     }
 
     @Test
     fun testRoundtripInMemory() {
-        testRoundtrip(usersRepo = UsersRepoMock { it.toRow(null) })
+        testRoundtrip(usersRepo = UsersRepoMock(toRow = { it.toRow { Instant.EPOCH } }))
     }
 
     @Test
@@ -63,7 +63,7 @@ class UsersRepoTest {
 
     @Test
     fun testInsertUnsavedStreamingInMemory() {
-        testRoundtrip(usersRepo = UsersRepoMock { it.toRow(TypoInstant.now) })
+        testInsertUnsavedStreaming(usersRepo = UsersRepoMock(toRow = { it.toRow { Instant.now() } }))
     }
 
     @Test

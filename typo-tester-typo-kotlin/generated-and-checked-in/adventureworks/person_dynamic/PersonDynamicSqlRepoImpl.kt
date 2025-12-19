@@ -10,11 +10,10 @@ import kotlin.collections.List
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class PersonDynamicSqlRepoImpl() : PersonDynamicSqlRepo {
   override fun apply(
     firstName: String?,
     c: Connection
-  ): List<PersonDynamicSqlRow> = interpolate(Fragment.lit("SELECT p.title, p.firstname, p.middlename, p.lastname\nFROM person.person p\nWHERE "), Fragment.encode(PgTypes.text.nullable(), firstName), Fragment.lit("::text IS NULL OR p.firstname = "), Fragment.encode(PgTypes.text.nullable(), firstName), Fragment.lit("\n")).query(PersonDynamicSqlRow._rowParser.all()).runUnchecked(c)
+  ): List<PersonDynamicSqlRow> = Fragment.interpolate(Fragment.lit("SELECT p.title, p.firstname, p.middlename, p.lastname\nFROM person.person p\nWHERE "), Fragment.encode(PgTypes.text.nullable(), firstName), Fragment.lit("::text IS NULL OR p.firstname = "), Fragment.encode(PgTypes.text.nullable(), firstName), Fragment.lit("\n")).query(PersonDynamicSqlRow._rowParser.all()).runUnchecked(c)
 }

@@ -4,7 +4,7 @@ import adventureworks.public.Name
 import org.junit.Assert.*
 import org.junit.Test
 import typo.dsl.SortOrder
-import typo.kotlindsl.KotlinDbTypes
+import typo.runtime.PgTypes
 import java.math.BigDecimal
 
 class SeekTest {
@@ -14,8 +14,8 @@ class SeekTest {
     fun uniformAscending() {
         val query = productRepo.select()
             .seek({ f -> SortOrder.asc(f.name().underlying) }, typo.dsl.SqlExpr.ConstReq(Name("foo"), Name.pgType))
-            .seek({ f -> SortOrder.asc(f.weight().underlying) }, typo.dsl.SqlExpr.ConstOpt(java.util.Optional.ofNullable(BigDecimal("22.2")), KotlinDbTypes.PgTypes.numeric))
-            .seek({ f -> SortOrder.asc(f.listprice().underlying) }, typo.dsl.SqlExpr.ConstReq(BigDecimal("33.3"), KotlinDbTypes.PgTypes.numeric))
+            .seek({ f -> SortOrder.asc(f.weight().underlying) }, typo.dsl.SqlExpr.ConstOpt(java.util.Optional.ofNullable(BigDecimal("22.2")), PgTypes.numeric))
+            .seek({ f -> SortOrder.asc(f.listprice().underlying) }, typo.dsl.SqlExpr.ConstReq(BigDecimal("33.3"), PgTypes.numeric))
 
         val sql = query.sql()
         assertNotNull(sql)
@@ -27,8 +27,8 @@ class SeekTest {
     fun uniformDescending() {
         val query = productRepo.select()
             .seek({ f -> SortOrder.desc(f.name().underlying) }, typo.dsl.SqlExpr.ConstReq(Name("foo"), Name.pgType))
-            .seek({ f -> SortOrder.desc(f.weight().underlying) }, typo.dsl.SqlExpr.ConstOpt(java.util.Optional.ofNullable(BigDecimal("22.2")), KotlinDbTypes.PgTypes.numeric))
-            .seek({ f -> SortOrder.desc(f.listprice().underlying) }, typo.dsl.SqlExpr.ConstReq(BigDecimal("33.3"), KotlinDbTypes.PgTypes.numeric))
+            .seek({ f -> SortOrder.desc(f.weight().underlying) }, typo.dsl.SqlExpr.ConstOpt(java.util.Optional.ofNullable(BigDecimal("22.2")), PgTypes.numeric))
+            .seek({ f -> SortOrder.desc(f.listprice().underlying) }, typo.dsl.SqlExpr.ConstReq(BigDecimal("33.3"), PgTypes.numeric))
 
         val sql = query.sql()
         assertNotNull(sql)
@@ -39,8 +39,8 @@ class SeekTest {
     fun complex() {
         val query = productRepo.select()
             .seek({ f -> SortOrder.asc(f.name().underlying) }, typo.dsl.SqlExpr.ConstReq(Name("foo"), Name.pgType))
-            .seek({ f -> SortOrder.desc(f.weight().underlying) }, typo.dsl.SqlExpr.ConstOpt(java.util.Optional.ofNullable(BigDecimal("22.2")), KotlinDbTypes.PgTypes.numeric))
-            .seek({ f -> SortOrder.desc(f.listprice().underlying) }, typo.dsl.SqlExpr.ConstReq(BigDecimal("33.3"), KotlinDbTypes.PgTypes.numeric))
+            .seek({ f -> SortOrder.desc(f.weight().underlying) }, typo.dsl.SqlExpr.ConstOpt(java.util.Optional.ofNullable(BigDecimal("22.2")), PgTypes.numeric))
+            .seek({ f -> SortOrder.desc(f.listprice().underlying) }, typo.dsl.SqlExpr.ConstReq(BigDecimal("33.3"), PgTypes.numeric))
 
         val sql = query.sql()
         assertNotNull(sql)

@@ -6,9 +6,9 @@
 package adventureworks.person.contacttype
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface ContacttypeRepo {
   ): ContacttypeRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ContacttypeRowUnsaved>,
+    unsaved: Iterator<ContacttypeRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface ContacttypeRepo {
   ): ContacttypeRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     c: Connection
   ): List<ContacttypeRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     batchSize: Int,
     c: Connection
   ): Int

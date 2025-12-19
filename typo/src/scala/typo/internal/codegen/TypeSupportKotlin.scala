@@ -10,7 +10,7 @@ object TypeSupportKotlin extends TypeSupport {
   override val Double: jvm.Type.Qualified = TypesKotlin.Double
   override val Float: jvm.Type.Qualified = TypesKotlin.Float
   override val Int: jvm.Type.Qualified = TypesKotlin.Int
-  override val IteratorType: jvm.Type.Qualified = TypesKotlin.MutableIterator
+  override val IteratorType: jvm.Type.Qualified = TypesKotlin.Iterator
   override val Long: jvm.Type.Qualified = TypesKotlin.Long
   override val Short: jvm.Type.Qualified = TypesKotlin.Short
   override val String: jvm.Type.Qualified = TypesKotlin.String

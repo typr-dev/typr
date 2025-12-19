@@ -1,7 +1,6 @@
 package adventureworks
 
-import adventureworks.customtypes.TypoLocalDateTime
-import adventureworks.customtypes.TypoUUID
+import java.util.UUID
 import adventureworks.person.businessentity.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -13,12 +12,12 @@ class SeekDbTest {
         val now = LocalDateTime.of(2021, 1, 1, 0, 0)
         val rows = (0 until limit * 2).map { i ->
             // ensure some duplicate values
-            val time = TypoLocalDateTime(now.minusDays((i % limit).toLong()))
-            BusinessentityRow(BusinessentityId(i), TypoUUID.randomUUID(), time)
+            val time = now.minusDays((i % limit).toLong())
+            BusinessentityRow(BusinessentityId(i), UUID.randomUUID(), time)
         }
 
         // same as sql below
-        val sorted = rows.sortedWith(compareBy({ it.modifieddate.value }, { it.businessentityid.value }))
+        val sorted = rows.sortedWith(compareBy({ it.modifieddate }, { it.businessentityid.value }))
         val group1 = sorted.take(limit)
         val group2 = sorted.drop(limit).take(limit)
 
@@ -44,7 +43,11 @@ class SeekDbTest {
 
     @Test
     fun uniformInMemory() {
-        testUniformSeek(BusinessentityRepoMock { it.toRow(null, null, null) })
+        testUniformSeek(BusinessentityRepoMock(toRow = { it.toRow(
+            businessentityidDefault = { BusinessentityId(0) },
+            rowguidDefault = { UUID.randomUUID() },
+            modifieddateDefault = { LocalDateTime.now() }
+        ) }))
     }
 
     @Test
@@ -57,12 +60,12 @@ class SeekDbTest {
         val now = LocalDateTime.of(2021, 1, 1, 0, 0)
         val rows = (0 until limit * 2).map { i ->
             // ensure some duplicate values
-            val time = TypoLocalDateTime(now.minusDays((i % limit).toLong()))
-            BusinessentityRow(BusinessentityId(i), TypoUUID.randomUUID(), time)
+            val time = now.minusDays((i % limit).toLong())
+            BusinessentityRow(BusinessentityId(i), UUID.randomUUID(), time)
         }
 
         // same as sql below
-        val sorted = rows.sortedWith(compareBy({ -it.modifieddate.value.toEpochSecond(java.time.ZoneOffset.UTC) }, { it.businessentityid.value }))
+        val sorted = rows.sortedWith(compareBy({ -it.modifieddate.toEpochSecond(java.time.ZoneOffset.UTC) }, { it.businessentityid.value }))
         val group1 = sorted.take(limit)
         val group2 = sorted.drop(limit).take(limit)
 
@@ -88,7 +91,11 @@ class SeekDbTest {
 
     @Test
     fun nonUniformInMemory() {
-        testNonUniformSeek(BusinessentityRepoMock { it.toRow(null, null, null) })
+        testNonUniformSeek(BusinessentityRepoMock(toRow = { it.toRow(
+            businessentityidDefault = { BusinessentityId(0) },
+            rowguidDefault = { UUID.randomUUID() },
+            modifieddateDefault = { LocalDateTime.now() }
+        ) }))
     }
 
     @Test

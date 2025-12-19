@@ -7,9 +7,9 @@ package adventureworks.production.transactionhistoryarchive
 
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
   override fun delete(): DeleteBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> = DeleteBuilder.of("\"production\".\"transactionhistoryarchive\"", TransactionhistoryarchiveFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
   override fun deleteById(
     transactionid: TransactionhistoryarchiveId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"transactionhistoryarchive\" where \"transactionid\" = "), Fragment.encode(TransactionhistoryarchiveId.pgType, transactionid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"transactionhistoryarchive\" where \"transactionid\" = "), Fragment.encode(TransactionhistoryarchiveId.pgType, transactionid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     transactionids: Array<TransactionhistoryarchiveId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"transactionhistoryarchive\"\nwhere \"transactionid\" = ANY("), Fragment.encode(TransactionhistoryarchiveId.pgTypeArray, transactionids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"transactionhistoryarchive\"\nwhere \"transactionid\" = ANY("), Fragment.encode(TransactionhistoryarchiveId.pgTypeArray, transactionids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: TransactionhistoryarchiveRow,
     c: Connection
-  ): TransactionhistoryarchiveRow = interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\")\nvalues ("), Fragment.encode(TransactionhistoryarchiveId.pgType, unsaved.transactionid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderlineid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.transactiondate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.bpchar, unsaved.transactiontype), Fragment.lit("::bpchar, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.quantity), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.actualcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\n"))
+  ): TransactionhistoryarchiveRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\")\nvalues ("), Fragment.encode(TransactionhistoryarchiveId.pgType, unsaved.transactionid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderlineid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.transactiondate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.bpchar, unsaved.transactiontype), Fragment.lit("::bpchar, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.quantity), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.actualcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\n"))
     .updateReturning(TransactionhistoryarchiveRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,62 +48,62 @@ class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"transactionid\""))
-    values.add(interpolate(Fragment.encode(TransactionhistoryarchiveId.pgType, unsaved.transactionid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(TransactionhistoryarchiveId.pgType, unsaved.transactionid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"productid\""))
-    values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.productid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.productid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"referenceorderid\""))
-    values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"transactiontype\""))
-    values.add(interpolate(Fragment.encode(PgTypes.bpchar, unsaved.transactiontype), Fragment.lit("::bpchar")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.bpchar, unsaved.transactiontype), Fragment.lit("::bpchar")))
     columns.add(Fragment.lit("\"quantity\""))
-    values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.quantity), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.quantity), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"actualcost\""))
-    values.add(interpolate(Fragment.encode(PgTypes.numeric, unsaved.actualcost), Fragment.lit("::numeric")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, unsaved.actualcost), Fragment.lit("::numeric")))
     unsaved.referenceorderlineid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"referenceorderlineid\""))
-      values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
     );
     unsaved.transactiondate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"transactiondate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\n"))
     return q.updateReturning(TransactionhistoryarchiveRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<TransactionhistoryarchiveRow>,
+    unsaved: Iterator<TransactionhistoryarchiveRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, TransactionhistoryarchiveRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<TransactionhistoryarchiveRowUnsaved>,
+    unsaved: Iterator<TransactionhistoryarchiveRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"transactiontype\", \"quantity\", \"actualcost\", \"referenceorderlineid\", \"transactiondate\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, TransactionhistoryarchiveRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<TransactionhistoryarchiveFields, TransactionhistoryarchiveRow> = SelectBuilder.of("\"production\".\"transactionhistoryarchive\"", TransactionhistoryarchiveFields.structure, TransactionhistoryarchiveRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<TransactionhistoryarchiveRow> = interpolate(Fragment.lit("select \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\nfrom \"production\".\"transactionhistoryarchive\"\n")).query(TransactionhistoryarchiveRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<TransactionhistoryarchiveRow> = Fragment.interpolate(Fragment.lit("select \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\nfrom \"production\".\"transactionhistoryarchive\"\n")).query(TransactionhistoryarchiveRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     transactionid: TransactionhistoryarchiveId,
     c: Connection
-  ): TransactionhistoryarchiveRow? = interpolate(Fragment.lit("select \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\nfrom \"production\".\"transactionhistoryarchive\"\nwhere \"transactionid\" = "), Fragment.encode(TransactionhistoryarchiveId.pgType, transactionid), Fragment.lit("")).query(TransactionhistoryarchiveRow._rowParser.first()).runUnchecked(c)
+  ): TransactionhistoryarchiveRow? = Fragment.interpolate(Fragment.lit("select \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\nfrom \"production\".\"transactionhistoryarchive\"\nwhere \"transactionid\" = "), Fragment.encode(TransactionhistoryarchiveId.pgType, transactionid), Fragment.lit("")).query(TransactionhistoryarchiveRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     transactionids: Array<TransactionhistoryarchiveId>,
     c: Connection
-  ): List<TransactionhistoryarchiveRow> = interpolate(Fragment.lit("select \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\nfrom \"production\".\"transactionhistoryarchive\"\nwhere \"transactionid\" = ANY("), Fragment.encode(TransactionhistoryarchiveId.pgTypeArray, transactionids), Fragment.lit(")")).query(TransactionhistoryarchiveRow._rowParser.all()).runUnchecked(c)
+  ): List<TransactionhistoryarchiveRow> = Fragment.interpolate(Fragment.lit("select \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\nfrom \"production\".\"transactionhistoryarchive\"\nwhere \"transactionid\" = ANY("), Fragment.encode(TransactionhistoryarchiveId.pgTypeArray, transactionids), Fragment.lit(")")).query(TransactionhistoryarchiveRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     transactionids: Array<TransactionhistoryarchiveId>,
@@ -122,31 +121,31 @@ class TransactionhistoryarchiveRepoImpl() : TransactionhistoryarchiveRepo {
     c: Connection
   ): Boolean {
     val transactionid: TransactionhistoryarchiveId = row.transactionid
-    return interpolate(Fragment.lit("update \"production\".\"transactionhistoryarchive\"\nset \"productid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.productid), Fragment.lit("::int4,\n\"referenceorderid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.referenceorderid), Fragment.lit("::int4,\n\"referenceorderlineid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.referenceorderlineid), Fragment.lit("::int4,\n\"transactiondate\" = "), Fragment.encode(PgTypes.timestamp, row.transactiondate), Fragment.lit("::timestamp,\n\"transactiontype\" = "), Fragment.encode(PgTypes.bpchar, row.transactiontype), Fragment.lit("::bpchar,\n\"quantity\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.quantity), Fragment.lit("::int4,\n\"actualcost\" = "), Fragment.encode(PgTypes.numeric, row.actualcost), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"transactionid\" = "), Fragment.encode(TransactionhistoryarchiveId.pgType, transactionid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"transactionhistoryarchive\"\nset \"productid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.productid), Fragment.lit("::int4,\n\"referenceorderid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.referenceorderid), Fragment.lit("::int4,\n\"referenceorderlineid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.referenceorderlineid), Fragment.lit("::int4,\n\"transactiondate\" = "), Fragment.encode(PgTypes.timestamp, row.transactiondate), Fragment.lit("::timestamp,\n\"transactiontype\" = "), Fragment.encode(PgTypes.bpchar, row.transactiontype), Fragment.lit("::bpchar,\n\"quantity\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.quantity), Fragment.lit("::int4,\n\"actualcost\" = "), Fragment.encode(PgTypes.numeric, row.actualcost), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"transactionid\" = "), Fragment.encode(TransactionhistoryarchiveId.pgType, transactionid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: TransactionhistoryarchiveRow,
     c: Connection
-  ): TransactionhistoryarchiveRow = interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\")\nvalues ("), Fragment.encode(TransactionhistoryarchiveId.pgType, unsaved.transactionid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderlineid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.transactiondate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.bpchar, unsaved.transactiontype), Fragment.lit("::bpchar, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.quantity), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.actualcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"transactionid\")\ndo update set\n  \"productid\" = EXCLUDED.\"productid\",\n\"referenceorderid\" = EXCLUDED.\"referenceorderid\",\n\"referenceorderlineid\" = EXCLUDED.\"referenceorderlineid\",\n\"transactiondate\" = EXCLUDED.\"transactiondate\",\n\"transactiontype\" = EXCLUDED.\"transactiontype\",\n\"quantity\" = EXCLUDED.\"quantity\",\n\"actualcost\" = EXCLUDED.\"actualcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\""))
+  ): TransactionhistoryarchiveRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\")\nvalues ("), Fragment.encode(TransactionhistoryarchiveId.pgType, unsaved.transactionid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.referenceorderlineid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.transactiondate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.bpchar, unsaved.transactiontype), Fragment.lit("::bpchar, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.quantity), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.actualcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"transactionid\")\ndo update set\n  \"productid\" = EXCLUDED.\"productid\",\n\"referenceorderid\" = EXCLUDED.\"referenceorderid\",\n\"referenceorderlineid\" = EXCLUDED.\"referenceorderlineid\",\n\"transactiondate\" = EXCLUDED.\"transactiondate\",\n\"transactiontype\" = EXCLUDED.\"transactiontype\",\n\"quantity\" = EXCLUDED.\"quantity\",\n\"actualcost\" = EXCLUDED.\"actualcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\""))
     .updateReturning(TransactionhistoryarchiveRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<TransactionhistoryarchiveRow>,
+    unsaved: Iterator<TransactionhistoryarchiveRow>,
     c: Connection
-  ): List<TransactionhistoryarchiveRow> = interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int4, ?::int4, ?::timestamp, ?::bpchar, ?::int4, ?::numeric, ?::timestamp)\non conflict (\"transactionid\")\ndo update set\n  \"productid\" = EXCLUDED.\"productid\",\n\"referenceorderid\" = EXCLUDED.\"referenceorderid\",\n\"referenceorderlineid\" = EXCLUDED.\"referenceorderlineid\",\n\"transactiondate\" = EXCLUDED.\"transactiondate\",\n\"transactiontype\" = EXCLUDED.\"transactiontype\",\n\"quantity\" = EXCLUDED.\"quantity\",\n\"actualcost\" = EXCLUDED.\"actualcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\""))
+  ): List<TransactionhistoryarchiveRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int4, ?::int4, ?::timestamp, ?::bpchar, ?::int4, ?::numeric, ?::timestamp)\non conflict (\"transactionid\")\ndo update set\n  \"productid\" = EXCLUDED.\"productid\",\n\"referenceorderid\" = EXCLUDED.\"referenceorderid\",\n\"referenceorderlineid\" = EXCLUDED.\"referenceorderlineid\",\n\"transactiondate\" = EXCLUDED.\"transactiondate\",\n\"transactiontype\" = EXCLUDED.\"transactiontype\",\n\"quantity\" = EXCLUDED.\"quantity\",\n\"actualcost\" = EXCLUDED.\"actualcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\""))
     .updateManyReturning(TransactionhistoryarchiveRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<TransactionhistoryarchiveRow>,
+    unsaved: Iterator<TransactionhistoryarchiveRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table transactionhistoryarchive_TEMP (like \"production\".\"transactionhistoryarchive\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table transactionhistoryarchive_TEMP (like \"production\".\"transactionhistoryarchive\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy transactionhistoryarchive_TEMP(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\") from stdin", batchSize, unsaved, c, TransactionhistoryarchiveRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\")\nselect * from transactionhistoryarchive_TEMP\non conflict (\"transactionid\")\ndo update set\n  \"productid\" = EXCLUDED.\"productid\",\n\"referenceorderid\" = EXCLUDED.\"referenceorderid\",\n\"referenceorderlineid\" = EXCLUDED.\"referenceorderlineid\",\n\"transactiondate\" = EXCLUDED.\"transactiondate\",\n\"transactiontype\" = EXCLUDED.\"transactiontype\",\n\"quantity\" = EXCLUDED.\"quantity\",\n\"actualcost\" = EXCLUDED.\"actualcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table transactionhistoryarchive_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"transactionhistoryarchive\"(\"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\")\nselect * from transactionhistoryarchive_TEMP\non conflict (\"transactionid\")\ndo update set\n  \"productid\" = EXCLUDED.\"productid\",\n\"referenceorderid\" = EXCLUDED.\"referenceorderid\",\n\"referenceorderlineid\" = EXCLUDED.\"referenceorderlineid\",\n\"transactiondate\" = EXCLUDED.\"transactiondate\",\n\"transactiontype\" = EXCLUDED.\"transactiontype\",\n\"quantity\" = EXCLUDED.\"quantity\",\n\"actualcost\" = EXCLUDED.\"actualcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table transactionhistoryarchive_TEMP;")).update().runUnchecked(c)
   }
 }

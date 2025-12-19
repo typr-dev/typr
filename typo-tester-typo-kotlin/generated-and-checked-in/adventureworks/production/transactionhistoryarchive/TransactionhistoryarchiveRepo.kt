@@ -6,9 +6,9 @@
 package adventureworks.production.transactionhistoryarchive
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface TransactionhistoryarchiveRepo {
   ): TransactionhistoryarchiveRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<TransactionhistoryarchiveRow>,
+    unsaved: Iterator<TransactionhistoryarchiveRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<TransactionhistoryarchiveRowUnsaved>,
+    unsaved: Iterator<TransactionhistoryarchiveRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface TransactionhistoryarchiveRepo {
   ): TransactionhistoryarchiveRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<TransactionhistoryarchiveRow>,
+    unsaved: Iterator<TransactionhistoryarchiveRow>,
     c: Connection
   ): List<TransactionhistoryarchiveRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<TransactionhistoryarchiveRow>,
+    unsaved: Iterator<TransactionhistoryarchiveRow>,
     batchSize: Int,
     c: Connection
   ): Int

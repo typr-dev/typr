@@ -9,9 +9,9 @@ import adventureworks.userdefined.CustomCreditcardId
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -64,7 +64,7 @@ data class CreditcardRepoMock(
   ): CreditcardRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<CreditcardRow>,
+    unsaved: Iterator<CreditcardRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -79,7 +79,7 @@ data class CreditcardRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<CreditcardRowUnsaved>,
+    unsaved: Iterator<CreditcardRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -143,7 +143,7 @@ data class CreditcardRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<CreditcardRow>,
+    unsaved: Iterator<CreditcardRow>,
     c: Connection
   ): List<CreditcardRow> {
     val result = ArrayList<CreditcardRow>()
@@ -157,7 +157,7 @@ data class CreditcardRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<CreditcardRow>,
+    unsaved: Iterator<CreditcardRow>,
     batchSize: Int,
     c: Connection
   ): Int {

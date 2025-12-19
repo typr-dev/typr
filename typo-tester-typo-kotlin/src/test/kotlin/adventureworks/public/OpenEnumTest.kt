@@ -1,4 +1,4 @@
-package adventureworks.public_
+package adventureworks.public
 
 import adventureworks.WithConnection
 import adventureworks.public.title.*

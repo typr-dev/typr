@@ -6,9 +6,9 @@
 package adventureworks.production.unitmeasure
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface UnitmeasureRepo {
   ): UnitmeasureRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<UnitmeasureRow>,
+    unsaved: Iterator<UnitmeasureRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<UnitmeasureRowUnsaved>,
+    unsaved: Iterator<UnitmeasureRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface UnitmeasureRepo {
   ): UnitmeasureRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<UnitmeasureRow>,
+    unsaved: Iterator<UnitmeasureRow>,
     c: Connection
   ): List<UnitmeasureRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<UnitmeasureRow>,
+    unsaved: Iterator<UnitmeasureRow>,
     batchSize: Int,
     c: Connection
   ): Int

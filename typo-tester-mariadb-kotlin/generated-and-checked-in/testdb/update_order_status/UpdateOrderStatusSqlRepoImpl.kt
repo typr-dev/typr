@@ -9,12 +9,11 @@ import java.sql.Connection
 import testdb.orders.OrdersId
 import typo.kotlindsl.Fragment
 import typo.runtime.MariaTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class UpdateOrderStatusSqlRepoImpl() : UpdateOrderStatusSqlRepo {
   override fun apply(
     newStatus: String,
     orderId: /* user-picked */ OrdersId,
     c: Connection
-  ): Int = interpolate(Fragment.lit("-- Update order status\nUPDATE orders\nSET order_status = "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(",\n    confirmed_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'confirmed' THEN NOW(6) ELSE confirmed_at END,\n    shipped_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'shipped' THEN NOW(6) ELSE shipped_at END,\n    delivered_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'delivered' THEN NOW(6) ELSE delivered_at END\nWHERE order_id = "), Fragment.encode(OrdersId.pgType, orderId), Fragment.lit("\n")).update().runUnchecked(c)
+  ): Int = Fragment.interpolate(Fragment.lit("-- Update order status\nUPDATE orders\nSET order_status = "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(",\n    confirmed_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'confirmed' THEN NOW(6) ELSE confirmed_at END,\n    shipped_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'shipped' THEN NOW(6) ELSE shipped_at END,\n    delivered_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'delivered' THEN NOW(6) ELSE delivered_at END\nWHERE order_id = "), Fragment.encode(OrdersId.pgType, orderId), Fragment.lit("\n")).update().runUnchecked(c)
 }

@@ -7,9 +7,9 @@ package adventureworks.production.illustration
 
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class IllustrationRepoImpl() : IllustrationRepo {
   override fun delete(): DeleteBuilder<IllustrationFields, IllustrationRow> = DeleteBuilder.of("\"production\".\"illustration\"", IllustrationFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class IllustrationRepoImpl() : IllustrationRepo {
   override fun deleteById(
     illustrationid: IllustrationId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"illustration\" where \"illustrationid\" = "), Fragment.encode(IllustrationId.pgType, illustrationid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"illustration\" where \"illustrationid\" = "), Fragment.encode(IllustrationId.pgType, illustrationid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     illustrationids: Array<IllustrationId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"illustration\"\nwhere \"illustrationid\" = ANY("), Fragment.encode(IllustrationId.pgTypeArray, illustrationids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"illustration\"\nwhere \"illustrationid\" = ANY("), Fragment.encode(IllustrationId.pgTypeArray, illustrationids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: IllustrationRow,
     c: Connection
-  ): IllustrationRow = interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nvalues ("), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.diagram), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
+  ): IllustrationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nvalues ("), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.diagram), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
     .updateReturning(IllustrationRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,47 +48,47 @@ class IllustrationRepoImpl() : IllustrationRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"diagram\""))
-    values.add(interpolate(Fragment.encode(PgTypes.xml.nullable(), unsaved.diagram), Fragment.lit("::xml")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.xml.nullable(), unsaved.diagram), Fragment.lit("::xml")))
     unsaved.illustrationid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"illustrationid\""))
-      values.add(interpolate(Fragment.encode(IllustrationId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(IllustrationId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"illustration\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
     return q.updateReturning(IllustrationRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<IllustrationRow>,
+    unsaved: Iterator<IllustrationRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, IllustrationRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<IllustrationRowUnsaved>,
+    unsaved: Iterator<IllustrationRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"illustration\"(\"diagram\", \"illustrationid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, IllustrationRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<IllustrationFields, IllustrationRow> = SelectBuilder.of("\"production\".\"illustration\"", IllustrationFields.structure, IllustrationRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<IllustrationRow> = interpolate(Fragment.lit("select \"illustrationid\", \"diagram\", \"modifieddate\"\nfrom \"production\".\"illustration\"\n")).query(IllustrationRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<IllustrationRow> = Fragment.interpolate(Fragment.lit("select \"illustrationid\", \"diagram\", \"modifieddate\"\nfrom \"production\".\"illustration\"\n")).query(IllustrationRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     illustrationid: IllustrationId,
     c: Connection
-  ): IllustrationRow? = interpolate(Fragment.lit("select \"illustrationid\", \"diagram\", \"modifieddate\"\nfrom \"production\".\"illustration\"\nwhere \"illustrationid\" = "), Fragment.encode(IllustrationId.pgType, illustrationid), Fragment.lit("")).query(IllustrationRow._rowParser.first()).runUnchecked(c)
+  ): IllustrationRow? = Fragment.interpolate(Fragment.lit("select \"illustrationid\", \"diagram\", \"modifieddate\"\nfrom \"production\".\"illustration\"\nwhere \"illustrationid\" = "), Fragment.encode(IllustrationId.pgType, illustrationid), Fragment.lit("")).query(IllustrationRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     illustrationids: Array<IllustrationId>,
     c: Connection
-  ): List<IllustrationRow> = interpolate(Fragment.lit("select \"illustrationid\", \"diagram\", \"modifieddate\"\nfrom \"production\".\"illustration\"\nwhere \"illustrationid\" = ANY("), Fragment.encode(IllustrationId.pgTypeArray, illustrationids), Fragment.lit(")")).query(IllustrationRow._rowParser.all()).runUnchecked(c)
+  ): List<IllustrationRow> = Fragment.interpolate(Fragment.lit("select \"illustrationid\", \"diagram\", \"modifieddate\"\nfrom \"production\".\"illustration\"\nwhere \"illustrationid\" = ANY("), Fragment.encode(IllustrationId.pgTypeArray, illustrationids), Fragment.lit(")")).query(IllustrationRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     illustrationids: Array<IllustrationId>,
@@ -107,31 +106,31 @@ class IllustrationRepoImpl() : IllustrationRepo {
     c: Connection
   ): Boolean {
     val illustrationid: IllustrationId = row.illustrationid
-    return interpolate(Fragment.lit("update \"production\".\"illustration\"\nset \"diagram\" = "), Fragment.encode(PgTypes.xml.nullable(), row.diagram), Fragment.lit("::xml,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"illustrationid\" = "), Fragment.encode(IllustrationId.pgType, illustrationid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"illustration\"\nset \"diagram\" = "), Fragment.encode(PgTypes.xml.nullable(), row.diagram), Fragment.lit("::xml,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"illustrationid\" = "), Fragment.encode(IllustrationId.pgType, illustrationid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: IllustrationRow,
     c: Connection
-  ): IllustrationRow = interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nvalues ("), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.diagram), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"illustrationid\")\ndo update set\n  \"diagram\" = EXCLUDED.\"diagram\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"illustrationid\", \"diagram\", \"modifieddate\""))
+  ): IllustrationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nvalues ("), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.diagram), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"illustrationid\")\ndo update set\n  \"diagram\" = EXCLUDED.\"diagram\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"illustrationid\", \"diagram\", \"modifieddate\""))
     .updateReturning(IllustrationRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<IllustrationRow>,
+    unsaved: Iterator<IllustrationRow>,
     c: Connection
-  ): List<IllustrationRow> = interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nvalues (?::int4, ?::xml, ?::timestamp)\non conflict (\"illustrationid\")\ndo update set\n  \"diagram\" = EXCLUDED.\"diagram\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"illustrationid\", \"diagram\", \"modifieddate\""))
+  ): List<IllustrationRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nvalues (?::int4, ?::xml, ?::timestamp)\non conflict (\"illustrationid\")\ndo update set\n  \"diagram\" = EXCLUDED.\"diagram\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"illustrationid\", \"diagram\", \"modifieddate\""))
     .updateManyReturning(IllustrationRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<IllustrationRow>,
+    unsaved: Iterator<IllustrationRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table illustration_TEMP (like \"production\".\"illustration\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table illustration_TEMP (like \"production\".\"illustration\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy illustration_TEMP(\"illustrationid\", \"diagram\", \"modifieddate\") from stdin", batchSize, unsaved, c, IllustrationRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nselect * from illustration_TEMP\non conflict (\"illustrationid\")\ndo update set\n  \"diagram\" = EXCLUDED.\"diagram\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table illustration_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nselect * from illustration_TEMP\non conflict (\"illustrationid\")\ndo update set\n  \"diagram\" = EXCLUDED.\"diagram\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table illustration_TEMP;")).update().runUnchecked(c)
   }
 }

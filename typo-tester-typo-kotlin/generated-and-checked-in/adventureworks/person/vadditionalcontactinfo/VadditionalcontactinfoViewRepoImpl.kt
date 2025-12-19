@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VadditionalcontactinfoViewRepoImpl() : VadditionalcontactinfoViewRepo {
   override fun select(): SelectBuilder<VadditionalcontactinfoViewFields, VadditionalcontactinfoViewRow> = SelectBuilder.of("\"person\".\"vadditionalcontactinfo\"", VadditionalcontactinfoViewFields.structure, VadditionalcontactinfoViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VadditionalcontactinfoViewRow> = interpolate(Fragment.lit("select \"businessentityid\", \"firstname\", \"middlename\", \"lastname\", \"telephonenumber\", \"telephonespecialinstructions\", \"street\", \"city\", \"stateprovince\", \"postalcode\", \"countryregion\", \"homeaddressspecialinstructions\", \"emailaddress\", \"emailspecialinstructions\", \"emailtelephonenumber\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"vadditionalcontactinfo\"\n")).query(VadditionalcontactinfoViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VadditionalcontactinfoViewRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"firstname\", \"middlename\", \"lastname\", \"telephonenumber\", \"telephonespecialinstructions\", \"street\", \"city\", \"stateprovince\", \"postalcode\", \"countryregion\", \"homeaddressspecialinstructions\", \"emailaddress\", \"emailspecialinstructions\", \"emailtelephonenumber\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"vadditionalcontactinfo\"\n")).query(VadditionalcontactinfoViewRow._rowParser.all()).runUnchecked(c)
 }

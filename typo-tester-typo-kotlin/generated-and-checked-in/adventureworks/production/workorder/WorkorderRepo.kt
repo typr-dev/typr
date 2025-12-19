@@ -6,9 +6,9 @@
 package adventureworks.production.workorder
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface WorkorderRepo {
   ): WorkorderRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<WorkorderRow>,
+    unsaved: Iterator<WorkorderRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<WorkorderRowUnsaved>,
+    unsaved: Iterator<WorkorderRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface WorkorderRepo {
   ): WorkorderRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<WorkorderRow>,
+    unsaved: Iterator<WorkorderRow>,
     c: Connection
   ): List<WorkorderRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<WorkorderRow>,
+    unsaved: Iterator<WorkorderRow>,
     batchSize: Int,
     c: Connection
   ): Int

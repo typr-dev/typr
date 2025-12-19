@@ -8,9 +8,9 @@ package adventureworks.public.only_pk_columns
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -55,7 +55,7 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<OnlyPkColumnsRow>,
+    unsaved: Iterator<OnlyPkColumnsRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -107,7 +107,7 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<OnlyPkColumnsRow>,
+    unsaved: Iterator<OnlyPkColumnsRow>,
     c: Connection
   ): List<OnlyPkColumnsRow> {
     val result = ArrayList<OnlyPkColumnsRow>()
@@ -121,7 +121,7 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<OnlyPkColumnsRow>,
+    unsaved: Iterator<OnlyPkColumnsRow>,
     batchSize: Int,
     c: Connection
   ): Int {

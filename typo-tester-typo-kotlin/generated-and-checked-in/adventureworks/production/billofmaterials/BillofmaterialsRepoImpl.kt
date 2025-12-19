@@ -9,9 +9,9 @@ import adventureworks.production.product.ProductId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -22,7 +22,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class BillofmaterialsRepoImpl() : BillofmaterialsRepo {
   override fun delete(): DeleteBuilder<BillofmaterialsFields, BillofmaterialsRow> = DeleteBuilder.of("\"production\".\"billofmaterials\"", BillofmaterialsFields.structure, Dialect.POSTGRESQL)
@@ -30,19 +29,19 @@ class BillofmaterialsRepoImpl() : BillofmaterialsRepo {
   override fun deleteById(
     billofmaterialsid: Int,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"billofmaterials\" where \"billofmaterialsid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, billofmaterialsid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"billofmaterials\" where \"billofmaterialsid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, billofmaterialsid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     billofmaterialsids: Array<Int>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"billofmaterials\"\nwhere \"billofmaterialsid\" = ANY("), Fragment.encode(PgTypes.int4Array, billofmaterialsids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"billofmaterials\"\nwhere \"billofmaterialsid\" = ANY("), Fragment.encode(PgTypes.int4Array, billofmaterialsids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: BillofmaterialsRow,
     c: Connection
-  ): BillofmaterialsRow = interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\")\nvalues ("), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.billofmaterialsid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType.nullable(), unsaved.productassemblyid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.componentid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.bomlevel), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.perassemblyqty), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\n"))
+  ): BillofmaterialsRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\")\nvalues ("), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.billofmaterialsid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType.nullable(), unsaved.productassemblyid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.componentid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.bomlevel), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.perassemblyqty), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\n"))
     .updateReturning(BillofmaterialsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -52,65 +51,65 @@ class BillofmaterialsRepoImpl() : BillofmaterialsRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"productassemblyid\""))
-    values.add(interpolate(Fragment.encode(ProductId.pgType.nullable(), unsaved.productassemblyid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductId.pgType.nullable(), unsaved.productassemblyid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"componentid\""))
-    values.add(interpolate(Fragment.encode(ProductId.pgType, unsaved.componentid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductId.pgType, unsaved.componentid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"enddate\""))
-    values.add(interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp")))
     columns.add(Fragment.lit("\"unitmeasurecode\""))
-    values.add(interpolate(Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar")))
+    values.add(Fragment.interpolate(Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar")))
     columns.add(Fragment.lit("\"bomlevel\""))
-    values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.bomlevel), Fragment.lit("::int2")))
+    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.bomlevel), Fragment.lit("::int2")))
     unsaved.billofmaterialsid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"billofmaterialsid\""))
-      values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
     );
     unsaved.startdate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"startdate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
     unsaved.perassemblyqty.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"perassemblyqty\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\n"))
     return q.updateReturning(BillofmaterialsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<BillofmaterialsRow>,
+    unsaved: Iterator<BillofmaterialsRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, BillofmaterialsRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<BillofmaterialsRowUnsaved>,
+    unsaved: Iterator<BillofmaterialsRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"billofmaterials\"(\"productassemblyid\", \"componentid\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"billofmaterialsid\", \"startdate\", \"perassemblyqty\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, BillofmaterialsRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<BillofmaterialsFields, BillofmaterialsRow> = SelectBuilder.of("\"production\".\"billofmaterials\"", BillofmaterialsFields.structure, BillofmaterialsRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<BillofmaterialsRow> = interpolate(Fragment.lit("select \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\nfrom \"production\".\"billofmaterials\"\n")).query(BillofmaterialsRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<BillofmaterialsRow> = Fragment.interpolate(Fragment.lit("select \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\nfrom \"production\".\"billofmaterials\"\n")).query(BillofmaterialsRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     billofmaterialsid: Int,
     c: Connection
-  ): BillofmaterialsRow? = interpolate(Fragment.lit("select \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\nfrom \"production\".\"billofmaterials\"\nwhere \"billofmaterialsid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, billofmaterialsid), Fragment.lit("")).query(BillofmaterialsRow._rowParser.first()).runUnchecked(c)
+  ): BillofmaterialsRow? = Fragment.interpolate(Fragment.lit("select \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\nfrom \"production\".\"billofmaterials\"\nwhere \"billofmaterialsid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, billofmaterialsid), Fragment.lit("")).query(BillofmaterialsRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     billofmaterialsids: Array<Int>,
     c: Connection
-  ): List<BillofmaterialsRow> = interpolate(Fragment.lit("select \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\nfrom \"production\".\"billofmaterials\"\nwhere \"billofmaterialsid\" = ANY("), Fragment.encode(PgTypes.int4Array, billofmaterialsids), Fragment.lit(")")).query(BillofmaterialsRow._rowParser.all()).runUnchecked(c)
+  ): List<BillofmaterialsRow> = Fragment.interpolate(Fragment.lit("select \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\nfrom \"production\".\"billofmaterials\"\nwhere \"billofmaterialsid\" = ANY("), Fragment.encode(PgTypes.int4Array, billofmaterialsids), Fragment.lit(")")).query(BillofmaterialsRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     billofmaterialsids: Array<Int>,
@@ -128,31 +127,31 @@ class BillofmaterialsRepoImpl() : BillofmaterialsRepo {
     c: Connection
   ): Boolean {
     val billofmaterialsid: Int = row.billofmaterialsid
-    return interpolate(Fragment.lit("update \"production\".\"billofmaterials\"\nset \"productassemblyid\" = "), Fragment.encode(ProductId.pgType.nullable(), row.productassemblyid), Fragment.lit("::int4,\n\"componentid\" = "), Fragment.encode(ProductId.pgType, row.componentid), Fragment.lit("::int4,\n\"startdate\" = "), Fragment.encode(PgTypes.timestamp, row.startdate), Fragment.lit("::timestamp,\n\"enddate\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.enddate), Fragment.lit("::timestamp,\n\"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, row.unitmeasurecode), Fragment.lit("::bpchar,\n\"bomlevel\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.bomlevel), Fragment.lit("::int2,\n\"perassemblyqty\" = "), Fragment.encode(PgTypes.numeric, row.perassemblyqty), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"billofmaterialsid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, billofmaterialsid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"billofmaterials\"\nset \"productassemblyid\" = "), Fragment.encode(ProductId.pgType.nullable(), row.productassemblyid), Fragment.lit("::int4,\n\"componentid\" = "), Fragment.encode(ProductId.pgType, row.componentid), Fragment.lit("::int4,\n\"startdate\" = "), Fragment.encode(PgTypes.timestamp, row.startdate), Fragment.lit("::timestamp,\n\"enddate\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.enddate), Fragment.lit("::timestamp,\n\"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, row.unitmeasurecode), Fragment.lit("::bpchar,\n\"bomlevel\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.bomlevel), Fragment.lit("::int2,\n\"perassemblyqty\" = "), Fragment.encode(PgTypes.numeric, row.perassemblyqty), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"billofmaterialsid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, billofmaterialsid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: BillofmaterialsRow,
     c: Connection
-  ): BillofmaterialsRow = interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\")\nvalues ("), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.billofmaterialsid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType.nullable(), unsaved.productassemblyid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.componentid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.bomlevel), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.perassemblyqty), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"billofmaterialsid\")\ndo update set\n  \"productassemblyid\" = EXCLUDED.\"productassemblyid\",\n\"componentid\" = EXCLUDED.\"componentid\",\n\"startdate\" = EXCLUDED.\"startdate\",\n\"enddate\" = EXCLUDED.\"enddate\",\n\"unitmeasurecode\" = EXCLUDED.\"unitmeasurecode\",\n\"bomlevel\" = EXCLUDED.\"bomlevel\",\n\"perassemblyqty\" = EXCLUDED.\"perassemblyqty\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\""))
+  ): BillofmaterialsRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\")\nvalues ("), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.billofmaterialsid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType.nullable(), unsaved.productassemblyid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.componentid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.bomlevel), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.perassemblyqty), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"billofmaterialsid\")\ndo update set\n  \"productassemblyid\" = EXCLUDED.\"productassemblyid\",\n\"componentid\" = EXCLUDED.\"componentid\",\n\"startdate\" = EXCLUDED.\"startdate\",\n\"enddate\" = EXCLUDED.\"enddate\",\n\"unitmeasurecode\" = EXCLUDED.\"unitmeasurecode\",\n\"bomlevel\" = EXCLUDED.\"bomlevel\",\n\"perassemblyqty\" = EXCLUDED.\"perassemblyqty\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\""))
     .updateReturning(BillofmaterialsRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<BillofmaterialsRow>,
+    unsaved: Iterator<BillofmaterialsRow>,
     c: Connection
-  ): List<BillofmaterialsRow> = interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::bpchar, ?::int2, ?::numeric, ?::timestamp)\non conflict (\"billofmaterialsid\")\ndo update set\n  \"productassemblyid\" = EXCLUDED.\"productassemblyid\",\n\"componentid\" = EXCLUDED.\"componentid\",\n\"startdate\" = EXCLUDED.\"startdate\",\n\"enddate\" = EXCLUDED.\"enddate\",\n\"unitmeasurecode\" = EXCLUDED.\"unitmeasurecode\",\n\"bomlevel\" = EXCLUDED.\"bomlevel\",\n\"perassemblyqty\" = EXCLUDED.\"perassemblyqty\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\""))
+  ): List<BillofmaterialsRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::bpchar, ?::int2, ?::numeric, ?::timestamp)\non conflict (\"billofmaterialsid\")\ndo update set\n  \"productassemblyid\" = EXCLUDED.\"productassemblyid\",\n\"componentid\" = EXCLUDED.\"componentid\",\n\"startdate\" = EXCLUDED.\"startdate\",\n\"enddate\" = EXCLUDED.\"enddate\",\n\"unitmeasurecode\" = EXCLUDED.\"unitmeasurecode\",\n\"bomlevel\" = EXCLUDED.\"bomlevel\",\n\"perassemblyqty\" = EXCLUDED.\"perassemblyqty\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\""))
     .updateManyReturning(BillofmaterialsRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<BillofmaterialsRow>,
+    unsaved: Iterator<BillofmaterialsRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table billofmaterials_TEMP (like \"production\".\"billofmaterials\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table billofmaterials_TEMP (like \"production\".\"billofmaterials\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy billofmaterials_TEMP(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\") from stdin", batchSize, unsaved, c, BillofmaterialsRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\")\nselect * from billofmaterials_TEMP\non conflict (\"billofmaterialsid\")\ndo update set\n  \"productassemblyid\" = EXCLUDED.\"productassemblyid\",\n\"componentid\" = EXCLUDED.\"componentid\",\n\"startdate\" = EXCLUDED.\"startdate\",\n\"enddate\" = EXCLUDED.\"enddate\",\n\"unitmeasurecode\" = EXCLUDED.\"unitmeasurecode\",\n\"bomlevel\" = EXCLUDED.\"bomlevel\",\n\"perassemblyqty\" = EXCLUDED.\"perassemblyqty\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table billofmaterials_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"billofmaterials\"(\"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\")\nselect * from billofmaterials_TEMP\non conflict (\"billofmaterialsid\")\ndo update set\n  \"productassemblyid\" = EXCLUDED.\"productassemblyid\",\n\"componentid\" = EXCLUDED.\"componentid\",\n\"startdate\" = EXCLUDED.\"startdate\",\n\"enddate\" = EXCLUDED.\"enddate\",\n\"unitmeasurecode\" = EXCLUDED.\"unitmeasurecode\",\n\"bomlevel\" = EXCLUDED.\"bomlevel\",\n\"perassemblyqty\" = EXCLUDED.\"perassemblyqty\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table billofmaterials_TEMP;")).update().runUnchecked(c)
   }
 }

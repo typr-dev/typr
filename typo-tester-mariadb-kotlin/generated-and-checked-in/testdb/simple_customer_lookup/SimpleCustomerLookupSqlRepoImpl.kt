@@ -9,11 +9,10 @@ import java.sql.Connection
 import kotlin.collections.List
 import typo.kotlindsl.Fragment
 import typo.runtime.MariaTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class SimpleCustomerLookupSqlRepoImpl() : SimpleCustomerLookupSqlRepo {
   override fun apply(
     email: String,
     c: Connection
-  ): List<SimpleCustomerLookupSqlRow> = interpolate(Fragment.lit("-- Simple customer lookup by email\nSELECT customer_id,\n       email,\n       first_name,\n       last_name,\n       tier,\n       status,\n       created_at\nFROM customers\nWHERE email = "), Fragment.encode(MariaTypes.varchar, email), Fragment.lit("\n")).query(SimpleCustomerLookupSqlRow._rowParser.all()).runUnchecked(c)
+  ): List<SimpleCustomerLookupSqlRow> = Fragment.interpolate(Fragment.lit("-- Simple customer lookup by email\nSELECT customer_id,\n       email,\n       first_name,\n       last_name,\n       tier,\n       status,\n       created_at\nFROM customers\nWHERE email = "), Fragment.encode(MariaTypes.varchar, email), Fragment.lit("\n")).query(SimpleCustomerLookupSqlRow._rowParser.all()).runUnchecked(c)
 }

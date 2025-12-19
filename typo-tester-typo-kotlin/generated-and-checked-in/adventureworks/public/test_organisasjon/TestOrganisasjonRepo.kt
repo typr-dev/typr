@@ -6,9 +6,9 @@
 package adventureworks.public.test_organisasjon
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -32,7 +32,7 @@ interface TestOrganisasjonRepo {
   ): TestOrganisasjonRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<TestOrganisasjonRow>,
+    unsaved: Iterator<TestOrganisasjonRow>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -64,13 +64,13 @@ interface TestOrganisasjonRepo {
   ): TestOrganisasjonRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<TestOrganisasjonRow>,
+    unsaved: Iterator<TestOrganisasjonRow>,
     c: Connection
   ): List<TestOrganisasjonRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<TestOrganisasjonRow>,
+    unsaved: Iterator<TestOrganisasjonRow>,
     batchSize: Int,
     c: Connection
   ): Int

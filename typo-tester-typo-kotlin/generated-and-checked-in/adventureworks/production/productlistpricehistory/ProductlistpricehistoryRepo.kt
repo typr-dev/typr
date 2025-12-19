@@ -6,9 +6,9 @@
 package adventureworks.production.productlistpricehistory
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface ProductlistpricehistoryRepo {
   ): ProductlistpricehistoryRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<ProductlistpricehistoryRow>,
+    unsaved: Iterator<ProductlistpricehistoryRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ProductlistpricehistoryRowUnsaved>,
+    unsaved: Iterator<ProductlistpricehistoryRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface ProductlistpricehistoryRepo {
   ): ProductlistpricehistoryRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<ProductlistpricehistoryRow>,
+    unsaved: Iterator<ProductlistpricehistoryRow>,
     c: Connection
   ): List<ProductlistpricehistoryRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<ProductlistpricehistoryRow>,
+    unsaved: Iterator<ProductlistpricehistoryRow>,
     batchSize: Int,
     c: Connection
   ): Int

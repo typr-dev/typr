@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class BomViewRepoImpl() : BomViewRepo {
   override fun select(): SelectBuilder<BomViewFields, BomViewRow> = SelectBuilder.of("\"pr\".\"bom\"", BomViewFields.structure, BomViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<BomViewRow> = interpolate(Fragment.lit("select \"id\", \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\nfrom \"pr\".\"bom\"\n")).query(BomViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<BomViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"billofmaterialsid\", \"productassemblyid\", \"componentid\", \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\", \"perassemblyqty\", \"modifieddate\"\nfrom \"pr\".\"bom\"\n")).query(BomViewRow._rowParser.all()).runUnchecked(c)
 }

@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class CcViewRepoImpl() : CcViewRepo {
   override fun select(): SelectBuilder<CcViewFields, CcViewRow> = SelectBuilder.of("\"sa\".\"cc\"", CcViewFields.structure, CcViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<CcViewRow> = interpolate(Fragment.lit("select \"id\", \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\", \"expyear\", \"modifieddate\"\nfrom \"sa\".\"cc\"\n")).query(CcViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<CcViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\", \"expyear\", \"modifieddate\"\nfrom \"sa\".\"cc\"\n")).query(CcViewRow._rowParser.all()).runUnchecked(c)
 }

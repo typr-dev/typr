@@ -3,12 +3,13 @@ package adventureworks.person
 import adventureworks.DomainInsert
 import adventureworks.TestInsert
 import adventureworks.WithConnection
+import adventureworks.customtypes.Defaulted
 import adventureworks.person.address.*
 import adventureworks.person.addresstype.*
 import adventureworks.person.businessentityaddress.*
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.person.person.*
-import adventureworks.public_.Name
+import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -67,7 +68,7 @@ class PersonWithAddressesRepo(
         oldAttachedAddresses.forEach { (_, ba) ->
             val address = currentAddressesByType[ba.addresstypeid]
             if (address == null || address.addressid != ba.addressid) {
-                businessentityAddressRepo.deleteById(ba.compositeId, c)
+                businessentityAddressRepo.deleteById(ba.compositeId(), c)
             }
         }
 
@@ -87,15 +88,85 @@ class PersonWithAddressesTest {
     fun works() {
         WithConnection.run { c ->
             // insert randomly generated rows (with a fixed seed) we base the test on
-            val testInsert = TestInsert(Random(1), DomainInsert)
-            val businessentityRow = testInsert.personBusinessentity(c)
-            val personRow = testInsert.personPerson(c, businessentityRow.businessentityid, persontype = "SC", firstname = FirstName("name"))
-            val countryregionRow = testInsert.personCountryregion(c, CountryregionId("NOR"))
-            val salesterritoryRow = testInsert.salesSalesterritory(c, countryregionRow.countryregioncode)
-            val stateprovinceRow = testInsert.personStateprovince(c, countryregionRow.countryregioncode, salesterritoryRow.territoryid)
-            val addressRow1 = testInsert.personAddress(c, stateprovinceRow.stateprovinceid)
-            val addressRow2 = testInsert.personAddress(c, stateprovinceRow.stateprovinceid)
-            val addressRow3 = testInsert.personAddress(c, stateprovinceRow.stateprovinceid)
+            val testInsert = TestInsert(java.util.Random(1), DomainInsert)
+            val businessentityRow = testInsert.personBusinessentity(businessentityid = Defaulted.UseDefault(), rowguid = Defaulted.UseDefault(), modifieddate = Defaulted.UseDefault(), c = c)
+            val personRow = testInsert.personPerson(
+                businessentityid = businessentityRow.businessentityid,
+                persontype = "SC",
+                firstname = FirstName("name"),
+                title = null,
+                middlename = null,
+                lastname = testInsert.domainInsert.publicName(testInsert.random),
+                suffix = null,
+                additionalcontactinfo = null,
+                demographics = null,
+                namestyle = Defaulted.UseDefault(),
+                emailpromotion = Defaulted.UseDefault(),
+                rowguid = Defaulted.UseDefault(),
+                modifieddate = Defaulted.UseDefault(),
+                c = c
+            )
+            val countryregionRow = testInsert.personCountryregion(countryregioncode = CountryregionId("NOR"), name = testInsert.domainInsert.publicName(testInsert.random), modifieddate = Defaulted.UseDefault(), c = c)
+            val salesterritoryRow = testInsert.salesSalesterritory(
+                territoryid = Defaulted.UseDefault(),
+                name = testInsert.domainInsert.publicName(testInsert.random),
+                countryregioncode = countryregionRow.countryregioncode,
+                group = "group",
+                salesytd = Defaulted.UseDefault(),
+                saleslastyear = Defaulted.UseDefault(),
+                costytd = Defaulted.UseDefault(),
+                costlastyear = Defaulted.UseDefault(),
+                rowguid = Defaulted.UseDefault(),
+                modifieddate = Defaulted.UseDefault(),
+                c = c
+            )
+            val stateprovinceRow = testInsert.personStateprovince(
+                stateprovincecode = "SC",
+                countryregioncode = countryregionRow.countryregioncode,
+                name = testInsert.domainInsert.publicName(testInsert.random),
+                territoryid = salesterritoryRow.territoryid,
+                isonlystateprovinceflag = Defaulted.UseDefault(),
+                rowguid = Defaulted.UseDefault(),
+                modifieddate = Defaulted.UseDefault(),
+                stateprovinceid = Defaulted.UseDefault(),
+                c = c
+            )
+            val addressRow1 = testInsert.personAddress(
+                addressline1 = "line1",
+                city = "city",
+                stateprovinceid = stateprovinceRow.stateprovinceid,
+                postalcode = "12345",
+                addressline2 = null,
+                spatiallocation = null,
+                addressid = Defaulted.UseDefault(),
+                rowguid = Defaulted.UseDefault(),
+                modifieddate = Defaulted.UseDefault(),
+                c = c
+            )
+            val addressRow2 = testInsert.personAddress(
+                addressline1 = "line2",
+                city = "city",
+                stateprovinceid = stateprovinceRow.stateprovinceid,
+                postalcode = "12345",
+                addressline2 = null,
+                spatiallocation = null,
+                addressid = Defaulted.UseDefault(),
+                rowguid = Defaulted.UseDefault(),
+                modifieddate = Defaulted.UseDefault(),
+                c = c
+            )
+            val addressRow3 = testInsert.personAddress(
+                addressline1 = "line3",
+                city = "city",
+                stateprovinceid = stateprovinceRow.stateprovinceid,
+                postalcode = "12345",
+                addressline2 = null,
+                spatiallocation = null,
+                addressid = Defaulted.UseDefault(),
+                rowguid = Defaulted.UseDefault(),
+                modifieddate = Defaulted.UseDefault(),
+                c = c
+            )
 
             val businessentityaddressRepo = BusinessentityaddressRepoImpl()
             val repo = PersonWithAddressesRepo(

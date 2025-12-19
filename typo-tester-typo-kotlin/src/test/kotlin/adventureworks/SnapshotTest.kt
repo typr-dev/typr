@@ -33,7 +33,7 @@ object SnapshotTest {
 
     fun compareFragment(testClassName: String, fragmentName: String, fragment: Fragment?) {
         fragment?.let { sql ->
-            val str = sql.sql.replace(Regex("\\{param[\\d]+}"), "?")
+            val str = sql.render().replace(Regex("\\{param[\\d]+}"), "?")
             writeAndCompare(outFolder.resolve("$testClassName/$fragmentName.sql"), str)
         }
     }

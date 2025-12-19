@@ -11,12 +11,11 @@ import testdb.customers.CustomersId
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.nullable
 import typo.runtime.MariaTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class CustomerOrdersSqlRepoImpl() : CustomerOrdersSqlRepo {
   override fun apply(
     customerId: /* user-picked */ CustomersId,
     orderStatus: String?,
     c: Connection
-  ): List<CustomerOrdersSqlRow> = interpolate(Fragment.lit("-- Query customers with their orders\nSELECT c.customer_id,\n       c.email,\n       c.first_name,\n       c.last_name,\n       c.tier,\n       o.order_id,\n       o.order_number,\n       o.order_status,\n       o.total_amount,\n       o.ordered_at\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE c.customer_id = "), Fragment.encode(CustomersId.pgType, customerId), Fragment.lit("\n  AND ("), Fragment.encode(MariaTypes.text.nullable(), orderStatus), Fragment.lit(" IS NULL OR o.order_status = "), Fragment.encode(MariaTypes.text.nullable(), orderStatus), Fragment.lit(")\n")).query(CustomerOrdersSqlRow._rowParser.all()).runUnchecked(c)
+  ): List<CustomerOrdersSqlRow> = Fragment.interpolate(Fragment.lit("-- Query customers with their orders\nSELECT c.customer_id,\n       c.email,\n       c.first_name,\n       c.last_name,\n       c.tier,\n       o.order_id,\n       o.order_number,\n       o.order_status,\n       o.total_amount,\n       o.ordered_at\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE c.customer_id = "), Fragment.encode(CustomersId.pgType, customerId), Fragment.lit("\n  AND ("), Fragment.encode(MariaTypes.text.nullable(), orderStatus), Fragment.lit(" IS NULL OR o.order_status = "), Fragment.encode(MariaTypes.text.nullable(), orderStatus), Fragment.lit(")\n")).query(CustomerOrdersSqlRow._rowParser.all()).runUnchecked(c)
 }

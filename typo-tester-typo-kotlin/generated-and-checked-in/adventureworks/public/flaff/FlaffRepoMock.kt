@@ -8,9 +8,9 @@ package adventureworks.public.flaff
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -55,7 +55,7 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<FlaffRow>,
+    unsaved: Iterator<FlaffRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -118,7 +118,7 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<FlaffRow>,
+    unsaved: Iterator<FlaffRow>,
     c: Connection
   ): List<FlaffRow> {
     val result = ArrayList<FlaffRow>()
@@ -132,7 +132,7 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<FlaffRow>,
+    unsaved: Iterator<FlaffRow>,
     batchSize: Int,
     c: Connection
   ): Int {

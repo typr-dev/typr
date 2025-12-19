@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VpersondemographicsViewRepoImpl() : VpersondemographicsViewRepo {
   override fun select(): SelectBuilder<VpersondemographicsViewFields, VpersondemographicsViewRow> = SelectBuilder.of("\"sales\".\"vpersondemographics\"", VpersondemographicsViewFields.structure, VpersondemographicsViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VpersondemographicsViewRow> = interpolate(Fragment.lit("select \"businessentityid\", \"totalpurchaseytd\"::numeric, \"datefirstpurchase\", \"birthdate\", \"maritalstatus\", \"yearlyincome\", \"gender\", \"totalchildren\", \"numberchildrenathome\", \"education\", \"occupation\", \"homeownerflag\", \"numbercarsowned\"\nfrom \"sales\".\"vpersondemographics\"\n")).query(VpersondemographicsViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VpersondemographicsViewRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"totalpurchaseytd\"::numeric, \"datefirstpurchase\", \"birthdate\", \"maritalstatus\", \"yearlyincome\", \"gender\", \"totalchildren\", \"numberchildrenathome\", \"education\", \"occupation\", \"homeownerflag\", \"numbercarsowned\"\nfrom \"sales\".\"vpersondemographics\"\n")).query(VpersondemographicsViewRow._rowParser.all()).runUnchecked(c)
 }

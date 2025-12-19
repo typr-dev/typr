@@ -9,9 +9,9 @@ import adventureworks.production.document.DocumentId
 import adventureworks.production.product.ProductId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -21,7 +21,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class ProductdocumentRepoImpl() : ProductdocumentRepo {
   override fun delete(): DeleteBuilder<ProductdocumentFields, ProductdocumentRow> = DeleteBuilder.of("\"production\".\"productdocument\"", ProductdocumentFields.structure, Dialect.POSTGRESQL)
@@ -29,7 +28,7 @@ class ProductdocumentRepoImpl() : ProductdocumentRepo {
   override fun deleteById(
     compositeId: ProductdocumentId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"productdocument\" where \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"documentnode\" = "), Fragment.encode(DocumentId.pgType, compositeId.documentnode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"productdocument\" where \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"documentnode\" = "), Fragment.encode(DocumentId.pgType, compositeId.documentnode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<ProductdocumentId>,
@@ -37,13 +36,13 @@ class ProductdocumentRepoImpl() : ProductdocumentRepo {
   ): Int {
     val productid: Array<ProductId> = arrayMap.map(compositeIds, ProductdocumentId::productid, ProductId::class.java)
     val documentnode: Array<DocumentId> = arrayMap.map(compositeIds, ProductdocumentId::documentnode, DocumentId::class.java)
-    return interpolate(Fragment.lit("delete\nfrom \"production\".\"productdocument\"\nwhere (\"productid\", \"documentnode\")\nin (select unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]), unnest("), Fragment.encode(DocumentId.pgTypeArray, documentnode), Fragment.lit("::varchar[]))\n")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"productdocument\"\nwhere (\"productid\", \"documentnode\")\nin (select unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]), unnest("), Fragment.encode(DocumentId.pgTypeArray, documentnode), Fragment.lit("::varchar[]))\n")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: ProductdocumentRow,
     c: Connection
-  ): ProductdocumentRow = interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(DocumentId.pgType, unsaved.documentnode), Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
+  ): ProductdocumentRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(DocumentId.pgType, unsaved.documentnode), Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
     .updateReturning(ProductdocumentRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -53,42 +52,42 @@ class ProductdocumentRepoImpl() : ProductdocumentRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"productid\""))
-    values.add(interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
     unsaved.documentnode.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"documentnode\""))
-      values.add(interpolate(Fragment.encode(DocumentId.pgType, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(DocumentId.pgType, value), Fragment.lit(""))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"productdocument\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
     return q.updateReturning(ProductdocumentRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ProductdocumentRow>,
+    unsaved: Iterator<ProductdocumentRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\") FROM STDIN", batchSize, unsaved, c, ProductdocumentRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ProductdocumentRowUnsaved>,
+    unsaved: Iterator<ProductdocumentRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ProductdocumentRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<ProductdocumentFields, ProductdocumentRow> = SelectBuilder.of("\"production\".\"productdocument\"", ProductdocumentFields.structure, ProductdocumentRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ProductdocumentRow> = interpolate(Fragment.lit("select \"productid\", \"modifieddate\", \"documentnode\"\nfrom \"production\".\"productdocument\"\n")).query(ProductdocumentRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ProductdocumentRow> = Fragment.interpolate(Fragment.lit("select \"productid\", \"modifieddate\", \"documentnode\"\nfrom \"production\".\"productdocument\"\n")).query(ProductdocumentRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     compositeId: ProductdocumentId,
     c: Connection
-  ): ProductdocumentRow? = interpolate(Fragment.lit("select \"productid\", \"modifieddate\", \"documentnode\"\nfrom \"production\".\"productdocument\"\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"documentnode\" = "), Fragment.encode(DocumentId.pgType, compositeId.documentnode), Fragment.lit("")).query(ProductdocumentRow._rowParser.first()).runUnchecked(c)
+  ): ProductdocumentRow? = Fragment.interpolate(Fragment.lit("select \"productid\", \"modifieddate\", \"documentnode\"\nfrom \"production\".\"productdocument\"\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"documentnode\" = "), Fragment.encode(DocumentId.pgType, compositeId.documentnode), Fragment.lit("")).query(ProductdocumentRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     compositeIds: Array<ProductdocumentId>,
@@ -96,7 +95,7 @@ class ProductdocumentRepoImpl() : ProductdocumentRepo {
   ): List<ProductdocumentRow> {
     val productid: Array<ProductId> = arrayMap.map(compositeIds, ProductdocumentId::productid, ProductId::class.java)
     val documentnode: Array<DocumentId> = arrayMap.map(compositeIds, ProductdocumentId::documentnode, DocumentId::class.java)
-    return interpolate(Fragment.lit("select \"productid\", \"modifieddate\", \"documentnode\"\nfrom \"production\".\"productdocument\"\nwhere (\"productid\", \"documentnode\")\nin (select unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]), unnest("), Fragment.encode(DocumentId.pgTypeArray, documentnode), Fragment.lit("::varchar[]))\n")).query(ProductdocumentRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select \"productid\", \"modifieddate\", \"documentnode\"\nfrom \"production\".\"productdocument\"\nwhere (\"productid\", \"documentnode\")\nin (select unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]), unnest("), Fragment.encode(DocumentId.pgTypeArray, documentnode), Fragment.lit("::varchar[]))\n")).query(ProductdocumentRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(
@@ -115,31 +114,31 @@ class ProductdocumentRepoImpl() : ProductdocumentRepo {
     c: Connection
   ): Boolean {
     val compositeId: ProductdocumentId = row.compositeId()
-    return interpolate(Fragment.lit("update \"production\".\"productdocument\"\nset \"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"documentnode\" = "), Fragment.encode(DocumentId.pgType, compositeId.documentnode), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"productdocument\"\nset \"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"documentnode\" = "), Fragment.encode(DocumentId.pgType, compositeId.documentnode), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductdocumentRow,
     c: Connection
-  ): ProductdocumentRow = interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(DocumentId.pgType, unsaved.documentnode), Fragment.lit(")\non conflict (\"productid\", \"documentnode\")\ndo update set\n  \"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"modifieddate\", \"documentnode\""))
+  ): ProductdocumentRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(DocumentId.pgType, unsaved.documentnode), Fragment.lit(")\non conflict (\"productid\", \"documentnode\")\ndo update set\n  \"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"modifieddate\", \"documentnode\""))
     .updateReturning(ProductdocumentRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ProductdocumentRow>,
+    unsaved: Iterator<ProductdocumentRow>,
     c: Connection
-  ): List<ProductdocumentRow> = interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nvalues (?::int4, ?::timestamp, ?)\non conflict (\"productid\", \"documentnode\")\ndo update set\n  \"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"modifieddate\", \"documentnode\""))
+  ): List<ProductdocumentRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nvalues (?::int4, ?::timestamp, ?)\non conflict (\"productid\", \"documentnode\")\ndo update set\n  \"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"modifieddate\", \"documentnode\""))
     .updateManyReturning(ProductdocumentRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ProductdocumentRow>,
+    unsaved: Iterator<ProductdocumentRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table productdocument_TEMP (like \"production\".\"productdocument\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table productdocument_TEMP (like \"production\".\"productdocument\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy productdocument_TEMP(\"productid\", \"modifieddate\", \"documentnode\") from stdin", batchSize, unsaved, c, ProductdocumentRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nselect * from productdocument_TEMP\non conflict (\"productid\", \"documentnode\")\ndo update set\n  \"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productdocument_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nselect * from productdocument_TEMP\non conflict (\"productid\", \"documentnode\")\ndo update set\n  \"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productdocument_TEMP;")).update().runUnchecked(c)
   }
 }

@@ -6,9 +6,9 @@
 package adventureworks.sales.salesreason
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface SalesreasonRepo {
   ): SalesreasonRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<SalesreasonRow>,
+    unsaved: Iterator<SalesreasonRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SalesreasonRowUnsaved>,
+    unsaved: Iterator<SalesreasonRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface SalesreasonRepo {
   ): SalesreasonRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<SalesreasonRow>,
+    unsaved: Iterator<SalesreasonRow>,
     c: Connection
   ): List<SalesreasonRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<SalesreasonRow>,
+    unsaved: Iterator<SalesreasonRow>,
     batchSize: Int,
     c: Connection
   ): Int

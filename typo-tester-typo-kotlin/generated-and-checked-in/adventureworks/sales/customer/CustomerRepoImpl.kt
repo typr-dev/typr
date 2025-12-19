@@ -9,9 +9,9 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -21,7 +21,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class CustomerRepoImpl() : CustomerRepo {
   override fun delete(): DeleteBuilder<CustomerFields, CustomerRow> = DeleteBuilder.of("\"sales\".\"customer\"", CustomerFields.structure, Dialect.POSTGRESQL)
@@ -29,19 +28,19 @@ class CustomerRepoImpl() : CustomerRepo {
   override fun deleteById(
     customerid: CustomerId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"sales\".\"customer\" where \"customerid\" = "), Fragment.encode(CustomerId.pgType, customerid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"sales\".\"customer\" where \"customerid\" = "), Fragment.encode(CustomerId.pgType, customerid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     customerids: Array<CustomerId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"sales\".\"customer\"\nwhere \"customerid\" = ANY("), Fragment.encode(CustomerId.pgTypeArray, customerids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"sales\".\"customer\"\nwhere \"customerid\" = ANY("), Fragment.encode(CustomerId.pgTypeArray, customerids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: CustomerRow,
     c: Connection
-  ): CustomerRow = interpolate(Fragment.lit("insert into \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(CustomerId.pgType, unsaved.customerid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.storeid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType.nullable(), unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\n"))
+  ): CustomerRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(CustomerId.pgType, unsaved.customerid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.storeid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType.nullable(), unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(CustomerRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -51,56 +50,56 @@ class CustomerRepoImpl() : CustomerRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"personid\""))
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.personid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.personid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"storeid\""))
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.storeid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.storeid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"territoryid\""))
-    values.add(interpolate(Fragment.encode(SalesterritoryId.pgType.nullable(), unsaved.territoryid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(SalesterritoryId.pgType.nullable(), unsaved.territoryid), Fragment.lit("::int4")))
     unsaved.customerid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"customerid\""))
-      values.add(interpolate(Fragment.encode(CustomerId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(CustomerId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.rowguid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"sales\".\"customer\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"customer\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(CustomerRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<CustomerRow>,
+    unsaved: Iterator<CustomerRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, CustomerRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<CustomerRowUnsaved>,
+    unsaved: Iterator<CustomerRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"customer\"(\"personid\", \"storeid\", \"territoryid\", \"customerid\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, CustomerRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<CustomerFields, CustomerRow> = SelectBuilder.of("\"sales\".\"customer\"", CustomerFields.structure, CustomerRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<CustomerRow> = interpolate(Fragment.lit("select \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"customer\"\n")).query(CustomerRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<CustomerRow> = Fragment.interpolate(Fragment.lit("select \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"customer\"\n")).query(CustomerRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     customerid: CustomerId,
     c: Connection
-  ): CustomerRow? = interpolate(Fragment.lit("select \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"customer\"\nwhere \"customerid\" = "), Fragment.encode(CustomerId.pgType, customerid), Fragment.lit("")).query(CustomerRow._rowParser.first()).runUnchecked(c)
+  ): CustomerRow? = Fragment.interpolate(Fragment.lit("select \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"customer\"\nwhere \"customerid\" = "), Fragment.encode(CustomerId.pgType, customerid), Fragment.lit("")).query(CustomerRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     customerids: Array<CustomerId>,
     c: Connection
-  ): List<CustomerRow> = interpolate(Fragment.lit("select \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"customer\"\nwhere \"customerid\" = ANY("), Fragment.encode(CustomerId.pgTypeArray, customerids), Fragment.lit(")")).query(CustomerRow._rowParser.all()).runUnchecked(c)
+  ): List<CustomerRow> = Fragment.interpolate(Fragment.lit("select \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"customer\"\nwhere \"customerid\" = ANY("), Fragment.encode(CustomerId.pgTypeArray, customerids), Fragment.lit(")")).query(CustomerRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     customerids: Array<CustomerId>,
@@ -118,31 +117,31 @@ class CustomerRepoImpl() : CustomerRepo {
     c: Connection
   ): Boolean {
     val customerid: CustomerId = row.customerid
-    return interpolate(Fragment.lit("update \"sales\".\"customer\"\nset \"personid\" = "), Fragment.encode(BusinessentityId.pgType.nullable(), row.personid), Fragment.lit("::int4,\n\"storeid\" = "), Fragment.encode(BusinessentityId.pgType.nullable(), row.storeid), Fragment.lit("::int4,\n\"territoryid\" = "), Fragment.encode(SalesterritoryId.pgType.nullable(), row.territoryid), Fragment.lit("::int4,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"customerid\" = "), Fragment.encode(CustomerId.pgType, customerid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"sales\".\"customer\"\nset \"personid\" = "), Fragment.encode(BusinessentityId.pgType.nullable(), row.personid), Fragment.lit("::int4,\n\"storeid\" = "), Fragment.encode(BusinessentityId.pgType.nullable(), row.storeid), Fragment.lit("::int4,\n\"territoryid\" = "), Fragment.encode(SalesterritoryId.pgType.nullable(), row.territoryid), Fragment.lit("::int4,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"customerid\" = "), Fragment.encode(CustomerId.pgType, customerid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: CustomerRow,
     c: Connection
-  ): CustomerRow = interpolate(Fragment.lit("insert into \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(CustomerId.pgType, unsaved.customerid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.storeid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType.nullable(), unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"customerid\")\ndo update set\n  \"personid\" = EXCLUDED.\"personid\",\n\"storeid\" = EXCLUDED.\"storeid\",\n\"territoryid\" = EXCLUDED.\"territoryid\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\""))
+  ): CustomerRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(CustomerId.pgType, unsaved.customerid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.storeid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType.nullable(), unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"customerid\")\ndo update set\n  \"personid\" = EXCLUDED.\"personid\",\n\"storeid\" = EXCLUDED.\"storeid\",\n\"territoryid\" = EXCLUDED.\"territoryid\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\""))
     .updateReturning(CustomerRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<CustomerRow>,
+    unsaved: Iterator<CustomerRow>,
     c: Connection
-  ): List<CustomerRow> = interpolate(Fragment.lit("insert into \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int4, ?::int4, ?::uuid, ?::timestamp)\non conflict (\"customerid\")\ndo update set\n  \"personid\" = EXCLUDED.\"personid\",\n\"storeid\" = EXCLUDED.\"storeid\",\n\"territoryid\" = EXCLUDED.\"territoryid\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\""))
+  ): List<CustomerRow> = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int4, ?::int4, ?::uuid, ?::timestamp)\non conflict (\"customerid\")\ndo update set\n  \"personid\" = EXCLUDED.\"personid\",\n\"storeid\" = EXCLUDED.\"storeid\",\n\"territoryid\" = EXCLUDED.\"territoryid\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\""))
     .updateManyReturning(CustomerRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<CustomerRow>,
+    unsaved: Iterator<CustomerRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table customer_TEMP (like \"sales\".\"customer\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table customer_TEMP (like \"sales\".\"customer\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy customer_TEMP(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, CustomerRow.pgText)
-    return interpolate(Fragment.lit("insert into \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\")\nselect * from customer_TEMP\non conflict (\"customerid\")\ndo update set\n  \"personid\" = EXCLUDED.\"personid\",\n\"storeid\" = EXCLUDED.\"storeid\",\n\"territoryid\" = EXCLUDED.\"territoryid\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table customer_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"sales\".\"customer\"(\"customerid\", \"personid\", \"storeid\", \"territoryid\", \"rowguid\", \"modifieddate\")\nselect * from customer_TEMP\non conflict (\"customerid\")\ndo update set\n  \"personid\" = EXCLUDED.\"personid\",\n\"storeid\" = EXCLUDED.\"storeid\",\n\"territoryid\" = EXCLUDED.\"territoryid\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table customer_TEMP;")).update().runUnchecked(c)
   }
 }

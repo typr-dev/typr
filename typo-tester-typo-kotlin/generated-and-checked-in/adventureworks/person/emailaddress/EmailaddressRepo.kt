@@ -6,9 +6,9 @@
 package adventureworks.person.emailaddress
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface EmailaddressRepo {
   ): EmailaddressRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<EmailaddressRow>,
+    unsaved: Iterator<EmailaddressRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<EmailaddressRowUnsaved>,
+    unsaved: Iterator<EmailaddressRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface EmailaddressRepo {
   ): EmailaddressRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<EmailaddressRow>,
+    unsaved: Iterator<EmailaddressRow>,
     c: Connection
   ): List<EmailaddressRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<EmailaddressRow>,
+    unsaved: Iterator<EmailaddressRow>,
     batchSize: Int,
     c: Connection
   ): Int

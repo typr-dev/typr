@@ -131,6 +131,10 @@ object SqlExpr {
         // Custom operators
         fun <T2> customBinaryOp(op: String, right: typo.dsl.SqlExpr<T2>, eval: (T, T2) -> Boolean): typo.dsl.SqlExpr<Boolean> =
             underlying.customBinaryOp(op, right, java.util.function.BiFunction { a, b -> eval(a, b) })
+
+        // Sorting
+        fun asc(): typo.dsl.SortOrder<T> = underlying.asc()
+        fun desc(): typo.dsl.SortOrder<T> = underlying.desc()
     }
 
     /**

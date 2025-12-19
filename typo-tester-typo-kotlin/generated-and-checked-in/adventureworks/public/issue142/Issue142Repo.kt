@@ -6,9 +6,9 @@
 package adventureworks.public.issue142
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -32,7 +32,7 @@ interface Issue142Repo {
   ): Issue142Row
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<Issue142Row>,
+    unsaved: Iterator<Issue142Row>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -64,13 +64,13 @@ interface Issue142Repo {
   ): Issue142Row
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<Issue142Row>,
+    unsaved: Iterator<Issue142Row>,
     c: Connection
   ): List<Issue142Row>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<Issue142Row>,
+    unsaved: Iterator<Issue142Row>,
     batchSize: Int,
     c: Connection
   ): Int

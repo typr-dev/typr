@@ -10,12 +10,11 @@ import java.time.LocalDateTime
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class UpdatePersonSqlRepoImpl() : UpdatePersonSqlRepo {
   override fun apply(
     suffix: String,
     cutoff: LocalDateTime?,
     c: Connection
-  ): Int = interpolate(Fragment.lit("update person.person\nset firstname = firstname || '-' || "), Fragment.encode(PgTypes.text, suffix), Fragment.lit("\nwhere modifieddate < "), Fragment.encode(PgTypes.timestamp.nullable(), cutoff), Fragment.lit("::timestamp")).update().runUnchecked(c)
+  ): Int = Fragment.interpolate(Fragment.lit("update person.person\nset firstname = firstname || '-' || "), Fragment.encode(PgTypes.text, suffix), Fragment.lit("\nwhere modifieddate < "), Fragment.encode(PgTypes.timestamp.nullable(), cutoff), Fragment.lit("::timestamp")).update().runUnchecked(c)
 }

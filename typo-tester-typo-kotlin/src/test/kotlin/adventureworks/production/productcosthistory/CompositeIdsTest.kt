@@ -99,25 +99,25 @@ class CompositeIdsTest {
             )
 
             // Test composite ID
-            assertNotNull(ph1.compositeId)
-            assertEquals(product.productid, ph1.compositeId.productid)
+            assertNotNull(ph1.compositeId())
+            assertEquals(product.productid, ph1.compositeId().productid)
 
             // Test selectByIds with composite IDs
             val wanted = arrayOf(
-                ph1.compositeId,
-                ph2.compositeId,
-                ProductcosthistoryId(ProductId(9999), ph3.compositeId.startdate)
+                ph1.compositeId(),
+                ph2.compositeId(),
+                ProductcosthistoryId(ProductId(9999), ph3.compositeId().startdate)
             )
 
-            val selected = repo.selectByIds(wanted, c).map { it.compositeId }.toSet()
-            assertEquals(setOf(ph1.compositeId, ph2.compositeId), selected)
+            val selected = repo.selectByIds(wanted, c).map { it.compositeId() }.toSet()
+            assertEquals(setOf(ph1.compositeId(), ph2.compositeId()), selected)
 
             // Test deleteByIds
             assertEquals(2, repo.deleteByIds(wanted, c))
 
             // Verify remaining
-            val remaining = repo.selectAll(c).map { it.compositeId }
-            assertEquals(listOf(ph3.compositeId), remaining)
+            val remaining = repo.selectAll(c).map { it.compositeId() }
+            assertEquals(listOf(ph3.compositeId()), remaining)
         }
     }
 }

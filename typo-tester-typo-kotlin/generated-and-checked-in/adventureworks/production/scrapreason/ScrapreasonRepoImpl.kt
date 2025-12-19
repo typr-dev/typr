@@ -8,9 +8,9 @@ package adventureworks.production.scrapreason
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class ScrapreasonRepoImpl() : ScrapreasonRepo {
   override fun delete(): DeleteBuilder<ScrapreasonFields, ScrapreasonRow> = DeleteBuilder.of("\"production\".\"scrapreason\"", ScrapreasonFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
   override fun deleteById(
     scrapreasonid: ScrapreasonId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"scrapreason\" where \"scrapreasonid\" = "), Fragment.encode(ScrapreasonId.pgType, scrapreasonid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"scrapreason\" where \"scrapreasonid\" = "), Fragment.encode(ScrapreasonId.pgType, scrapreasonid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     scrapreasonids: Array<ScrapreasonId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"scrapreason\"\nwhere \"scrapreasonid\" = ANY("), Fragment.encode(ScrapreasonId.pgTypeArray, scrapreasonids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"scrapreason\"\nwhere \"scrapreasonid\" = ANY("), Fragment.encode(ScrapreasonId.pgTypeArray, scrapreasonids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: ScrapreasonRow,
     c: Connection
-  ): ScrapreasonRow = interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ScrapreasonId.pgType, unsaved.scrapreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
+  ): ScrapreasonRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ScrapreasonId.pgType, unsaved.scrapreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
     .updateReturning(ScrapreasonRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,47 +48,47 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.scrapreasonid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"scrapreasonid\""))
-      values.add(interpolate(Fragment.encode(ScrapreasonId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(ScrapreasonId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(ScrapreasonRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ScrapreasonRow>,
+    unsaved: Iterator<ScrapreasonRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ScrapreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ScrapreasonRowUnsaved>,
+    unsaved: Iterator<ScrapreasonRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"scrapreason\"(\"name\", \"scrapreasonid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ScrapreasonRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<ScrapreasonFields, ScrapreasonRow> = SelectBuilder.of("\"production\".\"scrapreason\"", ScrapreasonFields.structure, ScrapreasonRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ScrapreasonRow> = interpolate(Fragment.lit("select \"scrapreasonid\", \"name\", \"modifieddate\"\nfrom \"production\".\"scrapreason\"\n")).query(ScrapreasonRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ScrapreasonRow> = Fragment.interpolate(Fragment.lit("select \"scrapreasonid\", \"name\", \"modifieddate\"\nfrom \"production\".\"scrapreason\"\n")).query(ScrapreasonRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     scrapreasonid: ScrapreasonId,
     c: Connection
-  ): ScrapreasonRow? = interpolate(Fragment.lit("select \"scrapreasonid\", \"name\", \"modifieddate\"\nfrom \"production\".\"scrapreason\"\nwhere \"scrapreasonid\" = "), Fragment.encode(ScrapreasonId.pgType, scrapreasonid), Fragment.lit("")).query(ScrapreasonRow._rowParser.first()).runUnchecked(c)
+  ): ScrapreasonRow? = Fragment.interpolate(Fragment.lit("select \"scrapreasonid\", \"name\", \"modifieddate\"\nfrom \"production\".\"scrapreason\"\nwhere \"scrapreasonid\" = "), Fragment.encode(ScrapreasonId.pgType, scrapreasonid), Fragment.lit("")).query(ScrapreasonRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     scrapreasonids: Array<ScrapreasonId>,
     c: Connection
-  ): List<ScrapreasonRow> = interpolate(Fragment.lit("select \"scrapreasonid\", \"name\", \"modifieddate\"\nfrom \"production\".\"scrapreason\"\nwhere \"scrapreasonid\" = ANY("), Fragment.encode(ScrapreasonId.pgTypeArray, scrapreasonids), Fragment.lit(")")).query(ScrapreasonRow._rowParser.all()).runUnchecked(c)
+  ): List<ScrapreasonRow> = Fragment.interpolate(Fragment.lit("select \"scrapreasonid\", \"name\", \"modifieddate\"\nfrom \"production\".\"scrapreason\"\nwhere \"scrapreasonid\" = ANY("), Fragment.encode(ScrapreasonId.pgTypeArray, scrapreasonids), Fragment.lit(")")).query(ScrapreasonRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     scrapreasonids: Array<ScrapreasonId>,
@@ -107,31 +106,31 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
     c: Connection
   ): Boolean {
     val scrapreasonid: ScrapreasonId = row.scrapreasonid
-    return interpolate(Fragment.lit("update \"production\".\"scrapreason\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"scrapreasonid\" = "), Fragment.encode(ScrapreasonId.pgType, scrapreasonid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"scrapreason\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"scrapreasonid\" = "), Fragment.encode(ScrapreasonId.pgType, scrapreasonid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ScrapreasonRow,
     c: Connection
-  ): ScrapreasonRow = interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ScrapreasonId.pgType, unsaved.scrapreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"scrapreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"scrapreasonid\", \"name\", \"modifieddate\""))
+  ): ScrapreasonRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ScrapreasonId.pgType, unsaved.scrapreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"scrapreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"scrapreasonid\", \"name\", \"modifieddate\""))
     .updateReturning(ScrapreasonRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ScrapreasonRow>,
+    unsaved: Iterator<ScrapreasonRow>,
     c: Connection
-  ): List<ScrapreasonRow> = interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::timestamp)\non conflict (\"scrapreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"scrapreasonid\", \"name\", \"modifieddate\""))
+  ): List<ScrapreasonRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::timestamp)\non conflict (\"scrapreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"scrapreasonid\", \"name\", \"modifieddate\""))
     .updateManyReturning(ScrapreasonRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ScrapreasonRow>,
+    unsaved: Iterator<ScrapreasonRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table scrapreason_TEMP (like \"production\".\"scrapreason\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table scrapreason_TEMP (like \"production\".\"scrapreason\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy scrapreason_TEMP(\"scrapreasonid\", \"name\", \"modifieddate\") from stdin", batchSize, unsaved, c, ScrapreasonRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nselect * from scrapreason_TEMP\non conflict (\"scrapreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table scrapreason_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nselect * from scrapreason_TEMP\non conflict (\"scrapreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table scrapreason_TEMP;")).update().runUnchecked(c)
   }
 }

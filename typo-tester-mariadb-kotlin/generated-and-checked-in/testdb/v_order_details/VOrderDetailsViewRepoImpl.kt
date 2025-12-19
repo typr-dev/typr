@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VOrderDetailsViewRepoImpl() : VOrderDetailsViewRepo {
   override fun select(): SelectBuilder<VOrderDetailsViewFields, VOrderDetailsViewRow> = SelectBuilder.of("`v_order_details`", VOrderDetailsViewFields.structure, VOrderDetailsViewRow._rowParser, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<VOrderDetailsViewRow> = interpolate(Fragment.lit("select `order_id`, `order_number`, `order_status`, `payment_status`, `total_amount`, `currency_code`, `ordered_at`, `customer_email`, `customer_name`, `item_count`, `total_quantity`, `tracking_number`, `shipping_status`, `carrier_name`\nfrom `v_order_details`\n")).query(VOrderDetailsViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VOrderDetailsViewRow> = Fragment.interpolate(Fragment.lit("select `order_id`, `order_number`, `order_status`, `payment_status`, `total_amount`, `currency_code`, `ordered_at`, `customer_email`, `customer_name`, `item_count`, `total_quantity`, `tracking_number`, `shipping_status`, `carrier_name`\nfrom `v_order_details`\n")).query(VOrderDetailsViewRow._rowParser.all()).runUnchecked(c)
 }

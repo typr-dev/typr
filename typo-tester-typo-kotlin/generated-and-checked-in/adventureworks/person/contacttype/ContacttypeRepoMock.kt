@@ -8,9 +8,9 @@ package adventureworks.person.contacttype
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -63,7 +63,7 @@ data class ContacttypeRepoMock(
   ): ContacttypeRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -78,7 +78,7 @@ data class ContacttypeRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ContacttypeRowUnsaved>,
+    unsaved: Iterator<ContacttypeRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -142,7 +142,7 @@ data class ContacttypeRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     c: Connection
   ): List<ContacttypeRow> {
     val result = ArrayList<ContacttypeRow>()
@@ -156,7 +156,7 @@ data class ContacttypeRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     batchSize: Int,
     c: Connection
   ): Int {

@@ -7,9 +7,9 @@ package adventureworks.public.test_utdanningstilbud
 
 import adventureworks.public.test_organisasjon.TestOrganisasjonId
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
   override fun delete(): DeleteBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> = DeleteBuilder.of("\"public\".\"test_utdanningstilbud\"", TestUtdanningstilbudFields.structure, Dialect.POSTGRESQL)
@@ -27,7 +26,7 @@ class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
   override fun deleteById(
     compositeId: TestUtdanningstilbudId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"public\".\"test_utdanningstilbud\" where \"organisasjonskode\" = "), Fragment.encode(TestOrganisasjonId.pgType, compositeId.organisasjonskode), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"test_utdanningstilbud\" where \"organisasjonskode\" = "), Fragment.encode(TestOrganisasjonId.pgType, compositeId.organisasjonskode), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<TestUtdanningstilbudId>,
@@ -35,29 +34,29 @@ class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
   ): Int {
     val organisasjonskode: Array<TestOrganisasjonId> = arrayMap.map(compositeIds, TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId::class.java)
     val utdanningsmulighetKode: Array<String> = arrayMap.map(compositeIds, TestUtdanningstilbudId::utdanningsmulighetKode, String::class.java)
-    return interpolate(Fragment.lit("delete\nfrom \"public\".\"test_utdanningstilbud\"\nwhere (\"organisasjonskode\", \"utdanningsmulighet_kode\")\nin (select unnest("), Fragment.encode(TestOrganisasjonId.pgTypeArray, organisasjonskode), Fragment.lit("::text[]), unnest("), Fragment.encode(PgTypes.textArray, utdanningsmulighetKode), Fragment.lit("::text[]))\n")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"test_utdanningstilbud\"\nwhere (\"organisasjonskode\", \"utdanningsmulighet_kode\")\nin (select unnest("), Fragment.encode(TestOrganisasjonId.pgTypeArray, organisasjonskode), Fragment.lit("::text[]), unnest("), Fragment.encode(PgTypes.textArray, utdanningsmulighetKode), Fragment.lit("::text[]))\n")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: TestUtdanningstilbudRow,
     c: Connection
-  ): TestUtdanningstilbudRow = interpolate(Fragment.lit("insert into \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\")\nvalues ("), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(")\nreturning \"organisasjonskode\", \"utdanningsmulighet_kode\"\n"))
+  ): TestUtdanningstilbudRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\")\nvalues ("), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(")\nreturning \"organisasjonskode\", \"utdanningsmulighet_kode\"\n"))
     .updateReturning(TestUtdanningstilbudRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<TestUtdanningstilbudRow>,
+    unsaved: Iterator<TestUtdanningstilbudRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\") FROM STDIN", batchSize, unsaved, c, TestUtdanningstilbudRow.pgText)
 
   override fun select(): SelectBuilder<TestUtdanningstilbudFields, TestUtdanningstilbudRow> = SelectBuilder.of("\"public\".\"test_utdanningstilbud\"", TestUtdanningstilbudFields.structure, TestUtdanningstilbudRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<TestUtdanningstilbudRow> = interpolate(Fragment.lit("select \"organisasjonskode\", \"utdanningsmulighet_kode\"\nfrom \"public\".\"test_utdanningstilbud\"\n")).query(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<TestUtdanningstilbudRow> = Fragment.interpolate(Fragment.lit("select \"organisasjonskode\", \"utdanningsmulighet_kode\"\nfrom \"public\".\"test_utdanningstilbud\"\n")).query(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     compositeId: TestUtdanningstilbudId,
     c: Connection
-  ): TestUtdanningstilbudRow? = interpolate(Fragment.lit("select \"organisasjonskode\", \"utdanningsmulighet_kode\"\nfrom \"public\".\"test_utdanningstilbud\"\nwhere \"organisasjonskode\" = "), Fragment.encode(TestOrganisasjonId.pgType, compositeId.organisasjonskode), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).query(TestUtdanningstilbudRow._rowParser.first()).runUnchecked(c)
+  ): TestUtdanningstilbudRow? = Fragment.interpolate(Fragment.lit("select \"organisasjonskode\", \"utdanningsmulighet_kode\"\nfrom \"public\".\"test_utdanningstilbud\"\nwhere \"organisasjonskode\" = "), Fragment.encode(TestOrganisasjonId.pgType, compositeId.organisasjonskode), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).query(TestUtdanningstilbudRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     compositeIds: Array<TestUtdanningstilbudId>,
@@ -65,7 +64,7 @@ class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
   ): List<TestUtdanningstilbudRow> {
     val organisasjonskode: Array<TestOrganisasjonId> = arrayMap.map(compositeIds, TestUtdanningstilbudId::organisasjonskode, TestOrganisasjonId::class.java)
     val utdanningsmulighetKode: Array<String> = arrayMap.map(compositeIds, TestUtdanningstilbudId::utdanningsmulighetKode, String::class.java)
-    return interpolate(Fragment.lit("select \"organisasjonskode\", \"utdanningsmulighet_kode\"\nfrom \"public\".\"test_utdanningstilbud\"\nwhere (\"organisasjonskode\", \"utdanningsmulighet_kode\")\nin (select unnest("), Fragment.encode(TestOrganisasjonId.pgTypeArray, organisasjonskode), Fragment.lit("::text[]), unnest("), Fragment.encode(PgTypes.textArray, utdanningsmulighetKode), Fragment.lit("::text[]))\n")).query(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select \"organisasjonskode\", \"utdanningsmulighet_kode\"\nfrom \"public\".\"test_utdanningstilbud\"\nwhere (\"organisasjonskode\", \"utdanningsmulighet_kode\")\nin (select unnest("), Fragment.encode(TestOrganisasjonId.pgTypeArray, organisasjonskode), Fragment.lit("::text[]), unnest("), Fragment.encode(PgTypes.textArray, utdanningsmulighetKode), Fragment.lit("::text[]))\n")).query(TestUtdanningstilbudRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(
@@ -82,25 +81,25 @@ class TestUtdanningstilbudRepoImpl() : TestUtdanningstilbudRepo {
   override fun upsert(
     unsaved: TestUtdanningstilbudRow,
     c: Connection
-  ): TestUtdanningstilbudRow = interpolate(Fragment.lit("insert into \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\")\nvalues ("), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(")\non conflict (\"organisasjonskode\", \"utdanningsmulighet_kode\")\ndo update set \"organisasjonskode\" = EXCLUDED.\"organisasjonskode\"\nreturning \"organisasjonskode\", \"utdanningsmulighet_kode\""))
+  ): TestUtdanningstilbudRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\")\nvalues ("), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(")\non conflict (\"organisasjonskode\", \"utdanningsmulighet_kode\")\ndo update set \"organisasjonskode\" = EXCLUDED.\"organisasjonskode\"\nreturning \"organisasjonskode\", \"utdanningsmulighet_kode\""))
     .updateReturning(TestUtdanningstilbudRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<TestUtdanningstilbudRow>,
+    unsaved: Iterator<TestUtdanningstilbudRow>,
     c: Connection
-  ): List<TestUtdanningstilbudRow> = interpolate(Fragment.lit("insert into \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\")\nvalues (?, ?)\non conflict (\"organisasjonskode\", \"utdanningsmulighet_kode\")\ndo update set \"organisasjonskode\" = EXCLUDED.\"organisasjonskode\"\nreturning \"organisasjonskode\", \"utdanningsmulighet_kode\""))
+  ): List<TestUtdanningstilbudRow> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\")\nvalues (?, ?)\non conflict (\"organisasjonskode\", \"utdanningsmulighet_kode\")\ndo update set \"organisasjonskode\" = EXCLUDED.\"organisasjonskode\"\nreturning \"organisasjonskode\", \"utdanningsmulighet_kode\""))
     .updateManyReturning(TestUtdanningstilbudRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<TestUtdanningstilbudRow>,
+    unsaved: Iterator<TestUtdanningstilbudRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table test_utdanningstilbud_TEMP (like \"public\".\"test_utdanningstilbud\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table test_utdanningstilbud_TEMP (like \"public\".\"test_utdanningstilbud\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy test_utdanningstilbud_TEMP(\"organisasjonskode\", \"utdanningsmulighet_kode\") from stdin", batchSize, unsaved, c, TestUtdanningstilbudRow.pgText)
-    return interpolate(Fragment.lit("insert into \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\")\nselect * from test_utdanningstilbud_TEMP\non conflict (\"organisasjonskode\", \"utdanningsmulighet_kode\")\ndo nothing\n;\ndrop table test_utdanningstilbud_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_utdanningstilbud\"(\"organisasjonskode\", \"utdanningsmulighet_kode\")\nselect * from test_utdanningstilbud_TEMP\non conflict (\"organisasjonskode\", \"utdanningsmulighet_kode\")\ndo nothing\n;\ndrop table test_utdanningstilbud_TEMP;")).update().runUnchecked(c)
   }
 }

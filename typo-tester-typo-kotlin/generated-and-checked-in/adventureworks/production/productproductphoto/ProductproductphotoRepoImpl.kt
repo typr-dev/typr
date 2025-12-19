@@ -10,9 +10,9 @@ import adventureworks.production.productphoto.ProductphotoId
 import adventureworks.public.Flag
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -22,7 +22,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class ProductproductphotoRepoImpl() : ProductproductphotoRepo {
   override fun delete(): DeleteBuilder<ProductproductphotoFields, ProductproductphotoRow> = DeleteBuilder.of("\"production\".\"productproductphoto\"", ProductproductphotoFields.structure, Dialect.POSTGRESQL)
@@ -30,7 +29,7 @@ class ProductproductphotoRepoImpl() : ProductproductphotoRepo {
   override fun deleteById(
     compositeId: ProductproductphotoId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"productproductphoto\" where \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, compositeId.productphotoid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"productproductphoto\" where \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, compositeId.productphotoid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<ProductproductphotoId>,
@@ -38,13 +37,13 @@ class ProductproductphotoRepoImpl() : ProductproductphotoRepo {
   ): Int {
     val productid: Array<ProductId> = arrayMap.map(compositeIds, ProductproductphotoId::productid, ProductId::class.java)
     val productphotoid: Array<ProductphotoId> = arrayMap.map(compositeIds, ProductproductphotoId::productphotoid, ProductphotoId::class.java)
-    return interpolate(Fragment.lit("delete\nfrom \"production\".\"productproductphoto\"\nwhere (\"productid\", \"productphotoid\")\nin (select unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ProductphotoId.pgTypeArray, productphotoid), Fragment.lit("::int4[]))\n")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"productproductphoto\"\nwhere (\"productid\", \"productphotoid\")\nin (select unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ProductphotoId.pgTypeArray, productphotoid), Fragment.lit("::int4[]))\n")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: ProductproductphotoRow,
     c: Connection
-  ): ProductproductphotoRow = interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(Flag.pgType, unsaved.primary), Fragment.lit("::bool, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\n"))
+  ): ProductproductphotoRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(Flag.pgType, unsaved.primary), Fragment.lit("::bool, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\n"))
     .updateReturning(ProductproductphotoRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -54,44 +53,44 @@ class ProductproductphotoRepoImpl() : ProductproductphotoRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"productid\""))
-    values.add(interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"productphotoid\""))
-    values.add(interpolate(Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4")))
     unsaved.primary.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"primary\""))
-      values.add(interpolate(Fragment.encode(Flag.pgType, value), Fragment.lit("::bool"))) }
+      values.add(Fragment.interpolate(Fragment.encode(Flag.pgType, value), Fragment.lit("::bool"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\n"))
     return q.updateReturning(ProductproductphotoRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ProductproductphotoRow>,
+    unsaved: Iterator<ProductproductphotoRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ProductproductphotoRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ProductproductphotoRowUnsaved>,
+    unsaved: Iterator<ProductproductphotoRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ProductproductphotoRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<ProductproductphotoFields, ProductproductphotoRow> = SelectBuilder.of("\"production\".\"productproductphoto\"", ProductproductphotoFields.structure, ProductproductphotoRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ProductproductphotoRow> = interpolate(Fragment.lit("select \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\nfrom \"production\".\"productproductphoto\"\n")).query(ProductproductphotoRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ProductproductphotoRow> = Fragment.interpolate(Fragment.lit("select \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\nfrom \"production\".\"productproductphoto\"\n")).query(ProductproductphotoRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     compositeId: ProductproductphotoId,
     c: Connection
-  ): ProductproductphotoRow? = interpolate(Fragment.lit("select \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\nfrom \"production\".\"productproductphoto\"\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, compositeId.productphotoid), Fragment.lit("")).query(ProductproductphotoRow._rowParser.first()).runUnchecked(c)
+  ): ProductproductphotoRow? = Fragment.interpolate(Fragment.lit("select \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\nfrom \"production\".\"productproductphoto\"\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, compositeId.productphotoid), Fragment.lit("")).query(ProductproductphotoRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     compositeIds: Array<ProductproductphotoId>,
@@ -99,7 +98,7 @@ class ProductproductphotoRepoImpl() : ProductproductphotoRepo {
   ): List<ProductproductphotoRow> {
     val productid: Array<ProductId> = arrayMap.map(compositeIds, ProductproductphotoId::productid, ProductId::class.java)
     val productphotoid: Array<ProductphotoId> = arrayMap.map(compositeIds, ProductproductphotoId::productphotoid, ProductphotoId::class.java)
-    return interpolate(Fragment.lit("select \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\nfrom \"production\".\"productproductphoto\"\nwhere (\"productid\", \"productphotoid\")\nin (select unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ProductphotoId.pgTypeArray, productphotoid), Fragment.lit("::int4[]))\n")).query(ProductproductphotoRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\nfrom \"production\".\"productproductphoto\"\nwhere (\"productid\", \"productphotoid\")\nin (select unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit("::int4[]), unnest("), Fragment.encode(ProductphotoId.pgTypeArray, productphotoid), Fragment.lit("::int4[]))\n")).query(ProductproductphotoRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(
@@ -118,31 +117,31 @@ class ProductproductphotoRepoImpl() : ProductproductphotoRepo {
     c: Connection
   ): Boolean {
     val compositeId: ProductproductphotoId = row.compositeId()
-    return interpolate(Fragment.lit("update \"production\".\"productproductphoto\"\nset \"primary\" = "), Fragment.encode(Flag.pgType, row.primary), Fragment.lit("::bool,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, compositeId.productphotoid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"productproductphoto\"\nset \"primary\" = "), Fragment.encode(Flag.pgType, row.primary), Fragment.lit("::bool,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, compositeId.productphotoid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductproductphotoRow,
     c: Connection
-  ): ProductproductphotoRow = interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(Flag.pgType, unsaved.primary), Fragment.lit("::bool, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"productid\", \"productphotoid\")\ndo update set\n  \"primary\" = EXCLUDED.\"primary\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\""))
+  ): ProductproductphotoRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(Flag.pgType, unsaved.primary), Fragment.lit("::bool, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"productid\", \"productphotoid\")\ndo update set\n  \"primary\" = EXCLUDED.\"primary\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\""))
     .updateReturning(ProductproductphotoRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ProductproductphotoRow>,
+    unsaved: Iterator<ProductproductphotoRow>,
     c: Connection
-  ): List<ProductproductphotoRow> = interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::bool, ?::timestamp)\non conflict (\"productid\", \"productphotoid\")\ndo update set\n  \"primary\" = EXCLUDED.\"primary\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\""))
+  ): List<ProductproductphotoRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::bool, ?::timestamp)\non conflict (\"productid\", \"productphotoid\")\ndo update set\n  \"primary\" = EXCLUDED.\"primary\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\""))
     .updateManyReturning(ProductproductphotoRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ProductproductphotoRow>,
+    unsaved: Iterator<ProductproductphotoRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table productproductphoto_TEMP (like \"production\".\"productproductphoto\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table productproductphoto_TEMP (like \"production\".\"productproductphoto\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy productproductphoto_TEMP(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\") from stdin", batchSize, unsaved, c, ProductproductphotoRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\")\nselect * from productproductphoto_TEMP\non conflict (\"productid\", \"productphotoid\")\ndo update set\n  \"primary\" = EXCLUDED.\"primary\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productproductphoto_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"productproductphoto\"(\"productid\", \"productphotoid\", \"primary\", \"modifieddate\")\nselect * from productproductphoto_TEMP\non conflict (\"productid\", \"productphotoid\")\ndo update set\n  \"primary\" = EXCLUDED.\"primary\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productproductphoto_TEMP;")).update().runUnchecked(c)
   }
 }

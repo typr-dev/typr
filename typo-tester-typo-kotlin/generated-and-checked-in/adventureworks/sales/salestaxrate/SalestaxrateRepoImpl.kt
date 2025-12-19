@@ -9,9 +9,9 @@ import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -21,7 +21,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class SalestaxrateRepoImpl() : SalestaxrateRepo {
   override fun delete(): DeleteBuilder<SalestaxrateFields, SalestaxrateRow> = DeleteBuilder.of("\"sales\".\"salestaxrate\"", SalestaxrateFields.structure, Dialect.POSTGRESQL)
@@ -29,19 +28,19 @@ class SalestaxrateRepoImpl() : SalestaxrateRepo {
   override fun deleteById(
     salestaxrateid: SalestaxrateId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"sales\".\"salestaxrate\" where \"salestaxrateid\" = "), Fragment.encode(SalestaxrateId.pgType, salestaxrateid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"sales\".\"salestaxrate\" where \"salestaxrateid\" = "), Fragment.encode(SalestaxrateId.pgType, salestaxrateid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     salestaxrateids: Array<SalestaxrateId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"sales\".\"salestaxrate\"\nwhere \"salestaxrateid\" = ANY("), Fragment.encode(SalestaxrateId.pgTypeArray, salestaxrateids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"sales\".\"salestaxrate\"\nwhere \"salestaxrateid\" = ANY("), Fragment.encode(SalestaxrateId.pgTypeArray, salestaxrateids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: SalestaxrateRow,
     c: Connection
-  ): SalestaxrateRow = interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalestaxrateId.pgType, unsaved.salestaxrateid), Fragment.lit("::int4, "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.taxrate), Fragment.lit("::numeric, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+  ): SalestaxrateRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalestaxrateId.pgType, unsaved.salestaxrateid), Fragment.lit("::int4, "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.taxrate), Fragment.lit("::numeric, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(SalestaxrateRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -51,61 +50,61 @@ class SalestaxrateRepoImpl() : SalestaxrateRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"stateprovinceid\""))
-    values.add(interpolate(Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"taxtype\""))
-    values.add(interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2")))
+    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2")))
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.salestaxrateid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"salestaxrateid\""))
-      values.add(interpolate(Fragment.encode(SalestaxrateId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(SalestaxrateId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.taxrate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"taxrate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.rowguid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(SalestaxrateRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<SalestaxrateRow>,
+    unsaved: Iterator<SalestaxrateRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, SalestaxrateRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SalestaxrateRowUnsaved>,
+    unsaved: Iterator<SalestaxrateRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"salestaxrate\"(\"stateprovinceid\", \"taxtype\", \"name\", \"salestaxrateid\", \"taxrate\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, SalestaxrateRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<SalestaxrateFields, SalestaxrateRow> = SelectBuilder.of("\"sales\".\"salestaxrate\"", SalestaxrateFields.structure, SalestaxrateRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<SalestaxrateRow> = interpolate(Fragment.lit("select \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salestaxrate\"\n")).query(SalestaxrateRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<SalestaxrateRow> = Fragment.interpolate(Fragment.lit("select \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salestaxrate\"\n")).query(SalestaxrateRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     salestaxrateid: SalestaxrateId,
     c: Connection
-  ): SalestaxrateRow? = interpolate(Fragment.lit("select \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salestaxrate\"\nwhere \"salestaxrateid\" = "), Fragment.encode(SalestaxrateId.pgType, salestaxrateid), Fragment.lit("")).query(SalestaxrateRow._rowParser.first()).runUnchecked(c)
+  ): SalestaxrateRow? = Fragment.interpolate(Fragment.lit("select \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salestaxrate\"\nwhere \"salestaxrateid\" = "), Fragment.encode(SalestaxrateId.pgType, salestaxrateid), Fragment.lit("")).query(SalestaxrateRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     salestaxrateids: Array<SalestaxrateId>,
     c: Connection
-  ): List<SalestaxrateRow> = interpolate(Fragment.lit("select \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salestaxrate\"\nwhere \"salestaxrateid\" = ANY("), Fragment.encode(SalestaxrateId.pgTypeArray, salestaxrateids), Fragment.lit(")")).query(SalestaxrateRow._rowParser.all()).runUnchecked(c)
+  ): List<SalestaxrateRow> = Fragment.interpolate(Fragment.lit("select \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salestaxrate\"\nwhere \"salestaxrateid\" = ANY("), Fragment.encode(SalestaxrateId.pgTypeArray, salestaxrateids), Fragment.lit(")")).query(SalestaxrateRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     salestaxrateids: Array<SalestaxrateId>,
@@ -123,31 +122,31 @@ class SalestaxrateRepoImpl() : SalestaxrateRepo {
     c: Connection
   ): Boolean {
     val salestaxrateid: SalestaxrateId = row.salestaxrateid
-    return interpolate(Fragment.lit("update \"sales\".\"salestaxrate\"\nset \"stateprovinceid\" = "), Fragment.encode(StateprovinceId.pgType, row.stateprovinceid), Fragment.lit("::int4,\n\"taxtype\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.taxtype), Fragment.lit("::int2,\n\"taxrate\" = "), Fragment.encode(PgTypes.numeric, row.taxrate), Fragment.lit("::numeric,\n\"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"salestaxrateid\" = "), Fragment.encode(SalestaxrateId.pgType, salestaxrateid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"sales\".\"salestaxrate\"\nset \"stateprovinceid\" = "), Fragment.encode(StateprovinceId.pgType, row.stateprovinceid), Fragment.lit("::int4,\n\"taxtype\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.taxtype), Fragment.lit("::int2,\n\"taxrate\" = "), Fragment.encode(PgTypes.numeric, row.taxrate), Fragment.lit("::numeric,\n\"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"salestaxrateid\" = "), Fragment.encode(SalestaxrateId.pgType, salestaxrateid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: SalestaxrateRow,
     c: Connection
-  ): SalestaxrateRow = interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalestaxrateId.pgType, unsaved.salestaxrateid), Fragment.lit("::int4, "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.taxrate), Fragment.lit("::numeric, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"salestaxrateid\")\ndo update set\n  \"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"taxtype\" = EXCLUDED.\"taxtype\",\n\"taxrate\" = EXCLUDED.\"taxrate\",\n\"name\" = EXCLUDED.\"name\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\""))
+  ): SalestaxrateRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalestaxrateId.pgType, unsaved.salestaxrateid), Fragment.lit("::int4, "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.taxrate), Fragment.lit("::numeric, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"salestaxrateid\")\ndo update set\n  \"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"taxtype\" = EXCLUDED.\"taxtype\",\n\"taxrate\" = EXCLUDED.\"taxrate\",\n\"name\" = EXCLUDED.\"name\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\""))
     .updateReturning(SalestaxrateRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<SalestaxrateRow>,
+    unsaved: Iterator<SalestaxrateRow>,
     c: Connection
-  ): List<SalestaxrateRow> = interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int2, ?::numeric, ?::varchar, ?::uuid, ?::timestamp)\non conflict (\"salestaxrateid\")\ndo update set\n  \"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"taxtype\" = EXCLUDED.\"taxtype\",\n\"taxrate\" = EXCLUDED.\"taxrate\",\n\"name\" = EXCLUDED.\"name\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\""))
+  ): List<SalestaxrateRow> = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::int4, ?::int2, ?::numeric, ?::varchar, ?::uuid, ?::timestamp)\non conflict (\"salestaxrateid\")\ndo update set\n  \"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"taxtype\" = EXCLUDED.\"taxtype\",\n\"taxrate\" = EXCLUDED.\"taxrate\",\n\"name\" = EXCLUDED.\"name\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\""))
     .updateManyReturning(SalestaxrateRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<SalestaxrateRow>,
+    unsaved: Iterator<SalestaxrateRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table salestaxrate_TEMP (like \"sales\".\"salestaxrate\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table salestaxrate_TEMP (like \"sales\".\"salestaxrate\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy salestaxrate_TEMP(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, SalestaxrateRow.pgText)
-    return interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nselect * from salestaxrate_TEMP\non conflict (\"salestaxrateid\")\ndo update set\n  \"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"taxtype\" = EXCLUDED.\"taxtype\",\n\"taxrate\" = EXCLUDED.\"taxrate\",\n\"name\" = EXCLUDED.\"name\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table salestaxrate_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nselect * from salestaxrate_TEMP\non conflict (\"salestaxrateid\")\ndo update set\n  \"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"taxtype\" = EXCLUDED.\"taxtype\",\n\"taxrate\" = EXCLUDED.\"taxrate\",\n\"name\" = EXCLUDED.\"name\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table salestaxrate_TEMP;")).update().runUnchecked(c)
   }
 }

@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VCustomerSummaryViewRepoImpl() : VCustomerSummaryViewRepo {
   override fun select(): SelectBuilder<VCustomerSummaryViewFields, VCustomerSummaryViewRow> = SelectBuilder.of("`v_customer_summary`", VCustomerSummaryViewFields.structure, VCustomerSummaryViewRow._rowParser, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<VCustomerSummaryViewRow> = interpolate(Fragment.lit("select `customer_id`, `email`, `full_name`, `tier`, `status`, `created_at`, `last_login_at`, `total_orders`, `lifetime_value`, `last_order_date`\nfrom `v_customer_summary`\n")).query(VCustomerSummaryViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VCustomerSummaryViewRow> = Fragment.interpolate(Fragment.lit("select `customer_id`, `email`, `full_name`, `tier`, `status`, `created_at`, `last_login_at`, `total_orders`, `lifetime_value`, `last_order_date`\nfrom `v_customer_summary`\n")).query(VCustomerSummaryViewRow._rowParser.all()).runUnchecked(c)
 }

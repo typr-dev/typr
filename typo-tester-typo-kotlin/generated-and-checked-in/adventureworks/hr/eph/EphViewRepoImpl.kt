@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class EphViewRepoImpl() : EphViewRepo {
   override fun select(): SelectBuilder<EphViewFields, EphViewRow> = SelectBuilder.of("\"hr\".\"eph\"", EphViewFields.structure, EphViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<EphViewRow> = interpolate(Fragment.lit("select \"id\", \"businessentityid\", \"ratechangedate\", \"rate\", \"payfrequency\", \"modifieddate\"\nfrom \"hr\".\"eph\"\n")).query(EphViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<EphViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"businessentityid\", \"ratechangedate\", \"rate\", \"payfrequency\", \"modifieddate\"\nfrom \"hr\".\"eph\"\n")).query(EphViewRow._rowParser.all()).runUnchecked(c)
 }

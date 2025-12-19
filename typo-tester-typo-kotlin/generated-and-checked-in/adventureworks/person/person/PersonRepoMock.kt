@@ -9,9 +9,9 @@ import adventureworks.person.businessentity.BusinessentityId
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -64,7 +64,7 @@ data class PersonRepoMock(
   ): PersonRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<PersonRow>,
+    unsaved: Iterator<PersonRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -79,7 +79,7 @@ data class PersonRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<PersonRowUnsaved>,
+    unsaved: Iterator<PersonRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -143,7 +143,7 @@ data class PersonRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<PersonRow>,
+    unsaved: Iterator<PersonRow>,
     c: Connection
   ): List<PersonRow> {
     val result = ArrayList<PersonRow>()
@@ -157,7 +157,7 @@ data class PersonRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<PersonRow>,
+    unsaved: Iterator<PersonRow>,
     batchSize: Int,
     c: Connection
   ): Int {

@@ -6,9 +6,9 @@
 package adventureworks.production.productphoto
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface ProductphotoRepo {
   ): ProductphotoRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<ProductphotoRow>,
+    unsaved: Iterator<ProductphotoRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ProductphotoRowUnsaved>,
+    unsaved: Iterator<ProductphotoRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface ProductphotoRepo {
   ): ProductphotoRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<ProductphotoRow>,
+    unsaved: Iterator<ProductphotoRow>,
     c: Connection
   ): List<ProductphotoRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<ProductphotoRow>,
+    unsaved: Iterator<ProductphotoRow>,
     batchSize: Int,
     c: Connection
   ): Int

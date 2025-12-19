@@ -6,9 +6,9 @@
 package adventureworks.public.title
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -16,7 +16,6 @@ import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class TitleRepoImpl() : TitleRepo {
   override fun delete(): DeleteBuilder<TitleFields, TitleRow> = DeleteBuilder.of("\"public\".\"title\"", TitleFields.structure, Dialect.POSTGRESQL)
@@ -24,40 +23,40 @@ class TitleRepoImpl() : TitleRepo {
   override fun deleteById(
     code: TitleId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"public\".\"title\" where \"code\" = "), Fragment.encode(TitleId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"title\" where \"code\" = "), Fragment.encode(TitleId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     codes: Array<TitleId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("), Fragment.encode(TitleId.pgTypeArray, codes), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("), Fragment.encode(TitleId.pgTypeArray, codes), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: TitleRow,
     c: Connection
-  ): TitleRow = interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(")\nreturning \"code\"\n"))
+  ): TitleRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(")\nreturning \"code\"\n"))
     .updateReturning(TitleRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<TitleRow>,
+    unsaved: Iterator<TitleRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"title\"(\"code\") FROM STDIN", batchSize, unsaved, c, TitleRow.pgText)
 
   override fun select(): SelectBuilder<TitleFields, TitleRow> = SelectBuilder.of("\"public\".\"title\"", TitleFields.structure, TitleRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<TitleRow> = interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\n")).query(TitleRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<TitleRow> = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\n")).query(TitleRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     code: TitleId,
     c: Connection
-  ): TitleRow? = interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = "), Fragment.encode(TitleId.pgType, code), Fragment.lit("")).query(TitleRow._rowParser.first()).runUnchecked(c)
+  ): TitleRow? = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = "), Fragment.encode(TitleId.pgType, code), Fragment.lit("")).query(TitleRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     codes: Array<TitleId>,
     c: Connection
-  ): List<TitleRow> = interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("), Fragment.encode(TitleId.pgTypeArray, codes), Fragment.lit(")")).query(TitleRow._rowParser.all()).runUnchecked(c)
+  ): List<TitleRow> = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("), Fragment.encode(TitleId.pgTypeArray, codes), Fragment.lit(")")).query(TitleRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     codes: Array<TitleId>,
@@ -73,25 +72,25 @@ class TitleRepoImpl() : TitleRepo {
   override fun upsert(
     unsaved: TitleRow,
     c: Connection
-  ): TitleRow = interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(")\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
+  ): TitleRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(")\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
     .updateReturning(TitleRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<TitleRow>,
+    unsaved: Iterator<TitleRow>,
     c: Connection
-  ): List<TitleRow> = interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues (?)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
+  ): List<TitleRow> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues (?)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
     .updateManyReturning(TitleRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<TitleRow>,
+    unsaved: Iterator<TitleRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table title_TEMP (like \"public\".\"title\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table title_TEMP (like \"public\".\"title\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy title_TEMP(\"code\") from stdin", batchSize, unsaved, c, TitleRow.pgText)
-    return interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nselect * from title_TEMP\non conflict (\"code\")\ndo nothing\n;\ndrop table title_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nselect * from title_TEMP\non conflict (\"code\")\ndo nothing\n;\ndrop table title_TEMP;")).update().runUnchecked(c)
   }
 }

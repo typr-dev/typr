@@ -7,9 +7,9 @@ package adventureworks.production.productphoto
 
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class ProductphotoRepoImpl() : ProductphotoRepo {
   override fun delete(): DeleteBuilder<ProductphotoFields, ProductphotoRow> = DeleteBuilder.of("\"production\".\"productphoto\"", ProductphotoFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class ProductphotoRepoImpl() : ProductphotoRepo {
   override fun deleteById(
     productphotoid: ProductphotoId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"productphoto\" where \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, productphotoid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"productphoto\" where \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, productphotoid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     productphotoids: Array<ProductphotoId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"productphoto\"\nwhere \"productphotoid\" = ANY("), Fragment.encode(ProductphotoId.pgTypeArray, productphotoids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"productphoto\"\nwhere \"productphotoid\" = ANY("), Fragment.encode(ProductphotoId.pgTypeArray, productphotoids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: ProductphotoRow,
     c: Connection
-  ): ProductphotoRow = interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.thumbnailphoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.thumbnailphotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.largephoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.largephotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\n"))
+  ): ProductphotoRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.thumbnailphoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.thumbnailphotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.largephoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.largephotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\n"))
     .updateReturning(ProductphotoRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,53 +48,53 @@ class ProductphotoRepoImpl() : ProductphotoRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"thumbnailphoto\""))
-    values.add(interpolate(Fragment.encode(PgTypes.bytea.nullable(), unsaved.thumbnailphoto), Fragment.lit("::bytea")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.bytea.nullable(), unsaved.thumbnailphoto), Fragment.lit("::bytea")))
     columns.add(Fragment.lit("\"thumbnailphotofilename\""))
-    values.add(interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.thumbnailphotofilename), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.thumbnailphotofilename), Fragment.lit("")))
     columns.add(Fragment.lit("\"largephoto\""))
-    values.add(interpolate(Fragment.encode(PgTypes.bytea.nullable(), unsaved.largephoto), Fragment.lit("::bytea")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.bytea.nullable(), unsaved.largephoto), Fragment.lit("::bytea")))
     columns.add(Fragment.lit("\"largephotofilename\""))
-    values.add(interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.largephotofilename), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.largephotofilename), Fragment.lit("")))
     unsaved.productphotoid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"productphotoid\""))
-      values.add(interpolate(Fragment.encode(ProductphotoId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(ProductphotoId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"productphoto\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\n"))
     return q.updateReturning(ProductphotoRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ProductphotoRow>,
+    unsaved: Iterator<ProductphotoRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ProductphotoRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ProductphotoRowUnsaved>,
+    unsaved: Iterator<ProductphotoRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productphoto\"(\"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"productphotoid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ProductphotoRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<ProductphotoFields, ProductphotoRow> = SelectBuilder.of("\"production\".\"productphoto\"", ProductphotoFields.structure, ProductphotoRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ProductphotoRow> = interpolate(Fragment.lit("select \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\nfrom \"production\".\"productphoto\"\n")).query(ProductphotoRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ProductphotoRow> = Fragment.interpolate(Fragment.lit("select \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\nfrom \"production\".\"productphoto\"\n")).query(ProductphotoRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     productphotoid: ProductphotoId,
     c: Connection
-  ): ProductphotoRow? = interpolate(Fragment.lit("select \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\nfrom \"production\".\"productphoto\"\nwhere \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, productphotoid), Fragment.lit("")).query(ProductphotoRow._rowParser.first()).runUnchecked(c)
+  ): ProductphotoRow? = Fragment.interpolate(Fragment.lit("select \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\nfrom \"production\".\"productphoto\"\nwhere \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, productphotoid), Fragment.lit("")).query(ProductphotoRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     productphotoids: Array<ProductphotoId>,
     c: Connection
-  ): List<ProductphotoRow> = interpolate(Fragment.lit("select \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\nfrom \"production\".\"productphoto\"\nwhere \"productphotoid\" = ANY("), Fragment.encode(ProductphotoId.pgTypeArray, productphotoids), Fragment.lit(")")).query(ProductphotoRow._rowParser.all()).runUnchecked(c)
+  ): List<ProductphotoRow> = Fragment.interpolate(Fragment.lit("select \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\nfrom \"production\".\"productphoto\"\nwhere \"productphotoid\" = ANY("), Fragment.encode(ProductphotoId.pgTypeArray, productphotoids), Fragment.lit(")")).query(ProductphotoRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     productphotoids: Array<ProductphotoId>,
@@ -113,31 +112,31 @@ class ProductphotoRepoImpl() : ProductphotoRepo {
     c: Connection
   ): Boolean {
     val productphotoid: ProductphotoId = row.productphotoid
-    return interpolate(Fragment.lit("update \"production\".\"productphoto\"\nset \"thumbnailphoto\" = "), Fragment.encode(PgTypes.bytea.nullable(), row.thumbnailphoto), Fragment.lit("::bytea,\n\"thumbnailphotofilename\" = "), Fragment.encode(PgTypes.text.nullable(), row.thumbnailphotofilename), Fragment.lit(",\n\"largephoto\" = "), Fragment.encode(PgTypes.bytea.nullable(), row.largephoto), Fragment.lit("::bytea,\n\"largephotofilename\" = "), Fragment.encode(PgTypes.text.nullable(), row.largephotofilename), Fragment.lit(",\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, productphotoid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"productphoto\"\nset \"thumbnailphoto\" = "), Fragment.encode(PgTypes.bytea.nullable(), row.thumbnailphoto), Fragment.lit("::bytea,\n\"thumbnailphotofilename\" = "), Fragment.encode(PgTypes.text.nullable(), row.thumbnailphotofilename), Fragment.lit(",\n\"largephoto\" = "), Fragment.encode(PgTypes.bytea.nullable(), row.largephoto), Fragment.lit("::bytea,\n\"largephotofilename\" = "), Fragment.encode(PgTypes.text.nullable(), row.largephotofilename), Fragment.lit(",\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productphotoid\" = "), Fragment.encode(ProductphotoId.pgType, productphotoid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductphotoRow,
     c: Connection
-  ): ProductphotoRow = interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.thumbnailphoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.thumbnailphotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.largephoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.largephotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"productphotoid\")\ndo update set\n  \"thumbnailphoto\" = EXCLUDED.\"thumbnailphoto\",\n\"thumbnailphotofilename\" = EXCLUDED.\"thumbnailphotofilename\",\n\"largephoto\" = EXCLUDED.\"largephoto\",\n\"largephotofilename\" = EXCLUDED.\"largephotofilename\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\""))
+  ): ProductphotoRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.thumbnailphoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.thumbnailphotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.largephoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.largephotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"productphotoid\")\ndo update set\n  \"thumbnailphoto\" = EXCLUDED.\"thumbnailphoto\",\n\"thumbnailphotofilename\" = EXCLUDED.\"thumbnailphotofilename\",\n\"largephoto\" = EXCLUDED.\"largephoto\",\n\"largephotofilename\" = EXCLUDED.\"largephotofilename\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\""))
     .updateReturning(ProductphotoRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ProductphotoRow>,
+    unsaved: Iterator<ProductphotoRow>,
     c: Connection
-  ): List<ProductphotoRow> = interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nvalues (?::int4, ?::bytea, ?, ?::bytea, ?, ?::timestamp)\non conflict (\"productphotoid\")\ndo update set\n  \"thumbnailphoto\" = EXCLUDED.\"thumbnailphoto\",\n\"thumbnailphotofilename\" = EXCLUDED.\"thumbnailphotofilename\",\n\"largephoto\" = EXCLUDED.\"largephoto\",\n\"largephotofilename\" = EXCLUDED.\"largephotofilename\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\""))
+  ): List<ProductphotoRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nvalues (?::int4, ?::bytea, ?, ?::bytea, ?, ?::timestamp)\non conflict (\"productphotoid\")\ndo update set\n  \"thumbnailphoto\" = EXCLUDED.\"thumbnailphoto\",\n\"thumbnailphotofilename\" = EXCLUDED.\"thumbnailphotofilename\",\n\"largephoto\" = EXCLUDED.\"largephoto\",\n\"largephotofilename\" = EXCLUDED.\"largephotofilename\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\""))
     .updateManyReturning(ProductphotoRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ProductphotoRow>,
+    unsaved: Iterator<ProductphotoRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table productphoto_TEMP (like \"production\".\"productphoto\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table productphoto_TEMP (like \"production\".\"productphoto\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy productphoto_TEMP(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\") from stdin", batchSize, unsaved, c, ProductphotoRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nselect * from productphoto_TEMP\non conflict (\"productphotoid\")\ndo update set\n  \"thumbnailphoto\" = EXCLUDED.\"thumbnailphoto\",\n\"thumbnailphotofilename\" = EXCLUDED.\"thumbnailphotofilename\",\n\"largephoto\" = EXCLUDED.\"largephoto\",\n\"largephotofilename\" = EXCLUDED.\"largephotofilename\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productphoto_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nselect * from productphoto_TEMP\non conflict (\"productphotoid\")\ndo update set\n  \"thumbnailphoto\" = EXCLUDED.\"thumbnailphoto\",\n\"thumbnailphotofilename\" = EXCLUDED.\"thumbnailphotofilename\",\n\"largephoto\" = EXCLUDED.\"largephoto\",\n\"largephotofilename\" = EXCLUDED.\"largephotofilename\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productphoto_TEMP;")).update().runUnchecked(c)
   }
 }

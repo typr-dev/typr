@@ -2,8 +2,8 @@ package adventureworks.humanresources.department
 
 import adventureworks.WithConnection
 import adventureworks.customtypes.Defaulted
-import adventureworks.customtypes.TypoLocalDateTime
-import adventureworks.public_.Name
+import java.time.LocalDateTime
+import adventureworks.public.Name
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -17,18 +17,20 @@ class DepartmentTest {
             val unsaved = DepartmentRowUnsaved(
                 name = Name("foo"),
                 groupname = Name("bar"),
-                modifieddate = Defaulted.Provided(TypoLocalDateTime.now)
+                modifieddate = Defaulted.Provided(LocalDateTime.now())
             )
 
             // insert and round trip check
             val saved1 = departmentRepoI.insert(unsaved, c)
-            val saved2 = unsaved.toRow(departmentidDefault = saved1.departmentid, modifieddateDefault = saved1.modifieddate)
+            val saved2 = unsaved.toRow(
+                departmentidDefault = { saved1.departmentid },
+                modifieddateDefault = { saved1.modifieddate }
+            )
             assertEquals(saved1, saved2)
 
             // check field values
-            val updatedOpt = departmentRepoI.update(saved1.copy(name = Name("baz")), c)
-            assertNotNull(updatedOpt)
-            assertEquals(Name("baz"), updatedOpt?.name)
+            val updated = departmentRepoI.update(saved1.copy(name = Name("baz")), c)
+            assertTrue(updated)
 
             val allDepartments = departmentRepoI.selectAll(c)
             assertEquals(1, allDepartments.size)
@@ -49,7 +51,7 @@ class DepartmentTest {
             val unsaved = DepartmentRowUnsaved(
                 name = Name("foo"),
                 groupname = Name("bar"),
-                modifieddate = Defaulted.Provided(TypoLocalDateTime.now)
+                modifieddate = Defaulted.Provided(LocalDateTime.now())
             )
 
             // insert and round trip check

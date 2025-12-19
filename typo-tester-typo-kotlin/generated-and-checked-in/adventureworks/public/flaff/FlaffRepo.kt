@@ -6,9 +6,9 @@
 package adventureworks.public.flaff
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -32,7 +32,7 @@ interface FlaffRepo {
   ): FlaffRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<FlaffRow>,
+    unsaved: Iterator<FlaffRow>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -69,13 +69,13 @@ interface FlaffRepo {
   ): FlaffRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<FlaffRow>,
+    unsaved: Iterator<FlaffRow>,
     c: Connection
   ): List<FlaffRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<FlaffRow>,
+    unsaved: Iterator<FlaffRow>,
     batchSize: Int,
     c: Connection
   ): Int

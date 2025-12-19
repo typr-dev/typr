@@ -2,8 +2,8 @@ package adventureworks.person.businessentityaddress
 
 import adventureworks.WithConnection
 import adventureworks.customtypes.Defaulted
-import adventureworks.customtypes.TypoLocalDateTime
-import adventureworks.customtypes.TypoUUID
+import java.time.LocalDateTime
+import java.util.UUID
 import adventureworks.person.address.AddressRepoImpl
 import adventureworks.person.address.AddressRowUnsaved
 import adventureworks.person.addresstype.AddresstypeRepoImpl
@@ -16,7 +16,7 @@ import adventureworks.person.countryregion.CountryregionRepoImpl
 import adventureworks.person.countryregion.CountryregionRowUnsaved
 import adventureworks.person.stateprovince.StateprovinceRepoImpl
 import adventureworks.person.stateprovince.StateprovinceRowUnsaved
-import adventureworks.public_.Name
+import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryRepoImpl
 import adventureworks.sales.salesterritory.SalesterritoryRowUnsaved
 import org.junit.Assert.*
@@ -88,20 +88,22 @@ class BusinessentityaddressTest {
                 businessentityid = businessentityRow.businessentityid,
                 addressid = address.addressid,
                 addresstypeid = addressType.addresstypeid,
-                rowguid = Defaulted.Provided(TypoUUID.randomUUID()),
-                modifieddate = Defaulted.Provided(TypoLocalDateTime.now)
+                rowguid = Defaulted.Provided(UUID.randomUUID()),
+                modifieddate = Defaulted.Provided(LocalDateTime.now())
             )
 
             // insert and round trip check
             val saved1 = businessentityaddressRepo.insert(unsaved1, c)
-            val saved2 = unsaved1.toRow(rowguidDefault = saved1.rowguid, modifieddateDefault = saved1.modifieddate)
+            val saved2 = unsaved1.toRow(
+                rowguidDefault = { saved1.rowguid },
+                modifieddateDefault = { saved1.modifieddate }
+            )
             assertEquals(saved1, saved2)
 
             // check field values
-            val newModifiedDate = TypoLocalDateTime(saved1.modifieddate.value.minusDays(1))
-            val updatedOpt = businessentityaddressRepo.update(saved1.copy(modifieddate = newModifiedDate), c)
-            assertNotNull(updatedOpt)
-            assertEquals(newModifiedDate, updatedOpt?.modifieddate)
+            val newModifiedDate = saved1.modifieddate.minusDays(1)
+            val updated = businessentityaddressRepo.update(saved1.copy(modifieddate = newModifiedDate), c)
+            assertTrue(updated)
 
             val allRecords = businessentityaddressRepo.selectAll(c)
             assertEquals(1, allRecords.size)
@@ -109,7 +111,7 @@ class BusinessentityaddressTest {
             assertEquals(newModifiedDate, saved3.modifieddate)
 
             // delete
-            businessentityaddressRepo.deleteById(saved1.compositeId, c)
+            businessentityaddressRepo.deleteById(saved1.compositeId(), c)
 
             val emptyList = businessentityaddressRepo.selectAll(c)
             assertTrue(emptyList.isEmpty())

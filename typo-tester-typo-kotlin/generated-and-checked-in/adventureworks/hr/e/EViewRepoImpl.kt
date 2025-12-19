@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class EViewRepoImpl() : EViewRepo {
   override fun select(): SelectBuilder<EViewFields, EViewRow> = SelectBuilder.of("\"hr\".\"e\"", EViewFields.structure, EViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<EViewRow> = interpolate(Fragment.lit("select \"id\", \"businessentityid\", \"nationalidnumber\", \"loginid\", \"jobtitle\", \"birthdate\", \"maritalstatus\", \"gender\", \"hiredate\", \"salariedflag\", \"vacationhours\", \"sickleavehours\", \"currentflag\", \"rowguid\", \"modifieddate\", \"organizationnode\"\nfrom \"hr\".\"e\"\n")).query(EViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<EViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"businessentityid\", \"nationalidnumber\", \"loginid\", \"jobtitle\", \"birthdate\", \"maritalstatus\", \"gender\", \"hiredate\", \"salariedflag\", \"vacationhours\", \"sickleavehours\", \"currentflag\", \"rowguid\", \"modifieddate\", \"organizationnode\"\nfrom \"hr\".\"e\"\n")).query(EViewRow._rowParser.all()).runUnchecked(c)
 }

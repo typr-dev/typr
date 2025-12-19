@@ -8,9 +8,9 @@ package adventureworks.production.unitmeasure
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class UnitmeasureRepoImpl() : UnitmeasureRepo {
   override fun delete(): DeleteBuilder<UnitmeasureFields, UnitmeasureRow> = DeleteBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
   override fun deleteById(
     unitmeasurecode: UnitmeasureId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"unitmeasure\" where \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"unitmeasure\" where \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     unitmeasurecodes: Array<UnitmeasureId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("), Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("), Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: UnitmeasureRow,
     c: Connection
-  ): UnitmeasureRow = interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
+  ): UnitmeasureRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
     .updateReturning(UnitmeasureRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,44 +48,44 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"unitmeasurecode\""))
-    values.add(interpolate(Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar")))
+    values.add(Fragment.interpolate(Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar")))
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(UnitmeasureRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<UnitmeasureRow>,
+    unsaved: Iterator<UnitmeasureRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, UnitmeasureRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<UnitmeasureRowUnsaved>,
+    unsaved: Iterator<UnitmeasureRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, UnitmeasureRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<UnitmeasureFields, UnitmeasureRow> = SelectBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, UnitmeasureRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<UnitmeasureRow> = interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\n")).query(UnitmeasureRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<UnitmeasureRow> = Fragment.interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\n")).query(UnitmeasureRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     unitmeasurecode: UnitmeasureId,
     c: Connection
-  ): UnitmeasureRow? = interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).query(UnitmeasureRow._rowParser.first()).runUnchecked(c)
+  ): UnitmeasureRow? = Fragment.interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).query(UnitmeasureRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     unitmeasurecodes: Array<UnitmeasureId>,
     c: Connection
-  ): List<UnitmeasureRow> = interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("), Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes), Fragment.lit(")")).query(UnitmeasureRow._rowParser.all()).runUnchecked(c)
+  ): List<UnitmeasureRow> = Fragment.interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("), Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes), Fragment.lit(")")).query(UnitmeasureRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     unitmeasurecodes: Array<UnitmeasureId>,
@@ -104,31 +103,31 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
     c: Connection
   ): Boolean {
     val unitmeasurecode: UnitmeasureId = row.unitmeasurecode
-    return interpolate(Fragment.lit("update \"production\".\"unitmeasure\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"unitmeasure\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: UnitmeasureRow,
     c: Connection
-  ): UnitmeasureRow = interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\""))
+  ): UnitmeasureRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\""))
     .updateReturning(UnitmeasureRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<UnitmeasureRow>,
+    unsaved: Iterator<UnitmeasureRow>,
     c: Connection
-  ): List<UnitmeasureRow> = interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues (?::bpchar, ?::varchar, ?::timestamp)\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\""))
+  ): List<UnitmeasureRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues (?::bpchar, ?::varchar, ?::timestamp)\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\""))
     .updateManyReturning(UnitmeasureRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<UnitmeasureRow>,
+    unsaved: Iterator<UnitmeasureRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table unitmeasure_TEMP (like \"production\".\"unitmeasure\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table unitmeasure_TEMP (like \"production\".\"unitmeasure\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy unitmeasure_TEMP(\"unitmeasurecode\", \"name\", \"modifieddate\") from stdin", batchSize, unsaved, c, UnitmeasureRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nselect * from unitmeasure_TEMP\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table unitmeasure_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nselect * from unitmeasure_TEMP\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table unitmeasure_TEMP;")).update().runUnchecked(c)
   }
 }

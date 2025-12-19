@@ -107,11 +107,19 @@ class DbLibTypo(
           processedParts
       }
 
-      // Add static import for the interpolate method and use unqualified name
-      val staticImport = jvm.Import(Fragment / jvm.Ident(lang.dsl.interpolatorName), isStatic = true)
-      val interpolateIdent = jvm.Ident(lang.dsl.interpolatorName)
-      val call = jvm.Call(interpolateIdent, List(jvm.Call.ArgGroup(finalParts.map(jvm.Arg.Pos.apply), isImplicit = false)))
-      code"$staticImport$call"
+      // Kotlin doesn't support static imports from companion objects, so use qualified name
+      // Java can use static imports for cleaner code
+      lang match {
+        case _: LangKotlin =>
+          // Kotlin: use qualified name Fragment.interpolate(...)
+          code"$Fragment.interpolate(${finalParts.mkCode(", ")})"
+        case _ =>
+          // Java: use static import + unqualified name for cleaner code
+          val staticImport = jvm.Import(Fragment / jvm.Ident(lang.dsl.interpolatorName), isStatic = true)
+          val interpolateIdent = jvm.Ident(lang.dsl.interpolatorName)
+          val call = jvm.Call(interpolateIdent, List(jvm.Call.ArgGroup(finalParts.map(jvm.Arg.Pos.apply), isImplicit = false)))
+          code"$staticImport$call"
+      }
     }
   }
   def FR(content: jvm.Code) = SQL(content)

@@ -8,9 +8,9 @@ package adventureworks.purchasing.shipmethod
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.DeleteBuilderMock
@@ -63,7 +63,7 @@ data class ShipmethodRepoMock(
   ): ShipmethodRow = insert(toRow(unsaved), c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ShipmethodRow>,
+    unsaved: Iterator<ShipmethodRow>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -78,7 +78,7 @@ data class ShipmethodRepoMock(
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ShipmethodRowUnsaved>,
+    unsaved: Iterator<ShipmethodRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long {
@@ -142,7 +142,7 @@ data class ShipmethodRepoMock(
   }
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ShipmethodRow>,
+    unsaved: Iterator<ShipmethodRow>,
     c: Connection
   ): List<ShipmethodRow> {
     val result = ArrayList<ShipmethodRow>()
@@ -156,7 +156,7 @@ data class ShipmethodRepoMock(
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ShipmethodRow>,
+    unsaved: Iterator<ShipmethodRow>,
     batchSize: Int,
     c: Connection
   ): Int {

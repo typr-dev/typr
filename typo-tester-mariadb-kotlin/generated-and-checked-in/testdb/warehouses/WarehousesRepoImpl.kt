@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.kotlindsl.nullable
 import typo.runtime.MariaTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class WarehousesRepoImpl() : WarehousesRepo {
   override fun delete(): DeleteBuilder<WarehousesFields, WarehousesRow> = DeleteBuilder.of("`warehouses`", WarehousesFields.structure, Dialect.MARIADB)
@@ -27,7 +26,7 @@ class WarehousesRepoImpl() : WarehousesRepo {
   override fun deleteById(
     warehouseId: WarehousesId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from `warehouses` where `warehouse_id` = "), Fragment.encode(WarehousesId.pgType, warehouseId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `warehouses` where `warehouse_id` = "), Fragment.encode(WarehousesId.pgType, warehouseId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     warehouseIds: Array<WarehousesId>,
@@ -41,7 +40,7 @@ class WarehousesRepoImpl() : WarehousesRepo {
   override fun insert(
     unsaved: WarehousesRow,
     c: Connection
-  ): WarehousesRow = interpolate(Fragment.lit("insert into `warehouses`(`code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)\nvalues ("), Fragment.encode(MariaTypes.char_, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.address), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.location), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon.nullable(), unsaved.serviceArea), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.timezone), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactEmail), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactPhone), Fragment.lit(")\nreturning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
+  ): WarehousesRow = Fragment.interpolate(Fragment.lit("insert into `warehouses`(`code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)\nvalues ("), Fragment.encode(MariaTypes.char_, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.address), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.location), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon.nullable(), unsaved.serviceArea), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.timezone), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactEmail), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactPhone), Fragment.lit(")\nreturning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
     .updateReturning(WarehousesRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -51,50 +50,50 @@ class WarehousesRepoImpl() : WarehousesRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`code`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.char_, unsaved.code), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.char_, unsaved.code), Fragment.lit("")))
     columns.add(Fragment.lit("`name`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit("")))
     columns.add(Fragment.lit("`address`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.varchar, unsaved.address), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.address), Fragment.lit("")))
     columns.add(Fragment.lit("`location`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.point, unsaved.location), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.point, unsaved.location), Fragment.lit("")))
     unsaved.serviceArea.visit(
       {  },
       { value -> columns.add(Fragment.lit("`service_area`"))
-      values.add(interpolate(Fragment.encode(MariaTypes.polygon.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.polygon.nullable(), value), Fragment.lit(""))) }
     );
     unsaved.timezone.visit(
       {  },
       { value -> columns.add(Fragment.lit("`timezone`"))
-      values.add(interpolate(Fragment.encode(MariaTypes.varchar, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, value), Fragment.lit(""))) }
     );
     unsaved.isActive.visit(
       {  },
       { value -> columns.add(Fragment.lit("`is_active`"))
-      values.add(interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
     );
     unsaved.contactEmail.visit(
       {  },
       { value -> columns.add(Fragment.lit("`contact_email`"))
-      values.add(interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
     );
     unsaved.contactPhone.visit(
       {  },
       { value -> columns.add(Fragment.lit("`contact_phone`"))
-      values.add(interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into `warehouses`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `warehouses`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
     return q.updateReturning(WarehousesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun select(): SelectBuilder<WarehousesFields, WarehousesRow> = SelectBuilder.of("`warehouses`", WarehousesFields.structure, WarehousesRow._rowParser, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<WarehousesRow> = interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\nfrom `warehouses`\n")).query(WarehousesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<WarehousesRow> = Fragment.interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\nfrom `warehouses`\n")).query(WarehousesRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     warehouseId: WarehousesId,
     c: Connection
-  ): WarehousesRow? = interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\nfrom `warehouses`\nwhere `warehouse_id` = "), Fragment.encode(WarehousesId.pgType, warehouseId), Fragment.lit("")).query(WarehousesRow._rowParser.first()).runUnchecked(c)
+  ): WarehousesRow? = Fragment.interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\nfrom `warehouses`\nwhere `warehouse_id` = "), Fragment.encode(WarehousesId.pgType, warehouseId), Fragment.lit("")).query(WarehousesRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     warehouseIds: Array<WarehousesId>,
@@ -117,7 +116,7 @@ class WarehousesRepoImpl() : WarehousesRepo {
   override fun selectByUniqueCode(
     code: String,
     c: Connection
-  ): WarehousesRow? = interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\nfrom `warehouses`\nwhere `code` = "), Fragment.encode(MariaTypes.char_, code), Fragment.lit("\n")).query(WarehousesRow._rowParser.first()).runUnchecked(c)
+  ): WarehousesRow? = Fragment.interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\nfrom `warehouses`\nwhere `code` = "), Fragment.encode(MariaTypes.char_, code), Fragment.lit("\n")).query(WarehousesRow._rowParser.first()).runUnchecked(c)
 
   override fun update(): UpdateBuilder<WarehousesFields, WarehousesRow> = UpdateBuilder.of("`warehouses`", WarehousesFields.structure, WarehousesRow._rowParser, Dialect.MARIADB)
 
@@ -126,20 +125,20 @@ class WarehousesRepoImpl() : WarehousesRepo {
     c: Connection
   ): Boolean {
     val warehouseId: WarehousesId = row.warehouseId
-    return interpolate(Fragment.lit("update `warehouses`\nset `code` = "), Fragment.encode(MariaTypes.char_, row.code), Fragment.lit(",\n`name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit(",\n`address` = "), Fragment.encode(MariaTypes.varchar, row.address), Fragment.lit(",\n`location` = "), Fragment.encode(MariaTypes.point, row.location), Fragment.lit(",\n`service_area` = "), Fragment.encode(MariaTypes.polygon.nullable(), row.serviceArea), Fragment.lit(",\n`timezone` = "), Fragment.encode(MariaTypes.varchar, row.timezone), Fragment.lit(",\n`is_active` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isActive), Fragment.lit(",\n`contact_email` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.contactEmail), Fragment.lit(",\n`contact_phone` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.contactPhone), Fragment.lit("\nwhere `warehouse_id` = "), Fragment.encode(WarehousesId.pgType, warehouseId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `warehouses`\nset `code` = "), Fragment.encode(MariaTypes.char_, row.code), Fragment.lit(",\n`name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit(",\n`address` = "), Fragment.encode(MariaTypes.varchar, row.address), Fragment.lit(",\n`location` = "), Fragment.encode(MariaTypes.point, row.location), Fragment.lit(",\n`service_area` = "), Fragment.encode(MariaTypes.polygon.nullable(), row.serviceArea), Fragment.lit(",\n`timezone` = "), Fragment.encode(MariaTypes.varchar, row.timezone), Fragment.lit(",\n`is_active` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isActive), Fragment.lit(",\n`contact_email` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.contactEmail), Fragment.lit(",\n`contact_phone` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.contactPhone), Fragment.lit("\nwhere `warehouse_id` = "), Fragment.encode(WarehousesId.pgType, warehouseId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: WarehousesRow,
     c: Connection
-  ): WarehousesRow = interpolate(Fragment.lit("INSERT INTO `warehouses`(`code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)\nVALUES ("), Fragment.encode(MariaTypes.char_, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.address), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.location), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon.nullable(), unsaved.serviceArea), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.timezone), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactEmail), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactPhone), Fragment.lit(")\nON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n`name` = VALUES(`name`),\n`address` = VALUES(`address`),\n`location` = VALUES(`location`),\n`service_area` = VALUES(`service_area`),\n`timezone` = VALUES(`timezone`),\n`is_active` = VALUES(`is_active`),\n`contact_email` = VALUES(`contact_email`),\n`contact_phone` = VALUES(`contact_phone`)\nRETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`"))
+  ): WarehousesRow = Fragment.interpolate(Fragment.lit("INSERT INTO `warehouses`(`code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)\nVALUES ("), Fragment.encode(MariaTypes.char_, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.address), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.location), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon.nullable(), unsaved.serviceArea), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.timezone), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactEmail), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactPhone), Fragment.lit(")\nON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n`name` = VALUES(`name`),\n`address` = VALUES(`address`),\n`location` = VALUES(`location`),\n`service_area` = VALUES(`service_area`),\n`timezone` = VALUES(`timezone`),\n`is_active` = VALUES(`is_active`),\n`contact_email` = VALUES(`contact_email`),\n`contact_phone` = VALUES(`contact_phone`)\nRETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`"))
     .updateReturning(WarehousesRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
     unsaved: MutableIterator<WarehousesRow>,
     c: Connection
-  ): List<WarehousesRow> = interpolate(Fragment.lit("INSERT INTO `warehouses`(`warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n`name` = VALUES(`name`),\n`address` = VALUES(`address`),\n`location` = VALUES(`location`),\n`service_area` = VALUES(`service_area`),\n`timezone` = VALUES(`timezone`),\n`is_active` = VALUES(`is_active`),\n`contact_email` = VALUES(`contact_email`),\n`contact_phone` = VALUES(`contact_phone`)\nRETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`"))
+  ): List<WarehousesRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `warehouses`(`warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n`name` = VALUES(`name`),\n`address` = VALUES(`address`),\n`location` = VALUES(`location`),\n`service_area` = VALUES(`service_area`),\n`timezone` = VALUES(`timezone`),\n`is_active` = VALUES(`is_active`),\n`contact_email` = VALUES(`contact_email`),\n`contact_phone` = VALUES(`contact_phone`)\nRETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`"))
     .updateReturningEach(WarehousesRow._rowParser, unsaved)
   .runUnchecked(c)
 }

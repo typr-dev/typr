@@ -6,9 +6,9 @@
 package adventureworks.production.location
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface LocationRepo {
   ): LocationRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<LocationRowUnsaved>,
+    unsaved: Iterator<LocationRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface LocationRepo {
   ): LocationRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     c: Connection
   ): List<LocationRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<LocationRow>,
+    unsaved: Iterator<LocationRow>,
     batchSize: Int,
     c: Connection
   ): Int

@@ -5,12 +5,15 @@ import adventureworks.customtypes.*
 import adventureworks.person.businessentity.*
 import adventureworks.person.person.PersonRepoImpl
 import adventureworks.person.person.PersonRowUnsaved
-import adventureworks.public_.Flag
-import adventureworks.public_.Name
+import adventureworks.public.Flag
+import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import org.junit.Assert.*
 import org.junit.Test
+import typo.data.Xml
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.UUID
 
 class EmployeeTest {
     private val employeeRepo = EmployeeRepoImpl()
@@ -35,7 +38,7 @@ class EmployeeTest {
                     middlename = Name("middlename"),
                     lastname = Name("lastname"),
                     suffix = "suffix",
-                    additionalcontactinfo = TypoXml("<additionalcontactinfo/>"),
+                    additionalcontactinfo = Xml("<additionalcontactinfo/>"),
                     demographics = null
                 ),
                 c
@@ -47,36 +50,35 @@ class EmployeeTest {
                 nationalidnumber = "9912312312",
                 loginid = "loginid",
                 jobtitle = "jobtitle",
-                birthdate = TypoLocalDate(LocalDate.of(1950, 1, 1)),
+                birthdate = LocalDate.of(1950, 1, 1),
                 maritalstatus = "M",
                 gender = "F",
-                hiredate = TypoLocalDate(LocalDate.now().minusYears(1)),
+                hiredate = LocalDate.now().minusYears(1),
                 salariedflag = Defaulted.Provided(Flag(true)),
-                vacationhours = Defaulted.Provided(TypoShort(1)),
-                sickleavehours = Defaulted.Provided(TypoShort(2)),
+                vacationhours = Defaulted.Provided(1.toShort()),
+                sickleavehours = Defaulted.Provided(2.toShort()),
                 currentflag = Defaulted.Provided(Flag(true)),
-                rowguid = Defaulted.Provided(TypoUUID.randomUUID()),
-                modifieddate = Defaulted.Provided(TypoLocalDateTime.now),
+                rowguid = Defaulted.Provided(UUID.randomUUID()),
+                modifieddate = Defaulted.Provided(LocalDateTime.now()),
                 organizationnode = Defaulted.Provided("/")
             )
 
             // insert and round trip check
             val saved1 = employeeRepo.insert(unsaved, c)
             val saved2 = unsaved.toRow(
-                salariedflagDefault = saved1.salariedflag,
-                vacationhoursDefault = saved1.vacationhours,
-                sickleavehoursDefault = saved1.sickleavehours,
-                currentflagDefault = saved1.currentflag,
-                rowguidDefault = saved1.rowguid,
-                modifieddateDefault = saved1.modifieddate,
-                organizationnodeDefault = saved1.organizationnode
+                salariedflagDefault = { saved1.salariedflag },
+                vacationhoursDefault = { saved1.vacationhours },
+                sickleavehoursDefault = { saved1.sickleavehours },
+                currentflagDefault = { saved1.currentflag },
+                rowguidDefault = { saved1.rowguid },
+                modifieddateDefault = { saved1.modifieddate },
+                organizationnodeDefault = { saved1.organizationnode }
             )
             assertEquals(saved1, saved2)
 
             // check field values
-            val updatedOpt = employeeRepo.update(saved1.copy(gender = "M"), c)
-            assertNotNull(updatedOpt)
-            assertEquals("M", updatedOpt?.gender)
+            val updated = employeeRepo.update(saved1.copy(gender = "M"), c)
+            assertTrue(updated)
 
             val allEmployees = employeeRepo.selectAll(c)
             assertEquals(1, allEmployees.size)
@@ -98,10 +100,10 @@ class EmployeeTest {
                 nationalidnumber = "9912312312",
                 loginid = "loginid",
                 jobtitle = "jobtitle",
-                birthdate = TypoLocalDate(LocalDate.of(1950, 1, 1)),
+                birthdate = LocalDate.of(1950, 1, 1),
                 maritalstatus = "M",
                 gender = "F",
-                hiredate = TypoLocalDate(LocalDate.now().minusYears(1))
+                hiredate = LocalDate.now().minusYears(1)
             )
 
             // insert and check static default values
@@ -116,8 +118,8 @@ class EmployeeTest {
             assertEquals(unsaved2.hiredate, inserted.hiredate)
             // below: these are assertions for the static default values
             assertEquals(Flag(true), inserted.salariedflag)
-            assertEquals(TypoShort(0), inserted.vacationhours)
-            assertEquals(TypoShort(0), inserted.sickleavehours)
+            assertEquals(0.toShort(), inserted.vacationhours)
+            assertEquals(0.toShort(), inserted.sickleavehours)
             assertEquals(Flag(true), inserted.currentflag)
             assertNotNull(inserted.rowguid)
             assertNotNull(inserted.modifieddate)

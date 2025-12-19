@@ -17,7 +17,6 @@ import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.MariaTypes
-import typo.kotlindsl.Fragment.interpolate
 
 class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
   override fun delete(): DeleteBuilder<MariatestIdentityFields, MariatestIdentityRow> = DeleteBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, Dialect.MARIADB)
@@ -25,7 +24,7 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
   override fun deleteById(
     id: MariatestIdentityId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from `mariatest_identity` where `id` = "), Fragment.encode(MariatestIdentityId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `mariatest_identity` where `id` = "), Fragment.encode(MariatestIdentityId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     ids: Array<MariatestIdentityId>,
@@ -39,7 +38,7 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
   override fun insert(
     unsaved: MariatestIdentityRow,
     c: Connection
-  ): MariatestIdentityRow = interpolate(Fragment.lit("insert into `mariatest_identity`(`name`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(")\nreturning `id`, `name`\n"))
+  ): MariatestIdentityRow = Fragment.interpolate(Fragment.lit("insert into `mariatest_identity`(`name`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(")\nreturning `id`, `name`\n"))
     .updateReturning(MariatestIdentityRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,19 +48,19 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`name`"))
-    values.add(interpolate(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit("")))
-    val q: Fragment = interpolate(Fragment.lit("insert into `mariatest_identity`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `id`, `name`\n"))
+    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit("")))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_identity`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `id`, `name`\n"))
     return q.updateReturning(MariatestIdentityRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun select(): SelectBuilder<MariatestIdentityFields, MariatestIdentityRow> = SelectBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, MariatestIdentityRow._rowParser, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<MariatestIdentityRow> = interpolate(Fragment.lit("select `id`, `name`\nfrom `mariatest_identity`\n")).query(MariatestIdentityRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<MariatestIdentityRow> = Fragment.interpolate(Fragment.lit("select `id`, `name`\nfrom `mariatest_identity`\n")).query(MariatestIdentityRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     id: MariatestIdentityId,
     c: Connection
-  ): MariatestIdentityRow? = interpolate(Fragment.lit("select `id`, `name`\nfrom `mariatest_identity`\nwhere `id` = "), Fragment.encode(MariatestIdentityId.pgType, id), Fragment.lit("")).query(MariatestIdentityRow._rowParser.first()).runUnchecked(c)
+  ): MariatestIdentityRow? = Fragment.interpolate(Fragment.lit("select `id`, `name`\nfrom `mariatest_identity`\nwhere `id` = "), Fragment.encode(MariatestIdentityId.pgType, id), Fragment.lit("")).query(MariatestIdentityRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     ids: Array<MariatestIdentityId>,
@@ -88,20 +87,20 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
     c: Connection
   ): Boolean {
     val id: MariatestIdentityId = row.id
-    return interpolate(Fragment.lit("update `mariatest_identity`\nset `name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit("\nwhere `id` = "), Fragment.encode(MariatestIdentityId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `mariatest_identity`\nset `name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit("\nwhere `id` = "), Fragment.encode(MariatestIdentityId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: MariatestIdentityRow,
     c: Connection
-  ): MariatestIdentityRow = interpolate(Fragment.lit("INSERT INTO `mariatest_identity`(`name`)\nVALUES ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(")\nON DUPLICATE KEY UPDATE `name` = VALUES(`name`)\nRETURNING `id`, `name`"))
+  ): MariatestIdentityRow = Fragment.interpolate(Fragment.lit("INSERT INTO `mariatest_identity`(`name`)\nVALUES ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(")\nON DUPLICATE KEY UPDATE `name` = VALUES(`name`)\nRETURNING `id`, `name`"))
     .updateReturning(MariatestIdentityRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
     unsaved: MutableIterator<MariatestIdentityRow>,
     c: Connection
-  ): List<MariatestIdentityRow> = interpolate(Fragment.lit("INSERT INTO `mariatest_identity`(`id`, `name`)\nVALUES (?, ?)\nON DUPLICATE KEY UPDATE `name` = VALUES(`name`)\nRETURNING `id`, `name`"))
+  ): List<MariatestIdentityRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `mariatest_identity`(`id`, `name`)\nVALUES (?, ?)\nON DUPLICATE KEY UPDATE `name` = VALUES(`name`)\nRETURNING `id`, `name`"))
     .updateReturningEach(MariatestIdentityRow._rowParser, unsaved)
   .runUnchecked(c)
 }

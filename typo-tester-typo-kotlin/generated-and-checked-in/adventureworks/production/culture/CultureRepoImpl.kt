@@ -8,9 +8,9 @@ package adventureworks.production.culture
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class CultureRepoImpl() : CultureRepo {
   override fun delete(): DeleteBuilder<CultureFields, CultureRow> = DeleteBuilder.of("\"production\".\"culture\"", CultureFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class CultureRepoImpl() : CultureRepo {
   override fun deleteById(
     cultureid: CultureId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"production\".\"culture\" where \"cultureid\" = "), Fragment.encode(CultureId.pgType, cultureid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"culture\" where \"cultureid\" = "), Fragment.encode(CultureId.pgType, cultureid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     cultureids: Array<CultureId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"production\".\"culture\"\nwhere \"cultureid\" = ANY("), Fragment.encode(CultureId.pgTypeArray, cultureids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"culture\"\nwhere \"cultureid\" = ANY("), Fragment.encode(CultureId.pgTypeArray, cultureids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: CultureRow,
     c: Connection
-  ): CultureRow = interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"cultureid\", \"name\", \"modifieddate\"\n"))
+  ): CultureRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"cultureid\", \"name\", \"modifieddate\"\n"))
     .updateReturning(CultureRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,44 +48,44 @@ class CultureRepoImpl() : CultureRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"cultureid\""))
-    values.add(interpolate(Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar")))
+    values.add(Fragment.interpolate(Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar")))
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"production\".\"culture\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"cultureid\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"cultureid\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(CultureRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<CultureRow>,
+    unsaved: Iterator<CultureRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, CultureRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<CultureRowUnsaved>,
+    unsaved: Iterator<CultureRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, CultureRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<CultureFields, CultureRow> = SelectBuilder.of("\"production\".\"culture\"", CultureFields.structure, CultureRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<CultureRow> = interpolate(Fragment.lit("select \"cultureid\", \"name\", \"modifieddate\"\nfrom \"production\".\"culture\"\n")).query(CultureRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<CultureRow> = Fragment.interpolate(Fragment.lit("select \"cultureid\", \"name\", \"modifieddate\"\nfrom \"production\".\"culture\"\n")).query(CultureRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     cultureid: CultureId,
     c: Connection
-  ): CultureRow? = interpolate(Fragment.lit("select \"cultureid\", \"name\", \"modifieddate\"\nfrom \"production\".\"culture\"\nwhere \"cultureid\" = "), Fragment.encode(CultureId.pgType, cultureid), Fragment.lit("")).query(CultureRow._rowParser.first()).runUnchecked(c)
+  ): CultureRow? = Fragment.interpolate(Fragment.lit("select \"cultureid\", \"name\", \"modifieddate\"\nfrom \"production\".\"culture\"\nwhere \"cultureid\" = "), Fragment.encode(CultureId.pgType, cultureid), Fragment.lit("")).query(CultureRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     cultureids: Array<CultureId>,
     c: Connection
-  ): List<CultureRow> = interpolate(Fragment.lit("select \"cultureid\", \"name\", \"modifieddate\"\nfrom \"production\".\"culture\"\nwhere \"cultureid\" = ANY("), Fragment.encode(CultureId.pgTypeArray, cultureids), Fragment.lit(")")).query(CultureRow._rowParser.all()).runUnchecked(c)
+  ): List<CultureRow> = Fragment.interpolate(Fragment.lit("select \"cultureid\", \"name\", \"modifieddate\"\nfrom \"production\".\"culture\"\nwhere \"cultureid\" = ANY("), Fragment.encode(CultureId.pgTypeArray, cultureids), Fragment.lit(")")).query(CultureRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     cultureids: Array<CultureId>,
@@ -104,31 +103,31 @@ class CultureRepoImpl() : CultureRepo {
     c: Connection
   ): Boolean {
     val cultureid: CultureId = row.cultureid
-    return interpolate(Fragment.lit("update \"production\".\"culture\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"cultureid\" = "), Fragment.encode(CultureId.pgType, cultureid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"production\".\"culture\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"cultureid\" = "), Fragment.encode(CultureId.pgType, cultureid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: CultureRow,
     c: Connection
-  ): CultureRow = interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"cultureid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"cultureid\", \"name\", \"modifieddate\""))
+  ): CultureRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"cultureid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"cultureid\", \"name\", \"modifieddate\""))
     .updateReturning(CultureRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<CultureRow>,
+    unsaved: Iterator<CultureRow>,
     c: Connection
-  ): List<CultureRow> = interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nvalues (?::bpchar, ?::varchar, ?::timestamp)\non conflict (\"cultureid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"cultureid\", \"name\", \"modifieddate\""))
+  ): List<CultureRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nvalues (?::bpchar, ?::varchar, ?::timestamp)\non conflict (\"cultureid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"cultureid\", \"name\", \"modifieddate\""))
     .updateManyReturning(CultureRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<CultureRow>,
+    unsaved: Iterator<CultureRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table culture_TEMP (like \"production\".\"culture\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table culture_TEMP (like \"production\".\"culture\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy culture_TEMP(\"cultureid\", \"name\", \"modifieddate\") from stdin", batchSize, unsaved, c, CultureRow.pgText)
-    return interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nselect * from culture_TEMP\non conflict (\"cultureid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table culture_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nselect * from culture_TEMP\non conflict (\"cultureid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table culture_TEMP;")).update().runUnchecked(c)
   }
 }

@@ -8,9 +8,9 @@ package adventureworks.purchasing.shipmethod
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class ShipmethodRepoImpl() : ShipmethodRepo {
   override fun delete(): DeleteBuilder<ShipmethodFields, ShipmethodRow> = DeleteBuilder.of("\"purchasing\".\"shipmethod\"", ShipmethodFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class ShipmethodRepoImpl() : ShipmethodRepo {
   override fun deleteById(
     shipmethodid: ShipmethodId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"purchasing\".\"shipmethod\" where \"shipmethodid\" = "), Fragment.encode(ShipmethodId.pgType, shipmethodid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"purchasing\".\"shipmethod\" where \"shipmethodid\" = "), Fragment.encode(ShipmethodId.pgType, shipmethodid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     shipmethodids: Array<ShipmethodId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"purchasing\".\"shipmethod\"\nwhere \"shipmethodid\" = ANY("), Fragment.encode(ShipmethodId.pgTypeArray, shipmethodids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"purchasing\".\"shipmethod\"\nwhere \"shipmethodid\" = ANY("), Fragment.encode(ShipmethodId.pgTypeArray, shipmethodids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: ShipmethodRow,
     c: Connection
-  ): ShipmethodRow = interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.shipbase), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.shiprate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\n"))
+  ): ShipmethodRow = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.shipbase), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.shiprate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(ShipmethodRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,62 +48,62 @@ class ShipmethodRepoImpl() : ShipmethodRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.shipmethodid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"shipmethodid\""))
-      values.add(interpolate(Fragment.encode(ShipmethodId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(ShipmethodId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.shipbase.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"shipbase\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.shiprate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"shiprate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))) }
     );
     unsaved.rowguid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(ShipmethodRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ShipmethodRow>,
+    unsaved: Iterator<ShipmethodRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ShipmethodRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ShipmethodRowUnsaved>,
+    unsaved: Iterator<ShipmethodRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"purchasing\".\"shipmethod\"(\"name\", \"shipmethodid\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ShipmethodRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<ShipmethodFields, ShipmethodRow> = SelectBuilder.of("\"purchasing\".\"shipmethod\"", ShipmethodFields.structure, ShipmethodRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ShipmethodRow> = interpolate(Fragment.lit("select \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\nfrom \"purchasing\".\"shipmethod\"\n")).query(ShipmethodRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ShipmethodRow> = Fragment.interpolate(Fragment.lit("select \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\nfrom \"purchasing\".\"shipmethod\"\n")).query(ShipmethodRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     shipmethodid: ShipmethodId,
     c: Connection
-  ): ShipmethodRow? = interpolate(Fragment.lit("select \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\nfrom \"purchasing\".\"shipmethod\"\nwhere \"shipmethodid\" = "), Fragment.encode(ShipmethodId.pgType, shipmethodid), Fragment.lit("")).query(ShipmethodRow._rowParser.first()).runUnchecked(c)
+  ): ShipmethodRow? = Fragment.interpolate(Fragment.lit("select \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\nfrom \"purchasing\".\"shipmethod\"\nwhere \"shipmethodid\" = "), Fragment.encode(ShipmethodId.pgType, shipmethodid), Fragment.lit("")).query(ShipmethodRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     shipmethodids: Array<ShipmethodId>,
     c: Connection
-  ): List<ShipmethodRow> = interpolate(Fragment.lit("select \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\nfrom \"purchasing\".\"shipmethod\"\nwhere \"shipmethodid\" = ANY("), Fragment.encode(ShipmethodId.pgTypeArray, shipmethodids), Fragment.lit(")")).query(ShipmethodRow._rowParser.all()).runUnchecked(c)
+  ): List<ShipmethodRow> = Fragment.interpolate(Fragment.lit("select \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\"\nfrom \"purchasing\".\"shipmethod\"\nwhere \"shipmethodid\" = ANY("), Fragment.encode(ShipmethodId.pgTypeArray, shipmethodids), Fragment.lit(")")).query(ShipmethodRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     shipmethodids: Array<ShipmethodId>,
@@ -122,31 +121,31 @@ class ShipmethodRepoImpl() : ShipmethodRepo {
     c: Connection
   ): Boolean {
     val shipmethodid: ShipmethodId = row.shipmethodid
-    return interpolate(Fragment.lit("update \"purchasing\".\"shipmethod\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"shipbase\" = "), Fragment.encode(PgTypes.numeric, row.shipbase), Fragment.lit("::numeric,\n\"shiprate\" = "), Fragment.encode(PgTypes.numeric, row.shiprate), Fragment.lit("::numeric,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"shipmethodid\" = "), Fragment.encode(ShipmethodId.pgType, shipmethodid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"purchasing\".\"shipmethod\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"shipbase\" = "), Fragment.encode(PgTypes.numeric, row.shipbase), Fragment.lit("::numeric,\n\"shiprate\" = "), Fragment.encode(PgTypes.numeric, row.shiprate), Fragment.lit("::numeric,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"shipmethodid\" = "), Fragment.encode(ShipmethodId.pgType, shipmethodid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ShipmethodRow,
     c: Connection
-  ): ShipmethodRow = interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.shipbase), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.shiprate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"shipmethodid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"shipbase\" = EXCLUDED.\"shipbase\",\n\"shiprate\" = EXCLUDED.\"shiprate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\""))
+  ): ShipmethodRow = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.shipbase), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.shiprate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"shipmethodid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"shipbase\" = EXCLUDED.\"shipbase\",\n\"shiprate\" = EXCLUDED.\"shiprate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\""))
     .updateReturning(ShipmethodRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ShipmethodRow>,
+    unsaved: Iterator<ShipmethodRow>,
     c: Connection
-  ): List<ShipmethodRow> = interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)\non conflict (\"shipmethodid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"shipbase\" = EXCLUDED.\"shipbase\",\n\"shiprate\" = EXCLUDED.\"shiprate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\""))
+  ): List<ShipmethodRow> = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)\non conflict (\"shipmethodid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"shipbase\" = EXCLUDED.\"shipbase\",\n\"shiprate\" = EXCLUDED.\"shiprate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\""))
     .updateManyReturning(ShipmethodRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ShipmethodRow>,
+    unsaved: Iterator<ShipmethodRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table shipmethod_TEMP (like \"purchasing\".\"shipmethod\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table shipmethod_TEMP (like \"purchasing\".\"shipmethod\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy shipmethod_TEMP(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, ShipmethodRow.pgText)
-    return interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\")\nselect * from shipmethod_TEMP\non conflict (\"shipmethodid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"shipbase\" = EXCLUDED.\"shipbase\",\n\"shiprate\" = EXCLUDED.\"shiprate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table shipmethod_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"shipmethod\"(\"shipmethodid\", \"name\", \"shipbase\", \"shiprate\", \"rowguid\", \"modifieddate\")\nselect * from shipmethod_TEMP\non conflict (\"shipmethodid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"shipbase\" = EXCLUDED.\"shipbase\",\n\"shiprate\" = EXCLUDED.\"shiprate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table shipmethod_TEMP;")).update().runUnchecked(c)
   }
 }

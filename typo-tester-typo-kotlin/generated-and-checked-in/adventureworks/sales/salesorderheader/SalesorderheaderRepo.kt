@@ -6,9 +6,9 @@
 package adventureworks.sales.salesorderheader
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface SalesorderheaderRepo {
   ): SalesorderheaderRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<SalesorderheaderRow>,
+    unsaved: Iterator<SalesorderheaderRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SalesorderheaderRowUnsaved>,
+    unsaved: Iterator<SalesorderheaderRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface SalesorderheaderRepo {
   ): SalesorderheaderRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<SalesorderheaderRow>,
+    unsaved: Iterator<SalesorderheaderRow>,
     c: Connection
   ): List<SalesorderheaderRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<SalesorderheaderRow>,
+    unsaved: Iterator<SalesorderheaderRow>,
     batchSize: Int,
     c: Connection
   ): Int

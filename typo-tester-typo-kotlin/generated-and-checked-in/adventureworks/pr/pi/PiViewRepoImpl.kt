@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class PiViewRepoImpl() : PiViewRepo {
   override fun select(): SelectBuilder<PiViewFields, PiViewRow> = SelectBuilder.of("\"pr\".\"pi\"", PiViewFields.structure, PiViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<PiViewRow> = interpolate(Fragment.lit("select \"id\", \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\", \"rowguid\", \"modifieddate\"\nfrom \"pr\".\"pi\"\n")).query(PiViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<PiViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\", \"rowguid\", \"modifieddate\"\nfrom \"pr\".\"pi\"\n")).query(PiViewRow._rowParser.all()).runUnchecked(c)
 }

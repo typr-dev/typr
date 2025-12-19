@@ -6,9 +6,9 @@
 package adventureworks.public.title_domain
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -16,7 +16,6 @@ import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class TitleDomainRepoImpl() : TitleDomainRepo {
   override fun delete(): DeleteBuilder<TitleDomainFields, TitleDomainRow> = DeleteBuilder.of("\"public\".\"title_domain\"", TitleDomainFields.structure, Dialect.POSTGRESQL)
@@ -24,40 +23,40 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
   override fun deleteById(
     code: TitleDomainId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"public\".\"title_domain\" where \"code\" = "), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"title_domain\" where \"code\" = "), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     codes: Array<TitleDomainId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: TitleDomainRow,
     c: Connection
-  ): TitleDomainRow = interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("::text)\nreturning \"code\"\n"))
+  ): TitleDomainRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("::text)\nreturning \"code\"\n"))
     .updateReturning(TitleDomainRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<TitleDomainRow>,
+    unsaved: Iterator<TitleDomainRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"title_domain\"(\"code\") FROM STDIN", batchSize, unsaved, c, TitleDomainRow.pgText)
 
   override fun select(): SelectBuilder<TitleDomainFields, TitleDomainRow> = SelectBuilder.of("\"public\".\"title_domain\"", TitleDomainFields.structure, TitleDomainRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<TitleDomainRow> = interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\n")).query(TitleDomainRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<TitleDomainRow> = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\n")).query(TitleDomainRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     code: TitleDomainId,
     c: Connection
-  ): TitleDomainRow? = interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = "), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).query(TitleDomainRow._rowParser.first()).runUnchecked(c)
+  ): TitleDomainRow? = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = "), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).query(TitleDomainRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     codes: Array<TitleDomainId>,
     c: Connection
-  ): List<TitleDomainRow> = interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")")).query(TitleDomainRow._rowParser.all()).runUnchecked(c)
+  ): List<TitleDomainRow> = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")")).query(TitleDomainRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     codes: Array<TitleDomainId>,
@@ -73,25 +72,25 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
   override fun upsert(
     unsaved: TitleDomainRow,
     c: Connection
-  ): TitleDomainRow = interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("::text)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
+  ): TitleDomainRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("::text)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
     .updateReturning(TitleDomainRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<TitleDomainRow>,
+    unsaved: Iterator<TitleDomainRow>,
     c: Connection
-  ): List<TitleDomainRow> = interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues (?::text)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
+  ): List<TitleDomainRow> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues (?::text)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
     .updateManyReturning(TitleDomainRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<TitleDomainRow>,
+    unsaved: Iterator<TitleDomainRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table title_domain_TEMP (like \"public\".\"title_domain\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table title_domain_TEMP (like \"public\".\"title_domain\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy title_domain_TEMP(\"code\") from stdin", batchSize, unsaved, c, TitleDomainRow.pgText)
-    return interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nselect * from title_domain_TEMP\non conflict (\"code\")\ndo nothing\n;\ndrop table title_domain_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nselect * from title_domain_TEMP\non conflict (\"code\")\ndo nothing\n;\ndrop table title_domain_TEMP;")).update().runUnchecked(c)
   }
 }

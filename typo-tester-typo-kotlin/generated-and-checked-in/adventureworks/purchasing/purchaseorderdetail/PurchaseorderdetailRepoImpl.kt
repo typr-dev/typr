@@ -16,17 +16,16 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.SelectBuilder
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
-import typo.kotlindsl.Fragment.interpolate
 
 class PurchaseorderdetailRepoImpl() : PurchaseorderdetailRepo {
   override fun select(): SelectBuilder<PurchaseorderdetailFields, PurchaseorderdetailRow> = SelectBuilder.of("\"purchasing\".\"purchaseorderdetail\"", PurchaseorderdetailFields.structure, PurchaseorderdetailRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<PurchaseorderdetailRow> = interpolate(Fragment.lit("select \"purchaseorderid\", \"purchaseorderdetailid\", \"duedate\", \"orderqty\", \"productid\", \"unitprice\", \"receivedqty\", \"rejectedqty\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderdetail\"\n")).query(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<PurchaseorderdetailRow> = Fragment.interpolate(Fragment.lit("select \"purchaseorderid\", \"purchaseorderdetailid\", \"duedate\", \"orderqty\", \"productid\", \"unitprice\", \"receivedqty\", \"rejectedqty\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderdetail\"\n")).query(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     compositeId: PurchaseorderdetailId,
     c: Connection
-  ): PurchaseorderdetailRow? = interpolate(Fragment.lit("select \"purchaseorderid\", \"purchaseorderdetailid\", \"duedate\", \"orderqty\", \"productid\", \"unitprice\", \"receivedqty\", \"rejectedqty\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderdetail\"\nwhere \"purchaseorderid\" = "), Fragment.encode(PurchaseorderheaderId.pgType, compositeId.purchaseorderid), Fragment.lit(" AND \"purchaseorderdetailid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.purchaseorderdetailid), Fragment.lit("")).query(PurchaseorderdetailRow._rowParser.first()).runUnchecked(c)
+  ): PurchaseorderdetailRow? = Fragment.interpolate(Fragment.lit("select \"purchaseorderid\", \"purchaseorderdetailid\", \"duedate\", \"orderqty\", \"productid\", \"unitprice\", \"receivedqty\", \"rejectedqty\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderdetail\"\nwhere \"purchaseorderid\" = "), Fragment.encode(PurchaseorderheaderId.pgType, compositeId.purchaseorderid), Fragment.lit(" AND \"purchaseorderdetailid\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.purchaseorderdetailid), Fragment.lit("")).query(PurchaseorderdetailRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     compositeIds: Array<PurchaseorderdetailId>,
@@ -34,7 +33,7 @@ class PurchaseorderdetailRepoImpl() : PurchaseorderdetailRepo {
   ): List<PurchaseorderdetailRow> {
     val purchaseorderid: Array<PurchaseorderheaderId> = arrayMap.map(compositeIds, PurchaseorderdetailId::purchaseorderid, PurchaseorderheaderId::class.java)
     val purchaseorderdetailid: Array<Int> = arrayMap.map(compositeIds, PurchaseorderdetailId::purchaseorderdetailid, Int::class.javaObjectType)
-    return interpolate(Fragment.lit("select \"purchaseorderid\", \"purchaseorderdetailid\", \"duedate\", \"orderqty\", \"productid\", \"unitprice\", \"receivedqty\", \"rejectedqty\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderdetail\"\nwhere (\"purchaseorderid\", \"purchaseorderdetailid\")\nin (select unnest("), Fragment.encode(PurchaseorderheaderId.pgTypeArray, purchaseorderid), Fragment.lit("::int4[]), unnest("), Fragment.encode(PgTypes.int4Array, purchaseorderdetailid), Fragment.lit("::int4[]))\n")).query(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select \"purchaseorderid\", \"purchaseorderdetailid\", \"duedate\", \"orderqty\", \"productid\", \"unitprice\", \"receivedqty\", \"rejectedqty\", \"modifieddate\"\nfrom \"purchasing\".\"purchaseorderdetail\"\nwhere (\"purchaseorderid\", \"purchaseorderdetailid\")\nin (select unnest("), Fragment.encode(PurchaseorderheaderId.pgTypeArray, purchaseorderid), Fragment.lit("::int4[]), unnest("), Fragment.encode(PgTypes.int4Array, purchaseorderdetailid), Fragment.lit("::int4[]))\n")).query(PurchaseorderdetailRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

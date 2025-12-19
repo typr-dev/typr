@@ -6,9 +6,9 @@
 package adventureworks.public.users
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.data.Unknown
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
@@ -38,14 +38,14 @@ interface UsersRepo {
   ): UsersRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<UsersRow>,
+    unsaved: Iterator<UsersRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<UsersRowUnsaved>,
+    unsaved: Iterator<UsersRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -87,13 +87,13 @@ interface UsersRepo {
   ): UsersRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<UsersRow>,
+    unsaved: Iterator<UsersRow>,
     c: Connection
   ): List<UsersRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<UsersRow>,
+    unsaved: Iterator<UsersRow>,
     batchSize: Int,
     c: Connection
   ): Int

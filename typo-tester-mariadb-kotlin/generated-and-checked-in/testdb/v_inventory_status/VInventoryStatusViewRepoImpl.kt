@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class VInventoryStatusViewRepoImpl() : VInventoryStatusViewRepo {
   override fun select(): SelectBuilder<VInventoryStatusViewFields, VInventoryStatusViewRow> = SelectBuilder.of("`v_inventory_status`", VInventoryStatusViewFields.structure, VInventoryStatusViewRow._rowParser, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<VInventoryStatusViewRow> = interpolate(Fragment.lit("select `product_id`, `sku`, `product_name`, `warehouse_id`, `warehouse_code`, `warehouse_name`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `available`, `reorder_point`, `stock_status`, `bin_location`, `last_counted_at`\nfrom `v_inventory_status`\n")).query(VInventoryStatusViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<VInventoryStatusViewRow> = Fragment.interpolate(Fragment.lit("select `product_id`, `sku`, `product_name`, `warehouse_id`, `warehouse_code`, `warehouse_name`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `available`, `reorder_point`, `stock_status`, `bin_location`, `last_counted_at`\nfrom `v_inventory_status`\n")).query(VInventoryStatusViewRow._rowParser.all()).runUnchecked(c)
 }

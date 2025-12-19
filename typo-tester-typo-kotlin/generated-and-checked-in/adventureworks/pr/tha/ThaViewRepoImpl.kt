@@ -10,10 +10,9 @@ import kotlin.collections.List
 import typo.kotlindsl.Dialect
 import typo.kotlindsl.Fragment
 import typo.kotlindsl.SelectBuilder
-import typo.kotlindsl.Fragment.interpolate
 
 class ThaViewRepoImpl() : ThaViewRepo {
   override fun select(): SelectBuilder<ThaViewFields, ThaViewRow> = SelectBuilder.of("\"pr\".\"tha\"", ThaViewFields.structure, ThaViewRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ThaViewRow> = interpolate(Fragment.lit("select \"id\", \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\nfrom \"pr\".\"tha\"\n")).query(ThaViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ThaViewRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"transactionid\", \"productid\", \"referenceorderid\", \"referenceorderlineid\", \"transactiondate\", \"transactiontype\", \"quantity\", \"actualcost\", \"modifieddate\"\nfrom \"pr\".\"tha\"\n")).query(ThaViewRow._rowParser.all()).runUnchecked(c)
 }

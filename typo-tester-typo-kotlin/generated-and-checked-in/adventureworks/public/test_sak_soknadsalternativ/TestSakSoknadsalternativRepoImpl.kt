@@ -7,9 +7,9 @@ package adventureworks.public.test_sak_soknadsalternativ
 
 import adventureworks.public.test_organisasjon.TestOrganisasjonId
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.internal.arrayMap
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
   override fun delete(): DeleteBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> = DeleteBuilder.of("\"public\".\"test_sak_soknadsalternativ\"", TestSakSoknadsalternativFields.structure, Dialect.POSTGRESQL)
@@ -27,7 +26,7 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
   override fun deleteById(
     compositeId: TestSakSoknadsalternativId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"public\".\"test_sak_soknadsalternativ\" where \"organisasjonskode_saksbehandler\" = "), Fragment.encode(PgTypes.text, compositeId.organisasjonskodeSaksbehandler), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"test_sak_soknadsalternativ\" where \"organisasjonskode_saksbehandler\" = "), Fragment.encode(PgTypes.text, compositeId.organisasjonskodeSaksbehandler), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<TestSakSoknadsalternativId>,
@@ -35,29 +34,29 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
   ): Int {
     val organisasjonskodeSaksbehandler: Array<String> = arrayMap.map(compositeIds, TestSakSoknadsalternativId::organisasjonskodeSaksbehandler, String::class.java)
     val utdanningsmulighetKode: Array<String> = arrayMap.map(compositeIds, TestSakSoknadsalternativId::utdanningsmulighetKode, String::class.java)
-    return interpolate(Fragment.lit("delete\nfrom \"public\".\"test_sak_soknadsalternativ\"\nwhere (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\nin (select unnest("), Fragment.encode(PgTypes.textArray, organisasjonskodeSaksbehandler), Fragment.lit("::text[]), unnest("), Fragment.encode(PgTypes.textArray, utdanningsmulighetKode), Fragment.lit("::text[]))\n")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"test_sak_soknadsalternativ\"\nwhere (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\nin (select unnest("), Fragment.encode(PgTypes.textArray, organisasjonskodeSaksbehandler), Fragment.lit("::text[]), unnest("), Fragment.encode(PgTypes.textArray, utdanningsmulighetKode), Fragment.lit("::text[]))\n")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: TestSakSoknadsalternativRow,
     c: Connection
-  ): TestSakSoknadsalternativRow = interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nvalues ("), Fragment.encode(PgTypes.text, unsaved.organisasjonskodeSaksbehandler), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(", "), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskodeTilbyder), Fragment.lit(")\nreturning \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\n"))
+  ): TestSakSoknadsalternativRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nvalues ("), Fragment.encode(PgTypes.text, unsaved.organisasjonskodeSaksbehandler), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(", "), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskodeTilbyder), Fragment.lit(")\nreturning \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\n"))
     .updateReturning(TestSakSoknadsalternativRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(
-    unsaved: MutableIterator<TestSakSoknadsalternativRow>,
+    unsaved: Iterator<TestSakSoknadsalternativRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\") FROM STDIN", batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText)
 
   override fun select(): SelectBuilder<TestSakSoknadsalternativFields, TestSakSoknadsalternativRow> = SelectBuilder.of("\"public\".\"test_sak_soknadsalternativ\"", TestSakSoknadsalternativFields.structure, TestSakSoknadsalternativRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<TestSakSoknadsalternativRow> = interpolate(Fragment.lit("select \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\nfrom \"public\".\"test_sak_soknadsalternativ\"\n")).query(TestSakSoknadsalternativRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<TestSakSoknadsalternativRow> = Fragment.interpolate(Fragment.lit("select \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\nfrom \"public\".\"test_sak_soknadsalternativ\"\n")).query(TestSakSoknadsalternativRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     compositeId: TestSakSoknadsalternativId,
     c: Connection
-  ): TestSakSoknadsalternativRow? = interpolate(Fragment.lit("select \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\nfrom \"public\".\"test_sak_soknadsalternativ\"\nwhere \"organisasjonskode_saksbehandler\" = "), Fragment.encode(PgTypes.text, compositeId.organisasjonskodeSaksbehandler), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).query(TestSakSoknadsalternativRow._rowParser.first()).runUnchecked(c)
+  ): TestSakSoknadsalternativRow? = Fragment.interpolate(Fragment.lit("select \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\nfrom \"public\".\"test_sak_soknadsalternativ\"\nwhere \"organisasjonskode_saksbehandler\" = "), Fragment.encode(PgTypes.text, compositeId.organisasjonskodeSaksbehandler), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).query(TestSakSoknadsalternativRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     compositeIds: Array<TestSakSoknadsalternativId>,
@@ -65,7 +64,7 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
   ): List<TestSakSoknadsalternativRow> {
     val organisasjonskodeSaksbehandler: Array<String> = arrayMap.map(compositeIds, TestSakSoknadsalternativId::organisasjonskodeSaksbehandler, String::class.java)
     val utdanningsmulighetKode: Array<String> = arrayMap.map(compositeIds, TestSakSoknadsalternativId::utdanningsmulighetKode, String::class.java)
-    return interpolate(Fragment.lit("select \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\nfrom \"public\".\"test_sak_soknadsalternativ\"\nwhere (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\nin (select unnest("), Fragment.encode(PgTypes.textArray, organisasjonskodeSaksbehandler), Fragment.lit("::text[]), unnest("), Fragment.encode(PgTypes.textArray, utdanningsmulighetKode), Fragment.lit("::text[]))\n")).query(TestSakSoknadsalternativRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\nfrom \"public\".\"test_sak_soknadsalternativ\"\nwhere (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\nin (select unnest("), Fragment.encode(PgTypes.textArray, organisasjonskodeSaksbehandler), Fragment.lit("::text[]), unnest("), Fragment.encode(PgTypes.textArray, utdanningsmulighetKode), Fragment.lit("::text[]))\n")).query(TestSakSoknadsalternativRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(
@@ -84,31 +83,31 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
     c: Connection
   ): Boolean {
     val compositeId: TestSakSoknadsalternativId = row.compositeId()
-    return interpolate(Fragment.lit("update \"public\".\"test_sak_soknadsalternativ\"\nset \"organisasjonskode_tilbyder\" = "), Fragment.encode(TestOrganisasjonId.pgType, row.organisasjonskodeTilbyder), Fragment.lit("\nwhere \"organisasjonskode_saksbehandler\" = "), Fragment.encode(PgTypes.text, compositeId.organisasjonskodeSaksbehandler), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"public\".\"test_sak_soknadsalternativ\"\nset \"organisasjonskode_tilbyder\" = "), Fragment.encode(TestOrganisasjonId.pgType, row.organisasjonskodeTilbyder), Fragment.lit("\nwhere \"organisasjonskode_saksbehandler\" = "), Fragment.encode(PgTypes.text, compositeId.organisasjonskodeSaksbehandler), Fragment.lit(" AND \"utdanningsmulighet_kode\" = "), Fragment.encode(PgTypes.text, compositeId.utdanningsmulighetKode), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: TestSakSoknadsalternativRow,
     c: Connection
-  ): TestSakSoknadsalternativRow = interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nvalues ("), Fragment.encode(PgTypes.text, unsaved.organisasjonskodeSaksbehandler), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(", "), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskodeTilbyder), Fragment.lit(")\non conflict (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\ndo update set\n  \"organisasjonskode_tilbyder\" = EXCLUDED.\"organisasjonskode_tilbyder\"\nreturning \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\""))
+  ): TestSakSoknadsalternativRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nvalues ("), Fragment.encode(PgTypes.text, unsaved.organisasjonskodeSaksbehandler), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(", "), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskodeTilbyder), Fragment.lit(")\non conflict (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\ndo update set\n  \"organisasjonskode_tilbyder\" = EXCLUDED.\"organisasjonskode_tilbyder\"\nreturning \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\""))
     .updateReturning(TestSakSoknadsalternativRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<TestSakSoknadsalternativRow>,
+    unsaved: Iterator<TestSakSoknadsalternativRow>,
     c: Connection
-  ): List<TestSakSoknadsalternativRow> = interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nvalues (?, ?, ?)\non conflict (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\ndo update set\n  \"organisasjonskode_tilbyder\" = EXCLUDED.\"organisasjonskode_tilbyder\"\nreturning \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\""))
+  ): List<TestSakSoknadsalternativRow> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nvalues (?, ?, ?)\non conflict (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\ndo update set\n  \"organisasjonskode_tilbyder\" = EXCLUDED.\"organisasjonskode_tilbyder\"\nreturning \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\""))
     .updateManyReturning(TestSakSoknadsalternativRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<TestSakSoknadsalternativRow>,
+    unsaved: Iterator<TestSakSoknadsalternativRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table test_sak_soknadsalternativ_TEMP (like \"public\".\"test_sak_soknadsalternativ\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table test_sak_soknadsalternativ_TEMP (like \"public\".\"test_sak_soknadsalternativ\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy test_sak_soknadsalternativ_TEMP(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\") from stdin", batchSize, unsaved, c, TestSakSoknadsalternativRow.pgText)
-    return interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nselect * from test_sak_soknadsalternativ_TEMP\non conflict (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\ndo update set\n  \"organisasjonskode_tilbyder\" = EXCLUDED.\"organisasjonskode_tilbyder\"\n;\ndrop table test_sak_soknadsalternativ_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nselect * from test_sak_soknadsalternativ_TEMP\non conflict (\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\")\ndo update set\n  \"organisasjonskode_tilbyder\" = EXCLUDED.\"organisasjonskode_tilbyder\"\n;\ndrop table test_sak_soknadsalternativ_TEMP;")).update().runUnchecked(c)
   }
 }

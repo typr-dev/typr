@@ -6,9 +6,9 @@
 package adventureworks.sales.salesterritory
 
 import java.sql.Connection
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
@@ -37,14 +37,14 @@ interface SalesterritoryRepo {
   ): SalesterritoryRow
 
   abstract fun insertStreaming(
-    unsaved: MutableIterator<SalesterritoryRow>,
+    unsaved: Iterator<SalesterritoryRow>,
     batchSize: Int,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SalesterritoryRowUnsaved>,
+    unsaved: Iterator<SalesterritoryRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long
@@ -81,13 +81,13 @@ interface SalesterritoryRepo {
   ): SalesterritoryRow
 
   abstract fun upsertBatch(
-    unsaved: MutableIterator<SalesterritoryRow>,
+    unsaved: Iterator<SalesterritoryRow>,
     c: Connection
   ): List<SalesterritoryRow>
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
-    unsaved: MutableIterator<SalesterritoryRow>,
+    unsaved: Iterator<SalesterritoryRow>,
     batchSize: Int,
     c: Connection
   ): Int

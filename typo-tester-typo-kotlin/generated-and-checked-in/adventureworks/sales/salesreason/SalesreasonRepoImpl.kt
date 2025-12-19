@@ -8,9 +8,9 @@ package adventureworks.sales.salesreason
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class SalesreasonRepoImpl() : SalesreasonRepo {
   override fun delete(): DeleteBuilder<SalesreasonFields, SalesreasonRow> = DeleteBuilder.of("\"sales\".\"salesreason\"", SalesreasonFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class SalesreasonRepoImpl() : SalesreasonRepo {
   override fun deleteById(
     salesreasonid: SalesreasonId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"sales\".\"salesreason\" where \"salesreasonid\" = "), Fragment.encode(SalesreasonId.pgType, salesreasonid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"sales\".\"salesreason\" where \"salesreasonid\" = "), Fragment.encode(SalesreasonId.pgType, salesreasonid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     salesreasonids: Array<SalesreasonId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"sales\".\"salesreason\"\nwhere \"salesreasonid\" = ANY("), Fragment.encode(SalesreasonId.pgTypeArray, salesreasonids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"sales\".\"salesreason\"\nwhere \"salesreasonid\" = ANY("), Fragment.encode(SalesreasonId.pgTypeArray, salesreasonids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: SalesreasonRow,
     c: Connection
-  ): SalesreasonRow = interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesreasonId.pgType, unsaved.salesreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.reasontype), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"))
+  ): SalesreasonRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesreasonId.pgType, unsaved.salesreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.reasontype), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"))
     .updateReturning(SalesreasonRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,49 +48,49 @@ class SalesreasonRepoImpl() : SalesreasonRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     columns.add(Fragment.lit("\"reasontype\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.reasontype), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.reasontype), Fragment.lit("::varchar")))
     unsaved.salesreasonid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"salesreasonid\""))
-      values.add(interpolate(Fragment.encode(SalesreasonId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(SalesreasonId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"))
     return q.updateReturning(SalesreasonRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<SalesreasonRow>,
+    unsaved: Iterator<SalesreasonRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, SalesreasonRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<SalesreasonRowUnsaved>,
+    unsaved: Iterator<SalesreasonRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"sales\".\"salesreason\"(\"name\", \"reasontype\", \"salesreasonid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, SalesreasonRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<SalesreasonFields, SalesreasonRow> = SelectBuilder.of("\"sales\".\"salesreason\"", SalesreasonFields.structure, SalesreasonRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<SalesreasonRow> = interpolate(Fragment.lit("select \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\nfrom \"sales\".\"salesreason\"\n")).query(SalesreasonRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<SalesreasonRow> = Fragment.interpolate(Fragment.lit("select \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\nfrom \"sales\".\"salesreason\"\n")).query(SalesreasonRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     salesreasonid: SalesreasonId,
     c: Connection
-  ): SalesreasonRow? = interpolate(Fragment.lit("select \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\nfrom \"sales\".\"salesreason\"\nwhere \"salesreasonid\" = "), Fragment.encode(SalesreasonId.pgType, salesreasonid), Fragment.lit("")).query(SalesreasonRow._rowParser.first()).runUnchecked(c)
+  ): SalesreasonRow? = Fragment.interpolate(Fragment.lit("select \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\nfrom \"sales\".\"salesreason\"\nwhere \"salesreasonid\" = "), Fragment.encode(SalesreasonId.pgType, salesreasonid), Fragment.lit("")).query(SalesreasonRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     salesreasonids: Array<SalesreasonId>,
     c: Connection
-  ): List<SalesreasonRow> = interpolate(Fragment.lit("select \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\nfrom \"sales\".\"salesreason\"\nwhere \"salesreasonid\" = ANY("), Fragment.encode(SalesreasonId.pgTypeArray, salesreasonids), Fragment.lit(")")).query(SalesreasonRow._rowParser.all()).runUnchecked(c)
+  ): List<SalesreasonRow> = Fragment.interpolate(Fragment.lit("select \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\nfrom \"sales\".\"salesreason\"\nwhere \"salesreasonid\" = ANY("), Fragment.encode(SalesreasonId.pgTypeArray, salesreasonids), Fragment.lit(")")).query(SalesreasonRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     salesreasonids: Array<SalesreasonId>,
@@ -109,31 +108,31 @@ class SalesreasonRepoImpl() : SalesreasonRepo {
     c: Connection
   ): Boolean {
     val salesreasonid: SalesreasonId = row.salesreasonid
-    return interpolate(Fragment.lit("update \"sales\".\"salesreason\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"reasontype\" = "), Fragment.encode(Name.pgType, row.reasontype), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"salesreasonid\" = "), Fragment.encode(SalesreasonId.pgType, salesreasonid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"sales\".\"salesreason\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"reasontype\" = "), Fragment.encode(Name.pgType, row.reasontype), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"salesreasonid\" = "), Fragment.encode(SalesreasonId.pgType, salesreasonid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: SalesreasonRow,
     c: Connection
-  ): SalesreasonRow = interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesreasonId.pgType, unsaved.salesreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.reasontype), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"salesreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"reasontype\" = EXCLUDED.\"reasontype\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\""))
+  ): SalesreasonRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesreasonId.pgType, unsaved.salesreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.reasontype), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"salesreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"reasontype\" = EXCLUDED.\"reasontype\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\""))
     .updateReturning(SalesreasonRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<SalesreasonRow>,
+    unsaved: Iterator<SalesreasonRow>,
     c: Connection
-  ): List<SalesreasonRow> = interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::varchar, ?::timestamp)\non conflict (\"salesreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"reasontype\" = EXCLUDED.\"reasontype\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\""))
+  ): List<SalesreasonRow> = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::varchar, ?::timestamp)\non conflict (\"salesreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"reasontype\" = EXCLUDED.\"reasontype\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\""))
     .updateManyReturning(SalesreasonRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<SalesreasonRow>,
+    unsaved: Iterator<SalesreasonRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table salesreason_TEMP (like \"sales\".\"salesreason\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table salesreason_TEMP (like \"sales\".\"salesreason\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy salesreason_TEMP(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\") from stdin", batchSize, unsaved, c, SalesreasonRow.pgText)
-    return interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\")\nselect * from salesreason_TEMP\non conflict (\"salesreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"reasontype\" = EXCLUDED.\"reasontype\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table salesreason_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"(\"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\")\nselect * from salesreason_TEMP\non conflict (\"salesreasonid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"reasontype\" = EXCLUDED.\"reasontype\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table salesreason_TEMP;")).update().runUnchecked(c)
   }
 }

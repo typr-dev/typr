@@ -8,9 +8,9 @@ package adventureworks.person.contacttype
 import adventureworks.public.Name
 import java.sql.Connection
 import java.util.ArrayList
+import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.MutableIterator
 import kotlin.collections.MutableMap
 import typo.kotlindsl.DeleteBuilder
 import typo.kotlindsl.Dialect
@@ -19,7 +19,6 @@ import typo.kotlindsl.SelectBuilder
 import typo.kotlindsl.UpdateBuilder
 import typo.runtime.PgTypes
 import typo.runtime.streamingInsert
-import typo.kotlindsl.Fragment.interpolate
 
 class ContacttypeRepoImpl() : ContacttypeRepo {
   override fun delete(): DeleteBuilder<ContacttypeFields, ContacttypeRow> = DeleteBuilder.of("\"person\".\"contacttype\"", ContacttypeFields.structure, Dialect.POSTGRESQL)
@@ -27,19 +26,19 @@ class ContacttypeRepoImpl() : ContacttypeRepo {
   override fun deleteById(
     contacttypeid: ContacttypeId,
     c: Connection
-  ): Boolean = interpolate(Fragment.lit("delete from \"person\".\"contacttype\" where \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, contacttypeid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"contacttype\" where \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, contacttypeid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     contacttypeids: Array<ContacttypeId>,
     c: Connection
-  ): Int = interpolate(Fragment.lit("delete\nfrom \"person\".\"contacttype\"\nwhere \"contacttypeid\" = ANY("), Fragment.encode(ContacttypeId.pgTypeArray, contacttypeids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"contacttype\"\nwhere \"contacttypeid\" = ANY("), Fragment.encode(ContacttypeId.pgTypeArray, contacttypeids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: ContacttypeRow,
     c: Connection
-  ): ContacttypeRow = interpolate(Fragment.lit("insert into \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"contacttypeid\", \"name\", \"modifieddate\"\n"))
+  ): ContacttypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"contacttypeid\", \"name\", \"modifieddate\"\n"))
     .updateReturning(ContacttypeRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,47 +48,47 @@ class ContacttypeRepoImpl() : ContacttypeRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.contacttypeid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"contacttypeid\""))
-      values.add(interpolate(Fragment.encode(ContacttypeId.pgType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(ContacttypeId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = interpolate(Fragment.lit("insert into \"person\".\"contacttype\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"contacttypeid\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"contacttype\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"contacttypeid\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(ContacttypeRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
   override fun insertStreaming(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ContacttypeRow.pgText)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
-    unsaved: MutableIterator<ContacttypeRowUnsaved>,
+    unsaved: Iterator<ContacttypeRowUnsaved>,
     batchSize: Int,
     c: Connection
   ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"contacttype\"(\"name\", \"contacttypeid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ContacttypeRowUnsaved.pgText)
 
   override fun select(): SelectBuilder<ContacttypeFields, ContacttypeRow> = SelectBuilder.of("\"person\".\"contacttype\"", ContacttypeFields.structure, ContacttypeRow._rowParser, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ContacttypeRow> = interpolate(Fragment.lit("select \"contacttypeid\", \"name\", \"modifieddate\"\nfrom \"person\".\"contacttype\"\n")).query(ContacttypeRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: Connection): List<ContacttypeRow> = Fragment.interpolate(Fragment.lit("select \"contacttypeid\", \"name\", \"modifieddate\"\nfrom \"person\".\"contacttype\"\n")).query(ContacttypeRow._rowParser.all()).runUnchecked(c)
 
   override fun selectById(
     contacttypeid: ContacttypeId,
     c: Connection
-  ): ContacttypeRow? = interpolate(Fragment.lit("select \"contacttypeid\", \"name\", \"modifieddate\"\nfrom \"person\".\"contacttype\"\nwhere \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, contacttypeid), Fragment.lit("")).query(ContacttypeRow._rowParser.first()).runUnchecked(c)
+  ): ContacttypeRow? = Fragment.interpolate(Fragment.lit("select \"contacttypeid\", \"name\", \"modifieddate\"\nfrom \"person\".\"contacttype\"\nwhere \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, contacttypeid), Fragment.lit("")).query(ContacttypeRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     contacttypeids: Array<ContacttypeId>,
     c: Connection
-  ): List<ContacttypeRow> = interpolate(Fragment.lit("select \"contacttypeid\", \"name\", \"modifieddate\"\nfrom \"person\".\"contacttype\"\nwhere \"contacttypeid\" = ANY("), Fragment.encode(ContacttypeId.pgTypeArray, contacttypeids), Fragment.lit(")")).query(ContacttypeRow._rowParser.all()).runUnchecked(c)
+  ): List<ContacttypeRow> = Fragment.interpolate(Fragment.lit("select \"contacttypeid\", \"name\", \"modifieddate\"\nfrom \"person\".\"contacttype\"\nwhere \"contacttypeid\" = ANY("), Fragment.encode(ContacttypeId.pgTypeArray, contacttypeids), Fragment.lit(")")).query(ContacttypeRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     contacttypeids: Array<ContacttypeId>,
@@ -107,31 +106,31 @@ class ContacttypeRepoImpl() : ContacttypeRepo {
     c: Connection
   ): Boolean {
     val contacttypeid: ContacttypeId = row.contacttypeid
-    return interpolate(Fragment.lit("update \"person\".\"contacttype\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, contacttypeid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"person\".\"contacttype\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"contacttypeid\" = "), Fragment.encode(ContacttypeId.pgType, contacttypeid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ContacttypeRow,
     c: Connection
-  ): ContacttypeRow = interpolate(Fragment.lit("insert into \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"contacttypeid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"contacttypeid\", \"name\", \"modifieddate\""))
+  ): ContacttypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"contacttypeid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"contacttypeid\", \"name\", \"modifieddate\""))
     .updateReturning(ContacttypeRow._rowParser.exactlyOne())
     .runUnchecked(c)
 
   override fun upsertBatch(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     c: Connection
-  ): List<ContacttypeRow> = interpolate(Fragment.lit("insert into \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::timestamp)\non conflict (\"contacttypeid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"contacttypeid\", \"name\", \"modifieddate\""))
+  ): List<ContacttypeRow> = Fragment.interpolate(Fragment.lit("insert into \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::timestamp)\non conflict (\"contacttypeid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"contacttypeid\", \"name\", \"modifieddate\""))
     .updateManyReturning(ContacttypeRow._rowParser, unsaved)
   .runUnchecked(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
-    unsaved: MutableIterator<ContacttypeRow>,
+    unsaved: Iterator<ContacttypeRow>,
     batchSize: Int,
     c: Connection
   ): Int {
-    interpolate(Fragment.lit("create temporary table contacttype_TEMP (like \"person\".\"contacttype\") on commit drop")).update().runUnchecked(c)
+    Fragment.interpolate(Fragment.lit("create temporary table contacttype_TEMP (like \"person\".\"contacttype\") on commit drop")).update().runUnchecked(c)
     streamingInsert.insertUnchecked("copy contacttype_TEMP(\"contacttypeid\", \"name\", \"modifieddate\") from stdin", batchSize, unsaved, c, ContacttypeRow.pgText)
-    return interpolate(Fragment.lit("insert into \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\")\nselect * from contacttype_TEMP\non conflict (\"contacttypeid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table contacttype_TEMP;")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("insert into \"person\".\"contacttype\"(\"contacttypeid\", \"name\", \"modifieddate\")\nselect * from contacttype_TEMP\non conflict (\"contacttypeid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table contacttype_TEMP;")).update().runUnchecked(c)
   }
 }
