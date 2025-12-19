@@ -1,8 +1,7 @@
 package adventureworks.userdefined
 
 import typo.dsl.Bijection
-import typo.runtime.PgText
-import typo.runtime.PgTypes
+import typo.runtime.{PgText, PgTypes}
 
 case class FirstName(value: String) extends AnyVal
 

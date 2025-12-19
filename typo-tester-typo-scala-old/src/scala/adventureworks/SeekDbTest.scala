@@ -1,9 +1,7 @@
 package adventureworks
 
-import adventureworks.DbNow
-
-import adventureworks.person.businessentity._
-import org.junit.Assert._
+import adventureworks.person.businessentity.*
+import org.junit.Assert.*
 import org.junit.Test
 import typo.dsl.SqlExpr
 import typo.runtime.PgTypes
@@ -11,7 +9,7 @@ import typo.runtime.PgTypes
 import java.sql.Connection
 import java.time.LocalDateTime
 import java.util.UUID
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 class SeekDbTest {
   private val timestampPgType = PgTypes.timestamp.withTypename("timestamp")

@@ -1,6 +1,6 @@
 package adventureworks
 
-import adventureworks.public._
+import adventureworks.public.*
 
 import scala.util.Random
 

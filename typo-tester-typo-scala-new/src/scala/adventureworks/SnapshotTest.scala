@@ -1,8 +1,6 @@
 package adventureworks
 
-import adventureworks.DbNow
-
-import org.junit.Assert._
+import org.junit.Assert.*
 import typo.runtime.Fragment
 
 import java.nio.file.{Files, Path}

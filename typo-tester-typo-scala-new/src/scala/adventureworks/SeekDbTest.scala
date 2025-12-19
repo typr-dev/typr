@@ -1,9 +1,7 @@
 package adventureworks
 
-import adventureworks.DbNow
-
-import adventureworks.person.businessentity._
-import org.junit.Assert._
+import adventureworks.person.businessentity.*
+import org.junit.Assert.*
 import org.junit.Test
 import typo.runtime.PgTypes
 

@@ -1,21 +1,17 @@
 package adventureworks.production.productcosthistory
 
-import adventureworks.DbNow
-
-import adventureworks.SnapshotTest
-import adventureworks.WithConnection
-import adventureworks.person.businessentity._
-import adventureworks.person.emailaddress._
-import adventureworks.person.person._
-import adventureworks.production.product._
-import adventureworks.production.productcategory._
-import adventureworks.production.productmodel._
-import adventureworks.production.productsubcategory._
-import adventureworks.production.unitmeasure._
-import adventureworks.public.Name
-import adventureworks.public.NameStyle
+import adventureworks.{DbNow, SnapshotTest, WithConnection}
+import adventureworks.person.businessentity.*
+import adventureworks.person.emailaddress.*
+import adventureworks.person.person.*
+import adventureworks.production.product.*
+import adventureworks.production.productcategory.*
+import adventureworks.production.productmodel.*
+import adventureworks.production.productsubcategory.*
+import adventureworks.production.unitmeasure.*
+import adventureworks.public.{Name, NameStyle}
 import adventureworks.userdefined.FirstName
-import org.junit.Assert._
+import org.junit.Assert.*
 import org.junit.Test
 
 import java.time.LocalDateTime

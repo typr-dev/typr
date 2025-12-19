@@ -1,17 +1,15 @@
 package adventureworks.public
 
-import adventureworks.DbNow
-
+import adventureworks.public.title.*
+import adventureworks.public.title_domain.*
+import adventureworks.public.titledperson.*
 import adventureworks.{DomainInsertImpl, TestInsert, WithConnection}
-import adventureworks.public.title._
-import adventureworks.public.title_domain._
-import adventureworks.public.titledperson._
-import org.junit.Assert._
+import org.junit.Assert.*
 import org.junit.Test
 
 import java.sql.Connection
 import java.util.Random
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 class OpenEnumTest {
   private val titleRepo = TitleRepoImpl()

@@ -1,18 +1,15 @@
 package adventureworks.production.product
 
-import adventureworks.DbNow
-
 import adventureworks.production.productcategory.*
 import adventureworks.production.productmodel.*
 import adventureworks.production.productsubcategory.*
 import adventureworks.production.unitmeasure.*
 import adventureworks.public.{Flag, Name}
-import adventureworks.{SnapshotTest, WithConnection}
+import adventureworks.{DbNow, SnapshotTest, WithConnection}
 import org.junit.Assert.*
 import org.junit.Test
 import typo.data.Xml
 
-import java.time.LocalDateTime
 import java.util.UUID
 
 class ProductTest extends SnapshotTest {

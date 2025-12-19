@@ -1,14 +1,11 @@
 package adventureworks.production.unitmeasure
 
-import adventureworks.DbNow
-
-import adventureworks.WithConnection
+import adventureworks.{DbNow, WithConnection}
 import adventureworks.public.Name
-import org.junit.Assert._
+import org.junit.Assert.*
 import org.junit.Test
 
-import java.time.LocalDateTime
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 class RepoTest {
 

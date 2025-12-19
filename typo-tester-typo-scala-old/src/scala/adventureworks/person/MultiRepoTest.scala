@@ -1,22 +1,20 @@
 package adventureworks.person
 
-import adventureworks.DbNow
-
-import adventureworks.{DomainInsertImpl, TestInsert, WithConnection}
 import adventureworks.customtypes.Defaulted
-import adventureworks.person.address._
-import adventureworks.person.addresstype._
-import adventureworks.person.businessentityaddress._
+import adventureworks.person.address.*
+import adventureworks.person.addresstype.*
+import adventureworks.person.businessentityaddress.*
 import adventureworks.person.countryregion.CountryregionId
-import adventureworks.person.person._
+import adventureworks.person.person.*
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
-import org.junit.Assert._
+import adventureworks.{DomainInsertImpl, TestInsert, WithConnection}
+import org.junit.Assert.*
 import org.junit.Test
 
 import java.sql.Connection
 import java.util.{Optional, Random}
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 case class PersonWithAddresses(person: PersonRow, addresses: Map[Name, AddressRow])
 

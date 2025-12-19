@@ -1,9 +1,7 @@
 package adventureworks
 
-import adventureworks.DbNow
-
-import adventureworks.public.identity_test._
-import org.junit.Assert._
+import adventureworks.public.identity_test.*
+import org.junit.Assert.*
 import org.junit.Test
 
 class IdentityTest {

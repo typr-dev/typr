@@ -1,20 +1,18 @@
 package adventureworks
 
-import adventureworks.DbNow
-
-import adventureworks.humanresources.employee._
-import adventureworks.person.businessentity._
-import adventureworks.person.emailaddress._
-import adventureworks.person.person._
-import adventureworks.person_row_join._
+import adventureworks.humanresources.employee.*
+import adventureworks.person.businessentity.*
+import adventureworks.person.emailaddress.*
+import adventureworks.person.person.*
+import adventureworks.person_row_join.*
 import adventureworks.public.Name
-import adventureworks.sales.salesperson._
+import adventureworks.sales.salesperson.*
 import adventureworks.userdefined.FirstName
 import org.junit.Test
 
 import java.time.LocalDate
 import java.util.Optional
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 class RecordTest {
   private val personRowJoinSqlRepo = new PersonRowJoinSqlRepoImpl

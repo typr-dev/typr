@@ -1,11 +1,7 @@
 package adventureworks.update_person_returning
 
-import adventureworks.DbNow
-
-import adventureworks.WithConnection
+import adventureworks.{DbNow, WithConnection}
 import org.junit.Test
-
-import java.time.LocalDateTime
 
 class UpdatePersonReturningSqlRepoTest {
   private val updatePersonReturningSqlRepo = new UpdatePersonReturningSqlRepoImpl

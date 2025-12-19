@@ -1,16 +1,13 @@
 package adventureworks.public_.users
 
-import adventureworks.DbNow
-
-import adventureworks.WithConnection
+import adventureworks.{DbNow, WithConnection}
 import adventureworks.customtypes.Defaulted
-import adventureworks.public.users._
-import org.junit.Assert._
+import adventureworks.public.users.*
+import org.junit.Assert.*
 import org.junit.Test
 import typo.data.Unknown
 
 import java.sql.Connection
-import java.time.Instant
 import java.util.UUID
 
 class UsersRepoTest {

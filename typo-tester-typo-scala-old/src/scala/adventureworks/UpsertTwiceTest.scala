@@ -1,9 +1,7 @@
 package adventureworks
 
-import adventureworks.DbNow
-
-import adventureworks.public.only_pk_columns._
-import org.junit.Assert._
+import adventureworks.public.only_pk_columns.*
+import org.junit.Assert.*
 import org.junit.Test
 
 class UpsertTwiceTest {

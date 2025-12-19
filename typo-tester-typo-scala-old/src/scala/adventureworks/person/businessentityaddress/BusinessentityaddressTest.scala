@@ -1,8 +1,6 @@
 package adventureworks.person.businessentityaddress
 
-import adventureworks.DbNow
-
-import adventureworks.WithConnection
+import adventureworks.{DbNow, WithConnection}
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.address.{AddressRepoImpl, AddressRowUnsaved}
 import adventureworks.person.addresstype.{AddresstypeRepoImpl, AddresstypeRowUnsaved}
@@ -11,10 +9,9 @@ import adventureworks.person.countryregion.{CountryregionId, CountryregionRepoIm
 import adventureworks.person.stateprovince.{StateprovinceRepoImpl, StateprovinceRowUnsaved}
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.{SalesterritoryRepoImpl, SalesterritoryRowUnsaved}
-import org.junit.Assert._
+import org.junit.Assert.*
 import org.junit.Test
 
-import java.time.LocalDateTime
 import java.util.{Optional, UUID}
 
 class BusinessentityaddressTest {

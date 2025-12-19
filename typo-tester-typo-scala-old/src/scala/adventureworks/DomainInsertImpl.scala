@@ -1,6 +1,6 @@
 package adventureworks
 
-import adventureworks.public._
+import adventureworks.public.*
 import typo.runtime.internal.RandomHelper
 
 import java.util.Random

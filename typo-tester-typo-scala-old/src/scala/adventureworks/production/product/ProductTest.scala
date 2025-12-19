@@ -1,23 +1,17 @@
 package adventureworks.production.product
 
-import adventureworks.DbNow
-
-import adventureworks.SnapshotTest
-import adventureworks.WithConnection
-import adventureworks.production.productcategory._
-import adventureworks.production.productmodel._
-import adventureworks.production.productsubcategory._
-import adventureworks.production.unitmeasure._
-import adventureworks.public.Flag
-import adventureworks.public.Name
-import org.junit.Assert._
+import adventureworks.{DbNow, SnapshotTest, WithConnection}
+import adventureworks.production.productcategory.*
+import adventureworks.production.productmodel.*
+import adventureworks.production.productsubcategory.*
+import adventureworks.production.unitmeasure.*
+import adventureworks.public.{Flag, Name}
+import org.junit.Assert.*
 import org.junit.Test
 import typo.data.Xml
 
 import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.util.Optional
-import java.util.UUID
+import java.util.{Optional, UUID}
 
 class ProductTest extends SnapshotTest {
 

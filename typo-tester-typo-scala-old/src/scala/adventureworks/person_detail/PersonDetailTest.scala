@@ -1,12 +1,8 @@
 package adventureworks.person_detail
 
-import adventureworks.DbNow
-
-import adventureworks.WithConnection
+import adventureworks.{DbNow, WithConnection}
 import adventureworks.person.businessentity.BusinessentityId
 import org.junit.Test
-
-import java.time.LocalDateTime
 
 class PersonDetailTest {
   private val personDetailSqlRepo = new PersonDetailSqlRepoImpl

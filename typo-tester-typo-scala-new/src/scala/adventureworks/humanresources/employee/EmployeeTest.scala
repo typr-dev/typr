@@ -1,18 +1,16 @@
 package adventureworks.humanresources.employee
 
-import adventureworks.DbNow
-
-import adventureworks.WithConnection
+import adventureworks.{DbNow, WithConnection}
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.{BusinessentityId, BusinessentityRepoImpl, BusinessentityRowUnsaved}
 import adventureworks.person.person.{PersonRepoImpl, PersonRowUnsaved}
 import adventureworks.public.{Flag, Name}
 import adventureworks.userdefined.FirstName
-import org.junit.Assert._
+import org.junit.Assert.*
 import org.junit.Test
 import typo.data.Xml
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 import java.util.UUID
 
 class EmployeeTest {

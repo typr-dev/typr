@@ -1,7 +1,7 @@
 package adventureworks
 
-import java.time.{Instant, LocalDateTime, OffsetDateTime, ZoneId}
 import java.time.temporal.ChronoUnit
+import java.time.{Instant, LocalDateTime, OffsetDateTime, ZoneId}
 
 /** Utility object for creating database-compatible timestamps.
   *

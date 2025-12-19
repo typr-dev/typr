@@ -1,14 +1,10 @@
 package adventureworks.humanresources.department
 
-import adventureworks.DbNow
-
-import adventureworks.WithConnection
+import adventureworks.{DbNow, WithConnection}
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
-import org.junit.Assert._
+import org.junit.Assert.*
 import org.junit.Test
-
-import java.time.LocalDateTime
 
 class DepartmentTest {
   private val departmentRepo = new DepartmentRepoImpl
