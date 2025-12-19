@@ -2,6 +2,7 @@ package adventureworks.production.productcosthistory;
 
 import static org.junit.Assert.*;
 
+import adventureworks.DbNow;
 import adventureworks.SnapshotTest;
 import adventureworks.WithConnection;
 import adventureworks.person.businessentity.*;
@@ -49,7 +50,7 @@ public class CompositeIdsTest extends SnapshotTest {
           var unitmeasure =
               unitmeasureRepo.insert(
                   new UnitmeasureRow(
-                      new UnitmeasureId("kgg"), new Name("Kilograms"), LocalDateTime.now()),
+                      new UnitmeasureId("kgg"), new Name("Kilograms"), DbNow.localDateTime()),
                   c);
 
           // Setup product category - use short ctor
@@ -68,7 +69,7 @@ public class CompositeIdsTest extends SnapshotTest {
           var productModel =
               productmodelRepo.insert(new ProductmodelRowUnsaved(new Name("Test Model")), c);
 
-          var now = LocalDateTime.now();
+          var now = DbNow.localDateTime();
 
           // Setup product - use short ctor + withers
           var product =
@@ -239,20 +240,20 @@ public class CompositeIdsTest extends SnapshotTest {
                 unsaved.toRow(
                     () -> 0, // emailaddressid
                     () -> UUID.randomUUID(),
-                    () -> LocalDateTime.now())),
+                    () -> DbNow.localDateTime())),
         new BusinessentityRepoMock(
             unsaved ->
                 unsaved.toRow(
                     () -> new BusinessentityId(0), // businessentityid
                     () -> UUID.randomUUID(),
-                    () -> LocalDateTime.now())),
+                    () -> DbNow.localDateTime())),
         new PersonRepoMock(
             unsaved ->
                 unsaved.toRow(
                     () -> new NameStyle(false), // namestyle
                     () -> 0, // emailpromotion
                     () -> UUID.randomUUID(),
-                    () -> LocalDateTime.now())));
+                    () -> DbNow.localDateTime())));
   }
 
   private PersonRow personRow(BusinessentityId businessentityid, int i, LocalDateTime now) {

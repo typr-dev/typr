@@ -1,5 +1,6 @@
 package adventureworks.humanresources.department
 
+import adventureworks.DbNow
 import adventureworks.WithConnection
 import adventureworks.customtypes.Defaulted
 import java.time.LocalDateTime
@@ -17,7 +18,7 @@ class DepartmentTest {
             val unsaved = DepartmentRowUnsaved(
                 name = Name("foo"),
                 groupname = Name("bar"),
-                modifieddate = Defaulted.Provided(LocalDateTime.now())
+                modifieddate = Defaulted.Provided(DbNow.localDateTime())
             )
 
             // insert and round trip check
@@ -51,7 +52,7 @@ class DepartmentTest {
             val unsaved = DepartmentRowUnsaved(
                 name = Name("foo"),
                 groupname = Name("bar"),
-                modifieddate = Defaulted.Provided(LocalDateTime.now())
+                modifieddate = Defaulted.Provided(DbNow.localDateTime())
             )
 
             // insert and round trip check

@@ -1,5 +1,6 @@
 package adventureworks
 
+import adventureworks.DbNow
 import adventureworks.customtypes.*
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
@@ -59,10 +60,10 @@ object ArrayTestData {
         point = PGpoint(6.5, 4.3),
         polygon = PGpolygon(arrayOf(PGpoint(6.5, 4.3), PGpoint(10.5, 4.3), PGpoint(-6.5, 4.3))),
         text = "flaff",
-        time = LocalTime.now(),
-        timestamp = LocalDateTime.now(),
-        timestampz = Instant.now(),
-        timez = OffsetTime.now(),
+        time = DbNow.localDateTime().toLocalTime(),
+        timestamp = DbNow.localDateTime(),
+        timestampz = DbNow.instant(),
+        timez = DbNow.offsetDateTime().toOffsetTime(),
         uuid = UUID.randomUUID(),
         varchar = "asd asd ",
         vector = Vector(floatArrayOf(1.0f, 2.2f, 3.3f)),
@@ -93,10 +94,10 @@ object ArrayTestData {
         pointes = arrayOf(PGpoint(6.5, 4.3)),
         polygones = arrayOf(PGpolygon(arrayOf(PGpoint(6.5, 4.3), PGpoint(10.5, 4.3), PGpoint(-6.5, 4.3)))),
         textes = arrayOf("flaff"),
-        timees = arrayOf(LocalTime.now()),
-        timestampes = arrayOf(LocalDateTime.now()),
-        timestampzes = arrayOf(Instant.now()),
-        timezes = arrayOf(OffsetTime.now()),
+        timees = arrayOf(DbNow.localDateTime().toLocalTime()),
+        timestampes = arrayOf(DbNow.localDateTime()),
+        timestampzes = arrayOf(DbNow.instant()),
+        timezes = arrayOf(DbNow.offsetDateTime().toOffsetTime()),
         uuides = arrayOf(UUID.randomUUID()),
         varchares = arrayOf("asd asd "),
         xmles = arrayOf(Xml("<xml/>"))
@@ -205,10 +206,10 @@ object ArrayTestData {
         point = PGpoint(6.5, 4.3),
         polygon = PGpolygon(arrayOf(PGpoint(6.5, 4.3), PGpoint(10.5, 4.3), PGpoint(-6.5, 4.3))),
         text = "flaff",
-        time = LocalTime.now(),
-        timestamp = LocalDateTime.now(),
-        timestampz = Instant.now(),
-        timez = OffsetTime.now(),
+        time = DbNow.localDateTime().toLocalTime(),
+        timestamp = DbNow.localDateTime(),
+        timestampz = DbNow.instant(),
+        timez = DbNow.offsetDateTime().toOffsetTime(),
         uuid = UUID.randomUUID(),
         varchar = "asd asd ",
         vector = Vector(floatArrayOf(1.0f, 2.2f, 3.3f)),
@@ -239,10 +240,10 @@ object ArrayTestData {
         pointes = arrayOf(PGpoint(6.5, 4.3)),
         polygones = arrayOf(PGpolygon(arrayOf(PGpoint(6.5, 4.3), PGpoint(10.5, 4.3), PGpoint(-6.5, 4.3)))),
         textes = arrayOf("flaff"),
-        timees = arrayOf(LocalTime.now()),
-        timestampes = arrayOf(LocalDateTime.now()),
-        timestampzes = arrayOf(Instant.now()),
-        timezes = arrayOf(OffsetTime.now()),
+        timees = arrayOf(DbNow.localDateTime().toLocalTime()),
+        timestampes = arrayOf(DbNow.localDateTime()),
+        timestampzes = arrayOf(DbNow.instant()),
+        timezes = arrayOf(DbNow.offsetDateTime().toOffsetTime()),
         uuides = arrayOf(UUID.randomUUID()),
         varchares = arrayOf("asd asd "),
         xmles = arrayOf(Xml("<xml/>"))

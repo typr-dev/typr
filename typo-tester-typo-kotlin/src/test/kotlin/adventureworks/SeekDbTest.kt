@@ -1,5 +1,6 @@
 package adventureworks
 
+import adventureworks.DbNow
 import java.util.UUID
 import adventureworks.person.businessentity.*
 import org.junit.Assert.assertEquals
@@ -46,7 +47,7 @@ class SeekDbTest {
         testUniformSeek(BusinessentityRepoMock(toRow = { it.toRow(
             businessentityidDefault = { BusinessentityId(0) },
             rowguidDefault = { UUID.randomUUID() },
-            modifieddateDefault = { LocalDateTime.now() }
+            modifieddateDefault = { DbNow.localDateTime() }
         ) }))
     }
 
@@ -94,7 +95,7 @@ class SeekDbTest {
         testNonUniformSeek(BusinessentityRepoMock(toRow = { it.toRow(
             businessentityidDefault = { BusinessentityId(0) },
             rowguidDefault = { UUID.randomUUID() },
-            modifieddateDefault = { LocalDateTime.now() }
+            modifieddateDefault = { DbNow.localDateTime() }
         ) }))
     }
 

@@ -2,10 +2,10 @@ package adventureworks.humanresources.department;
 
 import static org.junit.Assert.*;
 
+import adventureworks.DbNow;
 import adventureworks.WithConnection;
 import adventureworks.customtypes.Defaulted;
 import adventureworks.public_.Name;
-import java.time.LocalDateTime;
 import org.junit.Test;
 
 public class DepartmentTest {
@@ -18,7 +18,7 @@ public class DepartmentTest {
           // setup - use short ctor + wither for modifieddate
           var unsaved =
               new DepartmentRowUnsaved(new Name("foo"), new Name("bar"))
-                  .withModifieddate(new Defaulted.Provided<>(LocalDateTime.now()));
+                  .withModifieddate(new Defaulted.Provided<>(DbNow.localDateTime()));
 
           // insert and round trip check
           var saved1 = departmentRepo.insert(unsaved, c);
@@ -45,7 +45,7 @@ public class DepartmentTest {
           // setup - use short ctor + wither
           var unsaved =
               new DepartmentRowUnsaved(new Name("foo"), new Name("bar"))
-                  .withModifieddate(new Defaulted.Provided<>(LocalDateTime.now()));
+                  .withModifieddate(new Defaulted.Provided<>(DbNow.localDateTime()));
 
           // Scala: insert and verify upsert
           // inserted2 <- departmentRepo.upsert(saved1.copy(name = newName))

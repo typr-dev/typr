@@ -2,6 +2,7 @@ package adventureworks.person.businessentityaddress;
 
 import static org.junit.Assert.*;
 
+import adventureworks.DbNow;
 import adventureworks.WithConnection;
 import adventureworks.customtypes.Defaulted;
 import adventureworks.person.address.AddressRepoImpl;
@@ -18,7 +19,6 @@ import adventureworks.person.stateprovince.StateprovinceRowUnsaved;
 import adventureworks.public_.Name;
 import adventureworks.sales.salesterritory.SalesterritoryRepoImpl;
 import adventureworks.sales.salesterritory.SalesterritoryRowUnsaved;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class BusinessentityaddressTest {
                       address.addressid(),
                       addressType.addresstypeid())
                   .withRowguid(new Defaulted.Provided<>(UUID.randomUUID()))
-                  .withModifieddate(new Defaulted.Provided<>(LocalDateTime.now()));
+                  .withModifieddate(new Defaulted.Provided<>(DbNow.localDateTime()));
 
           // insert and round trip check
           var saved1 = businessentityaddressRepo.insert(unsaved1, c);

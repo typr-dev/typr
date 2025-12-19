@@ -2,9 +2,9 @@ package adventureworks.public_.users;
 
 import static org.junit.Assert.*;
 
+import adventureworks.DbNow;
 import adventureworks.WithConnection;
 import adventureworks.customtypes.Defaulted;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +30,8 @@ public class UsersRepoTest {
                       new Unknown("email@asd.no"),
                       "password")
                   .withLastName(Optional.of("last_name"))
-                  .withVerifiedOn(Optional.of(Instant.now()))
-                  .withCreatedAt(new Defaulted.Provided<>(Instant.now()));
+                  .withVerifiedOn(Optional.of(DbNow.instant()))
+                  .withCreatedAt(new Defaulted.Provided<>(DbNow.instant()));
 
           usersRepo.insert(before, c);
 
@@ -60,7 +60,7 @@ public class UsersRepoTest {
                         new Unknown("email-" + idx + "@asd.no"),
                         "password")
                     .withLastName(Optional.of("last_name"))
-                    .withVerifiedOn(Optional.of(Instant.now())));
+                    .withVerifiedOn(Optional.of(DbNow.instant())));
           }
 
           usersRepo.insertUnsavedStreaming(before.iterator(), 2, c);
@@ -84,7 +84,7 @@ public class UsersRepoTest {
   @Test
   public void testRoundtripInMemory() {
     // Use mock repo - the Scala uses ??? but we need a real supplier
-    testRoundtrip(new UsersRepoMock(unsaved -> unsaved.toRow(() -> Instant.now())));
+    testRoundtrip(new UsersRepoMock(unsaved -> unsaved.toRow(() -> DbNow.instant())));
   }
 
   @Test
@@ -94,7 +94,7 @@ public class UsersRepoTest {
 
   @Test
   public void testInsertUnsavedStreamingInMemory() {
-    testInsertUnsavedStreaming(new UsersRepoMock(unsaved -> unsaved.toRow(() -> Instant.now())));
+    testInsertUnsavedStreaming(new UsersRepoMock(unsaved -> unsaved.toRow(() -> DbNow.instant())));
   }
 
   @Test

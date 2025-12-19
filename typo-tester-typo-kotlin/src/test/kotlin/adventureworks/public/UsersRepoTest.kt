@@ -1,5 +1,6 @@
 package adventureworks.public
 
+import adventureworks.DbNow
 import adventureworks.WithConnection
 import adventureworks.customtypes.Defaulted
 import java.time.Instant
@@ -20,8 +21,8 @@ class UsersRepoTest {
                 lastName = "last_name",
                 email = Unknown("email@asd.no"),
                 password = "password",
-                verifiedOn = Instant.now(),
-                createdAt = Defaulted.Provided(Instant.now())
+                verifiedOn = DbNow.instant(),
+                createdAt = Defaulted.Provided(DbNow.instant())
             )
             usersRepo.insert(before, c)
             val after = usersRepo.select().where { it.userId().isEqual(before.userId) }.toList(c).first()
@@ -37,7 +38,7 @@ class UsersRepoTest {
                 lastName = "last_name",
                 email = Unknown("email-$idx@asd.no"),
                 password = "password",
-                verifiedOn = Instant.now()
+                verifiedOn = DbNow.instant()
             )
         }
 
@@ -63,7 +64,7 @@ class UsersRepoTest {
 
     @Test
     fun testInsertUnsavedStreamingInMemory() {
-        testInsertUnsavedStreaming(usersRepo = UsersRepoMock(toRow = { it.toRow { Instant.now() } }))
+        testInsertUnsavedStreaming(usersRepo = UsersRepoMock(toRow = { it.toRow { DbNow.instant() } }))
     }
 
     @Test

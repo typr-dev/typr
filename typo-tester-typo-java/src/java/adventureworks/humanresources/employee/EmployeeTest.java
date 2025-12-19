@@ -2,6 +2,7 @@ package adventureworks.humanresources.employee;
 
 import static org.junit.Assert.*;
 
+import adventureworks.DbNow;
 import adventureworks.WithConnection;
 import adventureworks.customtypes.Defaulted;
 import adventureworks.person.businessentity.BusinessentityId;
@@ -13,7 +14,6 @@ import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class EmployeeTest {
                   .withSickleavehours(new Defaulted.Provided<>((short) 2))
                   .withCurrentflag(new Defaulted.Provided<>(new Flag(true)))
                   .withRowguid(new Defaulted.Provided<>(UUID.randomUUID()))
-                  .withModifieddate(new Defaulted.Provided<>(LocalDateTime.now()))
+                  .withModifieddate(new Defaulted.Provided<>(DbNow.localDateTime()))
                   .withOrganizationnode(new Defaulted.Provided<>(Optional.of("/")));
 
           // Insert and round trip check

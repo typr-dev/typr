@@ -1,5 +1,6 @@
 package adventureworks.person.businessentityaddress
 
+import adventureworks.DbNow
 import adventureworks.WithConnection
 import adventureworks.customtypes.Defaulted
 import java.time.LocalDateTime
@@ -89,7 +90,7 @@ class BusinessentityaddressTest {
                 addressid = address.addressid,
                 addresstypeid = addressType.addresstypeid,
                 rowguid = Defaulted.Provided(UUID.randomUUID()),
-                modifieddate = Defaulted.Provided(LocalDateTime.now())
+                modifieddate = Defaulted.Provided(DbNow.localDateTime())
             )
 
             // insert and round trip check

@@ -1,8 +1,8 @@
 package adventureworks.person_detail;
 
+import adventureworks.DbNow;
 import adventureworks.WithConnection;
 import adventureworks.person.businessentity.BusinessentityId;
-import java.time.LocalDateTime;
 import org.junit.Test;
 
 public class PersonDetailTest {
@@ -12,7 +12,7 @@ public class PersonDetailTest {
   public void timestampWorks() {
     WithConnection.run(
         c -> {
-          personDetailSqlRepo.apply(new BusinessentityId(1), LocalDateTime.now(), c);
+          personDetailSqlRepo.apply(new BusinessentityId(1), DbNow.localDateTime(), c);
         });
   }
 }

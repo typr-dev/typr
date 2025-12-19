@@ -1,5 +1,6 @@
 package adventureworks.production.product
 
+import adventureworks.DbNow
 import adventureworks.WithConnection
 import java.time.LocalDateTime
 import adventureworks.production.unitmeasure.*
@@ -10,8 +11,8 @@ import org.junit.Test
 class RepoTest {
     private fun upsertStreaming(unitmeasureRepo: UnitmeasureRepo) {
         WithConnection.run { c ->
-            val um1 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg1"), name = Name("name1"), modifieddate = LocalDateTime.now())
-            val um2 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg2"), name = Name("name2"), modifieddate = LocalDateTime.now())
+            val um1 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg1"), name = Name("name1"), modifieddate = DbNow.localDateTime())
+            val um2 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg2"), name = Name("name2"), modifieddate = DbNow.localDateTime())
             unitmeasureRepo.upsertStreaming(listOf(um1, um2).iterator(), 1000, c)
             assertEquals(listOf(um1, um2), unitmeasureRepo.selectAll(c).sortedBy { it.name.value })
             val um1a = um1.copy(name = Name("name1a"))
@@ -23,8 +24,8 @@ class RepoTest {
 
     private fun upsertBatch(unitmeasureRepo: UnitmeasureRepo) {
         WithConnection.run { c ->
-            val um1 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg1"), name = Name("name1"), modifieddate = LocalDateTime.now())
-            val um2 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg2"), name = Name("name2"), modifieddate = LocalDateTime.now())
+            val um1 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg1"), name = Name("name1"), modifieddate = DbNow.localDateTime())
+            val um2 = UnitmeasureRow(unitmeasurecode = UnitmeasureId("kg2"), name = Name("name2"), modifieddate = DbNow.localDateTime())
             val initial = unitmeasureRepo.upsertBatch(listOf(um1, um2).iterator(), c)
             assertEquals(listOf(um1, um2), initial.sortedBy { it.name.value })
             val um1a = um1.copy(name = Name("name1a"))
@@ -38,7 +39,7 @@ class RepoTest {
 
     @Test
     fun upsertStreamingInMemory() {
-        upsertStreaming(UnitmeasureRepoMock(toRow = { it.toRow(modifieddateDefault = { LocalDateTime.now() }) }))
+        upsertStreaming(UnitmeasureRepoMock(toRow = { it.toRow(modifieddateDefault = { DbNow.localDateTime() }) }))
     }
 
     @Test
@@ -48,7 +49,7 @@ class RepoTest {
 
     @Test
     fun upsertBatchInMemory() {
-        upsertBatch(UnitmeasureRepoMock(toRow = { it.toRow(modifieddateDefault = { LocalDateTime.now() }) }))
+        upsertBatch(UnitmeasureRepoMock(toRow = { it.toRow(modifieddateDefault = { DbNow.localDateTime() }) }))
     }
 
     @Test

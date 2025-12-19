@@ -2,6 +2,7 @@ package adventureworks.production.product;
 
 import static org.junit.Assert.*;
 
+import adventureworks.DbNow;
 import adventureworks.SnapshotTest;
 import adventureworks.WithConnection;
 import adventureworks.customtypes.Defaulted;
@@ -12,7 +13,6 @@ import adventureworks.production.unitmeasure.*;
 import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
@@ -61,7 +61,7 @@ public class ProductTest extends SnapshotTest {
                       BigDecimal.valueOf(20),
                       BigDecimal.valueOf(22),
                       26,
-                      LocalDateTime.now().plusDays(1))
+                      DbNow.localDateTime().plusDays(1))
                   .withColor(Optional.of("color"))
                   .withSize(Optional.of("size"))
                   .withSizeunitmeasurecode(Optional.of(unitmeasure.unitmeasurecode()))
@@ -72,12 +72,12 @@ public class ProductTest extends SnapshotTest {
                   .withStyle(Optional.of("W "))
                   .withProductsubcategoryid(Optional.of(productSubcategory.productsubcategoryid()))
                   .withProductmodelid(Optional.of(productmodel.productmodelid()))
-                  .withSellenddate(Optional.of(LocalDateTime.now().plusDays(10)))
-                  .withDiscontinueddate(Optional.of(LocalDateTime.now().plusDays(100)))
+                  .withSellenddate(Optional.of(DbNow.localDateTime().plusDays(10)))
+                  .withDiscontinueddate(Optional.of(DbNow.localDateTime().plusDays(100)))
                   .withMakeflag(new Defaulted.Provided<>(new Flag(true)))
                   .withFinishedgoodsflag(new Defaulted.Provided<>(new Flag(true)))
                   .withRowguid(new Defaulted.Provided<>(UUID.randomUUID()))
-                  .withModifieddate(new Defaulted.Provided<>(LocalDateTime.now()));
+                  .withModifieddate(new Defaulted.Provided<>(DbNow.localDateTime()));
 
           // insert and round trip check
           var saved1 = productRepo.insert(unsaved1, c);
@@ -87,7 +87,7 @@ public class ProductTest extends SnapshotTest {
                   () -> new Flag(true),
                   () -> new Flag(false),
                   () -> UUID.randomUUID(),
-                  () -> LocalDateTime.now());
+                  () -> DbNow.localDateTime());
           // note: saved1 and saved2 won't be equal due to different generated defaults
           assertNotNull(saved2);
 
@@ -154,7 +154,7 @@ public class ProductTest extends SnapshotTest {
           compareFragment("leftJoined", leftJoined.sql());
           leftJoined.toList(c).forEach(System.out::println);
 
-          var sellStartDate = LocalDateTime.now();
+          var sellStartDate = DbNow.localDateTime();
           // Note: The mock does not support string function evaluation (reverse, upper, substring)
           // or numeric operations (plus). These are only evaluated in SQL.
           if (!isMock) {
@@ -207,11 +207,11 @@ public class ProductTest extends SnapshotTest {
                               .like("foo%", Bijection.identity())
                               .not(Bijection.asBool()))
                   .where(p -> p.daystomanufacture().greaterThan(0))
-                  .where(p -> p.modifieddate().lessThan(LocalDateTime.now()))
+                  .where(p -> p.modifieddate().lessThan(DbNow.localDateTime()))
                   .join(
                       projectModelRepo
                           .select()
-                          .where(pm -> pm.modifieddate().lessThan(LocalDateTime.now())))
+                          .where(pm -> pm.modifieddate().lessThan(DbNow.localDateTime())))
                   .on(p_pm -> p_pm._1().productmodelid().isEqual(p_pm._2().productmodelid()))
                   .where(p_pm -> p_pm._2().instructions().isNull().not(Bijection.asBool()));
 
@@ -245,7 +245,7 @@ public class ProductTest extends SnapshotTest {
                               .coalesce("yellow")
                               .isNotEqual(new SqlExpr.ConstReq<>("blue", PgTypes.text)))
                   // compare dates
-                  .where(p -> p.modifieddate().lessThan(LocalDateTime.now()))
+                  .where(p -> p.modifieddate().lessThan(DbNow.localDateTime()))
                   // join, filter table we join with as well
                   .join(
                       projectModelRepo
@@ -313,26 +313,26 @@ public class ProductTest extends SnapshotTest {
                     () -> new Flag(true),
                     () -> new Flag(false),
                     () -> UUID.randomUUID(),
-                    () -> LocalDateTime.now())),
+                    () -> DbNow.localDateTime())),
         new ProductmodelRepoMock(
             unsaved ->
                 unsaved.toRow(
                     () -> new ProductmodelId(0),
                     () -> UUID.randomUUID(),
-                    () -> LocalDateTime.now())),
-        new UnitmeasureRepoMock(unsaved -> unsaved.toRow(() -> LocalDateTime.now())),
+                    () -> DbNow.localDateTime())),
+        new UnitmeasureRepoMock(unsaved -> unsaved.toRow(() -> DbNow.localDateTime())),
         new ProductcategoryRepoMock(
             unsaved ->
                 unsaved.toRow(
                     () -> new ProductcategoryId(0),
                     () -> UUID.randomUUID(),
-                    () -> LocalDateTime.now())),
+                    () -> DbNow.localDateTime())),
         new ProductsubcategoryRepoMock(
             unsaved ->
                 unsaved.toRow(
                     () -> new ProductsubcategoryId(0),
                     () -> UUID.randomUUID(),
-                    () -> LocalDateTime.now())),
+                    () -> DbNow.localDateTime())),
         true // isMock
         );
   }

@@ -1,5 +1,6 @@
 package adventureworks.production.product
 
+import adventureworks.DbNow
 import adventureworks.WithConnection
 import adventureworks.public.Name
 import org.junit.Assert.*
@@ -21,7 +22,7 @@ class ProductTest {
                 standardcost = BigDecimal("100.00"),
                 listprice = BigDecimal("150.00"),
                 daystomanufacture = 5,
-                sellstartdate = LocalDateTime.now()
+                sellstartdate = DbNow.localDateTime()
             )
 
             val inserted = productRepo.insert(unsaved, c)
@@ -54,7 +55,7 @@ class ProductTest {
                 standardcost = BigDecimal("100.00"),
                 listprice = BigDecimal("150.00"),
                 daystomanufacture = 5,
-                sellstartdate = LocalDateTime.now()
+                sellstartdate = DbNow.localDateTime()
             )
             val unsaved2 = ProductRowUnsaved(
                 name = Name("Product B"),
@@ -64,7 +65,7 @@ class ProductTest {
                 standardcost = BigDecimal("200.00"),
                 listprice = BigDecimal("250.00"),
                 daystomanufacture = 10,
-                sellstartdate = LocalDateTime.now()
+                sellstartdate = DbNow.localDateTime()
             )
 
             val product1 = productRepo.insert(unsaved1, c)

@@ -112,7 +112,11 @@ jobs:
         run: docker compose up -d
 
       - name: Sourcegen
-        run:  bleep sourcegen typo-runtime-java
+        run: |
+          bleep sourcegen typo-runtime-java
+          bleep sourcegen typo-dsl-kotlin
+      - name: Compile Kotlin
+        run: ./gradlew compileKotlin compileTestKotlin
       - name: Run Kotlin tests
         env:
           CI: true

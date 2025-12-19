@@ -1,5 +1,6 @@
 package adventureworks.production.productcosthistory
 
+import adventureworks.DbNow
 import adventureworks.WithConnection
 import adventureworks.production.product.*
 import adventureworks.production.productcategory.*
@@ -48,7 +49,7 @@ class CompositeIdsTest {
                 c
             )
 
-            val now = LocalDateTime.now()
+            val now = DbNow.localDateTime()
 
             // Setup product
             val product = productRepo.insert(

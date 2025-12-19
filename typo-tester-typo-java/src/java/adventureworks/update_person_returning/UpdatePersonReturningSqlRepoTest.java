@@ -1,7 +1,7 @@
 package adventureworks.update_person_returning;
 
+import adventureworks.DbNow;
 import adventureworks.WithConnection;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.Test;
 
@@ -13,7 +13,8 @@ public class UpdatePersonReturningSqlRepoTest {
   public void timestampWorks() {
     WithConnection.run(
         c -> {
-          updatePersonReturningSqlRepo.apply(Optional.of("1"), Optional.of(LocalDateTime.now()), c);
+          updatePersonReturningSqlRepo.apply(
+              Optional.of("1"), Optional.of(DbNow.localDateTime()), c);
         });
   }
 }

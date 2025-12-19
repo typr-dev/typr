@@ -2,9 +2,9 @@ package adventureworks.production.unitmeasure;
 
 import static org.junit.Assert.*;
 
+import adventureworks.DbNow;
 import adventureworks.WithConnection;
 import adventureworks.public_.Name;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import org.junit.Test;
@@ -16,9 +16,11 @@ public class RepoTest {
     WithConnection.run(
         c -> {
           var um1 =
-              new UnitmeasureRow(new UnitmeasureId("kg1"), new Name("name1"), LocalDateTime.now());
+              new UnitmeasureRow(
+                  new UnitmeasureId("kg1"), new Name("name1"), DbNow.localDateTime());
           var um2 =
-              new UnitmeasureRow(new UnitmeasureId("kg2"), new Name("name2"), LocalDateTime.now());
+              new UnitmeasureRow(
+                  new UnitmeasureId("kg2"), new Name("name2"), DbNow.localDateTime());
           unitmeasureRepo.upsertStreaming(List.of(um1, um2).iterator(), 1000, c);
 
           var all1 =
@@ -43,9 +45,11 @@ public class RepoTest {
     WithConnection.run(
         c -> {
           var um1 =
-              new UnitmeasureRow(new UnitmeasureId("kg1"), new Name("name1"), LocalDateTime.now());
+              new UnitmeasureRow(
+                  new UnitmeasureId("kg1"), new Name("name1"), DbNow.localDateTime());
           var um2 =
-              new UnitmeasureRow(new UnitmeasureId("kg2"), new Name("name2"), LocalDateTime.now());
+              new UnitmeasureRow(
+                  new UnitmeasureId("kg2"), new Name("name2"), DbNow.localDateTime());
           var initial =
               unitmeasureRepo.upsertBatch(List.of(um1, um2).iterator(), c).stream()
                   .sorted(Comparator.comparing(r -> r.name().value()))
@@ -70,7 +74,7 @@ public class RepoTest {
 
   @Test
   public void upsertStreamingInMemory() {
-    upsertStreaming(new UnitmeasureRepoMock(unsaved -> unsaved.toRow(() -> LocalDateTime.now())));
+    upsertStreaming(new UnitmeasureRepoMock(unsaved -> unsaved.toRow(() -> DbNow.localDateTime())));
   }
 
   @Test
@@ -80,7 +84,7 @@ public class RepoTest {
 
   @Test
   public void upsertBatchInMemory() {
-    upsertBatch(new UnitmeasureRepoMock(unsaved -> unsaved.toRow(() -> LocalDateTime.now())));
+    upsertBatch(new UnitmeasureRepoMock(unsaved -> unsaved.toRow(() -> DbNow.localDateTime())));
   }
 
   @Test
