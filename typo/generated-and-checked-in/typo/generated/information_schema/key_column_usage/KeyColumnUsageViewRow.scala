@@ -21,24 +21,24 @@ import scala.util.Try
 
 /** View: information_schema.key_column_usage */
 case class KeyColumnUsageViewRow(
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraint_catalog","originalName":"constraint_catalog"},"columnName":"constraint_catalog","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  constraintCatalog: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraint_schema","originalName":"constraint_schema"},"columnName":"constraint_schema","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  constraintSchema: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraint_name","originalName":"constraint_name"},"columnName":"constraint_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  constraintName: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_catalog","originalName":"table_catalog"},"columnName":"table_catalog","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  tableCatalog: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_schema","originalName":"table_schema"},"columnName":"table_schema","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  tableSchema: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_name","originalName":"table_name"},"columnName":"table_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  tableName: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"column_name","originalName":"column_name"},"columnName":"column_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  columnName: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.Integer","columnDisplaySize":11,"parsedColumnName":{"name":"ordinal_position","originalName":"ordinal_position"},"columnName":"ordinal_position","columnType":"Integer","columnTypeName":"int4","format":0,"isAutoIncrement":false,"isCaseSensitive":false,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":true,"isWritable":true,"precision":10,"scale":0} */
-  ordinalPosition: /* nullability unknown */ Option[Int],
-  /** debug: {"columnClassName":"java.lang.Integer","columnDisplaySize":11,"parsedColumnName":{"name":"position_in_unique_constraint","originalName":"position_in_unique_constraint"},"columnName":"position_in_unique_constraint","columnType":"Integer","columnTypeName":"int4","format":0,"isAutoIncrement":false,"isCaseSensitive":false,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":true,"isWritable":true,"precision":10,"scale":0} */
-  positionInUniqueConstraint: /* nullability unknown */ Option[Int]
+  /** debug: {"name":"constraint_catalog","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":false,"source_primary_key":false} */
+  constraintCatalog: Option[String],
+  /** debug: {"name":"constraint_schema","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_primary_key":false} */
+  constraintSchema: Option[String],
+  /** debug: {"name":"constraint_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_primary_key":false} */
+  constraintName: Option[String],
+  /** debug: {"name":"table_catalog","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":false,"source_primary_key":false} */
+  tableCatalog: Option[String],
+  /** debug: {"name":"table_schema","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_primary_key":false} */
+  tableSchema: Option[String],
+  /** debug: {"name":"table_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_primary_key":false} */
+  tableName: Option[String],
+  /** debug: {"name":"column_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"attname","source_primary_key":false} */
+  columnName: Option[String],
+  /** debug: {"name":"ordinal_position","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_primary_key":false} */
+  ordinalPosition: Option[Int],
+  /** debug: {"name":"position_in_unique_constraint","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_primary_key":false} */
+  positionInUniqueConstraint: Option[Int]
 )
 
 object KeyColumnUsageViewRow {

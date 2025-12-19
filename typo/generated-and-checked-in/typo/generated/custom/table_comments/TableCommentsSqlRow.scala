@@ -30,7 +30,7 @@ case class TableCommentsSqlRow(
    */
   name: String,
   /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"description","originalName":"description"},"columnName":"description","columnType":"VarChar","columnTypeName":"text","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  description: /* nullability unknown */ Option[String]
+  description: Option[String]
 )
 
 object TableCommentsSqlRow {

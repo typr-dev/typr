@@ -10,10 +10,6 @@ package typo.generated.pg_catalog.pg_namespace
 import java.sql.Connection
 
 trait PgNamespaceRepo {
-  def deleteById(oid: PgNamespaceId)(implicit c: Connection): Boolean
-
-  def deleteByIds(oids: Array[PgNamespaceId])(implicit c: Connection): Int
-
   def insert(unsaved: PgNamespaceRow)(implicit c: Connection): PgNamespaceRow
 
   def insertStreaming(
@@ -22,24 +18,4 @@ trait PgNamespaceRepo {
   )(implicit c: Connection): Long
 
   def selectAll(implicit c: Connection): List[PgNamespaceRow]
-
-  def selectById(oid: PgNamespaceId)(implicit c: Connection): Option[PgNamespaceRow]
-
-  def selectByIds(oids: Array[PgNamespaceId])(implicit c: Connection): List[PgNamespaceRow]
-
-  def selectByIdsTracked(oids: Array[PgNamespaceId])(implicit c: Connection): Map[PgNamespaceId, PgNamespaceRow]
-
-  def selectByUniqueNspname(nspname: String)(implicit c: Connection): Option[PgNamespaceRow]
-
-  def update(row: PgNamespaceRow)(implicit c: Connection): Option[PgNamespaceRow]
-
-  def upsert(unsaved: PgNamespaceRow)(implicit c: Connection): PgNamespaceRow
-
-  def upsertBatch(unsaved: Iterable[PgNamespaceRow])(implicit c: Connection): List[PgNamespaceRow]
-
-  /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  def upsertStreaming(
-    unsaved: Iterator[PgNamespaceRow],
-    batchSize: Int = 10000
-  )(implicit c: Connection): Int
 }

@@ -22,6 +22,7 @@ case class TypoCoursier(logger: TypoLogger, downloadsDir: Path, osArch: OsArch) 
     FileCache[Task]()
       .withLogger(coursierLogger)
       .withLocation(downloadsDir.resolve("cache").toFile)
+      .withMaxRedirections(2)
 
   // provides extracted files
   val artifacts: ArchiveCache[Task] =

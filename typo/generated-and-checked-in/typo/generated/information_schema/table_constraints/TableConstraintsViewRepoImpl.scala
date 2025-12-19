@@ -12,7 +12,7 @@ import anorm.SqlStringInterpolation
 
 class TableConstraintsViewRepoImpl extends TableConstraintsViewRepo {
   override def selectAll(implicit c: Connection): List[TableConstraintsViewRow] = {
-    SQL"""select "constraint_catalog", "constraint_schema", "constraint_name", "table_catalog", "table_schema", "table_name", "constraint_type", "is_deferrable", "initially_deferred", "enforced", "nulls_distinct"
+    SQL"""select "is_deferrable", "constraint_type", "enforced", "constraint_name", "table_catalog", "constraint_schema", "table_name", "initially_deferred", "constraint_catalog", "table_schema"
     from "information_schema"."table_constraints"
     """.as(TableConstraintsViewRow.rowParser(1).*)
   }

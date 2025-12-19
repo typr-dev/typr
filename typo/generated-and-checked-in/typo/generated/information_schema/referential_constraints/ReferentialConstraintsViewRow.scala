@@ -21,24 +21,24 @@ import scala.util.Try
 
 /** View: information_schema.referential_constraints */
 case class ReferentialConstraintsViewRow(
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraint_catalog","originalName":"constraint_catalog"},"columnName":"constraint_catalog","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  constraintCatalog: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraint_schema","originalName":"constraint_schema"},"columnName":"constraint_schema","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  constraintSchema: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraint_name","originalName":"constraint_name"},"columnName":"constraint_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  constraintName: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"unique_constraint_catalog","originalName":"unique_constraint_catalog"},"columnName":"unique_constraint_catalog","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  uniqueConstraintCatalog: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"unique_constraint_schema","originalName":"unique_constraint_schema"},"columnName":"unique_constraint_schema","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  uniqueConstraintSchema: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"unique_constraint_name","originalName":"unique_constraint_name"},"columnName":"unique_constraint_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  uniqueConstraintName: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"match_option","originalName":"match_option"},"columnName":"match_option","columnType":"VarChar","columnTypeName":"varchar","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  matchOption: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"update_rule","originalName":"update_rule"},"columnName":"update_rule","columnType":"VarChar","columnTypeName":"varchar","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  updateRule: /* nullability unknown */ Option[String],
-  /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"delete_rule","originalName":"delete_rule"},"columnName":"delete_rule","columnType":"VarChar","columnTypeName":"varchar","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  deleteRule: /* nullability unknown */ Option[String]
+  /** debug: {"name":"constraint_catalog","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":false,"source_primary_key":false} */
+  constraintCatalog: Option[String],
+  /** debug: {"name":"constraint_schema","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_namespace","source_column":"nspname","source_primary_key":false} */
+  constraintSchema: Option[String],
+  /** debug: {"name":"constraint_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_constraint","source_column":"conname","source_primary_key":false} */
+  constraintName: Option[String],
+  /** debug: {"name":"unique_constraint_catalog","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_namespace","source_column":"nspname","source_primary_key":false} */
+  uniqueConstraintCatalog: Option[String],
+  /** debug: {"name":"unique_constraint_schema","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_namespace","source_column":"nspname","source_primary_key":false} */
+  uniqueConstraintSchema: Option[String],
+  /** debug: {"name":"unique_constraint_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_constraint","source_column":"conname","source_primary_key":false} */
+  uniqueConstraintName: Option[String],
+  /** debug: {"name":"match_option","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_constraint","source_column":"confmatchtype","source_primary_key":false} */
+  matchOption: Option[String],
+  /** debug: {"name":"update_rule","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_constraint","source_column":"confupdtype","source_primary_key":false} */
+  updateRule: Option[String],
+  /** debug: {"name":"delete_rule","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_constraint","source_column":"confdeltype","source_primary_key":false} */
+  deleteRule: Option[String]
 )
 
 object ReferentialConstraintsViewRow {

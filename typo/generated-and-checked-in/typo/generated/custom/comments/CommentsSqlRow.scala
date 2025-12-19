@@ -24,15 +24,15 @@ case class CommentsSqlRow(
   /** Points to [[typo.generated.information_schema.columns.ColumnsViewRow.tableSchema]]
    * debug: {"baseColumnName":"table_schema","baseRelationName":"information_schema.columns","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_schema","originalName":"table_schema"},"columnName":"table_schema","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"columns"}
    */
-  tableSchema: Option[/* nullability unknown */ String],
+  tableSchema: Option[String],
   /** Points to [[typo.generated.information_schema.columns.ColumnsViewRow.tableName]]
    * debug: {"baseColumnName":"table_name","baseRelationName":"information_schema.columns","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_name","originalName":"table_name"},"columnName":"table_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"columns"}
    */
-  tableName: Option[/* nullability unknown */ String],
+  tableName: Option[String],
   /** Points to [[typo.generated.information_schema.columns.ColumnsViewRow.columnName]]
    * debug: {"baseColumnName":"column_name","baseRelationName":"information_schema.columns","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"column_name","originalName":"column_name"},"columnName":"column_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"columns"}
    */
-  columnName: Option[/* nullability unknown */ String],
+  columnName: Option[String],
   /** Points to [[typo.generated.pg_catalog.pg_description.PgDescriptionRow.description]]
    * debug: {"baseColumnName":"description","baseRelationName":"pg_catalog.pg_description","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"description","originalName":"description"},"columnName":"description","columnType":"VarChar","columnTypeName":"text","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"pg_description"}
    */

@@ -328,14 +328,37 @@ object PgMetaDb {
               val colName = col.alias.getOrElse(col.name)
               val parsedName = ParsedName.of(colName)
 
-              // Determine nullability from sqlglot
-              // When column is an expression (function call, computation) without source column,
-              // we can't determine nullability, so default to nullable for safety
+              // Determine nullability
+              // For system views (information_schema, pg_catalog), use PostgreSQL metadata
+              // since sqlglot often gets nullability wrong for these
               val nullability: Nullability =
                 parsedName.nullability.getOrElse {
-                  if (col.nullableFromJoin || col.nullableInSchema) Nullability.Nullable
-                  else if (col.isExpression && col.sourceColumn.isEmpty) Nullability.NullableUnknown
-                  else Nullability.NoNulls
+                  // For information_schema and pg_catalog, prefer PostgreSQL metadata over sqlglot
+                  val isSystemView = relationName.schema.exists(s => s == "information_schema" || s == "pg_catalog")
+                  if (isSystemView) {
+                    columnsByTable
+                      .get(relationName)
+                      .flatMap { viewCols =>
+                        viewCols.find(_.columnName.contains(colName)).flatMap { dbCol =>
+                          dbCol.isNullable.map {
+                            case "YES" => Nullability.Nullable
+                            case "NO"  => Nullability.NoNulls
+                            case _     => Nullability.NullableUnknown
+                          }
+                        }
+                      }
+                      .getOrElse {
+                        // Fallback to sqlglot if no PostgreSQL metadata
+                        if (col.nullableFromJoin || col.nullableInSchema) Nullability.Nullable
+                        else if (col.isExpression && col.sourceColumn.isEmpty) Nullability.NullableUnknown
+                        else Nullability.NoNulls
+                      }
+                  } else {
+                    // For user views, use sqlglot as before
+                    if (col.nullableFromJoin || col.nullableInSchema) Nullability.Nullable
+                    else if (col.isExpression && col.sourceColumn.isEmpty) Nullability.NullableUnknown
+                    else Nullability.NoNulls
+                  }
                 }
 
               // Hybrid type resolution strategy:
@@ -396,7 +419,50 @@ object PgMetaDb {
               (dbCol, parsedName)
             }
             NonEmptyList.fromList(colList).getOrElse {
-              sys.error(s"View ${relationName.value} has no columns from sqlglot analysis")
+              // Fallback: For system views (like information_schema) where sqlglot can't analyze the SQL,
+              // use PostgreSQL metadata directly
+              columnsByTable.get(relationName) match {
+                case Some(dbCols) if dbCols.nonEmpty =>
+                  logger.warn(s"View ${relationName.value} has no columns from sqlglot analysis, falling back to PostgreSQL metadata")
+                  NonEmptyList
+                    .fromList(dbCols.toList.map { dbCol =>
+                      val colName = dbCol.columnName.getOrElse(sys.error(s"Column without name in ${relationName.value}"))
+                      val parsedName = ParsedName.of(colName)
+                      val dbType = dbCol.udtName match {
+                        case Some(udtName) =>
+                          typeMapperDb.dbTypeFrom(udtName, dbCol.characterMaximumLength) { () =>
+                            logger.warn(s"Couldn't translate database type from view ${relationName.value} column $colName with udtName $udtName")
+                          }
+                        case None =>
+                          logger.warn(s"No type information available for view ${relationName.value} column $colName. Falling back to text")
+                          typeMapperDb.dbTypeFromSqlglot("TEXT", None)(() => ())
+                      }
+                      // Use PostgreSQL's is_nullable field to determine nullability
+                      val nullability = parsedName.nullability.getOrElse {
+                        dbCol.isNullable match {
+                          case Some("YES") => Nullability.Nullable
+                          case Some("NO")  => Nullability.NoNulls
+                          case _           => Nullability.NullableUnknown
+                        }
+                      }
+                      val coord = (relationName, db.ColName(colName))
+                      val col = db.Col(
+                        parsedName = parsedName,
+                        tpe = dbType,
+                        udtName = None,
+                        columnDefault = None,
+                        maybeGenerated = None,
+                        comment = comments.get(coord),
+                        jsonDescription = DebugJson(dbCol),
+                        nullability = nullability,
+                        constraints = constraints.getOrElse(coord, Nil)
+                      )
+                      (col, parsedName)
+                    })
+                    .getOrElse(sys.error(s"View ${relationName.value} has no columns"))
+                case _ =>
+                  sys.error(s"View ${relationName.value} has no columns from sqlglot analysis or PostgreSQL metadata")
+              }
             }
           }
 

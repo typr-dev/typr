@@ -7,29 +7,17 @@
  */
 package typo.generated.pg_catalog.pg_namespace
 
-import anorm.BatchSql
-import anorm.NamedParameter
 import anorm.ParameterValue
 import anorm.ToStatement
 import java.sql.Connection
-import scala.annotation.nowarn
 import typo.generated.customtypes.TypoAclItem
 import typo.generated.streamingInsert
 import anorm.SqlStringInterpolation
 
 class PgNamespaceRepoImpl extends PgNamespaceRepo {
-  override def deleteById(oid: PgNamespaceId)(implicit c: Connection): Boolean = SQL"""delete from "pg_catalog"."pg_namespace" where "oid" = ${ParameterValue(oid, null, PgNamespaceId.toStatement)}""".executeUpdate() > 0
-
-  override def deleteByIds(oids: Array[PgNamespaceId])(implicit c: Connection): Int = {
-    SQL"""delete
-    from "pg_catalog"."pg_namespace"
-    where "oid" = ANY(${ParameterValue(oids, null, PgNamespaceId.arrayToStatement)})
-    """.executeUpdate()
-  }
-
   override def insert(unsaved: PgNamespaceRow)(implicit c: Connection): PgNamespaceRow = {
   SQL"""insert into "pg_catalog"."pg_namespace"("oid", "nspname", "nspowner", "nspacl")
-    values (${ParameterValue(unsaved.oid, null, PgNamespaceId.toStatement)}::oid, ${ParameterValue(unsaved.nspname, null, ToStatement.stringToStatement)}::name, ${ParameterValue(unsaved.nspowner, null, ToStatement.longToStatement)}::oid, ${ParameterValue(unsaved.nspacl, null, ToStatement.optionToStatement(TypoAclItem.arrayToStatement, typo.generated.arrayParameterMetaData(TypoAclItem.parameterMetadata)))}::aclitem[])
+    values (${ParameterValue(unsaved.oid, null, ToStatement.longToStatement)}::oid, ${ParameterValue(unsaved.nspname, null, ToStatement.stringToStatement)}::name, ${ParameterValue(unsaved.nspowner, null, ToStatement.longToStatement)}::oid, ${ParameterValue(unsaved.nspacl, null, ToStatement.optionToStatement(TypoAclItem.arrayToStatement, typo.generated.arrayParameterMetaData(TypoAclItem.parameterMetadata)))}::aclitem[])
     returning "oid", "nspname", "nspowner", "nspacl"
     """
     .executeInsert(PgNamespaceRow.rowParser(1).single)
@@ -44,107 +32,5 @@ class PgNamespaceRepoImpl extends PgNamespaceRepo {
     SQL"""select "oid", "nspname", "nspowner", "nspacl"
     from "pg_catalog"."pg_namespace"
     """.as(PgNamespaceRow.rowParser(1).*)
-  }
-
-  override def selectById(oid: PgNamespaceId)(implicit c: Connection): Option[PgNamespaceRow] = {
-    SQL"""select "oid", "nspname", "nspowner", "nspacl"
-    from "pg_catalog"."pg_namespace"
-    where "oid" = ${ParameterValue(oid, null, PgNamespaceId.toStatement)}
-    """.as(PgNamespaceRow.rowParser(1).singleOpt)
-  }
-
-  override def selectByIds(oids: Array[PgNamespaceId])(implicit c: Connection): List[PgNamespaceRow] = {
-    SQL"""select "oid", "nspname", "nspowner", "nspacl"
-    from "pg_catalog"."pg_namespace"
-    where "oid" = ANY(${ParameterValue(oids, null, PgNamespaceId.arrayToStatement)})
-    """.as(PgNamespaceRow.rowParser(1).*)
-  }
-
-  override def selectByIdsTracked(oids: Array[PgNamespaceId])(implicit c: Connection): Map[PgNamespaceId, PgNamespaceRow] = {
-    val byId = selectByIds(oids).view.map(x => (x.oid, x)).toMap
-    oids.view.flatMap(id => byId.get(id).map(x => (id, x))).toMap
-  }
-
-  override def selectByUniqueNspname(nspname: String)(implicit c: Connection): Option[PgNamespaceRow] = {
-    SQL"""select "oid", "nspname", "nspowner", "nspacl"
-    from "pg_catalog"."pg_namespace"
-    where "nspname" = ${ParameterValue(nspname, null, ToStatement.stringToStatement)}
-    """.as(PgNamespaceRow.rowParser(1).singleOpt)
-  }
-
-  override def update(row: PgNamespaceRow)(implicit c: Connection): Option[PgNamespaceRow] = {
-    val oid = row.oid
-    SQL"""update "pg_catalog"."pg_namespace"
-    set "nspname" = ${ParameterValue(row.nspname, null, ToStatement.stringToStatement)}::name,
-    "nspowner" = ${ParameterValue(row.nspowner, null, ToStatement.longToStatement)}::oid,
-    "nspacl" = ${ParameterValue(row.nspacl, null, ToStatement.optionToStatement(TypoAclItem.arrayToStatement, typo.generated.arrayParameterMetaData(TypoAclItem.parameterMetadata)))}::aclitem[]
-    where "oid" = ${ParameterValue(oid, null, PgNamespaceId.toStatement)}
-    returning "oid", "nspname", "nspowner", "nspacl"
-    """.executeInsert(PgNamespaceRow.rowParser(1).singleOpt)
-  }
-
-  override def upsert(unsaved: PgNamespaceRow)(implicit c: Connection): PgNamespaceRow = {
-  SQL"""insert into "pg_catalog"."pg_namespace"("oid", "nspname", "nspowner", "nspacl")
-    values (
-      ${ParameterValue(unsaved.oid, null, PgNamespaceId.toStatement)}::oid,
-    ${ParameterValue(unsaved.nspname, null, ToStatement.stringToStatement)}::name,
-    ${ParameterValue(unsaved.nspowner, null, ToStatement.longToStatement)}::oid,
-    ${ParameterValue(unsaved.nspacl, null, ToStatement.optionToStatement(TypoAclItem.arrayToStatement, typo.generated.arrayParameterMetaData(TypoAclItem.parameterMetadata)))}::aclitem[]
-    )
-    on conflict ("oid")
-    do update set
-      "nspname" = EXCLUDED."nspname",
-    "nspowner" = EXCLUDED."nspowner",
-    "nspacl" = EXCLUDED."nspacl"
-    returning "oid", "nspname", "nspowner", "nspacl"
-    """
-    .executeInsert(PgNamespaceRow.rowParser(1).single)
-  }
-
-  override def upsertBatch(unsaved: Iterable[PgNamespaceRow])(implicit c: Connection): List[PgNamespaceRow] = {
-    def toNamedParameter(row: PgNamespaceRow): List[NamedParameter] = List(
-      NamedParameter("oid", ParameterValue(row.oid, null, PgNamespaceId.toStatement)),
-      NamedParameter("nspname", ParameterValue(row.nspname, null, ToStatement.stringToStatement)),
-      NamedParameter("nspowner", ParameterValue(row.nspowner, null, ToStatement.longToStatement)),
-      NamedParameter("nspacl", ParameterValue(row.nspacl, null, ToStatement.optionToStatement(TypoAclItem.arrayToStatement, typo.generated.arrayParameterMetaData(TypoAclItem.parameterMetadata))))
-    )
-  
-    unsaved.toList match {
-      case Nil => Nil
-      case head :: rest =>
-        new anorm.typo.generated.ExecuteReturningSyntax.Ops(
-          BatchSql(
-            s"""insert into "pg_catalog"."pg_namespace"("oid", "nspname", "nspowner", "nspacl")
-            values ({oid}::oid, {nspname}::name, {nspowner}::oid, {nspacl}::aclitem[])
-            on conflict ("oid")
-            do update set
-              "nspname" = EXCLUDED."nspname",
-            "nspowner" = EXCLUDED."nspowner",
-            "nspacl" = EXCLUDED."nspacl"
-            returning "oid", "nspname", "nspowner", "nspacl"
-            """,
-            toNamedParameter(head),
-            rest.map(toNamedParameter)*
-          )
-        ).executeReturning(PgNamespaceRow.rowParser(1).*)
-    }
-  }
-
-  /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
-  override def upsertStreaming(
-    unsaved: Iterator[PgNamespaceRow],
-    batchSize: Int = 10000
-  )(implicit c: Connection): Int = {
-    SQL"""create temporary table pg_namespace_TEMP (like "pg_catalog"."pg_namespace") on commit drop""".execute(): @nowarn
-    streamingInsert(s"""copy pg_namespace_TEMP("oid", "nspname", "nspowner", "nspacl") from stdin""", batchSize, unsaved)(PgNamespaceRow.pgText, c): @nowarn
-    SQL"""insert into "pg_catalog"."pg_namespace"("oid", "nspname", "nspowner", "nspacl")
-    select * from pg_namespace_TEMP
-    on conflict ("oid")
-    do update set
-      "nspname" = EXCLUDED."nspname",
-    "nspowner" = EXCLUDED."nspowner",
-    "nspacl" = EXCLUDED."nspacl"
-    ;
-    drop table pg_namespace_TEMP;""".executeUpdate()
   }
 }

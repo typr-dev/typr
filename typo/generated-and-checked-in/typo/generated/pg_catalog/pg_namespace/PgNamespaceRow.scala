@@ -21,26 +21,22 @@ import scala.util.Try
 import typo.generated.Text
 import typo.generated.customtypes.TypoAclItem
 
-/** Table: pg_catalog.pg_namespace
- * Primary key: oid
- */
+/** Table: pg_catalog.pg_namespace */
 case class PgNamespaceRow(
   /** debug: {"table_catalog":"Adventureworks","table_schema":"pg_catalog","table_name":"pg_namespace","column_name":"oid","ordinal_position":1,"is_nullable":"NO","data_type":"oid","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"oid","dtd_identifier":"1","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"YES"} */
-  oid: PgNamespaceId,
+  oid: Long,
   /** debug: {"table_catalog":"Adventureworks","table_schema":"pg_catalog","table_name":"pg_namespace","column_name":"nspname","ordinal_position":2,"is_nullable":"NO","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"2","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"YES"} */
   nspname: String,
   /** debug: {"table_catalog":"Adventureworks","table_schema":"pg_catalog","table_name":"pg_namespace","column_name":"nspowner","ordinal_position":3,"is_nullable":"NO","data_type":"oid","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"oid","dtd_identifier":"3","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"YES"} */
-  nspowner: /* oid */ Long,
+  nspowner: Long,
   /** debug: {"table_catalog":"Adventureworks","table_schema":"pg_catalog","table_name":"pg_namespace","column_name":"nspacl","ordinal_position":4,"is_nullable":"YES","data_type":"ARRAY","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"_aclitem","dtd_identifier":"4","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"YES"} */
   nspacl: Option[Array[TypoAclItem]]
-) {
-  def id: PgNamespaceId = oid
-}
+)
 
 object PgNamespaceRow {
   implicit lazy val pgText: Text[PgNamespaceRow] = {
     Text.instance[PgNamespaceRow]{ (row, sb) =>
-      PgNamespaceId.pgText.unsafeEncode(row.oid, sb)
+      Text.longInstance.unsafeEncode(row.oid, sb)
       sb.append(Text.DELIMETER)
       Text.stringInstance.unsafeEncode(row.nspname, sb)
       sb.append(Text.DELIMETER)
@@ -54,7 +50,7 @@ object PgNamespaceRow {
     Reads[PgNamespaceRow](json => JsResult.fromTry(
         Try(
           PgNamespaceRow(
-            oid = json.\("oid").as(PgNamespaceId.reads),
+            oid = json.\("oid").as(Reads.LongReads),
             nspname = json.\("nspname").as(Reads.StringReads),
             nspowner = json.\("nspowner").as(Reads.LongReads),
             nspacl = json.\("nspacl").toOption.map(_.as(Reads.ArrayReads[TypoAclItem](TypoAclItem.reads, implicitly)))
@@ -68,7 +64,7 @@ object PgNamespaceRow {
     RowParser[PgNamespaceRow] { row =>
       Success(
         PgNamespaceRow(
-          oid = row(idx + 0)(PgNamespaceId.column),
+          oid = row(idx + 0)(Column.columnToLong),
           nspname = row(idx + 1)(Column.columnToString),
           nspowner = row(idx + 2)(Column.columnToLong),
           nspacl = row(idx + 3)(Column.columnToOption(TypoAclItem.arrayColumn))
@@ -80,7 +76,7 @@ object PgNamespaceRow {
   implicit lazy val writes: OWrites[PgNamespaceRow] = {
     OWrites[PgNamespaceRow](o =>
       new JsObject(ListMap[String, JsValue](
-        "oid" -> PgNamespaceId.writes.writes(o.oid),
+        "oid" -> Writes.LongWrites.writes(o.oid),
         "nspname" -> Writes.StringWrites.writes(o.nspname),
         "nspowner" -> Writes.LongWrites.writes(o.nspowner),
         "nspacl" -> Writes.OptionWrites(Writes.arrayWrites[TypoAclItem](implicitly, TypoAclItem.writes)).writes(o.nspacl)

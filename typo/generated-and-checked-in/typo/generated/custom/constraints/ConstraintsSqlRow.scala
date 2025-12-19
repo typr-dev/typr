@@ -24,17 +24,17 @@ case class ConstraintsSqlRow(
   /** Points to [[typo.generated.information_schema.table_constraints.TableConstraintsViewRow.tableSchema]]
    * debug: {"baseColumnName":"table_schema","baseRelationName":"information_schema.table_constraints","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_schema","originalName":"table_schema"},"columnName":"table_schema","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"table_constraints"}
    */
-  tableSchema: Option[/* nullability unknown */ String],
+  tableSchema: Option[String],
   /** Points to [[typo.generated.information_schema.table_constraints.TableConstraintsViewRow.tableName]]
    * debug: {"baseColumnName":"table_name","baseRelationName":"information_schema.table_constraints","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_name","originalName":"table_name"},"columnName":"table_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"table_constraints"}
    */
-  tableName: Option[/* nullability unknown */ String],
+  tableName: Option[String],
   /** debug: {"columnClassName":"java.sql.Array","columnDisplaySize":2147483647,"parsedColumnName":{"name":"columns","originalName":"columns"},"columnName":"columns","columnType":"Array","columnTypeName":"_name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  columns: /* nullability unknown */ Option[Array[String]],
+  columns: Option[Array[String]],
   /** Points to [[typo.generated.information_schema.table_constraints.TableConstraintsViewRow.constraintName]]
    * debug: {"baseColumnName":"constraint_name","baseRelationName":"information_schema.table_constraints","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"constraint_name","originalName":"constraint_name"},"columnName":"constraint_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"table_constraints"}
    */
-  constraintName: Option[/* nullability unknown */ String],
+  constraintName: Option[String],
   /** debug: {"baseColumnName":"check_clause","baseRelationName":"information_schema.check_constraints","columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"check_clause","originalName":"check_clause"},"columnName":"check_clause","columnType":"VarChar","columnTypeName":"varchar","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"Nullable","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0,"tableName":"check_constraints"} */
   checkClause: Option[String]
 )

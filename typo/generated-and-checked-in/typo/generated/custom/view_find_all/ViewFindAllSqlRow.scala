@@ -18,24 +18,23 @@ import play.api.libs.json.Reads
 import play.api.libs.json.Writes
 import scala.collection.immutable.ListMap
 import scala.util.Try
-import typo.generated.pg_catalog.pg_namespace.PgNamespaceId
 
 /** SQL file: custom/view_find_all.sql */
 case class ViewFindAllSqlRow(
   /** Points to [[typo.generated.pg_catalog.pg_namespace.PgNamespaceRow.oid]]
    * debug: {"baseColumnName":"oid","baseRelationName":"pg_catalog.pg_namespace","columnClassName":"java.lang.Long","columnDisplaySize":10,"parsedColumnName":{"name":"table_oid","originalName":"table_oid"},"columnName":"table_oid","columnType":"BigInt","columnTypeName":"oid","format":0,"isAutoIncrement":false,"isCaseSensitive":false,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":10,"scale":0,"tableName":"pg_namespace"}
    */
-  tableOid: PgNamespaceId,
+  tableOid: Long,
   /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_schema","originalName":"table_schema"},"columnName":"table_schema","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  tableSchema: /* nullability unknown */ Option[String],
+  tableSchema: Option[String],
   /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"table_name","originalName":"table_name"},"columnName":"table_name","columnType":"VarChar","columnTypeName":"name","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  tableName: /* nullability unknown */ Option[String],
+  tableName: Option[String],
   /** Points to [[typo.generated.pg_catalog.pg_class.PgClassRow.relkind]]
    * debug: {"baseColumnName":"relkind","baseRelationName":"pg_catalog.pg_class","columnClassName":"java.lang.String","columnDisplaySize":1,"parsedColumnName":{"name":"relkind","originalName":"relkind"},"columnName":"relkind","columnType":"Char","columnTypeName":"char","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NoNulls","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":1,"scale":0,"tableName":"pg_class"}
    */
   relkind: String,
   /** debug: {"columnClassName":"java.lang.String","columnDisplaySize":2147483647,"parsedColumnName":{"name":"view_definition","originalName":"view_definition"},"columnName":"view_definition","columnType":"VarChar","columnTypeName":"varchar","format":0,"isAutoIncrement":false,"isCaseSensitive":true,"isCurrency":false,"isDefinitelyWritable":false,"isNullable":"NullableUnknown","isReadOnly":false,"isSearchable":true,"isSigned":false,"isWritable":true,"precision":2147483647,"scale":0} */
-  viewDefinition: /* nullability unknown */ Option[String]
+  viewDefinition: Option[String]
 )
 
 object ViewFindAllSqlRow {
@@ -43,7 +42,7 @@ object ViewFindAllSqlRow {
     Reads[ViewFindAllSqlRow](json => JsResult.fromTry(
         Try(
           ViewFindAllSqlRow(
-            tableOid = json.\("table_oid").as(PgNamespaceId.reads),
+            tableOid = json.\("table_oid").as(Reads.LongReads),
             tableSchema = json.\("table_schema").toOption.map(_.as(Reads.StringReads)),
             tableName = json.\("table_name").toOption.map(_.as(Reads.StringReads)),
             relkind = json.\("relkind").as(Reads.StringReads),
@@ -58,7 +57,7 @@ object ViewFindAllSqlRow {
     RowParser[ViewFindAllSqlRow] { row =>
       Success(
         ViewFindAllSqlRow(
-          tableOid = row(idx + 0)(PgNamespaceId.column),
+          tableOid = row(idx + 0)(Column.columnToLong),
           tableSchema = row(idx + 1)(Column.columnToOption(Column.columnToString)),
           tableName = row(idx + 2)(Column.columnToOption(Column.columnToString)),
           relkind = row(idx + 3)(Column.columnToString),
@@ -71,7 +70,7 @@ object ViewFindAllSqlRow {
   implicit lazy val writes: OWrites[ViewFindAllSqlRow] = {
     OWrites[ViewFindAllSqlRow](o =>
       new JsObject(ListMap[String, JsValue](
-        "table_oid" -> PgNamespaceId.writes.writes(o.tableOid),
+        "table_oid" -> Writes.LongWrites.writes(o.tableOid),
         "table_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableSchema),
         "table_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableName),
         "relkind" -> Writes.StringWrites.writes(o.relkind),
