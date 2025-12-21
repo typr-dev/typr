@@ -40,7 +40,7 @@ data class PersonphoneRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): PersonphoneRowUnsaved = PersonphoneRowUnsaved(businessentityid, phonenumber, phonenumbertypeid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<PersonphoneRow> = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> PersonphoneRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate) })
+    val _rowParser: RowParser<PersonphoneRow> = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> PersonphoneRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate) })
 
     fun apply(
       compositeId: PersonphoneId,

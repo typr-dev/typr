@@ -70,7 +70,7 @@ public record EmployeesRow(
           DuckDbTypes.varchar,
           DuckDbTypes.numeric.opt(),
           DuckDbTypes.date,
-          EmployeesRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new EmployeesRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.empNumber(),

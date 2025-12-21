@@ -24,6 +24,6 @@ data class UmViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<UmViewRow> = RowParsers.of(UnitmeasureId.pgType, UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> UmViewRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.id, row.unitmeasurecode, row.name, row.modifieddate) })
+    val _rowParser: RowParser<UmViewRow> = RowParsers.of(UnitmeasureId.pgType, UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> UmViewRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.unitmeasurecode, row.name, row.modifieddate) })
   }
 }

@@ -62,5 +62,30 @@ case class VsalespersonViewRow(
 )
 
 object VsalespersonViewRow {
-  val `_rowParser`: RowParser[VsalespersonViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, Name.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, VsalespersonViewRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.territoryname, row.territorygroup, row.salesquota, row.salesytd, row.saleslastyear))
+  val `_rowParser`: RowParser[VsalespersonViewRow] = {
+    RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, Name.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21) => new VsalespersonViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12,
+      t13,
+      t14,
+      t15,
+      t16,
+      t17,
+      t18,
+      t19,
+      t20,
+      t21
+    ), row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.territoryname, row.territorygroup, row.salesquota, row.salesytd, row.saleslastyear))
+  }
 }

@@ -207,7 +207,8 @@ public record WViewRow(
           PgTypes.timestamp,
           ScrapreasonId.pgType,
           PgTypes.timestamp,
-          WViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
+              new WViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
           row ->
               new Object[] {
                 row.id(),

@@ -32,6 +32,6 @@ data class PmViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PmViewRow> = RowParsers.of(ProductmodelId.pgType, ProductmodelId.pgType, Name.pgType, PgTypes.xml, PgTypes.xml, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> PmViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.id, row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<PmViewRow> = RowParsers.of(ProductmodelId.pgType, ProductmodelId.pgType, Name.pgType, PgTypes.xml, PgTypes.xml, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> PmViewRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.id, row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate) })
   }
 }

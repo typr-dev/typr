@@ -62,7 +62,7 @@ public record TestSakSoknadsalternativRow(
           PgTypes.text,
           PgTypes.text,
           TestOrganisasjonId.pgType,
-          TestSakSoknadsalternativRow::new,
+          (t0, t1, t2) -> new TestSakSoknadsalternativRow(t0, t1, t2),
           row ->
               new Object[] {
                 row.organisasjonskodeSaksbehandler(),

@@ -59,7 +59,19 @@ case class MariatestSpatialRow(
 }
 
 object MariatestSpatialRow {
-  val `_rowParser`: RowParser[MariatestSpatialRow] = RowParsers.of(MariatestSpatialId.pgType, MariaTypes.geometry, MariaTypes.point, MariaTypes.linestring, MariaTypes.polygon, MariaTypes.multipoint, MariaTypes.multilinestring, MariaTypes.multipolygon, MariaTypes.geometrycollection)(MariatestSpatialRow.apply)(row => Array[Any](row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
+  val `_rowParser`: RowParser[MariatestSpatialRow] = {
+    RowParsers.of(MariatestSpatialId.pgType, MariaTypes.geometry, MariaTypes.point, MariaTypes.linestring, MariaTypes.polygon, MariaTypes.multipoint, MariaTypes.multilinestring, MariaTypes.multipolygon, MariaTypes.geometrycollection)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new MariatestSpatialRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8
+    ))(row => Array[Any](row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
+  }
 
   given mariaText: MariaText[MariatestSpatialRow] = MariaText.from(`_rowParser`.underlying)
 }

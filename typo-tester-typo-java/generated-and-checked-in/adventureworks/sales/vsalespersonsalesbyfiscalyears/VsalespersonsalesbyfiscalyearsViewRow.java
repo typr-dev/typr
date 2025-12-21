@@ -71,7 +71,8 @@ public record VsalespersonsalesbyfiscalyearsViewRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.numeric,
-          VsalespersonsalesbyfiscalyearsViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) ->
+              new VsalespersonsalesbyfiscalyearsViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.salesPersonID(),

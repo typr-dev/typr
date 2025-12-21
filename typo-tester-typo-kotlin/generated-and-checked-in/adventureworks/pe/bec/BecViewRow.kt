@@ -29,6 +29,6 @@ data class BecViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<BecViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> BecViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.personid, row.contacttypeid, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<BecViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> BecViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.personid, row.contacttypeid, row.rowguid, row.modifieddate) })
   }
 }

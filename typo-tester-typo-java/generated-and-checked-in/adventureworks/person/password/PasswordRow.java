@@ -65,7 +65,7 @@ public record PasswordRow(
           PgTypes.text,
           PgTypes.uuid,
           PgTypes.timestamp,
-          PasswordRow::new,
+          (t0, t1, t2, t3, t4) -> new PasswordRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.businessentityid(),

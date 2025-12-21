@@ -52,7 +52,7 @@ public record UmViewRow(
           UnitmeasureId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          UmViewRow::new,
+          (t0, t1, t2, t3) -> new UmViewRow(t0, t1, t2, t3),
           row -> new Object[] {row.id(), row.unitmeasurecode(), row.name(), row.modifieddate()});
   ;
 }

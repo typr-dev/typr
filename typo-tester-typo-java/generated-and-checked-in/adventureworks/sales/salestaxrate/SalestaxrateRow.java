@@ -110,7 +110,7 @@ public record SalestaxrateRow(
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          SalestaxrateRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new SalestaxrateRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.salestaxrateid(),

@@ -73,7 +73,7 @@ public record VproductanddescriptionMVRow(
           Name.pgType,
           CultureId.pgType,
           PgTypes.text,
-          VproductanddescriptionMVRow::new,
+          (t0, t1, t2, t3, t4) -> new VproductanddescriptionMVRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.productid(), row.name(), row.productmodel(), row.cultureid(), row.description()

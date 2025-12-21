@@ -57,7 +57,16 @@ case class StoreRow(
 }
 
 object StoreRow {
-  val `_rowParser`: RowParser[StoreRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), PgTypes.xml.opt(), PgTypes.uuid, PgTypes.timestamp, StoreRow.apply, row => Array[Any](row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[StoreRow] = {
+    RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.opt(), PgTypes.xml.opt(), PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5) => new StoreRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5
+    ), row => Array[Any](row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate))
+  }
 
   given pgText: PgText[StoreRow] = PgText.from(`_rowParser`)
 }

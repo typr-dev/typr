@@ -72,7 +72,18 @@ case class ProductImagesRow(
 }
 
 object ProductImagesRow {
-  val `_rowParser`: RowParser[ProductImagesRow] = RowParsers.of(ProductImagesId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.tinyintUnsigned, ScalaDbTypes.MariaTypes.bool, MariaTypes.longblob.nullable)(ProductImagesRow.apply)(row => Array[Any](row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData))
+  val `_rowParser`: RowParser[ProductImagesRow] = {
+    RowParsers.of(ProductImagesId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.tinyintUnsigned, ScalaDbTypes.MariaTypes.bool, MariaTypes.longblob.nullable)((t0, t1, t2, t3, t4, t5, t6, t7) => new ProductImagesRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7
+    ))(row => Array[Any](row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData))
+  }
 
   given mariaText: MariaText[ProductImagesRow] = MariaText.from(`_rowParser`.underlying)
 }

@@ -26,6 +26,6 @@ data class DViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<DViewRow> = RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> DViewRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.id, row.departmentid, row.name, row.groupname, row.modifieddate) })
+    val _rowParser: RowParser<DViewRow> = RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> DViewRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.id, row.departmentid, row.name, row.groupname, row.modifieddate) })
   }
 }

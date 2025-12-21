@@ -47,7 +47,7 @@ public record CultureRow(
           CultureId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          CultureRow::new,
+          (t0, t1, t2) -> new CultureRow(t0, t1, t2),
           row -> new Object[] {row.cultureid(), row.name(), row.modifieddate()});
   ;
 

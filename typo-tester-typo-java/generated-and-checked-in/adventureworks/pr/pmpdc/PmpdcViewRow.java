@@ -77,7 +77,7 @@ public record PmpdcViewRow(
           ProductdescriptionId.pgType,
           CultureId.pgType,
           PgTypes.timestamp,
-          PmpdcViewRow::new,
+          (t0, t1, t2, t3) -> new PmpdcViewRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.productmodelid(),

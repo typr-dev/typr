@@ -209,7 +209,8 @@ public record CustomerOrdersSqlRow(
           MariaTypes.text.opt(),
           MariaTypes.numeric.opt(),
           MariaTypes.datetime.opt(),
-          CustomerOrdersSqlRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
+              new CustomerOrdersSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
           row ->
               new Object[] {
                 row.customerId(),

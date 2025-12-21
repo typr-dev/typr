@@ -90,7 +90,7 @@ public record BusinessentitycontactRow(
           ContacttypeId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          BusinessentitycontactRow::new,
+          (t0, t1, t2, t3, t4) -> new BusinessentitycontactRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.businessentityid(),

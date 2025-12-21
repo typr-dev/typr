@@ -24,6 +24,6 @@ data class PdocViewRow(
   val documentnode: DocumentId
 ) {
   companion object {
-    val _rowParser: RowParser<PdocViewRow> = RowParsers.of(ProductId.pgType, ProductId.pgType, PgTypes.timestamp, DocumentId.pgType, { t0, t1, t2, t3 -> PdocViewRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.id, row.productid, row.modifieddate, row.documentnode) })
+    val _rowParser: RowParser<PdocViewRow> = RowParsers.of(ProductId.pgType, ProductId.pgType, PgTypes.timestamp, DocumentId.pgType, { t0, t1, t2, t3 -> PdocViewRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.productid, row.modifieddate, row.documentnode) })
   }
 }

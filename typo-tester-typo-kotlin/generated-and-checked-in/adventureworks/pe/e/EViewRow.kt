@@ -29,6 +29,6 @@ data class EViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<EViewRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, BusinessentityId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> EViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<EViewRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, BusinessentityId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> EViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate) })
   }
 }

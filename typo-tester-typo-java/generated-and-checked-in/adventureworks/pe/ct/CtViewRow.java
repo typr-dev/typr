@@ -52,7 +52,7 @@ public record CtViewRow(
           ContacttypeId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          CtViewRow::new,
+          (t0, t1, t2, t3) -> new CtViewRow(t0, t1, t2, t3),
           row -> new Object[] {row.id(), row.contacttypeid(), row.name(), row.modifieddate()});
   ;
 }

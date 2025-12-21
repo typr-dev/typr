@@ -53,7 +53,7 @@ public record ContacttypeRow(
           ContacttypeId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          ContacttypeRow::new,
+          (t0, t1, t2) -> new ContacttypeRow(t0, t1, t2),
           row -> new Object[] {row.contacttypeid(), row.name(), row.modifieddate()});
   ;
 

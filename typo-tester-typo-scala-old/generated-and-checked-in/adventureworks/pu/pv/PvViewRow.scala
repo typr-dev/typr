@@ -42,5 +42,20 @@ case class PvViewRow(
 )
 
 object PvViewRow {
-  val `_rowParser`: RowParser[PvViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, PgTypes.int4, PgTypes.int4, PgTypes.int4, UnitmeasureId.pgType, PgTypes.timestamp, PvViewRow.apply, row => Array[Any](row.id, row.productid, row.businessentityid, row.averageleadtime, row.standardprice, row.lastreceiptcost, row.lastreceiptdate, row.minorderqty, row.maxorderqty, row.onorderqty, row.unitmeasurecode, row.modifieddate))
+  val `_rowParser`: RowParser[PvViewRow] = {
+    RowParsers.of(ProductId.pgType, ProductId.pgType, BusinessentityId.pgType, PgTypes.int4, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, PgTypes.int4, PgTypes.int4, PgTypes.int4, UnitmeasureId.pgType, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) => new PvViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11
+    ), row => Array[Any](row.id, row.productid, row.businessentityid, row.averageleadtime, row.standardprice, row.lastreceiptcost, row.lastreceiptdate, row.minorderqty, row.maxorderqty, row.onorderqty, row.unitmeasurecode, row.modifieddate))
+  }
 }

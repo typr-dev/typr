@@ -18,7 +18,7 @@ val tabellkode: Issue142Id) {
   fun id(): Issue142Id = tabellkode
 
   companion object {
-    val _rowParser: RowParser<Issue1422Row> = RowParsers.of(Issue142Id.pgType, { t0 -> Issue1422Row(t0!!) }, { row -> arrayOf<Any?>(row.tabellkode) })
+    val _rowParser: RowParser<Issue1422Row> = RowParsers.of(Issue142Id.pgType, { t0 -> Issue1422Row(t0) }, { row -> arrayOf<Any?>(row.tabellkode) })
 
     val pgText: PgText<Issue1422Row> =
       PgText.from(_rowParser.underlying)

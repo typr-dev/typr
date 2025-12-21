@@ -52,7 +52,7 @@ data class ShipmethodRow(
   ): ShipmethodRowUnsaved = ShipmethodRowUnsaved(name, shipmethodid, shipbase, shiprate, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ShipmethodRow> = RowParsers.of(ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> ShipmethodRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.shipmethodid, row.name, row.shipbase, row.shiprate, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<ShipmethodRow> = RowParsers.of(ShipmethodId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> ShipmethodRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.shipmethodid, row.name, row.shipbase, row.shiprate, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<ShipmethodRow> =
       PgText.from(_rowParser.underlying)

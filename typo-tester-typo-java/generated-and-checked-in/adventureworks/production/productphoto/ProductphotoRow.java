@@ -115,7 +115,7 @@ public record ProductphotoRow(
           PgTypes.bytea.opt(),
           PgTypes.text.opt(),
           PgTypes.timestamp,
-          ProductphotoRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new ProductphotoRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.productphotoid(),

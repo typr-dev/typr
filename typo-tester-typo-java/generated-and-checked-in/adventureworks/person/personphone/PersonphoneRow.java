@@ -70,7 +70,7 @@ public record PersonphoneRow(
           Phone.pgType,
           PhonenumbertypeId.pgType,
           PgTypes.timestamp,
-          PersonphoneRow::new,
+          (t0, t1, t2, t3) -> new PersonphoneRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.businessentityid(),

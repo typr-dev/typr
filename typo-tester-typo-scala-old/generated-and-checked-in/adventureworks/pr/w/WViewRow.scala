@@ -38,5 +38,18 @@ case class WViewRow(
 )
 
 object WViewRow {
-  val `_rowParser`: RowParser[WViewRow] = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, PgTypes.int4, PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, ScrapreasonId.pgType, PgTypes.timestamp, WViewRow.apply, row => Array[Any](row.id, row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate))
+  val `_rowParser`: RowParser[WViewRow] = {
+    RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, PgTypes.int4, PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, ScrapreasonId.pgType, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new WViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9
+    ), row => Array[Any](row.id, row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate))
+  }
 }

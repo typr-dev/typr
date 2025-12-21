@@ -60,7 +60,7 @@ public record PersoncreditcardRow(
           BusinessentityId.pgType,
           CustomCreditcardId.pgType,
           PgTypes.timestamp,
-          PersoncreditcardRow::new,
+          (t0, t1, t2) -> new PersoncreditcardRow(t0, t1, t2),
           row -> new Object[] {row.businessentityid(), row.creditcardid(), row.modifieddate()});
   ;
 

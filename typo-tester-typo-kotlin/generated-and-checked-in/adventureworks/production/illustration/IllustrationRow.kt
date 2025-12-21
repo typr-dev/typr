@@ -36,7 +36,7 @@ data class IllustrationRow(
   ): IllustrationRowUnsaved = IllustrationRowUnsaved(diagram, illustrationid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<IllustrationRow> = RowParsers.of(IllustrationId.pgType, PgTypes.xml.nullable(), PgTypes.timestamp, { t0, t1, t2 -> IllustrationRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.illustrationid, row.diagram, row.modifieddate) })
+    val _rowParser: RowParser<IllustrationRow> = RowParsers.of(IllustrationId.pgType, PgTypes.xml.nullable(), PgTypes.timestamp, { t0, t1, t2 -> IllustrationRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.illustrationid, row.diagram, row.modifieddate) })
 
     val pgText: PgText<IllustrationRow> =
       PgText.from(_rowParser.underlying)

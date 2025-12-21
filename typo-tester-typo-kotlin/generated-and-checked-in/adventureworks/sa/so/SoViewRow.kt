@@ -42,6 +42,6 @@ data class SoViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<SoViewRow> = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, PgTypes.timestamp, PgTypes.timestamp, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> SoViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!) }, { row -> arrayOf<Any?>(row.id, row.specialofferid, row.description, row.discountpct, row.type, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SoViewRow> = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, PgTypes.timestamp, PgTypes.timestamp, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> SoViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) }, { row -> arrayOf<Any?>(row.id, row.specialofferid, row.description, row.discountpct, row.type, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate) })
   }
 }

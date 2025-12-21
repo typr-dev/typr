@@ -50,7 +50,7 @@ public record MariatestUniqueRow(
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.varchar,
-          MariatestUniqueRow::new,
+          (t0, t1, t2, t3) -> new MariatestUniqueRow(t0, t1, t2, t3),
           row -> new Object[] {row.id(), row.email(), row.code(), row.category()});
   ;
 

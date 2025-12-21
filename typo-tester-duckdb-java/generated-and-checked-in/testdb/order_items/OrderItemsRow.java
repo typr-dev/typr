@@ -47,7 +47,7 @@ public record OrderItemsRow(
           DuckDbTypes.integer,
           DuckDbTypes.integer,
           DuckDbTypes.numeric,
-          OrderItemsRow::new,
+          (t0, t1, t2, t3) -> new OrderItemsRow(t0, t1, t2, t3),
           row -> new Object[] {row.orderId(), row.productId(), row.quantity(), row.unitPrice()});
   ;
 

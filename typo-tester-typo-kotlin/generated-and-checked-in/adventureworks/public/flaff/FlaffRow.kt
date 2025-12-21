@@ -33,7 +33,7 @@ data class FlaffRow(
   fun id(): FlaffId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<FlaffRow> = RowParsers.of(ShortText.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ShortText.pgType, ShortText.pgType.nullable(), { t0, t1, t2, t3, t4 -> FlaffRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier) })
+    val _rowParser: RowParser<FlaffRow> = RowParsers.of(ShortText.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ShortText.pgType, ShortText.pgType.nullable(), { t0, t1, t2, t3, t4 -> FlaffRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier) })
 
     fun apply(
       compositeId: FlaffId,

@@ -77,7 +77,7 @@ public record JcViewRow(
           BusinessentityId.pgType,
           PgTypes.xml,
           PgTypes.timestamp,
-          JcViewRow::new,
+          (t0, t1, t2, t3, t4) -> new JcViewRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.id(),

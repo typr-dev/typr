@@ -267,7 +267,8 @@ public record PodViewRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          PodViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
+              new PodViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
           row ->
               new Object[] {
                 row.id(),

@@ -6,6 +6,7 @@
 package testdb.inventory_check;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Optional;
 import testdb.inventory.InventoryId;
 import testdb.products.ProductsId;
 import testdb.warehouses.WarehousesId;
@@ -33,12 +34,12 @@ public record InventoryCheckSqlRow(
     @JsonProperty("quantity_on_hand") Integer quantityOnHand,
     /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
     @JsonProperty("quantity_reserved") Integer quantityReserved,
-    /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
+    /** Points to {@link testdb.inventory.InventoryRow#quantityOnHand()} */
     Integer available,
     /** Points to {@link testdb.inventory.InventoryRow#reorderPoint()} */
     @JsonProperty("reorder_point") Integer reorderPoint,
     /** Points to {@link testdb.inventory.InventoryRow#binLocation()} */
-    @JsonProperty("bin_location") String binLocation) {
+    @JsonProperty("bin_location") Optional<String> binLocation) {
   /** Points to {@link testdb.inventory.InventoryRow#inventoryId()} */
   public InventoryCheckSqlRow withInventoryId(InventoryId inventoryId) {
     return new InventoryCheckSqlRow(
@@ -201,7 +202,7 @@ public record InventoryCheckSqlRow(
   }
   ;
 
-  /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
+  /** Points to {@link testdb.inventory.InventoryRow#quantityOnHand()} */
   public InventoryCheckSqlRow withAvailable(Integer available) {
     return new InventoryCheckSqlRow(
         inventoryId,
@@ -238,7 +239,7 @@ public record InventoryCheckSqlRow(
   ;
 
   /** Points to {@link testdb.inventory.InventoryRow#binLocation()} */
-  public InventoryCheckSqlRow withBinLocation(String binLocation) {
+  public InventoryCheckSqlRow withBinLocation(Optional<String> binLocation) {
     return new InventoryCheckSqlRow(
         inventoryId,
         productId,
@@ -268,8 +269,9 @@ public record InventoryCheckSqlRow(
           MariaTypes.int_,
           MariaTypes.int_,
           MariaTypes.int_,
-          MariaTypes.varchar,
-          InventoryCheckSqlRow::new,
+          MariaTypes.varchar.opt(),
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) ->
+              new InventoryCheckSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11),
           row ->
               new Object[] {
                 row.inventoryId(),

@@ -38,6 +38,6 @@ data class PodViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PodViewRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, PurchaseorderheaderId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.timestamp, KotlinDbTypes.PgTypes.int2, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PodViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.id, row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate) })
+    val _rowParser: RowParser<PodViewRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, PurchaseorderheaderId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.timestamp, KotlinDbTypes.PgTypes.int2, ProductId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PodViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.id, row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate) })
   }
 }

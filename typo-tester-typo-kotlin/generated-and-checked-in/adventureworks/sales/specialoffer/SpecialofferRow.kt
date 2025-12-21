@@ -69,7 +69,7 @@ data class SpecialofferRow(
   ): SpecialofferRowUnsaved = SpecialofferRowUnsaved(description, type, category, startdate, enddate, maxqty, specialofferid, discountpct, minqty, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SpecialofferRow> = RowParsers.of(SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, PgTypes.timestamp, PgTypes.timestamp, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> SpecialofferRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!) }, { row -> arrayOf<Any?>(row.specialofferid, row.description, row.discountpct, row.type, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SpecialofferRow> = RowParsers.of(SpecialofferId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.text, PgTypes.text, PgTypes.timestamp, PgTypes.timestamp, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> SpecialofferRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) }, { row -> arrayOf<Any?>(row.specialofferid, row.description, row.discountpct, row.type, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<SpecialofferRow> =
       PgText.from(_rowParser.underlying)

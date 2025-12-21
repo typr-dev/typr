@@ -98,7 +98,22 @@ case class PaymentsRow(
 }
 
 object PaymentsRow {
-  val `_rowParser`: RowParser[PaymentsRow] = RowParsers.of(PaymentsId.pgType, OrdersId.pgType, PaymentMethodsId.pgType, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.text, MariaTypes.longtext.nullable, MariaTypes.varchar.nullable, MariaTypes.inet6.nullable, MariaTypes.datetime, MariaTypes.datetime.nullable)(PaymentsRow.apply)(row => Array[Any](row.paymentId, row.orderId, row.methodId, row.transactionId, row.amount, row.currencyCode, row.status, row.processorResponse, row.errorMessage, row.ipAddress, row.createdAt, row.processedAt))
+  val `_rowParser`: RowParser[PaymentsRow] = {
+    RowParsers.of(PaymentsId.pgType, OrdersId.pgType, PaymentMethodsId.pgType, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.text, MariaTypes.longtext.nullable, MariaTypes.varchar.nullable, MariaTypes.inet6.nullable, MariaTypes.datetime, MariaTypes.datetime.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) => new PaymentsRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11
+    ))(row => Array[Any](row.paymentId, row.orderId, row.methodId, row.transactionId, row.amount, row.currencyCode, row.status, row.processorResponse, row.errorMessage, row.ipAddress, row.createdAt, row.processedAt))
+  }
 
   given mariaText: MariaText[PaymentsRow] = MariaText.from(`_rowParser`.underlying)
 }

@@ -52,7 +52,7 @@ public record CuViewRow(
           CurrencyId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          CuViewRow::new,
+          (t0, t1, t2, t3) -> new CuViewRow(t0, t1, t2, t3),
           row -> new Object[] {row.id(), row.currencycode(), row.name(), row.modifieddate()});
   ;
 }

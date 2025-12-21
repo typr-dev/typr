@@ -22,7 +22,7 @@ public record ProductSearchSqlRow(
     /** Points to {@link testdb.products.ProductsRow#name()} */
     String name,
     /** Points to {@link testdb.products.ProductsRow#shortDescription()} */
-    @JsonProperty("short_description") String shortDescription,
+    @JsonProperty("short_description") Optional<String> shortDescription,
     /** Points to {@link testdb.products.ProductsRow#basePrice()} */
     @JsonProperty("base_price") BigDecimal basePrice,
     /** Points to {@link testdb.products.ProductsRow#status()} */
@@ -51,7 +51,7 @@ public record ProductSearchSqlRow(
   ;
 
   /** Points to {@link testdb.products.ProductsRow#shortDescription()} */
-  public ProductSearchSqlRow withShortDescription(String shortDescription) {
+  public ProductSearchSqlRow withShortDescription(Optional<String> shortDescription) {
     return new ProductSearchSqlRow(
         productId, sku, name, shortDescription, basePrice, status, brandName);
   }
@@ -83,11 +83,11 @@ public record ProductSearchSqlRow(
           ProductsId.pgType,
           MariaTypes.varchar,
           MariaTypes.varchar,
-          MariaTypes.varchar,
+          MariaTypes.varchar.opt(),
           MariaTypes.numeric,
           MariaTypes.text,
           MariaTypes.varchar.opt(),
-          ProductSearchSqlRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new ProductSearchSqlRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.productId(),

@@ -36,6 +36,6 @@ data class PrViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PrViewRow> = RowParsers.of(ProductreviewId.pgType, ProductreviewId.pgType, ProductId.pgType, Name.pgType, PgTypes.timestamp, PgTypes.text, KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> PrViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!) }, { row -> arrayOf<Any?>(row.id, row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate) })
+    val _rowParser: RowParser<PrViewRow> = RowParsers.of(ProductreviewId.pgType, ProductreviewId.pgType, ProductId.pgType, Name.pgType, PgTypes.timestamp, PgTypes.text, KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> PrViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.id, row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate) })
   }
 }

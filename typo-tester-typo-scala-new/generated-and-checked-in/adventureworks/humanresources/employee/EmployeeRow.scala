@@ -108,7 +108,25 @@ case class EmployeeRow(
 }
 
 object EmployeeRow {
-  val `_rowParser`: RowParser[EmployeeRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, Flag.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, Flag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text.nullable)(EmployeeRow.apply)(row => Array[Any](row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
+  val `_rowParser`: RowParser[EmployeeRow] = {
+    RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, Flag.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, Flag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14) => new EmployeeRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12,
+      t13,
+      t14
+    ))(row => Array[Any](row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
+  }
 
   given pgText: PgText[EmployeeRow] = PgText.from(`_rowParser`.underlying)
 }

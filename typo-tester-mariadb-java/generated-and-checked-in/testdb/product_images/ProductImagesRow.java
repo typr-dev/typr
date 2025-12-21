@@ -98,7 +98,7 @@ public record ProductImagesRow(
           MariaTypes.tinyintUnsigned,
           MariaTypes.bool,
           MariaTypes.longblob.opt(),
-          ProductImagesRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7) -> new ProductImagesRow(t0, t1, t2, t3, t4, t5, t6, t7),
           row ->
               new Object[] {
                 row.imageId(),

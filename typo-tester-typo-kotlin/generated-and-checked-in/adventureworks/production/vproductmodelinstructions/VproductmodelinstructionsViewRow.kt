@@ -36,6 +36,6 @@ data class VproductmodelinstructionsViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<VproductmodelinstructionsViewRow> = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.nullable(), KotlinDbTypes.PgTypes.int4, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> VproductmodelinstructionsViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!) }, { row -> arrayOf<Any?>(row.productmodelid, row.name, row.instructions, row.locationID, row.setupHours, row.machineHours, row.laborHours, row.lotSize, row.step, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<VproductmodelinstructionsViewRow> = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.nullable(), KotlinDbTypes.PgTypes.int4, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> VproductmodelinstructionsViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) }, { row -> arrayOf<Any?>(row.productmodelid, row.name, row.instructions, row.locationID, row.setupHours, row.machineHours, row.laborHours, row.lotSize, row.step, row.rowguid, row.modifieddate) })
   }
 }

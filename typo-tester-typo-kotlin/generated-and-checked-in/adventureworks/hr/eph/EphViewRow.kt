@@ -29,6 +29,6 @@ data class EphViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<EphViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.timestamp, PgTypes.numeric, KotlinDbTypes.PgTypes.int2, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> EphViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate) })
+    val _rowParser: RowParser<EphViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.timestamp, PgTypes.numeric, KotlinDbTypes.PgTypes.int2, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> EphViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate) })
   }
 }

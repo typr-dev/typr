@@ -60,5 +60,18 @@ case class VDailySalesViewRow(
 )
 
 object VDailySalesViewRow {
-  val `_rowParser`: RowParser[VDailySalesViewRow] = RowParsers.of(MariaTypes.date.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable)(VDailySalesViewRow.apply)(row => Array[Any](row.orderDate, row.orderCount, row.uniqueCustomers, row.itemsSold, row.grossSales, row.totalDiscounts, row.totalShipping, row.totalTax, row.netSales, row.avgOrderValue))
+  val `_rowParser`: RowParser[VDailySalesViewRow] = {
+    RowParsers.of(MariaTypes.date.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new VDailySalesViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9
+    ))(row => Array[Any](row.orderDate, row.orderCount, row.uniqueCustomers, row.itemsSold, row.grossSales, row.totalDiscounts, row.totalShipping, row.totalTax, row.netSales, row.avgOrderValue))
+  }
 }

@@ -37,6 +37,6 @@ data class AViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<AViewRow> = RowParsers.of(AddressId.pgType, AddressId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> AViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.id, row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<AViewRow> = RowParsers.of(AddressId.pgType, AddressId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> AViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.id, row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate) })
   }
 }

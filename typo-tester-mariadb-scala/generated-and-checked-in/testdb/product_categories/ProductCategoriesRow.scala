@@ -53,7 +53,14 @@ case class ProductCategoriesRow(
 }
 
 object ProductCategoriesRow {
-  val `_rowParser`: RowParser[ProductCategoriesRow] = RowParsers.of(ProductsId.pgType, CategoriesId.pgType, ScalaDbTypes.MariaTypes.bool, ScalaDbTypes.MariaTypes.smallint)(ProductCategoriesRow.apply)(row => Array[Any](row.productId, row.categoryId, row.isPrimary, row.sortOrder))
+  val `_rowParser`: RowParser[ProductCategoriesRow] = {
+    RowParsers.of(ProductsId.pgType, CategoriesId.pgType, ScalaDbTypes.MariaTypes.bool, ScalaDbTypes.MariaTypes.smallint)((t0, t1, t2, t3) => new ProductCategoriesRow(
+      t0,
+      t1,
+      t2,
+      t3
+    ))(row => Array[Any](row.productId, row.categoryId, row.isPrimary, row.sortOrder))
+  }
 
   def apply(
     compositeId: ProductCategoriesId,

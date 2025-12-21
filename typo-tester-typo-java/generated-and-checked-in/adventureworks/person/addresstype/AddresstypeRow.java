@@ -63,7 +63,7 @@ public record AddresstypeRow(
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          AddresstypeRow::new,
+          (t0, t1, t2, t3) -> new AddresstypeRow(t0, t1, t2, t3),
           row -> new Object[] {row.addresstypeid(), row.name(), row.rowguid(), row.modifieddate()});
   ;
 

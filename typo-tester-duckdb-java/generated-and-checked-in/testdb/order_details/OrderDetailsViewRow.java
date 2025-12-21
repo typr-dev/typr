@@ -73,7 +73,7 @@ public record OrderDetailsViewRow(
           DuckDbTypes.integer.opt(),
           DuckDbTypes.numeric.opt(),
           DuckDbTypes.numeric.opt(),
-          OrderDetailsViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new OrderDetailsViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.orderId(),

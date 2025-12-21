@@ -98,7 +98,7 @@ public record ShoppingcartitemRow(
           ProductId.pgType,
           PgTypes.timestamp,
           PgTypes.timestamp,
-          ShoppingcartitemRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new ShoppingcartitemRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.shoppingcartitemid(),

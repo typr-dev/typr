@@ -37,7 +37,7 @@ data class CountryregioncurrencyRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): CountryregioncurrencyRowUnsaved = CountryregioncurrencyRowUnsaved(countryregioncode, currencycode, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<CountryregioncurrencyRow> = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, PgTypes.timestamp, { t0, t1, t2 -> CountryregioncurrencyRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.countryregioncode, row.currencycode, row.modifieddate) })
+    val _rowParser: RowParser<CountryregioncurrencyRow> = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, PgTypes.timestamp, { t0, t1, t2 -> CountryregioncurrencyRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.countryregioncode, row.currencycode, row.modifieddate) })
 
     fun apply(
       compositeId: CountryregioncurrencyId,

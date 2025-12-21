@@ -54,7 +54,7 @@ public record ProductCategoriesRow(
           CategoriesId.pgType,
           MariaTypes.bool,
           MariaTypes.smallint,
-          ProductCategoriesRow::new,
+          (t0, t1, t2, t3) -> new ProductCategoriesRow(t0, t1, t2, t3),
           row ->
               new Object[] {row.productId(), row.categoryId(), row.isPrimary(), row.sortOrder()});
   ;

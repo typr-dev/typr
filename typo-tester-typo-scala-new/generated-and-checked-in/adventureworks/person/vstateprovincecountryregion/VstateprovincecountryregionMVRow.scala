@@ -33,5 +33,15 @@ case class VstateprovincecountryregionMVRow(
 )
 
 object VstateprovincecountryregionMVRow {
-  val `_rowParser`: RowParser[VstateprovincecountryregionMVRow] = RowParsers.of(StateprovinceId.pgType, PgTypes.bpchar, Flag.pgType, Name.pgType, SalesterritoryId.pgType, CountryregionId.pgType, Name.pgType)(VstateprovincecountryregionMVRow.apply)(row => Array[Any](row.stateprovinceid, row.stateprovincecode, row.isonlystateprovinceflag, row.stateprovincename, row.territoryid, row.countryregioncode, row.countryregionname))
+  val `_rowParser`: RowParser[VstateprovincecountryregionMVRow] = {
+    RowParsers.of(StateprovinceId.pgType, PgTypes.bpchar, Flag.pgType, Name.pgType, SalesterritoryId.pgType, CountryregionId.pgType, Name.pgType)((t0, t1, t2, t3, t4, t5, t6) => new VstateprovincecountryregionMVRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6
+    ))(row => Array[Any](row.stateprovinceid, row.stateprovincecode, row.isonlystateprovinceflag, row.stateprovincename, row.territoryid, row.countryregioncode, row.countryregionname))
+  }
 }

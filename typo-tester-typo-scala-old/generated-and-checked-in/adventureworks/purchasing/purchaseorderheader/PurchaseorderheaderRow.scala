@@ -102,7 +102,22 @@ case class PurchaseorderheaderRow(
 }
 
 object PurchaseorderheaderRow {
-  val `_rowParser`: RowParser[PurchaseorderheaderRow] = RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int2, PgTypes.int2, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, PurchaseorderheaderRow.apply, row => Array[Any](row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate))
+  val `_rowParser`: RowParser[PurchaseorderheaderRow] = {
+    RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int2, PgTypes.int2, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) => new PurchaseorderheaderRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11
+    ), row => Array[Any](row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate))
+  }
 
   given pgText: PgText[PurchaseorderheaderRow] = PgText.from(`_rowParser`)
 }

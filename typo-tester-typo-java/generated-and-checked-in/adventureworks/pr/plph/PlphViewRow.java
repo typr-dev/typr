@@ -106,7 +106,7 @@ public record PlphViewRow(
           PgTypes.timestamp,
           PgTypes.numeric,
           PgTypes.timestamp,
-          PlphViewRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new PlphViewRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.id(),

@@ -52,7 +52,7 @@ public record PersonDynamicSqlRow(
           FirstName.pgType,
           Name.pgType.opt(),
           Name.pgType,
-          PersonDynamicSqlRow::new,
+          (t0, t1, t2, t3) -> new PersonDynamicSqlRow(t0, t1, t2, t3),
           row -> new Object[] {row.title(), row.firstname(), row.middlename(), row.lastname()});
   ;
 }

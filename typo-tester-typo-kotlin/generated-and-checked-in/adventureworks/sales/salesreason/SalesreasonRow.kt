@@ -37,7 +37,7 @@ data class SalesreasonRow(
   ): SalesreasonRowUnsaved = SalesreasonRowUnsaved(name, reasontype, salesreasonid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SalesreasonRow> = RowParsers.of(SalesreasonId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> SalesreasonRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.salesreasonid, row.name, row.reasontype, row.modifieddate) })
+    val _rowParser: RowParser<SalesreasonRow> = RowParsers.of(SalesreasonId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> SalesreasonRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.salesreasonid, row.name, row.reasontype, row.modifieddate) })
 
     val pgText: PgText<SalesreasonRow> =
       PgText.from(_rowParser.underlying)

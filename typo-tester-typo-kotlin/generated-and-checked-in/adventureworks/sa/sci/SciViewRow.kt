@@ -31,6 +31,6 @@ data class SciViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<SciViewRow> = RowParsers.of(ShoppingcartitemId.pgType, ShoppingcartitemId.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> SciViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.id, row.shoppingcartitemid, row.shoppingcartid, row.quantity, row.productid, row.datecreated, row.modifieddate) })
+    val _rowParser: RowParser<SciViewRow> = RowParsers.of(ShoppingcartitemId.pgType, ShoppingcartitemId.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> SciViewRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.id, row.shoppingcartitemid, row.shoppingcartid, row.quantity, row.productid, row.datecreated, row.modifieddate) })
   }
 }

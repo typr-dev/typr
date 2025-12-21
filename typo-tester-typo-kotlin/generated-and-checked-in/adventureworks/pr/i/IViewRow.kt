@@ -24,6 +24,6 @@ data class IViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<IViewRow> = RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, PgTypes.xml, PgTypes.timestamp, { t0, t1, t2, t3 -> IViewRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.id, row.illustrationid, row.diagram, row.modifieddate) })
+    val _rowParser: RowParser<IViewRow> = RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, PgTypes.xml, PgTypes.timestamp, { t0, t1, t2, t3 -> IViewRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.illustrationid, row.diagram, row.modifieddate) })
   }
 }

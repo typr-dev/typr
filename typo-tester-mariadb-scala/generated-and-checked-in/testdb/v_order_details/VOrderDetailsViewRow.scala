@@ -84,5 +84,22 @@ case class VOrderDetailsViewRow(
 )
 
 object VOrderDetailsViewRow {
-  val `_rowParser`: RowParser[VOrderDetailsViewRow] = RowParsers.of(OrdersId.pgType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.datetime, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.varchar.nullable, MariaTypes.text.nullable, MariaTypes.varchar.nullable)(VOrderDetailsViewRow.apply)(row => Array[Any](row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.totalAmount, row.currencyCode, row.orderedAt, row.customerEmail, row.customerName, row.itemCount, row.totalQuantity, row.trackingNumber, row.shippingStatus, row.carrierName))
+  val `_rowParser`: RowParser[VOrderDetailsViewRow] = {
+    RowParsers.of(OrdersId.pgType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.datetime, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.varchar.nullable, MariaTypes.text.nullable, MariaTypes.varchar.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) => new VOrderDetailsViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12,
+      t13
+    ))(row => Array[Any](row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.totalAmount, row.currencyCode, row.orderedAt, row.customerEmail, row.customerName, row.itemCount, row.totalQuantity, row.trackingNumber, row.shippingStatus, row.carrierName))
+  }
 }

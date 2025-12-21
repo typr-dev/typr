@@ -52,7 +52,7 @@ public record SrViewRow(
           ScrapreasonId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          SrViewRow::new,
+          (t0, t1, t2, t3) -> new SrViewRow(t0, t1, t2, t3),
           row -> new Object[] {row.id(), row.scrapreasonid(), row.name(), row.modifieddate()});
   ;
 }

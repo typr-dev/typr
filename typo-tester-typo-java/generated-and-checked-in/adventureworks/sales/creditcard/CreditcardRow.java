@@ -77,7 +77,7 @@ public record CreditcardRow(
           PgTypes.int2,
           PgTypes.int2,
           PgTypes.timestamp,
-          CreditcardRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new CreditcardRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.creditcardid(),

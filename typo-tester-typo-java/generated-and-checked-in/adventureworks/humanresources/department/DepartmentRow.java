@@ -62,7 +62,7 @@ public record DepartmentRow(
           Name.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          DepartmentRow::new,
+          (t0, t1, t2, t3) -> new DepartmentRow(t0, t1, t2, t3),
           row ->
               new Object[] {row.departmentid(), row.name(), row.groupname(), row.modifieddate()});
   ;

@@ -53,7 +53,7 @@ public record ProductsRow(
           DuckDbTypes.varchar,
           DuckDbTypes.numeric,
           DuckDbTypes.json.opt(),
-          ProductsRow::new,
+          (t0, t1, t2, t3, t4) -> new ProductsRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {row.productId(), row.sku(), row.name(), row.price(), row.metadata()});
   ;

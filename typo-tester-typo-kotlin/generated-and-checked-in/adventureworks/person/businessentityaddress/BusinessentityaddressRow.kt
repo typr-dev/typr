@@ -48,7 +48,7 @@ data class BusinessentityaddressRow(
   ): BusinessentityaddressRowUnsaved = BusinessentityaddressRowUnsaved(businessentityid, addressid, addresstypeid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<BusinessentityaddressRow> = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> BusinessentityaddressRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<BusinessentityaddressRow> = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> BusinessentityaddressRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate) })
 
     fun apply(
       compositeId: BusinessentityaddressId,

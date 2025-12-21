@@ -246,7 +246,8 @@ public record BomViewRow(
           PgTypes.int2,
           PgTypes.numeric,
           PgTypes.timestamp,
-          BomViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
+              new BomViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
           row ->
               new Object[] {
                 row.id(),

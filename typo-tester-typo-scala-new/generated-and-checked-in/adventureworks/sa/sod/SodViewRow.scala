@@ -42,5 +42,19 @@ case class SodViewRow(
 )
 
 object SodViewRow {
-  val `_rowParser`: RowParser[SodViewRow] = RowParsers.of(ScalaDbTypes.PgTypes.int4, SalesorderheaderId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.text, ScalaDbTypes.PgTypes.int2, ProductId.pgType, SpecialofferId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)(SodViewRow.apply)(row => Array[Any](row.id, row.salesorderid, row.salesorderdetailid, row.carriertrackingnumber, row.orderqty, row.productid, row.specialofferid, row.unitprice, row.unitpricediscount, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SodViewRow] = {
+    RowParsers.of(ScalaDbTypes.PgTypes.int4, SalesorderheaderId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.text, ScalaDbTypes.PgTypes.int2, ProductId.pgType, SpecialofferId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => new SodViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10
+    ))(row => Array[Any](row.id, row.salesorderid, row.salesorderdetailid, row.carriertrackingnumber, row.orderqty, row.productid, row.specialofferid, row.unitprice, row.unitpricediscount, row.rowguid, row.modifieddate))
+  }
 }

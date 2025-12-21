@@ -57,7 +57,7 @@ data class VendorRow(
   ): VendorRowUnsaved = VendorRowUnsaved(businessentityid, accountnumber, name, creditrating, purchasingwebserviceurl, preferredvendorstatus, activeflag, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<VendorRow> = RowParsers.of(BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, KotlinDbTypes.PgTypes.int2, Flag.pgType, Flag.pgType, PgTypes.text.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7 -> VendorRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.accountnumber, row.name, row.creditrating, row.preferredvendorstatus, row.activeflag, row.purchasingwebserviceurl, row.modifieddate) })
+    val _rowParser: RowParser<VendorRow> = RowParsers.of(BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, KotlinDbTypes.PgTypes.int2, Flag.pgType, Flag.pgType, PgTypes.text.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7 -> VendorRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.businessentityid, row.accountnumber, row.name, row.creditrating, row.preferredvendorstatus, row.activeflag, row.purchasingwebserviceurl, row.modifieddate) })
 
     val pgText: PgText<VendorRow> =
       PgText.from(_rowParser.underlying)

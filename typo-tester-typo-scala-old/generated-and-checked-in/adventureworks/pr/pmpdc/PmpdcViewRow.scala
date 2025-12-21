@@ -26,5 +26,12 @@ case class PmpdcViewRow(
 )
 
 object PmpdcViewRow {
-  val `_rowParser`: RowParser[PmpdcViewRow] = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, PgTypes.timestamp, PmpdcViewRow.apply, row => Array[Any](row.productmodelid, row.productdescriptionid, row.cultureid, row.modifieddate))
+  val `_rowParser`: RowParser[PmpdcViewRow] = {
+    RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, PgTypes.timestamp, (t0, t1, t2, t3) => new PmpdcViewRow(
+      t0,
+      t1,
+      t2,
+      t3
+    ), row => Array[Any](row.productmodelid, row.productdescriptionid, row.cultureid, row.modifieddate))
+  }
 }

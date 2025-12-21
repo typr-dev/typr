@@ -88,7 +88,7 @@ data class PurchaseorderheaderRow(
   ): PurchaseorderheaderRowUnsaved = PurchaseorderheaderRowUnsaved(employeeid, vendorid, shipmethodid, shipdate, purchaseorderid, revisionnumber, status, orderdate, subtotal, taxamt, freight, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<PurchaseorderheaderRow> = RowParsers.of(PurchaseorderheaderId.pgType, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> PurchaseorderheaderRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!) }, { row -> arrayOf<Any?>(row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate) })
+    val _rowParser: RowParser<PurchaseorderheaderRow> = RowParsers.of(PurchaseorderheaderId.pgType, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> PurchaseorderheaderRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) }, { row -> arrayOf<Any?>(row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate) })
 
     val pgText: PgText<PurchaseorderheaderRow> =
       PgText.from(_rowParser.underlying)

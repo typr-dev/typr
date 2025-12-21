@@ -25,5 +25,12 @@ case class BeViewRow(
 )
 
 object BeViewRow {
-  val `_rowParser`: RowParser[BeViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.uuid, PgTypes.timestamp, BeViewRow.apply, row => Array[Any](row.id, row.businessentityid, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[BeViewRow] = {
+    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3) => new BeViewRow(
+      t0,
+      t1,
+      t2,
+      t3
+    ), row => Array[Any](row.id, row.businessentityid, row.rowguid, row.modifieddate))
+  }
 }

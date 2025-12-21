@@ -190,7 +190,8 @@ public record TransactionhistoryarchiveRow(
           PgTypes.int4,
           PgTypes.numeric,
           PgTypes.timestamp,
-          TransactionhistoryarchiveRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
+              new TransactionhistoryarchiveRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
           row ->
               new Object[] {
                 row.transactionid(),

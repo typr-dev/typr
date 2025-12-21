@@ -32,7 +32,7 @@ public record MariatestIdentityRow(
       RowParsers.of(
           MariatestIdentityId.pgType,
           MariaTypes.varchar,
-          MariatestIdentityRow::new,
+          (t0, t1) -> new MariatestIdentityRow(t0, t1),
           row -> new Object[] {row.id(), row.name()});
   ;
 

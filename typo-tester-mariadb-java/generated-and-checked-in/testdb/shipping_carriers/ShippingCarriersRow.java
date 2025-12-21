@@ -71,7 +71,7 @@ public record ShippingCarriersRow(
           MariaTypes.varchar.opt(),
           MariaTypes.longtext.opt(),
           MariaTypes.bool,
-          ShippingCarriersRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new ShippingCarriersRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.carrierId(),

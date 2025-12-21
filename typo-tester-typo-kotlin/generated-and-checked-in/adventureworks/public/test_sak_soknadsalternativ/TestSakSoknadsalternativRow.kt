@@ -30,7 +30,7 @@ data class TestSakSoknadsalternativRow(
   fun id(): TestSakSoknadsalternativId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<TestSakSoknadsalternativRow> = RowParsers.of(PgTypes.text, PgTypes.text, TestOrganisasjonId.pgType, { t0, t1, t2 -> TestSakSoknadsalternativRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.organisasjonskodeSaksbehandler, row.utdanningsmulighetKode, row.organisasjonskodeTilbyder) })
+    val _rowParser: RowParser<TestSakSoknadsalternativRow> = RowParsers.of(PgTypes.text, PgTypes.text, TestOrganisasjonId.pgType, { t0, t1, t2 -> TestSakSoknadsalternativRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.organisasjonskodeSaksbehandler, row.utdanningsmulighetKode, row.organisasjonskodeTilbyder) })
 
     fun apply(
       compositeId: TestSakSoknadsalternativId,

@@ -62,7 +62,7 @@ public record ProductdescriptionRow(
           PgTypes.text,
           PgTypes.uuid,
           PgTypes.timestamp,
-          ProductdescriptionRow::new,
+          (t0, t1, t2, t3) -> new ProductdescriptionRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.productdescriptionid(), row.description(), row.rowguid(), row.modifieddate()

@@ -55,7 +55,7 @@ data class ProductreviewRow(
   ): ProductreviewRowUnsaved = ProductreviewRowUnsaved(productid, reviewername, emailaddress, rating, comments, productreviewid, reviewdate, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductreviewRow> = RowParsers.of(ProductreviewId.pgType, ProductId.pgType, Name.pgType, PgTypes.timestamp, PgTypes.text, KotlinDbTypes.PgTypes.int4, PgTypes.text.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7 -> ProductreviewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!) }, { row -> arrayOf<Any?>(row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate) })
+    val _rowParser: RowParser<ProductreviewRow> = RowParsers.of(ProductreviewId.pgType, ProductId.pgType, Name.pgType, PgTypes.timestamp, PgTypes.text, KotlinDbTypes.PgTypes.int4, PgTypes.text.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7 -> ProductreviewRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate) })
 
     val pgText: PgText<ProductreviewRow> =
       PgText.from(_rowParser.underlying)

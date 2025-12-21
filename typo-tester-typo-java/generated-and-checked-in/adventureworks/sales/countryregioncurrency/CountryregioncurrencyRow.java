@@ -60,7 +60,7 @@ public record CountryregioncurrencyRow(
           CountryregionId.pgType,
           CurrencyId.pgType,
           PgTypes.timestamp,
-          CountryregioncurrencyRow::new,
+          (t0, t1, t2) -> new CountryregioncurrencyRow(t0, t1, t2),
           row -> new Object[] {row.countryregioncode(), row.currencycode(), row.modifieddate()});
   ;
 

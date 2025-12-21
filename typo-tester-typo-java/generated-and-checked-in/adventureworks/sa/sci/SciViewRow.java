@@ -104,7 +104,7 @@ public record SciViewRow(
           ProductId.pgType,
           PgTypes.timestamp,
           PgTypes.timestamp,
-          SciViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new SciViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.id(),

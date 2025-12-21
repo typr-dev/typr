@@ -96,7 +96,7 @@ public record StoreRow(
           PgTypes.xml.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          StoreRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new StoreRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.businessentityid(),

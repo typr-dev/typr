@@ -38,6 +38,6 @@ data class WViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<WViewRow> = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, ScrapreasonId.pgType, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> WViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.id, row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate) })
+    val _rowParser: RowParser<WViewRow> = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, ProductId.pgType, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, ScrapreasonId.pgType, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> WViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.id, row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate) })
   }
 }

@@ -71,7 +71,7 @@ public record LViewRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          LViewRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new LViewRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.id(),

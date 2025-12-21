@@ -22,6 +22,6 @@ data class CrViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<CrViewRow> = RowParsers.of(CountryregionId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> CrViewRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.countryregioncode, row.name, row.modifieddate) })
+    val _rowParser: RowParser<CrViewRow> = RowParsers.of(CountryregionId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> CrViewRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.countryregioncode, row.name, row.modifieddate) })
   }
 }

@@ -108,7 +108,7 @@ public record BeaViewRow(
           AddresstypeId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          BeaViewRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new BeaViewRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.id(),

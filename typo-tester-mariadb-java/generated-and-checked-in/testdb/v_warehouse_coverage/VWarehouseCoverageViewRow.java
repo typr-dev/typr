@@ -207,7 +207,8 @@ public record VWarehouseCoverageViewRow(
           MariaTypes.bool,
           MariaTypes.bigint,
           MariaTypes.numeric.opt(),
-          VWarehouseCoverageViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
+              new VWarehouseCoverageViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
           row ->
               new Object[] {
                 row.warehouseId(),

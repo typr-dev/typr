@@ -35,7 +35,7 @@ data class ScrapreasonRow(
   ): ScrapreasonRowUnsaved = ScrapreasonRowUnsaved(name, scrapreasonid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ScrapreasonRow> = RowParsers.of(ScrapreasonId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> ScrapreasonRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.scrapreasonid, row.name, row.modifieddate) })
+    val _rowParser: RowParser<ScrapreasonRow> = RowParsers.of(ScrapreasonId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> ScrapreasonRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.scrapreasonid, row.name, row.modifieddate) })
 
     val pgText: PgText<ScrapreasonRow> =
       PgText.from(_rowParser.underlying)

@@ -60,7 +60,7 @@ public record SalesorderheadersalesreasonRow(
           SalesorderheaderId.pgType,
           SalesreasonId.pgType,
           PgTypes.timestamp,
-          SalesorderheadersalesreasonRow::new,
+          (t0, t1, t2) -> new SalesorderheadersalesreasonRow(t0, t1, t2),
           row -> new Object[] {row.salesorderid(), row.salesreasonid(), row.modifieddate()});
   ;
 

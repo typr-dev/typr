@@ -56,7 +56,15 @@ case class LocationRow(
 }
 
 object LocationRow {
-  val `_rowParser`: RowParser[LocationRow] = RowParsers.of(LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, LocationRow.apply, row => Array[Any](row.locationid, row.name, row.costrate, row.availability, row.modifieddate))
+  val `_rowParser`: RowParser[LocationRow] = {
+    RowParsers.of(LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, (t0, t1, t2, t3, t4) => new LocationRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4
+    ), row => Array[Any](row.locationid, row.name, row.costrate, row.availability, row.modifieddate))
+  }
 
   given pgText: PgText[LocationRow] = PgText.from(`_rowParser`)
 }

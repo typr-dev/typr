@@ -70,7 +70,7 @@ public record ProductproductphotoRow(
           ProductphotoId.pgType,
           Flag.pgType,
           PgTypes.timestamp,
-          ProductproductphotoRow::new,
+          (t0, t1, t2, t3) -> new ProductproductphotoRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.productid(), row.productphotoid(), row.primary(), row.modifieddate()

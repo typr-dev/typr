@@ -38,7 +38,7 @@ data class PasswordRow(
   ): PasswordRowUnsaved = PasswordRowUnsaved(businessentityid, passwordhash, passwordsalt, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<PasswordRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> PasswordRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<PasswordRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> PasswordRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<PasswordRow> =
       PgText.from(_rowParser.underlying)

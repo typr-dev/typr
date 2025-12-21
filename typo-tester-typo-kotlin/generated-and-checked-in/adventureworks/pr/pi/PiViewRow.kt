@@ -34,6 +34,6 @@ data class PiViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PiViewRow> = RowParsers.of(ProductId.pgType, ProductId.pgType, LocationId.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7 -> PiViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!) }, { row -> arrayOf<Any?>(row.id, row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<PiViewRow> = RowParsers.of(ProductId.pgType, ProductId.pgType, LocationId.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7 -> PiViewRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.id, row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate) })
   }
 }

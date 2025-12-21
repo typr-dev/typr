@@ -207,7 +207,8 @@ public record VDailySalesViewRow(
           MariaTypes.numeric.opt(),
           MariaTypes.numeric.opt(),
           MariaTypes.numeric.opt(),
-          VDailySalesViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
+              new VDailySalesViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
           row ->
               new Object[] {
                 row.orderDate(),

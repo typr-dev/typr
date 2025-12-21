@@ -33,7 +33,7 @@ data class UsersRow(
   fun toUnsavedRow(createdAt: Defaulted<Instant>): UsersRowUnsaved = UsersRowUnsaved(userId, name, lastName, email, password, verifiedOn, createdAt)
 
   companion object {
-    val _rowParser: RowParser<UsersRow> = RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.unknown, PgTypes.text, PgTypes.timestamptz, PgTypes.timestamptz.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> UsersRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.userId, row.name, row.lastName, row.email, row.password, row.createdAt, row.verifiedOn) })
+    val _rowParser: RowParser<UsersRow> = RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.unknown, PgTypes.text, PgTypes.timestamptz, PgTypes.timestamptz.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> UsersRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.userId, row.name, row.lastName, row.email, row.password, row.createdAt, row.verifiedOn) })
 
     val pgText: PgText<UsersRow> =
       PgText.from(_rowParser.underlying)

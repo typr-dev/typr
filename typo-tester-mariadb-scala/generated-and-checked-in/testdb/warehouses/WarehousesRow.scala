@@ -77,7 +77,20 @@ case class WarehousesRow(
 }
 
 object WarehousesRow {
-  val `_rowParser`: RowParser[WarehousesRow] = RowParsers.of(WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.nullable, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bool, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable)(WarehousesRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone))
+  val `_rowParser`: RowParser[WarehousesRow] = {
+    RowParsers.of(WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.nullable, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bool, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new WarehousesRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9
+    ))(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone))
+  }
 
   given mariaText: MariaText[WarehousesRow] = MariaText.from(`_rowParser`.underlying)
 }

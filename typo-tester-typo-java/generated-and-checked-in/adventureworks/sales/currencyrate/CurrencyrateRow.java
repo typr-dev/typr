@@ -148,7 +148,7 @@ public record CurrencyrateRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          CurrencyrateRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new CurrencyrateRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.currencyrateid(),

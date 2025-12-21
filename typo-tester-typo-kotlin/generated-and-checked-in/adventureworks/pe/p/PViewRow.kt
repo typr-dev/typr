@@ -49,6 +49,6 @@ data class PViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, PgTypes.xml, PgTypes.xml, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> PViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!, t12!!, t13!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<PViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, PgTypes.xml, PgTypes.xml, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> PViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate) })
   }
 }

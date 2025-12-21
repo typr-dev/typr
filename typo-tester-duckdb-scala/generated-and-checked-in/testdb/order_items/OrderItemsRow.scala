@@ -37,7 +37,14 @@ case class OrderItemsRow(
 }
 
 object OrderItemsRow {
-  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.numeric)(OrderItemsRow.apply)(row => Array[Any](row.orderId, row.productId, row.quantity, row.unitPrice))
+  val `_rowParser`: RowParser[OrderItemsRow] = {
+    RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.numeric)((t0, t1, t2, t3) => new OrderItemsRow(
+      t0,
+      t1,
+      t2,
+      t3
+    ))(row => Array[Any](row.orderId, row.productId, row.quantity, row.unitPrice))
+  }
 
   def apply(
     compositeId: OrderItemsId,

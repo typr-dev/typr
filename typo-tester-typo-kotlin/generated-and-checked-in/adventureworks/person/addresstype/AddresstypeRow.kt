@@ -39,7 +39,7 @@ data class AddresstypeRow(
   ): AddresstypeRowUnsaved = AddresstypeRowUnsaved(name, addresstypeid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<AddresstypeRow> = RowParsers.of(AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3 -> AddresstypeRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.addresstypeid, row.name, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<AddresstypeRow> = RowParsers.of(AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3 -> AddresstypeRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.addresstypeid, row.name, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<AddresstypeRow> =
       PgText.from(_rowParser.underlying)

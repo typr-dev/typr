@@ -66,7 +66,7 @@ public record PccViewRow(
           BusinessentityId.pgType,
           CustomCreditcardId.pgType,
           PgTypes.timestamp,
-          PccViewRow::new,
+          (t0, t1, t2, t3) -> new PccViewRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.id(), row.businessentityid(), row.creditcardid(), row.modifieddate()

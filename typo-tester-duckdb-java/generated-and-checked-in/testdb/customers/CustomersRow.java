@@ -58,7 +58,7 @@ public record CustomersRow(
           DuckDbTypes.varchar.opt(),
           DuckDbTypes.timestamp,
           Priority.duckDbType.opt(),
-          CustomersRow::new,
+          (t0, t1, t2, t3, t4) -> new CustomersRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.customerId(), row.name(), row.email(), row.createdAt(), row.priority()

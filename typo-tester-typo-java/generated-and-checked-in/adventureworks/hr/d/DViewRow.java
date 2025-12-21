@@ -61,7 +61,7 @@ public record DViewRow(
           Name.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          DViewRow::new,
+          (t0, t1, t2, t3, t4) -> new DViewRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.id(), row.departmentid(), row.name(), row.groupname(), row.modifieddate()

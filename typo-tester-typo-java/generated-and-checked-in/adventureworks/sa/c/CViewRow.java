@@ -81,7 +81,7 @@ public record CViewRow(
           SalesterritoryId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          CViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new CViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.id(),

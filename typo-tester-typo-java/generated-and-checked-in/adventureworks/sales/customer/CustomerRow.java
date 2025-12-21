@@ -97,7 +97,7 @@ public record CustomerRow(
           SalesterritoryId.pgType.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          CustomerRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new CustomerRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.customerid(),

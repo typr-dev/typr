@@ -81,7 +81,7 @@ public record SmViewRow(
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          SmViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new SmViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.id(),

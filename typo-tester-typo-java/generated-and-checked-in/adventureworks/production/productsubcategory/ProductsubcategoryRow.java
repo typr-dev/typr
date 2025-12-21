@@ -86,7 +86,7 @@ public record ProductsubcategoryRow(
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          ProductsubcategoryRow::new,
+          (t0, t1, t2, t3, t4) -> new ProductsubcategoryRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.productsubcategoryid(),

@@ -76,7 +76,19 @@ case class PurchaseorderdetailRow(
 }
 
 object PurchaseorderdetailRow {
-  val `_rowParser`: RowParser[PurchaseorderdetailRow] = RowParsers.of(PurchaseorderheaderId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.timestamp, ScalaDbTypes.PgTypes.int2, ProductId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(PurchaseorderdetailRow.apply)(row => Array[Any](row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate))
+  val `_rowParser`: RowParser[PurchaseorderdetailRow] = {
+    RowParsers.of(PurchaseorderheaderId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.timestamp, ScalaDbTypes.PgTypes.int2, ProductId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new PurchaseorderdetailRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8
+    ))(row => Array[Any](row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate))
+  }
 
   def apply(
     compositeId: PurchaseorderdetailId,

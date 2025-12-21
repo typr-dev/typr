@@ -37,7 +37,7 @@ data class SalesorderheadersalesreasonRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): SalesorderheadersalesreasonRowUnsaved = SalesorderheadersalesreasonRowUnsaved(salesorderid, salesreasonid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SalesorderheadersalesreasonRow> = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, PgTypes.timestamp, { t0, t1, t2 -> SalesorderheadersalesreasonRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.salesorderid, row.salesreasonid, row.modifieddate) })
+    val _rowParser: RowParser<SalesorderheadersalesreasonRow> = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, PgTypes.timestamp, { t0, t1, t2 -> SalesorderheadersalesreasonRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.salesorderid, row.salesreasonid, row.modifieddate) })
 
     fun apply(
       compositeId: SalesorderheadersalesreasonId,

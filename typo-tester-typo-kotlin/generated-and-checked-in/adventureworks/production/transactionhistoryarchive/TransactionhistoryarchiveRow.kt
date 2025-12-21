@@ -53,7 +53,7 @@ data class TransactionhistoryarchiveRow(
   ): TransactionhistoryarchiveRowUnsaved = TransactionhistoryarchiveRowUnsaved(transactionid, productid, referenceorderid, transactiontype, quantity, actualcost, referenceorderlineid, transactiondate, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<TransactionhistoryarchiveRow> = RowParsers.of(TransactionhistoryarchiveId.pgType, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, PgTypes.timestamp, PgTypes.bpchar, KotlinDbTypes.PgTypes.int4, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> TransactionhistoryarchiveRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!) }, { row -> arrayOf<Any?>(row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate) })
+    val _rowParser: RowParser<TransactionhistoryarchiveRow> = RowParsers.of(TransactionhistoryarchiveId.pgType, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, PgTypes.timestamp, PgTypes.bpchar, KotlinDbTypes.PgTypes.int4, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> TransactionhistoryarchiveRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate) })
 
     val pgText: PgText<TransactionhistoryarchiveRow> =
       PgText.from(_rowParser.underlying)

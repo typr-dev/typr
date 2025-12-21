@@ -29,6 +29,6 @@ data class SpqhViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<SpqhViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.timestamp, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> SpqhViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SpqhViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.timestamp, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> SpqhViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate) })
   }
 }

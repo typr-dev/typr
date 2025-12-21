@@ -28,6 +28,6 @@ data class VjobcandidateemploymentViewRow(
   @JsonProperty("Emp.Loc.City") val empLocCity: String
 ) {
   companion object {
-    val _rowParser: RowParser<VjobcandidateemploymentViewRow> = RowParsers.of(JobcandidateId.pgType, PgTypes.date, PgTypes.date, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> VjobcandidateemploymentViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!) }, { row -> arrayOf<Any?>(row.jobcandidateid, row.empStartDate, row.empEndDate, row.empOrgName, row.empJobTitle, row.empResponsibility, row.empFunctionCategory, row.empIndustryCategory, row.empLocCountryRegion, row.empLocState, row.empLocCity) })
+    val _rowParser: RowParser<VjobcandidateemploymentViewRow> = RowParsers.of(JobcandidateId.pgType, PgTypes.date, PgTypes.date, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> VjobcandidateemploymentViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) }, { row -> arrayOf<Any?>(row.jobcandidateid, row.empStartDate, row.empEndDate, row.empOrgName, row.empJobTitle, row.empResponsibility, row.empFunctionCategory, row.empIndustryCategory, row.empLocCountryRegion, row.empLocState, row.empLocCity) })
   }
 }

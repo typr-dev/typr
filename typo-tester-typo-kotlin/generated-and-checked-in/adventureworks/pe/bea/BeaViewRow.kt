@@ -30,6 +30,6 @@ data class BeaViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<BeaViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> BeaViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<BeaViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> BeaViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate) })
   }
 }

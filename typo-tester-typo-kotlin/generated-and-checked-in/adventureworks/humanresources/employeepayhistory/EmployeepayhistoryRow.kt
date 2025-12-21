@@ -44,7 +44,7 @@ data class EmployeepayhistoryRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): EmployeepayhistoryRowUnsaved = EmployeepayhistoryRowUnsaved(businessentityid, ratechangedate, rate, payfrequency, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<EmployeepayhistoryRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, PgTypes.numeric, KotlinDbTypes.PgTypes.int2, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> EmployeepayhistoryRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate) })
+    val _rowParser: RowParser<EmployeepayhistoryRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, PgTypes.numeric, KotlinDbTypes.PgTypes.int2, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> EmployeepayhistoryRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate) })
 
     fun apply(
       compositeId: EmployeepayhistoryId,

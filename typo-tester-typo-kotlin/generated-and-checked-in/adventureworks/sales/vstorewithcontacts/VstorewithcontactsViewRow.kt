@@ -42,6 +42,6 @@ data class VstorewithcontactsViewRow(
   val emailpromotion: Int
 ) {
   companion object {
-    val _rowParser: RowParser<VstorewithcontactsViewRow> = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> VstorewithcontactsViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.name, row.contacttype, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion) })
+    val _rowParser: RowParser<VstorewithcontactsViewRow> = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> VstorewithcontactsViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) }, { row -> arrayOf<Any?>(row.businessentityid, row.name, row.contacttype, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion) })
   }
 }

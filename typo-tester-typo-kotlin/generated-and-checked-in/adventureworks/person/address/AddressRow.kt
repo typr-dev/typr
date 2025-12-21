@@ -52,7 +52,7 @@ data class AddressRow(
   ): AddressRowUnsaved = AddressRowUnsaved(addressline1, addressline2, city, stateprovinceid, postalcode, spatiallocation, addressid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<AddressRow> = RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> AddressRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!) }, { row -> arrayOf<Any?>(row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<AddressRow> = RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> AddressRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<AddressRow> =
       PgText.from(_rowParser.underlying)

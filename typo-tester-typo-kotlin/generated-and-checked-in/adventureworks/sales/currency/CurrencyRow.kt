@@ -30,7 +30,7 @@ data class CurrencyRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): CurrencyRowUnsaved = CurrencyRowUnsaved(currencycode, name, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<CurrencyRow> = RowParsers.of(CurrencyId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> CurrencyRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.currencycode, row.name, row.modifieddate) })
+    val _rowParser: RowParser<CurrencyRow> = RowParsers.of(CurrencyId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> CurrencyRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.currencycode, row.name, row.modifieddate) })
 
     val pgText: PgText<CurrencyRow> =
       PgText.from(_rowParser.underlying)

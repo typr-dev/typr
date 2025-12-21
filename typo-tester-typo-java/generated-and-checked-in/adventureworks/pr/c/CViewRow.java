@@ -52,7 +52,7 @@ public record CViewRow(
           CultureId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          CViewRow::new,
+          (t0, t1, t2, t3) -> new CViewRow(t0, t1, t2, t3),
           row -> new Object[] {row.id(), row.cultureid(), row.name(), row.modifieddate()});
   ;
 }

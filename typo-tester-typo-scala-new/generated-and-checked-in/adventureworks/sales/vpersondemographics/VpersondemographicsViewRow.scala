@@ -32,5 +32,21 @@ case class VpersondemographicsViewRow(
 )
 
 object VpersondemographicsViewRow {
-  val `_rowParser`: RowParser[VpersondemographicsViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.money, PgTypes.date, PgTypes.date, PgTypes.text, PgTypes.text, PgTypes.text, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, PgTypes.text, PgTypes.text, ScalaDbTypes.PgTypes.bool, ScalaDbTypes.PgTypes.int4)(VpersondemographicsViewRow.apply)(row => Array[Any](row.businessentityid, row.totalpurchaseytd, row.datefirstpurchase, row.birthdate, row.maritalstatus, row.yearlyincome, row.gender, row.totalchildren, row.numberchildrenathome, row.education, row.occupation, row.homeownerflag, row.numbercarsowned))
+  val `_rowParser`: RowParser[VpersondemographicsViewRow] = {
+    RowParsers.of(BusinessentityId.pgType, PgTypes.money, PgTypes.date, PgTypes.date, PgTypes.text, PgTypes.text, PgTypes.text, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, PgTypes.text, PgTypes.text, ScalaDbTypes.PgTypes.bool, ScalaDbTypes.PgTypes.int4)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) => new VpersondemographicsViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12
+    ))(row => Array[Any](row.businessentityid, row.totalpurchaseytd, row.datefirstpurchase, row.birthdate, row.maritalstatus, row.yearlyincome, row.gender, row.totalchildren, row.numberchildrenathome, row.education, row.occupation, row.homeownerflag, row.numbercarsowned))
+  }
 }

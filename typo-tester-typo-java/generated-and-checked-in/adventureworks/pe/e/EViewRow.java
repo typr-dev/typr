@@ -70,7 +70,7 @@ public record EViewRow(
           PgTypes.text,
           PgTypes.uuid,
           PgTypes.timestamp,
-          EViewRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new EViewRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.id(),

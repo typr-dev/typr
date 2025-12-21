@@ -275,7 +275,8 @@ public record SpecialofferRow(
           PgTypes.int4.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          SpecialofferRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
+              new SpecialofferRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
           row ->
               new Object[] {
                 row.specialofferid(),

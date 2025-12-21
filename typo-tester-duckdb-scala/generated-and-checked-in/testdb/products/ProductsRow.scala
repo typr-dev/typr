@@ -28,7 +28,15 @@ case class ProductsRow(
 }
 
 object ProductsRow {
-  val `_rowParser`: RowParser[ProductsRow] = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric, DuckDbTypes.json.nullable)(ProductsRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.price, row.metadata))
+  val `_rowParser`: RowParser[ProductsRow] = {
+    RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric, DuckDbTypes.json.nullable)((t0, t1, t2, t3, t4) => new ProductsRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4
+    ))(row => Array[Any](row.productId, row.sku, row.name, row.price, row.metadata))
+  }
 
   given duckDbText: DuckDbText[ProductsRow] = DuckDbText.from(`_rowParser`.underlying)
 }

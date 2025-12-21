@@ -91,7 +91,7 @@ public record BusinessentityaddressRow(
           AddresstypeId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          BusinessentityaddressRow::new,
+          (t0, t1, t2, t3, t4) -> new BusinessentityaddressRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.businessentityid(),

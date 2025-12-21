@@ -177,7 +177,7 @@ public record ProductreviewRow(
           PgTypes.int4,
           PgTypes.text.opt(),
           PgTypes.timestamp,
-          ProductreviewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7) -> new ProductreviewRow(t0, t1, t2, t3, t4, t5, t6, t7),
           row ->
               new Object[] {
                 row.productreviewid(),

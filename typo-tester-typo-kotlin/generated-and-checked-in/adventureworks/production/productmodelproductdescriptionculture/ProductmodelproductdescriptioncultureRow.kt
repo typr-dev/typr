@@ -42,7 +42,7 @@ data class ProductmodelproductdescriptioncultureRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): ProductmodelproductdescriptioncultureRowUnsaved = ProductmodelproductdescriptioncultureRowUnsaved(productmodelid, productdescriptionid, cultureid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductmodelproductdescriptioncultureRow> = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> ProductmodelproductdescriptioncultureRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.productmodelid, row.productdescriptionid, row.cultureid, row.modifieddate) })
+    val _rowParser: RowParser<ProductmodelproductdescriptioncultureRow> = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> ProductmodelproductdescriptioncultureRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.productmodelid, row.productdescriptionid, row.cultureid, row.modifieddate) })
 
     fun apply(
       compositeId: ProductmodelproductdescriptioncultureId,

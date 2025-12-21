@@ -107,7 +107,7 @@ public record BecViewRow(
           ContacttypeId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          BecViewRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new BecViewRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.id(),

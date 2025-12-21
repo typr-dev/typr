@@ -92,7 +92,7 @@ public record PmViewRow(
           PgTypes.xml,
           PgTypes.uuid,
           PgTypes.timestamp,
-          PmViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new PmViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.id(),

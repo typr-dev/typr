@@ -266,7 +266,8 @@ public record ThaViewRow(
           PgTypes.int4,
           PgTypes.numeric,
           PgTypes.timestamp,
-          ThaViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
+              new ThaViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
           row ->
               new Object[] {
                 row.id(),

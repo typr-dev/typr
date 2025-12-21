@@ -60,7 +60,7 @@ public record FlaffRow(
           PgTypes.int4,
           ShortText.pgType,
           ShortText.pgType.opt(),
-          FlaffRow::new,
+          (t0, t1, t2, t3, t4) -> new FlaffRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.code(),

@@ -25,7 +25,7 @@ case class MariatestIdentityRow(
 }
 
 object MariatestIdentityRow {
-  val `_rowParser`: RowParser[MariatestIdentityRow] = RowParsers.of(MariatestIdentityId.pgType, MariaTypes.varchar)(MariatestIdentityRow.apply)(row => Array[Any](row.id, row.name))
+  val `_rowParser`: RowParser[MariatestIdentityRow] = RowParsers.of(MariatestIdentityId.pgType, MariaTypes.varchar)((t0, t1) => new MariatestIdentityRow(t0, t1))(row => Array[Any](row.id, row.name))
 
   given mariaText: MariaText[MariatestIdentityRow] = MariaText.from(`_rowParser`.underlying)
 }

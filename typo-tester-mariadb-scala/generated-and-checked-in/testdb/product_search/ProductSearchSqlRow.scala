@@ -22,7 +22,7 @@ case class ProductSearchSqlRow(
   /** Points to [[testdb.products.ProductsRow.name]] */
   name: String,
   /** Points to [[testdb.products.ProductsRow.shortDescription]] */
-  @JsonProperty("short_description") shortDescription: String,
+  @JsonProperty("short_description") shortDescription: Option[String],
   /** Points to [[testdb.products.ProductsRow.basePrice]] */
   @JsonProperty("base_price") basePrice: BigDecimal,
   /** Points to [[testdb.products.ProductsRow.status]] */
@@ -32,5 +32,15 @@ case class ProductSearchSqlRow(
 )
 
 object ProductSearchSqlRow {
-  val `_rowParser`: RowParser[ProductSearchSqlRow] = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable)(ProductSearchSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName))
+  val `_rowParser`: RowParser[ProductSearchSqlRow] = {
+    RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable)((t0, t1, t2, t3, t4, t5, t6) => new ProductSearchSqlRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6
+    ))(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName))
+  }
 }

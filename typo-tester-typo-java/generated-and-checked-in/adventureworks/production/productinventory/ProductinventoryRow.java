@@ -110,7 +110,7 @@ public record ProductinventoryRow(
           PgTypes.int2,
           PgTypes.uuid,
           PgTypes.timestamp,
-          ProductinventoryRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new ProductinventoryRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.productid(),

@@ -62,7 +62,7 @@ public record PriceTiersRow(
           MariaTypes.intUnsigned,
           MariaTypes.text,
           MariaTypes.numeric,
-          PriceTiersRow::new,
+          (t0, t1, t2, t3, t4) -> new PriceTiersRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.tierId(), row.name(), row.minQuantity(), row.discountType(), row.discountValue()

@@ -25,5 +25,12 @@ case class IViewRow(
 )
 
 object IViewRow {
-  val `_rowParser`: RowParser[IViewRow] = RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, PgTypes.xml, PgTypes.timestamp, IViewRow.apply, row => Array[Any](row.id, row.illustrationid, row.diagram, row.modifieddate))
+  val `_rowParser`: RowParser[IViewRow] = {
+    RowParsers.of(IllustrationId.pgType, IllustrationId.pgType, PgTypes.xml, PgTypes.timestamp, (t0, t1, t2, t3) => new IViewRow(
+      t0,
+      t1,
+      t2,
+      t3
+    ), row => Array[Any](row.id, row.illustrationid, row.diagram, row.modifieddate))
+  }
 }

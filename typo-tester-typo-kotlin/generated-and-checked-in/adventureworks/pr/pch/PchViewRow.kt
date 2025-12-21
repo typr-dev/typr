@@ -28,6 +28,6 @@ data class PchViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PchViewRow> = RowParsers.of(ProductId.pgType, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> PchViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.id, row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate) })
+    val _rowParser: RowParser<PchViewRow> = RowParsers.of(ProductId.pgType, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> PchViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.id, row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate) })
   }
 }

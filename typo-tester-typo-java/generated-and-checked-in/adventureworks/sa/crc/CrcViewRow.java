@@ -61,7 +61,7 @@ public record CrcViewRow(
           CountryregionId.pgType,
           CurrencyId.pgType,
           PgTypes.timestamp,
-          CrcViewRow::new,
+          (t0, t1, t2) -> new CrcViewRow(t0, t1, t2),
           row -> new Object[] {row.countryregioncode(), row.currencycode(), row.modifieddate()});
   ;
 }

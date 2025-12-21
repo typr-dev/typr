@@ -58,7 +58,7 @@ public record OrdersRow(
           DuckDbTypes.date,
           DuckDbTypes.numeric.opt(),
           DuckDbTypes.varchar.opt(),
-          OrdersRow::new,
+          (t0, t1, t2, t3, t4) -> new OrdersRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.orderId(), row.customerId(), row.orderDate(), row.totalAmount(), row.status()

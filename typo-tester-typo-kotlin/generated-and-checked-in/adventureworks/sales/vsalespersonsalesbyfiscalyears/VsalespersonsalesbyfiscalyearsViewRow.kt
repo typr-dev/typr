@@ -23,6 +23,6 @@ data class VsalespersonsalesbyfiscalyearsViewRow(
   val _2014: BigDecimal
 ) {
   companion object {
-    val _rowParser: RowParser<VsalespersonsalesbyfiscalyearsViewRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, { t0, t1, t2, t3, t4, t5, t6 -> VsalespersonsalesbyfiscalyearsViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.salesPersonID, row.fullName, row.jobTitle, row.salesTerritory, row._2012, row._2013, row._2014) })
+    val _rowParser: RowParser<VsalespersonsalesbyfiscalyearsViewRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, { t0, t1, t2, t3, t4, t5, t6 -> VsalespersonsalesbyfiscalyearsViewRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.salesPersonID, row.fullName, row.jobTitle, row.salesTerritory, row._2012, row._2013, row._2014) })
   }
 }

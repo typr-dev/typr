@@ -70,7 +70,7 @@ public record UsersRow(
           PgTypes.text,
           PgTypes.timestamptz,
           PgTypes.timestamptz.opt(),
-          UsersRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new UsersRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.userId(),

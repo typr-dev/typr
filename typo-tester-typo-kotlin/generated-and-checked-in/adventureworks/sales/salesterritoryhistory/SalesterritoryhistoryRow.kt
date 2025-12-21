@@ -52,7 +52,7 @@ data class SalesterritoryhistoryRow(
   ): SalesterritoryhistoryRowUnsaved = SalesterritoryhistoryRowUnsaved(businessentityid, territoryid, startdate, enddate, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SalesterritoryhistoryRow> = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> SalesterritoryhistoryRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SalesterritoryhistoryRow> = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> SalesterritoryhistoryRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate) })
 
     fun apply(
       compositeId: SalesterritoryhistoryId,

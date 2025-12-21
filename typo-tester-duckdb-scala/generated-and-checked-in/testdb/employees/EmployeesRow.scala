@@ -46,7 +46,17 @@ case class EmployeesRow(
 }
 
 object EmployeesRow {
-  val `_rowParser`: RowParser[EmployeesRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date)(EmployeesRow.apply)(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
+  val `_rowParser`: RowParser[EmployeesRow] = {
+    RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date)((t0, t1, t2, t3, t4, t5, t6) => new EmployeesRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6
+    ))(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
+  }
 
   def apply(
     compositeId: EmployeesId,

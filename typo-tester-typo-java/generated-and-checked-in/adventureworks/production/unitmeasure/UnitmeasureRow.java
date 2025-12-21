@@ -44,7 +44,7 @@ public record UnitmeasureRow(
           UnitmeasureId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          UnitmeasureRow::new,
+          (t0, t1, t2) -> new UnitmeasureRow(t0, t1, t2),
           row -> new Object[] {row.unitmeasurecode(), row.name(), row.modifieddate()});
   ;
 

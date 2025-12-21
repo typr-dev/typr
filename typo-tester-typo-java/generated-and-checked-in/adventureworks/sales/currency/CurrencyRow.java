@@ -46,7 +46,7 @@ public record CurrencyRow(
           CurrencyId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          CurrencyRow::new,
+          (t0, t1, t2) -> new CurrencyRow(t0, t1, t2),
           row -> new Object[] {row.currencycode(), row.name(), row.modifieddate()});
   ;
 

@@ -38,6 +38,6 @@ data class BomViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<BomViewRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, ProductId.pgType, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, UnitmeasureId.pgType, KotlinDbTypes.PgTypes.int2, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> BomViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.id, row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate) })
+    val _rowParser: RowParser<BomViewRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, ProductId.pgType, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, UnitmeasureId.pgType, KotlinDbTypes.PgTypes.int2, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> BomViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.id, row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate) })
   }
 }

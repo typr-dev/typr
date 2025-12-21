@@ -29,7 +29,7 @@ public record OnlyPkColumnsRow(
       RowParsers.of(
           PgTypes.text,
           PgTypes.int4,
-          OnlyPkColumnsRow::new,
+          (t0, t1) -> new OnlyPkColumnsRow(t0, t1),
           row -> new Object[] {row.keyColumn1(), row.keyColumn2()});
   ;
 

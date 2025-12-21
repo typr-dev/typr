@@ -130,7 +130,7 @@ public record EdhViewRow(
           PgTypes.date,
           PgTypes.date,
           PgTypes.timestamp,
-          EdhViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new EdhViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.id(),

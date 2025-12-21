@@ -16,7 +16,7 @@ data class TestOrganisasjonRow(val organisasjonskode: TestOrganisasjonId) {
   fun id(): TestOrganisasjonId = organisasjonskode
 
   companion object {
-    val _rowParser: RowParser<TestOrganisasjonRow> = RowParsers.of(TestOrganisasjonId.pgType, { t0 -> TestOrganisasjonRow(t0!!) }, { row -> arrayOf<Any?>(row.organisasjonskode) })
+    val _rowParser: RowParser<TestOrganisasjonRow> = RowParsers.of(TestOrganisasjonId.pgType, { t0 -> TestOrganisasjonRow(t0) }, { row -> arrayOf<Any?>(row.organisasjonskode) })
 
     val pgText: PgText<TestOrganisasjonRow> =
       PgText.from(_rowParser.underlying)

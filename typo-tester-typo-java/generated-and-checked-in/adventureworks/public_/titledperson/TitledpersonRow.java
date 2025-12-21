@@ -42,7 +42,7 @@ public record TitledpersonRow(
           TitleDomainId.pgType,
           TitleId.pgType,
           PgTypes.text,
-          TitledpersonRow::new,
+          (t0, t1, t2) -> new TitledpersonRow(t0, t1, t2),
           row -> new Object[] {row.titleShort(), row.title(), row.name()});
   ;
 

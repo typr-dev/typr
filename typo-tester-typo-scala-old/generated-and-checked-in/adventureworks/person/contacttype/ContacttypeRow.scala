@@ -36,7 +36,7 @@ case class ContacttypeRow(
 }
 
 object ContacttypeRow {
-  val `_rowParser`: RowParser[ContacttypeRow] = RowParsers.of(ContacttypeId.pgType, Name.pgType, PgTypes.timestamp, ContacttypeRow.apply, row => Array[Any](row.contacttypeid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[ContacttypeRow] = RowParsers.of(ContacttypeId.pgType, Name.pgType, PgTypes.timestamp, (t0, t1, t2) => new ContacttypeRow(t0, t1, t2), row => Array[Any](row.contacttypeid, row.name, row.modifieddate))
 
   given pgText: PgText[ContacttypeRow] = PgText.from(`_rowParser`)
 }

@@ -51,7 +51,7 @@ data class ShoppingcartitemRow(
   ): ShoppingcartitemRowUnsaved = ShoppingcartitemRowUnsaved(shoppingcartid, productid, shoppingcartitemid, quantity, datecreated, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ShoppingcartitemRow> = RowParsers.of(ShoppingcartitemId.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> ShoppingcartitemRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.shoppingcartitemid, row.shoppingcartid, row.quantity, row.productid, row.datecreated, row.modifieddate) })
+    val _rowParser: RowParser<ShoppingcartitemRow> = RowParsers.of(ShoppingcartitemId.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> ShoppingcartitemRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.shoppingcartitemid, row.shoppingcartid, row.quantity, row.productid, row.datecreated, row.modifieddate) })
 
     val pgText: PgText<ShoppingcartitemRow> =
       PgText.from(_rowParser.underlying)

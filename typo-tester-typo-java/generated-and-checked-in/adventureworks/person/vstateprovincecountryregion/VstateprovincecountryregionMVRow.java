@@ -141,7 +141,8 @@ public record VstateprovincecountryregionMVRow(
           SalesterritoryId.pgType,
           CountryregionId.pgType,
           Name.pgType,
-          VstateprovincecountryregionMVRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) ->
+              new VstateprovincecountryregionMVRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.stateprovinceid(),

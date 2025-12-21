@@ -168,7 +168,35 @@ case class SalesorderheaderRow(
 }
 
 object SalesorderheaderRow {
-  val `_rowParser`: RowParser[SalesorderheaderRow] = RowParsers.of(SalesorderheaderId.pgType, ScalaDbTypes.PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp.nullable, ScalaDbTypes.PgTypes.int2, Flag.pgType, OrderNumber.pgType.nullable, AccountNumber.pgType.nullable, CustomerId.pgType, BusinessentityId.pgType.nullable, SalesterritoryId.pgType.nullable, AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.nullable, PgTypes.text.nullable, CurrencyrateId.pgType.nullable, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric.nullable, PgTypes.text.nullable, PgTypes.uuid, PgTypes.timestamp)(SalesorderheaderRow.apply)(row => Array[Any](row.salesorderid, row.revisionnumber, row.orderdate, row.duedate, row.shipdate, row.status, row.onlineorderflag, row.purchaseordernumber, row.accountnumber, row.customerid, row.salespersonid, row.territoryid, row.billtoaddressid, row.shiptoaddressid, row.shipmethodid, row.creditcardid, row.creditcardapprovalcode, row.currencyrateid, row.subtotal, row.taxamt, row.freight, row.totaldue, row.comment, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SalesorderheaderRow] = {
+    RowParsers.of(SalesorderheaderId.pgType, ScalaDbTypes.PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp.nullable, ScalaDbTypes.PgTypes.int2, Flag.pgType, OrderNumber.pgType.nullable, AccountNumber.pgType.nullable, CustomerId.pgType, BusinessentityId.pgType.nullable, SalesterritoryId.pgType.nullable, AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.nullable, PgTypes.text.nullable, CurrencyrateId.pgType.nullable, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric.nullable, PgTypes.text.nullable, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24) => new SalesorderheaderRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12,
+      t13,
+      t14,
+      t15,
+      t16,
+      t17,
+      t18,
+      t19,
+      t20,
+      t21,
+      t22,
+      t23,
+      t24
+    ))(row => Array[Any](row.salesorderid, row.revisionnumber, row.orderdate, row.duedate, row.shipdate, row.status, row.onlineorderflag, row.purchaseordernumber, row.accountnumber, row.customerid, row.salespersonid, row.territoryid, row.billtoaddressid, row.shiptoaddressid, row.shipmethodid, row.creditcardid, row.creditcardapprovalcode, row.currencyrateid, row.subtotal, row.taxamt, row.freight, row.totaldue, row.comment, row.rowguid, row.modifieddate))
+  }
 
   given pgText: PgText[SalesorderheaderRow] = PgText.from(`_rowParser`.underlying)
 }

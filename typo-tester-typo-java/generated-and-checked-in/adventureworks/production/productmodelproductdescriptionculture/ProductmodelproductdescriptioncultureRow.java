@@ -83,7 +83,7 @@ public record ProductmodelproductdescriptioncultureRow(
           ProductdescriptionId.pgType,
           CultureId.pgType,
           PgTypes.timestamp,
-          ProductmodelproductdescriptioncultureRow::new,
+          (t0, t1, t2, t3) -> new ProductmodelproductdescriptioncultureRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.productmodelid(),

@@ -24,7 +24,7 @@ data class OnlyPkColumnsRow(
   fun id(): OnlyPkColumnsId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<OnlyPkColumnsRow> = RowParsers.of(PgTypes.text, KotlinDbTypes.PgTypes.int4, { t0, t1 -> OnlyPkColumnsRow(t0!!, t1!!) }, { row -> arrayOf<Any?>(row.keyColumn1, row.keyColumn2) })
+    val _rowParser: RowParser<OnlyPkColumnsRow> = RowParsers.of(PgTypes.text, KotlinDbTypes.PgTypes.int4, { t0, t1 -> OnlyPkColumnsRow(t0, t1) }, { row -> arrayOf<Any?>(row.keyColumn1, row.keyColumn2) })
 
     fun apply(compositeId: OnlyPkColumnsId): OnlyPkColumnsRow = OnlyPkColumnsRow(compositeId.keyColumn1, compositeId.keyColumn2)
 

@@ -91,7 +91,7 @@ public record ProductcosthistoryRow(
           PgTypes.timestamp.opt(),
           PgTypes.numeric,
           PgTypes.timestamp,
-          ProductcosthistoryRow::new,
+          (t0, t1, t2, t3, t4) -> new ProductcosthistoryRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.productid(),

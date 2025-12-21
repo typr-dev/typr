@@ -27,7 +27,7 @@ data class IdentityTestRow(
   fun toUnsavedRow(defaultGenerated: Defaulted<Int>): IdentityTestRowUnsaved = IdentityTestRowUnsaved(name, defaultGenerated)
 
   companion object {
-    val _rowParser: RowParser<IdentityTestRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, IdentityTestId.pgType, { t0, t1, t2 -> IdentityTestRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.alwaysGenerated, row.defaultGenerated, row.name) })
+    val _rowParser: RowParser<IdentityTestRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int4, IdentityTestId.pgType, { t0, t1, t2 -> IdentityTestRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.alwaysGenerated, row.defaultGenerated, row.name) })
 
     val pgText: PgText<IdentityTestRow> =
       PgText.from(_rowParser.underlying)

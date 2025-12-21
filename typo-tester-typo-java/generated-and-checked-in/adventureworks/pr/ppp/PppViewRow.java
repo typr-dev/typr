@@ -77,7 +77,7 @@ public record PppViewRow(
           ProductphotoId.pgType,
           Flag.pgType,
           PgTypes.timestamp,
-          PppViewRow::new,
+          (t0, t1, t2, t3) -> new PppViewRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.productid(), row.productphotoid(), row.primary(), row.modifieddate()

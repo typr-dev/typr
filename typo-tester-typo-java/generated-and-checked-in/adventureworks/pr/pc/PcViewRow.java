@@ -78,7 +78,7 @@ public record PcViewRow(
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          PcViewRow::new,
+          (t0, t1, t2, t3, t4) -> new PcViewRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.id(), row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()

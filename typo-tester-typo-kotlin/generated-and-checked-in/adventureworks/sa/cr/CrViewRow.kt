@@ -31,6 +31,6 @@ data class CrViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<CrViewRow> = RowParsers.of(CurrencyrateId.pgType, PgTypes.timestamp, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> CrViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.currencyrateid, row.currencyratedate, row.fromcurrencycode, row.tocurrencycode, row.averagerate, row.endofdayrate, row.modifieddate) })
+    val _rowParser: RowParser<CrViewRow> = RowParsers.of(CurrencyrateId.pgType, PgTypes.timestamp, CurrencyId.pgType, CurrencyId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> CrViewRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.currencyrateid, row.currencyratedate, row.fromcurrencycode, row.tocurrencycode, row.averagerate, row.endofdayrate, row.modifieddate) })
   }
 }

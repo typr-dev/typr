@@ -137,7 +137,7 @@ public record PpViewRow(
           PgTypes.bytea,
           PgTypes.text,
           PgTypes.timestamp,
-          PpViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new PpViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.id(),

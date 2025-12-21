@@ -62,7 +62,16 @@ case class SalesterritoryhistoryRow(
 }
 
 object SalesterritoryhistoryRow {
-  val `_rowParser`: RowParser[SalesterritoryhistoryRow] = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable, PgTypes.uuid, PgTypes.timestamp)(SalesterritoryhistoryRow.apply)(row => Array[Any](row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SalesterritoryhistoryRow] = {
+    RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5) => new SalesterritoryhistoryRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5
+    ))(row => Array[Any](row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate))
+  }
 
   def apply(
     compositeId: SalesterritoryhistoryId,

@@ -28,7 +28,7 @@ case class IdentityTestRow(
 }
 
 object IdentityTestRow {
-  val `_rowParser`: RowParser[IdentityTestRow] = RowParsers.of(PgTypes.int4, PgTypes.int4, IdentityTestId.pgType, IdentityTestRow.apply, row => Array[Any](row.alwaysGenerated, row.defaultGenerated, row.name))
+  val `_rowParser`: RowParser[IdentityTestRow] = RowParsers.of(PgTypes.int4, PgTypes.int4, IdentityTestId.pgType, (t0, t1, t2) => new IdentityTestRow(t0, t1, t2), row => Array[Any](row.alwaysGenerated, row.defaultGenerated, row.name))
 
   given pgText: PgText[IdentityTestRow] = PgText.from(`_rowParser`)
 }

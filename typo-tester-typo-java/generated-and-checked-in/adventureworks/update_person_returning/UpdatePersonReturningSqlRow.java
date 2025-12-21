@@ -33,7 +33,7 @@ public record UpdatePersonReturningSqlRow(
       RowParsers.of(
           FirstName.pgType,
           PgTypes.timestamp,
-          UpdatePersonReturningSqlRow::new,
+          (t0, t1) -> new UpdatePersonReturningSqlRow(t0, t1),
           row -> new Object[] {row.firstname(), row.modifieddate()});
   ;
 }

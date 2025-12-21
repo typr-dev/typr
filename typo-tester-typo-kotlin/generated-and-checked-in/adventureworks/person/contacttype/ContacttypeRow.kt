@@ -35,7 +35,7 @@ data class ContacttypeRow(
   ): ContacttypeRowUnsaved = ContacttypeRowUnsaved(name, contacttypeid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ContacttypeRow> = RowParsers.of(ContacttypeId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> ContacttypeRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.contacttypeid, row.name, row.modifieddate) })
+    val _rowParser: RowParser<ContacttypeRow> = RowParsers.of(ContacttypeId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> ContacttypeRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.contacttypeid, row.name, row.modifieddate) })
 
     val pgText: PgText<ContacttypeRow> =
       PgText.from(_rowParser.underlying)

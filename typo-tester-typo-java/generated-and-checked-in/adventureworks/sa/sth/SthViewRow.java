@@ -127,7 +127,7 @@ public record SthViewRow(
           PgTypes.timestamp,
           PgTypes.uuid,
           PgTypes.timestamp,
-          SthViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new SthViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.id(),

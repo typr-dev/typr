@@ -46,7 +46,7 @@ data class ProductlistpricehistoryRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): ProductlistpricehistoryRowUnsaved = ProductlistpricehistoryRowUnsaved(productid, startdate, enddate, listprice, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductlistpricehistoryRow> = RowParsers.of(ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> ProductlistpricehistoryRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.productid, row.startdate, row.enddate, row.listprice, row.modifieddate) })
+    val _rowParser: RowParser<ProductlistpricehistoryRow> = RowParsers.of(ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> ProductlistpricehistoryRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.productid, row.startdate, row.enddate, row.listprice, row.modifieddate) })
 
     fun apply(
       compositeId: ProductlistpricehistoryId,

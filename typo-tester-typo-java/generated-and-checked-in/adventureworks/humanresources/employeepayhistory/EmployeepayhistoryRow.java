@@ -91,7 +91,7 @@ public record EmployeepayhistoryRow(
           PgTypes.numeric,
           PgTypes.int2,
           PgTypes.timestamp,
-          EmployeepayhistoryRow::new,
+          (t0, t1, t2, t3, t4) -> new EmployeepayhistoryRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.businessentityid(),

@@ -461,7 +461,9 @@ public record OrderDetailsSqlRow(
           MariaTypes.smallintUnsigned,
           MariaTypes.numeric,
           MariaTypes.numeric,
-          OrderDetailsSqlRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) ->
+              new OrderDetailsSqlRow(
+                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16),
           row ->
               new Object[] {
                 row.orderId(),

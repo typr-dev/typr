@@ -19,6 +19,6 @@ data class UpdatePersonReturningSqlRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<UpdatePersonReturningSqlRow> = RowParsers.of(FirstName.pgType, PgTypes.timestamp, { t0, t1 -> UpdatePersonReturningSqlRow(t0!!, t1!!) }, { row -> arrayOf<Any?>(row.firstname, row.modifieddate) })
+    val _rowParser: RowParser<UpdatePersonReturningSqlRow> = RowParsers.of(FirstName.pgType, PgTypes.timestamp, { t0, t1 -> UpdatePersonReturningSqlRow(t0, t1) }, { row -> arrayOf<Any?>(row.firstname, row.modifieddate) })
   }
 }

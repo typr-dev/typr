@@ -33,6 +33,6 @@ data class VvendorwithaddressesViewRow(
   val countryregionname: Name
 ) {
   companion object {
-    val _rowParser: RowParser<VvendorwithaddressesViewRow> = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> VvendorwithaddressesViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.name, row.addresstype, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname) })
+    val _rowParser: RowParser<VvendorwithaddressesViewRow> = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> VvendorwithaddressesViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.businessentityid, row.name, row.addresstype, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname) })
   }
 }

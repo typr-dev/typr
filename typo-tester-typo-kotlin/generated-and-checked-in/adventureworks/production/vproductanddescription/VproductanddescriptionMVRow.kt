@@ -26,6 +26,6 @@ data class VproductanddescriptionMVRow(
   val description: String
 ) {
   companion object {
-    val _rowParser: RowParser<VproductanddescriptionMVRow> = RowParsers.of(ProductId.pgType, Name.pgType, Name.pgType, CultureId.pgType, PgTypes.text, { t0, t1, t2, t3, t4 -> VproductanddescriptionMVRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.productid, row.name, row.productmodel, row.cultureid, row.description) })
+    val _rowParser: RowParser<VproductanddescriptionMVRow> = RowParsers.of(ProductId.pgType, Name.pgType, Name.pgType, CultureId.pgType, PgTypes.text, { t0, t1, t2, t3, t4 -> VproductanddescriptionMVRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.productid, row.name, row.productmodel, row.cultureid, row.description) })
   }
 }

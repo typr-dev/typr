@@ -53,7 +53,7 @@ public record IdentityTestRow(
           PgTypes.int4,
           PgTypes.int4,
           IdentityTestId.pgType,
-          IdentityTestRow::new,
+          (t0, t1, t2) -> new IdentityTestRow(t0, t1, t2),
           row -> new Object[] {row.alwaysGenerated(), row.defaultGenerated(), row.name()});
   ;
 

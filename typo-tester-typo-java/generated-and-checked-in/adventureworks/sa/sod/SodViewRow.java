@@ -270,7 +270,8 @@ public record SodViewRow(
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          SodViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
+              new SodViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
           row ->
               new Object[] {
                 row.id(),

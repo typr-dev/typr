@@ -157,7 +157,32 @@ case class OrdersRow(
 }
 
 object OrdersRow {
-  val `_rowParser`: RowParser[OrdersRow] = RowParsers.of(OrdersId.pgType, MariaTypes.varchar, CustomersId.pgType, MariaTypes.text, MariaTypes.text, CustomerAddressesId.pgType.nullable, CustomerAddressesId.pgType.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, PromotionsId.pgType.nullable, MariaTypes.text.nullable, MariaTypes.mediumtext.nullable, MariaTypes.inet6.nullable, MariaTypes.varchar.nullable, MariaTypes.datetime, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable)(OrdersRow.apply)(row => Array[Any](row.orderId, row.orderNumber, row.customerId, row.orderStatus, row.paymentStatus, row.shippingAddressId, row.billingAddressId, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.currencyCode, row.promotionId, row.notes, row.internalNotes, row.ipAddress, row.userAgent, row.orderedAt, row.confirmedAt, row.shippedAt, row.deliveredAt))
+  val `_rowParser`: RowParser[OrdersRow] = {
+    RowParsers.of(OrdersId.pgType, MariaTypes.varchar, CustomersId.pgType, MariaTypes.text, MariaTypes.text, CustomerAddressesId.pgType.nullable, CustomerAddressesId.pgType.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, PromotionsId.pgType.nullable, MariaTypes.text.nullable, MariaTypes.mediumtext.nullable, MariaTypes.inet6.nullable, MariaTypes.varchar.nullable, MariaTypes.datetime, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21) => new OrdersRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12,
+      t13,
+      t14,
+      t15,
+      t16,
+      t17,
+      t18,
+      t19,
+      t20,
+      t21
+    ))(row => Array[Any](row.orderId, row.orderNumber, row.customerId, row.orderStatus, row.paymentStatus, row.shippingAddressId, row.billingAddressId, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.currencyCode, row.promotionId, row.notes, row.internalNotes, row.ipAddress, row.userAgent, row.orderedAt, row.confirmedAt, row.shippedAt, row.deliveredAt))
+  }
 
   given mariaText: MariaText[OrdersRow] = MariaText.from(`_rowParser`.underlying)
 }

@@ -67,7 +67,7 @@ public record ShiftRow(
           PgTypes.time,
           PgTypes.time,
           PgTypes.timestamp,
-          ShiftRow::new,
+          (t0, t1, t2, t3, t4) -> new ShiftRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.shiftid(), row.name(), row.starttime(), row.endtime(), row.modifieddate()

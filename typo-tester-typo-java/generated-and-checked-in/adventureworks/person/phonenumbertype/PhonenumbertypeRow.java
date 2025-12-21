@@ -52,7 +52,7 @@ public record PhonenumbertypeRow(
           PhonenumbertypeId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          PhonenumbertypeRow::new,
+          (t0, t1, t2) -> new PhonenumbertypeRow(t0, t1, t2),
           row -> new Object[] {row.phonenumbertypeid(), row.name(), row.modifieddate()});
   ;
 

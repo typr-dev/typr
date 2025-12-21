@@ -57,7 +57,16 @@ case class ShippingCarriersRow(
 }
 
 object ShippingCarriersRow {
-  val `_rowParser`: RowParser[ShippingCarriersRow] = RowParsers.of(ShippingCarriersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.longtext.nullable, ScalaDbTypes.MariaTypes.bool)(ShippingCarriersRow.apply)(row => Array[Any](row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive))
+  val `_rowParser`: RowParser[ShippingCarriersRow] = {
+    RowParsers.of(ShippingCarriersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.longtext.nullable, ScalaDbTypes.MariaTypes.bool)((t0, t1, t2, t3, t4, t5) => new ShippingCarriersRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5
+    ))(row => Array[Any](row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive))
+  }
 
   given mariaText: MariaText[ShippingCarriersRow] = MariaText.from(`_rowParser`.underlying)
 }

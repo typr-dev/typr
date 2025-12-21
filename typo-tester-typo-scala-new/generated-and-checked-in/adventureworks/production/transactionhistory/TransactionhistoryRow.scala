@@ -71,7 +71,19 @@ case class TransactionhistoryRow(
 }
 
 object TransactionhistoryRow {
-  val `_rowParser`: RowParser[TransactionhistoryRow] = RowParsers.of(TransactionhistoryId.pgType, ProductId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, PgTypes.timestamp, PgTypes.bpchar, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(TransactionhistoryRow.apply)(row => Array[Any](row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate))
+  val `_rowParser`: RowParser[TransactionhistoryRow] = {
+    RowParsers.of(TransactionhistoryId.pgType, ProductId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, PgTypes.timestamp, PgTypes.bpchar, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new TransactionhistoryRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8
+    ))(row => Array[Any](row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate))
+  }
 
   given pgText: PgText[TransactionhistoryRow] = PgText.from(`_rowParser`.underlying)
 }

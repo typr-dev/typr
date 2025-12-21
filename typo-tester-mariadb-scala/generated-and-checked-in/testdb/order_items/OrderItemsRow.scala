@@ -92,7 +92,23 @@ case class OrderItemsRow(
 }
 
 object OrderItemsRow {
-  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrderItemsId.pgType, OrdersId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, WarehousesId.pgType.nullable, MariaTypes.tinytext.nullable)(OrderItemsRow.apply)(row => Array[Any](row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes))
+  val `_rowParser`: RowParser[OrderItemsRow] = {
+    RowParsers.of(OrderItemsId.pgType, OrdersId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, WarehousesId.pgType.nullable, MariaTypes.tinytext.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) => new OrderItemsRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12
+    ))(row => Array[Any](row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes))
+  }
 
   given mariaText: MariaText[OrderItemsRow] = MariaText.from(`_rowParser`.underlying)
 }

@@ -30,5 +30,14 @@ case class SpqhViewRow(
 )
 
 object SpqhViewRow {
-  val `_rowParser`: RowParser[SpqhViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)(SpqhViewRow.apply)(row => Array[Any](row.id, row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[SpqhViewRow] = {
+    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5) => new SpqhViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5
+    ))(row => Array[Any](row.id, row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate))
+  }
 }

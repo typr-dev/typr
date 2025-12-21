@@ -37,7 +37,7 @@ public record TableWithGeneratedColumnsRow(
       RowParsers.of(
           TableWithGeneratedColumnsId.pgType,
           PgTypes.text,
-          TableWithGeneratedColumnsRow::new,
+          (t0, t1) -> new TableWithGeneratedColumnsRow(t0, t1),
           row -> new Object[] {row.name(), row.nameTypeAlways()});
   ;
 

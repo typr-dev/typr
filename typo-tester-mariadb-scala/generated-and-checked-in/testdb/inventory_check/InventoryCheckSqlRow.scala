@@ -10,6 +10,7 @@ import testdb.inventory.InventoryId
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
 import typo.runtime.MariaTypes
+import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
 import typo.scaladsl.RowParsers
 import typo.scaladsl.ScalaDbTypes
@@ -34,14 +35,29 @@ case class InventoryCheckSqlRow(
   @JsonProperty("quantity_on_hand") quantityOnHand: Int,
   /** Points to [[testdb.inventory.InventoryRow.quantityReserved]] */
   @JsonProperty("quantity_reserved") quantityReserved: Int,
-  /** Points to [[testdb.inventory.InventoryRow.quantityReserved]] */
+  /** Points to [[testdb.inventory.InventoryRow.quantityOnHand]] */
   available: Int,
   /** Points to [[testdb.inventory.InventoryRow.reorderPoint]] */
   @JsonProperty("reorder_point") reorderPoint: Int,
   /** Points to [[testdb.inventory.InventoryRow.binLocation]] */
-  @JsonProperty("bin_location") binLocation: String
+  @JsonProperty("bin_location") binLocation: Option[String]
 )
 
 object InventoryCheckSqlRow {
-  val `_rowParser`: RowParser[InventoryCheckSqlRow] = RowParsers.of(InventoryId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar)(InventoryCheckSqlRow.apply)(row => Array[Any](row.inventoryId, row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.available, row.reorderPoint, row.binLocation))
+  val `_rowParser`: RowParser[InventoryCheckSqlRow] = {
+    RowParsers.of(InventoryId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) => new InventoryCheckSqlRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11
+    ))(row => Array[Any](row.inventoryId, row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.available, row.reorderPoint, row.binLocation))
+  }
 }

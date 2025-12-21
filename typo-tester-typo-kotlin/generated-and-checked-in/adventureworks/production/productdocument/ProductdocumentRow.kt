@@ -41,7 +41,7 @@ data class ProductdocumentRow(
   ): ProductdocumentRowUnsaved = ProductdocumentRowUnsaved(productid, modifieddate, documentnode)
 
   companion object {
-    val _rowParser: RowParser<ProductdocumentRow> = RowParsers.of(ProductId.pgType, PgTypes.timestamp, DocumentId.pgType, { t0, t1, t2 -> ProductdocumentRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.productid, row.modifieddate, row.documentnode) })
+    val _rowParser: RowParser<ProductdocumentRow> = RowParsers.of(ProductId.pgType, PgTypes.timestamp, DocumentId.pgType, { t0, t1, t2 -> ProductdocumentRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.productid, row.modifieddate, row.documentnode) })
 
     fun apply(
       compositeId: ProductdocumentId,

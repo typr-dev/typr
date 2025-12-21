@@ -83,7 +83,7 @@ public record LocationRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          LocationRow::new,
+          (t0, t1, t2, t3, t4) -> new LocationRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.locationid(), row.name(), row.costrate(), row.availability(), row.modifieddate()

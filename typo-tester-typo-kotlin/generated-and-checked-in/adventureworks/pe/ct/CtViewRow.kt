@@ -24,6 +24,6 @@ data class CtViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<CtViewRow> = RowParsers.of(ContacttypeId.pgType, ContacttypeId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> CtViewRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.id, row.contacttypeid, row.name, row.modifieddate) })
+    val _rowParser: RowParser<CtViewRow> = RowParsers.of(ContacttypeId.pgType, ContacttypeId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> CtViewRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.contacttypeid, row.name, row.modifieddate) })
   }
 }

@@ -62,7 +62,7 @@ public record PpViewRow(
           Phone.pgType,
           PhonenumbertypeId.pgType,
           PgTypes.timestamp,
-          PpViewRow::new,
+          (t0, t1, t2, t3, t4) -> new PpViewRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.id(),

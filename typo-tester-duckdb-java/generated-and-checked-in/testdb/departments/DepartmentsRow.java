@@ -45,7 +45,7 @@ public record DepartmentsRow(
           DuckDbTypes.varchar,
           DuckDbTypes.varchar,
           DuckDbTypes.numeric.opt(),
-          DepartmentsRow::new,
+          (t0, t1, t2, t3) -> new DepartmentsRow(t0, t1, t2, t3),
           row -> new Object[] {row.deptCode(), row.deptRegion(), row.deptName(), row.budget()});
   ;
 

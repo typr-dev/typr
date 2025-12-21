@@ -37,7 +37,7 @@ case class IllustrationRow(
 }
 
 object IllustrationRow {
-  val `_rowParser`: RowParser[IllustrationRow] = RowParsers.of(IllustrationId.pgType, PgTypes.xml.nullable, PgTypes.timestamp)(IllustrationRow.apply)(row => Array[Any](row.illustrationid, row.diagram, row.modifieddate))
+  val `_rowParser`: RowParser[IllustrationRow] = RowParsers.of(IllustrationId.pgType, PgTypes.xml.nullable, PgTypes.timestamp)((t0, t1, t2) => new IllustrationRow(t0, t1, t2))(row => Array[Any](row.illustrationid, row.diagram, row.modifieddate))
 
   given pgText: PgText[IllustrationRow] = PgText.from(`_rowParser`.underlying)
 }

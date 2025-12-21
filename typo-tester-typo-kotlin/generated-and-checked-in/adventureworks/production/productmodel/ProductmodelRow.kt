@@ -45,7 +45,7 @@ data class ProductmodelRow(
   ): ProductmodelRowUnsaved = ProductmodelRowUnsaved(name, catalogdescription, instructions, productmodelid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductmodelRow> = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.xml.nullable(), PgTypes.xml.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> ProductmodelRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<ProductmodelRow> = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.xml.nullable(), PgTypes.xml.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> ProductmodelRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<ProductmodelRow> =
       PgText.from(_rowParser.underlying)

@@ -52,7 +52,7 @@ data class EmployeedepartmenthistoryRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): EmployeedepartmenthistoryRowUnsaved = EmployeedepartmenthistoryRowUnsaved(businessentityid, departmentid, shiftid, startdate, enddate, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<EmployeedepartmenthistoryRow> = RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, PgTypes.date, PgTypes.date.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> EmployeedepartmenthistoryRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate) })
+    val _rowParser: RowParser<EmployeedepartmenthistoryRow> = RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, PgTypes.date, PgTypes.date.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> EmployeedepartmenthistoryRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate) })
 
     fun apply(
       compositeId: EmployeedepartmenthistoryId,

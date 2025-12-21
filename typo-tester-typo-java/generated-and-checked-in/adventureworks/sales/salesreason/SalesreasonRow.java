@@ -61,7 +61,7 @@ public record SalesreasonRow(
           Name.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          SalesreasonRow::new,
+          (t0, t1, t2, t3) -> new SalesreasonRow(t0, t1, t2, t3),
           row ->
               new Object[] {row.salesreasonid(), row.name(), row.reasontype(), row.modifieddate()});
   ;

@@ -91,7 +91,7 @@ public record ProductlistpricehistoryRow(
           PgTypes.timestamp.opt(),
           PgTypes.numeric,
           PgTypes.timestamp,
-          ProductlistpricehistoryRow::new,
+          (t0, t1, t2, t3, t4) -> new ProductlistpricehistoryRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.productid(), row.startdate(), row.enddate(), row.listprice(), row.modifieddate()

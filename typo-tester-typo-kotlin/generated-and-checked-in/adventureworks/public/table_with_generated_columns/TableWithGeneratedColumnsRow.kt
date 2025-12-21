@@ -29,7 +29,7 @@ data class TableWithGeneratedColumnsRow(
   fun toUnsavedRow(): TableWithGeneratedColumnsRowUnsaved = TableWithGeneratedColumnsRowUnsaved(name)
 
   companion object {
-    val _rowParser: RowParser<TableWithGeneratedColumnsRow> = RowParsers.of(TableWithGeneratedColumnsId.pgType, PgTypes.text, { t0, t1 -> TableWithGeneratedColumnsRow(t0!!, t1!!) }, { row -> arrayOf<Any?>(row.name, row.nameTypeAlways) })
+    val _rowParser: RowParser<TableWithGeneratedColumnsRow> = RowParsers.of(TableWithGeneratedColumnsId.pgType, PgTypes.text, { t0, t1 -> TableWithGeneratedColumnsRow(t0, t1) }, { row -> arrayOf<Any?>(row.name, row.nameTypeAlways) })
 
     val pgText: PgText<TableWithGeneratedColumnsRow> =
       PgText.from(_rowParser.underlying)

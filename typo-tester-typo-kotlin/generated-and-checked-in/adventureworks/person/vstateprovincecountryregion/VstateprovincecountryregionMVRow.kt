@@ -32,6 +32,6 @@ data class VstateprovincecountryregionMVRow(
   val countryregionname: Name
 ) {
   companion object {
-    val _rowParser: RowParser<VstateprovincecountryregionMVRow> = RowParsers.of(StateprovinceId.pgType, PgTypes.bpchar, Flag.pgType, Name.pgType, SalesterritoryId.pgType, CountryregionId.pgType, Name.pgType, { t0, t1, t2, t3, t4, t5, t6 -> VstateprovincecountryregionMVRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.stateprovinceid, row.stateprovincecode, row.isonlystateprovinceflag, row.stateprovincename, row.territoryid, row.countryregioncode, row.countryregionname) })
+    val _rowParser: RowParser<VstateprovincecountryregionMVRow> = RowParsers.of(StateprovinceId.pgType, PgTypes.bpchar, Flag.pgType, Name.pgType, SalesterritoryId.pgType, CountryregionId.pgType, Name.pgType, { t0, t1, t2, t3, t4, t5, t6 -> VstateprovincecountryregionMVRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.stateprovinceid, row.stateprovincecode, row.isonlystateprovinceflag, row.stateprovincename, row.territoryid, row.countryregioncode, row.countryregionname) })
   }
 }

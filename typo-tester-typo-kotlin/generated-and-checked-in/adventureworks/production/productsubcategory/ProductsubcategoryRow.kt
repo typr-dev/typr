@@ -44,7 +44,7 @@ data class ProductsubcategoryRow(
   ): ProductsubcategoryRowUnsaved = ProductsubcategoryRowUnsaved(productcategoryid, name, productsubcategoryid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductsubcategoryRow> = RowParsers.of(ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> ProductsubcategoryRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<ProductsubcategoryRow> = RowParsers.of(ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> ProductsubcategoryRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<ProductsubcategoryRow> =
       PgText.from(_rowParser.underlying)

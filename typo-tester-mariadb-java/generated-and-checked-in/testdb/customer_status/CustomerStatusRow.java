@@ -43,7 +43,7 @@ public record CustomerStatusRow(
           CustomerStatusId.pgType,
           MariaTypes.varchar,
           MariaTypes.bool,
-          CustomerStatusRow::new,
+          (t0, t1, t2) -> new CustomerStatusRow(t0, t1, t2),
           row -> new Object[] {row.statusCode(), row.description(), row.isActive()});
   ;
 

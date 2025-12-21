@@ -41,7 +41,15 @@ case class FlaffRow(
 }
 
 object FlaffRow {
-  val `_rowParser`: RowParser[FlaffRow] = RowParsers.of(ShortText.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int4, ShortText.pgType, ShortText.pgType.nullable)(FlaffRow.apply)(row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
+  val `_rowParser`: RowParser[FlaffRow] = {
+    RowParsers.of(ShortText.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int4, ShortText.pgType, ShortText.pgType.nullable)((t0, t1, t2, t3, t4) => new FlaffRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4
+    ))(row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
+  }
 
   def apply(
     compositeId: FlaffId,

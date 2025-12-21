@@ -189,7 +189,8 @@ public record MariatestSpatialNullRow(
           MariaTypes.multilinestring.opt(),
           MariaTypes.multipolygon.opt(),
           MariaTypes.geometrycollection.opt(),
-          MariatestSpatialNullRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
+              new MariatestSpatialNullRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
           row ->
               new Object[] {
                 row.id(),

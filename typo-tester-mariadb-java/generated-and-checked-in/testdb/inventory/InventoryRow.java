@@ -240,7 +240,8 @@ public record InventoryRow(
           MariaTypes.varchar.opt(),
           MariaTypes.datetime.opt(),
           MariaTypes.datetime,
-          InventoryRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
+              new InventoryRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
           row ->
               new Object[] {
                 row.inventoryId(),

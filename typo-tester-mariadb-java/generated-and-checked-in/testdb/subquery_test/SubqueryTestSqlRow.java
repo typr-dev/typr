@@ -73,7 +73,7 @@ public record SubqueryTestSqlRow(
           MariaTypes.bigint,
           MariaTypes.numeric,
           MariaTypes.varchar.opt(),
-          SubqueryTestSqlRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new SubqueryTestSqlRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.customerId(),

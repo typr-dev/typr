@@ -249,7 +249,8 @@ public record VstorewithdemographicsViewRow(
           PgTypes.text,
           PgTypes.text,
           PgTypes.int4,
-          VstorewithdemographicsViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) ->
+              new VstorewithdemographicsViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11),
           row ->
               new Object[] {
                 row.businessentityid(),

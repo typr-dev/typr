@@ -105,7 +105,7 @@ public record EphViewRow(
           PgTypes.numeric,
           PgTypes.int2,
           PgTypes.timestamp,
-          EphViewRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new EphViewRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.id(),

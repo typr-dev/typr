@@ -53,7 +53,7 @@ public record BusinessentityRow(
           BusinessentityId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          BusinessentityRow::new,
+          (t0, t1, t2) -> new BusinessentityRow(t0, t1, t2),
           row -> new Object[] {row.businessentityid(), row.rowguid(), row.modifieddate()});
   ;
 

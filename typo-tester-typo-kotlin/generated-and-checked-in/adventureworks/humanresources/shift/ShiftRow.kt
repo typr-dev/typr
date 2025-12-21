@@ -40,7 +40,7 @@ data class ShiftRow(
   ): ShiftRowUnsaved = ShiftRowUnsaved(name, starttime, endtime, shiftid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ShiftRow> = RowParsers.of(ShiftId.pgType, Name.pgType, PgTypes.time, PgTypes.time, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> ShiftRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate) })
+    val _rowParser: RowParser<ShiftRow> = RowParsers.of(ShiftId.pgType, Name.pgType, PgTypes.time, PgTypes.time, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> ShiftRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate) })
 
     val pgText: PgText<ShiftRow> =
       PgText.from(_rowParser.underlying)

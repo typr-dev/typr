@@ -37,7 +37,7 @@ public record PersonRowJoinSqlRow(
           BusinessentityId.pgType,
           PgTypes.recordArray.opt(),
           PgTypes.recordArray.opt(),
-          PersonRowJoinSqlRow::new,
+          (t0, t1, t2) -> new PersonRowJoinSqlRow(t0, t1, t2),
           row -> new Object[] {row.businessentityid(), row.email(), row.emails()});
   ;
 }

@@ -29,5 +29,14 @@ case class PchViewRow(
 )
 
 object PchViewRow {
-  val `_rowParser`: RowParser[PchViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(PchViewRow.apply)(row => Array[Any](row.id, row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
+  val `_rowParser`: RowParser[PchViewRow] = {
+    RowParsers.of(ProductId.pgType, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5) => new PchViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5
+    ))(row => Array[Any](row.id, row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
+  }
 }

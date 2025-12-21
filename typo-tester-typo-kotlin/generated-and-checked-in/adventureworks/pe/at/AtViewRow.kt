@@ -27,6 +27,6 @@ data class AtViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<AtViewRow> = RowParsers.of(AddresstypeId.pgType, AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> AtViewRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.id, row.addresstypeid, row.name, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<AtViewRow> = RowParsers.of(AddresstypeId.pgType, AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> AtViewRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.id, row.addresstypeid, row.name, row.rowguid, row.modifieddate) })
   }
 }

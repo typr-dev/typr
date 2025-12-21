@@ -53,7 +53,7 @@ public record ScrapreasonRow(
           ScrapreasonId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          ScrapreasonRow::new,
+          (t0, t1, t2) -> new ScrapreasonRow(t0, t1, t2),
           row -> new Object[] {row.scrapreasonid(), row.name(), row.modifieddate()});
   ;
 

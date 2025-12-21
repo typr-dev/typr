@@ -62,7 +62,7 @@ data class WorkorderRow(
   ): WorkorderRowUnsaved = WorkorderRowUnsaved(productid, orderqty, scrappedqty, startdate, enddate, duedate, scrapreasonid, workorderid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<WorkorderRow> = RowParsers.of(WorkorderId.pgType, ProductId.pgType, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.timestamp, ScrapreasonId.pgType.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> WorkorderRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!) }, { row -> arrayOf<Any?>(row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate) })
+    val _rowParser: RowParser<WorkorderRow> = RowParsers.of(WorkorderId.pgType, ProductId.pgType, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.timestamp, ScrapreasonId.pgType.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> WorkorderRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate) })
 
     val pgText: PgText<WorkorderRow> =
       PgText.from(_rowParser.underlying)

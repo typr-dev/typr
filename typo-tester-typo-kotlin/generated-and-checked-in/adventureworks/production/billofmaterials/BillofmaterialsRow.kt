@@ -73,7 +73,7 @@ data class BillofmaterialsRow(
   ): BillofmaterialsRowUnsaved = BillofmaterialsRowUnsaved(productassemblyid, componentid, enddate, unitmeasurecode, bomlevel, billofmaterialsid, startdate, perassemblyqty, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<BillofmaterialsRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, ProductId.pgType.nullable(), ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), UnitmeasureId.pgType, KotlinDbTypes.PgTypes.int2, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> BillofmaterialsRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!) }, { row -> arrayOf<Any?>(row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate) })
+    val _rowParser: RowParser<BillofmaterialsRow> = RowParsers.of(KotlinDbTypes.PgTypes.int4, ProductId.pgType.nullable(), ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), UnitmeasureId.pgType, KotlinDbTypes.PgTypes.int2, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> BillofmaterialsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate) })
 
     val pgText: PgText<BillofmaterialsRow> =
       PgText.from(_rowParser.underlying)

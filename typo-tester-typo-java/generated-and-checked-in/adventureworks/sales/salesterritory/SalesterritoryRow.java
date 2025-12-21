@@ -246,7 +246,8 @@ public record SalesterritoryRow(
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          SalesterritoryRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
+              new SalesterritoryRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
           row ->
               new Object[] {
                 row.territoryid(),

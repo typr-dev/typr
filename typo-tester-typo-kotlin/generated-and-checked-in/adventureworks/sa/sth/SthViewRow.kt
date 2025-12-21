@@ -31,6 +31,6 @@ data class SthViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<SthViewRow> = RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> SthViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SthViewRow> = RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> SthViewRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate) })
   }
 }

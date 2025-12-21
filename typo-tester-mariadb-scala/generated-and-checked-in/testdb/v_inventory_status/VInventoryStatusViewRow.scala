@@ -86,5 +86,22 @@ case class VInventoryStatusViewRow(
 )
 
 object VInventoryStatusViewRow {
-  val `_rowParser`: RowParser[VInventoryStatusViewRow] = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.datetime.nullable)(VInventoryStatusViewRow.apply)(row => Array[Any](row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.available, row.reorderPoint, row.stockStatus, row.binLocation, row.lastCountedAt))
+  val `_rowParser`: RowParser[VInventoryStatusViewRow] = {
+    RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.pgType, MariaTypes.char_, MariaTypes.varchar, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.datetime.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) => new VInventoryStatusViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12,
+      t13
+    ))(row => Array[Any](row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.available, row.reorderPoint, row.stockStatus, row.binLocation, row.lastCountedAt))
+  }
 }

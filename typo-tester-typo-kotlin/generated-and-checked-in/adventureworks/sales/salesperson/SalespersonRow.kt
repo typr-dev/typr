@@ -71,7 +71,7 @@ data class SalespersonRow(
   ): SalespersonRowUnsaved = SalespersonRowUnsaved(businessentityid, territoryid, salesquota, bonus, commissionpct, salesytd, saleslastyear, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SalespersonRow> = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType.nullable(), PgTypes.numeric.nullable(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> SalespersonRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.territoryid, row.salesquota, row.bonus, row.commissionpct, row.salesytd, row.saleslastyear, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SalespersonRow> = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType.nullable(), PgTypes.numeric.nullable(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> SalespersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.businessentityid, row.territoryid, row.salesquota, row.bonus, row.commissionpct, row.salesytd, row.saleslastyear, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<SalespersonRow> =
       PgText.from(_rowParser.underlying)

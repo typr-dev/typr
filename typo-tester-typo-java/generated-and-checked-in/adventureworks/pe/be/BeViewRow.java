@@ -56,7 +56,7 @@ public record BeViewRow(
           BusinessentityId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          BeViewRow::new,
+          (t0, t1, t2, t3) -> new BeViewRow(t0, t1, t2, t3),
           row ->
               new Object[] {row.id(), row.businessentityid(), row.rowguid(), row.modifieddate()});
   ;

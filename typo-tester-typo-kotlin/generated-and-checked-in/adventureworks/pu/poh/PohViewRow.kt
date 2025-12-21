@@ -45,6 +45,6 @@ data class PohViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PohViewRow> = RowParsers.of(PurchaseorderheaderId.pgType, PurchaseorderheaderId.pgType, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> PohViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!, t12!!) }, { row -> arrayOf<Any?>(row.id, row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate) })
+    val _rowParser: RowParser<PohViewRow> = RowParsers.of(PurchaseorderheaderId.pgType, PurchaseorderheaderId.pgType, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> PohViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) }, { row -> arrayOf<Any?>(row.id, row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate) })
   }
 }

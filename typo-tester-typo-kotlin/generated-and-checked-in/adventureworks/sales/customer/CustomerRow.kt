@@ -51,7 +51,7 @@ data class CustomerRow(
   ): CustomerRowUnsaved = CustomerRowUnsaved(personid, storeid, territoryid, customerid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<CustomerRow> = RowParsers.of(CustomerId.pgType, BusinessentityId.pgType.nullable(), BusinessentityId.pgType.nullable(), SalesterritoryId.pgType.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> CustomerRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.customerid, row.personid, row.storeid, row.territoryid, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<CustomerRow> = RowParsers.of(CustomerId.pgType, BusinessentityId.pgType.nullable(), BusinessentityId.pgType.nullable(), SalesterritoryId.pgType.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> CustomerRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.customerid, row.personid, row.storeid, row.territoryid, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<CustomerRow> =
       PgText.from(_rowParser.underlying)

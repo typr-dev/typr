@@ -38,5 +38,17 @@ case class VViewRow(
 )
 
 object VViewRow {
-  val `_rowParser`: RowParser[VViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, ScalaDbTypes.PgTypes.int2, Flag.pgType, Flag.pgType, PgTypes.text, PgTypes.timestamp)(VViewRow.apply)(row => Array[Any](row.id, row.businessentityid, row.accountnumber, row.name, row.creditrating, row.preferredvendorstatus, row.activeflag, row.purchasingwebserviceurl, row.modifieddate))
+  val `_rowParser`: RowParser[VViewRow] = {
+    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, AccountNumber.pgType, Name.pgType, ScalaDbTypes.PgTypes.int2, Flag.pgType, Flag.pgType, PgTypes.text, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new VViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8
+    ))(row => Array[Any](row.id, row.businessentityid, row.accountnumber, row.name, row.creditrating, row.preferredvendorstatus, row.activeflag, row.purchasingwebserviceurl, row.modifieddate))
+  }
 }

@@ -41,7 +41,7 @@ data class ProductphotoRow(
   ): ProductphotoRowUnsaved = ProductphotoRowUnsaved(thumbnailphoto, thumbnailphotofilename, largephoto, largephotofilename, productphotoid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductphotoRow> = RowParsers.of(ProductphotoId.pgType, PgTypes.bytea.nullable(), PgTypes.text.nullable(), PgTypes.bytea.nullable(), PgTypes.text.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> ProductphotoRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.productphotoid, row.thumbnailphoto, row.thumbnailphotofilename, row.largephoto, row.largephotofilename, row.modifieddate) })
+    val _rowParser: RowParser<ProductphotoRow> = RowParsers.of(ProductphotoId.pgType, PgTypes.bytea.nullable(), PgTypes.text.nullable(), PgTypes.bytea.nullable(), PgTypes.text.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> ProductphotoRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.productphotoid, row.thumbnailphoto, row.thumbnailphotofilename, row.largephoto, row.largephotofilename, row.modifieddate) })
 
     val pgText: PgText<ProductphotoRow> =
       PgText.from(_rowParser.underlying)

@@ -16,7 +16,7 @@ data class TitleDomainRow(val code: TitleDomainId) {
   fun id(): TitleDomainId = code
 
   companion object {
-    val _rowParser: RowParser<TitleDomainRow> = RowParsers.of(TitleDomainId.pgType, { t0 -> TitleDomainRow(t0!!) }, { row -> arrayOf<Any?>(row.code) })
+    val _rowParser: RowParser<TitleDomainRow> = RowParsers.of(TitleDomainId.pgType, { t0 -> TitleDomainRow(t0) }, { row -> arrayOf<Any?>(row.code) })
 
     val pgText: PgText<TitleDomainRow> =
       PgText.from(_rowParser.underlying)

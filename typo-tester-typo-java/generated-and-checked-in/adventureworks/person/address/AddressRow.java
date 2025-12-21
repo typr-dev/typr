@@ -192,7 +192,8 @@ public record AddressRow(
           PgTypes.bytea.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          AddressRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
+              new AddressRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
           row ->
               new Object[] {
                 row.addressid(),

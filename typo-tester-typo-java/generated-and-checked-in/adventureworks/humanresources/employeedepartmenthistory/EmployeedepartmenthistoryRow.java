@@ -120,7 +120,7 @@ public record EmployeedepartmenthistoryRow(
           PgTypes.date,
           PgTypes.date.opt(),
           PgTypes.timestamp,
-          EmployeedepartmenthistoryRow::new,
+          (t0, t1, t2, t3, t4, t5) -> new EmployeedepartmenthistoryRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.businessentityid(),

@@ -47,7 +47,7 @@ data class EmailaddressRow(
   ): EmailaddressRowUnsaved = EmailaddressRowUnsaved(businessentityid, emailaddress, emailaddressid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<EmailaddressRow> = RowParsers.of(BusinessentityId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.text.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> EmailaddressRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<EmailaddressRow> = RowParsers.of(BusinessentityId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.text.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> EmailaddressRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate) })
 
     fun apply(
       compositeId: EmailaddressId,

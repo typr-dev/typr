@@ -72,7 +72,7 @@ public record JobcandidateRow(
           BusinessentityId.pgType.opt(),
           PgTypes.xml.opt(),
           PgTypes.timestamp,
-          JobcandidateRow::new,
+          (t0, t1, t2, t3) -> new JobcandidateRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.jobcandidateid(), row.businessentityid(), row.resume(), row.modifieddate()

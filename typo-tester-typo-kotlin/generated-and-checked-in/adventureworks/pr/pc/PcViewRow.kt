@@ -27,6 +27,6 @@ data class PcViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PcViewRow> = RowParsers.of(ProductcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> PcViewRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.id, row.productcategoryid, row.name, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<PcViewRow> = RowParsers.of(ProductcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> PcViewRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.id, row.productcategoryid, row.name, row.rowguid, row.modifieddate) })
   }
 }

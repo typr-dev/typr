@@ -16,7 +16,7 @@ data class TitleRow(val code: TitleId) {
   fun id(): TitleId = code
 
   companion object {
-    val _rowParser: RowParser<TitleRow> = RowParsers.of(TitleId.pgType, { t0 -> TitleRow(t0!!) }, { row -> arrayOf<Any?>(row.code) })
+    val _rowParser: RowParser<TitleRow> = RowParsers.of(TitleId.pgType, { t0 -> TitleRow(t0) }, { row -> arrayOf<Any?>(row.code) })
 
     val pgText: PgText<TitleRow> =
       PgText.from(_rowParser.underlying)

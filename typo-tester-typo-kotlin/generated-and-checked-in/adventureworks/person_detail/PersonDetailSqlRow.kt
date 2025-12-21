@@ -38,6 +38,6 @@ data class PersonDetailSqlRow(
   val rowguid: UUID?
 ) {
   companion object {
-    val _rowParser: RowParser<PersonDetailSqlRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.nullable(), FirstName.pgType, Name.pgType.nullable(), Name.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.uuid.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PersonDetailSqlRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid) })
+    val _rowParser: RowParser<PersonDetailSqlRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.nullable(), FirstName.pgType, Name.pgType.nullable(), Name.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.uuid.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PersonDetailSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid) })
   }
 }

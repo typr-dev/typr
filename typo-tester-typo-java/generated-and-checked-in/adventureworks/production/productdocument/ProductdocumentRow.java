@@ -60,7 +60,7 @@ public record ProductdocumentRow(
           ProductId.pgType,
           PgTypes.timestamp,
           DocumentId.pgType,
-          ProductdocumentRow::new,
+          (t0, t1, t2) -> new ProductdocumentRow(t0, t1, t2),
           row -> new Object[] {row.productid(), row.modifieddate(), row.documentnode()});
   ;
 

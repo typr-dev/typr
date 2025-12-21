@@ -44,7 +44,15 @@ case class OrdersRow(
 }
 
 object OrdersRow {
-  val `_rowParser`: RowParser[OrdersRow] = RowParsers.of(OrdersId.duckDbType, ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.date, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.varchar.nullable)(OrdersRow.apply)(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
+  val `_rowParser`: RowParser[OrdersRow] = {
+    RowParsers.of(OrdersId.duckDbType, ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.date, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.varchar.nullable)((t0, t1, t2, t3, t4) => new OrdersRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4
+    ))(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
+  }
 
   given duckDbText: DuckDbText[OrdersRow] = DuckDbText.from(`_rowParser`.underlying)
 }

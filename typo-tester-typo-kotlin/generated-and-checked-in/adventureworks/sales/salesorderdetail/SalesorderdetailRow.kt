@@ -75,7 +75,7 @@ data class SalesorderdetailRow(
   ): SalesorderdetailRowUnsaved = SalesorderdetailRowUnsaved(salesorderid, carriertrackingnumber, orderqty, productid, specialofferid, unitprice, salesorderdetailid, unitpricediscount, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SalesorderdetailRow> = RowParsers.of(SalesorderheaderId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.text.nullable(), KotlinDbTypes.PgTypes.int2, ProductId.pgType, SpecialofferId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> SalesorderdetailRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!) }, { row -> arrayOf<Any?>(row.salesorderid, row.salesorderdetailid, row.carriertrackingnumber, row.orderqty, row.productid, row.specialofferid, row.unitprice, row.unitpricediscount, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SalesorderdetailRow> = RowParsers.of(SalesorderheaderId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.text.nullable(), KotlinDbTypes.PgTypes.int2, ProductId.pgType, SpecialofferId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> SalesorderdetailRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.salesorderid, row.salesorderdetailid, row.carriertrackingnumber, row.orderqty, row.productid, row.specialofferid, row.unitprice, row.unitpricediscount, row.rowguid, row.modifieddate) })
 
     fun apply(
       compositeId: SalesorderdetailId,

@@ -263,7 +263,8 @@ public record BillofmaterialsRow(
           PgTypes.int2,
           PgTypes.numeric,
           PgTypes.timestamp,
-          BillofmaterialsRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
+              new BillofmaterialsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
           row ->
               new Object[] {
                 row.billofmaterialsid(),

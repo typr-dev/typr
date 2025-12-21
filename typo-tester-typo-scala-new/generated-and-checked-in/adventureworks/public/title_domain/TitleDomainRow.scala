@@ -17,7 +17,7 @@ case class TitleDomainRow(code: TitleDomainId) {
 }
 
 object TitleDomainRow {
-  val `_rowParser`: RowParser[TitleDomainRow] = RowParsers.of(TitleDomainId.pgType)(TitleDomainRow.apply)(row => Array[Any](row.code))
+  val `_rowParser`: RowParser[TitleDomainRow] = RowParsers.of(TitleDomainId.pgType)(t0 => new TitleDomainRow(t0))(row => Array[Any](row.code))
 
   given pgText: PgText[TitleDomainRow] = PgText.from(`_rowParser`.underlying)
 }

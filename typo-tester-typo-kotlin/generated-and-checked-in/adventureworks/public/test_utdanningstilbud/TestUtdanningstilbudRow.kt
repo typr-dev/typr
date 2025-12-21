@@ -25,7 +25,7 @@ data class TestUtdanningstilbudRow(
   fun id(): TestUtdanningstilbudId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<TestUtdanningstilbudRow> = RowParsers.of(TestOrganisasjonId.pgType, PgTypes.text, { t0, t1 -> TestUtdanningstilbudRow(t0!!, t1!!) }, { row -> arrayOf<Any?>(row.organisasjonskode, row.utdanningsmulighetKode) })
+    val _rowParser: RowParser<TestUtdanningstilbudRow> = RowParsers.of(TestOrganisasjonId.pgType, PgTypes.text, { t0, t1 -> TestUtdanningstilbudRow(t0, t1) }, { row -> arrayOf<Any?>(row.organisasjonskode, row.utdanningsmulighetKode) })
 
     fun apply(compositeId: TestUtdanningstilbudId): TestUtdanningstilbudRow = TestUtdanningstilbudRow(compositeId.organisasjonskode, compositeId.utdanningsmulighetKode)
 

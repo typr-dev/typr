@@ -61,7 +61,7 @@ public record PmiViewRow(
           ProductmodelId.pgType,
           IllustrationId.pgType,
           PgTypes.timestamp,
-          PmiViewRow::new,
+          (t0, t1, t2) -> new PmiViewRow(t0, t1, t2),
           row -> new Object[] {row.productmodelid(), row.illustrationid(), row.modifieddate()});
   ;
 }

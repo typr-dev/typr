@@ -74,7 +74,8 @@ public record VsalespersonsalesbyfiscalyearsdataViewRow(
           Name.pgType,
           PgTypes.numeric.opt(),
           PgTypes.float8,
-          VsalespersonsalesbyfiscalyearsdataViewRow::new,
+          (t0, t1, t2, t3, t4, t5) ->
+              new VsalespersonsalesbyfiscalyearsdataViewRow(t0, t1, t2, t3, t4, t5),
           row ->
               new Object[] {
                 row.salespersonid(),

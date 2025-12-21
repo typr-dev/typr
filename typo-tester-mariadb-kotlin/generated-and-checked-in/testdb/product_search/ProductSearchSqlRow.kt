@@ -23,7 +23,7 @@ data class ProductSearchSqlRow(
   /** Points to [testdb.products.ProductsRow.name] */
   val name: String,
   /** Points to [testdb.products.ProductsRow.shortDescription] */
-  @JsonProperty("short_description") val shortDescription: String,
+  @JsonProperty("short_description") val shortDescription: String?,
   /** Points to [testdb.products.ProductsRow.basePrice] */
   @JsonProperty("base_price") val basePrice: BigDecimal,
   /** Points to [testdb.products.ProductsRow.status] */
@@ -32,6 +32,6 @@ data class ProductSearchSqlRow(
   @JsonProperty("brand_name") val brandName: String?
 ) {
   companion object {
-    val _rowParser: RowParser<ProductSearchSqlRow> = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, KotlinDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> ProductSearchSqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName) })
+    val _rowParser: RowParser<ProductSearchSqlRow> = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> ProductSearchSqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName) })
   }
 }

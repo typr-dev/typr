@@ -32,6 +32,6 @@ data class SViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<SViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType, PgTypes.xml, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> SViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SViewRow> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType, PgTypes.xml, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> SViewRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.id, row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate) })
   }
 }

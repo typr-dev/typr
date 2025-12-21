@@ -30,7 +30,7 @@ public record ProductDetailsWithSalesSqlRow(
     @JsonProperty("times_ordered") Optional<Long> timesOrdered,
     /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
     @JsonProperty("total_quantity_sold") Optional<Long> totalQuantitySold,
-    /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
+    /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
     @JsonProperty("total_revenue") Optional<Double> totalRevenue,
     /** Points to {@link testdb.order_items.OrderItemsRow#orderId()} */
     Optional<String> popularity) {
@@ -139,7 +139,7 @@ public record ProductDetailsWithSalesSqlRow(
   }
   ;
 
-  /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
+  /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
   public ProductDetailsWithSalesSqlRow withTotalRevenue(Optional<Double> totalRevenue) {
     return new ProductDetailsWithSalesSqlRow(
         productId,
@@ -180,7 +180,8 @@ public record ProductDetailsWithSalesSqlRow(
           DuckDbTypes.bigint.opt(),
           DuckDbTypes.double_.opt(),
           DuckDbTypes.varchar.opt(),
-          ProductDetailsWithSalesSqlRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
+              new ProductDetailsWithSalesSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
           row ->
               new Object[] {
                 row.productId(),

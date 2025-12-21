@@ -62,7 +62,7 @@ public record PntViewRow(
           PhonenumbertypeId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          PntViewRow::new,
+          (t0, t1, t2, t3) -> new PntViewRow(t0, t1, t2, t3),
           row -> new Object[] {row.id(), row.phonenumbertypeid(), row.name(), row.modifieddate()});
   ;
 }

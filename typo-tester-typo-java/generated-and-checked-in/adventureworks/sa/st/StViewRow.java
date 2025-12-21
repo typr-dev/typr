@@ -241,7 +241,8 @@ public record StViewRow(
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          StViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
+              new StViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
           row ->
               new Object[] {
                 row.id(),

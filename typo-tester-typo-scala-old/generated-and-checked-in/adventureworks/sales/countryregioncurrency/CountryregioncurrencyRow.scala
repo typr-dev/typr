@@ -38,7 +38,7 @@ case class CountryregioncurrencyRow(
 }
 
 object CountryregioncurrencyRow {
-  val `_rowParser`: RowParser[CountryregioncurrencyRow] = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, PgTypes.timestamp, CountryregioncurrencyRow.apply, row => Array[Any](row.countryregioncode, row.currencycode, row.modifieddate))
+  val `_rowParser`: RowParser[CountryregioncurrencyRow] = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, PgTypes.timestamp, (t0, t1, t2) => new CountryregioncurrencyRow(t0, t1, t2), row => Array[Any](row.countryregioncode, row.currencycode, row.modifieddate))
 
   def apply(
     compositeId: CountryregioncurrencyId,

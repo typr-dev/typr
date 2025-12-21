@@ -43,7 +43,7 @@ data class SpecialofferproductRow(
   ): SpecialofferproductRowUnsaved = SpecialofferproductRowUnsaved(specialofferid, productid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SpecialofferproductRow> = RowParsers.of(SpecialofferId.pgType, ProductId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3 -> SpecialofferproductRow(t0!!, t1!!, t2!!, t3!!) }, { row -> arrayOf<Any?>(row.specialofferid, row.productid, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SpecialofferproductRow> = RowParsers.of(SpecialofferId.pgType, ProductId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3 -> SpecialofferproductRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.specialofferid, row.productid, row.rowguid, row.modifieddate) })
 
     fun apply(
       compositeId: SpecialofferproductId,

@@ -36,7 +36,7 @@ data class BusinessentityRow(
   ): BusinessentityRowUnsaved = BusinessentityRowUnsaved(businessentityid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<BusinessentityRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2 -> BusinessentityRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<BusinessentityRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2 -> BusinessentityRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<BusinessentityRow> =
       PgText.from(_rowParser.underlying)

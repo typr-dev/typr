@@ -31,5 +31,14 @@ case class PscViewRow(
 )
 
 object PscViewRow {
-  val `_rowParser`: RowParser[PscViewRow] = RowParsers.of(ProductsubcategoryId.pgType, ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp)(PscViewRow.apply)(row => Array[Any](row.id, row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[PscViewRow] = {
+    RowParsers.of(ProductsubcategoryId.pgType, ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5) => new PscViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5
+    ))(row => Array[Any](row.id, row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate))
+  }
 }

@@ -51,7 +51,7 @@ public record IllustrationRow(
           IllustrationId.pgType,
           PgTypes.xml.opt(),
           PgTypes.timestamp,
-          IllustrationRow::new,
+          (t0, t1, t2) -> new IllustrationRow(t0, t1, t2),
           row -> new Object[] {row.illustrationid(), row.diagram(), row.modifieddate()});
   ;
 

@@ -59,7 +59,17 @@ case class CurrencyrateRow(
 }
 
 object CurrencyrateRow {
-  val `_rowParser`: RowParser[CurrencyrateRow] = RowParsers.of(CurrencyrateId.pgType, PgTypes.timestamp, CurrencyId.pgType, CurrencyId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(CurrencyrateRow.apply)(row => Array[Any](row.currencyrateid, row.currencyratedate, row.fromcurrencycode, row.tocurrencycode, row.averagerate, row.endofdayrate, row.modifieddate))
+  val `_rowParser`: RowParser[CurrencyrateRow] = {
+    RowParsers.of(CurrencyrateId.pgType, PgTypes.timestamp, CurrencyId.pgType, CurrencyId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6) => new CurrencyrateRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6
+    ))(row => Array[Any](row.currencyrateid, row.currencyratedate, row.fromcurrencycode, row.tocurrencycode, row.averagerate, row.endofdayrate, row.modifieddate))
+  }
 
   given pgText: PgText[CurrencyrateRow] = PgText.from(`_rowParser`.underlying)
 }

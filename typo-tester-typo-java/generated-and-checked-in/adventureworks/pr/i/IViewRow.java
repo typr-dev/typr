@@ -52,7 +52,7 @@ public record IViewRow(
           IllustrationId.pgType,
           PgTypes.xml,
           PgTypes.timestamp,
-          IViewRow::new,
+          (t0, t1, t2, t3) -> new IViewRow(t0, t1, t2, t3),
           row -> new Object[] {row.id(), row.illustrationid(), row.diagram(), row.modifieddate()});
   ;
 }

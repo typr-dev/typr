@@ -45,7 +45,15 @@ case class PriceTiersRow(
 }
 
 object PriceTiersRow {
-  val `_rowParser`: RowParser[PriceTiersRow] = RowParsers.of(PriceTiersId.pgType, MariaTypes.varchar, ScalaDbTypes.MariaTypes.intUnsigned, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric)(PriceTiersRow.apply)(row => Array[Any](row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue))
+  val `_rowParser`: RowParser[PriceTiersRow] = {
+    RowParsers.of(PriceTiersId.pgType, MariaTypes.varchar, ScalaDbTypes.MariaTypes.intUnsigned, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric)((t0, t1, t2, t3, t4) => new PriceTiersRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4
+    ))(row => Array[Any](row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue))
+  }
 
   given mariaText: MariaText[PriceTiersRow] = MariaText.from(`_rowParser`.underlying)
 }

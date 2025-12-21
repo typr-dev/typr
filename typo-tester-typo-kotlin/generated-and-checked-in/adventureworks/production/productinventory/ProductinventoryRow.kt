@@ -55,7 +55,7 @@ data class ProductinventoryRow(
   ): ProductinventoryRowUnsaved = ProductinventoryRowUnsaved(productid, locationid, shelf, bin, quantity, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductinventoryRow> = RowParsers.of(ProductId.pgType, LocationId.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> ProductinventoryRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!) }, { row -> arrayOf<Any?>(row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<ProductinventoryRow> = RowParsers.of(ProductId.pgType, LocationId.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6 -> ProductinventoryRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate) })
 
     fun apply(
       compositeId: ProductinventoryId,

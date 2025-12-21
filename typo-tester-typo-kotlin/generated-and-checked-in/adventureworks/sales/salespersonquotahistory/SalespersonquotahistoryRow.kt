@@ -45,7 +45,7 @@ data class SalespersonquotahistoryRow(
   ): SalespersonquotahistoryRowUnsaved = SalespersonquotahistoryRowUnsaved(businessentityid, quotadate, salesquota, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SalespersonquotahistoryRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> SalespersonquotahistoryRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<SalespersonquotahistoryRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> SalespersonquotahistoryRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate) })
 
     fun apply(
       compositeId: SalespersonquotahistoryId,

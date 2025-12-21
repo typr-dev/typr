@@ -307,7 +307,8 @@ public record OrderItemsRow(
           MariaTypes.text,
           WarehousesId.pgType.opt(),
           MariaTypes.tinytext.opt(),
-          OrderItemsRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) ->
+              new OrderItemsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12),
           row ->
               new Object[] {
                 row.itemId(),

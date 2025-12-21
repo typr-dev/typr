@@ -30,6 +30,6 @@ data class PscViewRow(
   val modifieddate: LocalDateTime
 ) {
   companion object {
-    val _rowParser: RowParser<PscViewRow> = RowParsers.of(ProductsubcategoryId.pgType, ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> PscViewRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.id, row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<PscViewRow> = RowParsers.of(ProductsubcategoryId.pgType, ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> PscViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.id, row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate) })
   }
 }

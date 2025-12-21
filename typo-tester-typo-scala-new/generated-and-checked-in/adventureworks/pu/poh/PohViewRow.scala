@@ -45,5 +45,21 @@ case class PohViewRow(
 )
 
 object PohViewRow {
-  val `_rowParser`: RowParser[PohViewRow] = RowParsers.of(PurchaseorderheaderId.pgType, PurchaseorderheaderId.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, PgTypes.timestamp, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(PohViewRow.apply)(row => Array[Any](row.id, row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate))
+  val `_rowParser`: RowParser[PohViewRow] = {
+    RowParsers.of(PurchaseorderheaderId.pgType, PurchaseorderheaderId.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, BusinessentityId.pgType, BusinessentityId.pgType, ShipmethodId.pgType, PgTypes.timestamp, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) => new PohViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9,
+      t10,
+      t11,
+      t12
+    ))(row => Array[Any](row.id, row.purchaseorderid, row.revisionnumber, row.status, row.employeeid, row.vendorid, row.shipmethodid, row.orderdate, row.shipdate, row.subtotal, row.taxamt, row.freight, row.modifieddate))
+  }
 }

@@ -41,7 +41,7 @@ public record TestUtdanningstilbudRow(
       RowParsers.of(
           TestOrganisasjonId.pgType,
           PgTypes.text,
-          TestUtdanningstilbudRow::new,
+          (t0, t1) -> new TestUtdanningstilbudRow(t0, t1),
           row -> new Object[] {row.organisasjonskode(), row.utdanningsmulighetKode()});
   ;
 

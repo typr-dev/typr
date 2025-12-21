@@ -61,7 +61,7 @@ public record SrViewRow(
           Name.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          SrViewRow::new,
+          (t0, t1, t2, t3, t4) -> new SrViewRow(t0, t1, t2, t3, t4),
           row ->
               new Object[] {
                 row.id(), row.salesreasonid(), row.name(), row.reasontype(), row.modifieddate()

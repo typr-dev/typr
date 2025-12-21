@@ -50,7 +50,14 @@ case class ProductmodelproductdescriptioncultureRow(
 }
 
 object ProductmodelproductdescriptioncultureRow {
-  val `_rowParser`: RowParser[ProductmodelproductdescriptioncultureRow] = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, PgTypes.timestamp)(ProductmodelproductdescriptioncultureRow.apply)(row => Array[Any](row.productmodelid, row.productdescriptionid, row.cultureid, row.modifieddate))
+  val `_rowParser`: RowParser[ProductmodelproductdescriptioncultureRow] = {
+    RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, PgTypes.timestamp)((t0, t1, t2, t3) => new ProductmodelproductdescriptioncultureRow(
+      t0,
+      t1,
+      t2,
+      t3
+    ))(row => Array[Any](row.productmodelid, row.productdescriptionid, row.cultureid, row.modifieddate))
+  }
 
   def apply(
     compositeId: ProductmodelproductdescriptioncultureId,

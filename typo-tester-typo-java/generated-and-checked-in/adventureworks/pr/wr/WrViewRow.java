@@ -371,7 +371,8 @@ public record WrViewRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          WrViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) ->
+              new WrViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12),
           row ->
               new Object[] {
                 row.id(),

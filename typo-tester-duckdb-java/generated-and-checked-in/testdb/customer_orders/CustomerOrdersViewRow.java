@@ -73,7 +73,7 @@ public record CustomerOrdersViewRow(
           DuckDbTypes.date.opt(),
           DuckDbTypes.numeric.opt(),
           DuckDbTypes.varchar.opt(),
-          CustomerOrdersViewRow::new,
+          (t0, t1, t2, t3, t4, t5, t6) -> new CustomerOrdersViewRow(t0, t1, t2, t3, t4, t5, t6),
           row ->
               new Object[] {
                 row.customerId(),

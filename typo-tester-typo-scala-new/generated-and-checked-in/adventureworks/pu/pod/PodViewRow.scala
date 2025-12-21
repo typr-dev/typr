@@ -38,5 +38,18 @@ case class PodViewRow(
 )
 
 object PodViewRow {
-  val `_rowParser`: RowParser[PodViewRow] = RowParsers.of(ScalaDbTypes.PgTypes.int4, PurchaseorderheaderId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.timestamp, ScalaDbTypes.PgTypes.int2, ProductId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(PodViewRow.apply)(row => Array[Any](row.id, row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate))
+  val `_rowParser`: RowParser[PodViewRow] = {
+    RowParsers.of(ScalaDbTypes.PgTypes.int4, PurchaseorderheaderId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.timestamp, ScalaDbTypes.PgTypes.int2, ProductId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new PodViewRow(
+      t0,
+      t1,
+      t2,
+      t3,
+      t4,
+      t5,
+      t6,
+      t7,
+      t8,
+      t9
+    ))(row => Array[Any](row.id, row.purchaseorderid, row.purchaseorderdetailid, row.duedate, row.orderqty, row.productid, row.unitprice, row.receivedqty, row.rejectedqty, row.modifieddate))
+  }
 }

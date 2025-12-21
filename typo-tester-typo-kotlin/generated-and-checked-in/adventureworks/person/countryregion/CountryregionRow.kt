@@ -30,7 +30,7 @@ data class CountryregionRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): CountryregionRowUnsaved = CountryregionRowUnsaved(countryregioncode, name, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<CountryregionRow> = RowParsers.of(CountryregionId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> CountryregionRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.countryregioncode, row.name, row.modifieddate) })
+    val _rowParser: RowParser<CountryregionRow> = RowParsers.of(CountryregionId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> CountryregionRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.countryregioncode, row.name, row.modifieddate) })
 
     val pgText: PgText<CountryregionRow> =
       PgText.from(_rowParser.underlying)

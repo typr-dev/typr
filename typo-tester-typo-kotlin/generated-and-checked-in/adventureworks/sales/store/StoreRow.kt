@@ -47,7 +47,7 @@ data class StoreRow(
   ): StoreRowUnsaved = StoreRowUnsaved(businessentityid, name, salespersonid, demographics, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<StoreRow> = RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.nullable(), PgTypes.xml.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> StoreRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!) }, { row -> arrayOf<Any?>(row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<StoreRow> = RowParsers.of(BusinessentityId.pgType, Name.pgType, BusinessentityId.pgType.nullable(), PgTypes.xml.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> StoreRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.businessentityid, row.name, row.salespersonid, row.demographics, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<StoreRow> =
       PgText.from(_rowParser.underlying)

@@ -45,7 +45,7 @@ public record CrViewRow(
           CountryregionId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          CrViewRow::new,
+          (t0, t1, t2) -> new CrViewRow(t0, t1, t2),
           row -> new Object[] {row.countryregioncode(), row.name(), row.modifieddate()});
   ;
 }

@@ -22,7 +22,7 @@ data class TitledpersonRow(
   val name: String
 ) {
   companion object {
-    val _rowParser: RowParser<TitledpersonRow> = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, { t0, t1, t2 -> TitledpersonRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.titleShort, row.title, row.name) })
+    val _rowParser: RowParser<TitledpersonRow> = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, { t0, t1, t2 -> TitledpersonRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.titleShort, row.title, row.name) })
 
     val pgText: PgText<TitledpersonRow> =
       PgText.from(_rowParser.underlying)

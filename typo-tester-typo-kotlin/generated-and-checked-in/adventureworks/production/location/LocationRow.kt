@@ -48,7 +48,7 @@ data class LocationRow(
   ): LocationRowUnsaved = LocationRowUnsaved(name, locationid, costrate, availability, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<LocationRow> = RowParsers.of(LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> LocationRow(t0!!, t1!!, t2!!, t3!!, t4!!) }, { row -> arrayOf<Any?>(row.locationid, row.name, row.costrate, row.availability, row.modifieddate) })
+    val _rowParser: RowParser<LocationRow> = RowParsers.of(LocationId.pgType, Name.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> LocationRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.locationid, row.name, row.costrate, row.availability, row.modifieddate) })
 
     val pgText: PgText<LocationRow> =
       PgText.from(_rowParser.underlying)

@@ -70,7 +70,7 @@ public record SpecialofferproductRow(
           ProductId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          SpecialofferproductRow::new,
+          (t0, t1, t2, t3) -> new SpecialofferproductRow(t0, t1, t2, t3),
           row ->
               new Object[] {
                 row.specialofferid(), row.productid(), row.rowguid(), row.modifieddate()

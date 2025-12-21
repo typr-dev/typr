@@ -72,7 +72,7 @@ data class DocumentRow(
   ): DocumentRowUnsaved = DocumentRowUnsaved(title, owner, filename, fileextension, revision, status, documentsummary, document, folderflag, changenumber, rowguid, modifieddate, documentnode)
 
   companion object {
-    val _rowParser: RowParser<DocumentRow> = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.bpchar, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int2, PgTypes.text.nullable(), PgTypes.bytea.nullable(), PgTypes.uuid, PgTypes.timestamp, DocumentId.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> DocumentRow(t0!!, t1!!, t2!!, t3!!, t4!!, t5!!, t6!!, t7!!, t8!!, t9!!, t10!!, t11!!, t12!!) }, { row -> arrayOf<Any?>(row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode) })
+    val _rowParser: RowParser<DocumentRow> = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.bpchar, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int2, PgTypes.text.nullable(), PgTypes.bytea.nullable(), PgTypes.uuid, PgTypes.timestamp, DocumentId.pgType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> DocumentRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) }, { row -> arrayOf<Any?>(row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode) })
 
     val pgText: PgText<DocumentRow> =
       PgText.from(_rowParser.underlying)

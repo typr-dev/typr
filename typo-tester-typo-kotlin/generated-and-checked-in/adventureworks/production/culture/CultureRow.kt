@@ -30,7 +30,7 @@ data class CultureRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime>): CultureRowUnsaved = CultureRowUnsaved(cultureid, name, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<CultureRow> = RowParsers.of(CultureId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> CultureRow(t0!!, t1!!, t2!!) }, { row -> arrayOf<Any?>(row.cultureid, row.name, row.modifieddate) })
+    val _rowParser: RowParser<CultureRow> = RowParsers.of(CultureId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> CultureRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.cultureid, row.name, row.modifieddate) })
 
     val pgText: PgText<CultureRow> =
       PgText.from(_rowParser.underlying)
