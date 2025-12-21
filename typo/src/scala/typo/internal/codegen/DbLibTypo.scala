@@ -1552,6 +1552,13 @@ class DbLibTypo(
               }
               // Use untyped params for SAM conversion compatibility
               jvm.Lambda(params.map(p => jvm.LambdaParam(p.name)), jvm.Body.Expr(tpe.construct(args: _*)))
+            case _: LangScala | _ if lang.typeSupport == TypeSupportJava =>
+              // For Scala 3 and TypeSupportJava, generate explicit lambda to avoid LambdaConversionException
+              val params = cols.toList.zipWithIndex.map { case (col, i) =>
+                jvm.Param(jvm.Ident(s"t$i"), col.tpe)
+              }
+              val args = params.map(_.name.code)
+              jvm.Lambda(params.map(p => jvm.LambdaParam(p.name)), jvm.Body.Expr(tpe.construct(args: _*)))
             case _ =>
               jvm.ConstructorMethodRef(tpe)
           }

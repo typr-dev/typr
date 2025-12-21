@@ -114,7 +114,8 @@ public sealed interface PgRead<A> extends DbRead<A>
       // we're not adding another level of optionality and we *know* we have a `B` even if there was
       // no `A`
       // note that `B` may very well be `Optional<>` itself
-      return new NonNullable<>((rs, col) -> Optional.of(f.apply(read(rs, col))));
+      // Use ofNullable to support Kotlin nullable types where B can be null
+      return new NonNullable<>((rs, col) -> Optional.ofNullable(f.apply(read(rs, col))));
     }
 
     // just here for completeness, doesn't make much sense
