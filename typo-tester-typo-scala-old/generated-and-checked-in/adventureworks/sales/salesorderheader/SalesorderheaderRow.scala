@@ -16,13 +16,13 @@ import adventureworks.sales.currencyrate.CurrencyrateId
 import adventureworks.sales.customer.CustomerId
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.userdefined.CustomCreditcardId
+import java.lang.Object
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
 import typo.runtime.PgText
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
-import typo.runtime.RowParsers
 
 /** Table: sales.salesorderheader
  * General sales order information.
@@ -168,32 +168,32 @@ case class SalesorderheaderRow(
 
 object SalesorderheaderRow {
   val `_rowParser`: RowParser[SalesorderheaderRow] = {
-    RowParsers.of(SalesorderheaderId.pgType, PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.int2, Flag.pgType, OrderNumber.pgType.opt(), AccountNumber.pgType.opt(), CustomerId.pgType, BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.opt(), PgTypes.text.opt(), CurrencyrateId.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric.opt(), PgTypes.text.opt(), PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24) => new SalesorderheaderRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16,
-      t17,
-      t18,
-      t19,
-      t20,
-      t21,
-      t22,
-      t23,
-      t24
+    new RowParser(java.util.List.of(SalesorderheaderId.pgType, PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.int2, Flag.pgType, OrderNumber.pgType.opt(), AccountNumber.pgType.opt(), CustomerId.pgType, BusinessentityId.pgType.opt(), SalesterritoryId.pgType.opt(), AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType.opt(), PgTypes.text.opt(), CurrencyrateId.pgType.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric.opt(), PgTypes.text.opt(), PgTypes.uuid, PgTypes.timestamp), (arr: Array[Object]) => new SalesorderheaderRow(
+      arr(0).asInstanceOf[SalesorderheaderId],
+      arr(1).asInstanceOf[java.lang.Short],
+      arr(2).asInstanceOf[LocalDateTime],
+      arr(3).asInstanceOf[LocalDateTime],
+      arr(4).asInstanceOf[Optional[LocalDateTime]],
+      arr(5).asInstanceOf[java.lang.Short],
+      arr(6).asInstanceOf[Flag],
+      arr(7).asInstanceOf[Optional[OrderNumber]],
+      arr(8).asInstanceOf[Optional[AccountNumber]],
+      arr(9).asInstanceOf[CustomerId],
+      arr(10).asInstanceOf[Optional[BusinessentityId]],
+      arr(11).asInstanceOf[Optional[SalesterritoryId]],
+      arr(12).asInstanceOf[AddressId],
+      arr(13).asInstanceOf[AddressId],
+      arr(14).asInstanceOf[ShipmethodId],
+      arr(15).asInstanceOf[Optional[/* user-picked */ CustomCreditcardId]],
+      arr(16).asInstanceOf[Optional[/* max 15 chars */ String]],
+      arr(17).asInstanceOf[Optional[CurrencyrateId]],
+      arr(18).asInstanceOf[java.math.BigDecimal],
+      arr(19).asInstanceOf[java.math.BigDecimal],
+      arr(20).asInstanceOf[java.math.BigDecimal],
+      arr(21).asInstanceOf[Optional[java.math.BigDecimal]],
+      arr(22).asInstanceOf[Optional[/* max 128 chars */ String]],
+      arr(23).asInstanceOf[UUID],
+      arr(24).asInstanceOf[LocalDateTime]
     ), row => Array[Any](row.salesorderid, row.revisionnumber, row.orderdate, row.duedate, row.shipdate, row.status, row.onlineorderflag, row.purchaseordernumber, row.accountnumber, row.customerid, row.salespersonid, row.territoryid, row.billtoaddressid, row.shiptoaddressid, row.shipmethodid, row.creditcardid, row.creditcardapprovalcode, row.currencyrateid, row.subtotal, row.taxamt, row.freight, row.totaldue, row.comment, row.rowguid, row.modifieddate))
   }
 

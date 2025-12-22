@@ -1552,6 +1552,17 @@ class DbLibTypo(
               }
               // Use untyped params for SAM conversion compatibility
               jvm.Lambda(params.map(p => jvm.LambdaParam(p.name)), jvm.Body.Expr(tpe.construct(args: _*)))
+            case _: LangScala if lang.typeSupport == TypeSupportJava && cols.length > 22 =>
+              // For Scala with TypeSupportJava and >22 params, Scala cannot implement Java function types
+              // with that many parameters. Use Object[] array instead: (Object[] arr) -> new Row(arr(0).asInstanceOf[T], ...)
+              val arr = jvm.Ident("arr")
+              val args = cols.toList.zipWithIndex.map { case (col, i) =>
+                code"${arr.code}($i).asInstanceOf[${col.tpe}]"
+              }
+              jvm.Lambda(
+                List(jvm.LambdaParam(arr, Some(jvm.Type.ArrayOf(TypesJava.Object)))),
+                jvm.Body.Expr(tpe.construct(args: _*))
+              )
             case _: LangScala =>
               // For Scala, always generate explicit lambda - method references don't work for >22 params
               // and can cause LambdaConversionException in Scala 3
@@ -1570,12 +1581,20 @@ class DbLibTypo(
             case _ =>
               jvm.ConstructorMethodRef(tpe)
           }
-          // For Scala DSL, use curried calls; for Java/Kotlin, use single parameter list
-          lang.dsl match {
-            case DslQualifiedNames.Scala =>
-              code"${lang.dsl.RowParsers}.of($pgTypes)($decodeLambda)($encodeLambda)"
+          // For Scala with TypeSupportJava and >22 params, use RowParser constructor directly
+          // because RowParsers.of() uses Function22+ which Scala cannot implement
+          lang match {
+            case _: LangScala if lang.typeSupport == TypeSupportJava && cols.length > 22 =>
+              val columnsList = code"${TypesJava.List}.of($pgTypes)"
+              code"new ${lang.dsl.RowParser}($columnsList, $decodeLambda, $encodeLambda)"
             case _ =>
-              code"${lang.dsl.RowParsers}.of($pgTypes, $decodeLambda, $encodeLambda)"
+              // For Scala DSL, use curried calls; for Java/Kotlin, use single parameter list
+              lang.dsl match {
+                case DslQualifiedNames.Scala =>
+                  code"${lang.dsl.RowParsers}.of($pgTypes)($decodeLambda)($encodeLambda)"
+                case _ =>
+                  code"${lang.dsl.RowParsers}.of($pgTypes, $decodeLambda, $encodeLambda)"
+              }
           }
         },
         isLazy = false,
