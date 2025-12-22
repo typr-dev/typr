@@ -101,7 +101,7 @@ public record SalestaxrateRow(
   }
   ;
 
-  static RowParser<SalestaxrateRow> _rowParser =
+  public static RowParser<SalestaxrateRow> _rowParser =
       RowParsers.of(
           SalestaxrateId.pgType,
           StateprovinceId.pgType,
@@ -110,7 +110,7 @@ public record SalestaxrateRow(
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new SalestaxrateRow(t0, t1, t2, t3, t4, t5, t6),
+          SalestaxrateRow::new,
           row ->
               new Object[] {
                 row.salestaxrateid(),

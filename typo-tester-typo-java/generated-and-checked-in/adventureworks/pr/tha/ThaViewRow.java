@@ -254,7 +254,7 @@ public record ThaViewRow(
   }
   ;
 
-  static RowParser<ThaViewRow> _rowParser =
+  public static RowParser<ThaViewRow> _rowParser =
       RowParsers.of(
           TransactionhistoryarchiveId.pgType,
           TransactionhistoryarchiveId.pgType,
@@ -266,8 +266,7 @@ public record ThaViewRow(
           PgTypes.int4,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new ThaViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          ThaViewRow::new,
           row ->
               new Object[] {
                 row.id(),

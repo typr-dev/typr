@@ -6,9 +6,16 @@
 package adventureworks.sales.salesorderdetail
 
 import adventureworks.sales.salesorderheader.SalesorderheaderId
+import typo.runtime.PgTypes
+import typo.runtime.RowParser
+import typo.runtime.RowParsers
 
 /** Type for the composite primary key of table `sales.salesorderdetail` */
 case class SalesorderdetailId(
   salesorderid: SalesorderheaderId,
   salesorderdetailid: Integer
 )
+
+object SalesorderdetailId {
+  val `_rowParser`: RowParser[SalesorderdetailId] = RowParsers.of(SalesorderheaderId.pgType, PgTypes.int4, SalesorderdetailId.apply, row => Array[Any](row.salesorderid, row.salesorderdetailid))
+}

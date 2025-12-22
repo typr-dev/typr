@@ -50,13 +50,13 @@ public record BeViewRow(
   }
   ;
 
-  static RowParser<BeViewRow> _rowParser =
+  public static RowParser<BeViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new BeViewRow(t0, t1, t2, t3),
+          BeViewRow::new,
           row ->
               new Object[] {row.id(), row.businessentityid(), row.rowguid(), row.modifieddate()});
   ;

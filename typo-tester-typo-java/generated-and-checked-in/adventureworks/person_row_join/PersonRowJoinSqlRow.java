@@ -32,12 +32,12 @@ public record PersonRowJoinSqlRow(
   }
   ;
 
-  static RowParser<PersonRowJoinSqlRow> _rowParser =
+  public static RowParser<PersonRowJoinSqlRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.recordArray.opt(),
           PgTypes.recordArray.opt(),
-          (t0, t1, t2) -> new PersonRowJoinSqlRow(t0, t1, t2),
+          PersonRowJoinSqlRow::new,
           row -> new Object[] {row.businessentityid(), row.email(), row.emails()});
   ;
 }

@@ -12,7 +12,6 @@ import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.price_tiers.PriceTiersId;
 import testdb.products.ProductsId;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -82,7 +81,7 @@ public record ProductPricesRow(
   }
   ;
 
-  static RowParser<ProductPricesRow> _rowParser =
+  public static RowParser<ProductPricesRow> _rowParser =
       RowParsers.of(
           ProductPricesId.pgType,
           ProductsId.pgType,
@@ -91,7 +90,7 @@ public record ProductPricesRow(
           MariaTypes.char_,
           MariaTypes.date,
           MariaTypes.date.opt(),
-          (t0, t1, t2, t3, t4, t5, t6) -> new ProductPricesRow(t0, t1, t2, t3, t4, t5, t6),
+          ProductPricesRow::new,
           row ->
               new Object[] {
                 row.priceId(),
@@ -103,8 +102,6 @@ public record ProductPricesRow(
                 row.validTo()
               });
   ;
-
-  public static MariaText<ProductPricesRow> mariaText = MariaText.from(_rowParser);
 
   public ProductPricesId id() {
     return priceId;

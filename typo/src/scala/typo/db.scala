@@ -188,8 +188,88 @@ object db {
     case class UnionType(members: List[(String, Type)]) extends DuckDbType
   }
 
-  // Shared/unknown type - extends all database types
-  case class Unknown(sqlType: String) extends PgType with MariaType with DuckDbType
+  // Oracle-specific types
+  sealed trait OracleType extends Type
+  object OracleType {
+    // Numeric types
+    case class Number(precision: Option[Int], scale: Option[Int]) extends OracleType
+    case object BinaryFloat extends OracleType
+    case object BinaryDouble extends OracleType
+    case class Float(binaryPrecision: Option[Int]) extends OracleType
+    // Character types
+    case class Varchar2(maxLength: Option[Int]) extends OracleType
+    case class NVarchar2(maxLength: Option[Int]) extends OracleType
+    case class Char(length: Option[Int]) extends OracleType
+    case class NChar(length: Option[Int]) extends OracleType
+    case object Clob extends OracleType
+    case object NClob extends OracleType
+    case object Long extends OracleType // deprecated
+    // Binary types
+    case class Raw(maxLength: Option[Int]) extends OracleType
+    case object Blob extends OracleType
+    case object LongRaw extends OracleType // deprecated
+    // Date/Time types
+    case object Date extends OracleType // DATE includes time in Oracle
+    case class Timestamp(fractionalSecondsPrecision: Option[Int]) extends OracleType
+    case class TimestampWithTimeZone(fractionalSecondsPrecision: Option[Int]) extends OracleType
+    case class TimestampWithLocalTimeZone(fractionalSecondsPrecision: Option[Int]) extends OracleType
+    case class IntervalYearToMonth(yearPrecision: Option[Int]) extends OracleType
+    case class IntervalDayToSecond(dayPrecision: Option[Int], fractionalSecondsPrecision: Option[Int]) extends OracleType
+    // ROWID types
+    case object RowId extends OracleType
+    case class URowId(maxLength: Option[Int]) extends OracleType
+    // XML/JSON types
+    case object XmlType extends OracleType
+    case object Json extends OracleType // 21c+
+    // Boolean (23c+)
+    case object Boolean extends OracleType
+
+    // ═══ OBJECT-RELATIONAL TYPES ═══
+
+    /** User-defined object type (CREATE TYPE AS OBJECT) */
+    case class ObjectType(
+        name: RelationName,
+        attributes: List[ObjectAttribute],
+        isFinal: Boolean,
+        isInstantiable: Boolean,
+        supertype: Option[RelationName]
+    ) extends OracleType
+
+    case class ObjectAttribute(
+        name: String,
+        tpe: Type,
+        position: Int
+    )
+
+    /** VARRAY(n) OF type - Fixed-size array */
+    case class VArray(
+        name: RelationName,
+        maxSize: Int,
+        elementType: Type
+    ) extends OracleType
+
+    /** TABLE OF type - Nested table (variable-length collection) */
+    case class NestedTable(
+        name: RelationName,
+        elementType: Type,
+        storageTable: Option[String]
+    ) extends OracleType
+
+    /** REF type_name - Object reference */
+    case class RefType(
+        objectType: RelationName
+    ) extends OracleType
+
+    /** SDO_GEOMETRY - Oracle Spatial types */
+    case object SdoGeometry extends OracleType
+    case object SdoPoint extends OracleType
+
+    /** ANYDATA - Dynamic type container (rarely used) */
+    case object AnyData extends OracleType
+  }
+
+  // Shared/unknown type - extends PgType, MariaType, and OracleType for pattern matching
+  case class Unknown(sqlType: String) extends PgType with MariaType with DuckDbType with OracleType
 
   case class Domain(name: RelationName, tpe: Type, originalType: String, isNotNull: Nullability, hasDefault: Boolean, constraintDefinition: Option[String])
   case class StringEnum(name: RelationName, values: NonEmptyList[String])

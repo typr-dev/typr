@@ -64,13 +64,13 @@ public record PersonphoneRow(
   }
   ;
 
-  static RowParser<PersonphoneRow> _rowParser =
+  public static RowParser<PersonphoneRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           Phone.pgType,
           PhonenumbertypeId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new PersonphoneRow(t0, t1, t2, t3),
+          PersonphoneRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

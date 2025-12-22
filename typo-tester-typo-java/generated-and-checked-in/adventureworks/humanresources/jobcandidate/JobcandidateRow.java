@@ -66,13 +66,13 @@ public record JobcandidateRow(
   }
   ;
 
-  static RowParser<JobcandidateRow> _rowParser =
+  public static RowParser<JobcandidateRow> _rowParser =
       RowParsers.of(
           JobcandidateId.pgType,
           BusinessentityId.pgType.opt(),
           PgTypes.xml.opt(),
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new JobcandidateRow(t0, t1, t2, t3),
+          JobcandidateRow::new,
           row ->
               new Object[] {
                 row.jobcandidateid(), row.businessentityid(), row.resume(), row.modifieddate()

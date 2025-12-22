@@ -78,7 +78,7 @@ public record ProductmodelRow(
   }
   ;
 
-  static RowParser<ProductmodelRow> _rowParser =
+  public static RowParser<ProductmodelRow> _rowParser =
       RowParsers.of(
           ProductmodelId.pgType,
           Name.pgType,
@@ -86,7 +86,7 @@ public record ProductmodelRow(
           PgTypes.xml.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new ProductmodelRow(t0, t1, t2, t3, t4, t5),
+          ProductmodelRow::new,
           row ->
               new Object[] {
                 row.productmodelid(),

@@ -10,9 +10,6 @@ import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.DuckDbText
-import typo.runtime.DuckDbTypes
-import typo.scaladsl.DuckDbTypeOps
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 case class CustomersRowUnsaved(
@@ -36,8 +33,4 @@ case class CustomersRowUnsaved(
       priority = priority.getOrElse(priorityDefault)
     )
   }
-}
-
-object CustomersRowUnsaved {
-  given duckDbText: DuckDbText[CustomersRowUnsaved] = DuckDbText.instance((row, sb) => { CustomersId.duckDbType.duckDbText.unsafeEncode(row.customerId, sb); sb.append(DuckDbText.DELIMETER); DuckDbTypes.varchar.duckDbText.unsafeEncode(row.name, sb); sb.append(DuckDbText.DELIMETER); DuckDbTypes.varchar.nullable.duckDbText.unsafeEncode(row.email, sb); sb.append(DuckDbText.DELIMETER); Defaulted.duckDbText(using DuckDbTypes.timestamp.duckDbText).unsafeEncode(row.createdAt, sb); sb.append(DuckDbText.DELIMETER); Defaulted.duckDbText(using Priority.duckDbType.nullable.duckDbText).unsafeEncode(row.priority, sb) })
 }

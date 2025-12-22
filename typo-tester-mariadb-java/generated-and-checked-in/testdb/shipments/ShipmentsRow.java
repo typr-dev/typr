@@ -14,7 +14,6 @@ import testdb.customtypes.Defaulted;
 import testdb.orders.OrdersId;
 import testdb.shipping_carriers.ShippingCarriersId;
 import testdb.warehouses.WarehousesId;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -446,7 +445,7 @@ public record ShipmentsRow(
   }
   ;
 
-  static RowParser<ShipmentsRow> _rowParser =
+  public static RowParser<ShipmentsRow> _rowParser =
       RowParsers.of(
           ShipmentsId.pgType,
           OrdersId.pgType,
@@ -465,9 +464,7 @@ public record ShipmentsRow(
           MariaTypes.datetime.opt(),
           MariaTypes.datetime,
           MariaTypes.datetime,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) ->
-              new ShipmentsRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16),
+          ShipmentsRow::new,
           row ->
               new Object[] {
                 row.shipmentId(),
@@ -489,8 +486,6 @@ public record ShipmentsRow(
                 row.updatedAt()
               });
   ;
-
-  public static MariaText<ShipmentsRow> mariaText = MariaText.from(_rowParser);
 
   public ShipmentsId id() {
     return shipmentId;

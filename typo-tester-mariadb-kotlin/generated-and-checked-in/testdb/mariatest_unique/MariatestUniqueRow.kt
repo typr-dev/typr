@@ -7,7 +7,6 @@ package testdb.mariatest_unique
 
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: mariatest_unique
@@ -29,8 +28,5 @@ data class MariatestUniqueRow(
 
   companion object {
     val _rowParser: RowParser<MariatestUniqueRow> = RowParsers.of(MariatestUniqueId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, { t0, t1, t2, t3 -> MariatestUniqueRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
-
-    val mariaText: MariaText<MariatestUniqueRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

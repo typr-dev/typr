@@ -53,14 +53,7 @@ case class ProductproductphotoRow(
 }
 
 object ProductproductphotoRow {
-  val `_rowParser`: RowParser[ProductproductphotoRow] = {
-    RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, PgTypes.timestamp, (t0, t1, t2, t3) => new ProductproductphotoRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ), row => Array[Any](row.productid, row.productphotoid, row.primary, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[ProductproductphotoRow] = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, PgTypes.timestamp, ProductproductphotoRow.apply, row => Array[Any](row.productid, row.productphotoid, row.primary, row.modifieddate))
 
   def apply(
     compositeId: ProductproductphotoId,

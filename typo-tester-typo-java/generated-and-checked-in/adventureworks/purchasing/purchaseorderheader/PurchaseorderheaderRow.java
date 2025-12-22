@@ -323,7 +323,7 @@ public record PurchaseorderheaderRow(
   }
   ;
 
-  static RowParser<PurchaseorderheaderRow> _rowParser =
+  public static RowParser<PurchaseorderheaderRow> _rowParser =
       RowParsers.of(
           PurchaseorderheaderId.pgType,
           PgTypes.int2,
@@ -337,8 +337,7 @@ public record PurchaseorderheaderRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) ->
-              new PurchaseorderheaderRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11),
+          PurchaseorderheaderRow::new,
           row ->
               new Object[] {
                 row.purchaseorderid(),

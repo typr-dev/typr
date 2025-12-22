@@ -55,12 +55,12 @@ public record SalesorderheadersalesreasonRow(
   }
   ;
 
-  static RowParser<SalesorderheadersalesreasonRow> _rowParser =
+  public static RowParser<SalesorderheadersalesreasonRow> _rowParser =
       RowParsers.of(
           SalesorderheaderId.pgType,
           SalesreasonId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new SalesorderheadersalesreasonRow(t0, t1, t2),
+          SalesorderheadersalesreasonRow::new,
           row -> new Object[] {row.salesorderid(), row.salesreasonid(), row.modifieddate()});
   ;
 

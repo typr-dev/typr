@@ -33,6 +33,8 @@ object TypeSupportJava extends TypeSupport {
     def isDefined(opt: jvm.Code): jvm.Code = code"$opt.isPresent()"
     def filterMapOrElse(opt: jvm.Code, predicate: jvm.Code, mapper: jvm.Code, default: jvm.Code): jvm.Code =
       code"$opt.filter($predicate).map($mapper).orElse($default)"
+    def toJavaOptional(opt: jvm.Code): jvm.Code =
+      opt // Already java.util.Optional, no conversion needed
   }
 
   override object Random extends RandomSupport {
@@ -75,6 +77,12 @@ object TypeSupportJava extends TypeSupport {
 
     def listMapToArray(list: jvm.Code, mapper: jvm.Code, arrayGenerator: jvm.Code): jvm.Code =
       code"$list.stream().map($mapper).toArray($arrayGenerator)"
+
+    def fromJavaList(javaList: jvm.Code, elementType: jvm.Type): jvm.Code =
+      javaList // No conversion needed in Java
+
+    def toJavaList(nativeList: jvm.Code, elementType: jvm.Type): jvm.Code =
+      nativeList // No conversion needed in Java
   }
 
   override object MapOps extends MapSupport {
@@ -135,6 +143,9 @@ object TypeSupportJava extends TypeSupport {
 
     def forEach(iterator: jvm.Code, lambda: jvm.Code): jvm.Code =
       code"$iterator.forEachRemaining($lambda)"
+
+    def toJavaIterator(iterator: jvm.Code): jvm.Code =
+      iterator // Already a Java Iterator, no conversion needed
   }
 
   override object MutableListOps extends MutableListSupport {

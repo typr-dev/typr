@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customtypes.Defaulted
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 import typo.scaladsl.DuckDbTypeOps
 import typo.scaladsl.RowParser
@@ -44,15 +43,5 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = {
-    RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)((t0, t1, t2, t3, t4) => new CustomersRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
-  }
-
-  given duckDbText: DuckDbText[CustomersRow] = DuckDbText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
 }

@@ -7,6 +7,8 @@ package adventureworks.sales.countryregioncurrency
 
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.sales.currency.CurrencyId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -32,6 +34,17 @@ object CountryregioncurrencyId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[CountryregioncurrencyId] = {
+    RowParser[CountryregioncurrencyId] { row =>
+      Success(
+        CountryregioncurrencyId(
+          countryregioncode = row(idx + 0)(CountryregionId.column),
+          currencycode = row(idx + 1)(CurrencyId.column)
+        )
+      )
+    }
   }
 
   implicit lazy val writes: OWrites[CountryregioncurrencyId] = {

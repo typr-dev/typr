@@ -48,14 +48,7 @@ case class PersonphoneRow(
 }
 
 object PersonphoneRow {
-  val `_rowParser`: RowParser[PersonphoneRow] = {
-    RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, PgTypes.timestamp)((t0, t1, t2, t3) => new PersonphoneRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ))(row => Array[Any](row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[PersonphoneRow] = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, PgTypes.timestamp)(PersonphoneRow.apply)(row => Array[Any](row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate))
 
   def apply(
     compositeId: PersonphoneId,

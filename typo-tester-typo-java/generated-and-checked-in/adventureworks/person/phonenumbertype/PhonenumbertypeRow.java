@@ -47,12 +47,12 @@ public record PhonenumbertypeRow(
   }
   ;
 
-  static RowParser<PhonenumbertypeRow> _rowParser =
+  public static RowParser<PhonenumbertypeRow> _rowParser =
       RowParsers.of(
           PhonenumbertypeId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new PhonenumbertypeRow(t0, t1, t2),
+          PhonenumbertypeRow::new,
           row -> new Object[] {row.phonenumbertypeid(), row.name(), row.modifieddate()});
   ;
 

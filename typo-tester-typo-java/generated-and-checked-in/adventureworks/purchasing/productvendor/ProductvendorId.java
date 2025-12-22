@@ -7,6 +7,8 @@ package adventureworks.purchasing.productvendor;
 
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.production.product.ProductId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `purchasing.productvendor` */
 public record ProductvendorId(ProductId productid, BusinessentityId businessentityid) {
@@ -18,5 +20,13 @@ public record ProductvendorId(ProductId productid, BusinessentityId businessenti
   public ProductvendorId withBusinessentityid(BusinessentityId businessentityid) {
     return new ProductvendorId(productid, businessentityid);
   }
+  ;
+
+  public static RowParser<ProductvendorId> _rowParser =
+      RowParsers.of(
+          ProductId.pgType,
+          BusinessentityId.pgType,
+          ProductvendorId::new,
+          row -> new Object[] {row.productid(), row.businessentityid()});
   ;
 }

@@ -25,14 +25,5 @@ case class CteTestSqlRow(
 )
 
 object CteTestSqlRow {
-  val `_rowParser`: RowParser[CteTestSqlRow] = {
-    RowParsers.of(MariaTypes.bigintUnsigned, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.varchar.nullable)((t0, t1, t2, t3, t4, t5) => new CteTestSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5
-    ))(row => Array[Any](row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand))
-  }
+  val `_rowParser`: RowParser[CteTestSqlRow] = RowParsers.of(MariaTypes.bigintUnsigned, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.varchar.nullable)(CteTestSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand))
 }

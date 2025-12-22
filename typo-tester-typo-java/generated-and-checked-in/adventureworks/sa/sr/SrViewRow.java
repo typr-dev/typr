@@ -54,14 +54,14 @@ public record SrViewRow(
   }
   ;
 
-  static RowParser<SrViewRow> _rowParser =
+  public static RowParser<SrViewRow> _rowParser =
       RowParsers.of(
           SalesreasonId.pgType,
           SalesreasonId.pgType,
           Name.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new SrViewRow(t0, t1, t2, t3, t4),
+          SrViewRow::new,
           row ->
               new Object[] {
                 row.id(), row.salesreasonid(), row.name(), row.reasontype(), row.modifieddate()

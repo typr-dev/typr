@@ -197,7 +197,7 @@ public record VCustomerSummaryViewRow(
   }
   ;
 
-  static RowParser<VCustomerSummaryViewRow> _rowParser =
+  public static RowParser<VCustomerSummaryViewRow> _rowParser =
       RowParsers.of(
           CustomersId.pgType,
           MariaTypes.varchar,
@@ -209,8 +209,7 @@ public record VCustomerSummaryViewRow(
           MariaTypes.bigint,
           MariaTypes.numeric,
           MariaTypes.datetime.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new VCustomerSummaryViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          VCustomerSummaryViewRow::new,
           row ->
               new Object[] {
                 row.customerId(),

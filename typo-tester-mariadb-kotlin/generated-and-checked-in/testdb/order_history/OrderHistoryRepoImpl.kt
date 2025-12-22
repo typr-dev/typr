@@ -34,7 +34,7 @@ class OrderHistoryRepoImpl() : OrderHistoryRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in historyIds) { fragments.add(Fragment.encode(OrderHistoryId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `order_history` where `history_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `order_history` where `history_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -78,7 +78,7 @@ class OrderHistoryRepoImpl() : OrderHistoryRepo {
       { value -> columns.add(Fragment.lit("`created_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `order_history`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `order_history`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
     return q.updateReturning(OrderHistoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -97,7 +97,7 @@ class OrderHistoryRepoImpl() : OrderHistoryRepo {
   ): List<OrderHistoryRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in historyIds) { fragments.add(Fragment.encode(OrderHistoryId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at` from `order_history` where `history_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(OrderHistoryRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at` from `order_history` where `history_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(OrderHistoryRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

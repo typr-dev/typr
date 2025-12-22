@@ -7,6 +7,8 @@ package adventureworks.humanresources.employeepayhistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.businessentity.BusinessentityId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -32,6 +34,17 @@ object EmployeepayhistoryId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[EmployeepayhistoryId] = {
+    RowParser[EmployeepayhistoryId] { row =>
+      Success(
+        EmployeepayhistoryId(
+          businessentityid = row(idx + 0)(BusinessentityId.column),
+          ratechangedate = row(idx + 1)(TypoLocalDateTime.column)
+        )
+      )
+    }
   }
 
   implicit lazy val writes: OWrites[EmployeepayhistoryId] = {

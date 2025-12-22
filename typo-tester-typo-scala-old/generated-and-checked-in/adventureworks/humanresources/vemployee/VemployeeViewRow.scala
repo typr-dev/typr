@@ -55,26 +55,5 @@ case class VemployeeViewRow(
 )
 
 object VemployeeViewRow {
-  val `_rowParser`: RowParser[VemployeeViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) => new VemployeeViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16,
-      t17
-    ), row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.additionalcontactinfo))
-  }
+  val `_rowParser`: RowParser[VemployeeViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml, VemployeeViewRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.additionalcontactinfo))
 }

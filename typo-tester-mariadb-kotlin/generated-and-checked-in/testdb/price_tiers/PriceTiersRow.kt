@@ -11,7 +11,6 @@ import testdb.customtypes.Defaulted
 import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: price_tiers
@@ -39,8 +38,5 @@ data class PriceTiersRow(
 
   companion object {
     val _rowParser: RowParser<PriceTiersRow> = RowParsers.of(PriceTiersId.pgType, MariaTypes.varchar, KotlinDbTypes.MariaTypes.intUnsigned, MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, { t0, t1, t2, t3, t4 -> PriceTiersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue) })
-
-    val mariaText: MariaText<PriceTiersRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

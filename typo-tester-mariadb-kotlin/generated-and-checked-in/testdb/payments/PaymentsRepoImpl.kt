@@ -36,7 +36,7 @@ class PaymentsRepoImpl() : PaymentsRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in paymentIds) { fragments.add(Fragment.encode(PaymentsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `payments` where `payment_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `payments` where `payment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -97,7 +97,7 @@ class PaymentsRepoImpl() : PaymentsRepo {
       { value -> columns.add(Fragment.lit("`processed_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `payments`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `payments`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\n"))
     return q.updateReturning(PaymentsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -116,7 +116,7 @@ class PaymentsRepoImpl() : PaymentsRepo {
   ): List<PaymentsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in paymentIds) { fragments.add(Fragment.encode(PaymentsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at` from `payments` where `payment_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(PaymentsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at` from `payments` where `payment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(PaymentsRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

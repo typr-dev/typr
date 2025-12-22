@@ -76,6 +76,7 @@ package object scaladsl {
     val POSTGRESQL: typo.dsl.Dialect = typo.dsl.Dialect.POSTGRESQL
     val MARIADB: typo.dsl.Dialect = typo.dsl.Dialect.MARIADB
     val DUCKDB: typo.dsl.Dialect = typo.dsl.Dialect.DUCKDB
+    val ORACLE: typo.dsl.Dialect = typo.dsl.Dialect.ORACLE
   }
 
   // Bijection companion object with factory methods

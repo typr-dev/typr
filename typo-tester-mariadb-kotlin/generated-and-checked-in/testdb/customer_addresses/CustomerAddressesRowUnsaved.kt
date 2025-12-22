@@ -11,10 +11,6 @@ import org.mariadb.jdbc.type.Point
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `customer_addresses` which has not been persisted yet */
 data class CustomerAddressesRowUnsaved(
@@ -68,33 +64,4 @@ data class CustomerAddressesRowUnsaved(
     createdAtDefault: () -> LocalDateTime,
     addressIdDefault: () -> CustomerAddressesId
   ): CustomerAddressesRow = CustomerAddressesRow(addressId = addressIdDefault(), customerId = customerId, addressType = addressType, isDefault = isDefault.getOrElse(isDefaultDefault), recipientName = recipientName, streetLine1 = streetLine1, streetLine2 = streetLine2.getOrElse(streetLine2Default), city = city, stateProvince = stateProvince.getOrElse(stateProvinceDefault), postalCode = postalCode, countryCode = countryCode, location = location.getOrElse(locationDefault), deliveryNotes = deliveryNotes.getOrElse(deliveryNotesDefault), createdAt = createdAt.getOrElse(createdAtDefault))
-
-  companion object {
-    val mariaText: MariaText<CustomerAddressesRowUnsaved> =
-      MariaText.instance({ row, sb -> CustomersId.pgType.mariaText().unsafeEncode(row.customerId, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.text.mariaText().unsafeEncode(row.addressType, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.recipientName, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.streetLine1, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.city, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.postalCode, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.char_.mariaText().unsafeEncode(row.countryCode, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isDefault, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.streetLine2, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.stateProvince, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.point.nullable().mariaText()).unsafeEncode(row.location, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.tinytext.nullable().mariaText()).unsafeEncode(row.deliveryNotes, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb) })
-  }
 }

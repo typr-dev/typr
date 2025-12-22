@@ -164,6 +164,10 @@ object DuckDbAdapter extends DbAdapter {
 
   def textType: db.Type = db.DuckDbType.Text
 
+  /** Public interface for looking up types by db.Type - delegates to lookupByDbType */
+  def lookupTypeByDbType(dbType: db.Type, Types: jvm.Type.Qualified, naming: Naming, typeSupport: TypeSupport): Code =
+    lookupByDbType(dbType, naming, typeSupport)
+
   private def lookupByDbType(dbType: db.Type, naming: Naming, typeSupport: TypeSupport): Code = {
     // Helper to get primitive type code based on language
     def primitiveType(name: String): Code = {
@@ -288,6 +292,8 @@ object DuckDbAdapter extends DbAdapter {
         sys.error(s"DuckDbAdapter.lookupByDbType: Cannot lookup PostgreSQL type in DuckDB adapter")
       case _: db.MariaType =>
         sys.error(s"DuckDbAdapter.lookupByDbType: Cannot lookup MariaDB type in DuckDB adapter")
+      case _: db.OracleType =>
+        sys.error(s"DuckDbAdapter.lookupByDbType: Cannot lookup Oracle type in DuckDB adapter")
     }
   }
 
@@ -299,6 +305,10 @@ object DuckDbAdapter extends DbAdapter {
   val supportsReturning: Boolean = true
   val supportsCopyStreaming: Boolean = false // DuckDB uses different COPY mechanism
   val supportsDefaultInCopy: Boolean = false
+
+  /** DuckDB uses SQL RETURNING clause for all inserts */
+  def returningStrategy(cols: NonEmptyList[ComputedColumn], rowType: jvm.Type, maybeId: Option[IdComputed]): ReturningStrategy =
+    ReturningStrategy.SqlReturning(rowType)
 
   // ═══════════════════════════════════════════════════════════════════════════
   // LAYER 4: SQL Templates

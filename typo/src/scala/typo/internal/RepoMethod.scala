@@ -3,6 +3,33 @@ package internal
 
 import typo.jvm.Comments
 
+/** Strategy for returning data after INSERT operations. Different databases require different JDBC mechanisms.
+  */
+sealed trait ReturningStrategy {
+  def returnType: jvm.Type
+}
+
+object ReturningStrategy {
+
+  /** Use SQL-level RETURNING clause (PostgreSQL, MariaDB). Returns full row via ResultSet from execute().
+    */
+  case class SqlReturning(rowType: jvm.Type) extends ReturningStrategy {
+    def returnType: jvm.Type = rowType
+  }
+
+  /** Use JDBC getGeneratedKeys() with ALL column names. Returns full row (Oracle for tables without STRUCT/ARRAY).
+    */
+  case class GeneratedKeysAllColumns(rowType: jvm.Type, columns: NonEmptyList[ComputedColumn]) extends ReturningStrategy {
+    def returnType: jvm.Type = rowType
+  }
+
+  /** Use JDBC getGeneratedKeys() with ID column names only. Returns just the ID (Oracle for tables with STRUCT/ARRAY).
+    */
+  case class GeneratedKeysIdOnly(id: IdComputed) extends ReturningStrategy {
+    def returnType: jvm.Type = id.tpe
+  }
+}
+
 sealed abstract class RepoMethod(val methodName: String, val tiebreaker: Int) {
   val comment: jvm.Comments = jvm.Comments.Empty
 
@@ -113,9 +140,10 @@ object RepoMethod {
   case class Insert(
       relName: db.RelationName,
       cols: NonEmptyList[ComputedColumn],
+      maybeId: Option[IdComputed],
       unsavedParam: jvm.Param[jvm.Type],
-      rowType: jvm.Type,
-      writeableColumnsWithId: NonEmptyList[ComputedColumn]
+      writeableColumnsWithId: NonEmptyList[ComputedColumn],
+      returningStrategy: ReturningStrategy
   ) extends Mutator("insert", 2)
 
   case class InsertUnsaved(
@@ -123,8 +151,9 @@ object RepoMethod {
       cols: NonEmptyList[ComputedColumn],
       unsaved: ComputedRowUnsaved,
       unsavedParam: jvm.Param[jvm.Type],
+      maybeId: Option[IdComputed],
       default: ComputedDefault,
-      rowType: jvm.Type
+      returningStrategy: ReturningStrategy
   ) extends Mutator("insert", 1)
 
   case class InsertStreaming(

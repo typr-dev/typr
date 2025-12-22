@@ -31,7 +31,7 @@ case class CultureRow(
 }
 
 object CultureRow {
-  val `_rowParser`: RowParser[CultureRow] = RowParsers.of(CultureId.pgType, Name.pgType, PgTypes.timestamp, (t0, t1, t2) => new CultureRow(t0, t1, t2), row => Array[Any](row.cultureid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CultureRow] = RowParsers.of(CultureId.pgType, Name.pgType, PgTypes.timestamp, CultureRow.apply, row => Array[Any](row.cultureid, row.name, row.modifieddate))
 
   given pgText: PgText[CultureRow] = PgText.from(`_rowParser`)
 }

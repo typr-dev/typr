@@ -67,18 +67,5 @@ case class VCustomerSummaryViewRow(
 )
 
 object VCustomerSummaryViewRow {
-  val `_rowParser`: RowParser[VCustomerSummaryViewRow] = {
-    RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.text, CustomerStatusId.pgType, MariaTypes.datetime, MariaTypes.datetime.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.datetime.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new VCustomerSummaryViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9
-    ))(row => Array[Any](row.customerId, row.email, row.fullName, row.tier, row.status, row.createdAt, row.lastLoginAt, row.totalOrders, row.lifetimeValue, row.lastOrderDate))
-  }
+  val `_rowParser`: RowParser[VCustomerSummaryViewRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.text, CustomerStatusId.pgType, MariaTypes.datetime, MariaTypes.datetime.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.datetime.nullable)(VCustomerSummaryViewRow.apply)(row => Array[Any](row.customerId, row.email, row.fullName, row.tier, row.status, row.createdAt, row.lastLoginAt, row.totalOrders, row.lifetimeValue, row.lastOrderDate))
 }

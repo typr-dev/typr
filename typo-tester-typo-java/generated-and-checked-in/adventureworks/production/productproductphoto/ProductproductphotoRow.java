@@ -64,13 +64,13 @@ public record ProductproductphotoRow(
   }
   ;
 
-  static RowParser<ProductproductphotoRow> _rowParser =
+  public static RowParser<ProductproductphotoRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           ProductphotoId.pgType,
           Flag.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new ProductproductphotoRow(t0, t1, t2, t3),
+          ProductproductphotoRow::new,
           row ->
               new Object[] {
                 row.productid(), row.productphotoid(), row.primary(), row.modifieddate()

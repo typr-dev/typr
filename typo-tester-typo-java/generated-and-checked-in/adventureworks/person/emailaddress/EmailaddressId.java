@@ -6,6 +6,9 @@
 package adventureworks.person.emailaddress;
 
 import adventureworks.person.businessentity.BusinessentityId;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `person.emailaddress` */
 public record EmailaddressId(BusinessentityId businessentityid, Integer emailaddressid) {
@@ -17,5 +20,13 @@ public record EmailaddressId(BusinessentityId businessentityid, Integer emailadd
   public EmailaddressId withEmailaddressid(Integer emailaddressid) {
     return new EmailaddressId(businessentityid, emailaddressid);
   }
+  ;
+
+  public static RowParser<EmailaddressId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          PgTypes.int4,
+          EmailaddressId::new,
+          row -> new Object[] {row.businessentityid(), row.emailaddressid()});
   ;
 }

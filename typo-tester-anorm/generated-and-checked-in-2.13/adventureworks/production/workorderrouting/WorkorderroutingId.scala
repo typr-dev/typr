@@ -7,6 +7,9 @@ package adventureworks.production.workorderrouting
 
 import adventureworks.customtypes.TypoShort
 import adventureworks.production.workorder.WorkorderId
+import anorm.Column
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -35,6 +38,18 @@ object WorkorderroutingId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[WorkorderroutingId] = {
+    RowParser[WorkorderroutingId] { row =>
+      Success(
+        WorkorderroutingId(
+          workorderid = row(idx + 0)(WorkorderId.column),
+          productid = row(idx + 1)(Column.columnToInt),
+          operationsequence = row(idx + 2)(TypoShort.column)
+        )
+      )
+    }
   }
 
   implicit lazy val writes: OWrites[WorkorderroutingId] = {

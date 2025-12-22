@@ -192,7 +192,7 @@ public record TransactionhistoryRow(
   }
   ;
 
-  static RowParser<TransactionhistoryRow> _rowParser =
+  public static RowParser<TransactionhistoryRow> _rowParser =
       RowParsers.of(
           TransactionhistoryId.pgType,
           ProductId.pgType,
@@ -203,8 +203,7 @@ public record TransactionhistoryRow(
           PgTypes.int4,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
-              new TransactionhistoryRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          TransactionhistoryRow::new,
           row ->
               new Object[] {
                 row.transactionid(),

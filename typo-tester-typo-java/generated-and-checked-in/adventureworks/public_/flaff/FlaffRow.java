@@ -53,14 +53,14 @@ public record FlaffRow(
   }
   ;
 
-  static RowParser<FlaffRow> _rowParser =
+  public static RowParser<FlaffRow> _rowParser =
       RowParsers.of(
           ShortText.pgType,
           PgTypes.text,
           PgTypes.int4,
           ShortText.pgType,
           ShortText.pgType.opt(),
-          (t0, t1, t2, t3, t4) -> new FlaffRow(t0, t1, t2, t3, t4),
+          FlaffRow::new,
           row ->
               new Object[] {
                 row.code(),

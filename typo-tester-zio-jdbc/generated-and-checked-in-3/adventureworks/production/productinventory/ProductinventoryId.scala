@@ -7,6 +7,8 @@ package adventureworks.production.productinventory
 
 import adventureworks.production.location.LocationId
 import adventureworks.production.product.ProductId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -19,6 +21,17 @@ case class ProductinventoryId(
 )
 
 object ProductinventoryId {
+  given jdbcDecoder: JdbcDecoder[ProductinventoryId] = {
+    new JdbcDecoder[ProductinventoryId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, ProductinventoryId) =
+        columIndex + 1 ->
+          ProductinventoryId(
+            productid = ProductId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            locationid = LocationId.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   given jsonDecoder: JsonDecoder[ProductinventoryId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val productid = jsonObj.get("productid").toRight("Missing field 'productid'").flatMap(_.as(using ProductId.jsonDecoder))

@@ -7,6 +7,9 @@ package adventureworks.public_.test_sak_soknadsalternativ;
 
 import adventureworks.public_.test_utdanningstilbud.TestUtdanningstilbudId;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `public.test_sak_soknadsalternativ` */
 public record TestSakSoknadsalternativId(
@@ -21,6 +24,14 @@ public record TestSakSoknadsalternativId(
   public TestSakSoknadsalternativId withUtdanningsmulighetKode(String utdanningsmulighetKode) {
     return new TestSakSoknadsalternativId(organisasjonskodeSaksbehandler, utdanningsmulighetKode);
   }
+  ;
+
+  public static RowParser<TestSakSoknadsalternativId> _rowParser =
+      RowParsers.of(
+          PgTypes.text,
+          PgTypes.text,
+          TestSakSoknadsalternativId::new,
+          row -> new Object[] {row.organisasjonskodeSaksbehandler(), row.utdanningsmulighetKode()});
   ;
 
   public static TestSakSoknadsalternativId from(

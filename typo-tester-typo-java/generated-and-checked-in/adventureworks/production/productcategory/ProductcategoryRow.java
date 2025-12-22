@@ -57,13 +57,13 @@ public record ProductcategoryRow(
   }
   ;
 
-  static RowParser<ProductcategoryRow> _rowParser =
+  public static RowParser<ProductcategoryRow> _rowParser =
       RowParsers.of(
           ProductcategoryId.pgType,
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new ProductcategoryRow(t0, t1, t2, t3),
+          ProductcategoryRow::new,
           row ->
               new Object[] {
                 row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()

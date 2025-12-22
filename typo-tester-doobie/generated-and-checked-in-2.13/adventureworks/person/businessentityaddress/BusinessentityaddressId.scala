@@ -8,6 +8,7 @@ package adventureworks.person.businessentityaddress
 import adventureworks.person.address.AddressId
 import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.person.businessentity.BusinessentityId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -22,4 +23,18 @@ object BusinessentityaddressId {
   implicit lazy val decoder: Decoder[BusinessentityaddressId] = Decoder.forProduct3[BusinessentityaddressId, BusinessentityId, AddressId, AddresstypeId]("businessentityid", "addressid", "addresstypeid")(BusinessentityaddressId.apply)(BusinessentityId.decoder, AddressId.decoder, AddresstypeId.decoder)
 
   implicit lazy val encoder: Encoder[BusinessentityaddressId] = Encoder.forProduct3[BusinessentityaddressId, BusinessentityId, AddressId, AddresstypeId]("businessentityid", "addressid", "addresstypeid")(x => (x.businessentityid, x.addressid, x.addresstypeid))(BusinessentityId.encoder, AddressId.encoder, AddresstypeId.encoder)
+
+  implicit lazy val read: Read[BusinessentityaddressId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(AddressId.get).asInstanceOf[Read[Any]],
+        new Read.Single(AddresstypeId.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      BusinessentityaddressId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            addressid = arr(1).asInstanceOf[AddressId],
+            addresstypeid = arr(2).asInstanceOf[AddresstypeId]
+      )
+    }
+  }
 }

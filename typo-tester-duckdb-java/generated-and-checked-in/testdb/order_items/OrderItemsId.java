@@ -6,6 +6,9 @@
 package testdb.order_items;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import typo.runtime.DuckDbTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `order_items` */
 public record OrderItemsId(
@@ -18,5 +21,13 @@ public record OrderItemsId(
   public OrderItemsId withProductId(Integer productId) {
     return new OrderItemsId(orderId, productId);
   }
+  ;
+
+  public static RowParser<OrderItemsId> _rowParser =
+      RowParsers.of(
+          DuckDbTypes.integer,
+          DuckDbTypes.integer,
+          OrderItemsId::new,
+          row -> new Object[] {row.orderId(), row.productId()});
   ;
 }

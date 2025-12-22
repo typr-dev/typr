@@ -5,6 +5,8 @@
  */
 package testdb.hardcoded.compositepk.person
 
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -18,4 +20,16 @@ object PersonId {
   given decoder: Decoder[PersonId] = Decoder.forProduct2[PersonId, Long, Option[String]]("one", "two")(PersonId.apply)(using Decoder.decodeLong, Decoder.decodeOption(using Decoder.decodeString))
 
   given encoder: Encoder[PersonId] = Encoder.forProduct2[PersonId, Long, Option[String]]("one", "two")(x => (x.one, x.two))(using Encoder.encodeLong, Encoder.encodeOption(using Encoder.encodeString))
+
+  given read: Read[PersonId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(Meta.LongMeta.get).asInstanceOf[Read[Any]],
+        new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      PersonId(
+        one = arr(0).asInstanceOf[Long],
+            two = arr(1).asInstanceOf[Option[String]]
+      )
+    }
+  }
 }

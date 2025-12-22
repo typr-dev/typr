@@ -12,7 +12,6 @@ import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
 import testdb.shipping_carriers.ShippingCarriersId
 import testdb.warehouses.WarehousesId
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -127,27 +126,5 @@ case class ShipmentsRow(
 }
 
 object ShipmentsRow {
-  val `_rowParser`: RowParser[ShipmentsRow] = {
-    RowParsers.of(ShipmentsId.pgType, OrdersId.pgType, ShippingCarriersId.pgType, MariaTypes.varchar.nullable, MariaTypes.varchar, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.longtext.nullable, MariaTypes.longblob.nullable, MariaTypes.text, MariaTypes.date.nullable, MariaTypes.datetime.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, WarehousesId.pgType.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime, MariaTypes.datetime)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => new ShipmentsRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16
-    ))(row => Array[Any](row.shipmentId, row.orderId, row.carrierId, row.trackingNumber, row.shippingMethod, row.weightKg, row.dimensionsJson, row.labelData, row.status, row.estimatedDeliveryDate, row.actualDeliveryAt, row.shippingCost, row.insuranceAmount, row.originWarehouseId, row.shippedAt, row.createdAt, row.updatedAt))
-  }
-
-  given mariaText: MariaText[ShipmentsRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[ShipmentsRow] = RowParsers.of(ShipmentsId.pgType, OrdersId.pgType, ShippingCarriersId.pgType, MariaTypes.varchar.nullable, MariaTypes.varchar, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.longtext.nullable, MariaTypes.longblob.nullable, MariaTypes.text, MariaTypes.date.nullable, MariaTypes.datetime.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, WarehousesId.pgType.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime, MariaTypes.datetime)(ShipmentsRow.apply)(row => Array[Any](row.shipmentId, row.orderId, row.carrierId, row.trackingNumber, row.shippingMethod, row.weightKg, row.dimensionsJson, row.labelData, row.status, row.estimatedDeliveryDate, row.actualDeliveryAt, row.shippingCost, row.insuranceAmount, row.originWarehouseId, row.shippedAt, row.createdAt, row.updatedAt))
 }

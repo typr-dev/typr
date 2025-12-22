@@ -287,7 +287,7 @@ public record ProductvendorRow(
   }
   ;
 
-  static RowParser<ProductvendorRow> _rowParser =
+  public static RowParser<ProductvendorRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           BusinessentityId.pgType,
@@ -300,8 +300,7 @@ public record ProductvendorRow(
           PgTypes.int4.opt(),
           UnitmeasureId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
-              new ProductvendorRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
+          ProductvendorRow::new,
           row ->
               new Object[] {
                 row.productid(),

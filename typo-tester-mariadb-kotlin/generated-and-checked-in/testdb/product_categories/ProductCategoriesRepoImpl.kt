@@ -34,7 +34,7 @@ class ProductCategoriesRepoImpl() : ProductCategoriesRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in compositeIds) { fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(ProductsId.pgType, id.productId), Fragment.lit(", "), Fragment.encode(CategoriesId.pgType, id.categoryId), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("delete from `product_categories` where (`product_id`, `category_id`) in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `product_categories` where (`product_id`, `category_id`) in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -63,7 +63,7 @@ class ProductCategoriesRepoImpl() : ProductCategoriesRepo {
       { value -> columns.add(Fragment.lit("`sort_order`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.smallint, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_categories`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_categories`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
     return q.updateReturning(ProductCategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -82,7 +82,7 @@ class ProductCategoriesRepoImpl() : ProductCategoriesRepo {
   ): List<ProductCategoriesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in compositeIds) { fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(ProductsId.pgType, id.productId), Fragment.lit(", "), Fragment.encode(CategoriesId.pgType, id.categoryId), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("select `product_id`, `category_id`, `is_primary`, `sort_order` from `product_categories` where (`product_id`, `category_id`) in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ProductCategoriesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `product_id`, `category_id`, `is_primary`, `sort_order` from `product_categories` where (`product_id`, `category_id`) in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ProductCategoriesRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

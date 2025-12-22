@@ -7,6 +7,8 @@ package adventureworks.production.productlistpricehistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.production.product.ProductId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -19,6 +21,17 @@ case class ProductlistpricehistoryId(
 )
 
 object ProductlistpricehistoryId {
+  given jdbcDecoder: JdbcDecoder[ProductlistpricehistoryId] = {
+    new JdbcDecoder[ProductlistpricehistoryId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, ProductlistpricehistoryId) =
+        columIndex + 1 ->
+          ProductlistpricehistoryId(
+            productid = ProductId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            startdate = TypoLocalDateTime.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   given jsonDecoder: JsonDecoder[ProductlistpricehistoryId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val productid = jsonObj.get("productid").toRight("Missing field 'productid'").flatMap(_.as(using ProductId.jsonDecoder))

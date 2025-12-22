@@ -97,7 +97,7 @@ public record PchViewRow(
   }
   ;
 
-  static RowParser<PchViewRow> _rowParser =
+  public static RowParser<PchViewRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           ProductId.pgType,
@@ -105,7 +105,7 @@ public record PchViewRow(
           PgTypes.timestamp,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new PchViewRow(t0, t1, t2, t3, t4, t5),
+          PchViewRow::new,
           row ->
               new Object[] {
                 row.id(),

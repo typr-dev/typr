@@ -99,7 +99,7 @@ public record SpqhViewRow(
   }
   ;
 
-  static RowParser<SpqhViewRow> _rowParser =
+  public static RowParser<SpqhViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
@@ -107,7 +107,7 @@ public record SpqhViewRow(
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new SpqhViewRow(t0, t1, t2, t3, t4, t5),
+          SpqhViewRow::new,
           row ->
               new Object[] {
                 row.id(),

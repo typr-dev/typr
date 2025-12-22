@@ -55,12 +55,12 @@ public record ProductdocumentRow(
   }
   ;
 
-  static RowParser<ProductdocumentRow> _rowParser =
+  public static RowParser<ProductdocumentRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           PgTypes.timestamp,
           DocumentId.pgType,
-          (t0, t1, t2) -> new ProductdocumentRow(t0, t1, t2),
+          ProductdocumentRow::new,
           row -> new Object[] {row.productid(), row.modifieddate(), row.documentnode()});
   ;
 

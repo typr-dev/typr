@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import testdb.DefaultedDeserializer;
 import testdb.DefaultedSerializer;
-import typo.runtime.MariaText;
 
 /** This signals a value where if you don't provide it, postgres will generate it for you */
 @JsonSerialize(using = DefaultedSerializer.class)
@@ -61,17 +60,6 @@ public sealed interface Defaulted<T> permits Defaulted.Provided, Defaulted.UseDe
       onDefault.run();
     }
     ;
-  }
-  ;
-
-  static <T> MariaText<Defaulted<T>> mariaText(MariaText<T> t) {
-    return MariaText.instance(
-        (ot, sb) ->
-            ot.visit(
-                () -> {
-                  sb.append("__DEFAULT_VALUE__");
-                },
-                value -> t.unsafeEncode(value, sb)));
   }
   ;
 

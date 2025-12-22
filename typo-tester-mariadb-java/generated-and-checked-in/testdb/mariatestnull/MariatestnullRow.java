@@ -17,7 +17,6 @@ import testdb.customtypes.Defaulted;
 import typo.data.maria.Inet4;
 import typo.data.maria.Inet6;
 import typo.data.maria.MariaSet;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -2124,7 +2123,7 @@ public record MariatestnullRow(
   }
   ;
 
-  static RowParser<MariatestnullRow> _rowParser =
+  public static RowParser<MariatestnullRow> _rowParser =
       RowParsers.of(
           MariaTypes.tinyint.opt(),
           MariaTypes.smallint.opt(),
@@ -2168,52 +2167,7 @@ public record MariatestnullRow(
           MariaTypes.longtext.opt(),
           MariaTypes.inet4.opt(),
           MariaTypes.inet6.opt(),
-          (t0,
-              t1,
-              t2,
-              t3,
-              t4,
-              t5,
-              t6,
-              t7,
-              t8,
-              t9,
-              t10,
-              t11,
-              t12,
-              t13,
-              t14,
-              t15,
-              t16,
-              t17,
-              t18,
-              t19,
-              t20,
-              t21,
-              t22,
-              t23,
-              t24,
-              t25,
-              t26,
-              t27,
-              t28,
-              t29,
-              t30,
-              t31,
-              t32,
-              t33,
-              t34,
-              t35,
-              t36,
-              t37,
-              t38,
-              t39,
-              t40,
-              t41) ->
-              new MariatestnullRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17,
-                  t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33,
-                  t34, t35, t36, t37, t38, t39, t40, t41),
+          MariatestnullRow::new,
           row ->
               new Object[] {
                 row.tinyintCol(),
@@ -2260,8 +2214,6 @@ public record MariatestnullRow(
                 row.inet6Col()
               });
   ;
-
-  public static MariaText<MariatestnullRow> mariaText = MariaText.from(_rowParser);
 
   public MariatestnullRowUnsaved toUnsavedRow(
       Defaulted<Optional<Byte>> tinyintCol,

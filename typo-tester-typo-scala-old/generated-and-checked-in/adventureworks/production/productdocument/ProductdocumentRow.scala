@@ -42,7 +42,7 @@ case class ProductdocumentRow(
 }
 
 object ProductdocumentRow {
-  val `_rowParser`: RowParser[ProductdocumentRow] = RowParsers.of(ProductId.pgType, PgTypes.timestamp, DocumentId.pgType, (t0, t1, t2) => new ProductdocumentRow(t0, t1, t2), row => Array[Any](row.productid, row.modifieddate, row.documentnode))
+  val `_rowParser`: RowParser[ProductdocumentRow] = RowParsers.of(ProductId.pgType, PgTypes.timestamp, DocumentId.pgType, ProductdocumentRow.apply, row => Array[Any](row.productid, row.modifieddate, row.documentnode))
 
   def apply(
     compositeId: ProductdocumentId,

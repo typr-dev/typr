@@ -213,7 +213,7 @@ public record VproductmodelinstructionsViewRow(
   }
   ;
 
-  static RowParser<VproductmodelinstructionsViewRow> _rowParser =
+  public static RowParser<VproductmodelinstructionsViewRow> _rowParser =
       RowParsers.of(
           ProductmodelId.pgType,
           Name.pgType,
@@ -226,8 +226,7 @@ public record VproductmodelinstructionsViewRow(
           PgTypes.text,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
-              new VproductmodelinstructionsViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
+          VproductmodelinstructionsViewRow::new,
           row ->
               new Object[] {
                 row.productmodelid(),

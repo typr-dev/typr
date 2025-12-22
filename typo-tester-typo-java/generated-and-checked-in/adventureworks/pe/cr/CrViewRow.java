@@ -40,12 +40,12 @@ public record CrViewRow(
   }
   ;
 
-  static RowParser<CrViewRow> _rowParser =
+  public static RowParser<CrViewRow> _rowParser =
       RowParsers.of(
           CountryregionId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new CrViewRow(t0, t1, t2),
+          CrViewRow::new,
           row -> new Object[] {row.countryregioncode(), row.name(), row.modifieddate()});
   ;
 }

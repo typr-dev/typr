@@ -9,6 +9,8 @@ import adventureworks.customtypes.TypoLocalDate
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -38,6 +40,19 @@ object EmployeedepartmenthistoryId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[EmployeedepartmenthistoryId] = {
+    RowParser[EmployeedepartmenthistoryId] { row =>
+      Success(
+        EmployeedepartmenthistoryId(
+          businessentityid = row(idx + 0)(BusinessentityId.column),
+          startdate = row(idx + 1)(TypoLocalDate.column),
+          departmentid = row(idx + 2)(DepartmentId.column),
+          shiftid = row(idx + 3)(ShiftId.column)
+        )
+      )
+    }
   }
 
   implicit lazy val writes: OWrites[EmployeedepartmenthistoryId] = {

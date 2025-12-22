@@ -7,6 +7,8 @@ package adventureworks.sales.countryregioncurrency;
 
 import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.sales.currency.CurrencyId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `sales.countryregioncurrency` */
 public record CountryregioncurrencyId(CountryregionId countryregioncode, CurrencyId currencycode) {
@@ -18,5 +20,13 @@ public record CountryregioncurrencyId(CountryregionId countryregioncode, Currenc
   public CountryregioncurrencyId withCurrencycode(CurrencyId currencycode) {
     return new CountryregioncurrencyId(countryregioncode, currencycode);
   }
+  ;
+
+  public static RowParser<CountryregioncurrencyId> _rowParser =
+      RowParsers.of(
+          CountryregionId.pgType,
+          CurrencyId.pgType,
+          CountryregioncurrencyId::new,
+          row -> new Object[] {row.countryregioncode(), row.currencycode()});
   ;
 }

@@ -7,9 +7,16 @@ package adventureworks.public.test_utdanningstilbud
 
 import adventureworks.public.test_organisasjon.TestOrganisasjonId
 import com.fasterxml.jackson.annotation.JsonProperty
+import typo.runtime.PgTypes
+import typo.scaladsl.RowParser
+import typo.scaladsl.RowParsers
 
 /** Type for the composite primary key of table `public.test_utdanningstilbud` */
 case class TestUtdanningstilbudId(
   organisasjonskode: TestOrganisasjonId,
   @JsonProperty("utdanningsmulighet_kode") utdanningsmulighetKode: String
 )
+
+object TestUtdanningstilbudId {
+  val `_rowParser`: RowParser[TestUtdanningstilbudId] = RowParsers.of(TestOrganisasjonId.pgType, PgTypes.text)(TestUtdanningstilbudId.apply)(row => Array[Any](row.organisasjonskode, row.utdanningsmulighetKode))
+}

@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.DuckDbText;
-import typo.runtime.DuckDbTypes;
 
 /** This class corresponds to a row in table `order_items` which has not been persisted yet */
 public record OrderItemsRowUnsaved(
@@ -47,18 +45,6 @@ public record OrderItemsRowUnsaved(
     return new OrderItemsRowUnsaved(orderId, productId, unitPrice, quantity);
   }
   ;
-
-  public static DuckDbText<OrderItemsRowUnsaved> duckDbText =
-      DuckDbText.instance(
-          (row, sb) -> {
-            DuckDbTypes.integer.duckDbText().unsafeEncode(row.orderId, sb);
-            sb.append(DuckDbText.DELIMETER);
-            DuckDbTypes.integer.duckDbText().unsafeEncode(row.productId, sb);
-            sb.append(DuckDbText.DELIMETER);
-            DuckDbTypes.numeric.duckDbText().unsafeEncode(row.unitPrice, sb);
-            sb.append(DuckDbText.DELIMETER);
-            Defaulted.duckDbText(DuckDbTypes.integer.duckDbText()).unsafeEncode(row.quantity, sb);
-          });
 
   public OrderItemsRow toRow(java.util.function.Supplier<Integer> quantityDefault) {
     return new OrderItemsRow(orderId, productId, quantity.getOrElse(quantityDefault), unitPrice);

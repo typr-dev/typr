@@ -38,18 +38,5 @@ case class DepartmentEmployeeDetailsSqlRow(
 )
 
 object DepartmentEmployeeDetailsSqlRow {
-  val `_rowParser`: RowParser[DepartmentEmployeeDetailsSqlRow] = {
-    RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new DepartmentEmployeeDetailsSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9
-    ))(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget, row.empNumber, row.empSuffix, row.empName, row.salary, row.hireDate, row.yearsOfService))
-  }
+  val `_rowParser`: RowParser[DepartmentEmployeeDetailsSqlRow] = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable)(DepartmentEmployeeDetailsSqlRow.apply)(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget, row.empNumber, row.empSuffix, row.empName, row.salary, row.hireDate, row.yearsOfService))
 }

@@ -81,7 +81,7 @@ class WorkorderroutingRepoImpl() : WorkorderroutingRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"workorderrouting\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"workorderid\", \"productid\", \"operationsequence\", \"locationid\", \"scheduledstartdate\", \"scheduledenddate\", \"actualstartdate\", \"actualenddate\", \"actualresourcehrs\", \"plannedcost\", \"actualcost\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"workorderrouting\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"workorderid\", \"productid\", \"operationsequence\", \"locationid\", \"scheduledstartdate\", \"scheduledenddate\", \"actualstartdate\", \"actualenddate\", \"actualresourcehrs\", \"plannedcost\", \"actualcost\", \"modifieddate\"\n"))
     return q.updateReturning(WorkorderroutingRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -12,7 +12,6 @@ import testdb.products.ProductsId
 import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
-import typo.runtime.MariaText
 
 /** Table: product_categories
   * Composite primary key: product_id, category_id
@@ -52,8 +51,5 @@ data class ProductCategoriesRow(
       isPrimary: Boolean,
       sortOrder: Short
     ): ProductCategoriesRow = ProductCategoriesRow(compositeId.productId, compositeId.categoryId, isPrimary, sortOrder)
-
-    val mariaText: MariaText<ProductCategoriesRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

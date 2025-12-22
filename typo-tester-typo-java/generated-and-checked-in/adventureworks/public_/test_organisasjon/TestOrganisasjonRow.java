@@ -16,10 +16,10 @@ public record TestOrganisasjonRow(TestOrganisasjonId organisasjonskode) {
   }
   ;
 
-  static RowParser<TestOrganisasjonRow> _rowParser =
+  public static RowParser<TestOrganisasjonRow> _rowParser =
       RowParsers.of(
           TestOrganisasjonId.pgType,
-          t0 -> new TestOrganisasjonRow(t0),
+          TestOrganisasjonRow::new,
           row -> new Object[] {row.organisasjonskode()});
   ;
 

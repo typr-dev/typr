@@ -152,12 +152,12 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
 
     // OFFSET
     if (params.offset().isPresent()) {
-      offsetFrag = Fragment.lit("\noffset " + params.offset().get());
+      offsetFrag = Fragment.lit("\n" + dialect.offsetClause(params.offset().get()));
     }
 
     // LIMIT
     if (params.limit().isPresent()) {
-      limitFrag = Fragment.lit("\nlimit " + params.limit().get());
+      limitFrag = Fragment.lit("\n" + dialect.limitClause(params.limit().get()));
     }
 
     return select
@@ -260,10 +260,12 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
                 subquery.append(Fragment.lit(" order by ")).append(simple.orderByFragment().get());
           } // Add OFFSET if present
           if (simple.offset().isPresent()) {
-            subquery = subquery.append(Fragment.lit(" offset " + simple.offset().get()));
+            subquery =
+                subquery.append(Fragment.lit(" " + dialect.offsetClause(simple.offset().get())));
           } // Add LIMIT if present
           if (simple.limit().isPresent()) {
-            subquery = subquery.append(Fragment.lit(" limit " + simple.limit().get()));
+            subquery =
+                subquery.append(Fragment.lit(" " + dialect.limitClause(simple.limit().get())));
           }
           subquery = subquery.append(Fragment.lit(") ")).append(Fragment.lit(simple.alias()));
           result = subquery;
@@ -403,7 +405,7 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
     Tuple2<Fragment, RowParser<Row>> sqlAndParser = getSqlAndRowParser();
     Fragment frag = sqlAndParser.first();
     Fragment countQuery =
-        Fragment.lit("select count(*) from (").append(frag).append(Fragment.lit(") rows"));
+        Fragment.lit("select count(*) from (").append(frag).append(Fragment.lit(") subq"));
 
     try (PreparedStatement ps = connection.prepareStatement(countQuery.render())) {
       countQuery.set(ps);

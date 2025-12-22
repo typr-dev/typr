@@ -56,15 +56,7 @@ case class EmailaddressRow(
 }
 
 object EmailaddressRow {
-  val `_rowParser`: RowParser[EmailaddressRow] = {
-    RowParsers.of(BusinessentityId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.text.nullable, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4) => new EmailaddressRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[EmailaddressRow] = RowParsers.of(BusinessentityId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.text.nullable, PgTypes.uuid, PgTypes.timestamp)(EmailaddressRow.apply)(row => Array[Any](row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: EmailaddressId,

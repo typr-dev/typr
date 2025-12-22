@@ -62,7 +62,7 @@ public record PaViewRow(
   }
   ;
 
-  static RowParser<PaViewRow> _rowParser =
+  public static RowParser<PaViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
@@ -70,7 +70,7 @@ public record PaViewRow(
           PgTypes.text,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new PaViewRow(t0, t1, t2, t3, t4, t5),
+          PaViewRow::new,
           row ->
               new Object[] {
                 row.id(),

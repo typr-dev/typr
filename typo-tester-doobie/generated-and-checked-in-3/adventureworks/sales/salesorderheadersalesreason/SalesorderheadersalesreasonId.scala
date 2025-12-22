@@ -7,6 +7,7 @@ package adventureworks.sales.salesorderheadersalesreason
 
 import adventureworks.sales.salesorderheader.SalesorderheaderId
 import adventureworks.sales.salesreason.SalesreasonId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object SalesorderheadersalesreasonId {
   given decoder: Decoder[SalesorderheadersalesreasonId] = Decoder.forProduct2[SalesorderheadersalesreasonId, SalesorderheaderId, SalesreasonId]("salesorderid", "salesreasonid")(SalesorderheadersalesreasonId.apply)(using SalesorderheaderId.decoder, SalesreasonId.decoder)
 
   given encoder: Encoder[SalesorderheadersalesreasonId] = Encoder.forProduct2[SalesorderheadersalesreasonId, SalesorderheaderId, SalesreasonId]("salesorderid", "salesreasonid")(x => (x.salesorderid, x.salesreasonid))(using SalesorderheaderId.encoder, SalesreasonId.encoder)
+
+  given read: Read[SalesorderheadersalesreasonId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(SalesorderheaderId.get).asInstanceOf[Read[Any]],
+        new Read.Single(SalesreasonId.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      SalesorderheadersalesreasonId(
+        salesorderid = arr(0).asInstanceOf[SalesorderheaderId],
+            salesreasonid = arr(1).asInstanceOf[SalesreasonId]
+      )
+    }
+  }
 }

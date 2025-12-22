@@ -8,7 +8,6 @@ package testdb.categories;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -96,7 +95,7 @@ public record CategoriesRow(
   }
   ;
 
-  static RowParser<CategoriesRow> _rowParser =
+  public static RowParser<CategoriesRow> _rowParser =
       RowParsers.of(
           CategoriesId.pgType,
           CategoriesId.pgType.opt(),
@@ -107,8 +106,7 @@ public record CategoriesRow(
           MariaTypes.smallint,
           MariaTypes.bool,
           MariaTypes.longtext.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
-              new CategoriesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          CategoriesRow::new,
           row ->
               new Object[] {
                 row.categoryId(),
@@ -122,8 +120,6 @@ public record CategoriesRow(
                 row.metadata()
               });
   ;
-
-  public static MariaText<CategoriesRow> mariaText = MariaText.from(_rowParser);
 
   public CategoriesId id() {
     return categoryId;

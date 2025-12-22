@@ -7,7 +7,6 @@ package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
-import typo.runtime.DuckDbText
 import typo.scaladsl.RowParser
 import typo.scaladsl.RowParsers
 import typo.scaladsl.ScalaDbTypes
@@ -37,14 +36,7 @@ case class OrderItemsRow(
 }
 
 object OrderItemsRow {
-  val `_rowParser`: RowParser[OrderItemsRow] = {
-    RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.numeric)((t0, t1, t2, t3) => new OrderItemsRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ))(row => Array[Any](row.orderId, row.productId, row.quantity, row.unitPrice))
-  }
+  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.numeric)(OrderItemsRow.apply)(row => Array[Any](row.orderId, row.productId, row.quantity, row.unitPrice))
 
   def apply(
     compositeId: OrderItemsId,
@@ -58,6 +50,4 @@ object OrderItemsRow {
       unitPrice
     )
   }
-
-  given duckDbText: DuckDbText[OrderItemsRow] = DuckDbText.from(`_rowParser`.underlying)
 }

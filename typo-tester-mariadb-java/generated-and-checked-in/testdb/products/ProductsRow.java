@@ -12,7 +12,6 @@ import java.util.Optional;
 import testdb.brands.BrandsId;
 import testdb.customtypes.Defaulted;
 import typo.data.maria.MariaSet;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -487,7 +486,7 @@ public record ProductsRow(
   }
   ;
 
-  static RowParser<ProductsRow> _rowParser =
+  public static RowParser<ProductsRow> _rowParser =
       RowParsers.of(
           ProductsId.pgType,
           MariaTypes.varchar,
@@ -507,9 +506,7 @@ public record ProductsRow(
           MariaTypes.datetime,
           MariaTypes.datetime,
           MariaTypes.datetime.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) ->
-              new ProductsRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17),
+          ProductsRow::new,
           row ->
               new Object[] {
                 row.productId(),
@@ -532,8 +529,6 @@ public record ProductsRow(
                 row.publishedAt()
               });
   ;
-
-  public static MariaText<ProductsRow> mariaText = MariaText.from(_rowParser);
 
   public ProductsId id() {
     return productId;

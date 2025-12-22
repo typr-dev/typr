@@ -47,15 +47,7 @@ case class PasswordRow(
 }
 
 object PasswordRow {
-  val `_rowParser`: RowParser[PasswordRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4) => new PasswordRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[PasswordRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp)(PasswordRow.apply)(row => Array[Any](row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate))
 
   given pgText: PgText[PasswordRow] = PgText.from(`_rowParser`.underlying)
 }

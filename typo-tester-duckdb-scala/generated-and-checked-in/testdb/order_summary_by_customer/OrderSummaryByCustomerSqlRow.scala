@@ -38,17 +38,5 @@ case class OrderSummaryByCustomerSqlRow(
 )
 
 object OrderSummaryByCustomerSqlRow {
-  val `_rowParser`: RowParser[OrderSummaryByCustomerSqlRow] = {
-    RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, Priority.duckDbType.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.double_.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new OrderSummaryByCustomerSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8
-    ))(row => Array[Any](row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount))
-  }
+  val `_rowParser`: RowParser[OrderSummaryByCustomerSqlRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, Priority.duckDbType.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.double_.nullable)(OrderSummaryByCustomerSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount))
 }

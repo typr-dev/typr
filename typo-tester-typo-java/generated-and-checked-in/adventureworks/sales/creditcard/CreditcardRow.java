@@ -69,7 +69,7 @@ public record CreditcardRow(
   }
   ;
 
-  static RowParser<CreditcardRow> _rowParser =
+  public static RowParser<CreditcardRow> _rowParser =
       RowParsers.of(
           CustomCreditcardId.pgType,
           PgTypes.text,
@@ -77,7 +77,7 @@ public record CreditcardRow(
           PgTypes.int2,
           PgTypes.int2,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new CreditcardRow(t0, t1, t2, t3, t4, t5),
+          CreditcardRow::new,
           row ->
               new Object[] {
                 row.creditcardid(),

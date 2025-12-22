@@ -6,6 +6,9 @@
 package adventureworks.production.workorderrouting;
 
 import adventureworks.production.workorder.WorkorderId;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `production.workorderrouting` */
 public record WorkorderroutingId(
@@ -23,5 +26,14 @@ public record WorkorderroutingId(
   public WorkorderroutingId withOperationsequence(Short operationsequence) {
     return new WorkorderroutingId(workorderid, productid, operationsequence);
   }
+  ;
+
+  public static RowParser<WorkorderroutingId> _rowParser =
+      RowParsers.of(
+          WorkorderId.pgType,
+          PgTypes.int4,
+          PgTypes.int2,
+          WorkorderroutingId::new,
+          row -> new Object[] {row.workorderid(), row.productid(), row.operationsequence()});
   ;
 }

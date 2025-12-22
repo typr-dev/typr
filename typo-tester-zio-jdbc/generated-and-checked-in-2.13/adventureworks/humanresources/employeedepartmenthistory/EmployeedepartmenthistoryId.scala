@@ -9,6 +9,8 @@ import adventureworks.customtypes.TypoLocalDate
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -23,6 +25,19 @@ case class EmployeedepartmenthistoryId(
 )
 
 object EmployeedepartmenthistoryId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[EmployeedepartmenthistoryId] = {
+    new JdbcDecoder[EmployeedepartmenthistoryId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, EmployeedepartmenthistoryId) =
+        columIndex + 3 ->
+          EmployeedepartmenthistoryId(
+            businessentityid = BusinessentityId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            startdate = TypoLocalDate.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2,
+            departmentid = DepartmentId.jdbcDecoder.unsafeDecode(columIndex + 2, rs)._2,
+            shiftid = ShiftId.jdbcDecoder.unsafeDecode(columIndex + 3, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[EmployeedepartmenthistoryId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val businessentityid = jsonObj.get("businessentityid").toRight("Missing field 'businessentityid'").flatMap(_.as(BusinessentityId.jsonDecoder))

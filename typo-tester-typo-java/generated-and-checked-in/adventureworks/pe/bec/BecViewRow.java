@@ -99,7 +99,7 @@ public record BecViewRow(
   }
   ;
 
-  static RowParser<BecViewRow> _rowParser =
+  public static RowParser<BecViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
@@ -107,7 +107,7 @@ public record BecViewRow(
           ContacttypeId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new BecViewRow(t0, t1, t2, t3, t4, t5),
+          BecViewRow::new,
           row ->
               new Object[] {
                 row.id(),

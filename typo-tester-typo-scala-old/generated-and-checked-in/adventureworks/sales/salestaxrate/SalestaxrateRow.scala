@@ -64,17 +64,7 @@ case class SalestaxrateRow(
 }
 
 object SalestaxrateRow {
-  val `_rowParser`: RowParser[SalestaxrateRow] = {
-    RowParsers.of(SalestaxrateId.pgType, StateprovinceId.pgType, PgTypes.int2, PgTypes.numeric, Name.pgType, PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6) => new SalestaxrateRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ), row => Array[Any](row.salestaxrateid, row.stateprovinceid, row.taxtype, row.taxrate, row.name, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[SalestaxrateRow] = RowParsers.of(SalestaxrateId.pgType, StateprovinceId.pgType, PgTypes.int2, PgTypes.numeric, Name.pgType, PgTypes.uuid, PgTypes.timestamp, SalestaxrateRow.apply, row => Array[Any](row.salestaxrateid, row.stateprovinceid, row.taxtype, row.taxrate, row.name, row.rowguid, row.modifieddate))
 
   given pgText: PgText[SalestaxrateRow] = PgText.from(`_rowParser`)
 }

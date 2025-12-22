@@ -101,7 +101,7 @@ public record PersonRow(
     return new PersonRow(id, favouriteFootballClubId, name, nickName, blogUrl, email, phone, likesPizza, maritalStatusId, workEmail, sector, favoriteNumber);
   };
 
-  static RowParser<PersonRow> _rowParser = RowParsers.of(PersonId.pgType, FootballClubId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PgTypes.text, PgTypes.bool, MaritalStatusId.pgType, PgTypes.text.opt(), Sector.pgType, Number.pgType, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) -> new PersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11), row -> new Object[]{row.id(), row.favouriteFootballClubId(), row.name(), row.nickName(), row.blogUrl(), row.email(), row.phone(), row.likesPizza(), row.maritalStatusId(), row.workEmail(), row.sector(), row.favoriteNumber()});;
+  public static RowParser<PersonRow> _rowParser = RowParsers.of(PersonId.pgType, FootballClubId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text, PgTypes.text, PgTypes.bool, MaritalStatusId.pgType, PgTypes.text.opt(), Sector.pgType, Number.pgType, PersonRow::new, row -> new Object[]{row.id(), row.favouriteFootballClubId(), row.name(), row.nickName(), row.blogUrl(), row.email(), row.phone(), row.likesPizza(), row.maritalStatusId(), row.workEmail(), row.sector(), row.favoriteNumber()});;
 
   static public PgText<PersonRow> pgText =
     PgText.from(_rowParser);

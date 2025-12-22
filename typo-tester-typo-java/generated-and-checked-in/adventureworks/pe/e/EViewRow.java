@@ -62,7 +62,7 @@ public record EViewRow(
   }
   ;
 
-  static RowParser<EViewRow> _rowParser =
+  public static RowParser<EViewRow> _rowParser =
       RowParsers.of(
           PgTypes.int4,
           BusinessentityId.pgType,
@@ -70,7 +70,7 @@ public record EViewRow(
           PgTypes.text,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new EViewRow(t0, t1, t2, t3, t4, t5),
+          EViewRow::new,
           row ->
               new Object[] {
                 row.id(),

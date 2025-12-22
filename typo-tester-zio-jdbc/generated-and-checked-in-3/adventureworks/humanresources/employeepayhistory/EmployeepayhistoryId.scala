@@ -7,6 +7,8 @@ package adventureworks.humanresources.employeepayhistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.businessentity.BusinessentityId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -19,6 +21,17 @@ case class EmployeepayhistoryId(
 )
 
 object EmployeepayhistoryId {
+  given jdbcDecoder: JdbcDecoder[EmployeepayhistoryId] = {
+    new JdbcDecoder[EmployeepayhistoryId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, EmployeepayhistoryId) =
+        columIndex + 1 ->
+          EmployeepayhistoryId(
+            businessentityid = BusinessentityId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            ratechangedate = TypoLocalDateTime.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   given jsonDecoder: JsonDecoder[EmployeepayhistoryId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val businessentityid = jsonObj.get("businessentityid").toRight("Missing field 'businessentityid'").flatMap(_.as(using BusinessentityId.jsonDecoder))

@@ -12,7 +12,6 @@ import testdb.customtypes.Defaulted
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 
 /** Table: customers
@@ -36,8 +35,5 @@ data class CustomersRow(
 
   companion object {
     val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable(), DuckDbTypes.timestamp, Priority.duckDbType.nullable(), { t0, t1, t2, t3, t4 -> CustomersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt, row.priority) })
-
-    val duckDbText: DuckDbText<CustomersRow> =
-      DuckDbText.from(_rowParser.underlying)
   }
 }

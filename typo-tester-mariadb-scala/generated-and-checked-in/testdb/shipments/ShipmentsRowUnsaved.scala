@@ -13,10 +13,6 @@ import testdb.customtypes.Defaulted.UseDefault
 import testdb.orders.OrdersId
 import testdb.shipping_carriers.ShippingCarriersId
 import testdb.warehouses.WarehousesId
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `shipments` which has not been persisted yet */
 case class ShipmentsRowUnsaved(
@@ -116,8 +112,4 @@ case class ShipmentsRowUnsaved(
       updatedAt = updatedAt.getOrElse(updatedAtDefault)
     )
   }
-}
-
-object ShipmentsRowUnsaved {
-  given mariaText: MariaText[ShipmentsRowUnsaved] = MariaText.instance((row, sb) => { OrdersId.pgType.mariaText.unsafeEncode(row.orderId, sb); sb.append(MariaText.DELIMETER); ShippingCarriersId.pgType.mariaText.unsafeEncode(row.carrierId, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.shippingMethod, sb); sb.append(MariaText.DELIMETER); ScalaDbTypes.MariaTypes.numeric.mariaText.unsafeEncode(row.shippingCost, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.trackingNumber, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.numeric.nullable.mariaText).unsafeEncode(row.weightKg, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longtext.nullable.mariaText).unsafeEncode(row.dimensionsJson, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longblob.nullable.mariaText).unsafeEncode(row.labelData, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.text.mariaText).unsafeEncode(row.status, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.date.nullable.mariaText).unsafeEncode(row.estimatedDeliveryDate, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.nullable.mariaText).unsafeEncode(row.actualDeliveryAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.numeric.nullable.mariaText).unsafeEncode(row.insuranceAmount, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using WarehousesId.pgType.nullable.mariaText).unsafeEncode(row.originWarehouseId, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.nullable.mariaText).unsafeEncode(row.shippedAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.mariaText).unsafeEncode(row.createdAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.mariaText).unsafeEncode(row.updatedAt, sb) })
 }

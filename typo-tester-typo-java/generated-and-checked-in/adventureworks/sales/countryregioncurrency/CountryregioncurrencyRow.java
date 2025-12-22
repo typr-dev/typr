@@ -55,12 +55,12 @@ public record CountryregioncurrencyRow(
   }
   ;
 
-  static RowParser<CountryregioncurrencyRow> _rowParser =
+  public static RowParser<CountryregioncurrencyRow> _rowParser =
       RowParsers.of(
           CountryregionId.pgType,
           CurrencyId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new CountryregioncurrencyRow(t0, t1, t2),
+          CountryregioncurrencyRow::new,
           row -> new Object[] {row.countryregioncode(), row.currencycode(), row.modifieddate()});
   ;
 

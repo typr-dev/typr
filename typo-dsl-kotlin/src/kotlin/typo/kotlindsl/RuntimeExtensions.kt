@@ -113,6 +113,33 @@ fun <A : Any> MariaType<A>.nullable(): MariaType<A?> {
 }
 
 // ================================
+// OracleType Extensions
+// ================================
+
+/**
+ * Kotlin-friendly nullable version of OracleType.opt().
+ */
+fun <A : Any> OracleType<A>.nullable(): OracleType<A?> {
+    val underlying = this.opt()
+
+    // Create wrapper components that convert Optional<A> to A? at boundaries
+    val oracleTypename = underlying.typename().to(optionalToNullable<A>()) as OracleTypename<A?>
+
+    // Use KotlinNullableOracleRead which implements DbRead.Nullable marker interface
+    // This tells RowParser.opt() that this column is already nullable
+    val oracleRead: OracleRead<A?> = typo.runtime.KotlinNullableOracleRead(underlying.read())
+
+    val oracleWrite = OracleWrite.primitive<A?> { ps, index, value -> underlying.write().set(ps, index, value.toOptional()) }
+
+    val oracleJson = underlying.oracleJson().bimap<A?>(
+        SqlFunction { opt -> opt.orNull() },
+        { nullable -> nullable.toOptional() }
+    )
+
+    return OracleType(oracleTypename, oracleRead, oracleWrite, oracleJson)
+}
+
+// ================================
 // Either Extensions (value-level)
 // ================================
 

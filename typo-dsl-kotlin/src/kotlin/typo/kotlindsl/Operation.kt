@@ -58,6 +58,18 @@ sealed interface Operation<Out> {
         }
     }
 
+    /** Update operation that returns generated keys (for Oracle, which doesn't support RETURNING in the same way) */
+    class UpdateReturningGeneratedKeys<Out>(override val underlying: JavaOperation.UpdateReturningGeneratedKeys<Out>) : Operation<Out> {
+        @Throws(SQLException::class)
+        override fun run(conn: Connection): Out = underlying.run(conn)
+
+        companion object {
+            @JvmStatic
+            operator fun <Out> invoke(query: Fragment, columnNames: Array<String>, parser: ResultSetParser<Out>): UpdateReturningGeneratedKeys<Out> =
+                UpdateReturningGeneratedKeys(JavaOperation.UpdateReturningGeneratedKeys(query.underlying, columnNames, parser.underlying))
+        }
+    }
+
     /** Batch update operation that returns an array of update counts */
     class UpdateMany<Row>(override val underlying: JavaOperation.UpdateMany<Row>) : Operation<IntArray> {
         @Throws(SQLException::class)

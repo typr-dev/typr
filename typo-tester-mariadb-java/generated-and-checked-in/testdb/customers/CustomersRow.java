@@ -11,7 +11,6 @@ import java.util.Optional;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customtypes.Defaulted;
 import typo.data.maria.MariaSet;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -328,7 +327,7 @@ public record CustomersRow(
   }
   ;
 
-  static RowParser<CustomersRow> _rowParser =
+  public static RowParser<CustomersRow> _rowParser =
       RowParsers.of(
           CustomersId.pgType,
           MariaTypes.varchar,
@@ -344,8 +343,7 @@ public record CustomersRow(
           MariaTypes.datetime,
           MariaTypes.datetime,
           MariaTypes.datetime.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) ->
-              new CustomersRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13),
+          CustomersRow::new,
           row ->
               new Object[] {
                 row.customerId(),
@@ -364,8 +362,6 @@ public record CustomersRow(
                 row.lastLoginAt()
               });
   ;
-
-  public static MariaText<CustomersRow> mariaText = MariaText.from(_rowParser);
 
   public CustomersId id() {
     return customerId;

@@ -7,6 +7,9 @@ package adventureworks.humanresources.employeepayhistory;
 
 import adventureworks.person.businessentity.BusinessentityId;
 import java.time.LocalDateTime;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `humanresources.employeepayhistory` */
 public record EmployeepayhistoryId(
@@ -19,5 +22,13 @@ public record EmployeepayhistoryId(
   public EmployeepayhistoryId withRatechangedate(LocalDateTime ratechangedate) {
     return new EmployeepayhistoryId(businessentityid, ratechangedate);
   }
+  ;
+
+  public static RowParser<EmployeepayhistoryId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          PgTypes.timestamp,
+          EmployeepayhistoryId::new,
+          row -> new Object[] {row.businessentityid(), row.ratechangedate()});
   ;
 }

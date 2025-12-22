@@ -32,15 +32,5 @@ case class ProductSearchSqlRow(
 )
 
 object ProductSearchSqlRow {
-  val `_rowParser`: RowParser[ProductSearchSqlRow] = {
-    RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable)((t0, t1, t2, t3, t4, t5, t6) => new ProductSearchSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ))(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName))
-  }
+  val `_rowParser`: RowParser[ProductSearchSqlRow] = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable)(ProductSearchSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName))
 }

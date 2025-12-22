@@ -79,7 +79,7 @@ class ProductvendorRepoImpl() : ProductvendorRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"productvendor\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productid\", \"businessentityid\", \"averageleadtime\", \"standardprice\", \"lastreceiptcost\", \"lastreceiptdate\", \"minorderqty\", \"maxorderqty\", \"onorderqty\", \"unitmeasurecode\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"productvendor\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productid\", \"businessentityid\", \"averageleadtime\", \"standardprice\", \"lastreceiptcost\", \"lastreceiptdate\", \"minorderqty\", \"maxorderqty\", \"onorderqty\", \"unitmeasurecode\", \"modifieddate\"\n"))
     return q.updateReturning(ProductvendorRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

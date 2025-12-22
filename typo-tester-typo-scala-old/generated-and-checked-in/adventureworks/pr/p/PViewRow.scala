@@ -11,11 +11,12 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
-import java.lang.Object
 import java.time.LocalDateTime
 import java.util.UUID
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
+import typo.runtime.RowParsers
+import typo.runtime.RowParsers.Function26
 
 /** View: pr.p */
 case class PViewRow(
@@ -75,33 +76,64 @@ case class PViewRow(
 
 object PViewRow {
   val `_rowParser`: RowParser[PViewRow] = {
-    new RowParser(java.util.List.of(ProductId.pgType, ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text, PgTypes.int2, PgTypes.int2, PgTypes.numeric, PgTypes.numeric, PgTypes.text, UnitmeasureId.pgType, UnitmeasureId.pgType, PgTypes.numeric, PgTypes.int4, PgTypes.bpchar, PgTypes.bpchar, PgTypes.bpchar, ProductsubcategoryId.pgType, ProductmodelId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.uuid, PgTypes.timestamp), (arr: Array[Object]) => new PViewRow(
-      arr(0).asInstanceOf[ProductId],
-      arr(1).asInstanceOf[ProductId],
-      arr(2).asInstanceOf[Name],
-      arr(3).asInstanceOf[String],
-      arr(4).asInstanceOf[Flag],
-      arr(5).asInstanceOf[Flag],
-      arr(6).asInstanceOf[String],
-      arr(7).asInstanceOf[java.lang.Short],
-      arr(8).asInstanceOf[java.lang.Short],
-      arr(9).asInstanceOf[java.math.BigDecimal],
-      arr(10).asInstanceOf[java.math.BigDecimal],
-      arr(11).asInstanceOf[String],
-      arr(12).asInstanceOf[UnitmeasureId],
-      arr(13).asInstanceOf[UnitmeasureId],
-      arr(14).asInstanceOf[java.math.BigDecimal],
-      arr(15).asInstanceOf[Integer],
-      arr(16).asInstanceOf[String],
-      arr(17).asInstanceOf[String],
-      arr(18).asInstanceOf[String],
-      arr(19).asInstanceOf[ProductsubcategoryId],
-      arr(20).asInstanceOf[ProductmodelId],
-      arr(21).asInstanceOf[LocalDateTime],
-      arr(22).asInstanceOf[LocalDateTime],
-      arr(23).asInstanceOf[LocalDateTime],
-      arr(24).asInstanceOf[UUID],
-      arr(25).asInstanceOf[LocalDateTime]
-    ), row => Array[Any](row.id, row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate))
+    RowParsers.of(ProductId.pgType, ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text, PgTypes.int2, PgTypes.int2, PgTypes.numeric, PgTypes.numeric, PgTypes.text, UnitmeasureId.pgType, UnitmeasureId.pgType, PgTypes.numeric, PgTypes.int4, PgTypes.bpchar, PgTypes.bpchar, PgTypes.bpchar, ProductsubcategoryId.pgType, ProductmodelId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.uuid, PgTypes.timestamp, new Function26[ProductId, ProductId, Name, String, Flag, Flag, String, java.lang.Short, java.lang.Short, java.math.BigDecimal, java.math.BigDecimal, String, UnitmeasureId, UnitmeasureId, java.math.BigDecimal, Integer, String, String, String, ProductsubcategoryId, ProductmodelId, LocalDateTime, LocalDateTime, LocalDateTime, UUID, LocalDateTime, PViewRow] {
+      override def apply(
+        t0: ProductId,
+        t1: ProductId,
+        t2: Name,
+        t3: String,
+        t4: Flag,
+        t5: Flag,
+        t6: String,
+        t7: java.lang.Short,
+        t8: java.lang.Short,
+        t9: java.math.BigDecimal,
+        t10: java.math.BigDecimal,
+        t11: String,
+        t12: UnitmeasureId,
+        t13: UnitmeasureId,
+        t14: java.math.BigDecimal,
+        t15: Integer,
+        t16: String,
+        t17: String,
+        t18: String,
+        t19: ProductsubcategoryId,
+        t20: ProductmodelId,
+        t21: LocalDateTime,
+        t22: LocalDateTime,
+        t23: LocalDateTime,
+        t24: UUID,
+        t25: LocalDateTime
+      ): PViewRow = {
+        new PViewRow(
+          t0,
+          t1,
+          t2,
+          t3,
+          t4,
+          t5,
+          t6,
+          t7,
+          t8,
+          t9,
+          t10,
+          t11,
+          t12,
+          t13,
+          t14,
+          t15,
+          t16,
+          t17,
+          t18,
+          t19,
+          t20,
+          t21,
+          t22,
+          t23,
+          t24,
+          t25
+        )
+      }
+    }, row => Array[Any](row.id, row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate))
   }
 }

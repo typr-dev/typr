@@ -90,7 +90,7 @@ public record ShoppingcartitemRow(
   }
   ;
 
-  static RowParser<ShoppingcartitemRow> _rowParser =
+  public static RowParser<ShoppingcartitemRow> _rowParser =
       RowParsers.of(
           ShoppingcartitemId.pgType,
           PgTypes.text,
@@ -98,7 +98,7 @@ public record ShoppingcartitemRow(
           ProductId.pgType,
           PgTypes.timestamp,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new ShoppingcartitemRow(t0, t1, t2, t3, t4, t5),
+          ShoppingcartitemRow::new,
           row ->
               new Object[] {
                 row.shoppingcartitemid(),

@@ -275,7 +275,11 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         val jsonInstances = options.jsonLibs.map(_.instances(tpe = id.tpe, cols = cols))
         val fieldAnnotations = JsonLib.mergeFieldAnnotations(jsonInstances.flatMap(_.fieldAnnotations.toList))
         val typeAnnotations = jsonInstances.flatMap(_.typeAnnotations)
-        val instances: List[jvm.Given] = jsonInstances.flatMap(_.givens)
+        val instances: List[jvm.ClassMember] = jsonInstances.flatMap(_.givens)
+
+        // For Oracle with GeneratedKeysIdOnly, composite IDs need a _rowParser to parse generated keys
+        val dbLibInstances: List[jvm.ClassMember] =
+          options.dbLib.toList.flatMap(_.rowInstances(id.tpe, cols, DbLib.RowType.Readable))
 
         Some(
           jvm.File(
@@ -295,7 +299,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
               `extends` = None,
               implements = Nil,
               members = instanceMethods,
-              staticMembers = instances ++ constructorMethod.toList
+              staticMembers = instances ++ dbLibInstances ++ constructorMethod.toList
             ),
             secondaryTypes = Nil,
             scope = Scope.Main

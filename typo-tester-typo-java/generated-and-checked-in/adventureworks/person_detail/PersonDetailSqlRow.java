@@ -196,7 +196,7 @@ public record PersonDetailSqlRow(
   }
   ;
 
-  static RowParser<PersonDetailSqlRow> _rowParser =
+  public static RowParser<PersonDetailSqlRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.text.opt(),
@@ -208,8 +208,7 @@ public record PersonDetailSqlRow(
           PgTypes.text.opt(),
           PgTypes.text.opt(),
           PgTypes.uuid.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new PersonDetailSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          PersonDetailSqlRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

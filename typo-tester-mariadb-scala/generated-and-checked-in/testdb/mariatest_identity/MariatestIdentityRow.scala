@@ -5,7 +5,6 @@
  */
 package testdb.mariatest_identity
 
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.RowParser
 import typo.scaladsl.RowParsers
@@ -25,7 +24,5 @@ case class MariatestIdentityRow(
 }
 
 object MariatestIdentityRow {
-  val `_rowParser`: RowParser[MariatestIdentityRow] = RowParsers.of(MariatestIdentityId.pgType, MariaTypes.varchar)((t0, t1) => new MariatestIdentityRow(t0, t1))(row => Array[Any](row.id, row.name))
-
-  given mariaText: MariaText[MariatestIdentityRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[MariatestIdentityRow] = RowParsers.of(MariatestIdentityId.pgType, MariaTypes.varchar)(MariatestIdentityRow.apply)(row => Array[Any](row.id, row.name))
 }

@@ -7,7 +7,6 @@ package testdb.payment_methods
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -60,17 +59,5 @@ case class PaymentMethodsRow(
 }
 
 object PaymentMethodsRow {
-  val `_rowParser`: RowParser[PaymentMethodsRow] = {
-    RowParsers.of(PaymentMethodsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.longtext.nullable, ScalaDbTypes.MariaTypes.bool, ScalaDbTypes.MariaTypes.tinyint)((t0, t1, t2, t3, t4, t5, t6) => new PaymentMethodsRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ))(row => Array[Any](row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder))
-  }
-
-  given mariaText: MariaText[PaymentMethodsRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[PaymentMethodsRow] = RowParsers.of(PaymentMethodsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.longtext.nullable, ScalaDbTypes.MariaTypes.bool, ScalaDbTypes.MariaTypes.tinyint)(PaymentMethodsRow.apply)(row => Array[Any](row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder))
 }

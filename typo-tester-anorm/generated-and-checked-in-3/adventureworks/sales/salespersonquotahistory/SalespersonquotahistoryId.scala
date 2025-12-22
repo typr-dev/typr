@@ -7,6 +7,8 @@ package adventureworks.sales.salespersonquotahistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.businessentity.BusinessentityId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -32,6 +34,17 @@ object SalespersonquotahistoryId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[SalespersonquotahistoryId] = {
+    RowParser[SalespersonquotahistoryId] { row =>
+      Success(
+        SalespersonquotahistoryId(
+          businessentityid = row(idx + 0)(using BusinessentityId.column),
+          quotadate = row(idx + 1)(using TypoLocalDateTime.column)
+        )
+      )
+    }
   }
 
   given writes: OWrites[SalespersonquotahistoryId] = {

@@ -89,7 +89,7 @@ public record CustomerRow(
   }
   ;
 
-  static RowParser<CustomerRow> _rowParser =
+  public static RowParser<CustomerRow> _rowParser =
       RowParsers.of(
           CustomerId.pgType,
           BusinessentityId.pgType.opt(),
@@ -97,7 +97,7 @@ public record CustomerRow(
           SalesterritoryId.pgType.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new CustomerRow(t0, t1, t2, t3, t4, t5),
+          CustomerRow::new,
           row ->
               new Object[] {
                 row.customerid(),

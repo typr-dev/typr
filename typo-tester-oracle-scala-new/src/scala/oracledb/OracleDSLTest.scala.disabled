@@ -1,0 +1,211 @@
+package oracledb
+
+import oracledb.customers.{CustomersRepoImpl, CustomersRowUnsaved}
+import oracledb.customtypes.Defaulted
+import oracledb.products.{ProductsRepoImpl, ProductsRowUnsaved}
+import org.scalatest.funsuite.AnyFunSuite
+import typo.dsl.Bijection
+
+class OracleDSLTest extends AnyFunSuite {
+  val customersRepo: CustomersRepoImpl = new CustomersRepoImpl
+  val productsRepo: ProductsRepoImpl = new ProductsRepoImpl
+
+  test("select with where clause") {
+    withConnection { c =>
+      given java.sql.Connection = c
+      val price = new MoneyT(BigDecimal("199.99"), "USD")
+      val unsaved = new ProductsRowUnsaved(
+        "DSL-001",
+        "DSL Test Product",
+        price,
+        Some(new TagVarrayT(Array("dsl"))),
+        Defaulted.UseDefault[oracledb.products.ProductsId]
+      )
+
+      val inserted = productsRepo.insert(unsaved)
+
+      val query = productsRepo.select().where(p => p.sku().isEqual("DSL-001"))
+
+      val results = query.toList(c)
+      val _ = assert(results.nonEmpty)
+      val _ = assert(results.get(0).sku() == "DSL-001")
+    }
+  }
+
+  test("order by clause") {
+    withConnection { c =>
+      given java.sql.Connection = c
+      val price1 = new MoneyT(BigDecimal("300.00"), "USD")
+      val price2 = new MoneyT(BigDecimal("100.00"), "USD")
+      val price3 = new MoneyT(BigDecimal("200.00"), "USD")
+
+      productsRepo.insert(
+        new ProductsRowUnsaved(
+          "ORDER-3",
+          "Product C",
+          price1,
+          None,
+          Defaulted.UseDefault[oracledb.products.ProductsId]
+        ),
+        c
+      )
+      productsRepo.insert(
+        new ProductsRowUnsaved(
+          "ORDER-1",
+          "Product A",
+          price2,
+          None,
+          Defaulted.UseDefault[oracledb.products.ProductsId]
+        ),
+        c
+      )
+      productsRepo.insert(
+        new ProductsRowUnsaved(
+          "ORDER-2",
+          "Product B",
+          price3,
+          None,
+          Defaulted.UseDefault[oracledb.products.ProductsId]
+        ),
+        c
+      )
+
+      val query = productsRepo
+        .select()
+        .where(p =>
+          p.sku()
+            .isEqual("ORDER-1")
+            .or(p.sku().isEqual("ORDER-2"), Bijection.identity())
+            .or(p.sku().isEqual("ORDER-3"), Bijection.identity())
+        )
+        .orderBy(p => p.sku().asc())
+
+      val results = query.toList(c)
+      val _ = assert(results.size() >= 3)
+    }
+  }
+
+  test("limit clause") {
+    withConnection { c =>
+      given java.sql.Connection = c
+      val price = new MoneyT(BigDecimal("10.00"), "USD")
+
+      for (i <- 1 to 5) {
+        productsRepo.insert(
+          new ProductsRowUnsaved(
+            s"LIMIT-$i",
+            s"Limit Product $i",
+            price,
+            None,
+            Defaulted.UseDefault[oracledb.products.ProductsId]
+          ),
+          c
+        )
+      }
+
+      val query = productsRepo.select().where(p => p.sku().isEqual("LIMIT-1")).limit(3)
+
+      val results = query.toList(c)
+      val _ = assert(results.size() <= 3)
+    }
+  }
+
+  test("count query") {
+    withConnection { c =>
+      given java.sql.Connection = c
+      val price = new MoneyT(BigDecimal("50.00"), "USD")
+
+      for (i <- 1 to 7) {
+        productsRepo.insert(
+          new ProductsRowUnsaved(
+            s"COUNT-$i",
+            s"Count Product $i",
+            price,
+            None,
+            Defaulted.UseDefault[oracledb.products.ProductsId]
+          ),
+          c
+        )
+      }
+
+      val query = productsRepo.select().where(p => p.sku().isEqual("COUNT-1"))
+
+      val count = query.count(c)
+      val _ = assert(count >= 1)
+    }
+  }
+
+  test("map projection") {
+    withConnection { c =>
+      given java.sql.Connection = c
+      val price = new MoneyT(BigDecimal("99.99"), "USD")
+      val inserted = productsRepo.insert(
+        new ProductsRowUnsaved(
+          "MAP-001",
+          "Map Test",
+          price,
+          None,
+          Defaulted.UseDefault[oracledb.products.ProductsId]
+        ),
+        c
+      )
+
+      // Single-column map returns Tuple1
+      val query = productsRepo.select().where(p => p.sku().isEqual("MAP-001")).map(p => p.name())
+
+      val results = query.toList(c)
+      val _ = assert(results.nonEmpty)
+      val _ = assert(results.get(0)._1() == "Map Test")
+    }
+  }
+
+  test("complex where with oracle object types") {
+    withConnection { c =>
+      given java.sql.Connection = c
+      val nycCoords = new CoordinatesT(BigDecimal("40.7128"), BigDecimal("-74.0061"))
+      val nycAddress = new AddressT("NYC Street", "New York", nycCoords)
+
+      customersRepo.insert(
+        new CustomersRowUnsaved(
+          "NYC Customer",
+          nycAddress,
+          None,
+          Defaulted.UseDefault[oracledb.customers.CustomersId],
+          Defaulted.UseDefault[java.time.LocalDateTime]
+        ),
+        c
+      )
+
+      val query = customersRepo.select().where(cust => cust.name().isEqual("NYC Customer"))
+
+      val results = query.toList(c)
+      val _ = assert(results.nonEmpty)
+      val _ = assert(results.get(0).name() == "NYC Customer")
+    }
+  }
+
+  test("delete with DSL") {
+    withConnection { c =>
+      given java.sql.Connection = c
+      val price = new MoneyT(BigDecimal("10.00"), "USD")
+      val inserted = productsRepo.insert(
+        new ProductsRowUnsaved(
+          "DELETE-DSL",
+          "To Delete via DSL",
+          price,
+          None,
+          Defaulted.UseDefault[oracledb.products.ProductsId]
+        ),
+        c
+      )
+
+      val deleteQuery = productsRepo.delete().where(p => p.sku().isEqual("DELETE-DSL"))
+
+      val deleted = deleteQuery.execute(c)
+      val _ = assert(deleted > 0)
+
+      val found = productsRepo.selectById(inserted, c)
+      val _ = assert(!found.isPresent)
+    }
+  }
+}

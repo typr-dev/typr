@@ -9,9 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.runtime.DuckDbText
-import typo.runtime.DuckDbTypes
 
 /** This class corresponds to a row in table `order_items` which has not been persisted yet */
 data class OrderItemsRowUnsaved(
@@ -22,15 +19,4 @@ data class OrderItemsRowUnsaved(
   val quantity: Defaulted<Int> = UseDefault()
 ) {
   fun toRow(quantityDefault: () -> Int): OrderItemsRow = OrderItemsRow(orderId = orderId, productId = productId, quantity = quantity.getOrElse(quantityDefault), unitPrice = unitPrice)
-
-  companion object {
-    val duckDbText: DuckDbText<OrderItemsRowUnsaved> =
-      DuckDbText.instance({ row, sb -> KotlinDbTypes.DuckDbTypes.integer.duckDbText().unsafeEncode(row.orderId, sb)
-      sb.append(DuckDbText.DELIMETER)
-      KotlinDbTypes.DuckDbTypes.integer.duckDbText().unsafeEncode(row.productId, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.numeric.duckDbText().unsafeEncode(row.unitPrice, sb)
-      sb.append(DuckDbText.DELIMETER)
-      Defaulted.duckDbText(KotlinDbTypes.DuckDbTypes.integer.duckDbText()).unsafeEncode(row.quantity, sb) })
-  }
 }

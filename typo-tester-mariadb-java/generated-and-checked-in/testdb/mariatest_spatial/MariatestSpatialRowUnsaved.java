@@ -14,8 +14,6 @@ import org.mariadb.jdbc.type.MultiPoint;
 import org.mariadb.jdbc.type.MultiPolygon;
 import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `mariatest_spatial` which has not been persisted yet */
 public record MariatestSpatialRowUnsaved(
@@ -147,26 +145,6 @@ public record MariatestSpatialRowUnsaved(
         geometrycollectionCol);
   }
   ;
-
-  public static MariaText<MariatestSpatialRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.geometry.mariaText().unsafeEncode(row.geometryCol, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.point.mariaText().unsafeEncode(row.pointCol, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.linestring.mariaText().unsafeEncode(row.linestringCol, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.polygon.mariaText().unsafeEncode(row.polygonCol, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.multipoint.mariaText().unsafeEncode(row.multipointCol, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.multilinestring.mariaText().unsafeEncode(row.multilinestringCol, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.multipolygon.mariaText().unsafeEncode(row.multipolygonCol, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.geometrycollection.mariaText().unsafeEncode(row.geometrycollectionCol, sb);
-          });
 
   public MariatestSpatialRow toRow(java.util.function.Supplier<MariatestSpatialId> idDefault) {
     return new MariatestSpatialRow(

@@ -62,16 +62,7 @@ case class ShipmethodRow(
 }
 
 object ShipmethodRow {
-  val `_rowParser`: RowParser[ShipmethodRow] = {
-    RowParsers.of(ShipmethodId.pgType, Name.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5) => new ShipmethodRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5
-    ))(row => Array[Any](row.shipmethodid, row.name, row.shipbase, row.shiprate, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[ShipmethodRow] = RowParsers.of(ShipmethodId.pgType, Name.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)(ShipmethodRow.apply)(row => Array[Any](row.shipmethodid, row.name, row.shipbase, row.shiprate, row.rowguid, row.modifieddate))
 
   given pgText: PgText[ShipmethodRow] = PgText.from(`_rowParser`.underlying)
 }

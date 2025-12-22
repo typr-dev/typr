@@ -9,10 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.products.ProductsId
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `product_images` which has not been persisted yet */
 data class ProductImagesRowUnsaved(
@@ -51,21 +47,4 @@ data class ProductImagesRowUnsaved(
     imageDataDefault: () -> ByteArray?,
     imageIdDefault: () -> ProductImagesId
   ): ProductImagesRow = ProductImagesRow(imageId = imageIdDefault(), productId = productId, imageUrl = imageUrl, thumbnailUrl = thumbnailUrl.getOrElse(thumbnailUrlDefault), altText = altText.getOrElse(altTextDefault), sortOrder = sortOrder.getOrElse(sortOrderDefault), isPrimary = isPrimary.getOrElse(isPrimaryDefault), imageData = imageData.getOrElse(imageDataDefault))
-
-  companion object {
-    val mariaText: MariaText<ProductImagesRowUnsaved> =
-      MariaText.instance({ row, sb -> ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.imageUrl, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.thumbnailUrl, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.altText, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.tinyintUnsigned.mariaText()).unsafeEncode(row.sortOrder, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isPrimary, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longblob.nullable().mariaText()).unsafeEncode(row.imageData, sb) })
-  }
 }

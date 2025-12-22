@@ -7,6 +7,9 @@ package adventureworks.production.productlistpricehistory;
 
 import adventureworks.production.product.ProductId;
 import java.time.LocalDateTime;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `production.productlistpricehistory` */
 public record ProductlistpricehistoryId(ProductId productid, LocalDateTime startdate) {
@@ -18,5 +21,13 @@ public record ProductlistpricehistoryId(ProductId productid, LocalDateTime start
   public ProductlistpricehistoryId withStartdate(LocalDateTime startdate) {
     return new ProductlistpricehistoryId(productid, startdate);
   }
+  ;
+
+  public static RowParser<ProductlistpricehistoryId> _rowParser =
+      RowParsers.of(
+          ProductId.pgType,
+          PgTypes.timestamp,
+          ProductlistpricehistoryId::new,
+          row -> new Object[] {row.productid(), row.startdate()});
   ;
 }

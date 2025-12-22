@@ -7,9 +7,16 @@ package adventureworks.sales.salespersonquotahistory
 
 import adventureworks.person.businessentity.BusinessentityId
 import java.time.LocalDateTime
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
+import typo.runtime.PgTypes
 
 /** Type for the composite primary key of table `sales.salespersonquotahistory` */
 data class SalespersonquotahistoryId(
   val businessentityid: BusinessentityId,
   val quotadate: LocalDateTime
-)
+) {
+  companion object {
+    val _rowParser: RowParser<SalespersonquotahistoryId> = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, { t0, t1 -> SalespersonquotahistoryId(t0, t1) }, { row -> arrayOf<Any?>(row.businessentityid, row.quotadate) })
+  }
+}

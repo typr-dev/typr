@@ -101,7 +101,7 @@ public record ProductinventoryRow(
   }
   ;
 
-  static RowParser<ProductinventoryRow> _rowParser =
+  public static RowParser<ProductinventoryRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           LocationId.pgType,
@@ -110,7 +110,7 @@ public record ProductinventoryRow(
           PgTypes.int2,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new ProductinventoryRow(t0, t1, t2, t3, t4, t5, t6),
+          ProductinventoryRow::new,
           row ->
               new Object[] {
                 row.productid(),

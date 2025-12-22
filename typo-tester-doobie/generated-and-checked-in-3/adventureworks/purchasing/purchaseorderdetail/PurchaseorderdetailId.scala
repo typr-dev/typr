@@ -6,6 +6,8 @@
 package adventureworks.purchasing.purchaseorderdetail
 
 import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -19,4 +21,16 @@ object PurchaseorderdetailId {
   given decoder: Decoder[PurchaseorderdetailId] = Decoder.forProduct2[PurchaseorderdetailId, PurchaseorderheaderId, Int]("purchaseorderid", "purchaseorderdetailid")(PurchaseorderdetailId.apply)(using PurchaseorderheaderId.decoder, Decoder.decodeInt)
 
   given encoder: Encoder[PurchaseorderdetailId] = Encoder.forProduct2[PurchaseorderdetailId, PurchaseorderheaderId, Int]("purchaseorderid", "purchaseorderdetailid")(x => (x.purchaseorderid, x.purchaseorderdetailid))(using PurchaseorderheaderId.encoder, Encoder.encodeInt)
+
+  given read: Read[PurchaseorderdetailId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(PurchaseorderheaderId.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.IntMeta.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      PurchaseorderdetailId(
+        purchaseorderid = arr(0).asInstanceOf[PurchaseorderheaderId],
+            purchaseorderdetailid = arr(1).asInstanceOf[Int]
+      )
+    }
+  }
 }

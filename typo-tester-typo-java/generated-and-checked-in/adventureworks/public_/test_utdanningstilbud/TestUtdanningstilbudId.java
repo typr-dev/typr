@@ -7,6 +7,9 @@ package adventureworks.public_.test_utdanningstilbud;
 
 import adventureworks.public_.test_organisasjon.TestOrganisasjonId;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `public.test_utdanningstilbud` */
 public record TestUtdanningstilbudId(
@@ -20,5 +23,13 @@ public record TestUtdanningstilbudId(
   public TestUtdanningstilbudId withUtdanningsmulighetKode(String utdanningsmulighetKode) {
     return new TestUtdanningstilbudId(organisasjonskode, utdanningsmulighetKode);
   }
+  ;
+
+  public static RowParser<TestUtdanningstilbudId> _rowParser =
+      RowParsers.of(
+          TestOrganisasjonId.pgType,
+          PgTypes.text,
+          TestUtdanningstilbudId::new,
+          row -> new Object[] {row.organisasjonskode(), row.utdanningsmulighetKode()});
   ;
 }

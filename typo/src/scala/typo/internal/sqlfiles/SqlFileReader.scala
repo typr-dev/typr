@@ -19,6 +19,8 @@ object SqlFileReader {
         MariaSqlFileMetadata(logger, scriptsPath, ds, externalTools)
       case DbType.DuckDB =>
         DuckDbSqlFileMetadata(logger, scriptsPath, ds, externalTools)
+      case DbType.Oracle =>
+        readSqlFileDirectories(logger, scriptsPath, ds)
     }
   }
 }

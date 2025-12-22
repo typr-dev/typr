@@ -7,6 +7,7 @@ package adventureworks.purchasing.productvendor
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.production.product.ProductId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object ProductvendorId {
   given decoder: Decoder[ProductvendorId] = Decoder.forProduct2[ProductvendorId, ProductId, BusinessentityId]("productid", "businessentityid")(ProductvendorId.apply)(using ProductId.decoder, BusinessentityId.decoder)
 
   given encoder: Encoder[ProductvendorId] = Encoder.forProduct2[ProductvendorId, ProductId, BusinessentityId]("productid", "businessentityid")(x => (x.productid, x.businessentityid))(using ProductId.encoder, BusinessentityId.encoder)
+
+  given read: Read[ProductvendorId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(ProductId.get).asInstanceOf[Read[Any]],
+        new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      ProductvendorId(
+        productid = arr(0).asInstanceOf[ProductId],
+            businessentityid = arr(1).asInstanceOf[BusinessentityId]
+      )
+    }
+  }
 }

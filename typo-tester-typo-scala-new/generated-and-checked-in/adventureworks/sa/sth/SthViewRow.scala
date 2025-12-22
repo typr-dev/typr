@@ -32,15 +32,5 @@ case class SthViewRow(
 )
 
 object SthViewRow {
-  val `_rowParser`: RowParser[SthViewRow] = {
-    RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6) => new SthViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ))(row => Array[Any](row.id, row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[SthViewRow] = RowParsers.of(SalesterritoryId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.uuid, PgTypes.timestamp)(SthViewRow.apply)(row => Array[Any](row.id, row.businessentityid, row.territoryid, row.startdate, row.enddate, row.rowguid, row.modifieddate))
 }

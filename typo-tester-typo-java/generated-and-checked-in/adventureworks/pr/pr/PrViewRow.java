@@ -176,7 +176,7 @@ public record PrViewRow(
   }
   ;
 
-  static RowParser<PrViewRow> _rowParser =
+  public static RowParser<PrViewRow> _rowParser =
       RowParsers.of(
           ProductreviewId.pgType,
           ProductreviewId.pgType,
@@ -187,7 +187,7 @@ public record PrViewRow(
           PgTypes.int4,
           PgTypes.text,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) -> new PrViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          PrViewRow::new,
           row ->
               new Object[] {
                 row.id(),

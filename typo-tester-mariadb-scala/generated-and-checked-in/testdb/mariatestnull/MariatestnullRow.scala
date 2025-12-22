@@ -15,7 +15,6 @@ import testdb.customtypes.Defaulted
 import typo.data.maria.Inet4
 import typo.data.maria.Inet6
 import typo.data.maria.MariaSet
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -287,52 +286,5 @@ case class MariatestnullRow(
 }
 
 object MariatestnullRow {
-  val `_rowParser`: RowParser[MariatestnullRow] = {
-    RowParsers.of(ScalaDbTypes.MariaTypes.tinyint.nullable, ScalaDbTypes.MariaTypes.smallint.nullable, ScalaDbTypes.MariaTypes.mediumint.nullable, ScalaDbTypes.MariaTypes.int_.nullable, ScalaDbTypes.MariaTypes.bigint.nullable, ScalaDbTypes.MariaTypes.tinyintUnsigned.nullable, ScalaDbTypes.MariaTypes.smallintUnsigned.nullable, ScalaDbTypes.MariaTypes.mediumintUnsigned.nullable, ScalaDbTypes.MariaTypes.intUnsigned.nullable, MariaTypes.bigintUnsigned.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.float_.nullable, ScalaDbTypes.MariaTypes.double_.nullable, ScalaDbTypes.MariaTypes.bool.nullable, MariaTypes.bit.nullable, MariaTypes.bit.nullable, MariaTypes.char_.nullable, MariaTypes.varchar.nullable, MariaTypes.tinytext.nullable, MariaTypes.text.nullable, MariaTypes.mediumtext.nullable, MariaTypes.longtext.nullable, MariaTypes.binary.nullable, MariaTypes.varbinary.nullable, MariaTypes.tinyblob.nullable, MariaTypes.blob.nullable, MariaTypes.mediumblob.nullable, MariaTypes.longblob.nullable, MariaTypes.date.nullable, MariaTypes.time.nullable, MariaTypes.time.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable, MariaTypes.timestamp.nullable, MariaTypes.timestamp.nullable, MariaTypes.year.nullable, MariaTypes.text.nullable, MariaTypes.set.nullable, MariaTypes.longtext.nullable, MariaTypes.inet4.nullable, MariaTypes.inet6.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40, t41) => new MariatestnullRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16,
-      t17,
-      t18,
-      t19,
-      t20,
-      t21,
-      t22,
-      t23,
-      t24,
-      t25,
-      t26,
-      t27,
-      t28,
-      t29,
-      t30,
-      t31,
-      t32,
-      t33,
-      t34,
-      t35,
-      t36,
-      t37,
-      t38,
-      t39,
-      t40,
-      t41
-    ))(row => Array[Any](row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.enumCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col))
-  }
-
-  given mariaText: MariaText[MariatestnullRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[MariatestnullRow] = RowParsers.of(ScalaDbTypes.MariaTypes.tinyint.nullable, ScalaDbTypes.MariaTypes.smallint.nullable, ScalaDbTypes.MariaTypes.mediumint.nullable, ScalaDbTypes.MariaTypes.int_.nullable, ScalaDbTypes.MariaTypes.bigint.nullable, ScalaDbTypes.MariaTypes.tinyintUnsigned.nullable, ScalaDbTypes.MariaTypes.smallintUnsigned.nullable, ScalaDbTypes.MariaTypes.mediumintUnsigned.nullable, ScalaDbTypes.MariaTypes.intUnsigned.nullable, MariaTypes.bigintUnsigned.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.float_.nullable, ScalaDbTypes.MariaTypes.double_.nullable, ScalaDbTypes.MariaTypes.bool.nullable, MariaTypes.bit.nullable, MariaTypes.bit.nullable, MariaTypes.char_.nullable, MariaTypes.varchar.nullable, MariaTypes.tinytext.nullable, MariaTypes.text.nullable, MariaTypes.mediumtext.nullable, MariaTypes.longtext.nullable, MariaTypes.binary.nullable, MariaTypes.varbinary.nullable, MariaTypes.tinyblob.nullable, MariaTypes.blob.nullable, MariaTypes.mediumblob.nullable, MariaTypes.longblob.nullable, MariaTypes.date.nullable, MariaTypes.time.nullable, MariaTypes.time.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable, MariaTypes.timestamp.nullable, MariaTypes.timestamp.nullable, MariaTypes.year.nullable, MariaTypes.text.nullable, MariaTypes.set.nullable, MariaTypes.longtext.nullable, MariaTypes.inet4.nullable, MariaTypes.inet6.nullable)(MariatestnullRow.apply)(row => Array[Any](row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.enumCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col))
 }

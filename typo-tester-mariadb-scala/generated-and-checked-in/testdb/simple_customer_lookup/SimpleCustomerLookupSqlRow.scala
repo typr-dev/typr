@@ -32,15 +32,5 @@ case class SimpleCustomerLookupSqlRow(
 )
 
 object SimpleCustomerLookupSqlRow {
-  val `_rowParser`: RowParser[SimpleCustomerLookupSqlRow] = {
-    RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, CustomerStatusId.pgType, MariaTypes.datetime)((t0, t1, t2, t3, t4, t5, t6) => new SimpleCustomerLookupSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ))(row => Array[Any](row.customerId, row.email, row.firstName, row.lastName, row.tier, row.status, row.createdAt))
-  }
+  val `_rowParser`: RowParser[SimpleCustomerLookupSqlRow] = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, CustomerStatusId.pgType, MariaTypes.datetime)(SimpleCustomerLookupSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.lastName, row.tier, row.status, row.createdAt))
 }

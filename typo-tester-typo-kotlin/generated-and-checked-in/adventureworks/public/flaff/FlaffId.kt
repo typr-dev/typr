@@ -7,6 +7,10 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import com.fasterxml.jackson.annotation.JsonProperty
+import typo.kotlindsl.KotlinDbTypes
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
+import typo.runtime.PgTypes
 
 /** Type for the composite primary key of table `public.flaff` */
 data class FlaffId(
@@ -14,4 +18,8 @@ data class FlaffId(
   @JsonProperty("another_code") val anotherCode: String,
   @JsonProperty("some_number") val someNumber: Int,
   val specifier: ShortText
-)
+) {
+  companion object {
+    val _rowParser: RowParser<FlaffId> = RowParsers.of(ShortText.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ShortText.pgType, { t0, t1, t2, t3 -> FlaffId(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.code, row.anotherCode, row.someNumber, row.specifier) })
+  }
+}

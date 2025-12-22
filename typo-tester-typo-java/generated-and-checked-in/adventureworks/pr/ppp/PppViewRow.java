@@ -71,13 +71,13 @@ public record PppViewRow(
   }
   ;
 
-  static RowParser<PppViewRow> _rowParser =
+  public static RowParser<PppViewRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           ProductphotoId.pgType,
           Flag.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new PppViewRow(t0, t1, t2, t3),
+          PppViewRow::new,
           row ->
               new Object[] {
                 row.productid(), row.productphotoid(), row.primary(), row.modifieddate()

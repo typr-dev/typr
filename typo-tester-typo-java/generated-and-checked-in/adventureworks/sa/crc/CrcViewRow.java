@@ -56,12 +56,12 @@ public record CrcViewRow(
   }
   ;
 
-  static RowParser<CrcViewRow> _rowParser =
+  public static RowParser<CrcViewRow> _rowParser =
       RowParsers.of(
           CountryregionId.pgType,
           CurrencyId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new CrcViewRow(t0, t1, t2),
+          CrcViewRow::new,
           row -> new Object[] {row.countryregioncode(), row.currencycode(), row.modifieddate()});
   ;
 }

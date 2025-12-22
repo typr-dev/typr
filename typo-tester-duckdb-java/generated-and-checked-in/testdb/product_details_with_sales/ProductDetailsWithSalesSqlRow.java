@@ -30,7 +30,7 @@ public record ProductDetailsWithSalesSqlRow(
     @JsonProperty("times_ordered") Optional<Long> timesOrdered,
     /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
     @JsonProperty("total_quantity_sold") Optional<Long> totalQuantitySold,
-    /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
+    /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
     @JsonProperty("total_revenue") Optional<Double> totalRevenue,
     /** Points to {@link testdb.order_items.OrderItemsRow#orderId()} */
     Optional<String> popularity) {
@@ -139,7 +139,7 @@ public record ProductDetailsWithSalesSqlRow(
   }
   ;
 
-  /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
+  /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
   public ProductDetailsWithSalesSqlRow withTotalRevenue(Optional<Double> totalRevenue) {
     return new ProductDetailsWithSalesSqlRow(
         productId,
@@ -169,7 +169,7 @@ public record ProductDetailsWithSalesSqlRow(
   }
   ;
 
-  static RowParser<ProductDetailsWithSalesSqlRow> _rowParser =
+  public static RowParser<ProductDetailsWithSalesSqlRow> _rowParser =
       RowParsers.of(
           ProductsId.duckDbType,
           DuckDbTypes.varchar,
@@ -180,8 +180,7 @@ public record ProductDetailsWithSalesSqlRow(
           DuckDbTypes.bigint.opt(),
           DuckDbTypes.double_.opt(),
           DuckDbTypes.varchar.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
-              new ProductDetailsWithSalesSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          ProductDetailsWithSalesSqlRow::new,
           row ->
               new Object[] {
                 row.productId(),

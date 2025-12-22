@@ -58,14 +58,14 @@ public record PasswordRow(
   }
   ;
 
-  static RowParser<PasswordRow> _rowParser =
+  public static RowParser<PasswordRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.text,
           PgTypes.text,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new PasswordRow(t0, t1, t2, t3, t4),
+          PasswordRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

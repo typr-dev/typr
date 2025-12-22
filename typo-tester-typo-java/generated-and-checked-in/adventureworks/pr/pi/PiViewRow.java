@@ -100,7 +100,7 @@ public record PiViewRow(
   }
   ;
 
-  static RowParser<PiViewRow> _rowParser =
+  public static RowParser<PiViewRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           ProductId.pgType,
@@ -110,7 +110,7 @@ public record PiViewRow(
           PgTypes.int2,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7) -> new PiViewRow(t0, t1, t2, t3, t4, t5, t6, t7),
+          PiViewRow::new,
           row ->
               new Object[] {
                 row.id(),

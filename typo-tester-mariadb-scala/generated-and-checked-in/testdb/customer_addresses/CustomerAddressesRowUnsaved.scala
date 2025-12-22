@@ -11,10 +11,6 @@ import org.mariadb.jdbc.`type`.Point
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `customer_addresses` which has not been persisted yet */
 case class CustomerAddressesRowUnsaved(
@@ -85,8 +81,4 @@ case class CustomerAddressesRowUnsaved(
       createdAt = createdAt.getOrElse(createdAtDefault)
     )
   }
-}
-
-object CustomerAddressesRowUnsaved {
-  given mariaText: MariaText[CustomerAddressesRowUnsaved] = MariaText.instance((row, sb) => { CustomersId.pgType.mariaText.unsafeEncode(row.customerId, sb); sb.append(MariaText.DELIMETER); MariaTypes.text.mariaText.unsafeEncode(row.addressType, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.recipientName, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.streetLine1, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.city, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.postalCode, sb); sb.append(MariaText.DELIMETER); MariaTypes.char_.mariaText.unsafeEncode(row.countryCode, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isDefault, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.streetLine2, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.stateProvince, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.point.nullable.mariaText).unsafeEncode(row.location, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.tinytext.nullable.mariaText).unsafeEncode(row.deliveryNotes, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.mariaText).unsafeEncode(row.createdAt, sb) })
 }

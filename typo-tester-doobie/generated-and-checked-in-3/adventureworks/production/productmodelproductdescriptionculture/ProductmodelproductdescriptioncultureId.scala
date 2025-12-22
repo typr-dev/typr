@@ -8,6 +8,7 @@ package adventureworks.production.productmodelproductdescriptionculture
 import adventureworks.production.culture.CultureId
 import adventureworks.production.productdescription.ProductdescriptionId
 import adventureworks.production.productmodel.ProductmodelId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -22,4 +23,18 @@ object ProductmodelproductdescriptioncultureId {
   given decoder: Decoder[ProductmodelproductdescriptioncultureId] = Decoder.forProduct3[ProductmodelproductdescriptioncultureId, ProductmodelId, ProductdescriptionId, CultureId]("productmodelid", "productdescriptionid", "cultureid")(ProductmodelproductdescriptioncultureId.apply)(using ProductmodelId.decoder, ProductdescriptionId.decoder, CultureId.decoder)
 
   given encoder: Encoder[ProductmodelproductdescriptioncultureId] = Encoder.forProduct3[ProductmodelproductdescriptioncultureId, ProductmodelId, ProductdescriptionId, CultureId]("productmodelid", "productdescriptionid", "cultureid")(x => (x.productmodelid, x.productdescriptionid, x.cultureid))(using ProductmodelId.encoder, ProductdescriptionId.encoder, CultureId.encoder)
+
+  given read: Read[ProductmodelproductdescriptioncultureId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(ProductmodelId.get).asInstanceOf[Read[Any]],
+        new Read.Single(ProductdescriptionId.get).asInstanceOf[Read[Any]],
+        new Read.Single(CultureId.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      ProductmodelproductdescriptioncultureId(
+        productmodelid = arr(0).asInstanceOf[ProductmodelId],
+            productdescriptionid = arr(1).asInstanceOf[ProductdescriptionId],
+            cultureid = arr(2).asInstanceOf[CultureId]
+      )
+    }
+  }
 }

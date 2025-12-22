@@ -11,7 +11,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: categories
@@ -65,8 +64,5 @@ data class CategoriesRow(
 
   companion object {
     val _rowParser: RowParser<CategoriesRow> = RowParsers.of(CategoriesId.pgType, CategoriesId.pgType.nullable(), MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable(), MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.smallint, KotlinDbTypes.MariaTypes.bool, MariaTypes.longtext.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> CategoriesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata) })
-
-    val mariaText: MariaText<CategoriesRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

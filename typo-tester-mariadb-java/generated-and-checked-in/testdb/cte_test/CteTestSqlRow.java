@@ -53,7 +53,7 @@ public record CteTestSqlRow(
   }
   ;
 
-  static RowParser<CteTestSqlRow> _rowParser =
+  public static RowParser<CteTestSqlRow> _rowParser =
       RowParsers.of(
           MariaTypes.bigintUnsigned,
           MariaTypes.varchar,
@@ -61,7 +61,7 @@ public record CteTestSqlRow(
           MariaTypes.bigint,
           MariaTypes.numeric,
           MariaTypes.varchar.opt(),
-          (t0, t1, t2, t3, t4, t5) -> new CteTestSqlRow(t0, t1, t2, t3, t4, t5),
+          CteTestSqlRow::new,
           row ->
               new Object[] {
                 row.customerId(),

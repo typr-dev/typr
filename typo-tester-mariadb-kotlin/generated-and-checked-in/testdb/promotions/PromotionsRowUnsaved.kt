@@ -11,10 +11,6 @@ import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import typo.data.maria.MariaSet
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `promotions` which has not been persisted yet */
 data class PromotionsRowUnsaved(
@@ -79,37 +75,4 @@ data class PromotionsRowUnsaved(
     createdAtDefault: () -> LocalDateTime,
     promotionIdDefault: () -> PromotionsId
   ): PromotionsRow = PromotionsRow(promotionId = promotionIdDefault(), code = code, name = name, description = description.getOrElse(descriptionDefault), discountType = discountType, discountValue = discountValue, minOrderAmount = minOrderAmount.getOrElse(minOrderAmountDefault), maxUses = maxUses.getOrElse(maxUsesDefault), usesCount = usesCount.getOrElse(usesCountDefault), maxUsesPerCustomer = maxUsesPerCustomer.getOrElse(maxUsesPerCustomerDefault), applicableTo = applicableTo.getOrElse(applicableToDefault), rulesJson = rulesJson.getOrElse(rulesJsonDefault), validFrom = validFrom, validTo = validTo, isActive = isActive.getOrElse(isActiveDefault), createdAt = createdAt.getOrElse(createdAtDefault))
-
-  companion object {
-    val mariaText: MariaText<PromotionsRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.code, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.text.mariaText().unsafeEncode(row.discountType, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.discountValue, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.datetime.mariaText().unsafeEncode(row.validFrom, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.datetime.mariaText().unsafeEncode(row.validTo, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.nullable().mariaText()).unsafeEncode(row.description, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.nullable().mariaText()).unsafeEncode(row.minOrderAmount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.intUnsigned.nullable().mariaText()).unsafeEncode(row.maxUses, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.intUnsigned.mariaText()).unsafeEncode(row.usesCount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.tinyintUnsigned.nullable().mariaText()).unsafeEncode(row.maxUsesPerCustomer, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.set.nullable().mariaText()).unsafeEncode(row.applicableTo, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.rulesJson, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb) })
-  }
 }

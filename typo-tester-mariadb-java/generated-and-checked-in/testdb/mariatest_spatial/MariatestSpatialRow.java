@@ -14,7 +14,6 @@ import org.mariadb.jdbc.type.MultiPoint;
 import org.mariadb.jdbc.type.MultiPolygon;
 import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -174,7 +173,7 @@ public record MariatestSpatialRow(
   }
   ;
 
-  static RowParser<MariatestSpatialRow> _rowParser =
+  public static RowParser<MariatestSpatialRow> _rowParser =
       RowParsers.of(
           MariatestSpatialId.pgType,
           MariaTypes.geometry,
@@ -185,8 +184,7 @@ public record MariatestSpatialRow(
           MariaTypes.multilinestring,
           MariaTypes.multipolygon,
           MariaTypes.geometrycollection,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
-              new MariatestSpatialRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          MariatestSpatialRow::new,
           row ->
               new Object[] {
                 row.id(),
@@ -200,8 +198,6 @@ public record MariatestSpatialRow(
                 row.geometrycollectionCol()
               });
   ;
-
-  public static MariaText<MariatestSpatialRow> mariaText = MariaText.from(_rowParser);
 
   public MariatestSpatialRowUnsaved toUnsavedRow() {
     return new MariatestSpatialRowUnsaved(

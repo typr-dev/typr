@@ -6,6 +6,8 @@
 package adventureworks.public.test_utdanningstilbud
 
 import adventureworks.public.test_organisasjon.TestOrganisasjonId
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -19,4 +21,16 @@ object TestUtdanningstilbudId {
   implicit lazy val decoder: Decoder[TestUtdanningstilbudId] = Decoder.forProduct2[TestUtdanningstilbudId, TestOrganisasjonId, String]("organisasjonskode", "utdanningsmulighet_kode")(TestUtdanningstilbudId.apply)(TestOrganisasjonId.decoder, Decoder.decodeString)
 
   implicit lazy val encoder: Encoder[TestUtdanningstilbudId] = Encoder.forProduct2[TestUtdanningstilbudId, TestOrganisasjonId, String]("organisasjonskode", "utdanningsmulighet_kode")(x => (x.organisasjonskode, x.utdanningsmulighetKode))(TestOrganisasjonId.encoder, Encoder.encodeString)
+
+  implicit lazy val read: Read[TestUtdanningstilbudId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(TestOrganisasjonId.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      TestUtdanningstilbudId(
+        organisasjonskode = arr(0).asInstanceOf[TestOrganisasjonId],
+            utdanningsmulighetKode = arr(1).asInstanceOf[String]
+      )
+    }
+  }
 }

@@ -13,6 +13,9 @@ class DbLibTypo(
     naming: Naming
 ) extends DbLib {
 
+  /** The database type (PostgreSQL, Oracle, MariaDB) */
+  val dbType: DbType = adapter.dbType
+
   // Check if we're using Scala types (not Java types wrapped in Scala syntax)
   // This is true for LangScalaNew but false for LangScalaJava
   private val usesScalaTypes: Boolean = lang.typeSupport eq TypeSupportScala
@@ -50,6 +53,7 @@ class DbLibTypo(
     case DbType.PostgreSQL => jvm.Type.Qualified("typo.scaladsl.PgTypeOps")
     case DbType.MariaDB    => jvm.Type.Qualified("typo.scaladsl.MariaTypeOps")
     case DbType.DuckDB     => jvm.Type.Qualified("typo.scaladsl.DuckDbTypeOps")
+    case DbType.Oracle     => jvm.Type.Qualified("typo.scaladsl.OracleTypeOps")
   }
 
   def rowParserFor(rowType: jvm.Type) = code"$rowType.$rowParserName"
@@ -70,14 +74,19 @@ class DbLibTypo(
   /** Generate the appropriate runUnchecked call for methods returning Optional - converts to Scala Option for scalaDsl only */
   def queryFirstRunUnchecked: jvm.Code = code".runUnchecked(c)"
 
-  /** Convert Scala Iterator to Java Iterator for streaming inserts - only needed for scalaDsl which uses Scala Iterator */
-  def iteratorToJava(iteratorCode: jvm.Code): jvm.Code = lang match {
-    case scala: LangScala if scala.dsl == DslQualifiedNames.Scala => code"${jvm.Import(ScalaIteratorOps)}$iteratorCode.toJavaIterator"
-    case _                                                        => iteratorCode
-  }
+  /** Convert Iterator to Java Iterator for batch inserts - only needed for Java DSL, Scala DSL Fragment methods accept Scala Iterator */
+  def iteratorToJava(iteratorCode: jvm.Code): jvm.Code =
+    if (lang.dsl == DslQualifiedNames.Scala) iteratorCode
+    else lang.typeSupport.IteratorOps.toJavaIterator(iteratorCode)
 
-  /** Fragment.comma() now accepts Iterable, so no conversion needed */
-  def collectionForComma(listCode: jvm.Code): jvm.Code = listCode
+  /** Convert Iterator to Java Iterator - always needed for streamingInsert which is Java code */
+  def iteratorToJavaAlways(iteratorCode: jvm.Code): jvm.Code =
+    lang.typeSupport.IteratorOps.toJavaIterator(iteratorCode)
+
+  /** Fragment.comma() expects java.util.List for Java DSL, but Iterable for Scala DSL */
+  def collectionForComma(listCode: jvm.Code): jvm.Code =
+    if (lang.dsl == DslQualifiedNames.Scala) listCode
+    else lang.typeSupport.ListType.toJavaList(listCode, Fragment)
 
   /** Fragment.or() expects List[Fragment] for Scala, ArrayList for Java/Kotlin */
   def collectionForOr(listCode: jvm.Code): jvm.Code = lang match {
@@ -384,6 +393,51 @@ class DbLibTypo(
               )
             )
         }
+
+      case DbType.Oracle =>
+        // Oracle: Use same approach as MariaDB (IN clause)
+        id match {
+          case x: IdComputed.Unary =>
+            val colName = adapter.quoteIdent(x.col.dbName.value)
+            val idIdent = jvm.Ident("id")
+            val fragments = jvm.Ident("fragments")
+            val encodeId = code"$Fragment.encode(${lookupType(x)}, $idIdent)"
+            val addStmt = lang.typeSupport.MutableListOps.add(fragments.code, encodeId)
+            jvm.Body.Stmts(
+              List(
+                jvm.LocalVar(fragments, Some(lang.typeSupport.MutableListOps.tpe.of(Fragment)), lang.typeSupport.MutableListOps.empty),
+                lang.arrayForEach(idsParam.name.code, idIdent, jvm.Body.Expr(addStmt)),
+                jvm.Return(
+                  code"""$Fragment.interpolate($Fragment.lit(${jvm.StrLit(
+                      s"select $colNamesStr from $qRelNameStr where $colName in ("
+                    )}), $Fragment.comma(${collectionForComma(fragments.code)}), $Fragment.lit(${jvm.StrLit(s")")})).query(${resultSetParserFor(rowType, "all")})$queryAllRunUnchecked"""
+                )
+              )
+            )
+
+          case x: IdComputed.Composite =>
+            val colNamesJoined = x.cols.toList.map(c => adapter.quoteIdent(c.dbCol.name.value)).mkString(", ")
+            val idIdent = jvm.Ident("id")
+            val fragments = jvm.Ident("fragments")
+            val encodedCols = x.cols.toList.map(c => code"$Fragment.encode(${lookupType(c)}, ${lang.prop(idIdent.code, c.name)})")
+            val commaLit = code"$Fragment.lit(${jvm.StrLit(", ")})"
+            val openParen = code"$Fragment.lit(${jvm.StrLit("(")})"
+            val closeParen = code"$Fragment.lit(${jvm.StrLit(")")})"
+            val tupleArgs = encodedCols.flatMap(e => List(commaLit, e)).drop(1)
+            val tupleExpr = code"$Fragment.interpolate($openParen, ${tupleArgs.mkCode(", ")}, $closeParen)"
+            val addStmt = lang.typeSupport.MutableListOps.add(fragments.code, tupleExpr)
+            jvm.Body.Stmts(
+              List(
+                jvm.LocalVar(fragments, Some(lang.typeSupport.MutableListOps.tpe.of(Fragment)), lang.typeSupport.MutableListOps.empty),
+                lang.arrayForEach(idsParam.name.code, idIdent, jvm.Body.Expr(addStmt)),
+                jvm.Return(
+                  code"""$Fragment.interpolate($Fragment.lit(${jvm.StrLit(
+                      s"select $colNamesStr from $qRelNameStr where ($colNamesJoined) in ("
+                    )}), $Fragment.comma(${collectionForComma(fragments.code)}), $Fragment.lit(${jvm.StrLit(")")})).query(${resultSetParserFor(rowType, "all")})$queryAllRunUnchecked"""
+                )
+              )
+            )
+        }
     }
   }
 
@@ -554,6 +608,52 @@ class DbLibTypo(
               )
             )
         }
+
+      case DbType.Oracle =>
+        // Oracle: Use same approach as MariaDB (IN clause)
+        id match {
+          case x: IdComputed.Unary =>
+            val colName = adapter.quoteIdent(x.col.dbName.value)
+            val idIdent = jvm.Ident("id")
+            val fragments = jvm.Ident("fragments")
+            val encodeId = code"$Fragment.encode(${lookupType(x)}, $idIdent)"
+            val addStmt = lang.typeSupport.MutableListOps.add(fragments.code, encodeId)
+            jvm.Body.Stmts(
+              List(
+                jvm.LocalVar(fragments, Some(lang.typeSupport.MutableListOps.tpe.of(Fragment)), lang.typeSupport.MutableListOps.empty),
+                lang.arrayForEach(idsParam.name.code, idIdent, jvm.Body.Expr(addStmt)),
+                jvm.Return(
+                  code"""$Fragment.interpolate($Fragment.lit(${jvm.StrLit(s"delete from $qRelNameStr where $colName in (")}), $Fragment.comma(${collectionForComma(
+                      fragments.code
+                    )}), $Fragment.lit(${jvm
+                      .StrLit(s")")})).update().runUnchecked(c)"""
+                )
+              )
+            )
+
+          case x: IdComputed.Composite =>
+            val colNamesJoined = x.cols.toList.map(c => adapter.quoteIdent(c.dbCol.name.value)).mkString(", ")
+            val idIdent = jvm.Ident("id")
+            val fragments = jvm.Ident("fragments")
+            val encodedCols = x.cols.toList.map(c => code"$Fragment.encode(${lookupType(c)}, ${lang.prop(idIdent.code, c.name)})")
+            val commaLit = code"$Fragment.lit(${jvm.StrLit(", ")})"
+            val openParen = code"$Fragment.lit(${jvm.StrLit("(")})"
+            val closeParen = code"$Fragment.lit(${jvm.StrLit(")")})"
+            val tupleArgs = encodedCols.flatMap(e => List(commaLit, e)).drop(1)
+            val tupleExpr = code"$Fragment.interpolate($openParen, ${tupleArgs.mkCode(", ")}, $closeParen)"
+            val addStmt = lang.typeSupport.MutableListOps.add(fragments.code, tupleExpr)
+            jvm.Body.Stmts(
+              List(
+                jvm.LocalVar(fragments, Some(lang.typeSupport.MutableListOps.tpe.of(Fragment)), lang.typeSupport.MutableListOps.empty),
+                lang.arrayForEach(idsParam.name.code, idIdent, jvm.Body.Expr(addStmt)),
+                jvm.Return(
+                  code"""$Fragment.interpolate($Fragment.lit(${jvm.StrLit(
+                      s"delete from $qRelNameStr where ($colNamesJoined) in ("
+                    )}), $Fragment.comma(${collectionForComma(fragments.code)}), $Fragment.lit(${jvm.StrLit(")")})).update().runUnchecked(c)"""
+                )
+              )
+            )
+        }
     }
   }
 
@@ -599,8 +699,8 @@ class DbLibTypo(
         sig(params = List(id.param, varargs), implicitParams = List(c), returnType = lang.Boolean)
       case RepoMethod.Update(_, _, _, param, _) =>
         sig(params = List(param), implicitParams = List(c), returnType = lang.Boolean)
-      case RepoMethod.Insert(_, _, unsavedParam, rowType, _) =>
-        sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
+      case RepoMethod.Insert(_, _, _, unsavedParam, _, returningStrategy) =>
+        sig(params = List(unsavedParam), implicitParams = List(c), returnType = returningStrategy.returnType)
       case RepoMethod.InsertStreaming(_, rowType, _) =>
         val unsaved = jvm.Param(jvm.Ident("unsaved"), lang.IteratorType.of(rowType))
         val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
@@ -614,8 +714,8 @@ class DbLibTypo(
         val unsaved = jvm.Param(jvm.Ident("unsaved"), lang.IteratorType.of(rowType))
         val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
         sig(params = List(unsaved, batchSize), implicitParams = List(c), returnType = lang.Int)
-      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, rowType) =>
-        sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
+      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _, returningStrategy) =>
+        sig(params = List(unsavedParam), implicitParams = List(c), returnType = returningStrategy.returnType)
       case RepoMethod.InsertUnsavedStreaming(_, unsaved) =>
         val unsavedParam = jvm.Param(jvm.Ident("unsaved"), lang.IteratorType.of(unsaved.tpe))
         val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), lang.Int, Some(code"10000"))
@@ -776,21 +876,58 @@ class DbLibTypo(
           )
         )
 
-      case RepoMethod.Insert(relName, cols, unsavedParam, rowType, writeableColumnsWithId) =>
+      case RepoMethod.Insert(relName, cols, _, unsavedParam, writeableColumnsWithId, returningStrategy) =>
+        val rowType = returningStrategy.returnType
         val values = writeableColumnsWithId.map { c =>
           runtimeInterpolateValue(prop(unsavedParam.name.code, c.name), c.typoType).code ++ adapter.columnWriteCast(c)
         }
-        val sql = SQL {
-          code"""|insert into ${quotedRelName(relName)}(${dbNames(writeableColumnsWithId, isRead = false)})
-                 |values (${values.mkCode(", ")})
-                 |returning ${dbNames(cols, isRead = true)}
-                 |""".stripMargin
+
+        returningStrategy match {
+          case ReturningStrategy.SqlReturning(_) =>
+            // PostgreSQL/MariaDB: Use RETURNING clause
+            val sql = SQL {
+              code"""|insert into ${quotedRelName(relName)}(${dbNames(writeableColumnsWithId, isRead = false)})
+                     |values (${values.mkCode(", ")})
+                     |returning ${dbNames(cols, isRead = true)}
+                     |""".stripMargin
+            }
+            val code = resultSetParserFor(rowType, "exactlyOne")
+            jvm.Body.Expr(
+              code"""|$sql
+                     |  .updateReturning($code).runUnchecked(c)"""
+            )
+
+          case ReturningStrategy.GeneratedKeysAllColumns(_, allCols) =>
+            // Oracle: Use getGeneratedKeys with all column names (no STRUCT/ARRAY in table)
+            val columnNameCodes = allCols.toList.map(c => code""""${c.dbName.value}"""")
+            val columnNamesArray = lang.typedArrayOf(lang.String, columnNameCodes)
+            val insertSql = SQL {
+              code"""|insert into ${quotedRelName(relName)}(${dbNames(writeableColumnsWithId, isRead = false)})
+                     |values (${values.mkCode(", ")})
+                     |""".stripMargin
+            }
+            val code = resultSetParserFor(rowType, "exactlyOne")
+            jvm.Body.Expr(
+              code"""|$insertSql
+                     |  .updateReturningGeneratedKeys($columnNamesArray, $code).runUnchecked(c)"""
+            )
+
+          case ReturningStrategy.GeneratedKeysIdOnly(idComputed) =>
+            // Oracle: Use getGeneratedKeys with ID column names only (table has STRUCT/ARRAY)
+            val idCols = idComputed.cols.toList
+            val columnNameCodes = idCols.map(c => code""""${c.dbName.value}"""")
+            val columnNamesArray = lang.typedArrayOf(lang.String, columnNameCodes)
+            val insertSql = SQL {
+              code"""|insert into ${quotedRelName(relName)}(${dbNames(writeableColumnsWithId, isRead = false)})
+                     |values (${values.mkCode(", ")})
+                     |""".stripMargin
+            }
+            val code = resultSetParserFor(idComputed.tpe, "exactlyOne")
+            jvm.Body.Expr(
+              code"""|$insertSql
+                     |  .updateReturningGeneratedKeys($columnNamesArray, $code).runUnchecked(c)"""
+            )
         }
-        val code = resultSetParserFor(rowType, "exactlyOne")
-        jvm.Body.Expr(
-          code"""|$sql
-                 |  .updateReturning($code).runUnchecked(c)"""
-        )
       case RepoMethod.Upsert(relName, cols, id, unsavedParam, rowType, writeableColumnsWithId) =>
         val values = writeableColumnsWithId.map { c =>
           runtimeInterpolateValue(prop(unsavedParam.name.code, c.name), c.typoType).code ++ adapter.columnWriteCast(c)
@@ -851,7 +988,7 @@ class DbLibTypo(
         // DuckDB: JDBC driver doesn't support batch + RETURNING (SQLFeatureNotSupportedException)
         // PostgreSQL: Use updateManyReturning which works correctly with batch + RETURNING
         // Note: For Scala DSL, Fragment methods expect Scala iterators, not Java iterators
-        val unsavedArg = code"unsaved"
+        val unsavedArg = iteratorToJava(code"unsaved")
         if (!adapter.supportsArrays || adapter.dbType == DbType.DuckDB) {
           jvm.Body.Expr(
             code"""|$sql
@@ -891,7 +1028,7 @@ class DbLibTypo(
                    |;
                    |drop table $tempTablename;""".stripMargin
           }
-          val unsavedArg = iteratorToJava(code"unsaved")
+          val unsavedArg = iteratorToJavaAlways(code"unsaved")
           jvm.Body.Stmts(
             List(
               jvm.IgnoreResult(code"${SQL(code"create temporary table $tempTablename (like ${quotedRelName(relName)}) on commit drop")}.update().runUnchecked(c)"),
@@ -901,7 +1038,8 @@ class DbLibTypo(
           )
         }
 
-      case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, _, rowType) =>
+      case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, _, _, returningStrategy) =>
+        val rowType = returningStrategy.returnType
         // Use mutable list for building columns and values
         val columns = jvm.Value(
           Nil,
@@ -939,42 +1077,109 @@ class DbLibTypo(
                  |);""".stripMargin
         }
 
-        val sql = SQL {
-          code"""|insert into ${quotedRelName(relName)}(${jvm.RuntimeInterpolation(code"$Fragment.comma(${columns.name})")})
-                 |values (${jvm.RuntimeInterpolation(code"$Fragment.comma(${values.name})")})
-                 |returning ${dbNames(cols, isRead = true)}
-                 |""".stripMargin
-        }
-        val sqlEmpty = SQL {
-          code"""|insert into ${quotedRelName(relName)} default values
-                 |returning ${dbNames(cols, isRead = true)}
-                 |""".stripMargin
-        }
-        val q = {
-          val body = if (unsaved.normalColumns.isEmpty) jvm.IfExpr(jvm.ApplyNullary(columns.name, jvm.Ident("isEmpty")), sqlEmpty, sql).code else sql
-          jvm.Value(Nil, jvm.Ident("q"), Fragment, Some(body), isLazy = false, isOverride = false)
-        }
+        returningStrategy match {
+          case ReturningStrategy.SqlReturning(_) =>
+            // PostgreSQL/MariaDB: Use RETURNING clause
+            val sql = SQL {
+              code"""|insert into ${quotedRelName(relName)}(${jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(columns.name.code)})")})
+                     |values (${jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(values.name.code)})")})
+                     |returning ${dbNames(cols, isRead = true)}
+                     |""".stripMargin
+            }
+            val sqlEmpty = SQL {
+              code"""|insert into ${quotedRelName(relName)} default values
+                     |returning ${dbNames(cols, isRead = true)}
+                     |""".stripMargin
+            }
+            val q = {
+              val body = if (unsaved.normalColumns.isEmpty) jvm.IfExpr(jvm.ApplyNullary(columns.name, jvm.Ident("isEmpty")), sqlEmpty, sql).code else sql
+              jvm.Value(Nil, jvm.Ident("q"), Fragment, Some(body), isLazy = false, isOverride = false)
+            }
 
-        val parser = code"$rowType.$rowParserName.exactlyOne()"
-        jvm.Body.Stmts(
-          List[List[jvm.Code]](
-            List(columns, values),
-            cases0,
-            cases1,
-            List(
-              q,
-              jvm.Return(code"q.updateReturning($parser).runUnchecked(c)")
+            val parser = code"$rowType.$rowParserName.exactlyOne()"
+            jvm.Body.Stmts(
+              List[List[jvm.Code]](
+                List(columns, values),
+                cases0,
+                cases1,
+                List(
+                  q,
+                  jvm.Return(code"q.updateReturning($parser).runUnchecked(c)")
+                )
+              ).flatten
             )
-          ).flatten
-        )
+
+          case ReturningStrategy.GeneratedKeysAllColumns(_, allCols) =>
+            // Oracle: Use getGeneratedKeys with all column names (no STRUCT/ARRAY in table)
+            val sql = SQL {
+              code"""|insert into ${quotedRelName(relName)}(${jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(columns.name.code)})")})
+                     |values (${jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(values.name.code)})")})
+                     |""".stripMargin
+            }
+            val sqlEmpty = SQL {
+              code"""|insert into ${quotedRelName(relName)} default values
+                     |""".stripMargin
+            }
+            val q = {
+              val body = if (unsaved.normalColumns.isEmpty) jvm.IfExpr(jvm.ApplyNullary(columns.name, jvm.Ident("isEmpty")), sqlEmpty, sql).code else sql
+              jvm.Value(Nil, jvm.Ident("q"), Fragment, Some(body), isLazy = false, isOverride = false)
+            }
+
+            val columnNameCodes = allCols.toList.map(c => code""""${c.dbName.value}"""")
+            val columnNamesArray = lang.typedArrayOf(lang.String, columnNameCodes)
+            val parser = code"$rowType.$rowParserName.exactlyOne()"
+            jvm.Body.Stmts(
+              List[List[jvm.Code]](
+                List(columns, values),
+                cases0,
+                cases1,
+                List(
+                  q,
+                  jvm.Return(code"q.updateReturningGeneratedKeys($columnNamesArray, $parser).runUnchecked(c)")
+                )
+              ).flatten
+            )
+
+          case ReturningStrategy.GeneratedKeysIdOnly(idComputed) =>
+            // Oracle: Use getGeneratedKeys with ID column names only (table has STRUCT/ARRAY)
+            val sql = SQL {
+              code"""|insert into ${quotedRelName(relName)}(${jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(columns.name.code)})")})
+                     |values (${jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(values.name.code)})")})
+                     |""".stripMargin
+            }
+            val sqlEmpty = SQL {
+              code"""|insert into ${quotedRelName(relName)} default values
+                     |""".stripMargin
+            }
+            val q = {
+              val body = if (unsaved.normalColumns.isEmpty) jvm.IfExpr(jvm.ApplyNullary(columns.name, jvm.Ident("isEmpty")), sqlEmpty, sql).code else sql
+              jvm.Value(Nil, jvm.Ident("q"), Fragment, Some(body), isLazy = false, isOverride = false)
+            }
+
+            val idCols = idComputed.cols.toList
+            val columnNameCodes = idCols.map(c => code""""${c.dbName.value}"""")
+            val columnNamesArray = lang.typedArrayOf(lang.String, columnNameCodes)
+            val parser = code"$rowType.$rowParserName.exactlyOne()"
+            jvm.Body.Stmts(
+              List[List[jvm.Code]](
+                List(columns, values),
+                cases0,
+                cases1,
+                List(
+                  q,
+                  jvm.Return(code"q.updateReturningGeneratedKeys($columnNamesArray, $parser).runUnchecked(c)")
+                )
+              ).flatten
+            )
+        }
 
       case RepoMethod.InsertStreaming(relName, rowType, writeableColumnsWithId) =>
         val sql = lang.s(code"COPY ${quotedRelName(relName)}(${dbNames(writeableColumnsWithId, isRead = false)}) FROM STDIN")
-        val unsavedArg = iteratorToJava(code"unsaved")
+        val unsavedArg = iteratorToJavaAlways(code"unsaved")
         jvm.Body.Expr(code"$streamingInsert.insertUnchecked($sql, batchSize, $unsavedArg, c, $rowType.${adapter.textFieldName})")
       case RepoMethod.InsertUnsavedStreaming(relName, unsaved) =>
         val sql = lang.s(code"COPY ${quotedRelName(relName)}(${dbNames(unsaved.unsavedCols, isRead = false)}) FROM STDIN (DEFAULT '${DbLibTextSupport.DefaultValue}')")
-        val unsavedArg = iteratorToJava(code"unsaved")
+        val unsavedArg = iteratorToJavaAlways(code"unsaved")
         jvm.Body.Expr(code"$streamingInsert.insertUnchecked($sql, batchSize, $unsavedArg, c, ${unsaved.tpe}.${adapter.textFieldName})")
       case RepoMethod.DeleteBuilder(relName, fieldsType, _) =>
         val structure = prop(code"$fieldsType", "structure")
@@ -1181,15 +1386,20 @@ class DbLibTypo(
             jvm.Return(shouldUpdateVar)
           )
         )
-      case RepoMethod.Insert(_, _, unsavedParam, _, _) =>
+      case RepoMethod.Insert(_, _, _, unsavedParam, _, returningStrategy) =>
         val unsavedIdAccess = idAccess(unsavedParam.name.code)
         val throwStmt = jvm.Throw(TypesJava.RuntimeException.construct(lang.s(code"id ${rt(unsavedIdAccess)} already exists")))
         val ifStmt = jvm.If(lang.MapOps.contains(mapCode, unsavedIdAccess), throwStmt.code)
+        // Return ID for Oracle with STRUCT/ARRAY, full row otherwise
+        val returnValue = returningStrategy match {
+          case _: ReturningStrategy.GeneratedKeysIdOnly => unsavedIdAccess
+          case _                                        => unsavedParam.name.code
+        }
         jvm.Body.Stmts(
           List(
             ifStmt.code,
             lang.MapOps.putVoid(mapCode, unsavedIdAccess, unsavedParam.name.code),
-            jvm.Return(unsavedParam.name.code)
+            jvm.Return(returnValue)
           )
         )
       case RepoMethod.Upsert(_, _, _, unsavedParam, _, _) =>
@@ -1256,7 +1466,7 @@ class DbLibTypo(
             )
           )
         }
-      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _) =>
+      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _, _) =>
         val insertCall = jvm.Call.withImplicits(
           code"insert",
           List(jvm.Arg.Pos(jvm.Apply1(maybeToRow.get, unsavedParam.name))),
@@ -1382,6 +1592,16 @@ class DbLibTypo(
   override def testInsertMethod(x: ComputedTestInserts.InsertMethod): jvm.Method = {
     val newRepo = jvm.New(x.table.names.RepoImplName, Nil)
     val newRow = jvm.New(x.cls, x.values.map { case (p, expr) => jvm.Arg.Named(p, expr) })
+
+    // Determine return type based on insert method's returning strategy
+    // Oracle tables with STRUCT/ARRAY columns return ID only, others return full row
+    val returnType: jvm.Type = x.table.repoMethods
+      .flatMap(_.toList.collectFirst {
+        case RepoMethod.InsertUnsaved(_, _, _, _, _, _, returningStrategy) => returningStrategy.returnType
+        case RepoMethod.Insert(_, _, _, _, _, returningStrategy)           => returningStrategy.returnType
+      })
+      .getOrElse(x.table.names.RowName)
+
     jvm.Method(
       Nil,
       comments = jvm.Comments.Empty,
@@ -1389,7 +1609,7 @@ class DbLibTypo(
       name = x.name,
       params = x.params,
       implicitParams = List(c),
-      tpe = x.table.names.RowName,
+      tpe = returnType,
       throws = Nil,
       body = jvm.Body.Expr(jvm.Call.withImplicits(code"($newRepo).insert", List(jvm.Arg.Pos(newRow)), List(jvm.Arg.Pos(c.name)))),
       isOverride = false,
@@ -1417,7 +1637,7 @@ class DbLibTypo(
         body = code"""${adapter.TextClass}.instance($outerLambda)"""
       )
     }
-    if (enableStreamingInserts) List(textInstance) else Nil
+    if (enableStreamingInserts && adapter.supportsCopyStreaming) List(textInstance) else Nil
   }
 
   override def stringEnumInstances(wrapperType: jvm.Type, underlyingTypoType: TypoType, sqlType: String, openEnum: Boolean): List[jvm.Given] = {
@@ -1515,7 +1735,39 @@ class DbLibTypo(
             overrideDbType.fold(base)(maybeRename(base, _))
           }
         )
-      )
+      ),
+      // For Oracle with GeneratedKeysIdOnly, we need a RowParser for the ID type
+      // This is used to parse the generated key(s) from the ResultSet returned by getGeneratedKeys()
+      // Note: We inline the type lookup instead of referencing the oracleType field to avoid
+      // forward reference issues in Java (static fields are sorted alphabetically)
+      if (adapter.dbType != DbType.Oracle) None
+      else
+        Some(
+          jvm.Given(
+            tparams = Nil,
+            name = rowParserName,
+            implicitParams = Nil,
+            tpe = lang.dsl.RowParser.of(wrapperType),
+            body = {
+              val x = jvm.Ident("x")
+              val id = jvm.Ident("id")
+              val encodeLambda = jvm.Lambda(id, lang.arrayOf(List(id.code)))
+              // Inline the type with bimap to avoid forward reference to oracleType field
+              val inlineType = code"${lookupType(underlyingDbType)}.bimap(${jvm.ConstructorMethodRef(wrapperType)}, ${jvm.FieldGetterRef(wrapperType, jvm.Ident("value"))})"
+              // For single-column ID where T0 = Row, decode is identity
+              // (the DbType.bimap already handles converting the underlying type to the wrapper type)
+              val decodeLambda = jvm.Lambda(x, x.code)
+              lang.dsl match {
+                case DslQualifiedNames.Scala =>
+                  // Scala RowParsers.of: def of[T0, Row](t0: DbType[T0])(decode: T0 => Row)(encode: Row => Array[Any])
+                  code"${lang.dsl.RowParsers}.of($inlineType)($decodeLambda)($encodeLambda)"
+                case _ =>
+                  // Java/Kotlin RowParsers.of: def of[T0, Row](t0: DbType[T0], decode: Function1[T0, Row], encode: Function[Row, Object[]])
+                  code"${lang.dsl.RowParsers}.of($inlineType, $decodeLambda, $encodeLambda)"
+              }
+            }
+          )
+        )
     ).flatten
   }
 
@@ -1536,15 +1788,45 @@ class DbLibTypo(
           // because Kotlin's ::ClassName doesn't SAM-convert to Java functional interfaces
           // Also, we must NOT use typed lambda parameters because Kotlin won't SAM-convert
           // typed lambdas to Java functional interfaces with generic type parameters
+
           val decodeLambda: jvm.Code = lang match {
+            case LangScala(_, TypeSupportJava, _) if cols.length > 22 =>
+              // For Scala with Java types and arity > 22, directly instantiate Function type
+              // to work around Scala compiler bug with SAM conversion
+              val params = cols.toList.zipWithIndex.map { case (col, i) =>
+                jvm.Param(jvm.Ident(s"t$i"), col.tpe)
+              }
+              val args = params.map(_.name.code)
+              val applyMethod = jvm.Method(
+                annotations = Nil,
+                comments = jvm.Comments.Empty,
+                tparams = Nil,
+                name = jvm.Ident("apply"),
+                params = params,
+                implicitParams = Nil,
+                tpe = tpe,
+                throws = Nil,
+                body = jvm.Body.Expr(tpe.construct(args: _*)),
+                isOverride = true,
+                isDefault = false
+              )
+              val functionTypeName = jvm.Type.Qualified(s"typo.runtime.RowParsers.Function${cols.length}")
+              val typeParams = cols.toList.map(_.tpe) :+ tpe
+              val functionType = functionTypeName.of(typeParams: _*)
+              jvm
+                .NewWithBody(
+                  extendsClass = None,
+                  implementsInterface = Some(functionType),
+                  members = List(applyMethod)
+                )
+                .code
             case _: LangKotlin =>
               val params = cols.toList.zipWithIndex.map { case (col, i) =>
                 jvm.Param(jvm.Ident(s"t$i"), col.tpe)
               }
               val args = params.zip(cols.toList).map { case (p, col) =>
-                // Don't use !! - the RowParser framework handles nullability correctly
-                val paramRef = p.name.code
                 // Use base() to unwrap Commented/UserDefined wrappers
+                val paramRef = p.name.code
                 jvm.Type.base(col.tpe) match {
                   case TypesJava.String => code"$paramRef as ${col.tpe}"
                   case _                => paramRef
@@ -1552,49 +1834,15 @@ class DbLibTypo(
               }
               // Use untyped params for SAM conversion compatibility
               jvm.Lambda(params.map(p => jvm.LambdaParam(p.name)), jvm.Body.Expr(tpe.construct(args: _*)))
-            case _: LangScala if lang.typeSupport == TypeSupportJava && cols.length > 22 =>
-              // For Scala with TypeSupportJava and >22 params, Scala cannot implement Java function types
-              // with that many parameters. Use Object[] array instead: (Object[] arr) -> new Row(arr(0).asInstanceOf[T], ...)
-              val arr = jvm.Ident("arr")
-              val args = cols.toList.zipWithIndex.map { case (col, i) =>
-                code"${arr.code}($i).asInstanceOf[${col.tpe}]"
-              }
-              jvm.Lambda(
-                List(jvm.LambdaParam(arr, Some(jvm.Type.ArrayOf(TypesJava.Object)))),
-                jvm.Body.Expr(tpe.construct(args: _*))
-              )
-            case _: LangScala =>
-              // For Scala, always generate explicit lambda - method references don't work for >22 params
-              // and can cause LambdaConversionException in Scala 3
-              val params = cols.toList.zipWithIndex.map { case (col, i) =>
-                jvm.Param(jvm.Ident(s"t$i"), col.tpe)
-              }
-              val args = params.map(_.name.code)
-              jvm.Lambda(params.map(p => jvm.LambdaParam(p.name)), jvm.Body.Expr(tpe.construct(args: _*)))
-            case _ if lang.typeSupport == TypeSupportJava =>
-              // For TypeSupportJava (Java types in other langs), also use lambda
-              val params = cols.toList.zipWithIndex.map { case (col, i) =>
-                jvm.Param(jvm.Ident(s"t$i"), col.tpe)
-              }
-              val args = params.map(_.name.code)
-              jvm.Lambda(params.map(p => jvm.LambdaParam(p.name)), jvm.Body.Expr(tpe.construct(args: _*)))
             case _ =>
               jvm.ConstructorMethodRef(tpe)
           }
-          // For Scala with TypeSupportJava and >22 params, use RowParser constructor directly
-          // because RowParsers.of() uses Function22+ which Scala cannot implement
-          lang match {
-            case _: LangScala if lang.typeSupport == TypeSupportJava && cols.length > 22 =>
-              val columnsList = code"${TypesJava.List}.of($pgTypes)"
-              code"new ${lang.dsl.RowParser}($columnsList, $decodeLambda, $encodeLambda)"
+          // For Scala DSL, use curried calls; for Java/Kotlin, use single parameter list
+          lang.dsl match {
+            case DslQualifiedNames.Scala =>
+              code"${lang.dsl.RowParsers}.of($pgTypes)($decodeLambda)($encodeLambda)"
             case _ =>
-              // For Scala DSL, use curried calls; for Java/Kotlin, use single parameter list
-              lang.dsl match {
-                case DslQualifiedNames.Scala =>
-                  code"${lang.dsl.RowParsers}.of($pgTypes)($decodeLambda)($encodeLambda)"
-                case _ =>
-                  code"${lang.dsl.RowParsers}.of($pgTypes, $decodeLambda, $encodeLambda)"
-              }
+              code"${lang.dsl.RowParsers}.of($pgTypes, $decodeLambda, $encodeLambda)"
           }
         },
         isLazy = false,
@@ -1603,7 +1851,7 @@ class DbLibTypo(
     }
     rowType match {
       case DbLib.RowType.Writable =>
-        val text = if (enableStreamingInserts) {
+        val text = if (enableStreamingInserts && adapter.supportsCopyStreaming) {
           val row = jvm.Ident("row")
           val sb = jvm.Ident("sb")
           val textCols: NonEmptyList[jvm.Code] = cols.map { col =>
@@ -1632,14 +1880,171 @@ class DbLibTypo(
           case DslQualifiedNames.Java => rowParserName.code
           case _                      => code"$rowParserName.underlying"
         }
-        List(rowParser) ++ List(
-          jvm.Given(tparams = Nil, name = adapter.textFieldName, implicitParams = Nil, tpe = adapter.TextClass.of(tpe), body = code"${adapter.TextClass}.from($rowParserArg)")
-        )
+        val textInstance =
+          if (enableStreamingInserts && adapter.supportsCopyStreaming)
+            List(jvm.Given(tparams = Nil, name = adapter.textFieldName, implicitParams = Nil, tpe = adapter.TextClass.of(tpe), body = code"${adapter.TextClass}.from($rowParserArg)"))
+          else Nil
+        List(rowParser) ++ textInstance
       case DbLib.RowType.Readable => List(rowParser)
     }
   }
 
-  override def customTypeInstances(ct: CustomType): List[jvm.Given] = {
+  override def customTypeInstances(ct: CustomType): List[jvm.Given] =
     Nil
+
+  override def structInstances(computed: ComputedOracleObjectType): List[jvm.ClassMember] = {
+    if (computed.attributes.isEmpty) {
+      Nil
+    } else {
+      val oracleType = jvm.Type.Qualified("typo.runtime.OracleType")
+      val oracleObject = jvm.Type.Qualified("typo.runtime.OracleObject")
+
+      // Get the Oracle type name (e.g., "ADDRESS_T")
+      val oracleTypeName = computed.underlying.name.name
+
+      // Build the chain: OracleObject.<StructType>builder("TYPE_NAME") (Java/Kotlin) or OracleObject.builder[StructType]("TYPE_NAME") (Scala)
+      val builderStart = jvm.GenericMethodCall(
+        target = oracleObject,
+        methodName = jvm.Ident("builder"),
+        typeArgs = List(computed.tpe),
+        args = List(jvm.Arg.Pos(jvm.StrLit(oracleTypeName)))
+      )
+
+      // Add all .addAttribute(...) calls
+      val addAttributeCalls = computed.attributes
+        .map { attr =>
+          val attrName = jvm.StrLit(attr.dbAttribute.name)
+          val oracleTypeCall = lookupType(attr.dbAttribute.tpe)
+          // Use FieldGetterRef for language-specific getter syntax: Java: ClassName::field, Scala: _.field
+          val methodRef = jvm.FieldGetterRef(computed.tpe, attr.name)
+          code".addAttribute($attrName, $oracleTypeCall, $methodRef)"
+        }
+        .mkCode(code"")
+
+      // Build the constructor lambda: attrs -> new StructType((Type)attrs[0], ...)
+      // Create individual arguments for jvm.New (handles Kotlin's lack of 'new' keyword)
+      val attrsIdent = jvm.Ident("attrs")
+      val constructorArgs: List[jvm.Arg] = computed.attributes.zipWithIndex.map { case (attr, idx) =>
+        // Use ArrayIndex for language-agnostic array access: Java/Kotlin: attrs[idx], Scala: attrs(idx)
+        val arrayAccess = jvm.ArrayIndex(attrsIdent, idx)
+        jvm.Arg.Pos(lang.castFromObject(attr.tpe, arrayAccess))
+      }
+      // Use jvm.New for language-specific instance creation and jvm.Lambda for lambda syntax
+      val constructorBody = jvm.New(computed.tpe, constructorArgs)
+      val constructorLambda = jvm.Lambda("attrs", jvm.Body(List(constructorBody)))
+      val buildCall = code".build($constructorLambda)"
+
+      // Complete chain with .asType()
+      val fullChain = code"$builderStart$addAttributeCalls$buildCall.asType()"
+
+      // Create static field
+      List(
+        jvm.Value(
+          annotations = Nil,
+          name = jvm.Ident("oracleType"),
+          tpe = oracleType.of(computed.tpe),
+          body = Some(fullChain),
+          isLazy = false,
+          isOverride = false
+        )
+      )
+    }
+  }
+
+  override def collectionInstances(computed: ComputedOracleCollectionType): List[jvm.ClassMember] = {
+    val oracleType = jvm.Type.Qualified("typo.runtime.OracleType")
+    val elementTypeInstance = lookupType((computed.underlying: @unchecked) match {
+      case v: db.OracleType.VArray      => v.elementType
+      case n: db.OracleType.NestedTable => n.elementType
+    })
+
+    // Generate base factory call for List<ElementType>
+    val baseFactoryCall = (computed.underlying: @unchecked) match {
+      case v: db.OracleType.VArray =>
+        val oracleVArray = jvm.Type.Qualified("typo.runtime.OracleVArray")
+        val typeName = jvm.StrLit(v.name.name)
+        code"$oracleVArray.of($typeName, ${v.maxSize}, $elementTypeInstance)"
+      case n: db.OracleType.NestedTable =>
+        val oracleNestedTable = jvm.Type.Qualified("typo.runtime.OracleNestedTable")
+        val typeName = jvm.StrLit(n.name.name)
+        code"$oracleNestedTable.of($typeName, $elementTypeInstance)"
+    }
+
+    // Convert from List<ElementType> to WrapperType using bimap
+    val listType = jvm.Type.Qualified("java.util.List")
+    val listIdent = jvm.Ident("list")
+    val wrapperIdent = jvm.Ident("wrapper")
+
+    // Create language-specific bimap lambdas
+    val (toWrapperLambda, fromWrapperLambda) = lang match {
+      case LangJava =>
+        val newArray = lang.newArray(computed.elementType, Some(code"0"))
+        val toArray = code"$listIdent.toArray($newArray)"
+        val toWrapper = jvm.Lambda(
+          "list",
+          jvm.Body(List(jvm.New(computed.tpe, List(jvm.Arg.Pos(toArray)))))
+        )
+        val valueAccess = lang.prop(wrapperIdent, "value")
+        val listOf = code"$listType.of($valueAccess)"
+        val fromWrapper = jvm.Lambda("wrapper", jvm.Body(List(listOf)))
+        (toWrapper, fromWrapper)
+
+      case _: LangKotlin =>
+        // Kotlin: Use asList() to convert array to java.util.List
+        val toArray = code"$listIdent.toTypedArray()"
+        val toWrapper = jvm.Lambda(
+          "list",
+          jvm.Body(List(jvm.New(computed.tpe, List(jvm.Arg.Pos(toArray)))))
+        )
+        val valueAccess = lang.prop(wrapperIdent, "value")
+        // Use asList() which returns java.util.List backed by the array
+        val listOf = code"$valueAccess.asList()"
+        val fromWrapper = jvm.Lambda("wrapper", jvm.Body(List(listOf)))
+        (toWrapper, fromWrapper)
+
+      case scala: LangScala if scala.typeSupport == TypeSupportJava =>
+        // For Scala with Java DSL (TypeSupportJava), use the same logic as Java/Kotlin
+        val newArray = lang.newArray(computed.elementType, Some(code"0"))
+        val toArray = code"$listIdent.toArray($newArray)"
+        val toWrapper = jvm.Lambda(
+          "list",
+          jvm.Body(List(jvm.New(computed.tpe, List(jvm.Arg.Pos(toArray)))))
+        )
+        val valueAccess = lang.prop(wrapperIdent, "value")
+        // Use spread operator : _* to pass array as varargs to List.of()
+        val listOf = code"$listType.of($valueAccess: _*)"
+        val fromWrapper = jvm.Lambda("wrapper", jvm.Body(List(listOf)))
+        (toWrapper, fromWrapper)
+
+      case scala: LangScala =>
+        // Convert from java.util.List to Scala List, then to Array
+        val scalaList = scala.ListType.fromJavaList(code"$listIdent", computed.elementType)
+        val toArray = code"$scalaList.toArray"
+        val toWrapper = jvm.Lambda(
+          "list",
+          jvm.Body(List(jvm.New(computed.tpe, List(jvm.Arg.Pos(toArray)))))
+        )
+        // Convert from Array to Scala List, then to java.util.List
+        val valueAccess = lang.prop(wrapperIdent, "value")
+        val scalaListFromArray = code"$valueAccess.toList"
+        val javaList = scala.ListType.toJavaList(scalaListFromArray, computed.elementType)
+        val fromWrapper = jvm.Lambda("wrapper", jvm.Body(List(javaList)))
+        (toWrapper, fromWrapper)
+
+      case _ => ???
+    }
+
+    val factoryCall = code"$baseFactoryCall.bimap($toWrapperLambda, $fromWrapperLambda)"
+
+    List(
+      jvm.Value(
+        annotations = Nil,
+        name = jvm.Ident("oracleType"),
+        tpe = oracleType.of(computed.tpe),
+        body = Some(factoryCall),
+        isLazy = false,
+        isOverride = false
+      )
+    )
   }
 }

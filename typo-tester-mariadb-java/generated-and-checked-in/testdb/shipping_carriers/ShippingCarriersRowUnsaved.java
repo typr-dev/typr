@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `shipping_carriers` which has not been persisted yet */
 public record ShippingCarriersRowUnsaved(
@@ -63,22 +61,6 @@ public record ShippingCarriersRowUnsaved(
     return new ShippingCarriersRowUnsaved(code, name, trackingUrlTemplate, apiConfig, isActive);
   }
   ;
-
-  public static MariaText<ShippingCarriersRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.code, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.trackingUrlTemplate, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.apiConfig, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb);
-          });
 
   public ShippingCarriersRow toRow(
       java.util.function.Supplier<Optional<String>> trackingUrlTemplateDefault,

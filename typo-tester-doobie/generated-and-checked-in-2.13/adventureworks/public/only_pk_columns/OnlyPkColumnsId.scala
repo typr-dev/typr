@@ -5,6 +5,8 @@
  */
 package adventureworks.public.only_pk_columns
 
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -18,4 +20,16 @@ object OnlyPkColumnsId {
   implicit lazy val decoder: Decoder[OnlyPkColumnsId] = Decoder.forProduct2[OnlyPkColumnsId, String, Int]("key_column_1", "key_column_2")(OnlyPkColumnsId.apply)(Decoder.decodeString, Decoder.decodeInt)
 
   implicit lazy val encoder: Encoder[OnlyPkColumnsId] = Encoder.forProduct2[OnlyPkColumnsId, String, Int]("key_column_1", "key_column_2")(x => (x.keyColumn1, x.keyColumn2))(Encoder.encodeString, Encoder.encodeInt)
+
+  implicit lazy val read: Read[OnlyPkColumnsId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.IntMeta.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      OnlyPkColumnsId(
+        keyColumn1 = arr(0).asInstanceOf[String],
+            keyColumn2 = arr(1).asInstanceOf[Int]
+      )
+    }
+  }
 }

@@ -15,7 +15,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: products
@@ -111,8 +110,5 @@ data class ProductsRow(
 
   companion object {
     val _rowParser: RowParser<ProductsRow> = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, BrandsId.pgType.nullable(), MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.longtext.nullable(), KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.longtext.nullable(), MariaTypes.text, MariaTypes.text, MariaTypes.set.nullable(), MariaTypes.longtext.nullable(), MariaTypes.longtext.nullable(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17 -> ProductsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.brandId, row.name, row.shortDescription, row.fullDescription, row.basePrice, row.costPrice, row.weightKg, row.dimensionsJson, row.status, row.taxClass, row.tags, row.attributes, row.seoMetadata, row.createdAt, row.updatedAt, row.publishedAt) })
-
-    val mariaText: MariaText<ProductsRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

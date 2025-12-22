@@ -274,7 +274,7 @@ public record VjobcandidateeducationViewRow(
   }
   ;
 
-  static RowParser<VjobcandidateeducationViewRow> _rowParser =
+  public static RowParser<VjobcandidateeducationViewRow> _rowParser =
       RowParsers.of(
           JobcandidateId.pgType,
           PgTypes.text.opt(),
@@ -289,9 +289,7 @@ public record VjobcandidateeducationViewRow(
           PgTypes.text.opt(),
           PgTypes.text.opt(),
           PgTypes.text.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) ->
-              new VjobcandidateeducationViewRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12),
+          VjobcandidateeducationViewRow::new,
           row ->
               new Object[] {
                 row.jobcandidateid(),

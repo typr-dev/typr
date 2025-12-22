@@ -36,7 +36,7 @@ class InventoryRepoImpl() : InventoryRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in inventoryIds) { fragments.add(Fragment.encode(InventoryId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `inventory` where `inventory_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `inventory` where `inventory_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -95,7 +95,7 @@ class InventoryRepoImpl() : InventoryRepo {
       { value -> columns.add(Fragment.lit("`updated_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `inventory`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `inventory`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\n"))
     return q.updateReturning(InventoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -114,7 +114,7 @@ class InventoryRepoImpl() : InventoryRepo {
   ): List<InventoryRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in inventoryIds) { fragments.add(Fragment.encode(InventoryId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at` from `inventory` where `inventory_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(InventoryRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at` from `inventory` where `inventory_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(InventoryRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

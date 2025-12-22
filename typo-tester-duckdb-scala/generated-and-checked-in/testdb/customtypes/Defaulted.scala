@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import testdb.DefaultedDeserializer
 import testdb.DefaultedSerializer
-import typo.runtime.DuckDbText
 
 @JsonSerialize(`using` = classOf[DefaultedSerializer])
 @JsonDeserialize(`using` = classOf[DefaultedDeserializer])
@@ -29,8 +28,6 @@ sealed trait Defaulted[T] {
 }
 
 object Defaulted {
-  given duckDbText[T](using t: DuckDbText[T]): DuckDbText[Defaulted[T]] = DuckDbText.instance((ot, sb) => ot.visit({ sb.append("__DEFAULT_VALUE__"): @scala.annotation.nowarn }, value => t.unsafeEncode(value, sb)))
-
   case class Provided[T](value: T) extends Defaulted[T] {
     override def fold[U](
       onDefault: => U,

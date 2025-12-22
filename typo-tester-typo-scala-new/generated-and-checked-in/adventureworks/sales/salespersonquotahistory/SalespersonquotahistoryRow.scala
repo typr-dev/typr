@@ -54,15 +54,7 @@ case class SalespersonquotahistoryRow(
 }
 
 object SalespersonquotahistoryRow {
-  val `_rowParser`: RowParser[SalespersonquotahistoryRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4) => new SalespersonquotahistoryRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[SalespersonquotahistoryRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)(SalespersonquotahistoryRow.apply)(row => Array[Any](row.businessentityid, row.quotadate, row.salesquota, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: SalespersonquotahistoryId,

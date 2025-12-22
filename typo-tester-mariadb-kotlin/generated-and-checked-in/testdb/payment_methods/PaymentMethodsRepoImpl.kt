@@ -34,7 +34,7 @@ class PaymentMethodsRepoImpl() : PaymentMethodsRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in methodIds) { fragments.add(Fragment.encode(PaymentMethodsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `payment_methods` where `method_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `payment_methods` where `method_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -70,7 +70,7 @@ class PaymentMethodsRepoImpl() : PaymentMethodsRepo {
       { value -> columns.add(Fragment.lit("`sort_order`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.tinyint, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `payment_methods`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `payment_methods`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`\n"))
     return q.updateReturning(PaymentMethodsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -89,7 +89,7 @@ class PaymentMethodsRepoImpl() : PaymentMethodsRepo {
   ): List<PaymentMethodsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in methodIds) { fragments.add(Fragment.encode(PaymentMethodsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order` from `payment_methods` where `method_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(PaymentMethodsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order` from `payment_methods` where `method_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(PaymentMethodsRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

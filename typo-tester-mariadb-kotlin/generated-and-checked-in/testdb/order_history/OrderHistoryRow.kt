@@ -12,7 +12,6 @@ import testdb.orders.OrdersId
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: order_history
@@ -62,8 +61,5 @@ data class OrderHistoryRow(
 
   companion object {
     val _rowParser: RowParser<OrderHistoryRow> = RowParsers.of(OrderHistoryId.pgType, OrdersId.pgType, MariaTypes.text.nullable(), MariaTypes.text, MariaTypes.varchar.nullable(), MariaTypes.varchar.nullable(), MariaTypes.longtext.nullable(), MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7 -> OrderHistoryRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt) })
-
-    val mariaText: MariaText<OrderHistoryRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

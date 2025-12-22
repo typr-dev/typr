@@ -6,6 +6,8 @@
 package adventureworks.public.test_sak_soknadsalternativ
 
 import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudId
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -24,4 +26,16 @@ object TestSakSoknadsalternativId {
     TestUtdanningstilbudId: TestUtdanningstilbudId,
     organisasjonskodeSaksbehandler: String
   ): TestSakSoknadsalternativId = new TestSakSoknadsalternativId(organisasjonskodeSaksbehandler = organisasjonskodeSaksbehandler, utdanningsmulighetKode = TestUtdanningstilbudId.utdanningsmulighetKode)
+
+  implicit lazy val read: Read[TestSakSoknadsalternativId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      TestSakSoknadsalternativId(
+        organisasjonskodeSaksbehandler = arr(0).asInstanceOf[String],
+            utdanningsmulighetKode = arr(1).asInstanceOf[String]
+      )
+    }
+  }
 }

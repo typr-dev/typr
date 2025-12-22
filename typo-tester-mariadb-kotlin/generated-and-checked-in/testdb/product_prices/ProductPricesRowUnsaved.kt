@@ -12,10 +12,6 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.price_tiers.PriceTiersId
 import testdb.products.ProductsId
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `product_prices` which has not been persisted yet */
 data class ProductPricesRowUnsaved(
@@ -46,19 +42,4 @@ data class ProductPricesRowUnsaved(
     validToDefault: () -> LocalDate?,
     priceIdDefault: () -> ProductPricesId
   ): ProductPricesRow = ProductPricesRow(priceId = priceIdDefault(), productId = productId, tierId = tierId.getOrElse(tierIdDefault), price = price, currencyCode = currencyCode.getOrElse(currencyCodeDefault), validFrom = validFrom, validTo = validTo.getOrElse(validToDefault))
-
-  companion object {
-    val mariaText: MariaText<ProductPricesRowUnsaved> =
-      MariaText.instance({ row, sb -> ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.price, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.date.mariaText().unsafeEncode(row.validFrom, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(PriceTiersId.pgType.nullable().mariaText()).unsafeEncode(row.tierId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.char_.mariaText()).unsafeEncode(row.currencyCode, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.date.nullable().mariaText()).unsafeEncode(row.validTo, sb) })
-  }
 }

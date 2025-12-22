@@ -12,8 +12,6 @@ import testdb.customer_status.CustomerStatusId;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import typo.data.maria.MariaSet;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 public record CustomersRowUnsaved(
@@ -317,39 +315,6 @@ public record CustomersRowUnsaved(
         lastLoginAt);
   }
   ;
-
-  public static MariaText<CustomersRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.email, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.binary.mariaText().unsafeEncode(row.passwordHash, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.firstName, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.lastName, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText()).unsafeEncode(row.phone, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(CustomerStatusId.pgType.mariaText()).unsafeEncode(row.status, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.tier, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.preferences, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.set.opt().mariaText())
-                .unsafeEncode(row.marketingFlags, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.opt().mariaText()).unsafeEncode(row.notes, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.updatedAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.lastLoginAt, sb);
-          });
 
   public CustomersRow toRow(
       java.util.function.Supplier<Optional<String>> phoneDefault,

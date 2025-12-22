@@ -1,0 +1,976 @@
+package typo.runtime;
+
+import java.sql.*;
+import oracle.sql.ARRAY;
+
+/**
+ * Minimal ResultSet wrapper that allows reading an ARRAY as if it were from a ResultSet. This is
+ * used internally to convert ARRAY elements in nested arrays to Java collections.
+ */
+class ArrayResultSetWrapper implements ResultSet, AutoCloseable {
+  private final ARRAY array;
+
+  ArrayResultSetWrapper(ARRAY array) {
+    this.array = array;
+  }
+
+  @Override
+  public Object getObject(int columnIndex) throws SQLException {
+    if (columnIndex == 1) {
+      return array;
+    }
+    throw new SQLException("Invalid column index: " + columnIndex);
+  }
+
+  @Override
+  public Object getObject(int columnIndex, java.util.Map<String, Class<?>> map)
+      throws SQLException {
+    return getObject(columnIndex);
+  }
+
+  @Override
+  public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+    return type.cast(getObject(columnIndex));
+  }
+
+  @Override
+  public boolean wasNull() throws SQLException {
+    return array == null;
+  }
+
+  @Override
+  public void close() throws SQLException {
+    // Nothing to close
+  }
+
+  // All other ResultSet methods throw UnsupportedOperationException
+  @Override
+  public String getString(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean getBoolean(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public byte getByte(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public short getShort(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getInt(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public long getLong(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public float getFloat(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public double getDouble(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.math.BigDecimal getBigDecimal(int columnIndex, int scale) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public byte[] getBytes(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Date getDate(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Time getTime(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Timestamp getTimestamp(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.InputStream getAsciiStream(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.InputStream getUnicodeStream(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.InputStream getBinaryStream(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String getString(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean getBoolean(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public byte getByte(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public short getShort(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getInt(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public long getLong(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public float getFloat(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public double getDouble(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.math.BigDecimal getBigDecimal(String columnLabel, int scale) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public byte[] getBytes(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Date getDate(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Time getTime(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Timestamp getTimestamp(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.InputStream getAsciiStream(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.InputStream getUnicodeStream(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.InputStream getBinaryStream(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public SQLWarning getWarnings() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void clearWarnings() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String getCursorName() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public ResultSetMetaData getMetaData() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Object getObject(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int findColumn(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.Reader getCharacterStream(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.Reader getCharacterStream(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.math.BigDecimal getBigDecimal(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.math.BigDecimal getBigDecimal(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean isBeforeFirst() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean isAfterLast() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean isFirst() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean isLast() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void beforeFirst() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void afterLast() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean first() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean last() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getRow() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean absolute(int row) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean relative(int rows) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean previous() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void setFetchDirection(int direction) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getFetchDirection() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void setFetchSize(int rows) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getFetchSize() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getType() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getConcurrency() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean rowUpdated() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean rowInserted() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean rowDeleted() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNull(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBoolean(int columnIndex, boolean x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateByte(int columnIndex, byte x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateShort(int columnIndex, short x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateInt(int columnIndex, int x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateLong(int columnIndex, long x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateFloat(int columnIndex, float x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateDouble(int columnIndex, double x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBigDecimal(int columnIndex, java.math.BigDecimal x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateString(int columnIndex, String x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBytes(int columnIndex, byte[] x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateDate(int columnIndex, Date x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateTime(int columnIndex, Time x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateTimestamp(int columnIndex, Timestamp x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateAsciiStream(int columnIndex, java.io.InputStream x, int length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBinaryStream(int columnIndex, java.io.InputStream x, int length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateCharacterStream(int columnIndex, java.io.Reader x, int length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateObject(int columnIndex, Object x, int scaleOrLength) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateObject(int columnIndex, Object x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNull(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBoolean(String columnLabel, boolean x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateByte(String columnLabel, byte x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateShort(String columnLabel, short x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateInt(String columnLabel, int x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateLong(String columnLabel, long x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateFloat(String columnLabel, float x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateDouble(String columnLabel, double x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBigDecimal(String columnLabel, java.math.BigDecimal x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateString(String columnLabel, String x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBytes(String columnLabel, byte[] x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateDate(String columnLabel, Date x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateTime(String columnLabel, Time x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateTimestamp(String columnLabel, Timestamp x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateAsciiStream(String columnLabel, java.io.InputStream x, int length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBinaryStream(String columnLabel, java.io.InputStream x, int length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateCharacterStream(String columnLabel, java.io.Reader reader, int length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateObject(String columnLabel, Object x, int scaleOrLength) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateObject(String columnLabel, Object x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void insertRow() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateRow() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void deleteRow() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void refreshRow() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void cancelRowUpdates() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void moveToInsertRow() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void moveToCurrentRow() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Statement getStatement() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Ref getRef(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Blob getBlob(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Clob getClob(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Array getArray(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Object getObject(String columnLabel, java.util.Map<String, Class<?>> map) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Ref getRef(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Blob getBlob(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Clob getClob(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Array getArray(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Date getDate(int columnIndex, java.util.Calendar cal) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Date getDate(String columnLabel, java.util.Calendar cal) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Time getTime(int columnIndex, java.util.Calendar cal) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Time getTime(String columnLabel, java.util.Calendar cal) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Timestamp getTimestamp(int columnIndex, java.util.Calendar cal) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Timestamp getTimestamp(String columnLabel, java.util.Calendar cal) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.net.URL getURL(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.net.URL getURL(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateRef(int columnIndex, Ref x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateRef(String columnLabel, Ref x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBlob(int columnIndex, Blob x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBlob(String columnLabel, Blob x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateClob(int columnIndex, Clob x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateClob(String columnLabel, Clob x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateArray(int columnIndex, Array x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateArray(String columnLabel, Array x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public RowId getRowId(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public RowId getRowId(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateRowId(int columnIndex, RowId x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateRowId(String columnLabel, RowId x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int getHoldability() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean isClosed() {
+    return false;
+  }
+
+  @Override
+  public void updateNString(int columnIndex, String nString) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNString(String columnLabel, String nString) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNClob(int columnIndex, NClob nClob) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNClob(String columnLabel, NClob nClob) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public NClob getNClob(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public NClob getNClob(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public SQLXML getSQLXML(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public SQLXML getSQLXML(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateSQLXML(int columnIndex, SQLXML xmlObject) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateSQLXML(String columnLabel, SQLXML xmlObject) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String getNString(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String getNString(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.Reader getNCharacterStream(int columnIndex) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public java.io.Reader getNCharacterStream(String columnLabel) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNCharacterStream(int columnIndex, java.io.Reader x, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNCharacterStream(String columnLabel, java.io.Reader reader, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateAsciiStream(int columnIndex, java.io.InputStream x, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBinaryStream(int columnIndex, java.io.InputStream x, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateCharacterStream(int columnIndex, java.io.Reader x, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateAsciiStream(String columnLabel, java.io.InputStream x, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBinaryStream(String columnLabel, java.io.InputStream x, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateCharacterStream(String columnLabel, java.io.Reader reader, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBlob(int columnIndex, java.io.InputStream inputStream, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBlob(String columnLabel, java.io.InputStream inputStream, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateClob(int columnIndex, java.io.Reader reader, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateClob(String columnLabel, java.io.Reader reader, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNClob(int columnIndex, java.io.Reader reader, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNClob(String columnLabel, java.io.Reader reader, long length) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNCharacterStream(int columnIndex, java.io.Reader x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNCharacterStream(String columnLabel, java.io.Reader reader) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateAsciiStream(int columnIndex, java.io.InputStream x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBinaryStream(int columnIndex, java.io.InputStream x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateCharacterStream(int columnIndex, java.io.Reader x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateAsciiStream(String columnLabel, java.io.InputStream x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBinaryStream(String columnLabel, java.io.InputStream x) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateCharacterStream(String columnLabel, java.io.Reader reader) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBlob(int columnIndex, java.io.InputStream inputStream) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateBlob(String columnLabel, java.io.InputStream inputStream) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateClob(int columnIndex, java.io.Reader reader) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateClob(String columnLabel, java.io.Reader reader) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNClob(int columnIndex, java.io.Reader reader) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void updateNClob(String columnLabel, java.io.Reader reader) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public <T> T getObject(String columnLabel, Class<T> type) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean next() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public <T> T unwrap(Class<T> iface) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean isWrapperFor(Class<?> iface) {
+    return false;
+  }
+}

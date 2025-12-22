@@ -8,10 +8,16 @@ package adventureworks.production.productmodelproductdescriptionculture
 import adventureworks.production.culture.CultureId
 import adventureworks.production.productdescription.ProductdescriptionId
 import adventureworks.production.productmodel.ProductmodelId
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `production.productmodelproductdescriptionculture` */
 data class ProductmodelproductdescriptioncultureId(
   val productmodelid: ProductmodelId,
   val productdescriptionid: ProductdescriptionId,
   val cultureid: CultureId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<ProductmodelproductdescriptioncultureId> = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, { t0, t1, t2 -> ProductmodelproductdescriptioncultureId(t0, t1, t2) }, { row -> arrayOf<Any?>(row.productmodelid, row.productdescriptionid, row.cultureid) })
+  }
+}

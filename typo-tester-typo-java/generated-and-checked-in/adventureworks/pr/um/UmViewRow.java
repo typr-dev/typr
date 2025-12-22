@@ -46,13 +46,13 @@ public record UmViewRow(
   }
   ;
 
-  static RowParser<UmViewRow> _rowParser =
+  public static RowParser<UmViewRow> _rowParser =
       RowParsers.of(
           UnitmeasureId.pgType,
           UnitmeasureId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new UmViewRow(t0, t1, t2, t3),
+          UmViewRow::new,
           row -> new Object[] {row.id(), row.unitmeasurecode(), row.name(), row.modifieddate()});
   ;
 }

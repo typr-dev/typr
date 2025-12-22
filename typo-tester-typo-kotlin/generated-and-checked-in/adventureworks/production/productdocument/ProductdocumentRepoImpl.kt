@@ -63,7 +63,7 @@ class ProductdocumentRepoImpl() : ProductdocumentRepo {
       { value -> columns.add(Fragment.lit("\"documentnode\""))
       values.add(Fragment.interpolate(Fragment.encode(DocumentId.pgType, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
     return q.updateReturning(ProductdocumentRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -14,7 +14,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: promotions
@@ -90,8 +89,5 @@ data class PromotionsRow(
 
   companion object {
     val _rowParser: RowParser<PromotionsRow> = RowParsers.of(PromotionsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable(), MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.intUnsigned.nullable(), KotlinDbTypes.MariaTypes.intUnsigned, KotlinDbTypes.MariaTypes.tinyintUnsigned.nullable(), MariaTypes.set.nullable(), MariaTypes.longtext.nullable(), MariaTypes.datetime, MariaTypes.datetime, KotlinDbTypes.MariaTypes.bool, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15 -> PromotionsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) }, { row -> arrayOf<Any?>(row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt) })
-
-    val mariaText: MariaText<PromotionsRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

@@ -35,7 +35,7 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in imageIds) { fragments.add(Fragment.encode(ProductImagesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `product_images` where `image_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `product_images` where `image_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -79,7 +79,7 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
       { value -> columns.add(Fragment.lit("`image_data`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.longblob.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_images`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_images`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
     return q.updateReturning(ProductImagesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -98,7 +98,7 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
   ): List<ProductImagesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in imageIds) { fragments.add(Fragment.encode(ProductImagesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data` from `product_images` where `image_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ProductImagesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data` from `product_images` where `image_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ProductImagesRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

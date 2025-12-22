@@ -8,7 +8,6 @@ package testdb.shipping_carriers;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -63,7 +62,7 @@ public record ShippingCarriersRow(
   }
   ;
 
-  static RowParser<ShippingCarriersRow> _rowParser =
+  public static RowParser<ShippingCarriersRow> _rowParser =
       RowParsers.of(
           ShippingCarriersId.pgType,
           MariaTypes.varchar,
@@ -71,7 +70,7 @@ public record ShippingCarriersRow(
           MariaTypes.varchar.opt(),
           MariaTypes.longtext.opt(),
           MariaTypes.bool,
-          (t0, t1, t2, t3, t4, t5) -> new ShippingCarriersRow(t0, t1, t2, t3, t4, t5),
+          ShippingCarriersRow::new,
           row ->
               new Object[] {
                 row.carrierId(),
@@ -82,8 +81,6 @@ public record ShippingCarriersRow(
                 row.isActive()
               });
   ;
-
-  public static MariaText<ShippingCarriersRow> mariaText = MariaText.from(_rowParser);
 
   public ShippingCarriersId id() {
     return carrierId;

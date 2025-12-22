@@ -83,7 +83,7 @@ public record ShipmethodRow(
   }
   ;
 
-  static RowParser<ShipmethodRow> _rowParser =
+  public static RowParser<ShipmethodRow> _rowParser =
       RowParsers.of(
           ShipmethodId.pgType,
           Name.pgType,
@@ -91,7 +91,7 @@ public record ShipmethodRow(
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new ShipmethodRow(t0, t1, t2, t3, t4, t5),
+          ShipmethodRow::new,
           row ->
               new Object[] {
                 row.shipmethodid(),

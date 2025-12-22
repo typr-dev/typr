@@ -72,7 +72,7 @@ public record SmViewRow(
   }
   ;
 
-  static RowParser<SmViewRow> _rowParser =
+  public static RowParser<SmViewRow> _rowParser =
       RowParsers.of(
           ShipmethodId.pgType,
           ShipmethodId.pgType,
@@ -81,7 +81,7 @@ public record SmViewRow(
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new SmViewRow(t0, t1, t2, t3, t4, t5, t6),
+          SmViewRow::new,
           row ->
               new Object[] {
                 row.id(),

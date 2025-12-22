@@ -225,7 +225,7 @@ public record VProductCatalogViewRow(
   }
   ;
 
-  static RowParser<VProductCatalogViewRow> _rowParser =
+  public static RowParser<VProductCatalogViewRow> _rowParser =
       RowParsers.of(
           ProductsId.pgType,
           MariaTypes.varchar,
@@ -238,8 +238,7 @@ public record VProductCatalogViewRow(
           MariaTypes.numeric,
           MariaTypes.numeric,
           MariaTypes.bigint,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
-              new VProductCatalogViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
+          VProductCatalogViewRow::new,
           row ->
               new Object[] {
                 row.productId(),

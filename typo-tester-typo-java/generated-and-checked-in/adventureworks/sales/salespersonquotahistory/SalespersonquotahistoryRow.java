@@ -77,14 +77,14 @@ public record SalespersonquotahistoryRow(
   }
   ;
 
-  static RowParser<SalespersonquotahistoryRow> _rowParser =
+  public static RowParser<SalespersonquotahistoryRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.timestamp,
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new SalespersonquotahistoryRow(t0, t1, t2, t3, t4),
+          SalespersonquotahistoryRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

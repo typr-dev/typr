@@ -46,13 +46,13 @@ public record SrViewRow(
   }
   ;
 
-  static RowParser<SrViewRow> _rowParser =
+  public static RowParser<SrViewRow> _rowParser =
       RowParsers.of(
           ScrapreasonId.pgType,
           ScrapreasonId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new SrViewRow(t0, t1, t2, t3),
+          SrViewRow::new,
           row -> new Object[] {row.id(), row.scrapreasonid(), row.name(), row.modifieddate()});
   ;
 }

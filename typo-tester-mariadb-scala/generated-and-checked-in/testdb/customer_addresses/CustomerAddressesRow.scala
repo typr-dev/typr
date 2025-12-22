@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 import org.mariadb.jdbc.`type`.Point
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -95,24 +94,5 @@ case class CustomerAddressesRow(
 }
 
 object CustomerAddressesRow {
-  val `_rowParser`: RowParser[CustomerAddressesRow] = {
-    RowParsers.of(CustomerAddressesId.pgType, CustomersId.pgType, MariaTypes.text, ScalaDbTypes.MariaTypes.bool, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.nullable, MariaTypes.tinytext.nullable, MariaTypes.datetime)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) => new CustomerAddressesRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13
-    ))(row => Array[Any](row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt))
-  }
-
-  given mariaText: MariaText[CustomerAddressesRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[CustomerAddressesRow] = RowParsers.of(CustomerAddressesId.pgType, CustomersId.pgType, MariaTypes.text, ScalaDbTypes.MariaTypes.bool, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.nullable, MariaTypes.tinytext.nullable, MariaTypes.datetime)(CustomerAddressesRow.apply)(row => Array[Any](row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt))
 }

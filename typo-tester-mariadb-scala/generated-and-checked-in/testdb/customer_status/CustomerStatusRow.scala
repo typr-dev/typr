@@ -7,7 +7,6 @@ package testdb.customer_status
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.RowParser
 import typo.scaladsl.RowParsers
@@ -32,7 +31,5 @@ case class CustomerStatusRow(
 }
 
 object CustomerStatusRow {
-  val `_rowParser`: RowParser[CustomerStatusRow] = RowParsers.of(CustomerStatusId.pgType, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bool)((t0, t1, t2) => new CustomerStatusRow(t0, t1, t2))(row => Array[Any](row.statusCode, row.description, row.isActive))
-
-  given mariaText: MariaText[CustomerStatusRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[CustomerStatusRow] = RowParsers.of(CustomerStatusId.pgType, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bool)(CustomerStatusRow.apply)(row => Array[Any](row.statusCode, row.description, row.isActive))
 }

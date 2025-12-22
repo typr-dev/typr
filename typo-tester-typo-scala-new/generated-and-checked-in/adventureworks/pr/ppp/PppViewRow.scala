@@ -26,12 +26,5 @@ case class PppViewRow(
 )
 
 object PppViewRow {
-  val `_rowParser`: RowParser[PppViewRow] = {
-    RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, PgTypes.timestamp)((t0, t1, t2, t3) => new PppViewRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ))(row => Array[Any](row.productid, row.productphotoid, row.primary, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[PppViewRow] = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, Flag.pgType, PgTypes.timestamp)(PppViewRow.apply)(row => Array[Any](row.productid, row.productphotoid, row.primary, row.modifieddate))
 }

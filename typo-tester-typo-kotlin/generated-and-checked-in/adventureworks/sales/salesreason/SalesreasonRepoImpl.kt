@@ -61,7 +61,7 @@ class SalesreasonRepoImpl() : SalesreasonRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesreason\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"))
     return q.updateReturning(SalesreasonRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

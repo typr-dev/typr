@@ -173,7 +173,7 @@ public record StateprovinceRow(
   }
   ;
 
-  static RowParser<StateprovinceRow> _rowParser =
+  public static RowParser<StateprovinceRow> _rowParser =
       RowParsers.of(
           StateprovinceId.pgType,
           PgTypes.bpchar,
@@ -183,7 +183,7 @@ public record StateprovinceRow(
           SalesterritoryId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7) -> new StateprovinceRow(t0, t1, t2, t3, t4, t5, t6, t7),
+          StateprovinceRow::new,
           row ->
               new Object[] {
                 row.stateprovinceid(),

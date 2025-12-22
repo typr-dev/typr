@@ -103,7 +103,7 @@ public record SalesterritoryhistoryRow(
   }
   ;
 
-  static RowParser<SalesterritoryhistoryRow> _rowParser =
+  public static RowParser<SalesterritoryhistoryRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           SalesterritoryId.pgType,
@@ -111,7 +111,7 @@ public record SalesterritoryhistoryRow(
           PgTypes.timestamp.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new SalesterritoryhistoryRow(t0, t1, t2, t3, t4, t5),
+          SalesterritoryhistoryRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

@@ -8,6 +8,8 @@ package adventureworks.production.productmodelproductdescriptionculture;
 import adventureworks.production.culture.CultureId;
 import adventureworks.production.productdescription.ProductdescriptionId;
 import adventureworks.production.productmodel.ProductmodelId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /**
  * Type for the composite primary key of table `production.productmodelproductdescriptionculture`
@@ -31,5 +33,14 @@ public record ProductmodelproductdescriptioncultureId(
     return new ProductmodelproductdescriptioncultureId(
         productmodelid, productdescriptionid, cultureid);
   }
+  ;
+
+  public static RowParser<ProductmodelproductdescriptioncultureId> _rowParser =
+      RowParsers.of(
+          ProductmodelId.pgType,
+          ProductdescriptionId.pgType,
+          CultureId.pgType,
+          ProductmodelproductdescriptioncultureId::new,
+          row -> new Object[] {row.productmodelid(), row.productdescriptionid(), row.cultureid()});
   ;
 }

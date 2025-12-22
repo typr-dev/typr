@@ -16,7 +16,6 @@ import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: mariatest_spatial
@@ -48,8 +47,5 @@ data class MariatestSpatialRow(
 
   companion object {
     val _rowParser: RowParser<MariatestSpatialRow> = RowParsers.of(MariatestSpatialId.pgType, MariaTypes.geometry, MariaTypes.point, MariaTypes.linestring, MariaTypes.polygon, MariaTypes.multipoint, MariaTypes.multilinestring, MariaTypes.multipolygon, MariaTypes.geometrycollection, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> MariatestSpatialRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol) })
-
-    val mariaText: MariaText<MariatestSpatialRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

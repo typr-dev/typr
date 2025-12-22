@@ -6,6 +6,8 @@
 package adventureworks.person.emailaddress
 
 import adventureworks.person.businessentity.BusinessentityId
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -19,4 +21,16 @@ object EmailaddressId {
   given decoder: Decoder[EmailaddressId] = Decoder.forProduct2[EmailaddressId, BusinessentityId, Int]("businessentityid", "emailaddressid")(EmailaddressId.apply)(using BusinessentityId.decoder, Decoder.decodeInt)
 
   given encoder: Encoder[EmailaddressId] = Encoder.forProduct2[EmailaddressId, BusinessentityId, Int]("businessentityid", "emailaddressid")(x => (x.businessentityid, x.emailaddressid))(using BusinessentityId.encoder, Encoder.encodeInt)
+
+  given read: Read[EmailaddressId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.IntMeta.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      EmailaddressId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            emailaddressid = arr(1).asInstanceOf[Int]
+      )
+    }
+  }
 }

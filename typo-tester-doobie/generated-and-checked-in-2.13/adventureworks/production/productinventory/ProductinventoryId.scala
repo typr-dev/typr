@@ -7,6 +7,7 @@ package adventureworks.production.productinventory
 
 import adventureworks.production.location.LocationId
 import adventureworks.production.product.ProductId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object ProductinventoryId {
   implicit lazy val decoder: Decoder[ProductinventoryId] = Decoder.forProduct2[ProductinventoryId, ProductId, LocationId]("productid", "locationid")(ProductinventoryId.apply)(ProductId.decoder, LocationId.decoder)
 
   implicit lazy val encoder: Encoder[ProductinventoryId] = Encoder.forProduct2[ProductinventoryId, ProductId, LocationId]("productid", "locationid")(x => (x.productid, x.locationid))(ProductId.encoder, LocationId.encoder)
+
+  implicit lazy val read: Read[ProductinventoryId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(ProductId.get).asInstanceOf[Read[Any]],
+        new Read.Single(LocationId.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      ProductinventoryId(
+        productid = arr(0).asInstanceOf[ProductId],
+            locationid = arr(1).asInstanceOf[LocationId]
+      )
+    }
+  }
 }

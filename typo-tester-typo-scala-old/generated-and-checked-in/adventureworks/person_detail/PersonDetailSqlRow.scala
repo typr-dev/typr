@@ -39,18 +39,5 @@ case class PersonDetailSqlRow(
 )
 
 object PersonDetailSqlRow {
-  val `_rowParser`: RowParser[PersonDetailSqlRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.uuid.opt(), (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new PersonDetailSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9
-    ), row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
-  }
+  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, Name.pgType.opt(), Name.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.uuid.opt(), PersonDetailSqlRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
 }

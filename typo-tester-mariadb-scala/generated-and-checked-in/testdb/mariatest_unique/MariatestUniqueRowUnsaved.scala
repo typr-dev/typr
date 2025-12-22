@@ -5,8 +5,7 @@
  */
 package testdb.mariatest_unique
 
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
+
 
 /** This class corresponds to a row in table `mariatest_unique` which has not been persisted yet */
 case class MariatestUniqueRowUnsaved(
@@ -25,8 +24,4 @@ case class MariatestUniqueRowUnsaved(
       category = category
     )
   }
-}
-
-object MariatestUniqueRowUnsaved {
-  given mariaText: MariaText[MariatestUniqueRowUnsaved] = MariaText.instance((row, sb) => { MariaTypes.varchar.mariaText.unsafeEncode(row.email, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.code, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.category, sb) })
 }

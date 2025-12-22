@@ -11,8 +11,6 @@ import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `warehouses` which has not been persisted yet */
 public record WarehousesRowUnsaved(
@@ -118,31 +116,6 @@ public record WarehousesRowUnsaved(
         code, name, address, location, serviceArea, timezone, isActive, contactEmail, contactPhone);
   }
   ;
-
-  public static MariaText<WarehousesRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.char_.mariaText().unsafeEncode(row.code, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.address, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.point.mariaText().unsafeEncode(row.location, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.polygon.opt().mariaText())
-                .unsafeEncode(row.serviceArea, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.mariaText()).unsafeEncode(row.timezone, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.contactEmail, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.contactPhone, sb);
-          });
 
   public WarehousesRow toRow(
       java.util.function.Supplier<Optional<Polygon>> serviceAreaDefault,

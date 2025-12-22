@@ -16,8 +16,8 @@ public record TitleRow(TitleId code) {
   }
   ;
 
-  static RowParser<TitleRow> _rowParser =
-      RowParsers.of(TitleId.pgType, t0 -> new TitleRow(t0), row -> new Object[] {row.code()});
+  public static RowParser<TitleRow> _rowParser =
+      RowParsers.of(TitleId.pgType, TitleRow::new, row -> new Object[] {row.code()});
   ;
 
   public static PgText<TitleRow> pgText = PgText.from(_rowParser);

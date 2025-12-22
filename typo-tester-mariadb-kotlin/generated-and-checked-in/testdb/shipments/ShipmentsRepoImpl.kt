@@ -37,7 +37,7 @@ class ShipmentsRepoImpl() : ShipmentsRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in shipmentIds) { fragments.add(Fragment.encode(ShipmentsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `shipments` where `shipment_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `shipments` where `shipment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -120,7 +120,7 @@ class ShipmentsRepoImpl() : ShipmentsRepo {
       { value -> columns.add(Fragment.lit("`updated_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `shipments`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `shipments`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\n"))
     return q.updateReturning(ShipmentsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -139,7 +139,7 @@ class ShipmentsRepoImpl() : ShipmentsRepo {
   ): List<ShipmentsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in shipmentIds) { fragments.add(Fragment.encode(ShipmentsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at` from `shipments` where `shipment_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ShipmentsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at` from `shipments` where `shipment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ShipmentsRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

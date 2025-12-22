@@ -41,19 +41,5 @@ case class StViewRow(
 )
 
 object StViewRow {
-  val `_rowParser`: RowParser[StViewRow] = {
-    RowParsers.of(SalesterritoryId.pgType, SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => new StViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10
-    ), row => Array[Any](row.id, row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[StViewRow] = RowParsers.of(SalesterritoryId.pgType, SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, StViewRow.apply, row => Array[Any](row.id, row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate))
 }

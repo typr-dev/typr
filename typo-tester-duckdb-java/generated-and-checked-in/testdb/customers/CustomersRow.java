@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.Priority;
 import testdb.customtypes.Defaulted;
-import typo.runtime.DuckDbText;
 import typo.runtime.DuckDbTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -51,21 +50,19 @@ public record CustomersRow(
   }
   ;
 
-  static RowParser<CustomersRow> _rowParser =
+  public static RowParser<CustomersRow> _rowParser =
       RowParsers.of(
           CustomersId.duckDbType,
           DuckDbTypes.varchar,
           DuckDbTypes.varchar.opt(),
           DuckDbTypes.timestamp,
           Priority.duckDbType.opt(),
-          (t0, t1, t2, t3, t4) -> new CustomersRow(t0, t1, t2, t3, t4),
+          CustomersRow::new,
           row ->
               new Object[] {
                 row.customerId(), row.name(), row.email(), row.createdAt(), row.priority()
               });
   ;
-
-  public static DuckDbText<CustomersRow> duckDbText = DuckDbText.from(_rowParser);
 
   public CustomersId id() {
     return customerId;

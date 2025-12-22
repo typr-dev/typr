@@ -18,7 +18,6 @@ import testdb.customtypes.Defaulted
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: mariatest_spatial_null
@@ -75,8 +74,5 @@ data class MariatestSpatialNullRow(
 
   companion object {
     val _rowParser: RowParser<MariatestSpatialNullRow> = RowParsers.of(MariatestSpatialNullId.pgType, MariaTypes.geometry.nullable(), MariaTypes.point.nullable(), MariaTypes.linestring.nullable(), MariaTypes.polygon.nullable(), MariaTypes.multipoint.nullable(), MariaTypes.multilinestring.nullable(), MariaTypes.multipolygon.nullable(), MariaTypes.geometrycollection.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> MariatestSpatialNullRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol) })
-
-    val mariaText: MariaText<MariatestSpatialNullRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

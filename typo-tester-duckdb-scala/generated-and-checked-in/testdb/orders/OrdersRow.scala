@@ -8,7 +8,6 @@ package testdb.orders
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 import typo.scaladsl.DuckDbTypeOps
 import typo.scaladsl.RowParser
@@ -44,15 +43,5 @@ case class OrdersRow(
 }
 
 object OrdersRow {
-  val `_rowParser`: RowParser[OrdersRow] = {
-    RowParsers.of(OrdersId.duckDbType, ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.date, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.varchar.nullable)((t0, t1, t2, t3, t4) => new OrdersRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
-  }
-
-  given duckDbText: DuckDbText[OrdersRow] = DuckDbText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[OrdersRow] = RowParsers.of(OrdersId.duckDbType, ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.date, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.varchar.nullable)(OrdersRow.apply)(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
 }

@@ -6,7 +6,6 @@
 package testdb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 import typo.scaladsl.DuckDbTypeOps
 import typo.scaladsl.RowParser
@@ -28,14 +27,7 @@ case class DepartmentsRow(
 }
 
 object DepartmentsRow {
-  val `_rowParser`: RowParser[DepartmentsRow] = {
-    RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable)((t0, t1, t2, t3) => new DepartmentsRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ))(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget))
-  }
+  val `_rowParser`: RowParser[DepartmentsRow] = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable)(DepartmentsRow.apply)(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget))
 
   def apply(
     compositeId: DepartmentsId,
@@ -49,6 +41,4 @@ object DepartmentsRow {
       budget
     )
   }
-
-  given duckDbText: DuckDbText[DepartmentsRow] = DuckDbText.from(`_rowParser`.underlying)
 }

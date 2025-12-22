@@ -6,9 +6,16 @@
 package adventureworks.sales.salesorderdetail
 
 import adventureworks.sales.salesorderheader.SalesorderheaderId
+import typo.kotlindsl.KotlinDbTypes
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `sales.salesorderdetail` */
 data class SalesorderdetailId(
   val salesorderid: SalesorderheaderId,
   val salesorderdetailid: Int
-)
+) {
+  companion object {
+    val _rowParser: RowParser<SalesorderdetailId> = RowParsers.of(SalesorderheaderId.pgType, KotlinDbTypes.PgTypes.int4, { t0, t1 -> SalesorderdetailId(t0, t1) }, { row -> arrayOf<Any?>(row.salesorderid, row.salesorderdetailid) })
+  }
+}

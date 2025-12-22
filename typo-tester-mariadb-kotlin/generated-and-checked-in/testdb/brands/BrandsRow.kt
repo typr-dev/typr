@@ -11,7 +11,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: brands
@@ -54,8 +53,5 @@ data class BrandsRow(
 
   companion object {
     val _rowParser: RowParser<BrandsRow> = RowParsers.of(BrandsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable(), MariaTypes.varchar.nullable(), MariaTypes.char_.nullable(), KotlinDbTypes.MariaTypes.bool, { t0, t1, t2, t3, t4, t5, t6 -> BrandsRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive) })
-
-    val mariaText: MariaText<BrandsRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

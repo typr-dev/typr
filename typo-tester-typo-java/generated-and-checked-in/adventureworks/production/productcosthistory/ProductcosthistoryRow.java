@@ -84,14 +84,14 @@ public record ProductcosthistoryRow(
   }
   ;
 
-  static RowParser<ProductcosthistoryRow> _rowParser =
+  public static RowParser<ProductcosthistoryRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           PgTypes.timestamp,
           PgTypes.timestamp.opt(),
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new ProductcosthistoryRow(t0, t1, t2, t3, t4),
+          ProductcosthistoryRow::new,
           row ->
               new Object[] {
                 row.productid(),

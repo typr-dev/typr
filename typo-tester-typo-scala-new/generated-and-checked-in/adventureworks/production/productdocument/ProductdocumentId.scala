@@ -7,9 +7,15 @@ package adventureworks.production.productdocument
 
 import adventureworks.production.document.DocumentId
 import adventureworks.production.product.ProductId
+import typo.scaladsl.RowParser
+import typo.scaladsl.RowParsers
 
 /** Type for the composite primary key of table `production.productdocument` */
 case class ProductdocumentId(
   productid: ProductId,
   documentnode: DocumentId
 )
+
+object ProductdocumentId {
+  val `_rowParser`: RowParser[ProductdocumentId] = RowParsers.of(ProductId.pgType, DocumentId.pgType)(ProductdocumentId.apply)(row => Array[Any](row.productid, row.documentnode))
+}

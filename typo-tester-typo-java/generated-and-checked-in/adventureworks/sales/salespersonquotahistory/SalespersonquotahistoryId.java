@@ -7,6 +7,9 @@ package adventureworks.sales.salespersonquotahistory;
 
 import adventureworks.person.businessentity.BusinessentityId;
 import java.time.LocalDateTime;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `sales.salespersonquotahistory` */
 public record SalespersonquotahistoryId(
@@ -19,5 +22,13 @@ public record SalespersonquotahistoryId(
   public SalespersonquotahistoryId withQuotadate(LocalDateTime quotadate) {
     return new SalespersonquotahistoryId(businessentityid, quotadate);
   }
+  ;
+
+  public static RowParser<SalespersonquotahistoryId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          PgTypes.timestamp,
+          SalespersonquotahistoryId::new,
+          row -> new Object[] {row.businessentityid(), row.quotadate()});
   ;
 }

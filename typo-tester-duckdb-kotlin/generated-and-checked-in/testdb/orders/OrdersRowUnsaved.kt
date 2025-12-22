@@ -10,10 +10,6 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
-import typo.runtime.DuckDbTypes
 
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 data class OrdersRowUnsaved(
@@ -29,17 +25,4 @@ data class OrdersRowUnsaved(
     orderDateDefault: () -> LocalDate,
     statusDefault: () -> String?
   ): OrdersRow = OrdersRow(orderId = orderId, customerId = customerId, orderDate = orderDate.getOrElse(orderDateDefault), totalAmount = totalAmount, status = status.getOrElse(statusDefault))
-
-  companion object {
-    val duckDbText: DuckDbText<OrdersRowUnsaved> =
-      DuckDbText.instance({ row, sb -> OrdersId.duckDbType.duckDbText().unsafeEncode(row.orderId, sb)
-      sb.append(DuckDbText.DELIMETER)
-      KotlinDbTypes.DuckDbTypes.integer.duckDbText().unsafeEncode(row.customerId, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.numeric.nullable().duckDbText().unsafeEncode(row.totalAmount, sb)
-      sb.append(DuckDbText.DELIMETER)
-      Defaulted.duckDbText(DuckDbTypes.date.duckDbText()).unsafeEncode(row.orderDate, sb)
-      sb.append(DuckDbText.DELIMETER)
-      Defaulted.duckDbText(DuckDbTypes.varchar.nullable().duckDbText()).unsafeEncode(row.status, sb) })
-  }
 }

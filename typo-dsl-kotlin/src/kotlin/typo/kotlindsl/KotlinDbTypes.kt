@@ -2,6 +2,7 @@ package typo.kotlindsl
 
 import typo.runtime.DuckDbType
 import typo.runtime.MariaType
+import typo.runtime.OracleType
 import typo.runtime.PgType
 import typo.runtime.SqlFunction
 
@@ -158,6 +159,37 @@ object KotlinDbTypes {
             { it }
         )
         val bool: DuckDbType<Boolean> = typo.runtime.DuckDbTypes.bool.bimap(
+            SqlFunction { it },
+            { it }
+        )
+    }
+
+    object OracleTypes {
+        // Numeric types - NUMBER is Oracle's universal numeric type
+        val number: OracleType<java.math.BigDecimal> = typo.runtime.OracleTypes.number
+
+        val numberInt: OracleType<Int> = typo.runtime.OracleTypes.numberInt.bimap(
+            SqlFunction { it },
+            { it }
+        )
+
+        val numberLong: OracleType<Long> = typo.runtime.OracleTypes.numberLong.bimap(
+            SqlFunction { it },
+            { it }
+        )
+
+        // Floating point
+        val binaryFloat: OracleType<Float> = typo.runtime.OracleTypes.binaryFloat.bimap(
+            SqlFunction { it },
+            { it }
+        )
+
+        val binaryDouble: OracleType<Double> = typo.runtime.OracleTypes.binaryDouble.bimap(
+            SqlFunction { it },
+            { it }
+        )
+
+        val float_: OracleType<Double> = typo.runtime.OracleTypes.float_.bimap(
             SqlFunction { it },
             { it }
         )

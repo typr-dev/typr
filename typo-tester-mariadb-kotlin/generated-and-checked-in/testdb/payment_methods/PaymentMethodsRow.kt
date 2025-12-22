@@ -11,7 +11,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: payment_methods
@@ -51,8 +50,5 @@ data class PaymentMethodsRow(
 
   companion object {
     val _rowParser: RowParser<PaymentMethodsRow> = RowParsers.of(PaymentMethodsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.longtext.nullable(), KotlinDbTypes.MariaTypes.bool, KotlinDbTypes.MariaTypes.tinyint, { t0, t1, t2, t3, t4, t5, t6 -> PaymentMethodsRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder) })
-
-    val mariaText: MariaText<PaymentMethodsRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

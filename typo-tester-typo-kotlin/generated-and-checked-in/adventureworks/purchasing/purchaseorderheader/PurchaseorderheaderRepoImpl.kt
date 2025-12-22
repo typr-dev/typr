@@ -98,7 +98,7 @@ class PurchaseorderheaderRepoImpl() : PurchaseorderheaderRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"purchasing\".\"purchaseorderheader\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"purchaseorderid\", \"revisionnumber\", \"status\", \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\", \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\n"))
     return q.updateReturning(PurchaseorderheaderRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

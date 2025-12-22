@@ -98,7 +98,7 @@ public record PlphViewRow(
   }
   ;
 
-  static RowParser<PlphViewRow> _rowParser =
+  public static RowParser<PlphViewRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           ProductId.pgType,
@@ -106,7 +106,7 @@ public record PlphViewRow(
           PgTypes.timestamp,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new PlphViewRow(t0, t1, t2, t3, t4, t5),
+          PlphViewRow::new,
           row ->
               new Object[] {
                 row.id(),

@@ -47,6 +47,16 @@ object TypoDataSource {
     TypoDataSource(ds, DbType.DuckDB)
   }
 
+  /** Create a TypoDataSource for Oracle */
+  def hikariOracle(server: String, port: Int, serviceName: String, username: String, password: String): TypoDataSource = {
+    val config = new HikariConfig
+    config.setJdbcUrl(s"jdbc:oracle:thin:@//$server:$port/$serviceName")
+    config.setUsername(username)
+    config.setPassword(password)
+    val ds = new HikariDataSource(config)
+    TypoDataSource(ds, DbType.Oracle)
+  }
+
   /** Create a TypoDataSource with auto-detection of database type */
   def hikari(ds: DataSource): TypoDataSource = {
     val conn = ds.getConnection

@@ -69,19 +69,5 @@ case class VProductCatalogViewRow(
 )
 
 object VProductCatalogViewRow {
-  val `_rowParser`: RowParser[VProductCatalogViewRow] = {
-    RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.set.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.bigint)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => new VProductCatalogViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10
-    ))(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.tags, row.brandName, row.availableQuantity, row.avgRating, row.reviewCount))
-  }
+  val `_rowParser`: RowParser[VProductCatalogViewRow] = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.set.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.bigint)(VProductCatalogViewRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.tags, row.brandName, row.availableQuantity, row.avgRating, row.reviewCount))
 }

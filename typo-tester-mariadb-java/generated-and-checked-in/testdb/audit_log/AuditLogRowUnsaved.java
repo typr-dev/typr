@@ -11,8 +11,6 @@ import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import typo.data.maria.Inet6;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `audit_log` which has not been persisted yet */
 public record AuditLogRowUnsaved(
@@ -125,32 +123,6 @@ public record AuditLogRowUnsaved(
         sessionId);
   }
   ;
-
-  public static MariaText<AuditLogRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.tableName, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.recordId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.text.mariaText().unsafeEncode(row.action, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.oldValues, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.newValues, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.changedBy, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.changedAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.inet6.opt().mariaText()).unsafeEncode(row.clientIp, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varbinary.opt().mariaText())
-                .unsafeEncode(row.sessionId, sb);
-          });
 
   public AuditLogRow toRow(
       java.util.function.Supplier<Optional<String>> oldValuesDefault,

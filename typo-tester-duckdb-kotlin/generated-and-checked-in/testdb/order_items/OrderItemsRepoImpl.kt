@@ -59,7 +59,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
       { value -> columns.add(Fragment.lit("\"quantity\""))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"order_items\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"order_items\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"))
     return q.updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

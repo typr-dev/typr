@@ -66,7 +66,7 @@ class EmployeesRepoImpl() : EmployeesRepo {
       { value -> columns.add(Fragment.lit("\"hire_date\""))
       values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.date, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"employees\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"employees\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\n"))
     return q.updateReturning(EmployeesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

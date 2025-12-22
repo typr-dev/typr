@@ -25,12 +25,5 @@ case class SrViewRow(
 )
 
 object SrViewRow {
-  val `_rowParser`: RowParser[SrViewRow] = {
-    RowParsers.of(ScrapreasonId.pgType, ScrapreasonId.pgType, Name.pgType, PgTypes.timestamp)((t0, t1, t2, t3) => new SrViewRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ))(row => Array[Any](row.id, row.scrapreasonid, row.name, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[SrViewRow] = RowParsers.of(ScrapreasonId.pgType, ScrapreasonId.pgType, Name.pgType, PgTypes.timestamp)(SrViewRow.apply)(row => Array[Any](row.id, row.scrapreasonid, row.name, row.modifieddate))
 }

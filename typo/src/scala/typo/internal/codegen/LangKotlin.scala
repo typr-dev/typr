@@ -121,6 +121,9 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
   override def arrayOf(elements: List[jvm.Code]): jvm.Code =
     code"arrayOf<Any?>(${elements.mkCode(", ")})"
 
+  override def typedArrayOf(elementType: jvm.Type, elements: List[jvm.Code]): jvm.Code =
+    code"arrayOf<$elementType>(${elements.mkCode(", ")})"
+
   override def equals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"($left == $right)"
 

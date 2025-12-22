@@ -36,7 +36,7 @@ class ProductPricesRepoImpl() : ProductPricesRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in priceIds) { fragments.add(Fragment.encode(ProductPricesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `product_prices` where `price_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `product_prices` where `price_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -72,7 +72,7 @@ class ProductPricesRepoImpl() : ProductPricesRepo {
       { value -> columns.add(Fragment.lit("`valid_to`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.date.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_prices`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_prices`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`\n"))
     return q.updateReturning(ProductPricesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -91,7 +91,7 @@ class ProductPricesRepoImpl() : ProductPricesRepo {
   ): List<ProductPricesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in priceIds) { fragments.add(Fragment.encode(ProductPricesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to` from `product_prices` where `price_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ProductPricesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to` from `product_prices` where `price_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ProductPricesRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

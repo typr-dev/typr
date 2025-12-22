@@ -5,6 +5,9 @@
  */
 package adventureworks.public.only_pk_columns
 
+import anorm.Column
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -31,6 +34,17 @@ object OnlyPkColumnsId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[OnlyPkColumnsId] = {
+    RowParser[OnlyPkColumnsId] { row =>
+      Success(
+        OnlyPkColumnsId(
+          keyColumn1 = row(idx + 0)(Column.columnToString),
+          keyColumn2 = row(idx + 1)(Column.columnToInt)
+        )
+      )
+    }
   }
 
   implicit lazy val writes: OWrites[OnlyPkColumnsId] = {

@@ -7,7 +7,6 @@ package testdb.mariatest_identity
 
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: mariatest_identity
@@ -25,8 +24,5 @@ data class MariatestIdentityRow(
 
   companion object {
     val _rowParser: RowParser<MariatestIdentityRow> = RowParsers.of(MariatestIdentityId.pgType, MariaTypes.varchar, { t0, t1 -> MariatestIdentityRow(t0, t1) }, { row -> arrayOf<Any?>(row.id, row.name) })
-
-    val mariaText: MariaText<MariatestIdentityRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

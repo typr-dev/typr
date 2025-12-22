@@ -40,6 +40,8 @@ object TypeSupportKotlin extends TypeSupport {
     def isDefined(opt: jvm.Code): jvm.Code = code"$opt != null"
     def filterMapOrElse(opt: jvm.Code, predicate: jvm.Code, mapper: jvm.Code, default: jvm.Code): jvm.Code =
       code"$opt?.takeIf($predicate)?.let($mapper) ?: $default"
+    def toJavaOptional(opt: jvm.Code): jvm.Code =
+      code"${TypesJava.Optional}.ofNullable($opt)"
   }
 
   override object ListType extends ListSupport {
@@ -73,6 +75,12 @@ object TypeSupportKotlin extends TypeSupport {
 
     def map(collection: jvm.Code, mapper: jvm.Code): jvm.Code =
       code"$collection.map($mapper)"
+
+    def fromJavaList(javaList: jvm.Code, elementType: jvm.Type): jvm.Code =
+      code"$javaList.toList()" // Convert java.util.List to Kotlin List
+
+    def toJavaList(nativeList: jvm.Code, elementType: jvm.Type): jvm.Code =
+      code"$nativeList.toMutableList()" // Convert Kotlin List to java.util.List
   }
 
   override object Random extends RandomSupport {
@@ -149,6 +157,9 @@ object TypeSupportKotlin extends TypeSupport {
 
     def forEach(iterator: jvm.Code, lambda: jvm.Code): jvm.Code =
       code"$iterator.forEach($lambda)"
+
+    def toJavaIterator(iterator: jvm.Code): jvm.Code =
+      iterator // Already a Java Iterator, no conversion needed
   }
 
   override object MutableListOps extends MutableListSupport {

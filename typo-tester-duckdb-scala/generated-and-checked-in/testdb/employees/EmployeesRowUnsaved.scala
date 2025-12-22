@@ -9,10 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.DuckDbText
-import typo.runtime.DuckDbTypes
-import typo.scaladsl.DuckDbTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `employees` which has not been persisted yet */
 case class EmployeesRowUnsaved(
@@ -36,8 +32,4 @@ case class EmployeesRowUnsaved(
       hireDate = hireDate.getOrElse(hireDateDefault)
     )
   }
-}
-
-object EmployeesRowUnsaved {
-  given duckDbText: DuckDbText[EmployeesRowUnsaved] = DuckDbText.instance((row, sb) => { ScalaDbTypes.DuckDbTypes.integer.duckDbText.unsafeEncode(row.empNumber, sb); sb.append(DuckDbText.DELIMETER); DuckDbTypes.varchar.duckDbText.unsafeEncode(row.empSuffix, sb); sb.append(DuckDbText.DELIMETER); DuckDbTypes.varchar.duckDbText.unsafeEncode(row.deptCode, sb); sb.append(DuckDbText.DELIMETER); DuckDbTypes.varchar.duckDbText.unsafeEncode(row.deptRegion, sb); sb.append(DuckDbText.DELIMETER); DuckDbTypes.varchar.duckDbText.unsafeEncode(row.empName, sb); sb.append(DuckDbText.DELIMETER); ScalaDbTypes.DuckDbTypes.numeric.nullable.duckDbText.unsafeEncode(row.salary, sb); sb.append(DuckDbText.DELIMETER); Defaulted.duckDbText(using DuckDbTypes.date.duckDbText).unsafeEncode(row.hireDate, sb) })
 }

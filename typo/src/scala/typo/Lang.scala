@@ -108,6 +108,9 @@ trait Lang {
   /** Array literal */
   def arrayOf(elements: List[jvm.Code]): jvm.Code
 
+  /** Typed array literal with specific element type: Java: `new String[]{"a", "b"}`, Kotlin: `arrayOf<String>("a", "b")`, Scala: `Array[String]("a", "b")` */
+  def typedArrayOf(elementType: jvm.Type, elements: List[jvm.Code]): jvm.Code
+
   /** Structural equality check */
   def equals(left: jvm.Code, right: jvm.Code): jvm.Code
 
@@ -146,6 +149,12 @@ trait ListSupport {
 
   /** Map over list elements and collect to array. Scala: list.map(mapper).toArray, Java: list.stream().map(mapper).toArray(generator) */
   def listMapToArray(list: jvm.Code, mapper: jvm.Code, arrayGenerator: jvm.Code): jvm.Code
+
+  /** Convert from java.util.List to language-native list type. Scala: javaList.asScala.toList, Java: javaList */
+  def fromJavaList(javaList: jvm.Code, elementType: jvm.Type): jvm.Code
+
+  /** Convert from language-native list type to java.util.List. Scala: scalaList.asJava, Java: javaList */
+  def toJavaList(nativeList: jvm.Code, elementType: jvm.Type): jvm.Code
 }
 
 trait OptionalSupport {
@@ -167,6 +176,9 @@ trait OptionalSupport {
 
   /** filter then map then getOrElse - combines common pattern */
   def filterMapOrElse(opt: jvm.Code, predicate: jvm.Code, mapper: jvm.Code, default: jvm.Code): jvm.Code
+
+  /** Convert optional to java.util.Optional - for Scala this converts, for Java/Kotlin it's a noop or wraps nullable */
+  def toJavaOptional(opt: jvm.Code): jvm.Code
 
   def unapply(t: jvm.Type): Option[jvm.Type] =
     t match {

@@ -36,7 +36,7 @@ public record PersonRow(
     return new PersonRow(one, two, name);
   };
 
-  static RowParser<PersonRow> _rowParser = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PgTypes.text.opt(), (t0, t1, t2) -> new PersonRow(t0, t1, t2), row -> new Object[]{row.one(), row.two(), row.name()});;
+  public static RowParser<PersonRow> _rowParser = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PgTypes.text.opt(), PersonRow::new, row -> new Object[]{row.one(), row.two(), row.name()});;
 
   static public PersonRow apply(
     PersonId compositeId,

@@ -40,19 +40,5 @@ case class VemployeedepartmenthistoryViewRow(
 )
 
 object VemployeedepartmenthistoryViewRow {
-  val `_rowParser`: RowParser[VemployeedepartmenthistoryViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, Name.pgType, Name.pgType, Name.pgType, PgTypes.date, PgTypes.date, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => new VemployeedepartmenthistoryViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10
-    ), row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.shift, row.department, row.groupname, row.startdate, row.enddate))
-  }
+  val `_rowParser`: RowParser[VemployeedepartmenthistoryViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, Name.pgType, Name.pgType, Name.pgType, PgTypes.date, PgTypes.date, VemployeedepartmenthistoryViewRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.shift, row.department, row.groupname, row.startdate, row.enddate))
 }

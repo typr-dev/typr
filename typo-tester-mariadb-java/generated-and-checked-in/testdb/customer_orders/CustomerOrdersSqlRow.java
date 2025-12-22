@@ -197,7 +197,7 @@ public record CustomerOrdersSqlRow(
   }
   ;
 
-  static RowParser<CustomerOrdersSqlRow> _rowParser =
+  public static RowParser<CustomerOrdersSqlRow> _rowParser =
       RowParsers.of(
           CustomersId.pgType,
           MariaTypes.varchar,
@@ -209,8 +209,7 @@ public record CustomerOrdersSqlRow(
           MariaTypes.text.opt(),
           MariaTypes.numeric.opt(),
           MariaTypes.datetime.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new CustomerOrdersSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          CustomerOrdersSqlRow::new,
           row ->
               new Object[] {
                 row.customerId(),

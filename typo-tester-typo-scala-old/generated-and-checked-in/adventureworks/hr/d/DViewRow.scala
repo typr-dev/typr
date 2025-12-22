@@ -27,13 +27,5 @@ case class DViewRow(
 )
 
 object DViewRow {
-  val `_rowParser`: RowParser[DViewRow] = {
-    RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp, (t0, t1, t2, t3, t4) => new DViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ), row => Array[Any](row.id, row.departmentid, row.name, row.groupname, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[DViewRow] = RowParsers.of(DepartmentId.pgType, DepartmentId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp, DViewRow.apply, row => Array[Any](row.id, row.departmentid, row.name, row.groupname, row.modifieddate))
 }

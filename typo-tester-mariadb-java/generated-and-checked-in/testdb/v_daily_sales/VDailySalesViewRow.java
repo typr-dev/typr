@@ -195,7 +195,7 @@ public record VDailySalesViewRow(
   }
   ;
 
-  static RowParser<VDailySalesViewRow> _rowParser =
+  public static RowParser<VDailySalesViewRow> _rowParser =
       RowParsers.of(
           MariaTypes.date.opt(),
           MariaTypes.bigint,
@@ -207,8 +207,7 @@ public record VDailySalesViewRow(
           MariaTypes.numeric.opt(),
           MariaTypes.numeric.opt(),
           MariaTypes.numeric.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new VDailySalesViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          VDailySalesViewRow::new,
           row ->
               new Object[] {
                 row.orderDate(),

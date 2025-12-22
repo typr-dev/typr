@@ -6,9 +6,16 @@
 package adventureworks.purchasing.purchaseorderdetail
 
 import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId
+import typo.runtime.PgTypes
+import typo.runtime.RowParser
+import typo.runtime.RowParsers
 
 /** Type for the composite primary key of table `purchasing.purchaseorderdetail` */
 case class PurchaseorderdetailId(
   purchaseorderid: PurchaseorderheaderId,
   purchaseorderdetailid: Integer
 )
+
+object PurchaseorderdetailId {
+  val `_rowParser`: RowParser[PurchaseorderdetailId] = RowParsers.of(PurchaseorderheaderId.pgType, PgTypes.int4, PurchaseorderdetailId.apply, row => Array[Any](row.purchaseorderid, row.purchaseorderdetailid))
+}

@@ -8,6 +8,8 @@ package adventureworks.person.personphone;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.person.phonenumbertype.PhonenumbertypeId;
 import adventureworks.public_.Phone;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `person.personphone` */
 public record PersonphoneId(
@@ -25,5 +27,14 @@ public record PersonphoneId(
   public PersonphoneId withPhonenumbertypeid(PhonenumbertypeId phonenumbertypeid) {
     return new PersonphoneId(businessentityid, phonenumber, phonenumbertypeid);
   }
+  ;
+
+  public static RowParser<PersonphoneId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          Phone.pgType,
+          PhonenumbertypeId.pgType,
+          PersonphoneId::new,
+          row -> new Object[] {row.businessentityid(), row.phonenumber(), row.phonenumbertypeid()});
   ;
 }

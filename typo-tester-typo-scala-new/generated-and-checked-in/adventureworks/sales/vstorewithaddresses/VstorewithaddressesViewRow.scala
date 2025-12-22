@@ -34,17 +34,5 @@ case class VstorewithaddressesViewRow(
 )
 
 object VstorewithaddressesViewRow {
-  val `_rowParser`: RowParser[VstorewithaddressesViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new VstorewithaddressesViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8
-    ))(row => Array[Any](row.businessentityid, row.name, row.addresstype, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname))
-  }
+  val `_rowParser`: RowParser[VstorewithaddressesViewRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType)(VstorewithaddressesViewRow.apply)(row => Array[Any](row.businessentityid, row.name, row.addresstype, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname))
 }

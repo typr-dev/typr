@@ -8,10 +8,6 @@ package testdb.categories
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `categories` which has not been persisted yet */
 data class CategoriesRowUnsaved(
@@ -53,23 +49,4 @@ data class CategoriesRowUnsaved(
     metadataDefault: () -> String?,
     categoryIdDefault: () -> CategoriesId
   ): CategoriesRow = CategoriesRow(categoryId = categoryIdDefault(), parentId = parentId.getOrElse(parentIdDefault), name = name, slug = slug, description = description.getOrElse(descriptionDefault), imageUrl = imageUrl.getOrElse(imageUrlDefault), sortOrder = sortOrder.getOrElse(sortOrderDefault), isVisible = isVisible.getOrElse(isVisibleDefault), metadata = metadata.getOrElse(metadataDefault))
-
-  companion object {
-    val mariaText: MariaText<CategoriesRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.slug, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(CategoriesId.pgType.nullable().mariaText()).unsafeEncode(row.parentId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.mediumtext.nullable().mariaText()).unsafeEncode(row.description, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.imageUrl, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.smallint.mariaText()).unsafeEncode(row.sortOrder, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isVisible, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.metadata, sb) })
-  }
 }

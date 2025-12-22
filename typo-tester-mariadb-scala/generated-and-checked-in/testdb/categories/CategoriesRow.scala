@@ -7,7 +7,6 @@ package testdb.categories
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -76,19 +75,5 @@ case class CategoriesRow(
 }
 
 object CategoriesRow {
-  val `_rowParser`: RowParser[CategoriesRow] = {
-    RowParsers.of(CategoriesId.pgType, CategoriesId.pgType.nullable, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.smallint, ScalaDbTypes.MariaTypes.bool, MariaTypes.longtext.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new CategoriesRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8
-    ))(row => Array[Any](row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata))
-  }
-
-  given mariaText: MariaText[CategoriesRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[CategoriesRow] = RowParsers.of(CategoriesId.pgType, CategoriesId.pgType.nullable, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.smallint, ScalaDbTypes.MariaTypes.bool, MariaTypes.longtext.nullable)(CategoriesRow.apply)(row => Array[Any](row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata))
 }

@@ -25,11 +25,11 @@ public record OnlyPkColumnsRow(
   }
   ;
 
-  static RowParser<OnlyPkColumnsRow> _rowParser =
+  public static RowParser<OnlyPkColumnsRow> _rowParser =
       RowParsers.of(
           PgTypes.text,
           PgTypes.int4,
-          (t0, t1) -> new OnlyPkColumnsRow(t0, t1),
+          OnlyPkColumnsRow::new,
           row -> new Object[] {row.keyColumn1(), row.keyColumn2()});
   ;
 

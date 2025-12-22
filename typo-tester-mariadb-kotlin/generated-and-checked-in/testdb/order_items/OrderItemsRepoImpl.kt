@@ -37,7 +37,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in itemIds) { fragments.add(Fragment.encode(OrderItemsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `order_items` where `item_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `order_items` where `item_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -91,7 +91,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
       { value -> columns.add(Fragment.lit("`notes`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.tinytext.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `order_items`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `order_items`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`\n"))
     return q.updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -110,7 +110,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   ): List<OrderItemsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in itemIds) { fragments.add(Fragment.encode(OrderItemsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes` from `order_items` where `item_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(OrderItemsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes` from `order_items` where `item_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(OrderItemsRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

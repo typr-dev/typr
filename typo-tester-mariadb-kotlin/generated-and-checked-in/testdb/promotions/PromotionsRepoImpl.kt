@@ -34,7 +34,7 @@ class PromotionsRepoImpl() : PromotionsRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in promotionIds) { fragments.add(Fragment.encode(PromotionsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `promotions` where `promotion_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `promotions` where `promotion_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -106,7 +106,7 @@ class PromotionsRepoImpl() : PromotionsRepo {
       { value -> columns.add(Fragment.lit("`created_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `promotions`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `promotions`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`\n"))
     return q.updateReturning(PromotionsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -125,7 +125,7 @@ class PromotionsRepoImpl() : PromotionsRepo {
   ): List<PromotionsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in promotionIds) { fragments.add(Fragment.encode(PromotionsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at` from `promotions` where `promotion_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(PromotionsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at` from `promotions` where `promotion_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(PromotionsRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

@@ -66,17 +66,7 @@ case class ProductinventoryRow(
 }
 
 object ProductinventoryRow {
-  val `_rowParser`: RowParser[ProductinventoryRow] = {
-    RowParsers.of(ProductId.pgType, LocationId.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6) => new ProductinventoryRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ))(row => Array[Any](row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[ProductinventoryRow] = RowParsers.of(ProductId.pgType, LocationId.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, PgTypes.uuid, PgTypes.timestamp)(ProductinventoryRow.apply)(row => Array[Any](row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate))
 
   def apply(
     compositeId: ProductinventoryId,

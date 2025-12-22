@@ -12,7 +12,6 @@ import testdb.customers.CustomersId;
 import testdb.customtypes.Defaulted;
 import testdb.order_items.OrderItemsId;
 import testdb.products.ProductsId;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -487,7 +486,7 @@ public record ReviewsRow(
   }
   ;
 
-  static RowParser<ReviewsRow> _rowParser =
+  public static RowParser<ReviewsRow> _rowParser =
       RowParsers.of(
           ReviewsId.pgType,
           ProductsId.pgType,
@@ -507,9 +506,7 @@ public record ReviewsRow(
           MariaTypes.datetime.opt(),
           MariaTypes.datetime,
           MariaTypes.datetime,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) ->
-              new ReviewsRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17),
+          ReviewsRow::new,
           row ->
               new Object[] {
                 row.reviewId(),
@@ -532,8 +529,6 @@ public record ReviewsRow(
                 row.updatedAt()
               });
   ;
-
-  public static MariaText<ReviewsRow> mariaText = MariaText.from(_rowParser);
 
   public ReviewsId id() {
     return reviewId;

@@ -8,9 +8,6 @@ package testdb.customer_status
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `customer_status` which has not been persisted yet */
 data class CustomerStatusRowUnsaved(
@@ -24,13 +21,4 @@ data class CustomerStatusRowUnsaved(
   @JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
 ) {
   fun toRow(isActiveDefault: () -> Boolean): CustomerStatusRow = CustomerStatusRow(statusCode = statusCode, description = description, isActive = isActive.getOrElse(isActiveDefault))
-
-  companion object {
-    val mariaText: MariaText<CustomerStatusRowUnsaved> =
-      MariaText.instance({ row, sb -> CustomerStatusId.pgType.mariaText().unsafeEncode(row.statusCode, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.description, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb) })
-  }
 }

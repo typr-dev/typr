@@ -46,12 +46,12 @@ public record IllustrationRow(
   }
   ;
 
-  static RowParser<IllustrationRow> _rowParser =
+  public static RowParser<IllustrationRow> _rowParser =
       RowParsers.of(
           IllustrationId.pgType,
           PgTypes.xml.opt(),
           PgTypes.timestamp,
-          (t0, t1, t2) -> new IllustrationRow(t0, t1, t2),
+          IllustrationRow::new,
           row -> new Object[] {row.illustrationid(), row.diagram(), row.modifieddate()});
   ;
 

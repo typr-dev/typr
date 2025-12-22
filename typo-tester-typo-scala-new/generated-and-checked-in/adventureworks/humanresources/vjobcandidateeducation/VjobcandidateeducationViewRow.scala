@@ -32,21 +32,5 @@ case class VjobcandidateeducationViewRow(
 )
 
 object VjobcandidateeducationViewRow {
-  val `_rowParser`: RowParser[VjobcandidateeducationViewRow] = {
-    RowParsers.of(JobcandidateId.pgType, PgTypes.text.nullable, PgTypes.date.nullable, PgTypes.date.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) => new VjobcandidateeducationViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12
-    ))(row => Array[Any](row.jobcandidateid, row.eduLevel, row.eduStartDate, row.eduEndDate, row.eduDegree, row.eduMajor, row.eduMinor, row.eduGPA, row.eduGPAScale, row.eduSchool, row.eduLocCountryRegion, row.eduLocState, row.eduLocCity))
-  }
+  val `_rowParser`: RowParser[VjobcandidateeducationViewRow] = RowParsers.of(JobcandidateId.pgType, PgTypes.text.nullable, PgTypes.date.nullable, PgTypes.date.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable, PgTypes.text.nullable)(VjobcandidateeducationViewRow.apply)(row => Array[Any](row.jobcandidateid, row.eduLevel, row.eduStartDate, row.eduEndDate, row.eduDegree, row.eduMajor, row.eduMinor, row.eduGPA, row.eduGPAScale, row.eduSchool, row.eduLocCountryRegion, row.eduLocState, row.eduLocCity))
 }

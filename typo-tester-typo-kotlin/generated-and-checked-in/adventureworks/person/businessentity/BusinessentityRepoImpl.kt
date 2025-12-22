@@ -61,7 +61,7 @@ class BusinessentityRepoImpl() : BusinessentityRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = (if (columns.isEmpty()) Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\" default values\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n")) else Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n")))
+    val q: Fragment = (if (columns.isEmpty()) Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\" default values\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n")) else Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n")))
     return q.updateReturning(BusinessentityRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

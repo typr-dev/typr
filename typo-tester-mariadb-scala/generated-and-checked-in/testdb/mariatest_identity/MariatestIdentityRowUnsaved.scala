@@ -5,8 +5,7 @@
  */
 package testdb.mariatest_identity
 
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
+
 
 /** This class corresponds to a row in table `mariatest_identity` which has not been persisted yet */
 case class MariatestIdentityRowUnsaved(
@@ -14,8 +13,4 @@ case class MariatestIdentityRowUnsaved(
   name: String
 ) {
   def toRow(idDefault: => MariatestIdentityId): MariatestIdentityRow = new MariatestIdentityRow(id = idDefault, name = name)
-}
-
-object MariatestIdentityRowUnsaved {
-  given mariaText: MariaText[MariatestIdentityRowUnsaved] = MariaText.instance((row, sb) => { MariaTypes.varchar.mariaText.unsafeEncode(row.name, sb) })
 }

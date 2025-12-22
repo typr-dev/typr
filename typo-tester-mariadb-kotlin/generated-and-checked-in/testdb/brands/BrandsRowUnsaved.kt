@@ -8,10 +8,6 @@ package testdb.brands
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `brands` which has not been persisted yet */
 data class BrandsRowUnsaved(
@@ -43,19 +39,4 @@ data class BrandsRowUnsaved(
     isActiveDefault: () -> Boolean,
     brandIdDefault: () -> BrandsId
   ): BrandsRow = BrandsRow(brandId = brandIdDefault(), name = name, slug = slug, logoBlob = logoBlob.getOrElse(logoBlobDefault), websiteUrl = websiteUrl.getOrElse(websiteUrlDefault), countryOfOrigin = countryOfOrigin.getOrElse(countryOfOriginDefault), isActive = isActive.getOrElse(isActiveDefault))
-
-  companion object {
-    val mariaText: MariaText<BrandsRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.slug, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.mediumblob.nullable().mariaText()).unsafeEncode(row.logoBlob, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.websiteUrl, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.char_.nullable().mariaText()).unsafeEncode(row.countryOfOrigin, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb) })
-  }
 }

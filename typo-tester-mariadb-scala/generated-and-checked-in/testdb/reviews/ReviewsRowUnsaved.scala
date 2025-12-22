@@ -12,10 +12,6 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.order_items.OrderItemsId
 import testdb.products.ProductsId
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `reviews` which has not been persisted yet */
 case class ReviewsRowUnsaved(
@@ -124,8 +120,4 @@ case class ReviewsRowUnsaved(
       updatedAt = updatedAt.getOrElse(updatedAtDefault)
     )
   }
-}
-
-object ReviewsRowUnsaved {
-  given mariaText: MariaText[ReviewsRowUnsaved] = MariaText.instance((row, sb) => { ProductsId.pgType.mariaText.unsafeEncode(row.productId, sb); sb.append(MariaText.DELIMETER); CustomersId.pgType.mariaText.unsafeEncode(row.customerId, sb); sb.append(MariaText.DELIMETER); ScalaDbTypes.MariaTypes.tinyintUnsigned.mariaText.unsafeEncode(row.rating, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using OrderItemsId.pgType.nullable.mariaText).unsafeEncode(row.orderItemId, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.title, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.text.nullable.mariaText).unsafeEncode(row.content, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longtext.nullable.mariaText).unsafeEncode(row.pros, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longtext.nullable.mariaText).unsafeEncode(row.cons, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longtext.nullable.mariaText).unsafeEncode(row.images, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isVerifiedPurchase, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isApproved, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.intUnsigned.mariaText).unsafeEncode(row.helpfulVotes, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.intUnsigned.mariaText).unsafeEncode(row.unhelpfulVotes, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.text.nullable.mariaText).unsafeEncode(row.adminResponse, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.nullable.mariaText).unsafeEncode(row.respondedAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.mariaText).unsafeEncode(row.createdAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.mariaText).unsafeEncode(row.updatedAt, sb) })
 }

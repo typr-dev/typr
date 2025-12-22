@@ -53,6 +53,16 @@ object Operation {
       new UpdateReturning(new typo.runtime.Operation.UpdateReturning(query.underlying, parser.underlying))
   }
 
+  /** Update operation with generated keys (Oracle-specific for databases without RETURNING clause) */
+  class UpdateReturningGeneratedKeys[Out](val underlying: typo.runtime.Operation.UpdateReturningGeneratedKeys[Out]) extends Operation[Out] {
+    override def run(conn: Connection): Out = underlying.run(conn)
+  }
+
+  object UpdateReturningGeneratedKeys {
+    def apply[Out](query: Fragment, columnNames: Array[String], parser: ResultSetParser[Out]): UpdateReturningGeneratedKeys[Out] =
+      new UpdateReturningGeneratedKeys(new typo.runtime.Operation.UpdateReturningGeneratedKeys(query.underlying, columnNames, parser.underlying))
+  }
+
   /** Batch update operation that returns an array of update counts */
   class UpdateMany[Row](val underlying: typo.runtime.Operation.UpdateMany[Row]) extends Operation[Array[Int]] {
     override def run(conn: Connection): Array[Int] = underlying.run(conn)

@@ -83,14 +83,14 @@ public record PdViewRow(
   }
   ;
 
-  static RowParser<PdViewRow> _rowParser =
+  public static RowParser<PdViewRow> _rowParser =
       RowParsers.of(
           ProductdescriptionId.pgType,
           ProductdescriptionId.pgType,
           PgTypes.text,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new PdViewRow(t0, t1, t2, t3, t4),
+          PdViewRow::new,
           row ->
               new Object[] {
                 row.id(),

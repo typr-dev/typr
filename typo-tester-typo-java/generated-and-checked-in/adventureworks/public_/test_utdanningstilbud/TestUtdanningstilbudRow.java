@@ -37,11 +37,11 @@ public record TestUtdanningstilbudRow(
   }
   ;
 
-  static RowParser<TestUtdanningstilbudRow> _rowParser =
+  public static RowParser<TestUtdanningstilbudRow> _rowParser =
       RowParsers.of(
           TestOrganisasjonId.pgType,
           PgTypes.text,
-          (t0, t1) -> new TestUtdanningstilbudRow(t0, t1),
+          TestUtdanningstilbudRow::new,
           row -> new Object[] {row.organisasjonskode(), row.utdanningsmulighetKode()});
   ;
 

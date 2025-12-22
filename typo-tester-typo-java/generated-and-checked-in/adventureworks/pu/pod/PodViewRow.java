@@ -255,7 +255,7 @@ public record PodViewRow(
   }
   ;
 
-  static RowParser<PodViewRow> _rowParser =
+  public static RowParser<PodViewRow> _rowParser =
       RowParsers.of(
           PgTypes.int4,
           PurchaseorderheaderId.pgType,
@@ -267,8 +267,7 @@ public record PodViewRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new PodViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          PodViewRow::new,
           row ->
               new Object[] {
                 row.id(),

@@ -7,7 +7,6 @@ package testdb.customer_status;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import testdb.customtypes.Defaulted;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -38,16 +37,14 @@ public record CustomerStatusRow(
   }
   ;
 
-  static RowParser<CustomerStatusRow> _rowParser =
+  public static RowParser<CustomerStatusRow> _rowParser =
       RowParsers.of(
           CustomerStatusId.pgType,
           MariaTypes.varchar,
           MariaTypes.bool,
-          (t0, t1, t2) -> new CustomerStatusRow(t0, t1, t2),
+          CustomerStatusRow::new,
           row -> new Object[] {row.statusCode(), row.description(), row.isActive()});
   ;
-
-  public static MariaText<CustomerStatusRow> mariaText = MariaText.from(_rowParser);
 
   public CustomerStatusId id() {
     return statusCode;

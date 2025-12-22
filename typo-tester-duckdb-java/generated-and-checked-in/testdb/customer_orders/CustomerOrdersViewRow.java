@@ -64,7 +64,7 @@ public record CustomerOrdersViewRow(
   }
   ;
 
-  static RowParser<CustomerOrdersViewRow> _rowParser =
+  public static RowParser<CustomerOrdersViewRow> _rowParser =
       RowParsers.of(
           DuckDbTypes.integer.opt(),
           DuckDbTypes.varchar.opt(),
@@ -73,7 +73,7 @@ public record CustomerOrdersViewRow(
           DuckDbTypes.date.opt(),
           DuckDbTypes.numeric.opt(),
           DuckDbTypes.varchar.opt(),
-          (t0, t1, t2, t3, t4, t5, t6) -> new CustomerOrdersViewRow(t0, t1, t2, t3, t4, t5, t6),
+          CustomerOrdersViewRow::new,
           row ->
               new Object[] {
                 row.customerId(),

@@ -7,9 +7,15 @@ package adventureworks.sales.salesorderheadersalesreason
 
 import adventureworks.sales.salesorderheader.SalesorderheaderId
 import adventureworks.sales.salesreason.SalesreasonId
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `sales.salesorderheadersalesreason` */
 data class SalesorderheadersalesreasonId(
   val salesorderid: SalesorderheaderId,
   val salesreasonid: SalesreasonId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<SalesorderheadersalesreasonId> = RowParsers.of(SalesorderheaderId.pgType, SalesreasonId.pgType, { t0, t1 -> SalesorderheadersalesreasonId(t0, t1) }, { row -> arrayOf<Any?>(row.salesorderid, row.salesreasonid) })
+  }
+}

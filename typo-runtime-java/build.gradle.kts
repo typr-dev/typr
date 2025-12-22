@@ -25,6 +25,7 @@ dependencies {
     api("org.jetbrains:annotations:26.0.1")
     api("org.mariadb.jdbc:mariadb-java-client:3.5.1")
     api("org.duckdb:duckdb_jdbc:1.1.3")
+    api("com.oracle.database.jdbc:ojdbc11:23.6.0.24.10")
 }
 
 tasks.withType<JavaCompile> {

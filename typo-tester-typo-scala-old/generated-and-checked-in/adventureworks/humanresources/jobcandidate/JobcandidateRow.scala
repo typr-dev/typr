@@ -49,14 +49,7 @@ case class JobcandidateRow(
 }
 
 object JobcandidateRow {
-  val `_rowParser`: RowParser[JobcandidateRow] = {
-    RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), PgTypes.xml.opt(), PgTypes.timestamp, (t0, t1, t2, t3) => new JobcandidateRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ), row => Array[Any](row.jobcandidateid, row.businessentityid, row.resume, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[JobcandidateRow] = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType.opt(), PgTypes.xml.opt(), PgTypes.timestamp, JobcandidateRow.apply, row => Array[Any](row.jobcandidateid, row.businessentityid, row.resume, row.modifieddate))
 
   given pgText: PgText[JobcandidateRow] = PgText.from(`_rowParser`)
 }

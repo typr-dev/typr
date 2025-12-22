@@ -33,7 +33,7 @@ class CustomerStatusRepoImpl() : CustomerStatusRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in statusCodes) { fragments.add(Fragment.encode(CustomerStatusId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `customer_status` where `status_code` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `customer_status` where `status_code` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -57,7 +57,7 @@ class CustomerStatusRepoImpl() : CustomerStatusRepo {
       { value -> columns.add(Fragment.lit("`is_active`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customer_status`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `status_code`, `description`, `is_active`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customer_status`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `status_code`, `description`, `is_active`\n"))
     return q.updateReturning(CustomerStatusRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -76,7 +76,7 @@ class CustomerStatusRepoImpl() : CustomerStatusRepo {
   ): List<CustomerStatusRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in statusCodes) { fragments.add(Fragment.encode(CustomerStatusId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `status_code`, `description`, `is_active` from `customer_status` where `status_code` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(CustomerStatusRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `status_code`, `description`, `is_active` from `customer_status` where `status_code` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CustomerStatusRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

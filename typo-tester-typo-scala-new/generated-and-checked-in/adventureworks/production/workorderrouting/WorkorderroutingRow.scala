@@ -87,22 +87,7 @@ case class WorkorderroutingRow(
 }
 
 object WorkorderroutingRow {
-  val `_rowParser`: RowParser[WorkorderroutingRow] = {
-    RowParsers.of(WorkorderId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int2, LocationId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp.nullable, PgTypes.timestamp.nullable, ScalaDbTypes.PgTypes.numeric.nullable, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric.nullable, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) => new WorkorderroutingRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11
-    ))(row => Array[Any](row.workorderid, row.productid, row.operationsequence, row.locationid, row.scheduledstartdate, row.scheduledenddate, row.actualstartdate, row.actualenddate, row.actualresourcehrs, row.plannedcost, row.actualcost, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[WorkorderroutingRow] = RowParsers.of(WorkorderId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int2, LocationId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp.nullable, PgTypes.timestamp.nullable, ScalaDbTypes.PgTypes.numeric.nullable, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric.nullable, PgTypes.timestamp)(WorkorderroutingRow.apply)(row => Array[Any](row.workorderid, row.productid, row.operationsequence, row.locationid, row.scheduledstartdate, row.scheduledenddate, row.actualstartdate, row.actualenddate, row.actualresourcehrs, row.plannedcost, row.actualcost, row.modifieddate))
 
   def apply(
     compositeId: WorkorderroutingId,

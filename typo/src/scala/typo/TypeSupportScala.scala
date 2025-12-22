@@ -34,6 +34,8 @@ object TypeSupportScala extends TypeSupport {
     def isDefined(opt: jvm.Code): jvm.Code = code"$opt.isDefined"
     def filterMapOrElse(opt: jvm.Code, predicate: jvm.Code, mapper: jvm.Code, default: jvm.Code): jvm.Code =
       code"$opt.filter($predicate).map($mapper).getOrElse($default)"
+    def toJavaOptional(opt: jvm.Code): jvm.Code =
+      code"${jvm.Import(jvm.Type.Qualified("scala.jdk.OptionConverters.RichOption"))}$opt.asJava"
   }
 
   override object Random extends RandomSupport {
@@ -77,6 +79,18 @@ object TypeSupportScala extends TypeSupport {
 
     def listMapToArray(list: jvm.Code, mapper: jvm.Code, arrayGenerator: jvm.Code): jvm.Code =
       code"$list.map($mapper).toArray"
+
+    def fromJavaList(javaList: jvm.Code, elementType: jvm.Type): jvm.Code = {
+      // Use specific import for Scala 3 compatibility (wildcard `_` doesn't work in Scala 3)
+      val listHasAsScala = jvm.Type.Qualified("scala.jdk.CollectionConverters.ListHasAsScala")
+      code"${jvm.Import(listHasAsScala, isStatic = false)}$javaList.asScala.toList"
+    }
+
+    def toJavaList(nativeList: jvm.Code, elementType: jvm.Type): jvm.Code = {
+      // Use specific import for Scala 3 compatibility (wildcard `_` doesn't work in Scala 3)
+      val seqHasAsJava = jvm.Type.Qualified("scala.jdk.CollectionConverters.SeqHasAsJava")
+      code"${jvm.Import(seqHasAsJava, isStatic = false)}$nativeList.asJava"
+    }
   }
 
   override object MapOps extends MapSupport {
@@ -133,6 +147,9 @@ object TypeSupportScala extends TypeSupport {
 
     def forEach(iterator: jvm.Code, lambda: jvm.Code): jvm.Code =
       code"$iterator.foreach($lambda)"
+
+    def toJavaIterator(iterator: jvm.Code): jvm.Code =
+      code"${jvm.Import(jvm.Type.Qualified("typo.scaladsl.ScalaIteratorOps"))}$iterator.toJavaIterator"
   }
 
   override object MutableListOps extends MutableListSupport {

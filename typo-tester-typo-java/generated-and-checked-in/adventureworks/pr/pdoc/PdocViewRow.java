@@ -58,13 +58,13 @@ public record PdocViewRow(
   }
   ;
 
-  static RowParser<PdocViewRow> _rowParser =
+  public static RowParser<PdocViewRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           ProductId.pgType,
           PgTypes.timestamp,
           DocumentId.pgType,
-          (t0, t1, t2, t3) -> new PdocViewRow(t0, t1, t2, t3),
+          PdocViewRow::new,
           row -> new Object[] {row.id(), row.productid(), row.modifieddate(), row.documentnode()});
   ;
 }

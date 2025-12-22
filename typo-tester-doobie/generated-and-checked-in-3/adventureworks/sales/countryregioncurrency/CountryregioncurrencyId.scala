@@ -7,6 +7,7 @@ package adventureworks.sales.countryregioncurrency
 
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.sales.currency.CurrencyId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object CountryregioncurrencyId {
   given decoder: Decoder[CountryregioncurrencyId] = Decoder.forProduct2[CountryregioncurrencyId, CountryregionId, CurrencyId]("countryregioncode", "currencycode")(CountryregioncurrencyId.apply)(using CountryregionId.decoder, CurrencyId.decoder)
 
   given encoder: Encoder[CountryregioncurrencyId] = Encoder.forProduct2[CountryregioncurrencyId, CountryregionId, CurrencyId]("countryregioncode", "currencycode")(x => (x.countryregioncode, x.currencycode))(using CountryregionId.encoder, CurrencyId.encoder)
+
+  given read: Read[CountryregioncurrencyId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(CountryregionId.get).asInstanceOf[Read[Any]],
+        new Read.Single(CurrencyId.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      CountryregioncurrencyId(
+        countryregioncode = arr(0).asInstanceOf[CountryregionId],
+            currencycode = arr(1).asInstanceOf[CurrencyId]
+      )
+    }
+  }
 }

@@ -10,13 +10,21 @@ class Naming(val pkg: jvm.QIdent, lang: Lang) {
 
     source match {
       case relation: Source.Relation =>
-        (pkg / relation.name.schema.toList.map(pkgSafe), relation.name.name)
+        (pkg / relation.name.schema.toList.map(pkgSafe), normalizeOracleName(relation.name.name))
       case Source.SqlFile(relPath) => forRelPath(relPath)
     }
   }
 
+  // Normalize Oracle SCREAMING_CASE identifiers to lowercase for package/directory names
+  private def normalizeOracleName(str: String): String =
+    if (str.nonEmpty && str.forall(c => c.isUpper || c.isDigit || c == '_' || c == '-' || c == '.')) {
+      str.toLowerCase
+    } else {
+      str
+    }
+
   // not enough, but covers a common case
-  def pkgSafe(str: String): jvm.Ident = jvm.Ident(lang.escapedIdent(str))
+  def pkgSafe(str: String): jvm.Ident = jvm.Ident(lang.escapedIdent(normalizeOracleName(str)))
 
   def suffixFor(source: Source): String =
     source match {
@@ -55,6 +63,9 @@ class Naming(val pkg: jvm.QIdent, lang: Lang) {
   def domainName(name: db.RelationName): jvm.QIdent =
     tpe(name, "")
 
+  def objectTypeName(name: db.RelationName): jvm.QIdent =
+    tpe(name, "")
+
   def enumValue(name: String): jvm.Ident = jvm.Ident(name)
 
   // field names
@@ -80,8 +91,15 @@ object Naming {
   def camelCaseIdent(strings: Array[String]): jvm.Ident =
     jvm.Ident(camelCase(strings))
 
-  def splitOnSymbol(str: String): Array[String] =
-    str.split("[\\-_.]")
+  def splitOnSymbol(str: String): Array[String] = {
+    // Normalize Oracle SCREAMING_CASE to lowercase before splitting
+    val normalized = if (str.nonEmpty && str.forall(c => c.isUpper || c.isDigit || c == '_' || c == '-' || c == '.')) {
+      str.toLowerCase
+    } else {
+      str
+    }
+    normalized.split("[\\-_.]")
+  }
 
   def camelCase(strings: Array[String]): String =
     strings

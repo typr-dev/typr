@@ -90,7 +90,7 @@ class PersonRepoImpl() : PersonRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"person\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"person\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(PersonRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

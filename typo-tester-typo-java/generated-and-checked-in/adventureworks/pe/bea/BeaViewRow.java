@@ -100,7 +100,7 @@ public record BeaViewRow(
   }
   ;
 
-  static RowParser<BeaViewRow> _rowParser =
+  public static RowParser<BeaViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
@@ -108,7 +108,7 @@ public record BeaViewRow(
           AddresstypeId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new BeaViewRow(t0, t1, t2, t3, t4, t5),
+          BeaViewRow::new,
           row ->
               new Object[] {
                 row.id(),

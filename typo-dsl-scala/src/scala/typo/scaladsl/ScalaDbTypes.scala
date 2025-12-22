@@ -1,6 +1,6 @@
 package typo.scaladsl
 
-import typo.runtime.{DuckDbType, MariaType, PgType}
+import typo.runtime.{DuckDbType, MariaType, OracleType, PgType}
 
 import scala.jdk.CollectionConverters.*
 
@@ -130,5 +130,14 @@ object ScalaDbTypes {
     // Boolean
     val bool: MariaType[Boolean] = typo.runtime.MariaTypes.bool.bimap(b => b, b => b)
     val bit1: MariaType[Boolean] = typo.runtime.MariaTypes.bit1.bimap(b => b, b => b)
+  }
+
+  object OracleTypes {
+    // BigDecimal - convert Java BigDecimal to Scala BigDecimal (Oracle NUMBER type)
+    val number: OracleType[BigDecimal] = typo.runtime.OracleTypes.number.bimap(jbd => BigDecimal(jbd), sbd => sbd.bigDecimal)
+
+    // Floating point primitives - no conversion needed
+    val binaryFloat: OracleType[Float] = typo.runtime.OracleTypes.binaryFloat.bimap(f => f, f => f)
+    val binaryDouble: OracleType[Double] = typo.runtime.OracleTypes.binaryDouble.bimap(d => d, d => d)
   }
 }

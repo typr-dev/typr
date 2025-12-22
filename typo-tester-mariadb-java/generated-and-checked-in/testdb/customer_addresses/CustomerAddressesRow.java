@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.mariadb.jdbc.type.Point;
 import testdb.customers.CustomersId;
 import testdb.customtypes.Defaulted;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -326,7 +325,7 @@ public record CustomerAddressesRow(
   }
   ;
 
-  static RowParser<CustomerAddressesRow> _rowParser =
+  public static RowParser<CustomerAddressesRow> _rowParser =
       RowParsers.of(
           CustomerAddressesId.pgType,
           CustomersId.pgType,
@@ -342,8 +341,7 @@ public record CustomerAddressesRow(
           MariaTypes.point.opt(),
           MariaTypes.tinytext.opt(),
           MariaTypes.datetime,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) ->
-              new CustomerAddressesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13),
+          CustomerAddressesRow::new,
           row ->
               new Object[] {
                 row.addressId(),
@@ -362,8 +360,6 @@ public record CustomerAddressesRow(
                 row.createdAt()
               });
   ;
-
-  public static MariaText<CustomerAddressesRow> mariaText = MariaText.from(_rowParser);
 
   public CustomerAddressesId id() {
     return addressId;

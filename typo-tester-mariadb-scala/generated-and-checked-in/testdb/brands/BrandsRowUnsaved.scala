@@ -8,10 +8,6 @@ package testdb.brands
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `brands` which has not been persisted yet */
 case class BrandsRowUnsaved(
@@ -53,8 +49,4 @@ case class BrandsRowUnsaved(
       isActive = isActive.getOrElse(isActiveDefault)
     )
   }
-}
-
-object BrandsRowUnsaved {
-  given mariaText: MariaText[BrandsRowUnsaved] = MariaText.instance((row, sb) => { MariaTypes.varchar.mariaText.unsafeEncode(row.name, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.slug, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.mediumblob.nullable.mariaText).unsafeEncode(row.logoBlob, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.websiteUrl, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.char_.nullable.mariaText).unsafeEncode(row.countryOfOrigin, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isActive, sb) })
 }

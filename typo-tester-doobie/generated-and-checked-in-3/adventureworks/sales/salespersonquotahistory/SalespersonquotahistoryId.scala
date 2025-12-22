@@ -7,6 +7,7 @@ package adventureworks.sales.salespersonquotahistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.businessentity.BusinessentityId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object SalespersonquotahistoryId {
   given decoder: Decoder[SalespersonquotahistoryId] = Decoder.forProduct2[SalespersonquotahistoryId, BusinessentityId, TypoLocalDateTime]("businessentityid", "quotadate")(SalespersonquotahistoryId.apply)(using BusinessentityId.decoder, TypoLocalDateTime.decoder)
 
   given encoder: Encoder[SalespersonquotahistoryId] = Encoder.forProduct2[SalespersonquotahistoryId, BusinessentityId, TypoLocalDateTime]("businessentityid", "quotadate")(x => (x.businessentityid, x.quotadate))(using BusinessentityId.encoder, TypoLocalDateTime.encoder)
+
+  given read: Read[SalespersonquotahistoryId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(TypoLocalDateTime.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      SalespersonquotahistoryId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            quotadate = arr(1).asInstanceOf[TypoLocalDateTime]
+      )
+    }
+  }
 }

@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typo.runtime.DuckDbText;
 import typo.runtime.DuckDbTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -61,7 +60,7 @@ public record EmployeesRow(
   }
   ;
 
-  static RowParser<EmployeesRow> _rowParser =
+  public static RowParser<EmployeesRow> _rowParser =
       RowParsers.of(
           DuckDbTypes.integer,
           DuckDbTypes.varchar,
@@ -70,7 +69,7 @@ public record EmployeesRow(
           DuckDbTypes.varchar,
           DuckDbTypes.numeric.opt(),
           DuckDbTypes.date,
-          (t0, t1, t2, t3, t4, t5, t6) -> new EmployeesRow(t0, t1, t2, t3, t4, t5, t6),
+          EmployeesRow::new,
           row ->
               new Object[] {
                 row.empNumber(),
@@ -100,8 +99,6 @@ public record EmployeesRow(
         hireDate);
   }
   ;
-
-  public static DuckDbText<EmployeesRow> duckDbText = DuckDbText.from(_rowParser);
 
   public EmployeesId compositeId() {
     return new EmployeesId(empNumber, empSuffix);

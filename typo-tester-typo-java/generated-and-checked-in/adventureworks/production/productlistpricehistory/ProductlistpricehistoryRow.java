@@ -84,14 +84,14 @@ public record ProductlistpricehistoryRow(
   }
   ;
 
-  static RowParser<ProductlistpricehistoryRow> _rowParser =
+  public static RowParser<ProductlistpricehistoryRow> _rowParser =
       RowParsers.of(
           ProductId.pgType,
           PgTypes.timestamp,
           PgTypes.timestamp.opt(),
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new ProductlistpricehistoryRow(t0, t1, t2, t3, t4),
+          ProductlistpricehistoryRow::new,
           row ->
               new Object[] {
                 row.productid(), row.startdate(), row.enddate(), row.listprice(), row.modifieddate()

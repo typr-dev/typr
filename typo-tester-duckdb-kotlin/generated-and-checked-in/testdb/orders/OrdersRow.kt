@@ -13,7 +13,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 
 /** Table: orders
@@ -37,8 +36,5 @@ data class OrdersRow(
 
   companion object {
     val _rowParser: RowParser<OrdersRow> = RowParsers.of(OrdersId.duckDbType, KotlinDbTypes.DuckDbTypes.integer, DuckDbTypes.date, DuckDbTypes.numeric.nullable(), DuckDbTypes.varchar.nullable(), { t0, t1, t2, t3, t4 -> OrdersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status) })
-
-    val duckDbText: DuckDbText<OrdersRow> =
-      DuckDbText.from(_rowParser.underlying)
   }
 }

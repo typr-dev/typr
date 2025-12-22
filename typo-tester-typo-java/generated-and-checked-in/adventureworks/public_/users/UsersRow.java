@@ -61,7 +61,7 @@ public record UsersRow(
   }
   ;
 
-  static RowParser<UsersRow> _rowParser =
+  public static RowParser<UsersRow> _rowParser =
       RowParsers.of(
           UsersId.pgType,
           PgTypes.text,
@@ -70,7 +70,7 @@ public record UsersRow(
           PgTypes.text,
           PgTypes.timestamptz,
           PgTypes.timestamptz.opt(),
-          (t0, t1, t2, t3, t4, t5, t6) -> new UsersRow(t0, t1, t2, t3, t4, t5, t6),
+          UsersRow::new,
           row ->
               new Object[] {
                 row.userId(),

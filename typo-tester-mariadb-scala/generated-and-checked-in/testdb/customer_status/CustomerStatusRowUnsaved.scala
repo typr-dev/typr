@@ -8,9 +8,6 @@ package testdb.customer_status
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `customer_status` which has not been persisted yet */
 case class CustomerStatusRowUnsaved(
@@ -24,8 +21,4 @@ case class CustomerStatusRowUnsaved(
   @JsonProperty("is_active") isActive: Defaulted[Boolean] = new UseDefault()
 ) {
   def toRow(isActiveDefault: => Boolean): CustomerStatusRow = new CustomerStatusRow(statusCode = statusCode, description = description, isActive = isActive.getOrElse(isActiveDefault))
-}
-
-object CustomerStatusRowUnsaved {
-  given mariaText: MariaText[CustomerStatusRowUnsaved] = MariaText.instance((row, sb) => { CustomerStatusId.pgType.mariaText.unsafeEncode(row.statusCode, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.description, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isActive, sb) })
 }

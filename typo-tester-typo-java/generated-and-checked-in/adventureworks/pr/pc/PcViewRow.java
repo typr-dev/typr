@@ -71,14 +71,14 @@ public record PcViewRow(
   }
   ;
 
-  static RowParser<PcViewRow> _rowParser =
+  public static RowParser<PcViewRow> _rowParser =
       RowParsers.of(
           ProductcategoryId.pgType,
           ProductcategoryId.pgType,
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new PcViewRow(t0, t1, t2, t3, t4),
+          PcViewRow::new,
           row ->
               new Object[] {
                 row.id(), row.productcategoryid(), row.name(), row.rowguid(), row.modifieddate()

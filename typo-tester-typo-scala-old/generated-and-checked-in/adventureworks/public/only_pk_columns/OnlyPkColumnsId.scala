@@ -6,9 +6,16 @@
 package adventureworks.public.only_pk_columns
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import typo.runtime.PgTypes
+import typo.runtime.RowParser
+import typo.runtime.RowParsers
 
 /** Type for the composite primary key of table `public.only_pk_columns` */
 case class OnlyPkColumnsId(
   @JsonProperty("key_column_1") keyColumn1: String,
   @JsonProperty("key_column_2") keyColumn2: Integer
 )
+
+object OnlyPkColumnsId {
+  val `_rowParser`: RowParser[OnlyPkColumnsId] = RowParsers.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsId.apply, row => Array[Any](row.keyColumn1, row.keyColumn2))
+}

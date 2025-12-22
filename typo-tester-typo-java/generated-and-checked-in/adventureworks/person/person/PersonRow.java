@@ -337,7 +337,7 @@ public record PersonRow(
   }
   ;
 
-  static RowParser<PersonRow> _rowParser =
+  public static RowParser<PersonRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.bpchar,
@@ -352,8 +352,7 @@ public record PersonRow(
           PgTypes.xml.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) ->
-              new PersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12),
+          PersonRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

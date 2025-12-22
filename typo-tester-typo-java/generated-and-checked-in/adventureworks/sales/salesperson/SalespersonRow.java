@@ -216,7 +216,7 @@ public record SalespersonRow(
   }
   ;
 
-  static RowParser<SalespersonRow> _rowParser =
+  public static RowParser<SalespersonRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           SalesterritoryId.pgType.opt(),
@@ -227,8 +227,7 @@ public record SalespersonRow(
           PgTypes.numeric,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
-              new SalespersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          SalespersonRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.orders.OrdersId;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -145,7 +144,7 @@ public record OrderHistoryRow(
   }
   ;
 
-  static RowParser<OrderHistoryRow> _rowParser =
+  public static RowParser<OrderHistoryRow> _rowParser =
       RowParsers.of(
           OrderHistoryId.pgType,
           OrdersId.pgType,
@@ -155,7 +154,7 @@ public record OrderHistoryRow(
           MariaTypes.varchar.opt(),
           MariaTypes.longtext.opt(),
           MariaTypes.datetime,
-          (t0, t1, t2, t3, t4, t5, t6, t7) -> new OrderHistoryRow(t0, t1, t2, t3, t4, t5, t6, t7),
+          OrderHistoryRow::new,
           row ->
               new Object[] {
                 row.historyId(),
@@ -168,8 +167,6 @@ public record OrderHistoryRow(
                 row.createdAt()
               });
   ;
-
-  public static MariaText<OrderHistoryRow> mariaText = MariaText.from(_rowParser);
 
   public OrderHistoryId id() {
     return historyId;

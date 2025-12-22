@@ -46,13 +46,13 @@ public record CuViewRow(
   }
   ;
 
-  static RowParser<CuViewRow> _rowParser =
+  public static RowParser<CuViewRow> _rowParser =
       RowParsers.of(
           CurrencyId.pgType,
           CurrencyId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new CuViewRow(t0, t1, t2, t3),
+          CuViewRow::new,
           row -> new Object[] {row.id(), row.currencycode(), row.name(), row.modifieddate()});
   ;
 }

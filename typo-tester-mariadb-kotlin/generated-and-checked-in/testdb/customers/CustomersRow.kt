@@ -13,7 +13,6 @@ import typo.data.maria.MariaSet
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: customers
@@ -86,8 +85,5 @@ data class CustomersRow(
 
   companion object {
     val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.pgType, MariaTypes.varchar, MariaTypes.binary, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), CustomerStatusId.pgType, MariaTypes.text, MariaTypes.longtext.nullable(), MariaTypes.set.nullable(), MariaTypes.text.nullable(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> CustomersRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt) })
-
-    val mariaText: MariaText<CustomersRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

@@ -29,14 +29,5 @@ case class EViewRow(
 )
 
 object EViewRow {
-  val `_rowParser`: RowParser[EViewRow] = {
-    RowParsers.of(PgTypes.int4, BusinessentityId.pgType, PgTypes.int4, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5) => new EViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5
-    ), row => Array[Any](row.id, row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[EViewRow] = RowParsers.of(PgTypes.int4, BusinessentityId.pgType, PgTypes.int4, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, EViewRow.apply, row => Array[Any](row.id, row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
 }

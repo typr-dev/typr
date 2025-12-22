@@ -138,7 +138,7 @@ class SalesorderheaderRepoImpl() : SalesorderheaderRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderheader\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"salesorderid\", \"revisionnumber\", \"orderdate\", \"duedate\", \"shipdate\", \"status\", \"onlineorderflag\", \"purchaseordernumber\", \"accountnumber\", \"customerid\", \"salespersonid\", \"territoryid\", \"billtoaddressid\", \"shiptoaddressid\", \"shipmethodid\", \"creditcardid\", \"creditcardapprovalcode\", \"currencyrateid\", \"subtotal\", \"taxamt\", \"freight\", \"totaldue\", \"comment\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderheader\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"salesorderid\", \"revisionnumber\", \"orderdate\", \"duedate\", \"shipdate\", \"status\", \"onlineorderflag\", \"purchaseordernumber\", \"accountnumber\", \"customerid\", \"salespersonid\", \"territoryid\", \"billtoaddressid\", \"shiptoaddressid\", \"shipmethodid\", \"creditcardid\", \"creditcardapprovalcode\", \"currencyrateid\", \"subtotal\", \"taxamt\", \"freight\", \"totaldue\", \"comment\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(SalesorderheaderRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

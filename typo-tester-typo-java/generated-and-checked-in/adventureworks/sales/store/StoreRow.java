@@ -88,7 +88,7 @@ public record StoreRow(
   }
   ;
 
-  static RowParser<StoreRow> _rowParser =
+  public static RowParser<StoreRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           Name.pgType,
@@ -96,7 +96,7 @@ public record StoreRow(
           PgTypes.xml.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new StoreRow(t0, t1, t2, t3, t4, t5),
+          StoreRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

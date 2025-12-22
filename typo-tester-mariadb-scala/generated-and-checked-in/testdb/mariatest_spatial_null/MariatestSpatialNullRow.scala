@@ -15,7 +15,6 @@ import org.mariadb.jdbc.`type`.MultiPolygon
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
 import testdb.customtypes.Defaulted
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -86,19 +85,5 @@ case class MariatestSpatialNullRow(
 }
 
 object MariatestSpatialNullRow {
-  val `_rowParser`: RowParser[MariatestSpatialNullRow] = {
-    RowParsers.of(MariatestSpatialNullId.pgType, MariaTypes.geometry.nullable, MariaTypes.point.nullable, MariaTypes.linestring.nullable, MariaTypes.polygon.nullable, MariaTypes.multipoint.nullable, MariaTypes.multilinestring.nullable, MariaTypes.multipolygon.nullable, MariaTypes.geometrycollection.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new MariatestSpatialNullRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8
-    ))(row => Array[Any](row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
-  }
-
-  given mariaText: MariaText[MariatestSpatialNullRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[MariatestSpatialNullRow] = RowParsers.of(MariatestSpatialNullId.pgType, MariaTypes.geometry.nullable, MariaTypes.point.nullable, MariaTypes.linestring.nullable, MariaTypes.polygon.nullable, MariaTypes.multipoint.nullable, MariaTypes.multilinestring.nullable, MariaTypes.multipolygon.nullable, MariaTypes.geometrycollection.nullable)(MariatestSpatialNullRow.apply)(row => Array[Any](row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
 }

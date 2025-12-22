@@ -11,8 +11,6 @@ import java.util.Optional;
 import testdb.Priority;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.DuckDbText;
-import typo.runtime.DuckDbTypes;
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 public record CustomersRowUnsaved(
@@ -54,22 +52,6 @@ public record CustomersRowUnsaved(
     return new CustomersRowUnsaved(customerId, name, email, createdAt, priority);
   }
   ;
-
-  public static DuckDbText<CustomersRowUnsaved> duckDbText =
-      DuckDbText.instance(
-          (row, sb) -> {
-            CustomersId.duckDbType.duckDbText().unsafeEncode(row.customerId, sb);
-            sb.append(DuckDbText.DELIMETER);
-            DuckDbTypes.varchar.duckDbText().unsafeEncode(row.name, sb);
-            sb.append(DuckDbText.DELIMETER);
-            DuckDbTypes.varchar.opt().duckDbText().unsafeEncode(row.email, sb);
-            sb.append(DuckDbText.DELIMETER);
-            Defaulted.duckDbText(DuckDbTypes.timestamp.duckDbText())
-                .unsafeEncode(row.createdAt, sb);
-            sb.append(DuckDbText.DELIMETER);
-            Defaulted.duckDbText(Priority.duckDbType.opt().duckDbText())
-                .unsafeEncode(row.priority, sb);
-          });
 
   public CustomersRow toRow(
       java.util.function.Supplier<LocalDateTime> createdAtDefault,

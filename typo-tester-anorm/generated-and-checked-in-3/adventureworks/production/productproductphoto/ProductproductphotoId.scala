@@ -7,6 +7,8 @@ package adventureworks.production.productproductphoto
 
 import adventureworks.production.product.ProductId
 import adventureworks.production.productphoto.ProductphotoId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -32,6 +34,17 @@ object ProductproductphotoId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[ProductproductphotoId] = {
+    RowParser[ProductproductphotoId] { row =>
+      Success(
+        ProductproductphotoId(
+          productid = row(idx + 0)(using ProductId.column),
+          productphotoid = row(idx + 1)(using ProductphotoId.column)
+        )
+      )
+    }
   }
 
   given writes: OWrites[ProductproductphotoId] = {

@@ -55,12 +55,12 @@ public record PersoncreditcardRow(
   }
   ;
 
-  static RowParser<PersoncreditcardRow> _rowParser =
+  public static RowParser<PersoncreditcardRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           CustomCreditcardId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new PersoncreditcardRow(t0, t1, t2),
+          PersoncreditcardRow::new,
           row -> new Object[] {row.businessentityid(), row.creditcardid(), row.modifieddate()});
   ;
 

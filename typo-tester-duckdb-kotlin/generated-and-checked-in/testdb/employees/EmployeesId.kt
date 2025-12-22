@@ -6,9 +6,17 @@
 package testdb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import typo.kotlindsl.KotlinDbTypes
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
+import typo.runtime.DuckDbTypes
 
 /** Type for the composite primary key of table `employees` */
 data class EmployeesId(
   @JsonProperty("emp_number") val empNumber: Int,
   @JsonProperty("emp_suffix") val empSuffix: String
-)
+) {
+  companion object {
+    val _rowParser: RowParser<EmployeesId> = RowParsers.of(KotlinDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, { t0, t1 -> EmployeesId(t0, t1) }, { row -> arrayOf<Any?>(row.empNumber, row.empSuffix) })
+  }
+}

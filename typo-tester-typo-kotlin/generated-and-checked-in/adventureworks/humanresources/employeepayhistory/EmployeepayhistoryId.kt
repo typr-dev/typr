@@ -7,9 +7,16 @@ package adventureworks.humanresources.employeepayhistory
 
 import adventureworks.person.businessentity.BusinessentityId
 import java.time.LocalDateTime
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
+import typo.runtime.PgTypes
 
 /** Type for the composite primary key of table `humanresources.employeepayhistory` */
 data class EmployeepayhistoryId(
   val businessentityid: BusinessentityId,
   val ratechangedate: LocalDateTime
-)
+) {
+  companion object {
+    val _rowParser: RowParser<EmployeepayhistoryId> = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, { t0, t1 -> EmployeepayhistoryId(t0, t1) }, { row -> arrayOf<Any?>(row.businessentityid, row.ratechangedate) })
+  }
+}

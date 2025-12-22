@@ -7,9 +7,15 @@ package adventureworks.production.productmodelillustration
 
 import adventureworks.production.illustration.IllustrationId
 import adventureworks.production.productmodel.ProductmodelId
+import typo.runtime.RowParser
+import typo.runtime.RowParsers
 
 /** Type for the composite primary key of table `production.productmodelillustration` */
 case class ProductmodelillustrationId(
   productmodelid: ProductmodelId,
   illustrationid: IllustrationId
 )
+
+object ProductmodelillustrationId {
+  val `_rowParser`: RowParser[ProductmodelillustrationId] = RowParsers.of(ProductmodelId.pgType, IllustrationId.pgType, ProductmodelillustrationId.apply, row => Array[Any](row.productmodelid, row.illustrationid))
+}

@@ -83,21 +83,7 @@ case class SpecialofferRow(
 }
 
 object SpecialofferRow {
-  val `_rowParser`: RowParser[SpecialofferRow] = {
-    RowParsers.of(SpecialofferId.pgType, PgTypes.text, ScalaDbTypes.PgTypes.numeric, PgTypes.text, PgTypes.text, PgTypes.timestamp, PgTypes.timestamp, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4.nullable, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => new SpecialofferRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10
-    ))(row => Array[Any](row.specialofferid, row.description, row.discountpct, row.`type`, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[SpecialofferRow] = RowParsers.of(SpecialofferId.pgType, PgTypes.text, ScalaDbTypes.PgTypes.numeric, PgTypes.text, PgTypes.text, PgTypes.timestamp, PgTypes.timestamp, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4.nullable, PgTypes.uuid, PgTypes.timestamp)(SpecialofferRow.apply)(row => Array[Any](row.specialofferid, row.description, row.discountpct, row.`type`, row.category, row.startdate, row.enddate, row.minqty, row.maxqty, row.rowguid, row.modifieddate))
 
   given pgText: PgText[SpecialofferRow] = PgText.from(`_rowParser`.underlying)
 }

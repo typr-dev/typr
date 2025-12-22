@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import testdb.DefaultedDeserializer
 import testdb.DefaultedSerializer
-import typo.runtime.MariaText
 
 @JsonSerialize(using = DefaultedSerializer::class)
 @JsonDeserialize(using = DefaultedDeserializer::class)
@@ -44,12 +43,6 @@ sealed interface Defaulted<T> {
       onProvided: (T) -> Unit
     ) {
       onDefault()
-    }
-  }
-
-  companion object {
-    fun <T> mariaText(t: MariaText<T>): MariaText<Defaulted<T>> {
-      return MariaText.instance({ ot, sb -> ot.visit({ sb.append("__DEFAULT_VALUE__") }, { value -> t.unsafeEncode(value, sb) }) })
     }
   }
 

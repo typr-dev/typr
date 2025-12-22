@@ -7,7 +7,6 @@ package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import typo.data.Json
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 import typo.scaladsl.DuckDbTypeOps
 import typo.scaladsl.RowParser
@@ -28,15 +27,5 @@ case class ProductsRow(
 }
 
 object ProductsRow {
-  val `_rowParser`: RowParser[ProductsRow] = {
-    RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric, DuckDbTypes.json.nullable)((t0, t1, t2, t3, t4) => new ProductsRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.productId, row.sku, row.name, row.price, row.metadata))
-  }
-
-  given duckDbText: DuckDbText[ProductsRow] = DuckDbText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[ProductsRow] = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric, DuckDbTypes.json.nullable)(ProductsRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.price, row.metadata))
 }

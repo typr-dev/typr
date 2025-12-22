@@ -64,13 +64,13 @@ public record SpecialofferproductRow(
   }
   ;
 
-  static RowParser<SpecialofferproductRow> _rowParser =
+  public static RowParser<SpecialofferproductRow> _rowParser =
       RowParsers.of(
           SpecialofferId.pgType,
           ProductId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new SpecialofferproductRow(t0, t1, t2, t3),
+          SpecialofferproductRow::new,
           row ->
               new Object[] {
                 row.specialofferid(), row.productid(), row.rowguid(), row.modifieddate()

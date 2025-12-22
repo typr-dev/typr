@@ -7,6 +7,8 @@ package adventureworks.production.workorderrouting
 
 import adventureworks.customtypes.TypoShort
 import adventureworks.production.workorder.WorkorderId
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -21,4 +23,18 @@ object WorkorderroutingId {
   given decoder: Decoder[WorkorderroutingId] = Decoder.forProduct3[WorkorderroutingId, WorkorderId, Int, TypoShort]("workorderid", "productid", "operationsequence")(WorkorderroutingId.apply)(using WorkorderId.decoder, Decoder.decodeInt, TypoShort.decoder)
 
   given encoder: Encoder[WorkorderroutingId] = Encoder.forProduct3[WorkorderroutingId, WorkorderId, Int, TypoShort]("workorderid", "productid", "operationsequence")(x => (x.workorderid, x.productid, x.operationsequence))(using WorkorderId.encoder, Encoder.encodeInt, TypoShort.encoder)
+
+  given read: Read[WorkorderroutingId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(WorkorderId.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.IntMeta.get).asInstanceOf[Read[Any]],
+        new Read.Single(TypoShort.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      WorkorderroutingId(
+        workorderid = arr(0).asInstanceOf[WorkorderId],
+            productid = arr(1).asInstanceOf[Int],
+            operationsequence = arr(2).asInstanceOf[TypoShort]
+      )
+    }
+  }
 }

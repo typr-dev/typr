@@ -48,12 +48,12 @@ public record IdentityTestRow(
   }
   ;
 
-  static RowParser<IdentityTestRow> _rowParser =
+  public static RowParser<IdentityTestRow> _rowParser =
       RowParsers.of(
           PgTypes.int4,
           PgTypes.int4,
           IdentityTestId.pgType,
-          (t0, t1, t2) -> new IdentityTestRow(t0, t1, t2),
+          IdentityTestRow::new,
           row -> new Object[] {row.alwaysGenerated(), row.defaultGenerated(), row.name()});
   ;
 

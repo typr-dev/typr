@@ -84,14 +84,14 @@ public record EmployeepayhistoryRow(
   }
   ;
 
-  static RowParser<EmployeepayhistoryRow> _rowParser =
+  public static RowParser<EmployeepayhistoryRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.timestamp,
           PgTypes.numeric,
           PgTypes.int2,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new EmployeepayhistoryRow(t0, t1, t2, t3, t4),
+          EmployeepayhistoryRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

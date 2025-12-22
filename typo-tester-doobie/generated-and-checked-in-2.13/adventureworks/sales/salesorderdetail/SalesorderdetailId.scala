@@ -6,6 +6,8 @@
 package adventureworks.sales.salesorderdetail
 
 import adventureworks.sales.salesorderheader.SalesorderheaderId
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -19,4 +21,16 @@ object SalesorderdetailId {
   implicit lazy val decoder: Decoder[SalesorderdetailId] = Decoder.forProduct2[SalesorderdetailId, SalesorderheaderId, Int]("salesorderid", "salesorderdetailid")(SalesorderdetailId.apply)(SalesorderheaderId.decoder, Decoder.decodeInt)
 
   implicit lazy val encoder: Encoder[SalesorderdetailId] = Encoder.forProduct2[SalesorderdetailId, SalesorderheaderId, Int]("salesorderid", "salesorderdetailid")(x => (x.salesorderid, x.salesorderdetailid))(SalesorderheaderId.encoder, Encoder.encodeInt)
+
+  implicit lazy val read: Read[SalesorderdetailId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(SalesorderheaderId.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.IntMeta.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      SalesorderdetailId(
+        salesorderid = arr(0).asInstanceOf[SalesorderheaderId],
+            salesorderdetailid = arr(1).asInstanceOf[Int]
+      )
+    }
+  }
 }

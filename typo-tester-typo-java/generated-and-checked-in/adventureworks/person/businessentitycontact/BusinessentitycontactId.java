@@ -7,6 +7,8 @@ package adventureworks.person.businessentitycontact;
 
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.person.contacttype.ContacttypeId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `person.businessentitycontact` */
 public record BusinessentitycontactId(
@@ -24,5 +26,14 @@ public record BusinessentitycontactId(
   public BusinessentitycontactId withContacttypeid(ContacttypeId contacttypeid) {
     return new BusinessentitycontactId(businessentityid, personid, contacttypeid);
   }
+  ;
+
+  public static RowParser<BusinessentitycontactId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          BusinessentityId.pgType,
+          ContacttypeId.pgType,
+          BusinessentitycontactId::new,
+          row -> new Object[] {row.businessentityid(), row.personid(), row.contacttypeid()});
   ;
 }

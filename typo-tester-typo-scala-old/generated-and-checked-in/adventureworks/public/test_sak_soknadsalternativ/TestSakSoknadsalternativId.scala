@@ -7,6 +7,9 @@ package adventureworks.public.test_sak_soknadsalternativ
 
 import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudId
 import com.fasterxml.jackson.annotation.JsonProperty
+import typo.runtime.PgTypes
+import typo.runtime.RowParser
+import typo.runtime.RowParsers
 
 /** Type for the composite primary key of table `public.test_sak_soknadsalternativ` */
 case class TestSakSoknadsalternativId(
@@ -15,6 +18,8 @@ case class TestSakSoknadsalternativId(
 )
 
 object TestSakSoknadsalternativId {
+  val `_rowParser`: RowParser[TestSakSoknadsalternativId] = RowParsers.of(PgTypes.text, PgTypes.text, TestSakSoknadsalternativId.apply, row => Array[Any](row.organisasjonskodeSaksbehandler, row.utdanningsmulighetKode))
+
   def from(
     TestUtdanningstilbudId: TestUtdanningstilbudId,
     organisasjonskodeSaksbehandler: String

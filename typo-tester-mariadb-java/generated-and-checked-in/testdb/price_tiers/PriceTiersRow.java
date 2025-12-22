@@ -8,7 +8,6 @@ package testdb.price_tiers;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import testdb.customtypes.Defaulted;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -55,21 +54,19 @@ public record PriceTiersRow(
   }
   ;
 
-  static RowParser<PriceTiersRow> _rowParser =
+  public static RowParser<PriceTiersRow> _rowParser =
       RowParsers.of(
           PriceTiersId.pgType,
           MariaTypes.varchar,
           MariaTypes.intUnsigned,
           MariaTypes.text,
           MariaTypes.numeric,
-          (t0, t1, t2, t3, t4) -> new PriceTiersRow(t0, t1, t2, t3, t4),
+          PriceTiersRow::new,
           row ->
               new Object[] {
                 row.tierId(), row.name(), row.minQuantity(), row.discountType(), row.discountValue()
               });
   ;
-
-  public static MariaText<PriceTiersRow> mariaText = MariaText.from(_rowParser);
 
   public PriceTiersId id() {
     return tierId;

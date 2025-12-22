@@ -1340,7 +1340,7 @@ $ifElseCode"""
         case _        => !isRangeType // Scala/Kotlin: only non-range types are generic
       }
 
-      if (isGenericType && (lang.isInstanceOf[LangScala] || lang == LangKotlin)) {
+      if (isGenericType && (lang.isInstanceOf[LangScala] || lang.isInstanceOf[LangKotlin])) {
         // Use wildcard for pattern matching to avoid type erasure warnings in Scala/Kotlin
         jvm.Type.TApply(baseTpe, List(jvm.Type.Wildcard))
       } else {
@@ -2186,7 +2186,7 @@ $ifElseCode"""
     val baseResponseTpe = jvm.Type.Qualified(apiPkg / jvm.Ident(responseName))
     // For Scala/Kotlin, add wildcards for the type parameters in lambda types
     // Java doesn't need this because the type is inferred
-    val responseTpe: jvm.Type = if (numTypeParams > 0 && (lang.isInstanceOf[LangScala] || lang == LangKotlin)) {
+    val responseTpe: jvm.Type = if (numTypeParams > 0 && (lang.isInstanceOf[LangScala] || lang.isInstanceOf[LangKotlin])) {
       jvm.Type.TApply(baseResponseTpe, List.fill(numTypeParams)(jvm.Type.Wildcard))
     } else {
       baseResponseTpe

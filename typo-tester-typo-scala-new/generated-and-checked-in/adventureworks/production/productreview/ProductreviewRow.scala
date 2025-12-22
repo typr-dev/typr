@@ -67,18 +67,7 @@ case class ProductreviewRow(
 }
 
 object ProductreviewRow {
-  val `_rowParser`: RowParser[ProductreviewRow] = {
-    RowParsers.of(ProductreviewId.pgType, ProductId.pgType, Name.pgType, PgTypes.timestamp, PgTypes.text, ScalaDbTypes.PgTypes.int4, PgTypes.text.nullable, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7) => new ProductreviewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7
-    ))(row => Array[Any](row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[ProductreviewRow] = RowParsers.of(ProductreviewId.pgType, ProductId.pgType, Name.pgType, PgTypes.timestamp, PgTypes.text, ScalaDbTypes.PgTypes.int4, PgTypes.text.nullable, PgTypes.timestamp)(ProductreviewRow.apply)(row => Array[Any](row.productreviewid, row.productid, row.reviewername, row.reviewdate, row.emailaddress, row.rating, row.comments, row.modifieddate))
 
   given pgText: PgText[ProductreviewRow] = PgText.from(`_rowParser`.underlying)
 }

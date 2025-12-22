@@ -11,7 +11,6 @@ import typo.data.Json
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 
 /** Table: products
@@ -28,8 +27,5 @@ data class ProductsRow(
 
   companion object {
     val _rowParser: RowParser<ProductsRow> = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric, DuckDbTypes.json.nullable(), { t0, t1, t2, t3, t4 -> ProductsRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.price, row.metadata) })
-
-    val duckDbText: DuckDbText<ProductsRow> =
-      DuckDbText.from(_rowParser.underlying)
   }
 }

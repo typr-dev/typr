@@ -8,6 +8,9 @@ package adventureworks.sales.salesterritoryhistory;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.sales.salesterritory.SalesterritoryId;
 import java.time.LocalDateTime;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `sales.salesterritoryhistory` */
 public record SalesterritoryhistoryId(
@@ -25,5 +28,14 @@ public record SalesterritoryhistoryId(
   public SalesterritoryhistoryId withTerritoryid(SalesterritoryId territoryid) {
     return new SalesterritoryhistoryId(businessentityid, startdate, territoryid);
   }
+  ;
+
+  public static RowParser<SalesterritoryhistoryId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          PgTypes.timestamp,
+          SalesterritoryId.pgType,
+          SalesterritoryhistoryId::new,
+          row -> new Object[] {row.businessentityid(), row.startdate(), row.territoryid()});
   ;
 }

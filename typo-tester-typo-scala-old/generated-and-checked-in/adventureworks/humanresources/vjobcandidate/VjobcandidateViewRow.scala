@@ -37,24 +37,5 @@ case class VjobcandidateViewRow(
 )
 
 object VjobcandidateViewRow {
-  val `_rowParser`: RowParser[VjobcandidateViewRow] = {
-    RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) => new VjobcandidateViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15
-    ), row => Array[Any](row.jobcandidateid, row.businessentityid, row.namePrefix, row.nameFirst, row.nameMiddle, row.nameLast, row.nameSuffix, row.skills, row.addrType, row.addrLocCountryRegion, row.addrLocState, row.addrLocCity, row.addrPostalCode, row.eMail, row.webSite, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[VjobcandidateViewRow] = RowParsers.of(JobcandidateId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.timestamp, VjobcandidateViewRow.apply, row => Array[Any](row.jobcandidateid, row.businessentityid, row.namePrefix, row.nameFirst, row.nameMiddle, row.nameLast, row.nameSuffix, row.skills, row.addrType, row.addrLocCountryRegion, row.addrLocState, row.addrLocCity, row.addrPostalCode, row.eMail, row.webSite, row.modifieddate))
 }

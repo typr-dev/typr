@@ -26,3 +26,30 @@ services:
       - 3307:3306
     volumes:
       - ./db/mariadb:/docker-entrypoint-initdb.d
+
+  oracle:
+    # Use regular (non-slim) image - slim requires decompression which can fail
+    image: gvenzl/oracle-free:23-arm64
+    restart: always
+    environment:
+      ORACLE_PASSWORD: password
+      APP_USER: typo
+      APP_USER_PASSWORD: typo_password
+    # Native ARM64 support available since Oracle 23.5 (Sep 2024)
+    # Docker will automatically pull the correct image for the platform
+    ports:
+      - 1521:1521
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./db/oracle:/container-entrypoint-initdb.d
+    # Oracle requires significant resources
+    shm_size: 1g
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+        reservations:
+          memory: 2g
+
+volumes:
+  oracle-data:

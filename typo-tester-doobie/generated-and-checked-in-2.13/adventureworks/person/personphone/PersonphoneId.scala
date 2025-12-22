@@ -8,6 +8,7 @@ package adventureworks.person.personphone
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.phonenumbertype.PhonenumbertypeId
 import adventureworks.public.Phone
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -22,4 +23,18 @@ object PersonphoneId {
   implicit lazy val decoder: Decoder[PersonphoneId] = Decoder.forProduct3[PersonphoneId, BusinessentityId, Phone, PhonenumbertypeId]("businessentityid", "phonenumber", "phonenumbertypeid")(PersonphoneId.apply)(BusinessentityId.decoder, Phone.decoder, PhonenumbertypeId.decoder)
 
   implicit lazy val encoder: Encoder[PersonphoneId] = Encoder.forProduct3[PersonphoneId, BusinessentityId, Phone, PhonenumbertypeId]("businessentityid", "phonenumber", "phonenumbertypeid")(x => (x.businessentityid, x.phonenumber, x.phonenumbertypeid))(BusinessentityId.encoder, Phone.encoder, PhonenumbertypeId.encoder)
+
+  implicit lazy val read: Read[PersonphoneId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(Phone.get).asInstanceOf[Read[Any]],
+        new Read.Single(PhonenumbertypeId.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      PersonphoneId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            phonenumber = arr(1).asInstanceOf[Phone],
+            phonenumbertypeid = arr(2).asInstanceOf[PhonenumbertypeId]
+      )
+    }
+  }
 }

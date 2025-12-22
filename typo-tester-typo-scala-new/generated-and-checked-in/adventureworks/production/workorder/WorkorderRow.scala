@@ -75,19 +75,7 @@ case class WorkorderRow(
 }
 
 object WorkorderRow {
-  val `_rowParser`: RowParser[WorkorderRow] = {
-    RowParsers.of(WorkorderId.pgType, ProductId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp.nullable, PgTypes.timestamp, ScrapreasonId.pgType.nullable, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new WorkorderRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8
-    ))(row => Array[Any](row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[WorkorderRow] = RowParsers.of(WorkorderId.pgType, ProductId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp.nullable, PgTypes.timestamp, ScrapreasonId.pgType.nullable, PgTypes.timestamp)(WorkorderRow.apply)(row => Array[Any](row.workorderid, row.productid, row.orderqty, row.scrappedqty, row.startdate, row.enddate, row.duedate, row.scrapreasonid, row.modifieddate))
 
   given pgText: PgText[WorkorderRow] = PgText.from(`_rowParser`.underlying)
 }

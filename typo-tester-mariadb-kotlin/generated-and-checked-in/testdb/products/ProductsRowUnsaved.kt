@@ -12,10 +12,6 @@ import testdb.brands.BrandsId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import typo.data.maria.MariaSet
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `products` which has not been persisted yet */
 data class ProductsRowUnsaved(
@@ -99,41 +95,4 @@ data class ProductsRowUnsaved(
     publishedAtDefault: () -> LocalDateTime?,
     productIdDefault: () -> ProductsId
   ): ProductsRow = ProductsRow(productId = productIdDefault(), sku = sku, brandId = brandId.getOrElse(brandIdDefault), name = name, shortDescription = shortDescription.getOrElse(shortDescriptionDefault), fullDescription = fullDescription.getOrElse(fullDescriptionDefault), basePrice = basePrice, costPrice = costPrice.getOrElse(costPriceDefault), weightKg = weightKg.getOrElse(weightKgDefault), dimensionsJson = dimensionsJson.getOrElse(dimensionsJsonDefault), status = status.getOrElse(statusDefault), taxClass = taxClass.getOrElse(taxClassDefault), tags = tags.getOrElse(tagsDefault), attributes = attributes.getOrElse(attributesDefault), seoMetadata = seoMetadata.getOrElse(seoMetadataDefault), createdAt = createdAt.getOrElse(createdAtDefault), updatedAt = updatedAt.getOrElse(updatedAtDefault), publishedAt = publishedAt.getOrElse(publishedAtDefault))
-
-  companion object {
-    val mariaText: MariaText<ProductsRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.sku, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.basePrice, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(BrandsId.pgType.nullable().mariaText()).unsafeEncode(row.brandId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.shortDescription, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.fullDescription, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.nullable().mariaText()).unsafeEncode(row.costPrice, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.nullable().mariaText()).unsafeEncode(row.weightKg, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.dimensionsJson, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.status, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.taxClass, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.set.nullable().mariaText()).unsafeEncode(row.tags, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.attributes, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.seoMetadata, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.updatedAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.publishedAt, sb) })
-  }
 }

@@ -32,7 +32,7 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(MariatestUniqueId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `mariatest_unique` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `mariatest_unique` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -53,7 +53,7 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit("")))
     columns.add(Fragment.lit("`category`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.category), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_unique`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `id`, `email`, `code`, `category`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_unique`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `id`, `email`, `code`, `category`\n"))
     return q.updateReturning(MariatestUniqueRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -72,7 +72,7 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
   ): List<MariatestUniqueRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(MariatestUniqueId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category` from `mariatest_unique` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestUniqueRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category` from `mariatest_unique` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(MariatestUniqueRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

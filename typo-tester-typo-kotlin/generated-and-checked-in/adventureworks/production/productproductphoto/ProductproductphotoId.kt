@@ -7,9 +7,15 @@ package adventureworks.production.productproductphoto
 
 import adventureworks.production.product.ProductId
 import adventureworks.production.productphoto.ProductphotoId
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `production.productproductphoto` */
 data class ProductproductphotoId(
   val productid: ProductId,
   val productphotoid: ProductphotoId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<ProductproductphotoId> = RowParsers.of(ProductId.pgType, ProductphotoId.pgType, { t0, t1 -> ProductproductphotoId(t0, t1) }, { row -> arrayOf<Any?>(row.productid, row.productphotoid) })
+  }
+}

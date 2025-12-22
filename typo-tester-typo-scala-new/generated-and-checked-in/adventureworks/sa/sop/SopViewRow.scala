@@ -28,13 +28,5 @@ case class SopViewRow(
 )
 
 object SopViewRow {
-  val `_rowParser`: RowParser[SopViewRow] = {
-    RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, ProductId.pgType, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4) => new SopViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.id, row.specialofferid, row.productid, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[SopViewRow] = RowParsers.of(SpecialofferId.pgType, SpecialofferId.pgType, ProductId.pgType, PgTypes.uuid, PgTypes.timestamp)(SopViewRow.apply)(row => Array[Any](row.id, row.specialofferid, row.productid, row.rowguid, row.modifieddate))
 }

@@ -34,7 +34,7 @@ class CustomersRepoImpl() : CustomersRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `customers` where `customer_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `customers` where `customer_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -102,7 +102,7 @@ class CustomersRepoImpl() : CustomersRepo {
       { value -> columns.add(Fragment.lit("`last_login_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customers`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customers`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`\n"))
     return q.updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -121,7 +121,7 @@ class CustomersRepoImpl() : CustomersRepo {
   ): List<CustomersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at` from `customers` where `customer_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(CustomersRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at` from `customers` where `customer_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CustomersRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

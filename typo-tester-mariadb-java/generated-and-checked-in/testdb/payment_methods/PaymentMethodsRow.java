@@ -8,7 +8,6 @@ package testdb.payment_methods;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -78,7 +77,7 @@ public record PaymentMethodsRow(
   }
   ;
 
-  static RowParser<PaymentMethodsRow> _rowParser =
+  public static RowParser<PaymentMethodsRow> _rowParser =
       RowParsers.of(
           PaymentMethodsId.pgType,
           MariaTypes.varchar,
@@ -87,7 +86,7 @@ public record PaymentMethodsRow(
           MariaTypes.longtext.opt(),
           MariaTypes.bool,
           MariaTypes.tinyint,
-          (t0, t1, t2, t3, t4, t5, t6) -> new PaymentMethodsRow(t0, t1, t2, t3, t4, t5, t6),
+          PaymentMethodsRow::new,
           row ->
               new Object[] {
                 row.methodId(),
@@ -99,8 +98,6 @@ public record PaymentMethodsRow(
                 row.sortOrder()
               });
   ;
-
-  public static MariaText<PaymentMethodsRow> mariaText = MariaText.from(_rowParser);
 
   public PaymentMethodsId id() {
     return methodId;

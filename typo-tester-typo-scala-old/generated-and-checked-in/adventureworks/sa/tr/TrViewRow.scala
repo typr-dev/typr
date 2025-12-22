@@ -35,16 +35,5 @@ case class TrViewRow(
 )
 
 object TrViewRow {
-  val `_rowParser`: RowParser[TrViewRow] = {
-    RowParsers.of(SalestaxrateId.pgType, SalestaxrateId.pgType, StateprovinceId.pgType, PgTypes.int2, PgTypes.numeric, Name.pgType, PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7) => new TrViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7
-    ), row => Array[Any](row.id, row.salestaxrateid, row.stateprovinceid, row.taxtype, row.taxrate, row.name, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[TrViewRow] = RowParsers.of(SalestaxrateId.pgType, SalestaxrateId.pgType, StateprovinceId.pgType, PgTypes.int2, PgTypes.numeric, Name.pgType, PgTypes.uuid, PgTypes.timestamp, TrViewRow.apply, row => Array[Any](row.id, row.salestaxrateid, row.stateprovinceid, row.taxtype, row.taxrate, row.name, row.rowguid, row.modifieddate))
 }

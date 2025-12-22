@@ -8,10 +8,6 @@ package testdb.shipping_carriers
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `shipping_carriers` which has not been persisted yet */
 case class ShippingCarriersRowUnsaved(
@@ -47,8 +43,4 @@ case class ShippingCarriersRowUnsaved(
       isActive = isActive.getOrElse(isActiveDefault)
     )
   }
-}
-
-object ShippingCarriersRowUnsaved {
-  given mariaText: MariaText[ShippingCarriersRowUnsaved] = MariaText.instance((row, sb) => { MariaTypes.varchar.mariaText.unsafeEncode(row.code, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.name, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.trackingUrlTemplate, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longtext.nullable.mariaText).unsafeEncode(row.apiConfig, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isActive, sb) })
 }

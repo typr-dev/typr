@@ -13,10 +13,6 @@ import testdb.customtypes.Defaulted.UseDefault
 import testdb.orders.OrdersId
 import testdb.payment_methods.PaymentMethodsId
 import typo.data.maria.Inet6
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `payments` which has not been persisted yet */
 data class PaymentsRowUnsaved(
@@ -74,29 +70,4 @@ data class PaymentsRowUnsaved(
     processedAtDefault: () -> LocalDateTime?,
     paymentIdDefault: () -> PaymentsId
   ): PaymentsRow = PaymentsRow(paymentId = paymentIdDefault(), orderId = orderId, methodId = methodId, transactionId = transactionId.getOrElse(transactionIdDefault), amount = amount, currencyCode = currencyCode.getOrElse(currencyCodeDefault), status = status.getOrElse(statusDefault), processorResponse = processorResponse.getOrElse(processorResponseDefault), errorMessage = errorMessage.getOrElse(errorMessageDefault), ipAddress = ipAddress.getOrElse(ipAddressDefault), createdAt = createdAt.getOrElse(createdAtDefault), processedAt = processedAt.getOrElse(processedAtDefault))
-
-  companion object {
-    val mariaText: MariaText<PaymentsRowUnsaved> =
-      MariaText.instance({ row, sb -> OrdersId.pgType.mariaText().unsafeEncode(row.orderId, sb)
-      sb.append(MariaText.DELIMETER)
-      PaymentMethodsId.pgType.mariaText().unsafeEncode(row.methodId, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.amount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.transactionId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.char_.mariaText()).unsafeEncode(row.currencyCode, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.status, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.processorResponse, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.errorMessage, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.inet6.nullable().mariaText()).unsafeEncode(row.ipAddress, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.processedAt, sb) })
-  }
 }

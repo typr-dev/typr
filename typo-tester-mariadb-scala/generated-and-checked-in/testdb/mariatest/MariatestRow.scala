@@ -15,7 +15,6 @@ import testdb.customtypes.Defaulted
 import typo.data.maria.Inet4
 import typo.data.maria.Inet6
 import typo.data.maria.MariaSet
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.RowParser
 import typo.scaladsl.RowParsers
@@ -168,52 +167,5 @@ case class MariatestRow(
 }
 
 object MariatestRow {
-  val `_rowParser`: RowParser[MariatestRow] = {
-    RowParsers.of(ScalaDbTypes.MariaTypes.tinyint, ScalaDbTypes.MariaTypes.smallint, ScalaDbTypes.MariaTypes.mediumint, MariatestId.pgType, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.tinyintUnsigned, ScalaDbTypes.MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.mediumintUnsigned, ScalaDbTypes.MariaTypes.intUnsigned, MariaTypes.bigintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.float_, ScalaDbTypes.MariaTypes.double_, ScalaDbTypes.MariaTypes.bool, MariaTypes.bit, MariaTypes.bit, MariaTypes.char_, MariaTypes.varchar, MariaTypes.tinytext, MariaTypes.text, MariaTypes.mediumtext, MariaTypes.longtext, MariaTypes.binary, MariaTypes.varbinary, MariaTypes.tinyblob, MariaTypes.blob, MariaTypes.mediumblob, MariaTypes.longblob, MariaTypes.date, MariaTypes.time, MariaTypes.time, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.timestamp, MariaTypes.timestamp, MariaTypes.year, MariaTypes.text, MariaTypes.set, MariaTypes.longtext, MariaTypes.inet4, MariaTypes.inet6)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40, t41) => new MariatestRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16,
-      t17,
-      t18,
-      t19,
-      t20,
-      t21,
-      t22,
-      t23,
-      t24,
-      t25,
-      t26,
-      t27,
-      t28,
-      t29,
-      t30,
-      t31,
-      t32,
-      t33,
-      t34,
-      t35,
-      t36,
-      t37,
-      t38,
-      t39,
-      t40,
-      t41
-    ))(row => Array[Any](row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.enumCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col))
-  }
-
-  given mariaText: MariaText[MariatestRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[MariatestRow] = RowParsers.of(ScalaDbTypes.MariaTypes.tinyint, ScalaDbTypes.MariaTypes.smallint, ScalaDbTypes.MariaTypes.mediumint, MariatestId.pgType, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.tinyintUnsigned, ScalaDbTypes.MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.mediumintUnsigned, ScalaDbTypes.MariaTypes.intUnsigned, MariaTypes.bigintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.float_, ScalaDbTypes.MariaTypes.double_, ScalaDbTypes.MariaTypes.bool, MariaTypes.bit, MariaTypes.bit, MariaTypes.char_, MariaTypes.varchar, MariaTypes.tinytext, MariaTypes.text, MariaTypes.mediumtext, MariaTypes.longtext, MariaTypes.binary, MariaTypes.varbinary, MariaTypes.tinyblob, MariaTypes.blob, MariaTypes.mediumblob, MariaTypes.longblob, MariaTypes.date, MariaTypes.time, MariaTypes.time, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.timestamp, MariaTypes.timestamp, MariaTypes.year, MariaTypes.text, MariaTypes.set, MariaTypes.longtext, MariaTypes.inet4, MariaTypes.inet6)(MariatestRow.apply)(row => Array[Any](row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.enumCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col))
 }

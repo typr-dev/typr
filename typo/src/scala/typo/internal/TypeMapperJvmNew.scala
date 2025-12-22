@@ -170,6 +170,42 @@ case class TypeMapperJvmNew(
           case db.DuckDbType.UnionType(_)    => lang.String.withComment("UNION type - mapped to String")
           case db.Unknown(_)                 => TypesJava.runtime.Unknown
         }
+      case x: db.OracleType =>
+        x match {
+          case db.OracleType.Number(_, _)                  => lang.BigDecimal
+          case db.OracleType.BinaryFloat                   => lang.Float
+          case db.OracleType.BinaryDouble                  => lang.Double
+          case db.OracleType.Float(_)                      => lang.Double
+          case db.OracleType.Varchar2(_)                   => lang.String
+          case db.OracleType.NVarchar2(_)                  => lang.String
+          case db.OracleType.Char(_)                       => lang.String
+          case db.OracleType.NChar(_)                      => lang.String
+          case db.OracleType.Clob                          => lang.String
+          case db.OracleType.NClob                         => lang.String
+          case db.OracleType.Long                          => lang.String
+          case db.OracleType.Raw(_)                        => lang.ByteArrayType
+          case db.OracleType.Blob                          => lang.ByteArrayType
+          case db.OracleType.LongRaw                       => lang.ByteArrayType
+          case db.OracleType.Date                          => TypesJava.LocalDateTime
+          case db.OracleType.Timestamp(_)                  => TypesJava.LocalDateTime
+          case db.OracleType.TimestampWithTimeZone(_)      => TypesJava.OffsetDateTime
+          case db.OracleType.TimestampWithLocalTimeZone(_) => TypesJava.OffsetDateTime
+          case db.OracleType.IntervalYearToMonth(_)        => TypesJava.runtime.OracleIntervalYM
+          case db.OracleType.IntervalDayToSecond(_, _)     => TypesJava.runtime.OracleIntervalDS
+          case db.OracleType.RowId                         => lang.String
+          case db.OracleType.URowId(_)                     => lang.String
+          case db.OracleType.XmlType                       => lang.String
+          case db.OracleType.Json                          => TypesJava.runtime.Json
+          case db.OracleType.Boolean                       => lang.Boolean
+          case db.OracleType.ObjectType(name, _, _, _, _)  => jvm.Type.Qualified(naming.objectTypeName(name))
+          case db.OracleType.VArray(name, _, _)            => jvm.Type.Qualified(naming.objectTypeName(name))
+          case db.OracleType.NestedTable(name, _, _)       => jvm.Type.Qualified(naming.objectTypeName(name))
+          case db.OracleType.RefType(_)                    => lang.String.withComment("REF type (not yet fully supported)")
+          case db.OracleType.SdoGeometry                   => lang.String.withComment("SDO_GEOMETRY (Oracle Spatial)")
+          case db.OracleType.SdoPoint                      => lang.String.withComment("SDO_POINT (Oracle Spatial)")
+          case db.OracleType.AnyData                       => TypesJava.Object.withComment("ANYDATA (dynamic type)")
+          case db.Unknown(_)                               => TypesJava.runtime.Unknown
+        }
     }
   }
 }

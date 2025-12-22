@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `brands` which has not been persisted yet */
 public record BrandsRowUnsaved(
@@ -71,25 +69,6 @@ public record BrandsRowUnsaved(
     return new BrandsRowUnsaved(name, slug, logoBlob, websiteUrl, countryOfOrigin, isActive);
   }
   ;
-
-  public static MariaText<BrandsRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.slug, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.mediumblob.opt().mariaText())
-                .unsafeEncode(row.logoBlob, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.websiteUrl, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.char_.opt().mariaText())
-                .unsafeEncode(row.countryOfOrigin, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb);
-          });
 
   public BrandsRow toRow(
       java.util.function.Supplier<Optional<byte[]>> logoBlobDefault,

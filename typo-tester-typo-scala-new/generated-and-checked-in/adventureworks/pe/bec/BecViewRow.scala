@@ -30,14 +30,5 @@ case class BecViewRow(
 )
 
 object BecViewRow {
-  val `_rowParser`: RowParser[BecViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5) => new BecViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5
-    ))(row => Array[Any](row.id, row.businessentityid, row.personid, row.contacttypeid, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[BecViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, PgTypes.uuid, PgTypes.timestamp)(BecViewRow.apply)(row => Array[Any](row.id, row.businessentityid, row.personid, row.contacttypeid, row.rowguid, row.modifieddate))
 }

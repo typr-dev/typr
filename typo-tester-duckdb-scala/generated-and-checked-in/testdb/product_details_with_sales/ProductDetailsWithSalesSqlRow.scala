@@ -30,24 +30,12 @@ case class ProductDetailsWithSalesSqlRow(
   @JsonProperty("times_ordered") timesOrdered: Option[Long],
   /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_quantity_sold") totalQuantitySold: Option[Long],
-  /** Points to [[testdb.order_items.OrderItemsRow.unitPrice]] */
+  /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_revenue") totalRevenue: Option[Double],
   /** Points to [[testdb.order_items.OrderItemsRow.orderId]] */
   popularity: Option[String]
 )
 
 object ProductDetailsWithSalesSqlRow {
-  val `_rowParser`: RowParser[ProductDetailsWithSalesSqlRow] = {
-    RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric, DuckDbTypes.json.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.double_.nullable, DuckDbTypes.varchar.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new ProductDetailsWithSalesSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8
-    ))(row => Array[Any](row.productId, row.sku, row.name, row.price, row.metadata, row.timesOrdered, row.totalQuantitySold, row.totalRevenue, row.popularity))
-  }
+  val `_rowParser`: RowParser[ProductDetailsWithSalesSqlRow] = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric, DuckDbTypes.json.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.double_.nullable, DuckDbTypes.varchar.nullable)(ProductDetailsWithSalesSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.price, row.metadata, row.timesOrdered, row.totalQuantitySold, row.totalRevenue, row.popularity))
 }

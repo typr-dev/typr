@@ -41,12 +41,12 @@ public record CurrencyRow(
   }
   ;
 
-  static RowParser<CurrencyRow> _rowParser =
+  public static RowParser<CurrencyRow> _rowParser =
       RowParsers.of(
           CurrencyId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new CurrencyRow(t0, t1, t2),
+          CurrencyRow::new,
           row -> new Object[] {row.currencycode(), row.name(), row.modifieddate()});
   ;
 

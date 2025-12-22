@@ -38,18 +38,5 @@ case class VemployeedepartmentViewRow(
 )
 
 object VemployeedepartmentViewRow {
-  val `_rowParser`: RowParser[VemployeedepartmentViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, Name.pgType, Name.pgType, PgTypes.date, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new VemployeedepartmentViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9
-    ), row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.department, row.groupname, row.startdate))
-  }
+  val `_rowParser`: RowParser[VemployeedepartmentViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, PgTypes.text, Name.pgType, Name.pgType, PgTypes.date, VemployeedepartmentViewRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.department, row.groupname, row.startdate))
 }

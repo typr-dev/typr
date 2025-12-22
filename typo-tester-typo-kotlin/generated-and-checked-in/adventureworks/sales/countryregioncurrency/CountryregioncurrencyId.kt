@@ -7,9 +7,15 @@ package adventureworks.sales.countryregioncurrency
 
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.sales.currency.CurrencyId
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `sales.countryregioncurrency` */
 data class CountryregioncurrencyId(
   val countryregioncode: CountryregionId,
   val currencycode: CurrencyId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<CountryregioncurrencyId> = RowParsers.of(CountryregionId.pgType, CurrencyId.pgType, { t0, t1 -> CountryregioncurrencyId(t0, t1) }, { row -> arrayOf<Any?>(row.countryregioncode, row.currencycode) })
+  }
+}

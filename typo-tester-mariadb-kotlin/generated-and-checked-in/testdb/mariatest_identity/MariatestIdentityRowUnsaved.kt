@@ -5,16 +5,10 @@
  */
 package testdb.mariatest_identity
 
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
+
 
 /** This class corresponds to a row in table `mariatest_identity` which has not been persisted yet */
 data class MariatestIdentityRowUnsaved(/**  */
 val name: String) {
   fun toRow(idDefault: () -> MariatestIdentityId): MariatestIdentityRow = MariatestIdentityRow(id = idDefault(), name = name)
-
-  companion object {
-    val mariaText: MariaText<MariatestIdentityRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb) })
-  }
 }

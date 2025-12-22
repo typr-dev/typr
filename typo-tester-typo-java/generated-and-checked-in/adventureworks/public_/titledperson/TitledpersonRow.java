@@ -37,12 +37,12 @@ public record TitledpersonRow(
   }
   ;
 
-  static RowParser<TitledpersonRow> _rowParser =
+  public static RowParser<TitledpersonRow> _rowParser =
       RowParsers.of(
           TitleDomainId.pgType,
           TitleId.pgType,
           PgTypes.text,
-          (t0, t1, t2) -> new TitledpersonRow(t0, t1, t2),
+          TitledpersonRow::new,
           row -> new Object[] {row.titleShort(), row.title(), row.name()});
   ;
 

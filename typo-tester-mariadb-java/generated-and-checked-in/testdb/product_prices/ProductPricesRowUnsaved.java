@@ -13,8 +13,6 @@ import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.price_tiers.PriceTiersId;
 import testdb.products.ProductsId;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `product_prices` which has not been persisted yet */
 public record ProductPricesRowUnsaved(
@@ -76,22 +74,6 @@ public record ProductPricesRowUnsaved(
     return new ProductPricesRowUnsaved(productId, price, validFrom, tierId, currencyCode, validTo);
   }
   ;
-
-  public static MariaText<ProductPricesRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.price, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.date.mariaText().unsafeEncode(row.validFrom, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(PriceTiersId.pgType.opt().mariaText()).unsafeEncode(row.tierId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.char_.mariaText()).unsafeEncode(row.currencyCode, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.date.opt().mariaText()).unsafeEncode(row.validTo, sb);
-          });
 
   public ProductPricesRow toRow(
       java.util.function.Supplier<Optional<PriceTiersId>> tierIdDefault,

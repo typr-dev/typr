@@ -249,8 +249,8 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         sig(params = List(id.param, varargs), implicitParams = List(c), returnType = TypesScala.Boolean)
       case RepoMethod.Update(_, _, _, param, _) =>
         sig(params = List(param), implicitParams = List(c), returnType = TypesScala.Option.of(param.tpe))
-      case RepoMethod.Insert(_, _, unsavedParam, rowType, _) =>
-        sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
+      case RepoMethod.Insert(_, _, _, unsavedParam, _, returningStrategy) =>
+        sig(params = List(unsavedParam), implicitParams = List(c), returnType = returningStrategy.returnType)
       case RepoMethod.InsertStreaming(_, rowType, _) =>
         val unsaved = jvm.Param(jvm.Ident("unsaved"), TypesScala.Iterator.of(rowType))
         val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
@@ -264,8 +264,8 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
         val unsaved = jvm.Param(jvm.Ident("unsaved"), TypesScala.Iterator.of(rowType))
         val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
         sig(params = List(unsaved, batchSize), implicitParams = List(c), returnType = TypesScala.Int)
-      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, rowType) =>
-        sig(params = List(unsavedParam), implicitParams = List(c), returnType = rowType)
+      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _, returningStrategy) =>
+        sig(params = List(unsavedParam), implicitParams = List(c), returnType = returningStrategy.returnType)
       case RepoMethod.InsertUnsavedStreaming(_, unsaved) =>
         val unsavedParam = jvm.Param(jvm.Ident("unsaved"), TypesScala.Iterator.of(unsaved.tpe))
         val batchSize = jvm.Param(Nil, jvm.Comments.Empty, jvm.Ident("batchSize"), TypesScala.Int, Some(code"10000"))
@@ -436,7 +436,8 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
           )
         )
 
-      case RepoMethod.Insert(relName, cols, unsavedParam, rowType, writeableColumnsWithId) =>
+      case RepoMethod.Insert(relName, cols, _, unsavedParam, writeableColumnsWithId, returningStrategy) =>
+        val rowType = returningStrategy.returnType
         val values = writeableColumnsWithId.map { c =>
           runtimeInterpolateValue(code"${unsavedParam.name}.${c.name}", c.tpe).code ++ sqlCast.toPgCode(c)
         }
@@ -545,7 +546,8 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
           )
         )
 
-      case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, default, rowType) =>
+      case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, _, default, returningStrategy) =>
+        val rowType = returningStrategy.returnType
         val cases0 = unsaved.normalColumns.map { col =>
           val colCast = jvm.StrLit(sqlCast.toPg(col.dbCol).fold("")(_.withColons))
           code"""Some(($NamedParameter(${jvm.StrLit(col.dbName.value)}, $ParameterValue(${unsavedParam.name}.${col.name}, null, ${lookupToStatementFor(col.tpe)})), $colCast))"""
@@ -712,7 +714,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                |  map.put(${param.name}.${id.paramName}, ${param.name}): @${TypesScala.nowarn}
                |  ${param.name}
                |}""".stripMargin)
-      case RepoMethod.Insert(_, _, unsavedParam, _, _) =>
+      case RepoMethod.Insert(_, _, _, unsavedParam, _, _) =>
         jvm.Body.Stmts(
           List(
             code"""|val _ = if (map.contains(${unsavedParam.name}.${id.paramName}))
@@ -742,7 +744,7 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
                |  map += (row.${id.paramName} -> row)
                |  row
                |}.toList""".stripMargin)
-      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _) =>
+      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _, _) =>
         jvm.Body.Expr(code"insert(${maybeToRow.get.name}(${unsavedParam.name}))")
       case RepoMethod.InsertStreaming(_, _, _) =>
         jvm.Body.Expr(code"""|unsaved.foreach { row =>
@@ -953,6 +955,12 @@ class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDef
 
     arrayInstances ++ List(arrayParameterMetaData, bigDecimalArrayToStatement)
   }
+
+  /** Oracle STRUCT types - not supported in PostgreSQL */
+  override def structInstances(computed: ComputedOracleObjectType): List[jvm.ClassMember] = Nil
+
+  /** Oracle COLLECTION types - not supported in PostgreSQL */
+  override def collectionInstances(computed: ComputedOracleCollectionType): List[jvm.ClassMember] = Nil
 
   val missingInstancesByType: Map[jvm.Type, jvm.QIdent] =
     missingInstances.collect { case x: jvm.Given => (x.tpe, pkg / x.name) }.toMap

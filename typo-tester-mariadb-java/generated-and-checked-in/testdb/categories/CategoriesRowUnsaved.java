@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `categories` which has not been persisted yet */
 public record CategoriesRowUnsaved(
@@ -102,30 +100,6 @@ public record CategoriesRowUnsaved(
         name, slug, parentId, description, imageUrl, sortOrder, isVisible, metadata);
   }
   ;
-
-  public static MariaText<CategoriesRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.slug, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(CategoriesId.pgType.opt().mariaText())
-                .unsafeEncode(row.parentId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.mediumtext.opt().mariaText())
-                .unsafeEncode(row.description, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.imageUrl, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.smallint.mariaText()).unsafeEncode(row.sortOrder, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isVisible, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.metadata, sb);
-          });
 
   public CategoriesRow toRow(
       java.util.function.Supplier<Optional<CategoriesId>> parentIdDefault,

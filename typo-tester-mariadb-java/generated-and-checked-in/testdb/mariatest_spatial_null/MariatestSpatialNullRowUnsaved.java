@@ -17,8 +17,6 @@ import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /**
  * This class corresponds to a row in table `mariatest_spatial_null` which has not been persisted
@@ -171,33 +169,6 @@ public record MariatestSpatialNullRowUnsaved(
         geometrycollectionCol);
   }
   ;
-
-  public static MariaText<MariatestSpatialNullRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            Defaulted.mariaText(MariaTypes.geometry.opt().mariaText())
-                .unsafeEncode(row.geometryCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.point.opt().mariaText()).unsafeEncode(row.pointCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.linestring.opt().mariaText())
-                .unsafeEncode(row.linestringCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.polygon.opt().mariaText())
-                .unsafeEncode(row.polygonCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.multipoint.opt().mariaText())
-                .unsafeEncode(row.multipointCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.multilinestring.opt().mariaText())
-                .unsafeEncode(row.multilinestringCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.multipolygon.opt().mariaText())
-                .unsafeEncode(row.multipolygonCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.geometrycollection.opt().mariaText())
-                .unsafeEncode(row.geometrycollectionCol, sb);
-          });
 
   public MariatestSpatialNullRow toRow(
       java.util.function.Supplier<Optional<Geometry>> geometryColDefault,

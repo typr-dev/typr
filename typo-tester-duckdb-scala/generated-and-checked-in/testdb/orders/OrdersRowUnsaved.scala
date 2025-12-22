@@ -9,10 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.DuckDbText
-import typo.runtime.DuckDbTypes
-import typo.scaladsl.DuckDbTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 case class OrdersRowUnsaved(
@@ -36,8 +32,4 @@ case class OrdersRowUnsaved(
       status = status.getOrElse(statusDefault)
     )
   }
-}
-
-object OrdersRowUnsaved {
-  given duckDbText: DuckDbText[OrdersRowUnsaved] = DuckDbText.instance((row, sb) => { OrdersId.duckDbType.duckDbText.unsafeEncode(row.orderId, sb); sb.append(DuckDbText.DELIMETER); ScalaDbTypes.DuckDbTypes.integer.duckDbText.unsafeEncode(row.customerId, sb); sb.append(DuckDbText.DELIMETER); ScalaDbTypes.DuckDbTypes.numeric.nullable.duckDbText.unsafeEncode(row.totalAmount, sb); sb.append(DuckDbText.DELIMETER); Defaulted.duckDbText(using DuckDbTypes.date.duckDbText).unsafeEncode(row.orderDate, sb); sb.append(DuckDbText.DELIMETER); Defaulted.duckDbText(using DuckDbTypes.varchar.nullable.duckDbText).unsafeEncode(row.status, sb) })
 }

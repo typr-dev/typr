@@ -34,16 +34,5 @@ case class PiViewRow(
 )
 
 object PiViewRow {
-  val `_rowParser`: RowParser[PiViewRow] = {
-    RowParsers.of(ProductId.pgType, ProductId.pgType, LocationId.pgType, PgTypes.text, PgTypes.int2, PgTypes.int2, PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7) => new PiViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7
-    ), row => Array[Any](row.id, row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[PiViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, LocationId.pgType, PgTypes.text, PgTypes.int2, PgTypes.int2, PgTypes.uuid, PgTypes.timestamp, PiViewRow.apply, row => Array[Any](row.id, row.productid, row.locationid, row.shelf, row.bin, row.quantity, row.rowguid, row.modifieddate))
 }

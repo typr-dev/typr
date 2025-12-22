@@ -7,6 +7,7 @@ package adventureworks.sales.personcreditcard
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CustomCreditcardId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object PersoncreditcardId {
   given decoder: Decoder[PersoncreditcardId] = Decoder.forProduct2[PersoncreditcardId, BusinessentityId, /* user-picked */ CustomCreditcardId]("businessentityid", "creditcardid")(PersoncreditcardId.apply)(using BusinessentityId.decoder, CustomCreditcardId.decoder)
 
   given encoder: Encoder[PersoncreditcardId] = Encoder.forProduct2[PersoncreditcardId, BusinessentityId, /* user-picked */ CustomCreditcardId]("businessentityid", "creditcardid")(x => (x.businessentityid, x.creditcardid))(using BusinessentityId.encoder, CustomCreditcardId.encoder)
+
+  given read: Read[PersoncreditcardId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(/* user-picked */ CustomCreditcardId.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      PersoncreditcardId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            creditcardid = arr(1).asInstanceOf[/* user-picked */ CustomCreditcardId]
+      )
+    }
+  }
 }

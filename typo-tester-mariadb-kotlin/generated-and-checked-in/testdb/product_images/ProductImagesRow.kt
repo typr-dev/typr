@@ -12,7 +12,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: product_images
@@ -62,8 +61,5 @@ data class ProductImagesRow(
 
   companion object {
     val _rowParser: RowParser<ProductImagesRow> = RowParsers.of(ProductImagesId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.tinyintUnsigned, KotlinDbTypes.MariaTypes.bool, MariaTypes.longblob.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7 -> ProductImagesRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData) })
-
-    val mariaText: MariaText<ProductImagesRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

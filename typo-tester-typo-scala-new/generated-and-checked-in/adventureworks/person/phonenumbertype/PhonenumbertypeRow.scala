@@ -36,7 +36,7 @@ case class PhonenumbertypeRow(
 }
 
 object PhonenumbertypeRow {
-  val `_rowParser`: RowParser[PhonenumbertypeRow] = RowParsers.of(PhonenumbertypeId.pgType, Name.pgType, PgTypes.timestamp)((t0, t1, t2) => new PhonenumbertypeRow(t0, t1, t2))(row => Array[Any](row.phonenumbertypeid, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[PhonenumbertypeRow] = RowParsers.of(PhonenumbertypeId.pgType, Name.pgType, PgTypes.timestamp)(PhonenumbertypeRow.apply)(row => Array[Any](row.phonenumbertypeid, row.name, row.modifieddate))
 
   given pgText: PgText[PhonenumbertypeRow] = PgText.from(`_rowParser`.underlying)
 }

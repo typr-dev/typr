@@ -10,9 +10,6 @@ import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.orders.OrdersId
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `order_history` which has not been persisted yet */
 data class OrderHistoryRowUnsaved(
@@ -51,21 +48,4 @@ data class OrderHistoryRowUnsaved(
     createdAtDefault: () -> LocalDateTime,
     historyIdDefault: () -> OrderHistoryId
   ): OrderHistoryRow = OrderHistoryRow(historyId = historyIdDefault(), orderId = orderId, previousStatus = previousStatus.getOrElse(previousStatusDefault), newStatus = newStatus, changedBy = changedBy.getOrElse(changedByDefault), changeReason = changeReason.getOrElse(changeReasonDefault), metadata = metadata.getOrElse(metadataDefault), createdAt = createdAt.getOrElse(createdAtDefault))
-
-  companion object {
-    val mariaText: MariaText<OrderHistoryRowUnsaved> =
-      MariaText.instance({ row, sb -> OrdersId.pgType.mariaText().unsafeEncode(row.orderId, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.text.mariaText().unsafeEncode(row.newStatus, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.nullable().mariaText()).unsafeEncode(row.previousStatus, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.changedBy, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.changeReason, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.metadata, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb) })
-  }
 }

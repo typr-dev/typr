@@ -35,7 +35,7 @@ class ProductsRepoImpl() : ProductsRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in productIds) { fragments.add(Fragment.encode(ProductsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `products` where `product_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `products` where `product_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -126,7 +126,7 @@ class ProductsRepoImpl() : ProductsRepo {
       { value -> columns.add(Fragment.lit("`published_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `products`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `products`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`\n"))
     return q.updateReturning(ProductsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -145,7 +145,7 @@ class ProductsRepoImpl() : ProductsRepo {
   ): List<ProductsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in productIds) { fragments.add(Fragment.encode(ProductsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at` from `products` where `product_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ProductsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at` from `products` where `product_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ProductsRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

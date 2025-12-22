@@ -10,10 +10,6 @@ import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `warehouses` which has not been persisted yet */
 data class WarehousesRowUnsaved(
@@ -54,25 +50,4 @@ data class WarehousesRowUnsaved(
     contactPhoneDefault: () -> String?,
     warehouseIdDefault: () -> WarehousesId
   ): WarehousesRow = WarehousesRow(warehouseId = warehouseIdDefault(), code = code, name = name, address = address, location = location, serviceArea = serviceArea.getOrElse(serviceAreaDefault), timezone = timezone.getOrElse(timezoneDefault), isActive = isActive.getOrElse(isActiveDefault), contactEmail = contactEmail.getOrElse(contactEmailDefault), contactPhone = contactPhone.getOrElse(contactPhoneDefault))
-
-  companion object {
-    val mariaText: MariaText<WarehousesRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.char_.mariaText().unsafeEncode(row.code, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.address, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.point.mariaText().unsafeEncode(row.location, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.polygon.nullable().mariaText()).unsafeEncode(row.serviceArea, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.mariaText()).unsafeEncode(row.timezone, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.contactEmail, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.contactPhone, sb) })
-  }
 }

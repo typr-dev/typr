@@ -908,7 +908,7 @@ public record AllScalarTypesSearchSqlRow(
   }
   ;
 
-  static RowParser<AllScalarTypesSearchSqlRow> _rowParser =
+  public static RowParser<AllScalarTypesSearchSqlRow> _rowParser =
       RowParsers.of(
           AllScalarTypesId.duckDbType,
           DuckDbTypes.tinyint.opt(),
@@ -936,35 +936,7 @@ public record AllScalarTypesSearchSqlRow(
           DuckDbTypes.json.opt(),
           Mood.duckDbType.opt(),
           DuckDbTypes.varchar,
-          (t0,
-              t1,
-              t2,
-              t3,
-              t4,
-              t5,
-              t6,
-              t7,
-              t8,
-              t9,
-              t10,
-              t11,
-              t12,
-              t13,
-              t14,
-              t15,
-              t16,
-              t17,
-              t18,
-              t19,
-              t20,
-              t21,
-              t22,
-              t23,
-              t24,
-              t25) ->
-              new AllScalarTypesSearchSqlRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17,
-                  t18, t19, t20, t21, t22, t23, t24, t25),
+          AllScalarTypesSearchSqlRow::new,
           row ->
               new Object[] {
                 row.id(),

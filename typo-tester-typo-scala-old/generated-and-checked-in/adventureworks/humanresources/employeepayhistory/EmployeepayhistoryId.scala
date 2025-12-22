@@ -7,9 +7,16 @@ package adventureworks.humanresources.employeepayhistory
 
 import adventureworks.person.businessentity.BusinessentityId
 import java.time.LocalDateTime
+import typo.runtime.PgTypes
+import typo.runtime.RowParser
+import typo.runtime.RowParsers
 
 /** Type for the composite primary key of table `humanresources.employeepayhistory` */
 case class EmployeepayhistoryId(
   businessentityid: BusinessentityId,
   ratechangedate: LocalDateTime
 )
+
+object EmployeepayhistoryId {
+  val `_rowParser`: RowParser[EmployeepayhistoryId] = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, EmployeepayhistoryId.apply, row => Array[Any](row.businessentityid, row.ratechangedate))
+}

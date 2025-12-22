@@ -7,9 +7,15 @@ package adventureworks.purchasing.productvendor
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.production.product.ProductId
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `purchasing.productvendor` */
 data class ProductvendorId(
   val productid: ProductId,
   val businessentityid: BusinessentityId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<ProductvendorId> = RowParsers.of(ProductId.pgType, BusinessentityId.pgType, { t0, t1 -> ProductvendorId(t0, t1) }, { row -> arrayOf<Any?>(row.productid, row.businessentityid) })
+  }
+}

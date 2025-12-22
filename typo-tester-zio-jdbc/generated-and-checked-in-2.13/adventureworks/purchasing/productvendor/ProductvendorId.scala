@@ -7,6 +7,8 @@ package adventureworks.purchasing.productvendor
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.production.product.ProductId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -19,6 +21,17 @@ case class ProductvendorId(
 )
 
 object ProductvendorId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[ProductvendorId] = {
+    new JdbcDecoder[ProductvendorId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, ProductvendorId) =
+        columIndex + 1 ->
+          ProductvendorId(
+            productid = ProductId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            businessentityid = BusinessentityId.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[ProductvendorId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val productid = jsonObj.get("productid").toRight("Missing field 'productid'").flatMap(_.as(ProductId.jsonDecoder))

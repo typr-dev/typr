@@ -11,7 +11,6 @@ import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.products.ProductsId;
 import testdb.warehouses.WarehousesId;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -227,7 +226,7 @@ public record InventoryRow(
   }
   ;
 
-  static RowParser<InventoryRow> _rowParser =
+  public static RowParser<InventoryRow> _rowParser =
       RowParsers.of(
           InventoryId.pgType,
           ProductsId.pgType,
@@ -240,8 +239,7 @@ public record InventoryRow(
           MariaTypes.varchar.opt(),
           MariaTypes.datetime.opt(),
           MariaTypes.datetime,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
-              new InventoryRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
+          InventoryRow::new,
           row ->
               new Object[] {
                 row.inventoryId(),
@@ -257,8 +255,6 @@ public record InventoryRow(
                 row.updatedAt()
               });
   ;
-
-  public static MariaText<InventoryRow> mariaText = MariaText.from(_rowParser);
 
   public InventoryId id() {
     return inventoryId;

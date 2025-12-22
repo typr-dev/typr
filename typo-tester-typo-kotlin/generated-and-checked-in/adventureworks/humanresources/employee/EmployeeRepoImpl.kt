@@ -101,7 +101,7 @@ class EmployeeRepoImpl() : EmployeeRepo {
       { value -> columns.add(Fragment.lit("\"organizationnode\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employee\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"businessentityid\", \"nationalidnumber\", \"loginid\", \"jobtitle\", \"birthdate\", \"maritalstatus\", \"gender\", \"hiredate\", \"salariedflag\", \"vacationhours\", \"sickleavehours\", \"currentflag\", \"rowguid\", \"modifieddate\", \"organizationnode\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employee\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"nationalidnumber\", \"loginid\", \"jobtitle\", \"birthdate\", \"maritalstatus\", \"gender\", \"hiredate\", \"salariedflag\", \"vacationhours\", \"sickleavehours\", \"currentflag\", \"rowguid\", \"modifieddate\", \"organizationnode\"\n"))
     return q.updateReturning(EmployeeRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

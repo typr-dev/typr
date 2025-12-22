@@ -20,7 +20,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 
 /** Table: all_scalar_types
@@ -56,8 +55,5 @@ data class AllScalarTypesRow(
 ) {
   companion object {
     val _rowParser: RowParser<AllScalarTypesRow> = RowParsers.of(AllScalarTypesId.duckDbType, KotlinDbTypes.DuckDbTypes.tinyint.nullable(), KotlinDbTypes.DuckDbTypes.smallint.nullable(), KotlinDbTypes.DuckDbTypes.integer.nullable(), KotlinDbTypes.DuckDbTypes.bigint.nullable(), DuckDbTypes.hugeint.nullable(), KotlinDbTypes.DuckDbTypes.smallint.nullable(), KotlinDbTypes.DuckDbTypes.integer.nullable(), KotlinDbTypes.DuckDbTypes.bigint.nullable(), DuckDbTypes.ubigint.nullable(), KotlinDbTypes.DuckDbTypes.float_.nullable(), KotlinDbTypes.DuckDbTypes.double_.nullable(), DuckDbTypes.numeric.nullable(), KotlinDbTypes.DuckDbTypes.boolean_.nullable(), DuckDbTypes.varchar.nullable(), DuckDbTypes.varchar.nullable(), DuckDbTypes.blob.nullable(), DuckDbTypes.date.nullable(), DuckDbTypes.time.nullable(), DuckDbTypes.timestamp.nullable(), DuckDbTypes.timestamptz.nullable(), DuckDbTypes.interval.nullable(), DuckDbTypes.uuid.nullable(), DuckDbTypes.json.nullable(), Mood.duckDbType.nullable(), DuckDbTypes.varchar, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25 -> AllScalarTypesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25) }, { row -> arrayOf<Any?>(row.id, row.colTinyint, row.colSmallint, row.colInteger, row.colBigint, row.colHugeint, row.colUtinyint, row.colUsmallint, row.colUinteger, row.colUbigint, row.colFloat, row.colDouble, row.colDecimal, row.colBoolean, row.colVarchar, row.colText, row.colBlob, row.colDate, row.colTime, row.colTimestamp, row.colTimestamptz, row.colInterval, row.colUuid, row.colJson, row.colMood, row.colNotNull) })
-
-    val duckDbText: DuckDbText<AllScalarTypesRow> =
-      DuckDbText.from(_rowParser.underlying)
   }
 }

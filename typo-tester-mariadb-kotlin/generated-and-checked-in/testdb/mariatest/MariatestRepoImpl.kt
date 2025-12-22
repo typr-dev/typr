@@ -33,7 +33,7 @@ class MariatestRepoImpl() : MariatestRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in intCols) { fragments.add(Fragment.encode(MariatestId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `mariatest` where `int_col` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `mariatest` where `int_col` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -138,7 +138,7 @@ class MariatestRepoImpl() : MariatestRepo {
       { value -> columns.add(Fragment.lit("`timestamp_fsp_col`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.timestamp, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `enum_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `enum_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`\n"))
     return q.updateReturning(MariatestRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -157,7 +157,7 @@ class MariatestRepoImpl() : MariatestRepo {
   ): List<MariatestRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in intCols) { fragments.add(Fragment.encode(MariatestId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `enum_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col` from `mariatest` where `int_col` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `enum_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col` from `mariatest` where `int_col` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(MariatestRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

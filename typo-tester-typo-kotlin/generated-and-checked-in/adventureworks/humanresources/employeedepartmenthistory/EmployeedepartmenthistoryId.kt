@@ -9,6 +9,9 @@ import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
 import java.time.LocalDate
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
+import typo.runtime.PgTypes
 
 /** Type for the composite primary key of table `humanresources.employeedepartmenthistory` */
 data class EmployeedepartmenthistoryId(
@@ -16,4 +19,8 @@ data class EmployeedepartmenthistoryId(
   val startdate: LocalDate,
   val departmentid: DepartmentId,
   val shiftid: ShiftId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<EmployeedepartmenthistoryId> = RowParsers.of(BusinessentityId.pgType, PgTypes.date, DepartmentId.pgType, ShiftId.pgType, { t0, t1, t2, t3 -> EmployeedepartmenthistoryId(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.businessentityid, row.startdate, row.departmentid, row.shiftid) })
+  }
+}

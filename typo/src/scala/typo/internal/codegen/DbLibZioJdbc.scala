@@ -234,10 +234,10 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
         sig(params = List(id.param, varargs), returnType = ZIO.of(ZConnection, Throwable, TypesScala.Boolean))
       case RepoMethod.Update(_, _, _, param, _) =>
         sig(params = List(param), returnType = ZIO.of(ZConnection, Throwable, TypesScala.Option.of(param.tpe)))
-      case RepoMethod.Insert(_, _, unsavedParam, rowType, _) =>
-        sig(params = List(unsavedParam), returnType = ZIO.of(ZConnection, Throwable, rowType))
-      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, rowType) =>
-        sig(params = List(unsavedParam), returnType = ZIO.of(ZConnection, Throwable, rowType))
+      case RepoMethod.Insert(_, _, _, unsavedParam, _, returningStrategy) =>
+        sig(params = List(unsavedParam), returnType = ZIO.of(ZConnection, Throwable, returningStrategy.returnType))
+      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _, returningStrategy) =>
+        sig(params = List(unsavedParam), returnType = ZIO.of(ZConnection, Throwable, returningStrategy.returnType))
       case RepoMethod.InsertStreaming(_, rowType, _) =>
         val unsavedParam = jvm.Param(jvm.Ident("unsaved"), ZStream.of(ZConnection, TypesJava.Throwable, rowType))
         sig(params = List(unsavedParam, batchSize), returnType = ZIO.of(ZConnection, TypesJava.Throwable, TypesScala.Long))
@@ -383,7 +383,8 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
           )
         )
 
-      case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, default, rowType) =>
+      case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, _, default, returningStrategy) =>
+        val rowType = returningStrategy.returnType
         val cases0 = unsaved.normalColumns.map { col =>
           val set = SQL(code"${runtimeInterpolateValue(code"${unsavedParam.name}.${col.name}", col.tpe)}${sqlCast.toPgCode(col)}")
           code"""Some((${SQL(col.dbName)}, $set))"""
@@ -476,7 +477,8 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
           )
         )
 
-      case RepoMethod.Insert(relName, cols, unsavedParam, rowType, writeableColumnsWithId) =>
+      case RepoMethod.Insert(relName, cols, _, unsavedParam, writeableColumnsWithId, returningStrategy) =>
+        val rowType = returningStrategy.returnType
         val values = writeableColumnsWithId.map { c =>
           code"${runtimeInterpolateValue(code"${unsavedParam.name}.${c.name}", c.tpe)}${sqlCast.toPgCode(c)}"
         }
@@ -613,7 +615,7 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
               |    ${param.name}
               |  }
               |}""".stripMargin)
-      case RepoMethod.Insert(_, _, unsavedParam, _, _) =>
+      case RepoMethod.Insert(_, _, _, unsavedParam, _, _) =>
         jvm.Body.Expr(code"""|$ZIO.succeed {
                |  val _ =
                |    if (map.contains(${unsavedParam.name}.${id.paramName}))
@@ -642,7 +644,7 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
                |    acc + 1
                |  }
                |}.runLast.map(_.getOrElse(0L))""".stripMargin)
-      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _) =>
+      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _, _) =>
         jvm.Body.Expr(code"insert(${maybeToRow.get.name}(${unsavedParam.name}))")
 
       case RepoMethod.DeleteBuilder(_, fieldsType, _) =>
@@ -936,6 +938,12 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
       ScalaBigDecimal ++
       all(TypesScala.Boolean, "bool", array => code"$array.map(x => boolean2Boolean(x): ${TypesScala.AnyRef})")
   }
+
+  /** Oracle STRUCT types - not supported in PostgreSQL */
+  override def structInstances(computed: ComputedOracleObjectType): List[jvm.ClassMember] = Nil
+
+  /** Oracle COLLECTION types - not supported in PostgreSQL */
+  override def collectionInstances(computed: ComputedOracleCollectionType): List[jvm.ClassMember] = Nil
 
   override def rowInstances(tpe: jvm.Type, cols: NonEmptyList[ComputedColumn], rowType: DbLib.RowType): List[jvm.ClassMember] = {
     val text = textSupport.map(_.rowInstance(tpe, cols))

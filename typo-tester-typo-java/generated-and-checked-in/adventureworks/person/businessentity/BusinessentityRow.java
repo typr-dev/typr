@@ -48,12 +48,12 @@ public record BusinessentityRow(
   }
   ;
 
-  static RowParser<BusinessentityRow> _rowParser =
+  public static RowParser<BusinessentityRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new BusinessentityRow(t0, t1, t2),
+          BusinessentityRow::new,
           row -> new Object[] {row.businessentityid(), row.rowguid(), row.modifieddate()});
   ;
 

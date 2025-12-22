@@ -79,14 +79,14 @@ public record SopViewRow(
   }
   ;
 
-  static RowParser<SopViewRow> _rowParser =
+  public static RowParser<SopViewRow> _rowParser =
       RowParsers.of(
           SpecialofferId.pgType,
           SpecialofferId.pgType,
           ProductId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new SopViewRow(t0, t1, t2, t3, t4),
+          SopViewRow::new,
           row ->
               new Object[] {
                 row.id(), row.specialofferid(), row.productid(), row.rowguid(), row.modifieddate()

@@ -7,6 +7,8 @@ package adventureworks.production.productmodelillustration;
 
 import adventureworks.production.illustration.IllustrationId;
 import adventureworks.production.productmodel.ProductmodelId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `production.productmodelillustration` */
 public record ProductmodelillustrationId(
@@ -19,5 +21,13 @@ public record ProductmodelillustrationId(
   public ProductmodelillustrationId withIllustrationid(IllustrationId illustrationid) {
     return new ProductmodelillustrationId(productmodelid, illustrationid);
   }
+  ;
+
+  public static RowParser<ProductmodelillustrationId> _rowParser =
+      RowParsers.of(
+          ProductmodelId.pgType,
+          IllustrationId.pgType,
+          ProductmodelillustrationId::new,
+          row -> new Object[] {row.productmodelid(), row.illustrationid()});
   ;
 }

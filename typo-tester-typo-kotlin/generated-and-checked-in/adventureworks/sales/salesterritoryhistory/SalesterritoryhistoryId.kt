@@ -8,10 +8,17 @@ package adventureworks.sales.salesterritoryhistory
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
 import java.time.LocalDateTime
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
+import typo.runtime.PgTypes
 
 /** Type for the composite primary key of table `sales.salesterritoryhistory` */
 data class SalesterritoryhistoryId(
   val businessentityid: BusinessentityId,
   val startdate: LocalDateTime,
   val territoryid: SalesterritoryId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<SalesterritoryhistoryId> = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, SalesterritoryId.pgType, { t0, t1, t2 -> SalesterritoryhistoryId(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.startdate, row.territoryid) })
+  }
+}

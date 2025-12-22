@@ -69,7 +69,12 @@ trait DbAdapter {
   /** Lookup runtime type instance for a WellKnownPrimitive */
   def lookupPrimitive(primitive: analysis.WellKnownPrimitive, typeSupport: TypeSupport): Code
 
-  /** Get the database-specific text/string type (for string enum underlying types) */
+  /** Lookup runtime type instance by database type */
+  def lookupTypeByDbType(dbType: db.Type, Types: jvm.Type.Qualified, naming: Naming, typeSupport: TypeSupport): Code
+
+  /** Get the database-specific text/string type (for string enum underlying types). NOTE: This is only used for PostgreSQL COPY streaming support. Oracle doesn't use this. Implementations should not
+    * rely on this method being meaningful for all databases.
+    */
   def textType: db.Type
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -87,6 +92,14 @@ trait DbAdapter {
 
   /** Whether COPY streaming supports DEFAULT keyword */
   def supportsDefaultInCopy: Boolean
+
+  /** Determine the strategy for returning data after INSERT operations.
+    *   - PostgreSQL/MariaDB: Use SQL RETURNING clause
+    *   - Oracle (no STRUCT/ARRAY): Use getGeneratedKeys with all columns
+    *   - Oracle (with STRUCT/ARRAY): Use getGeneratedKeys with ID columns only
+    * Note: maybeId is None for tables without a primary key
+    */
+  def returningStrategy(cols: NonEmptyList[ComputedColumn], rowType: jvm.Type, maybeId: Option[IdComputed]): ReturningStrategy
 
   // ═══════════════════════════════════════════════════════════════════════════
   // LAYER 4: SQL Templates

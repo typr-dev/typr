@@ -85,19 +85,7 @@ case class BillofmaterialsRow(
 }
 
 object BillofmaterialsRow {
-  val `_rowParser`: RowParser[BillofmaterialsRow] = {
-    RowParsers.of(ScalaDbTypes.PgTypes.int4, ProductId.pgType.nullable, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable, UnitmeasureId.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new BillofmaterialsRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8
-    ))(row => Array[Any](row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[BillofmaterialsRow] = RowParsers.of(ScalaDbTypes.PgTypes.int4, ProductId.pgType.nullable, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable, UnitmeasureId.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(BillofmaterialsRow.apply)(row => Array[Any](row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate))
 
   given pgText: PgText[BillofmaterialsRow] = PgText.from(`_rowParser`.underlying)
 }

@@ -5,6 +5,8 @@
  */
 package testdb.hardcoded.compositepk.person
 
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -18,4 +20,16 @@ object PersonId {
   implicit lazy val decoder: Decoder[PersonId] = Decoder.forProduct2[PersonId, Long, Option[String]]("one", "two")(PersonId.apply)(Decoder.decodeLong, Decoder.decodeOption(Decoder.decodeString))
 
   implicit lazy val encoder: Encoder[PersonId] = Encoder.forProduct2[PersonId, Long, Option[String]]("one", "two")(x => (x.one, x.two))(Encoder.encodeLong, Encoder.encodeOption(Encoder.encodeString))
+
+  implicit lazy val read: Read[PersonId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(Meta.LongMeta.get).asInstanceOf[Read[Any]],
+        new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      PersonId(
+        one = arr(0).asInstanceOf[Long],
+            two = arr(1).asInstanceOf[Option[String]]
+      )
+    }
+  }
 }

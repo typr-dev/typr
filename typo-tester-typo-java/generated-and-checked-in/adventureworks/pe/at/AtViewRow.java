@@ -55,14 +55,14 @@ public record AtViewRow(
   }
   ;
 
-  static RowParser<AtViewRow> _rowParser =
+  public static RowParser<AtViewRow> _rowParser =
       RowParsers.of(
           AddresstypeId.pgType,
           AddresstypeId.pgType,
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new AtViewRow(t0, t1, t2, t3, t4),
+          AtViewRow::new,
           row ->
               new Object[] {
                 row.id(), row.addresstypeid(), row.name(), row.rowguid(), row.modifieddate()

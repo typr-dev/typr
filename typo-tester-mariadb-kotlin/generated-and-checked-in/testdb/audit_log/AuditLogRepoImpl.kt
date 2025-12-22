@@ -33,7 +33,7 @@ class AuditLogRepoImpl() : AuditLogRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in logIds) { fragments.add(Fragment.encode(AuditLogId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `audit_log` where `log_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `audit_log` where `log_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -84,7 +84,7 @@ class AuditLogRepoImpl() : AuditLogRepo {
       { value -> columns.add(Fragment.lit("`session_id`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varbinary.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `audit_log`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `audit_log`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`\n"))
     return q.updateReturning(AuditLogRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -103,7 +103,7 @@ class AuditLogRepoImpl() : AuditLogRepo {
   ): List<AuditLogRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in logIds) { fragments.add(Fragment.encode(AuditLogId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id` from `audit_log` where `log_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(AuditLogRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id` from `audit_log` where `log_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(AuditLogRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

@@ -29,11 +29,11 @@ public record UpdatePersonReturningSqlRow(
   }
   ;
 
-  static RowParser<UpdatePersonReturningSqlRow> _rowParser =
+  public static RowParser<UpdatePersonReturningSqlRow> _rowParser =
       RowParsers.of(
           FirstName.pgType,
           PgTypes.timestamp,
-          (t0, t1) -> new UpdatePersonReturningSqlRow(t0, t1),
+          UpdatePersonReturningSqlRow::new,
           row -> new Object[] {row.firstname(), row.modifieddate()});
   ;
 }

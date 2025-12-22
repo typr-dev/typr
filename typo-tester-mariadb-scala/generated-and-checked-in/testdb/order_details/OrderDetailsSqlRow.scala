@@ -54,25 +54,5 @@ case class OrderDetailsSqlRow(
 )
 
 object OrderDetailsSqlRow {
-  val `_rowParser`: RowParser[OrderDetailsSqlRow] = {
-    RowParsers.of(OrdersId.pgType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.datetime, OrderItemsId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => new OrderDetailsSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16
-    ))(row => Array[Any](row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.orderedAt, row.itemId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.lineTotal))
-  }
+  val `_rowParser`: RowParser[OrderDetailsSqlRow] = RowParsers.of(OrdersId.pgType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.datetime, OrderItemsId.pgType, ProductsId.pgType, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric)(OrderDetailsSqlRow.apply)(row => Array[Any](row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.orderedAt, row.itemId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.lineTotal))
 }

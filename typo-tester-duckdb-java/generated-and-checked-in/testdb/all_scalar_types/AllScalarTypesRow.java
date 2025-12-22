@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.UUID;
 import testdb.Mood;
 import typo.data.Json;
-import typo.runtime.DuckDbText;
 import typo.runtime.DuckDbTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -856,7 +855,7 @@ public record AllScalarTypesRow(
   }
   ;
 
-  static RowParser<AllScalarTypesRow> _rowParser =
+  public static RowParser<AllScalarTypesRow> _rowParser =
       RowParsers.of(
           AllScalarTypesId.duckDbType,
           DuckDbTypes.tinyint.opt(),
@@ -884,35 +883,7 @@ public record AllScalarTypesRow(
           DuckDbTypes.json.opt(),
           Mood.duckDbType.opt(),
           DuckDbTypes.varchar,
-          (t0,
-              t1,
-              t2,
-              t3,
-              t4,
-              t5,
-              t6,
-              t7,
-              t8,
-              t9,
-              t10,
-              t11,
-              t12,
-              t13,
-              t14,
-              t15,
-              t16,
-              t17,
-              t18,
-              t19,
-              t20,
-              t21,
-              t22,
-              t23,
-              t24,
-              t25) ->
-              new AllScalarTypesRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17,
-                  t18, t19, t20, t21, t22, t23, t24, t25),
+          AllScalarTypesRow::new,
           row ->
               new Object[] {
                 row.id(),
@@ -943,6 +914,4 @@ public record AllScalarTypesRow(
                 row.colNotNull()
               });
   ;
-
-  public static DuckDbText<AllScalarTypesRow> duckDbText = DuckDbText.from(_rowParser);
 }

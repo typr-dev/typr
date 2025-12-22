@@ -120,7 +120,7 @@ public record CrViewRow(
   }
   ;
 
-  static RowParser<CrViewRow> _rowParser =
+  public static RowParser<CrViewRow> _rowParser =
       RowParsers.of(
           CurrencyrateId.pgType,
           PgTypes.timestamp,
@@ -129,7 +129,7 @@ public record CrViewRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new CrViewRow(t0, t1, t2, t3, t4, t5, t6),
+          CrViewRow::new,
           row ->
               new Object[] {
                 row.currencyrateid(),

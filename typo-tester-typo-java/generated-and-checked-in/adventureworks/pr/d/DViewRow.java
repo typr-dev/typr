@@ -289,7 +289,7 @@ public record DViewRow(
   }
   ;
 
-  static RowParser<DViewRow> _rowParser =
+  public static RowParser<DViewRow> _rowParser =
       RowParsers.of(
           PgTypes.text,
           BusinessentityId.pgType,
@@ -304,8 +304,7 @@ public record DViewRow(
           PgTypes.uuid,
           PgTypes.timestamp,
           DocumentId.pgType,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) ->
-              new DViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12),
+          DViewRow::new,
           row ->
               new Object[] {
                 row.title(),

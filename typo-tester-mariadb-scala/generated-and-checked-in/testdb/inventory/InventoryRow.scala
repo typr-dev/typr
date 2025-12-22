@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -94,21 +93,5 @@ case class InventoryRow(
 }
 
 object InventoryRow {
-  val `_rowParser`: RowParser[InventoryRow] = {
-    RowParsers.of(InventoryId.pgType, ProductsId.pgType, WarehousesId.pgType, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => new InventoryRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10
-    ))(row => Array[Any](row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt))
-  }
-
-  given mariaText: MariaText[InventoryRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[InventoryRow] = RowParsers.of(InventoryId.pgType, ProductsId.pgType, WarehousesId.pgType, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime)(InventoryRow.apply)(row => Array[Any](row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt))
 }

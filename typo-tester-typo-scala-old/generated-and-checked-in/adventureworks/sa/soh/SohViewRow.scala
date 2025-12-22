@@ -16,11 +16,12 @@ import adventureworks.sales.customer.CustomerId
 import adventureworks.sales.salesorderheader.SalesorderheaderId
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.userdefined.CustomCreditcardId
-import java.lang.Object
 import java.time.LocalDateTime
 import java.util.UUID
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
+import typo.runtime.RowParsers
+import typo.runtime.RowParsers.Function26
 
 /** View: sa.soh */
 case class SohViewRow(
@@ -80,33 +81,64 @@ case class SohViewRow(
 
 object SohViewRow {
   val `_rowParser`: RowParser[SohViewRow] = {
-    new RowParser(java.util.List.of(SalesorderheaderId.pgType, SalesorderheaderId.pgType, PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.int2, Flag.pgType, OrderNumber.pgType, AccountNumber.pgType, CustomerId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType, PgTypes.text, CurrencyrateId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.text, PgTypes.uuid, PgTypes.timestamp), (arr: Array[Object]) => new SohViewRow(
-      arr(0).asInstanceOf[SalesorderheaderId],
-      arr(1).asInstanceOf[SalesorderheaderId],
-      arr(2).asInstanceOf[java.lang.Short],
-      arr(3).asInstanceOf[LocalDateTime],
-      arr(4).asInstanceOf[LocalDateTime],
-      arr(5).asInstanceOf[LocalDateTime],
-      arr(6).asInstanceOf[java.lang.Short],
-      arr(7).asInstanceOf[Flag],
-      arr(8).asInstanceOf[OrderNumber],
-      arr(9).asInstanceOf[AccountNumber],
-      arr(10).asInstanceOf[CustomerId],
-      arr(11).asInstanceOf[BusinessentityId],
-      arr(12).asInstanceOf[SalesterritoryId],
-      arr(13).asInstanceOf[AddressId],
-      arr(14).asInstanceOf[AddressId],
-      arr(15).asInstanceOf[ShipmethodId],
-      arr(16).asInstanceOf[/* user-picked */ CustomCreditcardId],
-      arr(17).asInstanceOf[String],
-      arr(18).asInstanceOf[CurrencyrateId],
-      arr(19).asInstanceOf[java.math.BigDecimal],
-      arr(20).asInstanceOf[java.math.BigDecimal],
-      arr(21).asInstanceOf[java.math.BigDecimal],
-      arr(22).asInstanceOf[java.math.BigDecimal],
-      arr(23).asInstanceOf[String],
-      arr(24).asInstanceOf[UUID],
-      arr(25).asInstanceOf[LocalDateTime]
-    ), row => Array[Any](row.id, row.salesorderid, row.revisionnumber, row.orderdate, row.duedate, row.shipdate, row.status, row.onlineorderflag, row.purchaseordernumber, row.accountnumber, row.customerid, row.salespersonid, row.territoryid, row.billtoaddressid, row.shiptoaddressid, row.shipmethodid, row.creditcardid, row.creditcardapprovalcode, row.currencyrateid, row.subtotal, row.taxamt, row.freight, row.totaldue, row.comment, row.rowguid, row.modifieddate))
+    RowParsers.of(SalesorderheaderId.pgType, SalesorderheaderId.pgType, PgTypes.int2, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.int2, Flag.pgType, OrderNumber.pgType, AccountNumber.pgType, CustomerId.pgType, BusinessentityId.pgType, SalesterritoryId.pgType, AddressId.pgType, AddressId.pgType, ShipmethodId.pgType, CustomCreditcardId.pgType, PgTypes.text, CurrencyrateId.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, new Function26[SalesorderheaderId, SalesorderheaderId, java.lang.Short, LocalDateTime, LocalDateTime, LocalDateTime, java.lang.Short, Flag, OrderNumber, AccountNumber, CustomerId, BusinessentityId, SalesterritoryId, AddressId, AddressId, ShipmethodId, /* user-picked */ CustomCreditcardId, String, CurrencyrateId, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal, String, UUID, LocalDateTime, SohViewRow] {
+      override def apply(
+        t0: SalesorderheaderId,
+        t1: SalesorderheaderId,
+        t2: java.lang.Short,
+        t3: LocalDateTime,
+        t4: LocalDateTime,
+        t5: LocalDateTime,
+        t6: java.lang.Short,
+        t7: Flag,
+        t8: OrderNumber,
+        t9: AccountNumber,
+        t10: CustomerId,
+        t11: BusinessentityId,
+        t12: SalesterritoryId,
+        t13: AddressId,
+        t14: AddressId,
+        t15: ShipmethodId,
+        t16: /* user-picked */ CustomCreditcardId,
+        t17: String,
+        t18: CurrencyrateId,
+        t19: java.math.BigDecimal,
+        t20: java.math.BigDecimal,
+        t21: java.math.BigDecimal,
+        t22: java.math.BigDecimal,
+        t23: String,
+        t24: UUID,
+        t25: LocalDateTime
+      ): SohViewRow = {
+        new SohViewRow(
+          t0,
+          t1,
+          t2,
+          t3,
+          t4,
+          t5,
+          t6,
+          t7,
+          t8,
+          t9,
+          t10,
+          t11,
+          t12,
+          t13,
+          t14,
+          t15,
+          t16,
+          t17,
+          t18,
+          t19,
+          t20,
+          t21,
+          t22,
+          t23,
+          t24,
+          t25
+        )
+      }
+    }, row => Array[Any](row.id, row.salesorderid, row.revisionnumber, row.orderdate, row.duedate, row.shipdate, row.status, row.onlineorderflag, row.purchaseordernumber, row.accountnumber, row.customerid, row.salespersonid, row.territoryid, row.billtoaddressid, row.shiptoaddressid, row.shipmethodid, row.creditcardid, row.creditcardapprovalcode, row.currencyrateid, row.subtotal, row.taxamt, row.freight, row.totaldue, row.comment, row.rowguid, row.modifieddate))
   }
 }

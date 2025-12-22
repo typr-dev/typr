@@ -169,7 +169,7 @@ public record VViewRow(
   }
   ;
 
-  static RowParser<VViewRow> _rowParser =
+  public static RowParser<VViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
@@ -180,7 +180,7 @@ public record VViewRow(
           Flag.pgType,
           PgTypes.text,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) -> new VViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          VViewRow::new,
           row ->
               new Object[] {
                 row.id(),

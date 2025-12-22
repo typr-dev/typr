@@ -8,6 +8,8 @@ package adventureworks.production.productmodelproductdescriptionculture
 import adventureworks.production.culture.CultureId
 import adventureworks.production.productdescription.ProductdescriptionId
 import adventureworks.production.productmodel.ProductmodelId
+import typo.runtime.RowParser
+import typo.runtime.RowParsers
 
 /** Type for the composite primary key of table `production.productmodelproductdescriptionculture` */
 case class ProductmodelproductdescriptioncultureId(
@@ -15,3 +17,7 @@ case class ProductmodelproductdescriptioncultureId(
   productdescriptionid: ProductdescriptionId,
   cultureid: CultureId
 )
+
+object ProductmodelproductdescriptioncultureId {
+  val `_rowParser`: RowParser[ProductmodelproductdescriptioncultureId] = RowParsers.of(ProductmodelId.pgType, ProductdescriptionId.pgType, CultureId.pgType, ProductmodelproductdescriptioncultureId.apply, row => Array[Any](row.productmodelid, row.productdescriptionid, row.cultureid))
+}

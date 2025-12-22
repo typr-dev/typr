@@ -75,34 +75,5 @@ case class PViewRow(
 )
 
 object PViewRow {
-  val `_rowParser`: RowParser[PViewRow] = {
-    RowParsers.of(ProductId.pgType, ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.text, UnitmeasureId.pgType, UnitmeasureId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.int4, PgTypes.bpchar, PgTypes.bpchar, PgTypes.bpchar, ProductsubcategoryId.pgType, ProductmodelId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25) => new PViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16,
-      t17,
-      t18,
-      t19,
-      t20,
-      t21,
-      t22,
-      t23,
-      t24,
-      t25
-    ))(row => Array[Any](row.id, row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[PViewRow] = RowParsers.of(ProductId.pgType, ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.text, UnitmeasureId.pgType, UnitmeasureId.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.int4, PgTypes.bpchar, PgTypes.bpchar, PgTypes.bpchar, ProductsubcategoryId.pgType, ProductmodelId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.uuid, PgTypes.timestamp)(PViewRow.apply)(row => Array[Any](row.id, row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate))
 }

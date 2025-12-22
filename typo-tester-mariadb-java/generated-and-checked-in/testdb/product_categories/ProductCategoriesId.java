@@ -8,6 +8,8 @@ package testdb.product_categories;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import testdb.categories.CategoriesId;
 import testdb.products.ProductsId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `product_categories` */
 public record ProductCategoriesId(
@@ -21,5 +23,13 @@ public record ProductCategoriesId(
   public ProductCategoriesId withCategoryId(CategoriesId categoryId) {
     return new ProductCategoriesId(productId, categoryId);
   }
+  ;
+
+  public static RowParser<ProductCategoriesId> _rowParser =
+      RowParsers.of(
+          ProductsId.pgType,
+          CategoriesId.pgType,
+          ProductCategoriesId::new,
+          row -> new Object[] {row.productId(), row.categoryId()});
   ;
 }

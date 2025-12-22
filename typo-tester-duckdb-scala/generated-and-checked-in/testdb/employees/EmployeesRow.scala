@@ -8,7 +8,6 @@ package testdb.employees
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 import typo.scaladsl.DuckDbTypeOps
 import typo.scaladsl.RowParser
@@ -46,17 +45,7 @@ case class EmployeesRow(
 }
 
 object EmployeesRow {
-  val `_rowParser`: RowParser[EmployeesRow] = {
-    RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date)((t0, t1, t2, t3, t4, t5, t6) => new EmployeesRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ))(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
-  }
+  val `_rowParser`: RowParser[EmployeesRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date)(EmployeesRow.apply)(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
 
   def apply(
     compositeId: EmployeesId,
@@ -76,6 +65,4 @@ object EmployeesRow {
       hireDate
     )
   }
-
-  given duckDbText: DuckDbText[EmployeesRow] = DuckDbText.from(`_rowParser`.underlying)
 }

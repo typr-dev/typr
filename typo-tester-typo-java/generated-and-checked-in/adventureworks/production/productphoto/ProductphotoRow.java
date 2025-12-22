@@ -107,7 +107,7 @@ public record ProductphotoRow(
   }
   ;
 
-  static RowParser<ProductphotoRow> _rowParser =
+  public static RowParser<ProductphotoRow> _rowParser =
       RowParsers.of(
           ProductphotoId.pgType,
           PgTypes.bytea.opt(),
@@ -115,7 +115,7 @@ public record ProductphotoRow(
           PgTypes.bytea.opt(),
           PgTypes.text.opt(),
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new ProductphotoRow(t0, t1, t2, t3, t4, t5),
+          ProductphotoRow::new,
           row ->
               new Object[] {
                 row.productphotoid(),

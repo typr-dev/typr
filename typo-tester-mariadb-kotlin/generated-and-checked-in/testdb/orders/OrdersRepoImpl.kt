@@ -37,7 +37,7 @@ class OrdersRepoImpl() : OrdersRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in orderIds) { fragments.add(Fragment.encode(OrdersId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `orders` where `order_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `orders` where `order_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -145,7 +145,7 @@ class OrdersRepoImpl() : OrdersRepo {
       { value -> columns.add(Fragment.lit("`delivered_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `orders`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `orders`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`\n"))
     return q.updateReturning(OrdersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -164,7 +164,7 @@ class OrdersRepoImpl() : OrdersRepo {
   ): List<OrdersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in orderIds) { fragments.add(Fragment.encode(OrdersId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at` from `orders` where `order_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(OrdersRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at` from `orders` where `order_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(OrdersRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

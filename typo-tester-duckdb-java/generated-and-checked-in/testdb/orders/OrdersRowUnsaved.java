@@ -11,8 +11,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.DuckDbText;
-import typo.runtime.DuckDbTypes;
 
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 public record OrdersRowUnsaved(
@@ -55,21 +53,6 @@ public record OrdersRowUnsaved(
     return new OrdersRowUnsaved(orderId, customerId, totalAmount, orderDate, status);
   }
   ;
-
-  public static DuckDbText<OrdersRowUnsaved> duckDbText =
-      DuckDbText.instance(
-          (row, sb) -> {
-            OrdersId.duckDbType.duckDbText().unsafeEncode(row.orderId, sb);
-            sb.append(DuckDbText.DELIMETER);
-            DuckDbTypes.integer.duckDbText().unsafeEncode(row.customerId, sb);
-            sb.append(DuckDbText.DELIMETER);
-            DuckDbTypes.numeric.opt().duckDbText().unsafeEncode(row.totalAmount, sb);
-            sb.append(DuckDbText.DELIMETER);
-            Defaulted.duckDbText(DuckDbTypes.date.duckDbText()).unsafeEncode(row.orderDate, sb);
-            sb.append(DuckDbText.DELIMETER);
-            Defaulted.duckDbText(DuckDbTypes.varchar.opt().duckDbText())
-                .unsafeEncode(row.status, sb);
-          });
 
   public OrdersRow toRow(
       java.util.function.Supplier<LocalDate> orderDateDefault,

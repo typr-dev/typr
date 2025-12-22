@@ -6,6 +6,9 @@
 package testdb.employees;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import typo.runtime.DuckDbTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `employees` */
 public record EmployeesId(
@@ -18,5 +21,13 @@ public record EmployeesId(
   public EmployeesId withEmpSuffix(String empSuffix) {
     return new EmployeesId(empNumber, empSuffix);
   }
+  ;
+
+  public static RowParser<EmployeesId> _rowParser =
+      RowParsers.of(
+          DuckDbTypes.integer,
+          DuckDbTypes.varchar,
+          EmployeesId::new,
+          row -> new Object[] {row.empNumber(), row.empSuffix()});
   ;
 }

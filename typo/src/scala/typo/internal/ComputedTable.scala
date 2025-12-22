@@ -198,7 +198,8 @@ case class ComputedTable(
           writeableColumnsWithId <- writeableColumnsWithId
         } yield {
           val unsavedParam = jvm.Param(jvm.Ident("unsaved"), names.RowName)
-          RepoMethod.Insert(dbTable.name, cols, unsavedParam, names.RowName, writeableColumnsWithId)
+          val returningStrategy = dbType.adapter(needsTimestampCasts = false).returningStrategy(cols, names.RowName, maybeId)
+          RepoMethod.Insert(dbTable.name, cols, maybeId, unsavedParam, writeableColumnsWithId, returningStrategy)
         },
         for {
           writeableColumnsWithId <- writeableColumnsWithId
@@ -213,9 +214,12 @@ case class ComputedTable(
           id <- maybeId
           writeableColumnsWithId <- writeableColumnsWithId
         } yield RepoMethod.UpsertBatch(dbTable.name, cols, id, names.RowName, writeableColumnsWithId),
-        maybeUnsavedRow.map { unsavedRow =>
+        for {
+          unsavedRow <- maybeUnsavedRow
+        } yield {
           val unsavedParam = jvm.Param(jvm.Ident("unsaved"), unsavedRow.tpe)
-          RepoMethod.InsertUnsaved(dbTable.name, cols, unsavedRow, unsavedParam, default, names.RowName)
+          val returningStrategy = dbType.adapter(needsTimestampCasts = false).returningStrategy(cols, names.RowName, maybeId)
+          RepoMethod.InsertUnsaved(dbTable.name, cols, unsavedRow, unsavedParam, maybeId, default, returningStrategy)
         },
         maybeUnsavedRow.collect {
           case unsavedRow if options.enableStreamingInserts =>
@@ -230,13 +234,24 @@ case class ComputedTable(
         }
       ).flatten,
       dbTable.uniqueKeys
-        .map { uk =>
-          RepoMethod.SelectByUnique(
-            dbTable.name,
-            keyColumns = uk.cols.map(colName => cols.find(_.dbName == colName).get),
-            allColumns = cols,
-            rowType = names.RowName
-          )
+        .flatMap { uk =>
+          val keyColumns = uk.cols.toList.flatMap(colName => cols.find(_.dbName == colName))
+
+          // Only create select-by-unique methods if all referenced columns exist
+          if (keyColumns.size == uk.cols.length) {
+            NonEmptyList.fromList(keyColumns).map { nelKeyColumns =>
+              RepoMethod.SelectByUnique(
+                dbTable.name,
+                keyColumns = nelKeyColumns,
+                allColumns = cols,
+                rowType = names.RowName
+              )
+            }
+          } else {
+            // Skip unique keys that reference non-existent columns (e.g., nested table storage tables)
+            options.logger.warn(s"Skipping unique key ${uk.constraintName.value} on ${dbTable.name.value}: references columns not in table (${uk.cols.map(_.value).mkString(", ")})")
+            None
+          }
         }
     )
     val valid = maybeMethods.flatten.filter { method =>

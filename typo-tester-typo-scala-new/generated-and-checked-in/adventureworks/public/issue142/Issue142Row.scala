@@ -17,7 +17,7 @@ case class Issue142Row(tabellkode: Issue142Id) {
 }
 
 object Issue142Row {
-  val `_rowParser`: RowParser[Issue142Row] = RowParsers.of(Issue142Id.pgType)(t0 => new Issue142Row(t0))(row => Array[Any](row.tabellkode))
+  val `_rowParser`: RowParser[Issue142Row] = RowParsers.of(Issue142Id.pgType)(Issue142Row.apply)(row => Array[Any](row.tabellkode))
 
   given pgText: PgText[Issue142Row] = PgText.from(`_rowParser`.underlying)
 }

@@ -7,9 +7,15 @@ package adventureworks.sales.specialofferproduct
 
 import adventureworks.production.product.ProductId
 import adventureworks.sales.specialoffer.SpecialofferId
+import typo.scaladsl.RowParser
+import typo.scaladsl.RowParsers
 
 /** Type for the composite primary key of table `sales.specialofferproduct` */
 case class SpecialofferproductId(
   specialofferid: SpecialofferId,
   productid: ProductId
 )
+
+object SpecialofferproductId {
+  val `_rowParser`: RowParser[SpecialofferproductId] = RowParsers.of(SpecialofferId.pgType, ProductId.pgType)(SpecialofferproductId.apply)(row => Array[Any](row.specialofferid, row.productid))
+}

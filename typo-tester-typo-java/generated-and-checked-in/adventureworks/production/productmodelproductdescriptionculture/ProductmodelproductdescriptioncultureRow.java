@@ -77,13 +77,13 @@ public record ProductmodelproductdescriptioncultureRow(
   }
   ;
 
-  static RowParser<ProductmodelproductdescriptioncultureRow> _rowParser =
+  public static RowParser<ProductmodelproductdescriptioncultureRow> _rowParser =
       RowParsers.of(
           ProductmodelId.pgType,
           ProductdescriptionId.pgType,
           CultureId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new ProductmodelproductdescriptioncultureRow(t0, t1, t2, t3),
+          ProductmodelproductdescriptioncultureRow::new,
           row ->
               new Object[] {
                 row.productmodelid(),

@@ -15,8 +15,6 @@ import testdb.customtypes.Defaulted.UseDefault;
 import testdb.orders.OrdersId;
 import testdb.shipping_carriers.ShippingCarriersId;
 import testdb.warehouses.WarehousesId;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `shipments` which has not been persisted yet */
 public record ShipmentsRowUnsaved(
@@ -435,51 +433,6 @@ public record ShipmentsRowUnsaved(
         updatedAt);
   }
   ;
-
-  public static MariaText<ShipmentsRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            OrdersId.pgType.mariaText().unsafeEncode(row.orderId, sb);
-            sb.append(MariaText.DELIMETER);
-            ShippingCarriersId.pgType.mariaText().unsafeEncode(row.carrierId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.shippingMethod, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.shippingCost, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.trackingNumber, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.opt().mariaText())
-                .unsafeEncode(row.weightKg, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.dimensionsJson, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longblob.opt().mariaText())
-                .unsafeEncode(row.labelData, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.status, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.date.opt().mariaText())
-                .unsafeEncode(row.estimatedDeliveryDate, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.actualDeliveryAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.opt().mariaText())
-                .unsafeEncode(row.insuranceAmount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(WarehousesId.pgType.opt().mariaText())
-                .unsafeEncode(row.originWarehouseId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.shippedAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.updatedAt, sb);
-          });
 
   public ShipmentsRow toRow(
       java.util.function.Supplier<Optional<String>> trackingNumberDefault,

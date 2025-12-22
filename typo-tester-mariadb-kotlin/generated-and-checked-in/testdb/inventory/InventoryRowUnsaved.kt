@@ -11,10 +11,6 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `inventory` which has not been persisted yet */
 data class InventoryRowUnsaved(
@@ -70,27 +66,4 @@ data class InventoryRowUnsaved(
     updatedAtDefault: () -> LocalDateTime,
     inventoryIdDefault: () -> InventoryId
   ): InventoryRow = InventoryRow(inventoryId = inventoryIdDefault(), productId = productId, warehouseId = warehouseId, quantityOnHand = quantityOnHand.getOrElse(quantityOnHandDefault), quantityReserved = quantityReserved.getOrElse(quantityReservedDefault), quantityOnOrder = quantityOnOrder.getOrElse(quantityOnOrderDefault), reorderPoint = reorderPoint.getOrElse(reorderPointDefault), reorderQuantity = reorderQuantity.getOrElse(reorderQuantityDefault), binLocation = binLocation.getOrElse(binLocationDefault), lastCountedAt = lastCountedAt.getOrElse(lastCountedAtDefault), updatedAt = updatedAt.getOrElse(updatedAtDefault))
-
-  companion object {
-    val mariaText: MariaText<InventoryRowUnsaved> =
-      MariaText.instance({ row, sb -> ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb)
-      sb.append(MariaText.DELIMETER)
-      WarehousesId.pgType.mariaText().unsafeEncode(row.warehouseId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.int_.mariaText()).unsafeEncode(row.quantityOnHand, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.int_.mariaText()).unsafeEncode(row.quantityReserved, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.int_.mariaText()).unsafeEncode(row.quantityOnOrder, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.int_.mariaText()).unsafeEncode(row.reorderPoint, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.int_.mariaText()).unsafeEncode(row.reorderQuantity, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.binLocation, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.lastCountedAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.updatedAt, sb) })
-  }
 }

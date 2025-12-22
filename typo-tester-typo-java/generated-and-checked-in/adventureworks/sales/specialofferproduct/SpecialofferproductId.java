@@ -7,6 +7,8 @@ package adventureworks.sales.specialofferproduct;
 
 import adventureworks.production.product.ProductId;
 import adventureworks.sales.specialoffer.SpecialofferId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `sales.specialofferproduct` */
 public record SpecialofferproductId(SpecialofferId specialofferid, ProductId productid) {
@@ -18,5 +20,13 @@ public record SpecialofferproductId(SpecialofferId specialofferid, ProductId pro
   public SpecialofferproductId withProductid(ProductId productid) {
     return new SpecialofferproductId(specialofferid, productid);
   }
+  ;
+
+  public static RowParser<SpecialofferproductId> _rowParser =
+      RowParsers.of(
+          SpecialofferId.pgType,
+          ProductId.pgType,
+          SpecialofferproductId::new,
+          row -> new Object[] {row.specialofferid(), row.productid()});
   ;
 }

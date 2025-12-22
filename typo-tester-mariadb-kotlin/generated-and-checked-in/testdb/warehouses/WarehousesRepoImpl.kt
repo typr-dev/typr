@@ -34,7 +34,7 @@ class WarehousesRepoImpl() : WarehousesRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in warehouseIds) { fragments.add(Fragment.encode(WarehousesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `warehouses` where `warehouse_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `warehouses` where `warehouse_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -82,7 +82,7 @@ class WarehousesRepoImpl() : WarehousesRepo {
       { value -> columns.add(Fragment.lit("`contact_phone`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `warehouses`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `warehouses`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
     return q.updateReturning(WarehousesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -101,7 +101,7 @@ class WarehousesRepoImpl() : WarehousesRepo {
   ): List<WarehousesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in warehouseIds) { fragments.add(Fragment.encode(WarehousesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone` from `warehouses` where `warehouse_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(WarehousesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone` from `warehouses` where `warehouse_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(WarehousesRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

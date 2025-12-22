@@ -7,6 +7,9 @@ package adventureworks.public_.flaff;
 
 import adventureworks.public_.ShortText;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `public.flaff` */
 public record FlaffId(
@@ -32,5 +35,15 @@ public record FlaffId(
   public FlaffId withSpecifier(ShortText specifier) {
     return new FlaffId(code, anotherCode, someNumber, specifier);
   }
+  ;
+
+  public static RowParser<FlaffId> _rowParser =
+      RowParsers.of(
+          ShortText.pgType,
+          PgTypes.text,
+          PgTypes.int4,
+          ShortText.pgType,
+          FlaffId::new,
+          row -> new Object[] {row.code(), row.anotherCode(), row.someNumber(), row.specifier()});
   ;
 }

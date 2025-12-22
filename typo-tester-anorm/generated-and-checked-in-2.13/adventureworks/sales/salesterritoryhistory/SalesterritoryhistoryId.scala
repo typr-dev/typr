@@ -8,6 +8,8 @@ package adventureworks.sales.salesterritoryhistory
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -35,6 +37,18 @@ object SalesterritoryhistoryId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[SalesterritoryhistoryId] = {
+    RowParser[SalesterritoryhistoryId] { row =>
+      Success(
+        SalesterritoryhistoryId(
+          businessentityid = row(idx + 0)(BusinessentityId.column),
+          startdate = row(idx + 1)(TypoLocalDateTime.column),
+          territoryid = row(idx + 2)(SalesterritoryId.column)
+        )
+      )
+    }
   }
 
   implicit lazy val writes: OWrites[SalesterritoryhistoryId] = {

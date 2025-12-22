@@ -52,15 +52,7 @@ case class EmployeepayhistoryRow(
 }
 
 object EmployeepayhistoryRow {
-  val `_rowParser`: RowParser[EmployeepayhistoryRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.int2, PgTypes.timestamp)((t0, t1, t2, t3, t4) => new EmployeepayhistoryRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[EmployeepayhistoryRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.int2, PgTypes.timestamp)(EmployeepayhistoryRow.apply)(row => Array[Any](row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate))
 
   def apply(
     compositeId: EmployeepayhistoryId,

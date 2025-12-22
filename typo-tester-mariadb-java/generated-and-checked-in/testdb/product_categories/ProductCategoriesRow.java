@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import testdb.categories.CategoriesId;
 import testdb.customtypes.Defaulted;
 import testdb.products.ProductsId;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -48,13 +47,13 @@ public record ProductCategoriesRow(
   }
   ;
 
-  static RowParser<ProductCategoriesRow> _rowParser =
+  public static RowParser<ProductCategoriesRow> _rowParser =
       RowParsers.of(
           ProductsId.pgType,
           CategoriesId.pgType,
           MariaTypes.bool,
           MariaTypes.smallint,
-          (t0, t1, t2, t3) -> new ProductCategoriesRow(t0, t1, t2, t3),
+          ProductCategoriesRow::new,
           row ->
               new Object[] {row.productId(), row.categoryId(), row.isPrimary(), row.sortOrder()});
   ;
@@ -65,8 +64,6 @@ public record ProductCategoriesRow(
         compositeId.productId(), compositeId.categoryId(), isPrimary, sortOrder);
   }
   ;
-
-  public static MariaText<ProductCategoriesRow> mariaText = MariaText.from(_rowParser);
 
   public ProductCategoriesId compositeId() {
     return new ProductCategoriesId(productId, categoryId);

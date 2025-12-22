@@ -39,6 +39,10 @@ class Fragment(val underlying: typo.runtime.Fragment) extends AnyVal {
 
   def updateReturningEach[Row](parser: RowParser[Row], rows: Iterator[Row]): Operation.UpdateReturningEach[Row] =
     Operation.UpdateReturningEach(this, parser, rows)
+
+  /** Oracle-specific: Update with generated keys (for databases that don't support RETURNING clause) */
+  def updateReturningGeneratedKeys[T](columnNames: Array[String], parser: ResultSetParser[T]): Operation.UpdateReturningGeneratedKeys[T] =
+    Operation.UpdateReturningGeneratedKeys(this, columnNames, parser)
 }
 
 object Fragment {

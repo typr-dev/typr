@@ -7,6 +7,8 @@ package adventureworks.person.businessentitycontact
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.contacttype.ContacttypeId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -20,6 +22,18 @@ case class BusinessentitycontactId(
 )
 
 object BusinessentitycontactId {
+  given jdbcDecoder: JdbcDecoder[BusinessentitycontactId] = {
+    new JdbcDecoder[BusinessentitycontactId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, BusinessentitycontactId) =
+        columIndex + 2 ->
+          BusinessentitycontactId(
+            businessentityid = BusinessentityId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            personid = BusinessentityId.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2,
+            contacttypeid = ContacttypeId.jdbcDecoder.unsafeDecode(columIndex + 2, rs)._2
+          )
+    }
+  }
+
   given jsonDecoder: JsonDecoder[BusinessentitycontactId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val businessentityid = jsonObj.get("businessentityid").toRight("Missing field 'businessentityid'").flatMap(_.as(using BusinessentityId.jsonDecoder))

@@ -65,7 +65,7 @@ public record SubqueryTestSqlRow(
   }
   ;
 
-  static RowParser<SubqueryTestSqlRow> _rowParser =
+  public static RowParser<SubqueryTestSqlRow> _rowParser =
       RowParsers.of(
           CustomersId.pgType,
           MariaTypes.varchar,
@@ -73,7 +73,7 @@ public record SubqueryTestSqlRow(
           MariaTypes.bigint,
           MariaTypes.numeric,
           MariaTypes.varchar.opt(),
-          (t0, t1, t2, t3, t4, t5) -> new SubqueryTestSqlRow(t0, t1, t2, t3, t4, t5),
+          SubqueryTestSqlRow::new,
           row ->
               new Object[] {
                 row.customerId(),

@@ -484,7 +484,7 @@ public record VindividualcustomerViewRow(
   }
   ;
 
-  static RowParser<VindividualcustomerViewRow> _rowParser =
+  public static RowParser<VindividualcustomerViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.text,
@@ -504,9 +504,7 @@ public record VindividualcustomerViewRow(
           PgTypes.text,
           Name.pgType,
           PgTypes.xml,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) ->
-              new VindividualcustomerViewRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17),
+          VindividualcustomerViewRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

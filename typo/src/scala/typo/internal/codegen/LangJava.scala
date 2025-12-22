@@ -260,14 +260,15 @@ case object LangJava extends Lang {
       case jvm.Value(annotations, name, tpe, Some(body), isLazy, isOverride, _) =>
         val overrideAnnotation = if (isOverride) "@Override\n" else ""
         val staticMod = if (ctx.staticImplied) "static " else ""
+        val publicMod = if (ctx.staticImplied) ctx.public else ""
         if (isLazy) {
           // In Java, lazy vals become methods
-          code"""|$overrideAnnotation$staticMod${ctx.public}$tpe $name() {
+          code"""|$overrideAnnotation$publicMod$staticMod$tpe $name() {
                  |  return $body;
                  |}""".stripMargin
         } else {
           val annotationsCode = renderAnnotations(annotations)
-          code"$annotationsCode$staticMod$tpe $name = $body;"
+          code"$annotationsCode$publicMod$staticMod$tpe $name = $body;"
         }
       case jvm.Method(annotations, comments, tparams, name, params, implicitParams, tpe, throws, body, isOverride, isDefault) =>
         val overrideAnnotation = if (isOverride) "@Override\n" else ""
@@ -754,6 +755,9 @@ case object LangJava extends Lang {
 
   override def arrayOf(elements: List[jvm.Code]): jvm.Code =
     code"new Object[]{${elements.mkCode(", ")}}"
+
+  override def typedArrayOf(elementType: jvm.Type, elements: List[jvm.Code]): jvm.Code =
+    code"new $elementType[]{${elements.mkCode(", ")}}"
 
   // Java: use .equals() for structural equality
   override def equals(left: jvm.Code, right: jvm.Code): jvm.Code =

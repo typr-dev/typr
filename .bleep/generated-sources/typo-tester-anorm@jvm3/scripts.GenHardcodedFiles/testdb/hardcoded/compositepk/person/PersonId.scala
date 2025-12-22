@@ -5,6 +5,9 @@
  */
 package testdb.hardcoded.compositepk.person
 
+import anorm.Column
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -31,6 +34,17 @@ object PersonId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[PersonId] = {
+    RowParser[PersonId] { row =>
+      Success(
+        PersonId(
+          one = row(idx + 0)(using Column.columnToLong),
+          two = row(idx + 1)(using Column.columnToOption(using Column.columnToString))
+        )
+      )
+    }
   }
 
   given writes: OWrites[PersonId] = {

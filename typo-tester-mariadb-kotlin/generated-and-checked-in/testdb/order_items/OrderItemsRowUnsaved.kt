@@ -12,10 +12,6 @@ import testdb.customtypes.Defaulted.UseDefault
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `order_items` which has not been persisted yet */
 data class OrderItemsRowUnsaved(
@@ -66,31 +62,4 @@ data class OrderItemsRowUnsaved(
     notesDefault: () -> String?,
     itemIdDefault: () -> OrderItemsId
   ): OrderItemsRow = OrderItemsRow(itemId = itemIdDefault(), orderId = orderId, productId = productId, sku = sku, productName = productName, quantity = quantity, unitPrice = unitPrice, discountAmount = discountAmount.getOrElse(discountAmountDefault), taxAmount = taxAmount.getOrElse(taxAmountDefault), lineTotal = lineTotal, fulfillmentStatus = fulfillmentStatus.getOrElse(fulfillmentStatusDefault), warehouseId = warehouseId.getOrElse(warehouseIdDefault), notes = notes.getOrElse(notesDefault))
-
-  companion object {
-    val mariaText: MariaText<OrderItemsRowUnsaved> =
-      MariaText.instance({ row, sb -> OrdersId.pgType.mariaText().unsafeEncode(row.orderId, sb)
-      sb.append(MariaText.DELIMETER)
-      ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.sku, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.productName, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.smallintUnsigned.mariaText().unsafeEncode(row.quantity, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.unitPrice, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.lineTotal, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.mariaText()).unsafeEncode(row.discountAmount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.mariaText()).unsafeEncode(row.taxAmount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.fulfillmentStatus, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(WarehousesId.pgType.nullable().mariaText()).unsafeEncode(row.warehouseId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.tinytext.nullable().mariaText()).unsafeEncode(row.notes, sb) })
-  }
 }

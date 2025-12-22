@@ -604,13 +604,8 @@ def build_sqlglot_schema(schema: dict, dialect: str) -> tuple[MappingSchema, dic
     sqlglot_schema = MappingSchema(dialect=dialect)
     sqlglot_schema_dict = {}
 
-    # Build two separate maps:
-    # 1. sqlglot_schema_for_sqlglot: for sqlglot's type inference (uses exp.DataType)
-    # 2. sqlglot_schema_dict: for our lookups (preserves full column info including nullable)
-    sqlglot_schema_for_sqlglot = {}
-
     for table_name, columns in schema.items():
-        table_cols_for_sqlglot = {}
+        table_cols = {}
         table_cols_dict = {}
 
         for col_name, col_info in columns.items():
@@ -622,7 +617,7 @@ def build_sqlglot_schema(schema: dict, dialect: str) -> tuple[MappingSchema, dic
                 col_type = col_info.get("type", "VARCHAR")
                 try:
                     dtype = exp.DataType.build(col_type, dialect=dialect)
-                    table_cols_for_sqlglot[col_name] = dtype
+                    table_cols[col_name] = dtype
                 except Exception as e:
                     # Try spatial types, otherwise use string
                     spatial_types = {
@@ -633,16 +628,16 @@ def build_sqlglot_schema(schema: dict, dialect: str) -> tuple[MappingSchema, dic
                     }
                     lower_type = col_type.lower()
                     if lower_type in spatial_types:
-                        table_cols_for_sqlglot[col_name] = exp.DataType(this=spatial_types[lower_type])
+                        table_cols[col_name] = exp.DataType(this=spatial_types[lower_type])
                     else:
                         # Only warn once per unique type to reduce verbosity
                         if col_type not in _warned_types:
                             _warned_types.add(col_type)
                             print(f"Warning: couldn't parse type '{col_type}': {e}", file=sys.stderr)
-                        table_cols_for_sqlglot[col_name] = col_type
+                        table_cols[col_name] = col_type
             else:
                 # Not a dict - just use the value directly
-                table_cols_for_sqlglot[col_name] = col_info
+                table_cols[col_name] = col_info
                 table_cols_dict[col_name] = col_info
 
         # Quote table name if it contains special characters (like hyphens)
@@ -662,7 +657,7 @@ def build_sqlglot_schema(schema: dict, dialect: str) -> tuple[MappingSchema, dic
             quoted_table_name = f'"{table_name}"'
 
         try:
-            sqlglot_schema.add_table(quoted_table_name, table_cols_for_sqlglot)
+            sqlglot_schema.add_table(quoted_table_name, table_cols)
         except Exception as e:
             print(f"Warning: couldn't add table '{table_name}' to schema: {e}", file=sys.stderr)
 
@@ -868,18 +863,6 @@ def analyze_sql(sql: str, sqlglot_schema: MappingSchema, sqlglot_schema_dict: di
             if hasattr(select_col, 'type') and select_col.type:
                 inferred_type = str(select_col.type)
 
-            # Fix known function return types that sqlglot gets wrong
-            if isinstance(select_col, exp.Alias):
-                expr = select_col.this
-            else:
-                expr = select_col
-
-            # Fix known function return types that sqlglot gets wrong
-            # DuckDB DATE_DIFF function returns INTEGER, not DATE
-            if isinstance(expr, exp.DateDiff):
-                # DATE_DIFF returns INTEGER
-                inferred_type = 'INT'
-
             # Get direct source using the qualified/annotated AST
             source_table, source_col, is_expr = get_direct_column_source(
                 annotated, col_name, sqlglot_schema_dict, dialect
@@ -917,11 +900,6 @@ def analyze_sql(sql: str, sqlglot_schema: MappingSchema, sqlglot_schema_dict: di
                             nullable_in_schema = col_schema.get("nullable", False)
                             source_primary_key = col_schema.get("primary_key", False)
                         break
-
-            # For expressions with manually corrected types, clear source_type so inferred_type takes precedence
-            expr_upper = str(expr).upper()
-            if inferred_type == 'INT' and ('DATE_DIFF' in expr_upper or 'DATEDIFF' in expr_upper):
-                source_type = None
 
             # Fallback from qualified column
             if not source_table and isinstance(inner, exp.Column) and inner.table:

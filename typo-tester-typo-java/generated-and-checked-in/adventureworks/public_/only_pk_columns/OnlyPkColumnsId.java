@@ -6,6 +6,9 @@
 package adventureworks.public_.only_pk_columns;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `public.only_pk_columns` */
 public record OnlyPkColumnsId(
@@ -19,5 +22,13 @@ public record OnlyPkColumnsId(
   public OnlyPkColumnsId withKeyColumn2(Integer keyColumn2) {
     return new OnlyPkColumnsId(keyColumn1, keyColumn2);
   }
+  ;
+
+  public static RowParser<OnlyPkColumnsId> _rowParser =
+      RowParsers.of(
+          PgTypes.text,
+          PgTypes.int4,
+          OnlyPkColumnsId::new,
+          row -> new Object[] {row.keyColumn1(), row.keyColumn2()});
   ;
 }

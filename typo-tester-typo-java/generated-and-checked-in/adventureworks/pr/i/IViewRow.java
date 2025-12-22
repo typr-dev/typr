@@ -46,13 +46,13 @@ public record IViewRow(
   }
   ;
 
-  static RowParser<IViewRow> _rowParser =
+  public static RowParser<IViewRow> _rowParser =
       RowParsers.of(
           IllustrationId.pgType,
           IllustrationId.pgType,
           PgTypes.xml,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new IViewRow(t0, t1, t2, t3),
+          IViewRow::new,
           row -> new Object[] {row.id(), row.illustrationid(), row.diagram(), row.modifieddate()});
   ;
 }

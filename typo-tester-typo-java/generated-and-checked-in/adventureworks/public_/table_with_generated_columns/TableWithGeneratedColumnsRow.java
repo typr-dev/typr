@@ -33,11 +33,11 @@ public record TableWithGeneratedColumnsRow(
   }
   ;
 
-  static RowParser<TableWithGeneratedColumnsRow> _rowParser =
+  public static RowParser<TableWithGeneratedColumnsRow> _rowParser =
       RowParsers.of(
           TableWithGeneratedColumnsId.pgType,
           PgTypes.text,
-          (t0, t1) -> new TableWithGeneratedColumnsRow(t0, t1),
+          TableWithGeneratedColumnsRow::new,
           row -> new Object[] {row.name(), row.nameTypeAlways()});
   ;
 

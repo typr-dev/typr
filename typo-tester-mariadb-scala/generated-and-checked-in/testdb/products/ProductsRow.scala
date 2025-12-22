@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 import testdb.brands.BrandsId
 import testdb.customtypes.Defaulted
 import typo.data.maria.MariaSet
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -130,28 +129,5 @@ case class ProductsRow(
 }
 
 object ProductsRow {
-  val `_rowParser`: RowParser[ProductsRow] = {
-    RowParsers.of(ProductsId.pgType, MariaTypes.varchar, BrandsId.pgType.nullable, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.longtext.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.longtext.nullable, MariaTypes.text, MariaTypes.text, MariaTypes.set.nullable, MariaTypes.longtext.nullable, MariaTypes.longtext.nullable, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) => new ProductsRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16,
-      t17
-    ))(row => Array[Any](row.productId, row.sku, row.brandId, row.name, row.shortDescription, row.fullDescription, row.basePrice, row.costPrice, row.weightKg, row.dimensionsJson, row.status, row.taxClass, row.tags, row.attributes, row.seoMetadata, row.createdAt, row.updatedAt, row.publishedAt))
-  }
-
-  given mariaText: MariaText[ProductsRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[ProductsRow] = RowParsers.of(ProductsId.pgType, MariaTypes.varchar, BrandsId.pgType.nullable, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.longtext.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.longtext.nullable, MariaTypes.text, MariaTypes.text, MariaTypes.set.nullable, MariaTypes.longtext.nullable, MariaTypes.longtext.nullable, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable)(ProductsRow.apply)(row => Array[Any](row.productId, row.sku, row.brandId, row.name, row.shortDescription, row.fullDescription, row.basePrice, row.costPrice, row.weightKg, row.dimensionsJson, row.status, row.taxClass, row.tags, row.attributes, row.seoMetadata, row.createdAt, row.updatedAt, row.publishedAt))
 }

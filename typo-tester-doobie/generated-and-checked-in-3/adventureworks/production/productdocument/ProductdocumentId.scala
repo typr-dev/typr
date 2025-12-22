@@ -7,6 +7,7 @@ package adventureworks.production.productdocument
 
 import adventureworks.production.document.DocumentId
 import adventureworks.production.product.ProductId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object ProductdocumentId {
   given decoder: Decoder[ProductdocumentId] = Decoder.forProduct2[ProductdocumentId, ProductId, DocumentId]("productid", "documentnode")(ProductdocumentId.apply)(using ProductId.decoder, DocumentId.decoder)
 
   given encoder: Encoder[ProductdocumentId] = Encoder.forProduct2[ProductdocumentId, ProductId, DocumentId]("productid", "documentnode")(x => (x.productid, x.documentnode))(using ProductId.encoder, DocumentId.encoder)
+
+  given read: Read[ProductdocumentId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(ProductId.get).asInstanceOf[Read[Any]],
+        new Read.Single(DocumentId.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      ProductdocumentId(
+        productid = arr(0).asInstanceOf[ProductId],
+            documentnode = arr(1).asInstanceOf[DocumentId]
+      )
+    }
+  }
 }

@@ -14,10 +14,6 @@ import testdb.customtypes.Defaulted.UseDefault
 import testdb.orders.OrdersId
 import testdb.shipping_carriers.ShippingCarriersId
 import testdb.warehouses.WarehousesId
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `shipments` which has not been persisted yet */
 data class ShipmentsRowUnsaved(
@@ -97,39 +93,4 @@ data class ShipmentsRowUnsaved(
     updatedAtDefault: () -> LocalDateTime,
     shipmentIdDefault: () -> ShipmentsId
   ): ShipmentsRow = ShipmentsRow(shipmentId = shipmentIdDefault(), orderId = orderId, carrierId = carrierId, trackingNumber = trackingNumber.getOrElse(trackingNumberDefault), shippingMethod = shippingMethod, weightKg = weightKg.getOrElse(weightKgDefault), dimensionsJson = dimensionsJson.getOrElse(dimensionsJsonDefault), labelData = labelData.getOrElse(labelDataDefault), status = status.getOrElse(statusDefault), estimatedDeliveryDate = estimatedDeliveryDate.getOrElse(estimatedDeliveryDateDefault), actualDeliveryAt = actualDeliveryAt.getOrElse(actualDeliveryAtDefault), shippingCost = shippingCost, insuranceAmount = insuranceAmount.getOrElse(insuranceAmountDefault), originWarehouseId = originWarehouseId.getOrElse(originWarehouseIdDefault), shippedAt = shippedAt.getOrElse(shippedAtDefault), createdAt = createdAt.getOrElse(createdAtDefault), updatedAt = updatedAt.getOrElse(updatedAtDefault))
-
-  companion object {
-    val mariaText: MariaText<ShipmentsRowUnsaved> =
-      MariaText.instance({ row, sb -> OrdersId.pgType.mariaText().unsafeEncode(row.orderId, sb)
-      sb.append(MariaText.DELIMETER)
-      ShippingCarriersId.pgType.mariaText().unsafeEncode(row.carrierId, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.shippingMethod, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.shippingCost, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.trackingNumber, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.nullable().mariaText()).unsafeEncode(row.weightKg, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.dimensionsJson, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longblob.nullable().mariaText()).unsafeEncode(row.labelData, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.status, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.date.nullable().mariaText()).unsafeEncode(row.estimatedDeliveryDate, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.actualDeliveryAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.nullable().mariaText()).unsafeEncode(row.insuranceAmount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(WarehousesId.pgType.nullable().mariaText()).unsafeEncode(row.originWarehouseId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.shippedAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.updatedAt, sb) })
-  }
 }

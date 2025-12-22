@@ -6,6 +6,8 @@
 package adventureworks.purchasing.purchaseorderdetail
 
 import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -18,6 +20,17 @@ case class PurchaseorderdetailId(
 )
 
 object PurchaseorderdetailId {
+  given jdbcDecoder: JdbcDecoder[PurchaseorderdetailId] = {
+    new JdbcDecoder[PurchaseorderdetailId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, PurchaseorderdetailId) =
+        columIndex + 1 ->
+          PurchaseorderdetailId(
+            purchaseorderid = PurchaseorderheaderId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            purchaseorderdetailid = JdbcDecoder.intDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   given jsonDecoder: JsonDecoder[PurchaseorderdetailId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val purchaseorderid = jsonObj.get("purchaseorderid").toRight("Missing field 'purchaseorderid'").flatMap(_.as(using PurchaseorderheaderId.jsonDecoder))

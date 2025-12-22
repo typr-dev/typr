@@ -8,10 +8,6 @@ package testdb.payment_methods
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `payment_methods` which has not been persisted yet */
 case class PaymentMethodsRowUnsaved(
@@ -50,8 +46,4 @@ case class PaymentMethodsRowUnsaved(
       sortOrder = sortOrder.getOrElse(sortOrderDefault)
     )
   }
-}
-
-object PaymentMethodsRowUnsaved {
-  given mariaText: MariaText[PaymentMethodsRowUnsaved] = MariaText.instance((row, sb) => { MariaTypes.varchar.mariaText.unsafeEncode(row.code, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.name, sb); sb.append(MariaText.DELIMETER); MariaTypes.text.mariaText.unsafeEncode(row.methodType, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longtext.nullable.mariaText).unsafeEncode(row.processorConfig, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isActive, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.tinyint.mariaText).unsafeEncode(row.sortOrder, sb) })
 }

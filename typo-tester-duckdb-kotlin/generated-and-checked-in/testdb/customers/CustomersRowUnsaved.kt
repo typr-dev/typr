@@ -10,9 +10,6 @@ import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
-import typo.runtime.DuckDbTypes
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 data class CustomersRowUnsaved(
@@ -28,17 +25,4 @@ data class CustomersRowUnsaved(
     createdAtDefault: () -> LocalDateTime,
     priorityDefault: () -> Priority?
   ): CustomersRow = CustomersRow(customerId = customerId, name = name, email = email, createdAt = createdAt.getOrElse(createdAtDefault), priority = priority.getOrElse(priorityDefault))
-
-  companion object {
-    val duckDbText: DuckDbText<CustomersRowUnsaved> =
-      DuckDbText.instance({ row, sb -> CustomersId.duckDbType.duckDbText().unsafeEncode(row.customerId, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.varchar.duckDbText().unsafeEncode(row.name, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.varchar.nullable().duckDbText().unsafeEncode(row.email, sb)
-      sb.append(DuckDbText.DELIMETER)
-      Defaulted.duckDbText(DuckDbTypes.timestamp.duckDbText()).unsafeEncode(row.createdAt, sb)
-      sb.append(DuckDbText.DELIMETER)
-      Defaulted.duckDbText(Priority.duckDbType.nullable().duckDbText()).unsafeEncode(row.priority, sb) })
-  }
 }

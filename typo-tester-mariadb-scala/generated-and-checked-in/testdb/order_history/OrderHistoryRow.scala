@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -72,18 +71,5 @@ case class OrderHistoryRow(
 }
 
 object OrderHistoryRow {
-  val `_rowParser`: RowParser[OrderHistoryRow] = {
-    RowParsers.of(OrderHistoryId.pgType, OrdersId.pgType, MariaTypes.text.nullable, MariaTypes.text, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable, MariaTypes.longtext.nullable, MariaTypes.datetime)((t0, t1, t2, t3, t4, t5, t6, t7) => new OrderHistoryRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7
-    ))(row => Array[Any](row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt))
-  }
-
-  given mariaText: MariaText[OrderHistoryRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[OrderHistoryRow] = RowParsers.of(OrderHistoryId.pgType, OrdersId.pgType, MariaTypes.text.nullable, MariaTypes.text, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable, MariaTypes.longtext.nullable, MariaTypes.datetime)(OrderHistoryRow.apply)(row => Array[Any](row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt))
 }

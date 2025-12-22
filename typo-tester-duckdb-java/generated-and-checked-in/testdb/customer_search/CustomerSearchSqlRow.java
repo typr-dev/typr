@@ -56,14 +56,14 @@ public record CustomerSearchSqlRow(
   }
   ;
 
-  static RowParser<CustomerSearchSqlRow> _rowParser =
+  public static RowParser<CustomerSearchSqlRow> _rowParser =
       RowParsers.of(
           CustomersId.duckDbType,
           DuckDbTypes.varchar,
           DuckDbTypes.varchar.opt(),
           DuckDbTypes.timestamp,
           Priority.duckDbType.opt(),
-          (t0, t1, t2, t3, t4) -> new CustomerSearchSqlRow(t0, t1, t2, t3, t4),
+          CustomerSearchSqlRow::new,
           row ->
               new Object[] {
                 row.customerId(), row.name(), row.email(), row.createdAt(), row.priority()

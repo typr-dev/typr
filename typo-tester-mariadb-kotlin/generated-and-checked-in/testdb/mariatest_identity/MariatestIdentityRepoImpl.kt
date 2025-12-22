@@ -32,7 +32,7 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(MariatestIdentityId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `mariatest_identity` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `mariatest_identity` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -49,7 +49,7 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`name`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_identity`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `id`, `name`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_identity`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `id`, `name`\n"))
     return q.updateReturning(MariatestIdentityRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -68,7 +68,7 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
   ): List<MariatestIdentityRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(MariatestIdentityId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `id`, `name` from `mariatest_identity` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestIdentityRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `id`, `name` from `mariatest_identity` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(MariatestIdentityRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

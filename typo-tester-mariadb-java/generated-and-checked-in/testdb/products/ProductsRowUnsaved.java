@@ -13,8 +13,6 @@ import testdb.brands.BrandsId;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import typo.data.maria.MariaSet;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `products` which has not been persisted yet */
 public record ProductsRowUnsaved(
@@ -470,52 +468,6 @@ public record ProductsRowUnsaved(
         publishedAt);
   }
   ;
-
-  public static MariaText<ProductsRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.sku, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.basePrice, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(BrandsId.pgType.opt().mariaText()).unsafeEncode(row.brandId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.shortDescription, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.fullDescription, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.opt().mariaText())
-                .unsafeEncode(row.costPrice, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.opt().mariaText())
-                .unsafeEncode(row.weightKg, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.dimensionsJson, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.status, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.taxClass, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.set.opt().mariaText()).unsafeEncode(row.tags, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.attributes, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.seoMetadata, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.updatedAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.publishedAt, sb);
-          });
 
   public ProductsRow toRow(
       java.util.function.Supplier<Optional<BrandsId>> brandIdDefault,

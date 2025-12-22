@@ -25,12 +25,5 @@ case class UmViewRow(
 )
 
 object UmViewRow {
-  val `_rowParser`: RowParser[UmViewRow] = {
-    RowParsers.of(UnitmeasureId.pgType, UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp)((t0, t1, t2, t3) => new UmViewRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ))(row => Array[Any](row.id, row.unitmeasurecode, row.name, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[UmViewRow] = RowParsers.of(UnitmeasureId.pgType, UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp)(UmViewRow.apply)(row => Array[Any](row.id, row.unitmeasurecode, row.name, row.modifieddate))
 }

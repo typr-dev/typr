@@ -10,8 +10,6 @@ import testdb.categories.CategoriesId;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.products.ProductsId;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /**
  * This class corresponds to a row in table `product_categories` which has not been persisted yet
@@ -57,18 +55,6 @@ public record ProductCategoriesRowUnsaved(
     return new ProductCategoriesRowUnsaved(productId, categoryId, isPrimary, sortOrder);
   }
   ;
-
-  public static MariaText<ProductCategoriesRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb);
-            sb.append(MariaText.DELIMETER);
-            CategoriesId.pgType.mariaText().unsafeEncode(row.categoryId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isPrimary, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.smallint.mariaText()).unsafeEncode(row.sortOrder, sb);
-          });
 
   public ProductCategoriesRow toRow(
       java.util.function.Supplier<Boolean> isPrimaryDefault,

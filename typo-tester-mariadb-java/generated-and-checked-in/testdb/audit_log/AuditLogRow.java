@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import typo.data.maria.Inet6;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -117,7 +116,7 @@ public record AuditLogRow(
   }
   ;
 
-  static RowParser<AuditLogRow> _rowParser =
+  public static RowParser<AuditLogRow> _rowParser =
       RowParsers.of(
           AuditLogId.pgType,
           MariaTypes.varchar,
@@ -129,8 +128,7 @@ public record AuditLogRow(
           MariaTypes.datetime,
           MariaTypes.inet6.opt(),
           MariaTypes.varbinary.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new AuditLogRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          AuditLogRow::new,
           row ->
               new Object[] {
                 row.logId(),
@@ -145,8 +143,6 @@ public record AuditLogRow(
                 row.sessionId()
               });
   ;
-
-  public static MariaText<AuditLogRow> mariaText = MariaText.from(_rowParser);
 
   public AuditLogId id() {
     return logId;

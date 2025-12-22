@@ -44,25 +44,5 @@ case class VadditionalcontactinfoViewRow(
 )
 
 object VadditionalcontactinfoViewRow {
-  val `_rowParser`: RowParser[VadditionalcontactinfoViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.xml.nullable, PgTypes.text.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.text.nullable, PgTypes.xml.nullable, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => new VadditionalcontactinfoViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16
-    ))(row => Array[Any](row.businessentityid, row.firstname, row.middlename, row.lastname, row.telephonenumber, row.telephonespecialinstructions, row.street, row.city, row.stateprovince, row.postalcode, row.countryregion, row.homeaddressspecialinstructions, row.emailaddress, row.emailspecialinstructions, row.emailtelephonenumber, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[VadditionalcontactinfoViewRow] = RowParsers.of(BusinessentityId.pgType, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.xml.nullable, PgTypes.text.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.text.nullable, PgTypes.xml.nullable, PgTypes.uuid, PgTypes.timestamp)(VadditionalcontactinfoViewRow.apply)(row => Array[Any](row.businessentityid, row.firstname, row.middlename, row.lastname, row.telephonenumber, row.telephonespecialinstructions, row.street, row.city, row.stateprovince, row.postalcode, row.countryregion, row.homeaddressspecialinstructions, row.emailaddress, row.emailspecialinstructions, row.emailtelephonenumber, row.rowguid, row.modifieddate))
 }

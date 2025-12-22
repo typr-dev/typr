@@ -7,9 +7,15 @@ package adventureworks.sales.specialofferproduct
 
 import adventureworks.production.product.ProductId
 import adventureworks.sales.specialoffer.SpecialofferId
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `sales.specialofferproduct` */
 data class SpecialofferproductId(
   val specialofferid: SpecialofferId,
   val productid: ProductId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<SpecialofferproductId> = RowParsers.of(SpecialofferId.pgType, ProductId.pgType, { t0, t1 -> SpecialofferproductId(t0, t1) }, { row -> arrayOf<Any?>(row.specialofferid, row.productid) })
+  }
+}

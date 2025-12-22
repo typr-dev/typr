@@ -10,8 +10,6 @@ import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.products.ProductsId;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `product_images` which has not been persisted yet */
 public record ProductImagesRowUnsaved(
@@ -93,27 +91,6 @@ public record ProductImagesRowUnsaved(
         productId, imageUrl, thumbnailUrl, altText, sortOrder, isPrimary, imageData);
   }
   ;
-
-  public static MariaText<ProductImagesRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.imageUrl, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.thumbnailUrl, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText()).unsafeEncode(row.altText, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.tinyintUnsigned.mariaText())
-                .unsafeEncode(row.sortOrder, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isPrimary, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longblob.opt().mariaText())
-                .unsafeEncode(row.imageData, sb);
-          });
 
   public ProductImagesRow toRow(
       java.util.function.Supplier<Optional<String>> thumbnailUrlDefault,

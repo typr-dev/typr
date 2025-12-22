@@ -6,6 +6,8 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
+import doobie.util.Read
+import doobie.util.meta.Meta
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -21,4 +23,20 @@ object FlaffId {
   given decoder: Decoder[FlaffId] = Decoder.forProduct4[FlaffId, ShortText, String, Int, ShortText]("code", "another_code", "some_number", "specifier")(FlaffId.apply)(using ShortText.decoder, Decoder.decodeString, Decoder.decodeInt, ShortText.decoder)
 
   given encoder: Encoder[FlaffId] = Encoder.forProduct4[FlaffId, ShortText, String, Int, ShortText]("code", "another_code", "some_number", "specifier")(x => (x.code, x.anotherCode, x.someNumber, x.specifier))(using ShortText.encoder, Encoder.encodeString, Encoder.encodeInt, ShortText.encoder)
+
+  given read: Read[FlaffId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(ShortText.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
+        new Read.Single(Meta.IntMeta.get).asInstanceOf[Read[Any]],
+        new Read.Single(ShortText.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      FlaffId(
+        code = arr(0).asInstanceOf[ShortText],
+            anotherCode = arr(1).asInstanceOf[String],
+            someNumber = arr(2).asInstanceOf[Int],
+            specifier = arr(3).asInstanceOf[ShortText]
+      )
+    }
+  }
 }

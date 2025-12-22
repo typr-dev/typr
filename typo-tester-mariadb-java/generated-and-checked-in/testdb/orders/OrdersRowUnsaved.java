@@ -15,8 +15,6 @@ import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.promotions.PromotionsId;
 import typo.data.maria.Inet6;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 public record OrdersRowUnsaved(
@@ -668,61 +666,6 @@ public record OrdersRowUnsaved(
         deliveredAt);
   }
   ;
-
-  public static MariaText<OrdersRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.orderNumber, sb);
-            sb.append(MariaText.DELIMETER);
-            CustomersId.pgType.mariaText().unsafeEncode(row.customerId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.subtotal, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.totalAmount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.orderStatus, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.paymentStatus, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(CustomerAddressesId.pgType.opt().mariaText())
-                .unsafeEncode(row.shippingAddressId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(CustomerAddressesId.pgType.opt().mariaText())
-                .unsafeEncode(row.billingAddressId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.mariaText()).unsafeEncode(row.shippingCost, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.mariaText()).unsafeEncode(row.taxAmount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.mariaText())
-                .unsafeEncode(row.discountAmount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.char_.mariaText()).unsafeEncode(row.currencyCode, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(PromotionsId.pgType.opt().mariaText())
-                .unsafeEncode(row.promotionId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.opt().mariaText()).unsafeEncode(row.notes, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.mediumtext.opt().mariaText())
-                .unsafeEncode(row.internalNotes, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.inet6.opt().mariaText()).unsafeEncode(row.ipAddress, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.userAgent, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.orderedAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.confirmedAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.shippedAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.deliveredAt, sb);
-          });
 
   public OrdersRow toRow(
       java.util.function.Supplier<String> orderStatusDefault,

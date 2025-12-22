@@ -6,6 +6,9 @@
 package adventureworks.sales.salesorderdetail;
 
 import adventureworks.sales.salesorderheader.SalesorderheaderId;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `sales.salesorderdetail` */
 public record SalesorderdetailId(SalesorderheaderId salesorderid, Integer salesorderdetailid) {
@@ -17,5 +20,13 @@ public record SalesorderdetailId(SalesorderheaderId salesorderid, Integer saleso
   public SalesorderdetailId withSalesorderdetailid(Integer salesorderdetailid) {
     return new SalesorderdetailId(salesorderid, salesorderdetailid);
   }
+  ;
+
+  public static RowParser<SalesorderdetailId> _rowParser =
+      RowParsers.of(
+          SalesorderheaderId.pgType,
+          PgTypes.int4,
+          SalesorderdetailId::new,
+          row -> new Object[] {row.salesorderid(), row.salesorderdetailid()});
   ;
 }

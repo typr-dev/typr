@@ -14,10 +14,6 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.promotions.PromotionsId
 import typo.data.maria.Inet6
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 data class OrdersRowUnsaved(
@@ -120,49 +116,4 @@ data class OrdersRowUnsaved(
     deliveredAtDefault: () -> LocalDateTime?,
     orderIdDefault: () -> OrdersId
   ): OrdersRow = OrdersRow(orderId = orderIdDefault(), orderNumber = orderNumber, customerId = customerId, orderStatus = orderStatus.getOrElse(orderStatusDefault), paymentStatus = paymentStatus.getOrElse(paymentStatusDefault), shippingAddressId = shippingAddressId.getOrElse(shippingAddressIdDefault), billingAddressId = billingAddressId.getOrElse(billingAddressIdDefault), subtotal = subtotal, shippingCost = shippingCost.getOrElse(shippingCostDefault), taxAmount = taxAmount.getOrElse(taxAmountDefault), discountAmount = discountAmount.getOrElse(discountAmountDefault), totalAmount = totalAmount, currencyCode = currencyCode.getOrElse(currencyCodeDefault), promotionId = promotionId.getOrElse(promotionIdDefault), notes = notes.getOrElse(notesDefault), internalNotes = internalNotes.getOrElse(internalNotesDefault), ipAddress = ipAddress.getOrElse(ipAddressDefault), userAgent = userAgent.getOrElse(userAgentDefault), orderedAt = orderedAt.getOrElse(orderedAtDefault), confirmedAt = confirmedAt.getOrElse(confirmedAtDefault), shippedAt = shippedAt.getOrElse(shippedAtDefault), deliveredAt = deliveredAt.getOrElse(deliveredAtDefault))
-
-  companion object {
-    val mariaText: MariaText<OrdersRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.orderNumber, sb)
-      sb.append(MariaText.DELIMETER)
-      CustomersId.pgType.mariaText().unsafeEncode(row.customerId, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.subtotal, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.totalAmount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.orderStatus, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.paymentStatus, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(CustomerAddressesId.pgType.nullable().mariaText()).unsafeEncode(row.shippingAddressId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(CustomerAddressesId.pgType.nullable().mariaText()).unsafeEncode(row.billingAddressId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.mariaText()).unsafeEncode(row.shippingCost, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.mariaText()).unsafeEncode(row.taxAmount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.numeric.mariaText()).unsafeEncode(row.discountAmount, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.char_.mariaText()).unsafeEncode(row.currencyCode, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(PromotionsId.pgType.nullable().mariaText()).unsafeEncode(row.promotionId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.nullable().mariaText()).unsafeEncode(row.notes, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.mediumtext.nullable().mariaText()).unsafeEncode(row.internalNotes, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.inet6.nullable().mariaText()).unsafeEncode(row.ipAddress, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.userAgent, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.orderedAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.confirmedAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.shippedAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.deliveredAt, sb) })
-  }
 }

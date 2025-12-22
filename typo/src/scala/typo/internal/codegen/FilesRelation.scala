@@ -877,7 +877,7 @@ case class FilesRelation(
 
   def RepoMockFile(dbLib: DbLib, idComputed: IdComputed, repoMethods: NonEmptyList[RepoMethod]): jvm.File = {
     val maybeToRowParam: Option[jvm.Param[Type.Function1]] = {
-      repoMethods.toList.collectFirst { case RepoMethod.InsertUnsaved(_, _, unsaved, _, _, _) =>
+      repoMethods.toList.collectFirst { case RepoMethod.InsertUnsaved(_, _, unsaved, _, _, _, _) =>
         jvm.Param(jvm.Ident("toRow"), jvm.Type.Function1(unsaved.tpe, names.RowName))
       }
     }

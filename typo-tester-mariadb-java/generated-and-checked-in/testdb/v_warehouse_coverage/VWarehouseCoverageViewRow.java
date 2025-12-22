@@ -195,7 +195,7 @@ public record VWarehouseCoverageViewRow(
   }
   ;
 
-  static RowParser<VWarehouseCoverageViewRow> _rowParser =
+  public static RowParser<VWarehouseCoverageViewRow> _rowParser =
       RowParsers.of(
           WarehousesId.pgType,
           MariaTypes.char_,
@@ -207,8 +207,7 @@ public record VWarehouseCoverageViewRow(
           MariaTypes.bool,
           MariaTypes.bigint,
           MariaTypes.numeric.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new VWarehouseCoverageViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          VWarehouseCoverageViewRow::new,
           row ->
               new Object[] {
                 row.warehouseId(),

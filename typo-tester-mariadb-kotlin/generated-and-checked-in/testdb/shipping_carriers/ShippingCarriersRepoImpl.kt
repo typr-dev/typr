@@ -34,7 +34,7 @@ class ShippingCarriersRepoImpl() : ShippingCarriersRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in carrierIds) { fragments.add(Fragment.encode(ShippingCarriersId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `shipping_carriers` where `carrier_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `shipping_carriers` where `carrier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -68,7 +68,7 @@ class ShippingCarriersRepoImpl() : ShippingCarriersRepo {
       { value -> columns.add(Fragment.lit("`is_active`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `shipping_carriers`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `shipping_carriers`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
     return q.updateReturning(ShippingCarriersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -87,7 +87,7 @@ class ShippingCarriersRepoImpl() : ShippingCarriersRepo {
   ): List<ShippingCarriersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in carrierIds) { fragments.add(Fragment.encode(ShippingCarriersId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active` from `shipping_carriers` where `carrier_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ShippingCarriersRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active` from `shipping_carriers` where `carrier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ShippingCarriersRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

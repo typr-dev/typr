@@ -7,6 +7,8 @@ package adventureworks.sales.salesorderheadersalesreason
 
 import adventureworks.sales.salesorderheader.SalesorderheaderId
 import adventureworks.sales.salesreason.SalesreasonId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -32,6 +34,17 @@ object SalesorderheadersalesreasonId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[SalesorderheadersalesreasonId] = {
+    RowParser[SalesorderheadersalesreasonId] { row =>
+      Success(
+        SalesorderheadersalesreasonId(
+          salesorderid = row(idx + 0)(SalesorderheaderId.column),
+          salesreasonid = row(idx + 1)(SalesreasonId.column)
+        )
+      )
+    }
   }
 
   implicit lazy val writes: OWrites[SalesorderheadersalesreasonId] = {

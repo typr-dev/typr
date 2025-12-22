@@ -13,8 +13,6 @@ import testdb.customtypes.Defaulted.UseDefault;
 import testdb.orders.OrdersId;
 import testdb.products.ProductsId;
 import testdb.warehouses.WarehousesId;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `order_items` which has not been persisted yet */
 public record OrderItemsRowUnsaved(
@@ -288,37 +286,6 @@ public record OrderItemsRowUnsaved(
         notes);
   }
   ;
-
-  public static MariaText<OrderItemsRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            OrdersId.pgType.mariaText().unsafeEncode(row.orderId, sb);
-            sb.append(MariaText.DELIMETER);
-            ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.sku, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.productName, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.smallintUnsigned.mariaText().unsafeEncode(row.quantity, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.unitPrice, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.lineTotal, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.mariaText())
-                .unsafeEncode(row.discountAmount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.mariaText()).unsafeEncode(row.taxAmount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.mariaText())
-                .unsafeEncode(row.fulfillmentStatus, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(WarehousesId.pgType.opt().mariaText())
-                .unsafeEncode(row.warehouseId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.tinytext.opt().mariaText()).unsafeEncode(row.notes, sb);
-          });
 
   public OrderItemsRow toRow(
       java.util.function.Supplier<BigDecimal> discountAmountDefault,

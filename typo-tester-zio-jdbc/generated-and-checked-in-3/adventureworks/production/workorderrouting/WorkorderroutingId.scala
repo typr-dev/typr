@@ -7,6 +7,8 @@ package adventureworks.production.workorderrouting
 
 import adventureworks.customtypes.TypoShort
 import adventureworks.production.workorder.WorkorderId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -20,6 +22,18 @@ case class WorkorderroutingId(
 )
 
 object WorkorderroutingId {
+  given jdbcDecoder: JdbcDecoder[WorkorderroutingId] = {
+    new JdbcDecoder[WorkorderroutingId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, WorkorderroutingId) =
+        columIndex + 2 ->
+          WorkorderroutingId(
+            workorderid = WorkorderId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            productid = JdbcDecoder.intDecoder.unsafeDecode(columIndex + 1, rs)._2,
+            operationsequence = TypoShort.jdbcDecoder.unsafeDecode(columIndex + 2, rs)._2
+          )
+    }
+  }
+
   given jsonDecoder: JsonDecoder[WorkorderroutingId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val workorderid = jsonObj.get("workorderid").toRight("Missing field 'workorderid'").flatMap(_.as(using WorkorderId.jsonDecoder))

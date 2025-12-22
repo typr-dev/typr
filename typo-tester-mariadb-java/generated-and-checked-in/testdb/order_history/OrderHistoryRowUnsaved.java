@@ -11,8 +11,6 @@ import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.orders.OrdersId;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `order_history` which has not been persisted yet */
 public record OrderHistoryRowUnsaved(
@@ -94,28 +92,6 @@ public record OrderHistoryRowUnsaved(
         orderId, newStatus, previousStatus, changedBy, changeReason, metadata, createdAt);
   }
   ;
-
-  public static MariaText<OrderHistoryRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            OrdersId.pgType.mariaText().unsafeEncode(row.orderId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.text.mariaText().unsafeEncode(row.newStatus, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.opt().mariaText())
-                .unsafeEncode(row.previousStatus, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.changedBy, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.changeReason, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.metadata, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb);
-          });
 
   public OrderHistoryRow toRow(
       java.util.function.Supplier<Optional<String>> previousStatusDefault,

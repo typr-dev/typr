@@ -8,8 +8,6 @@ package testdb.order_items
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.DuckDbText
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `order_items` which has not been persisted yet */
 case class OrderItemsRowUnsaved(
@@ -27,8 +25,4 @@ case class OrderItemsRowUnsaved(
       unitPrice = unitPrice
     )
   }
-}
-
-object OrderItemsRowUnsaved {
-  given duckDbText: DuckDbText[OrderItemsRowUnsaved] = DuckDbText.instance((row, sb) => { ScalaDbTypes.DuckDbTypes.integer.duckDbText.unsafeEncode(row.orderId, sb); sb.append(DuckDbText.DELIMETER); ScalaDbTypes.DuckDbTypes.integer.duckDbText.unsafeEncode(row.productId, sb); sb.append(DuckDbText.DELIMETER); ScalaDbTypes.DuckDbTypes.numeric.duckDbText.unsafeEncode(row.unitPrice, sb); sb.append(DuckDbText.DELIMETER); Defaulted.duckDbText(using ScalaDbTypes.DuckDbTypes.integer.duckDbText).unsafeEncode(row.quantity, sb) })
 }

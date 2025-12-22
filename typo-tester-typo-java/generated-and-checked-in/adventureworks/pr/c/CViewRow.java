@@ -46,13 +46,13 @@ public record CViewRow(
   }
   ;
 
-  static RowParser<CViewRow> _rowParser =
+  public static RowParser<CViewRow> _rowParser =
       RowParsers.of(
           CultureId.pgType,
           CultureId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new CViewRow(t0, t1, t2, t3),
+          CViewRow::new,
           row -> new Object[] {row.id(), row.cultureid(), row.name(), row.modifieddate()});
   ;
 }

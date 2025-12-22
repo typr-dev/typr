@@ -71,13 +71,13 @@ public record PmpdcViewRow(
   }
   ;
 
-  static RowParser<PmpdcViewRow> _rowParser =
+  public static RowParser<PmpdcViewRow> _rowParser =
       RowParsers.of(
           ProductmodelId.pgType,
           ProductdescriptionId.pgType,
           CultureId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new PmpdcViewRow(t0, t1, t2, t3),
+          PmpdcViewRow::new,
           row ->
               new Object[] {
                 row.productmodelid(),

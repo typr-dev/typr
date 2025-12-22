@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import typo.data.maria.MariaSet
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -107,26 +106,5 @@ case class PromotionsRow(
 }
 
 object PromotionsRow {
-  val `_rowParser`: RowParser[PromotionsRow] = {
-    RowParsers.of(PromotionsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.intUnsigned.nullable, ScalaDbTypes.MariaTypes.intUnsigned, ScalaDbTypes.MariaTypes.tinyintUnsigned.nullable, MariaTypes.set.nullable, MariaTypes.longtext.nullable, MariaTypes.datetime, MariaTypes.datetime, ScalaDbTypes.MariaTypes.bool, MariaTypes.datetime)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) => new PromotionsRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15
-    ))(row => Array[Any](row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt))
-  }
-
-  given mariaText: MariaText[PromotionsRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[PromotionsRow] = RowParsers.of(PromotionsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.intUnsigned.nullable, ScalaDbTypes.MariaTypes.intUnsigned, ScalaDbTypes.MariaTypes.tinyintUnsigned.nullable, MariaTypes.set.nullable, MariaTypes.longtext.nullable, MariaTypes.datetime, MariaTypes.datetime, ScalaDbTypes.MariaTypes.bool, MariaTypes.datetime)(PromotionsRow.apply)(row => Array[Any](row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt))
 }

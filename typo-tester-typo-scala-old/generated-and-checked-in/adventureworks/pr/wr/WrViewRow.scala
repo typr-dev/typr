@@ -43,21 +43,5 @@ case class WrViewRow(
 )
 
 object WrViewRow {
-  val `_rowParser`: RowParser[WrViewRow] = {
-    RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, PgTypes.int4, PgTypes.int2, LocationId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) => new WrViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12
-    ), row => Array[Any](row.id, row.workorderid, row.productid, row.operationsequence, row.locationid, row.scheduledstartdate, row.scheduledenddate, row.actualstartdate, row.actualenddate, row.actualresourcehrs, row.plannedcost, row.actualcost, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[WrViewRow] = RowParsers.of(WorkorderId.pgType, WorkorderId.pgType, PgTypes.int4, PgTypes.int2, LocationId.pgType, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, WrViewRow.apply, row => Array[Any](row.id, row.workorderid, row.productid, row.operationsequence, row.locationid, row.scheduledstartdate, row.scheduledenddate, row.actualstartdate, row.actualenddate, row.actualresourcehrs, row.plannedcost, row.actualcost, row.modifieddate))
 }

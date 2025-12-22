@@ -5,6 +5,8 @@
  */
 package adventureworks.public.only_pk_columns
 
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -17,6 +19,17 @@ case class OnlyPkColumnsId(
 )
 
 object OnlyPkColumnsId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[OnlyPkColumnsId] = {
+    new JdbcDecoder[OnlyPkColumnsId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, OnlyPkColumnsId) =
+        columIndex + 1 ->
+          OnlyPkColumnsId(
+            keyColumn1 = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            keyColumn2 = JdbcDecoder.intDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[OnlyPkColumnsId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val keyColumn1 = jsonObj.get("key_column_1").toRight("Missing field 'key_column_1'").flatMap(_.as(JsonDecoder.string))

@@ -66,7 +66,7 @@ public record VsalespersonsalesbyfiscalyearsdataViewRow(
   }
   ;
 
-  static RowParser<VsalespersonsalesbyfiscalyearsdataViewRow> _rowParser =
+  public static RowParser<VsalespersonsalesbyfiscalyearsdataViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.text,
@@ -74,8 +74,7 @@ public record VsalespersonsalesbyfiscalyearsdataViewRow(
           Name.pgType,
           PgTypes.numeric.opt(),
           PgTypes.float8,
-          (t0, t1, t2, t3, t4, t5) ->
-              new VsalespersonsalesbyfiscalyearsdataViewRow(t0, t1, t2, t3, t4, t5),
+          VsalespersonsalesbyfiscalyearsdataViewRow::new,
           row ->
               new Object[] {
                 row.salespersonid(),

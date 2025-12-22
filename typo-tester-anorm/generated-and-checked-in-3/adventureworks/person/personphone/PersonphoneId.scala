@@ -8,6 +8,8 @@ package adventureworks.person.personphone
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.phonenumbertype.PhonenumbertypeId
 import adventureworks.public.Phone
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -35,6 +37,18 @@ object PersonphoneId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[PersonphoneId] = {
+    RowParser[PersonphoneId] { row =>
+      Success(
+        PersonphoneId(
+          businessentityid = row(idx + 0)(using BusinessentityId.column),
+          phonenumber = row(idx + 1)(using Phone.column),
+          phonenumbertypeid = row(idx + 2)(using PhonenumbertypeId.column)
+        )
+      )
+    }
   }
 
   given writes: OWrites[PersonphoneId] = {

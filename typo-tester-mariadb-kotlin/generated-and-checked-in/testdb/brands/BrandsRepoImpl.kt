@@ -34,7 +34,7 @@ class BrandsRepoImpl() : BrandsRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in brandIds) { fragments.add(Fragment.encode(BrandsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `brands` where `brand_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `brands` where `brand_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -73,7 +73,7 @@ class BrandsRepoImpl() : BrandsRepo {
       { value -> columns.add(Fragment.lit("`is_active`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `brands`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `brands`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`\n"))
     return q.updateReturning(BrandsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -92,7 +92,7 @@ class BrandsRepoImpl() : BrandsRepo {
   ): List<BrandsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in brandIds) { fragments.add(Fragment.encode(BrandsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active` from `brands` where `brand_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(BrandsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active` from `brands` where `brand_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(BrandsRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

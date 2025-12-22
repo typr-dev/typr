@@ -14,8 +14,6 @@ import testdb.customtypes.Defaulted.UseDefault;
 import testdb.orders.OrdersId;
 import testdb.payment_methods.PaymentMethodsId;
 import typo.data.maria.Inet6;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `payments` which has not been persisted yet */
 public record PaymentsRowUnsaved(
@@ -249,36 +247,6 @@ public record PaymentsRowUnsaved(
         processedAt);
   }
   ;
-
-  public static MariaText<PaymentsRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            OrdersId.pgType.mariaText().unsafeEncode(row.orderId, sb);
-            sb.append(MariaText.DELIMETER);
-            PaymentMethodsId.pgType.mariaText().unsafeEncode(row.methodId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.amount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.transactionId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.char_.mariaText()).unsafeEncode(row.currencyCode, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.mariaText()).unsafeEncode(row.status, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.processorResponse, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.errorMessage, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.inet6.opt().mariaText()).unsafeEncode(row.ipAddress, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.processedAt, sb);
-          });
 
   public PaymentsRow toRow(
       java.util.function.Supplier<Optional<String>> transactionIdDefault,

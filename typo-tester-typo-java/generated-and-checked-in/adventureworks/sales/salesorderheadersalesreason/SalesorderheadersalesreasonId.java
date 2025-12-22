@@ -7,6 +7,8 @@ package adventureworks.sales.salesorderheadersalesreason;
 
 import adventureworks.sales.salesorderheader.SalesorderheaderId;
 import adventureworks.sales.salesreason.SalesreasonId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `sales.salesorderheadersalesreason` */
 public record SalesorderheadersalesreasonId(
@@ -19,5 +21,13 @@ public record SalesorderheadersalesreasonId(
   public SalesorderheadersalesreasonId withSalesreasonid(SalesreasonId salesreasonid) {
     return new SalesorderheadersalesreasonId(salesorderid, salesreasonid);
   }
+  ;
+
+  public static RowParser<SalesorderheadersalesreasonId> _rowParser =
+      RowParsers.of(
+          SalesorderheaderId.pgType,
+          SalesreasonId.pgType,
+          SalesorderheadersalesreasonId::new,
+          row -> new Object[] {row.salesorderid(), row.salesreasonid()});
   ;
 }

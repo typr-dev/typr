@@ -63,7 +63,7 @@ class CustomersRepoImpl() : CustomersRepo {
       { value -> columns.add(Fragment.lit("\"priority\""))
       values.add(Fragment.interpolate(Fragment.encode(Priority.duckDbType.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"customers\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"customers\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"))
     return q.updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

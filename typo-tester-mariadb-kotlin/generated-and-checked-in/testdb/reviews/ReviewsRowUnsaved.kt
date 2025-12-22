@@ -12,10 +12,6 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.order_items.OrderItemsId
 import testdb.products.ProductsId
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `reviews` which has not been persisted yet */
 data class ReviewsRowUnsaved(
@@ -103,41 +99,4 @@ data class ReviewsRowUnsaved(
     updatedAtDefault: () -> LocalDateTime,
     reviewIdDefault: () -> ReviewsId
   ): ReviewsRow = ReviewsRow(reviewId = reviewIdDefault(), productId = productId, customerId = customerId, orderItemId = orderItemId.getOrElse(orderItemIdDefault), rating = rating, title = title.getOrElse(titleDefault), content = content.getOrElse(contentDefault), pros = pros.getOrElse(prosDefault), cons = cons.getOrElse(consDefault), images = images.getOrElse(imagesDefault), isVerifiedPurchase = isVerifiedPurchase.getOrElse(isVerifiedPurchaseDefault), isApproved = isApproved.getOrElse(isApprovedDefault), helpfulVotes = helpfulVotes.getOrElse(helpfulVotesDefault), unhelpfulVotes = unhelpfulVotes.getOrElse(unhelpfulVotesDefault), adminResponse = adminResponse.getOrElse(adminResponseDefault), respondedAt = respondedAt.getOrElse(respondedAtDefault), createdAt = createdAt.getOrElse(createdAtDefault), updatedAt = updatedAt.getOrElse(updatedAtDefault))
-
-  companion object {
-    val mariaText: MariaText<ReviewsRowUnsaved> =
-      MariaText.instance({ row, sb -> ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb)
-      sb.append(MariaText.DELIMETER)
-      CustomersId.pgType.mariaText().unsafeEncode(row.customerId, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.tinyintUnsigned.mariaText().unsafeEncode(row.rating, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(OrderItemsId.pgType.nullable().mariaText()).unsafeEncode(row.orderItemId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.title, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.nullable().mariaText()).unsafeEncode(row.content, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.pros, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.cons, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.images, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isVerifiedPurchase, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isApproved, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.intUnsigned.mariaText()).unsafeEncode(row.helpfulVotes, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.intUnsigned.mariaText()).unsafeEncode(row.unhelpfulVotes, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.text.nullable().mariaText()).unsafeEncode(row.adminResponse, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.nullable().mariaText()).unsafeEncode(row.respondedAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.updatedAt, sb) })
-  }
 }

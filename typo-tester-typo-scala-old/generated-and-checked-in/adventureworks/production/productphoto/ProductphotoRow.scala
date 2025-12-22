@@ -51,16 +51,7 @@ case class ProductphotoRow(
 }
 
 object ProductphotoRow {
-  val `_rowParser`: RowParser[ProductphotoRow] = {
-    RowParsers.of(ProductphotoId.pgType, PgTypes.bytea.opt(), PgTypes.text.opt(), PgTypes.bytea.opt(), PgTypes.text.opt(), PgTypes.timestamp, (t0, t1, t2, t3, t4, t5) => new ProductphotoRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5
-    ), row => Array[Any](row.productphotoid, row.thumbnailphoto, row.thumbnailphotofilename, row.largephoto, row.largephotofilename, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[ProductphotoRow] = RowParsers.of(ProductphotoId.pgType, PgTypes.bytea.opt(), PgTypes.text.opt(), PgTypes.bytea.opt(), PgTypes.text.opt(), PgTypes.timestamp, ProductphotoRow.apply, row => Array[Any](row.productphotoid, row.thumbnailphoto, row.thumbnailphotofilename, row.largephoto, row.largephotofilename, row.modifieddate))
 
   given pgText: PgText[ProductphotoRow] = PgText.from(`_rowParser`)
 }

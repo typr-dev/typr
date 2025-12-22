@@ -9,9 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `price_tiers` which has not been persisted yet */
 data class PriceTiersRowUnsaved(
@@ -30,15 +27,4 @@ data class PriceTiersRowUnsaved(
     minQuantityDefault: () -> Long,
     tierIdDefault: () -> PriceTiersId
   ): PriceTiersRow = PriceTiersRow(tierId = tierIdDefault(), name = name, minQuantity = minQuantity.getOrElse(minQuantityDefault), discountType = discountType, discountValue = discountValue)
-
-  companion object {
-    val mariaText: MariaText<PriceTiersRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.text.mariaText().unsafeEncode(row.discountType, sb)
-      sb.append(MariaText.DELIMETER)
-      KotlinDbTypes.MariaTypes.numeric.mariaText().unsafeEncode(row.discountValue, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.intUnsigned.mariaText()).unsafeEncode(row.minQuantity, sb) })
-  }
 }

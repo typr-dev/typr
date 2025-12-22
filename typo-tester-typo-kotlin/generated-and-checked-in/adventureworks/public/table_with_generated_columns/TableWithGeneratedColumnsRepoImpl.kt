@@ -47,7 +47,7 @@ class TableWithGeneratedColumnsRepoImpl() : TableWithGeneratedColumnsRepo {
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
     values.add(Fragment.interpolate(Fragment.encode(TableWithGeneratedColumnsId.pgType, unsaved.name), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"table-with-generated-columns\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"name\", \"name-type-always\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"table-with-generated-columns\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"name\", \"name-type-always\"\n"))
     return q.updateReturning(TableWithGeneratedColumnsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

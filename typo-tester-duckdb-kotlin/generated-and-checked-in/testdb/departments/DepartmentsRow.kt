@@ -10,7 +10,6 @@ import java.math.BigDecimal
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 
 /** Table: departments
@@ -34,8 +33,5 @@ data class DepartmentsRow(
       deptName: String,
       budget: BigDecimal?
     ): DepartmentsRow = DepartmentsRow(compositeId.deptCode, compositeId.deptRegion, deptName, budget)
-
-    val duckDbText: DuckDbText<DepartmentsRow> =
-      DuckDbText.from(_rowParser.underlying)
   }
 }

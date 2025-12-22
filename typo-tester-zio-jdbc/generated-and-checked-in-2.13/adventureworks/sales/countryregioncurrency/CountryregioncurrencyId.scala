@@ -7,6 +7,8 @@ package adventureworks.sales.countryregioncurrency
 
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.sales.currency.CurrencyId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -19,6 +21,17 @@ case class CountryregioncurrencyId(
 )
 
 object CountryregioncurrencyId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[CountryregioncurrencyId] = {
+    new JdbcDecoder[CountryregioncurrencyId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, CountryregioncurrencyId) =
+        columIndex + 1 ->
+          CountryregioncurrencyId(
+            countryregioncode = CountryregionId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            currencycode = CurrencyId.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[CountryregioncurrencyId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val countryregioncode = jsonObj.get("countryregioncode").toRight("Missing field 'countryregioncode'").flatMap(_.as(CountryregionId.jsonDecoder))

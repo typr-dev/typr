@@ -11,7 +11,6 @@ import testdb.customtypes.Defaulted
 import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 
 /** Table: order_items
@@ -38,8 +37,5 @@ data class OrderItemsRow(
       quantity: Int,
       unitPrice: BigDecimal
     ): OrderItemsRow = OrderItemsRow(compositeId.orderId, compositeId.productId, quantity, unitPrice)
-
-    val duckDbText: DuckDbText<OrderItemsRow> =
-      DuckDbText.from(_rowParser.underlying)
   }
 }

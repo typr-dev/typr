@@ -10,7 +10,6 @@ import java.util.Optional;
 import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
 import testdb.customtypes.Defaulted;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -197,7 +196,7 @@ public record WarehousesRow(
   }
   ;
 
-  static RowParser<WarehousesRow> _rowParser =
+  public static RowParser<WarehousesRow> _rowParser =
       RowParsers.of(
           WarehousesId.pgType,
           MariaTypes.char_,
@@ -209,8 +208,7 @@ public record WarehousesRow(
           MariaTypes.bool,
           MariaTypes.varchar.opt(),
           MariaTypes.varchar.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new WarehousesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          WarehousesRow::new,
           row ->
               new Object[] {
                 row.warehouseId(),
@@ -225,8 +223,6 @@ public record WarehousesRow(
                 row.contactPhone()
               });
   ;
-
-  public static MariaText<WarehousesRow> mariaText = MariaText.from(_rowParser);
 
   public WarehousesId id() {
     return warehouseId;

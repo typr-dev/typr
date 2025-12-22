@@ -38,18 +38,5 @@ case class ThViewRow(
 )
 
 object ThViewRow {
-  val `_rowParser`: RowParser[ThViewRow] = {
-    RowParsers.of(TransactionhistoryId.pgType, TransactionhistoryId.pgType, ProductId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, PgTypes.timestamp, PgTypes.bpchar, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new ThViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9
-    ))(row => Array[Any](row.id, row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[ThViewRow] = RowParsers.of(TransactionhistoryId.pgType, TransactionhistoryId.pgType, ProductId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, PgTypes.timestamp, PgTypes.bpchar, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(ThViewRow.apply)(row => Array[Any](row.id, row.transactionid, row.productid, row.referenceorderid, row.referenceorderlineid, row.transactiondate, row.transactiontype, row.quantity, row.actualcost, row.modifieddate))
 }

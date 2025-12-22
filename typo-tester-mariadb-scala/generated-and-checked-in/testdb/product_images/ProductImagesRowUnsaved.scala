@@ -9,10 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.products.ProductsId
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `product_images` which has not been persisted yet */
 case class ProductImagesRowUnsaved(
@@ -62,8 +58,4 @@ case class ProductImagesRowUnsaved(
       imageData = imageData.getOrElse(imageDataDefault)
     )
   }
-}
-
-object ProductImagesRowUnsaved {
-  given mariaText: MariaText[ProductImagesRowUnsaved] = MariaText.instance((row, sb) => { ProductsId.pgType.mariaText.unsafeEncode(row.productId, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.imageUrl, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.thumbnailUrl, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.altText, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.tinyintUnsigned.mariaText).unsafeEncode(row.sortOrder, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isPrimary, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longblob.nullable.mariaText).unsafeEncode(row.imageData, sb) })
 }

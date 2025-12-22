@@ -7,6 +7,8 @@ package adventureworks.sales.personcreditcard
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CustomCreditcardId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -32,6 +34,17 @@ object PersoncreditcardId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[PersoncreditcardId] = {
+    RowParser[PersoncreditcardId] { row =>
+      Success(
+        PersoncreditcardId(
+          businessentityid = row(idx + 0)(using BusinessentityId.column),
+          creditcardid = row(idx + 1)(using /* user-picked */ CustomCreditcardId.column)
+        )
+      )
+    }
   }
 
   given writes: OWrites[PersoncreditcardId] = {

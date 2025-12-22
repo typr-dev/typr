@@ -29,14 +29,5 @@ case class EphViewRow(
 )
 
 object EphViewRow {
-  val `_rowParser`: RowParser[EphViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.int2, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5) => new EphViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5
-    ))(row => Array[Any](row.id, row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[EphViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.timestamp, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.int2, PgTypes.timestamp)(EphViewRow.apply)(row => Array[Any](row.id, row.businessentityid, row.ratechangedate, row.rate, row.payfrequency, row.modifieddate))
 }

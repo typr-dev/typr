@@ -16,9 +16,6 @@ import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
 
 /** This class corresponds to a row in table `mariatest_spatial_null` which has not been persisted yet */
 case class MariatestSpatialNullRowUnsaved(
@@ -78,8 +75,4 @@ case class MariatestSpatialNullRowUnsaved(
       geometrycollectionCol = geometrycollectionCol.getOrElse(geometrycollectionColDefault)
     )
   }
-}
-
-object MariatestSpatialNullRowUnsaved {
-  given mariaText: MariaText[MariatestSpatialNullRowUnsaved] = MariaText.instance((row, sb) => { Defaulted.mariaText(using MariaTypes.geometry.nullable.mariaText).unsafeEncode(row.geometryCol, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.point.nullable.mariaText).unsafeEncode(row.pointCol, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.linestring.nullable.mariaText).unsafeEncode(row.linestringCol, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.polygon.nullable.mariaText).unsafeEncode(row.polygonCol, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.multipoint.nullable.mariaText).unsafeEncode(row.multipointCol, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.multilinestring.nullable.mariaText).unsafeEncode(row.multilinestringCol, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.multipolygon.nullable.mariaText).unsafeEncode(row.multipolygonCol, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.geometrycollection.nullable.mariaText).unsafeEncode(row.geometrycollectionCol, sb) })
 }

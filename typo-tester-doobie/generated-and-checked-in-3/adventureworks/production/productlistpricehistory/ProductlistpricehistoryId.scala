@@ -7,6 +7,7 @@ package adventureworks.production.productlistpricehistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.production.product.ProductId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object ProductlistpricehistoryId {
   given decoder: Decoder[ProductlistpricehistoryId] = Decoder.forProduct2[ProductlistpricehistoryId, ProductId, TypoLocalDateTime]("productid", "startdate")(ProductlistpricehistoryId.apply)(using ProductId.decoder, TypoLocalDateTime.decoder)
 
   given encoder: Encoder[ProductlistpricehistoryId] = Encoder.forProduct2[ProductlistpricehistoryId, ProductId, TypoLocalDateTime]("productid", "startdate")(x => (x.productid, x.startdate))(using ProductId.encoder, TypoLocalDateTime.encoder)
+
+  given read: Read[ProductlistpricehistoryId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(ProductId.get).asInstanceOf[Read[Any]],
+        new Read.Single(TypoLocalDateTime.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      ProductlistpricehistoryId(
+        productid = arr(0).asInstanceOf[ProductId],
+            startdate = arr(1).asInstanceOf[TypoLocalDateTime]
+      )
+    }
+  }
 }

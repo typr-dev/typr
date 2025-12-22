@@ -48,12 +48,12 @@ public record ScrapreasonRow(
   }
   ;
 
-  static RowParser<ScrapreasonRow> _rowParser =
+  public static RowParser<ScrapreasonRow> _rowParser =
       RowParsers.of(
           ScrapreasonId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new ScrapreasonRow(t0, t1, t2),
+          ScrapreasonRow::new,
           row -> new Object[] {row.scrapreasonid(), row.name(), row.modifieddate()});
   ;
 

@@ -78,7 +78,7 @@ public record ProductSearchSqlRow(
   }
   ;
 
-  static RowParser<ProductSearchSqlRow> _rowParser =
+  public static RowParser<ProductSearchSqlRow> _rowParser =
       RowParsers.of(
           ProductsId.pgType,
           MariaTypes.varchar,
@@ -87,7 +87,7 @@ public record ProductSearchSqlRow(
           MariaTypes.numeric,
           MariaTypes.text,
           MariaTypes.varchar.opt(),
-          (t0, t1, t2, t3, t4, t5, t6) -> new ProductSearchSqlRow(t0, t1, t2, t3, t4, t5, t6),
+          ProductSearchSqlRow::new,
           row ->
               new Object[] {
                 row.productId(),

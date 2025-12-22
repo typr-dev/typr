@@ -8,6 +8,8 @@ package adventureworks.person.businessentityaddress;
 import adventureworks.person.address.AddressId;
 import adventureworks.person.addresstype.AddresstypeId;
 import adventureworks.person.businessentity.BusinessentityId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `person.businessentityaddress` */
 public record BusinessentityaddressId(
@@ -25,5 +27,14 @@ public record BusinessentityaddressId(
   public BusinessentityaddressId withAddresstypeid(AddresstypeId addresstypeid) {
     return new BusinessentityaddressId(businessentityid, addressid, addresstypeid);
   }
+  ;
+
+  public static RowParser<BusinessentityaddressId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          AddressId.pgType,
+          AddresstypeId.pgType,
+          BusinessentityaddressId::new,
+          row -> new Object[] {row.businessentityid(), row.addressid(), row.addresstypeid()});
   ;
 }

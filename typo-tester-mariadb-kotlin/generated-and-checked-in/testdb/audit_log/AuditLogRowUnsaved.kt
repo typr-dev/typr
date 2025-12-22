@@ -10,9 +10,6 @@ import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import typo.data.maria.Inet6
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `audit_log` which has not been persisted yet */
 data class AuditLogRowUnsaved(
@@ -56,25 +53,4 @@ data class AuditLogRowUnsaved(
     sessionIdDefault: () -> ByteArray?,
     logIdDefault: () -> AuditLogId
   ): AuditLogRow = AuditLogRow(logId = logIdDefault(), tableName = tableName, recordId = recordId, action = action, oldValues = oldValues.getOrElse(oldValuesDefault), newValues = newValues.getOrElse(newValuesDefault), changedBy = changedBy.getOrElse(changedByDefault), changedAt = changedAt.getOrElse(changedAtDefault), clientIp = clientIp.getOrElse(clientIpDefault), sessionId = sessionId.getOrElse(sessionIdDefault))
-
-  companion object {
-    val mariaText: MariaText<AuditLogRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.tableName, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.recordId, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.text.mariaText().unsafeEncode(row.action, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.oldValues, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.newValues, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.changedBy, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.changedAt, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.inet6.nullable().mariaText()).unsafeEncode(row.clientIp, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varbinary.nullable().mariaText()).unsafeEncode(row.sessionId, sb) })
-  }
 }

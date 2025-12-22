@@ -32,20 +32,5 @@ case class VstorewithdemographicsViewRow(
 )
 
 object VstorewithdemographicsViewRow {
-  val `_rowParser`: RowParser[VstorewithdemographicsViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, Name.pgType, PgTypes.money, PgTypes.money, PgTypes.text, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.int4, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) => new VstorewithdemographicsViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11
-    ), row => Array[Any](row.businessentityid, row.name, row.annualSales, row.annualRevenue, row.bankName, row.businessType, row.yearOpened, row.specialty, row.squareFeet, row.brands, row.internet, row.numberEmployees))
-  }
+  val `_rowParser`: RowParser[VstorewithdemographicsViewRow] = RowParsers.of(BusinessentityId.pgType, Name.pgType, PgTypes.money, PgTypes.money, PgTypes.text, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.int4, VstorewithdemographicsViewRow.apply, row => Array[Any](row.businessentityid, row.name, row.annualSales, row.annualRevenue, row.bankName, row.businessType, row.yearOpened, row.specialty, row.squareFeet, row.brands, row.internet, row.numberEmployees))
 }

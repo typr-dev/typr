@@ -14,7 +14,6 @@ import testdb.customers.CustomersId;
 import testdb.customtypes.Defaulted;
 import testdb.promotions.PromotionsId;
 import typo.data.maria.Inet6;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -685,7 +684,7 @@ public record OrdersRow(
   }
   ;
 
-  static RowParser<OrdersRow> _rowParser =
+  public static RowParser<OrdersRow> _rowParser =
       RowParsers.of(
           OrdersId.pgType,
           MariaTypes.varchar,
@@ -709,31 +708,7 @@ public record OrdersRow(
           MariaTypes.datetime.opt(),
           MariaTypes.datetime.opt(),
           MariaTypes.datetime.opt(),
-          (t0,
-              t1,
-              t2,
-              t3,
-              t4,
-              t5,
-              t6,
-              t7,
-              t8,
-              t9,
-              t10,
-              t11,
-              t12,
-              t13,
-              t14,
-              t15,
-              t16,
-              t17,
-              t18,
-              t19,
-              t20,
-              t21) ->
-              new OrdersRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17,
-                  t18, t19, t20, t21),
+          OrdersRow::new,
           row ->
               new Object[] {
                 row.orderId(),
@@ -760,8 +735,6 @@ public record OrdersRow(
                 row.deliveredAt()
               });
   ;
-
-  public static MariaText<OrdersRow> mariaText = MariaText.from(_rowParser);
 
   public OrdersId id() {
     return orderId;

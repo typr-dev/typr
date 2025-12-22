@@ -16,9 +16,8 @@ public record Issue142Row(Issue142Id tabellkode) {
   }
   ;
 
-  static RowParser<Issue142Row> _rowParser =
-      RowParsers.of(
-          Issue142Id.pgType, t0 -> new Issue142Row(t0), row -> new Object[] {row.tabellkode()});
+  public static RowParser<Issue142Row> _rowParser =
+      RowParsers.of(Issue142Id.pgType, Issue142Row::new, row -> new Object[] {row.tabellkode()});
   ;
 
   public static PgText<Issue142Row> pgText = PgText.from(_rowParser);

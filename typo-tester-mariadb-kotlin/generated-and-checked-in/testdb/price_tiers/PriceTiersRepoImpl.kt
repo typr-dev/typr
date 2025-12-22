@@ -33,7 +33,7 @@ class PriceTiersRepoImpl() : PriceTiersRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in tierIds) { fragments.add(Fragment.encode(PriceTiersId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `price_tiers` where `tier_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `price_tiers` where `tier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -59,7 +59,7 @@ class PriceTiersRepoImpl() : PriceTiersRepo {
       { value -> columns.add(Fragment.lit("`min_quantity`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.intUnsigned, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `price_tiers`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `price_tiers`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\n"))
     return q.updateReturning(PriceTiersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -78,7 +78,7 @@ class PriceTiersRepoImpl() : PriceTiersRepo {
   ): List<PriceTiersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in tierIds) { fragments.add(Fragment.encode(PriceTiersId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value` from `price_tiers` where `tier_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(PriceTiersRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value` from `price_tiers` where `tier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(PriceTiersRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

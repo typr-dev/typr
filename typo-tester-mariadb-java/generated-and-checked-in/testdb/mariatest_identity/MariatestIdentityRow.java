@@ -5,7 +5,6 @@
  */
 package testdb.mariatest_identity;
 
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -28,15 +27,13 @@ public record MariatestIdentityRow(
   }
   ;
 
-  static RowParser<MariatestIdentityRow> _rowParser =
+  public static RowParser<MariatestIdentityRow> _rowParser =
       RowParsers.of(
           MariatestIdentityId.pgType,
           MariaTypes.varchar,
-          (t0, t1) -> new MariatestIdentityRow(t0, t1),
+          MariatestIdentityRow::new,
           row -> new Object[] {row.id(), row.name()});
   ;
-
-  public static MariaText<MariatestIdentityRow> mariaText = MariaText.from(_rowParser);
 
   public MariatestIdentityRowUnsaved toUnsavedRow() {
     return new MariatestIdentityRowUnsaved(name);

@@ -8,10 +8,16 @@ package adventureworks.person.personphone
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.phonenumbertype.PhonenumbertypeId
 import adventureworks.public.Phone
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `person.personphone` */
 data class PersonphoneId(
   val businessentityid: BusinessentityId,
   val phonenumber: Phone,
   val phonenumbertypeid: PhonenumbertypeId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<PersonphoneId> = RowParsers.of(BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, { t0, t1, t2 -> PersonphoneId(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.phonenumber, row.phonenumbertypeid) })
+  }
+}

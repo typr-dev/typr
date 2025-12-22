@@ -76,14 +76,14 @@ public record LocationRow(
   }
   ;
 
-  static RowParser<LocationRow> _rowParser =
+  public static RowParser<LocationRow> _rowParser =
       RowParsers.of(
           LocationId.pgType,
           Name.pgType,
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new LocationRow(t0, t1, t2, t3, t4),
+          LocationRow::new,
           row ->
               new Object[] {
                 row.locationid(), row.name(), row.costrate(), row.availability(), row.modifieddate()

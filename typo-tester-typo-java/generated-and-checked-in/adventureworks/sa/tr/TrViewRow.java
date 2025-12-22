@@ -89,7 +89,7 @@ public record TrViewRow(
   }
   ;
 
-  static RowParser<TrViewRow> _rowParser =
+  public static RowParser<TrViewRow> _rowParser =
       RowParsers.of(
           SalestaxrateId.pgType,
           SalestaxrateId.pgType,
@@ -99,7 +99,7 @@ public record TrViewRow(
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7) -> new TrViewRow(t0, t1, t2, t3, t4, t5, t6, t7),
+          TrViewRow::new,
           row ->
               new Object[] {
                 row.id(),

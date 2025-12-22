@@ -6,6 +6,8 @@
 package adventureworks.public.test_utdanningstilbud
 
 import adventureworks.public.test_organisasjon.TestOrganisasjonId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -18,6 +20,17 @@ case class TestUtdanningstilbudId(
 )
 
 object TestUtdanningstilbudId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[TestUtdanningstilbudId] = {
+    new JdbcDecoder[TestUtdanningstilbudId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, TestUtdanningstilbudId) =
+        columIndex + 1 ->
+          TestUtdanningstilbudId(
+            organisasjonskode = TestOrganisasjonId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            utdanningsmulighetKode = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[TestUtdanningstilbudId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val organisasjonskode = jsonObj.get("organisasjonskode").toRight("Missing field 'organisasjonskode'").flatMap(_.as(TestOrganisasjonId.jsonDecoder))

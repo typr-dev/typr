@@ -43,6 +43,8 @@ class SqlCast(needsTimestampCasts: Boolean) {
           case ArrayName(x) => SqlCastValue(x + "[]")
           case other        => SqlCastValue(other)
         }
+      // Other database types - no cast needed
+      case _ => None
     }
 
   def toPgCode(c: ComputedColumn): jvm.Code =

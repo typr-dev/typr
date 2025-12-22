@@ -23,7 +23,7 @@ case class TitledpersonRow(
 )
 
 object TitledpersonRow {
-  val `_rowParser`: RowParser[TitledpersonRow] = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, (t0, t1, t2) => new TitledpersonRow(t0, t1, t2), row => Array[Any](row.titleShort, row.title, row.name))
+  val `_rowParser`: RowParser[TitledpersonRow] = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, TitledpersonRow.apply, row => Array[Any](row.titleShort, row.title, row.name))
 
   given pgText: PgText[TitledpersonRow] = PgText.from(`_rowParser`)
 }

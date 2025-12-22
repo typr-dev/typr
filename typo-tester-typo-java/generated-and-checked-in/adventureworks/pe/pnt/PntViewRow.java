@@ -56,13 +56,13 @@ public record PntViewRow(
   }
   ;
 
-  static RowParser<PntViewRow> _rowParser =
+  public static RowParser<PntViewRow> _rowParser =
       RowParsers.of(
           PhonenumbertypeId.pgType,
           PhonenumbertypeId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new PntViewRow(t0, t1, t2, t3),
+          PntViewRow::new,
           row -> new Object[] {row.id(), row.phonenumbertypeid(), row.name(), row.modifieddate()});
   ;
 }

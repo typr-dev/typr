@@ -15,7 +15,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: product_prices
@@ -58,8 +57,5 @@ data class ProductPricesRow(
 
   companion object {
     val _rowParser: RowParser<ProductPricesRow> = RowParsers.of(ProductPricesId.pgType, ProductsId.pgType, PriceTiersId.pgType.nullable(), KotlinDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.date, MariaTypes.date.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> ProductPricesRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.priceId, row.productId, row.tierId, row.price, row.currencyCode, row.validFrom, row.validTo) })
-
-    val mariaText: MariaText<ProductPricesRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

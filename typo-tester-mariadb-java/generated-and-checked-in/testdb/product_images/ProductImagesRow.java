@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.products.ProductsId;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -88,7 +87,7 @@ public record ProductImagesRow(
   }
   ;
 
-  static RowParser<ProductImagesRow> _rowParser =
+  public static RowParser<ProductImagesRow> _rowParser =
       RowParsers.of(
           ProductImagesId.pgType,
           ProductsId.pgType,
@@ -98,7 +97,7 @@ public record ProductImagesRow(
           MariaTypes.tinyintUnsigned,
           MariaTypes.bool,
           MariaTypes.longblob.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7) -> new ProductImagesRow(t0, t1, t2, t3, t4, t5, t6, t7),
+          ProductImagesRow::new,
           row ->
               new Object[] {
                 row.imageId(),
@@ -111,8 +110,6 @@ public record ProductImagesRow(
                 row.imageData()
               });
   ;
-
-  public static MariaText<ProductImagesRow> mariaText = MariaText.from(_rowParser);
 
   public ProductImagesId id() {
     return imageId;

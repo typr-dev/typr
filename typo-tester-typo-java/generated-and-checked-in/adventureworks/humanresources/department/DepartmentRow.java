@@ -56,13 +56,13 @@ public record DepartmentRow(
   }
   ;
 
-  static RowParser<DepartmentRow> _rowParser =
+  public static RowParser<DepartmentRow> _rowParser =
       RowParsers.of(
           DepartmentId.pgType,
           Name.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new DepartmentRow(t0, t1, t2, t3),
+          DepartmentRow::new,
           row ->
               new Object[] {row.departmentid(), row.name(), row.groupname(), row.modifieddate()});
   ;

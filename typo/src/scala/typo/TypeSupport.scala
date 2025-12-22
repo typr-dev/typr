@@ -7,6 +7,7 @@ package typo
   *   - Java types: Optional, java.util.List, java.util.Map, java.util.Random
   */
 trait TypeSupport {
+
   // Primitive type mappings
   val BigDecimal: jvm.Type.Qualified
   val Boolean: jvm.Type.Qualified
@@ -60,6 +61,9 @@ trait IteratorSupport {
 
   /** Iterate over iterator elements with a consumer lambda (for side effects) */
   def forEach(iterator: jvm.Code, lambda: jvm.Code): jvm.Code
+
+  /** Convert iterator to Java Iterator - for Scala this converts, for Java/Kotlin it's a noop */
+  def toJavaIterator(iterator: jvm.Code): jvm.Code
 }
 
 trait MutableListSupport {

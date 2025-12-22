@@ -7,6 +7,7 @@ package adventureworks.person.businessentitycontact
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.contacttype.ContacttypeId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -21,4 +22,18 @@ object BusinessentitycontactId {
   given decoder: Decoder[BusinessentitycontactId] = Decoder.forProduct3[BusinessentitycontactId, BusinessentityId, BusinessentityId, ContacttypeId]("businessentityid", "personid", "contacttypeid")(BusinessentitycontactId.apply)(using BusinessentityId.decoder, BusinessentityId.decoder, ContacttypeId.decoder)
 
   given encoder: Encoder[BusinessentitycontactId] = Encoder.forProduct3[BusinessentitycontactId, BusinessentityId, BusinessentityId, ContacttypeId]("businessentityid", "personid", "contacttypeid")(x => (x.businessentityid, x.personid, x.contacttypeid))(using BusinessentityId.encoder, BusinessentityId.encoder, ContacttypeId.encoder)
+
+  given read: Read[BusinessentitycontactId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(ContacttypeId.get).asInstanceOf[Read[Any]]
+    ))(using scala.reflect.ClassTag.Any).map { arr =>
+      BusinessentitycontactId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            personid = arr(1).asInstanceOf[BusinessentityId],
+            contacttypeid = arr(2).asInstanceOf[ContacttypeId]
+      )
+    }
+  }
 }

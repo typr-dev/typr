@@ -365,7 +365,7 @@ public record PohViewRow(
   }
   ;
 
-  static RowParser<PohViewRow> _rowParser =
+  public static RowParser<PohViewRow> _rowParser =
       RowParsers.of(
           PurchaseorderheaderId.pgType,
           PurchaseorderheaderId.pgType,
@@ -380,8 +380,7 @@ public record PohViewRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) ->
-              new PohViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12),
+          PohViewRow::new,
           row ->
               new Object[] {
                 row.id(),

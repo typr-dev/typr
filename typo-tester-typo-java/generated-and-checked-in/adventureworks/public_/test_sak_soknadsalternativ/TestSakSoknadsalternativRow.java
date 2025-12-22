@@ -57,12 +57,12 @@ public record TestSakSoknadsalternativRow(
   }
   ;
 
-  static RowParser<TestSakSoknadsalternativRow> _rowParser =
+  public static RowParser<TestSakSoknadsalternativRow> _rowParser =
       RowParsers.of(
           PgTypes.text,
           PgTypes.text,
           TestOrganisasjonId.pgType,
-          (t0, t1, t2) -> new TestSakSoknadsalternativRow(t0, t1, t2),
+          TestSakSoknadsalternativRow::new,
           row ->
               new Object[] {
                 row.organisasjonskodeSaksbehandler(),

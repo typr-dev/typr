@@ -132,7 +132,7 @@ public record VstateprovincecountryregionMVRow(
   }
   ;
 
-  static RowParser<VstateprovincecountryregionMVRow> _rowParser =
+  public static RowParser<VstateprovincecountryregionMVRow> _rowParser =
       RowParsers.of(
           StateprovinceId.pgType,
           PgTypes.bpchar,
@@ -141,8 +141,7 @@ public record VstateprovincecountryregionMVRow(
           SalesterritoryId.pgType,
           CountryregionId.pgType,
           Name.pgType,
-          (t0, t1, t2, t3, t4, t5, t6) ->
-              new VstateprovincecountryregionMVRow(t0, t1, t2, t3, t4, t5, t6),
+          VstateprovincecountryregionMVRow::new,
           row ->
               new Object[] {
                 row.stateprovinceid(),

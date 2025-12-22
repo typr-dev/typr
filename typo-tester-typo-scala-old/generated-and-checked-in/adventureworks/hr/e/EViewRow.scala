@@ -51,24 +51,5 @@ case class EViewRow(
 )
 
 object EViewRow {
-  val `_rowParser`: RowParser[EViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, Flag.pgType, PgTypes.int2, PgTypes.int2, Flag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text, (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) => new EViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15
-    ), row => Array[Any](row.id, row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
-  }
+  val `_rowParser`: RowParser[EViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, Flag.pgType, PgTypes.int2, PgTypes.int2, Flag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text, EViewRow.apply, row => Array[Any](row.id, row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
 }

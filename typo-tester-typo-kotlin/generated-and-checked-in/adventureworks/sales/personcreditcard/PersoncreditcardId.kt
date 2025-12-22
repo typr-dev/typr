@@ -7,9 +7,15 @@ package adventureworks.sales.personcreditcard
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CustomCreditcardId
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `sales.personcreditcard` */
 data class PersoncreditcardId(
   val businessentityid: BusinessentityId,
   val creditcardid: /* user-picked */ CustomCreditcardId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<PersoncreditcardId> = RowParsers.of(BusinessentityId.pgType, CustomCreditcardId.pgType, { t0, t1 -> PersoncreditcardId(t0, t1) }, { row -> arrayOf<Any?>(row.businessentityid, row.creditcardid) })
+  }
+}

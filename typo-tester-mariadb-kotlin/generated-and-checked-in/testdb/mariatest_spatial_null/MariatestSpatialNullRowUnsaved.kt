@@ -16,9 +16,6 @@ import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `mariatest_spatial_null` which has not been persisted yet */
 data class MariatestSpatialNullRowUnsaved(
@@ -66,23 +63,4 @@ data class MariatestSpatialNullRowUnsaved(
     geometrycollectionColDefault: () -> GeometryCollection?,
     idDefault: () -> MariatestSpatialNullId
   ): MariatestSpatialNullRow = MariatestSpatialNullRow(id = idDefault(), geometryCol = geometryCol.getOrElse(geometryColDefault), pointCol = pointCol.getOrElse(pointColDefault), linestringCol = linestringCol.getOrElse(linestringColDefault), polygonCol = polygonCol.getOrElse(polygonColDefault), multipointCol = multipointCol.getOrElse(multipointColDefault), multilinestringCol = multilinestringCol.getOrElse(multilinestringColDefault), multipolygonCol = multipolygonCol.getOrElse(multipolygonColDefault), geometrycollectionCol = geometrycollectionCol.getOrElse(geometrycollectionColDefault))
-
-  companion object {
-    val mariaText: MariaText<MariatestSpatialNullRowUnsaved> =
-      MariaText.instance({ row, sb -> Defaulted.mariaText(MariaTypes.geometry.nullable().mariaText()).unsafeEncode(row.geometryCol, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.point.nullable().mariaText()).unsafeEncode(row.pointCol, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.linestring.nullable().mariaText()).unsafeEncode(row.linestringCol, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.polygon.nullable().mariaText()).unsafeEncode(row.polygonCol, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.multipoint.nullable().mariaText()).unsafeEncode(row.multipointCol, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.multilinestring.nullable().mariaText()).unsafeEncode(row.multilinestringCol, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.multipolygon.nullable().mariaText()).unsafeEncode(row.multipolygonCol, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.geometrycollection.nullable().mariaText()).unsafeEncode(row.geometrycollectionCol, sb) })
-  }
 }

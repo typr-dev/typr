@@ -6,6 +6,8 @@
 package adventureworks.public.test_sak_soknadsalternativ
 
 import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -22,6 +24,17 @@ object TestSakSoknadsalternativId {
     TestUtdanningstilbudId: TestUtdanningstilbudId,
     organisasjonskodeSaksbehandler: String
   ): TestSakSoknadsalternativId = new TestSakSoknadsalternativId(organisasjonskodeSaksbehandler = organisasjonskodeSaksbehandler, utdanningsmulighetKode = TestUtdanningstilbudId.utdanningsmulighetKode)
+
+  implicit lazy val jdbcDecoder: JdbcDecoder[TestSakSoknadsalternativId] = {
+    new JdbcDecoder[TestSakSoknadsalternativId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, TestSakSoknadsalternativId) =
+        columIndex + 1 ->
+          TestSakSoknadsalternativId(
+            organisasjonskodeSaksbehandler = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            utdanningsmulighetKode = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
 
   implicit lazy val jsonDecoder: JsonDecoder[TestSakSoknadsalternativId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>

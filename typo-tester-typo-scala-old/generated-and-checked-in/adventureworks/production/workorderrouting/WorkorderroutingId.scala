@@ -6,6 +6,9 @@
 package adventureworks.production.workorderrouting
 
 import adventureworks.production.workorder.WorkorderId
+import typo.runtime.PgTypes
+import typo.runtime.RowParser
+import typo.runtime.RowParsers
 
 /** Type for the composite primary key of table `production.workorderrouting` */
 case class WorkorderroutingId(
@@ -13,3 +16,7 @@ case class WorkorderroutingId(
   productid: Integer,
   operationsequence: java.lang.Short
 )
+
+object WorkorderroutingId {
+  val `_rowParser`: RowParser[WorkorderroutingId] = RowParsers.of(WorkorderId.pgType, PgTypes.int4, PgTypes.int2, WorkorderroutingId.apply, row => Array[Any](row.workorderid, row.productid, row.operationsequence))
+}

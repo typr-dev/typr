@@ -48,33 +48,5 @@ case class VproductmodelcatalogdescriptionViewRow(
 )
 
 object VproductmodelcatalogdescriptionViewRow {
-  val `_rowParser`: RowParser[VproductmodelcatalogdescriptionViewRow] = {
-    RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24) => new VproductmodelcatalogdescriptionViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16,
-      t17,
-      t18,
-      t19,
-      t20,
-      t21,
-      t22,
-      t23,
-      t24
-    ))(row => Array[Any](row.productmodelid, row.name, row.summary, row.manufacturer, row.copyright, row.producturl, row.warrantyperiod, row.warrantydescription, row.noofyears, row.maintenancedescription, row.wheel, row.saddle, row.pedal, row.bikeframe, row.crankset, row.pictureangle, row.picturesize, row.productphotoid, row.material, row.color, row.productline, row.style, row.riderexperience, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[VproductmodelcatalogdescriptionViewRow] = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp)(VproductmodelcatalogdescriptionViewRow.apply)(row => Array[Any](row.productmodelid, row.name, row.summary, row.manufacturer, row.copyright, row.producturl, row.warrantyperiod, row.warrantydescription, row.noofyears, row.maintenancedescription, row.wheel, row.saddle, row.pedal, row.bikeframe, row.crankset, row.pictureangle, row.picturesize, row.productphotoid, row.material, row.color, row.productline, row.style, row.riderexperience, row.rowguid, row.modifieddate))
 }

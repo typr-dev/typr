@@ -11,6 +11,7 @@ public sealed interface Operation<Out>
     permits Operation.Query,
         Operation.Update,
         Operation.UpdateReturning,
+        Operation.UpdateReturningGeneratedKeys,
         Operation.UpdateManyReturning,
         Operation.UpdateMany,
         Operation.UpdateReturningEach {
@@ -53,6 +54,20 @@ public sealed interface Operation<Out>
       try (PreparedStatement stmt = conn.prepareStatement(query.render())) {
         query.set(stmt);
         try (ResultSet rs = stmt.executeQuery()) {
+          return parser.apply(rs);
+        }
+      }
+    }
+  }
+
+  record UpdateReturningGeneratedKeys<Out>(
+      Fragment query, String[] columnNames, ResultSetParser<Out> parser) implements Operation<Out> {
+    @Override
+    public Out run(Connection conn) throws SQLException {
+      try (PreparedStatement stmt = conn.prepareStatement(query.render(), columnNames)) {
+        query.set(stmt);
+        stmt.executeUpdate();
+        try (ResultSet rs = stmt.getGeneratedKeys()) {
           return parser.apply(rs);
         }
       }

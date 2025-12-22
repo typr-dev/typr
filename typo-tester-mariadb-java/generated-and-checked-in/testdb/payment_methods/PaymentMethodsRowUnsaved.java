@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `payment_methods` which has not been persisted yet */
 public record PaymentMethodsRowUnsaved(
@@ -78,23 +76,6 @@ public record PaymentMethodsRowUnsaved(
         code, name, methodType, processorConfig, isActive, sortOrder);
   }
   ;
-
-  public static MariaText<PaymentMethodsRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.code, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.text.mariaText().unsafeEncode(row.methodType, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.processorConfig, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.tinyint.mariaText()).unsafeEncode(row.sortOrder, sb);
-          });
 
   public PaymentMethodsRow toRow(
       java.util.function.Supplier<Optional<String>> processorConfigDefault,

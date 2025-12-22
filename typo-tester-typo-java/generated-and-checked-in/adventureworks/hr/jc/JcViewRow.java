@@ -70,14 +70,14 @@ public record JcViewRow(
   }
   ;
 
-  static RowParser<JcViewRow> _rowParser =
+  public static RowParser<JcViewRow> _rowParser =
       RowParsers.of(
           JobcandidateId.pgType,
           JobcandidateId.pgType,
           BusinessentityId.pgType,
           PgTypes.xml,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new JcViewRow(t0, t1, t2, t3, t4),
+          JcViewRow::new,
           row ->
               new Object[] {
                 row.id(),

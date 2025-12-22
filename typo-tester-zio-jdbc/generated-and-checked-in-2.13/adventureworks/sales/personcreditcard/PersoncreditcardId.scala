@@ -7,6 +7,8 @@ package adventureworks.sales.personcreditcard
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CustomCreditcardId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -19,6 +21,17 @@ case class PersoncreditcardId(
 )
 
 object PersoncreditcardId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[PersoncreditcardId] = {
+    new JdbcDecoder[PersoncreditcardId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, PersoncreditcardId) =
+        columIndex + 1 ->
+          PersoncreditcardId(
+            businessentityid = BusinessentityId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            creditcardid = CustomCreditcardId.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[PersoncreditcardId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val businessentityid = jsonObj.get("businessentityid").toRight("Missing field 'businessentityid'").flatMap(_.as(BusinessentityId.jsonDecoder))

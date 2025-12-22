@@ -65,7 +65,7 @@ class UsersRepoImpl() : UsersRepo {
       { value -> columns.add(Fragment.lit("\"created_at\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamptz, value), Fragment.lit("::timestamptz"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\n"))
     return q.updateReturning(UsersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

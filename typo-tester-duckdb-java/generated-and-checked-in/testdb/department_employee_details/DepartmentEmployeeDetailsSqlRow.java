@@ -195,7 +195,7 @@ public record DepartmentEmployeeDetailsSqlRow(
   }
   ;
 
-  static RowParser<DepartmentEmployeeDetailsSqlRow> _rowParser =
+  public static RowParser<DepartmentEmployeeDetailsSqlRow> _rowParser =
       RowParsers.of(
           DuckDbTypes.varchar,
           DuckDbTypes.varchar,
@@ -207,8 +207,7 @@ public record DepartmentEmployeeDetailsSqlRow(
           DuckDbTypes.numeric.opt(),
           DuckDbTypes.date.opt(),
           DuckDbTypes.integer.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new DepartmentEmployeeDetailsSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          DepartmentEmployeeDetailsSqlRow::new,
           row ->
               new Object[] {
                 row.deptCode(),

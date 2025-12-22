@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import typo.data.maria.MariaSet;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -402,7 +401,7 @@ public record PromotionsRow(
   }
   ;
 
-  static RowParser<PromotionsRow> _rowParser =
+  public static RowParser<PromotionsRow> _rowParser =
       RowParsers.of(
           PromotionsId.pgType,
           MariaTypes.varchar,
@@ -420,9 +419,7 @@ public record PromotionsRow(
           MariaTypes.datetime,
           MariaTypes.bool,
           MariaTypes.datetime,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) ->
-              new PromotionsRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15),
+          PromotionsRow::new,
           row ->
               new Object[] {
                 row.promotionId(),
@@ -443,8 +440,6 @@ public record PromotionsRow(
                 row.createdAt()
               });
   ;
-
-  public static MariaText<PromotionsRow> mariaText = MariaText.from(_rowParser);
 
   public PromotionsId id() {
     return promotionId;

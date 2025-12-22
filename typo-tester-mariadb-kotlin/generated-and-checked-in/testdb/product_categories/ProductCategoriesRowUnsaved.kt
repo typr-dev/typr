@@ -10,8 +10,6 @@ import testdb.categories.CategoriesId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.products.ProductsId
-import typo.kotlindsl.KotlinDbTypes
-import typo.runtime.MariaText
 
 /** This class corresponds to a row in table `product_categories` which has not been persisted yet */
 data class ProductCategoriesRowUnsaved(
@@ -36,15 +34,4 @@ data class ProductCategoriesRowUnsaved(
     isPrimaryDefault: () -> Boolean,
     sortOrderDefault: () -> Short
   ): ProductCategoriesRow = ProductCategoriesRow(productId = productId, categoryId = categoryId, isPrimary = isPrimary.getOrElse(isPrimaryDefault), sortOrder = sortOrder.getOrElse(sortOrderDefault))
-
-  companion object {
-    val mariaText: MariaText<ProductCategoriesRowUnsaved> =
-      MariaText.instance({ row, sb -> ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb)
-      sb.append(MariaText.DELIMETER)
-      CategoriesId.pgType.mariaText().unsafeEncode(row.categoryId, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isPrimary, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.smallint.mariaText()).unsafeEncode(row.sortOrder, sb) })
-  }
 }

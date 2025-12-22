@@ -28,13 +28,5 @@ case class PcViewRow(
 )
 
 object PcViewRow {
-  val `_rowParser`: RowParser[PcViewRow] = {
-    RowParsers.of(ProductcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, (t0, t1, t2, t3, t4) => new PcViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ), row => Array[Any](row.id, row.productcategoryid, row.name, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[PcViewRow] = RowParsers.of(ProductcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, PcViewRow.apply, row => Array[Any](row.id, row.productcategoryid, row.name, row.rowguid, row.modifieddate))
 }

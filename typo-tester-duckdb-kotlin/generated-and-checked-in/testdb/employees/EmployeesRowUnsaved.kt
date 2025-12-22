@@ -10,10 +10,6 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
-import typo.runtime.DuckDbTypes
 
 /** This class corresponds to a row in table `employees` which has not been persisted yet */
 data class EmployeesRowUnsaved(
@@ -27,21 +23,4 @@ data class EmployeesRowUnsaved(
   @JsonProperty("hire_date") val hireDate: Defaulted<LocalDate> = UseDefault()
 ) {
   fun toRow(hireDateDefault: () -> LocalDate): EmployeesRow = EmployeesRow(empNumber = empNumber, empSuffix = empSuffix, deptCode = deptCode, deptRegion = deptRegion, empName = empName, salary = salary, hireDate = hireDate.getOrElse(hireDateDefault))
-
-  companion object {
-    val duckDbText: DuckDbText<EmployeesRowUnsaved> =
-      DuckDbText.instance({ row, sb -> KotlinDbTypes.DuckDbTypes.integer.duckDbText().unsafeEncode(row.empNumber, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.varchar.duckDbText().unsafeEncode(row.empSuffix, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.varchar.duckDbText().unsafeEncode(row.deptCode, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.varchar.duckDbText().unsafeEncode(row.deptRegion, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.varchar.duckDbText().unsafeEncode(row.empName, sb)
-      sb.append(DuckDbText.DELIMETER)
-      DuckDbTypes.numeric.nullable().duckDbText().unsafeEncode(row.salary, sb)
-      sb.append(DuckDbText.DELIMETER)
-      Defaulted.duckDbText(DuckDbTypes.date.duckDbText()).unsafeEncode(row.hireDate, sb) })
-  }
 }

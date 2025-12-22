@@ -6,10 +6,17 @@
 package adventureworks.production.workorderrouting
 
 import adventureworks.production.workorder.WorkorderId
+import typo.kotlindsl.KotlinDbTypes
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `production.workorderrouting` */
 data class WorkorderroutingId(
   val workorderid: WorkorderId,
   val productid: Int,
   val operationsequence: Short
-)
+) {
+  companion object {
+    val _rowParser: RowParser<WorkorderroutingId> = RowParsers.of(WorkorderId.pgType, KotlinDbTypes.PgTypes.int4, KotlinDbTypes.PgTypes.int2, { t0, t1, t2 -> WorkorderroutingId(t0, t1, t2) }, { row -> arrayOf<Any?>(row.workorderid, row.productid, row.operationsequence) })
+  }
+}

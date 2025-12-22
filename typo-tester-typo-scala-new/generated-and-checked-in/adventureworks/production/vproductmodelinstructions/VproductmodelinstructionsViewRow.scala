@@ -36,19 +36,5 @@ case class VproductmodelinstructionsViewRow(
 )
 
 object VproductmodelinstructionsViewRow {
-  val `_rowParser`: RowParser[VproductmodelinstructionsViewRow] = {
-    RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.nullable, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.int4, PgTypes.text, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) => new VproductmodelinstructionsViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10
-    ))(row => Array[Any](row.productmodelid, row.name, row.instructions, row.locationID, row.setupHours, row.machineHours, row.laborHours, row.lotSize, row.step, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[VproductmodelinstructionsViewRow] = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text.nullable, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.int4, PgTypes.text, PgTypes.uuid, PgTypes.timestamp)(VproductmodelinstructionsViewRow.apply)(row => Array[Any](row.productmodelid, row.name, row.instructions, row.locationID, row.setupHours, row.machineHours, row.laborHours, row.lotSize, row.step, row.rowguid, row.modifieddate))
 }

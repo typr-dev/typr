@@ -7,7 +7,6 @@ package testdb.brands
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 import typo.scaladsl.MariaTypeOps
 import typo.scaladsl.RowParser
@@ -63,17 +62,5 @@ case class BrandsRow(
 }
 
 object BrandsRow {
-  val `_rowParser`: RowParser[BrandsRow] = {
-    RowParsers.of(BrandsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable, MariaTypes.varchar.nullable, MariaTypes.char_.nullable, ScalaDbTypes.MariaTypes.bool)((t0, t1, t2, t3, t4, t5, t6) => new BrandsRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ))(row => Array[Any](row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive))
-  }
-
-  given mariaText: MariaText[BrandsRow] = MariaText.from(`_rowParser`.underlying)
+  val `_rowParser`: RowParser[BrandsRow] = RowParsers.of(BrandsId.pgType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable, MariaTypes.varchar.nullable, MariaTypes.char_.nullable, ScalaDbTypes.MariaTypes.bool)(BrandsRow.apply)(row => Array[Any](row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive))
 }

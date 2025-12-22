@@ -46,13 +46,13 @@ public record CtViewRow(
   }
   ;
 
-  static RowParser<CtViewRow> _rowParser =
+  public static RowParser<CtViewRow> _rowParser =
       RowParsers.of(
           ContacttypeId.pgType,
           ContacttypeId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new CtViewRow(t0, t1, t2, t3),
+          CtViewRow::new,
           row -> new Object[] {row.id(), row.contacttypeid(), row.name(), row.modifieddate()});
   ;
 }

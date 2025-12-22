@@ -171,7 +171,7 @@ public record VendorRow(
   }
   ;
 
-  static RowParser<VendorRow> _rowParser =
+  public static RowParser<VendorRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           AccountNumber.pgType,
@@ -181,7 +181,7 @@ public record VendorRow(
           Flag.pgType,
           PgTypes.text.opt(),
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7) -> new VendorRow(t0, t1, t2, t3, t4, t5, t6, t7),
+          VendorRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

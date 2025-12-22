@@ -35,7 +35,7 @@ class CustomerAddressesRepoImpl() : CustomerAddressesRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in addressIds) { fragments.add(Fragment.encode(CustomerAddressesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `customer_addresses` where `address_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `customer_addresses` where `address_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -94,7 +94,7 @@ class CustomerAddressesRepoImpl() : CustomerAddressesRepo {
       { value -> columns.add(Fragment.lit("`created_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customer_addresses`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customer_addresses`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\n"))
     return q.updateReturning(CustomerAddressesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -113,7 +113,7 @@ class CustomerAddressesRepoImpl() : CustomerAddressesRepo {
   ): List<CustomerAddressesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in addressIds) { fragments.add(Fragment.encode(CustomerAddressesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at` from `customer_addresses` where `address_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(CustomerAddressesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at` from `customer_addresses` where `address_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CustomerAddressesRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

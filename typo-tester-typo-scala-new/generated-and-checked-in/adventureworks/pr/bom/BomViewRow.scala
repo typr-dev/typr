@@ -38,18 +38,5 @@ case class BomViewRow(
 )
 
 object BomViewRow {
-  val `_rowParser`: RowParser[BomViewRow] = {
-    RowParsers.of(ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, ProductId.pgType, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, UnitmeasureId.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) => new BomViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9
-    ))(row => Array[Any](row.id, row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[BomViewRow] = RowParsers.of(ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, ProductId.pgType, ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp, UnitmeasureId.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(BomViewRow.apply)(row => Array[Any](row.id, row.billofmaterialsid, row.productassemblyid, row.componentid, row.startdate, row.enddate, row.unitmeasurecode, row.bomlevel, row.perassemblyqty, row.modifieddate))
 }

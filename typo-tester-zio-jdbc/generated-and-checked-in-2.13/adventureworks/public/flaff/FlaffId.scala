@@ -6,6 +6,8 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -20,6 +22,19 @@ case class FlaffId(
 )
 
 object FlaffId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[FlaffId] = {
+    new JdbcDecoder[FlaffId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, FlaffId) =
+        columIndex + 3 ->
+          FlaffId(
+            code = ShortText.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            anotherCode = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 1, rs)._2,
+            someNumber = JdbcDecoder.intDecoder.unsafeDecode(columIndex + 2, rs)._2,
+            specifier = ShortText.jdbcDecoder.unsafeDecode(columIndex + 3, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[FlaffId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val code = jsonObj.get("code").toRight("Missing field 'code'").flatMap(_.as(ShortText.jsonDecoder))

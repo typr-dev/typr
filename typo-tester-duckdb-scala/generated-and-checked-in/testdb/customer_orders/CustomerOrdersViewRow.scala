@@ -25,15 +25,5 @@ case class CustomerOrdersViewRow(
 )
 
 object CustomerOrdersViewRow {
-  val `_rowParser`: RowParser[CustomerOrdersViewRow] = {
-    RowParsers.of(ScalaDbTypes.DuckDbTypes.integer.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.varchar.nullable)((t0, t1, t2, t3, t4, t5, t6) => new CustomerOrdersViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6
-    ))(row => Array[Any](row.customerId, row.customerName, row.email, row.orderId, row.orderDate, row.totalAmount, row.status))
-  }
+  val `_rowParser`: RowParser[CustomerOrdersViewRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.varchar.nullable)(CustomerOrdersViewRow.apply)(row => Array[Any](row.customerId, row.customerName, row.email, row.orderId, row.orderDate, row.totalAmount, row.status))
 }

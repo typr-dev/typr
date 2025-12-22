@@ -53,7 +53,7 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
       { value -> columns.add(Fragment.lit("\"default_generated\""))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"always_generated\", \"default_generated\", \"name\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"always_generated\", \"default_generated\", \"name\"\n"))
     return q.updateReturning(IdentityTestRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

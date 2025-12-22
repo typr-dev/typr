@@ -309,7 +309,7 @@ public record DocumentRow(
   }
   ;
 
-  static RowParser<DocumentRow> _rowParser =
+  public static RowParser<DocumentRow> _rowParser =
       RowParsers.of(
           PgTypes.text,
           BusinessentityId.pgType,
@@ -324,8 +324,7 @@ public record DocumentRow(
           PgTypes.uuid,
           PgTypes.timestamp,
           DocumentId.pgType,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) ->
-              new DocumentRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12),
+          DocumentRow::new,
           row ->
               new Object[] {
                 row.title(),

@@ -6,6 +6,9 @@
 package adventureworks.public.test_sak_soknadsalternativ
 
 import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudId
+import anorm.Column
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -37,6 +40,17 @@ object TestSakSoknadsalternativId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[TestSakSoknadsalternativId] = {
+    RowParser[TestSakSoknadsalternativId] { row =>
+      Success(
+        TestSakSoknadsalternativId(
+          organisasjonskodeSaksbehandler = row(idx + 0)(using Column.columnToString),
+          utdanningsmulighetKode = row(idx + 1)(using Column.columnToString)
+        )
+      )
+    }
   }
 
   given writes: OWrites[TestSakSoknadsalternativId] = {

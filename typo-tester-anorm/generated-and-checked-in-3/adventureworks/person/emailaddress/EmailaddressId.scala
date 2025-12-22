@@ -6,6 +6,9 @@
 package adventureworks.person.emailaddress
 
 import adventureworks.person.businessentity.BusinessentityId
+import anorm.Column
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -32,6 +35,17 @@ object EmailaddressId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[EmailaddressId] = {
+    RowParser[EmailaddressId] { row =>
+      Success(
+        EmailaddressId(
+          businessentityid = row(idx + 0)(using BusinessentityId.column),
+          emailaddressid = row(idx + 1)(using Column.columnToInt)
+        )
+      )
+    }
   }
 
   given writes: OWrites[EmailaddressId] = {

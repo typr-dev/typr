@@ -13,7 +13,6 @@ import testdb.customtypes.Defaulted;
 import testdb.orders.OrdersId;
 import testdb.payment_methods.PaymentMethodsId;
 import typo.data.maria.Inet6;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -260,7 +259,7 @@ public record PaymentsRow(
   }
   ;
 
-  static RowParser<PaymentsRow> _rowParser =
+  public static RowParser<PaymentsRow> _rowParser =
       RowParsers.of(
           PaymentsId.pgType,
           OrdersId.pgType,
@@ -274,8 +273,7 @@ public record PaymentsRow(
           MariaTypes.inet6.opt(),
           MariaTypes.datetime,
           MariaTypes.datetime.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) ->
-              new PaymentsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11),
+          PaymentsRow::new,
           row ->
               new Object[] {
                 row.paymentId(),
@@ -292,8 +290,6 @@ public record PaymentsRow(
                 row.processedAt()
               });
   ;
-
-  public static MariaText<PaymentsRow> mariaText = MariaText.from(_rowParser);
 
   public PaymentsId id() {
     return paymentId;

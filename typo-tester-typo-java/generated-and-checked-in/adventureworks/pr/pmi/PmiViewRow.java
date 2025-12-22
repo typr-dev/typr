@@ -56,12 +56,12 @@ public record PmiViewRow(
   }
   ;
 
-  static RowParser<PmiViewRow> _rowParser =
+  public static RowParser<PmiViewRow> _rowParser =
       RowParsers.of(
           ProductmodelId.pgType,
           IllustrationId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new PmiViewRow(t0, t1, t2),
+          PmiViewRow::new,
           row -> new Object[] {row.productmodelid(), row.illustrationid(), row.modifieddate()});
   ;
 }

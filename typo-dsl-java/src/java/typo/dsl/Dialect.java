@@ -27,6 +27,19 @@ public interface Dialect {
   String columnRef(String alias, String quotedColumn);
 
   /**
+   * Generate SQL fragment for LIMIT clause. PostgreSQL/MariaDB: LIMIT n Oracle: FETCH FIRST n ROWS
+   * ONLY
+   */
+  default String limitClause(int n) {
+    return "LIMIT " + n;
+  }
+
+  /** Generate SQL fragment for OFFSET clause. PostgreSQL/MariaDB: OFFSET n Oracle: OFFSET n ROWS */
+  default String offsetClause(int n) {
+    return "OFFSET " + n;
+  }
+
+  /**
    * Quote a table name for SQL, handling schema.table format and special characters. Each part is
    * quoted if it contains special characters or is not already quoted.
    */
@@ -150,6 +163,47 @@ public interface Dialect {
         public String columnRef(String alias, String quotedColumn) {
           // DuckDB uses simple alias."column" format (not PostgreSQL's (alias)."column")
           return alias + "." + quotedColumn;
+        }
+      };
+
+  /** Oracle dialect - uses double quotes for identifiers and FETCH FIRST for limits. */
+  Dialect ORACLE =
+      new Dialect() {
+        @Override
+        public String quoteIdent(String name) {
+          return "\"" + name + "\"";
+        }
+
+        @Override
+        public String escapeIdent(String name) {
+          return name.replace("\"", "\"\"");
+        }
+
+        @Override
+        public Fragment typeCast(Fragment value, String typeName) {
+          if (typeName == null || typeName.isEmpty()) {
+            return value;
+          }
+          // Oracle uses CAST() syntax, not ::
+          return Fragment.lit("CAST(").append(value).append(Fragment.lit(" AS " + typeName + ")"));
+        }
+
+        @Override
+        public String columnRef(String alias, String quotedColumn) {
+          // Oracle uses simple alias."column" format
+          return alias + "." + quotedColumn;
+        }
+
+        @Override
+        public String limitClause(int n) {
+          // Oracle 12c+ syntax
+          return "FETCH FIRST " + n + " ROWS ONLY";
+        }
+
+        @Override
+        public String offsetClause(int n) {
+          // Oracle 12c+ syntax
+          return "OFFSET " + n + " ROWS";
         }
       };
 }

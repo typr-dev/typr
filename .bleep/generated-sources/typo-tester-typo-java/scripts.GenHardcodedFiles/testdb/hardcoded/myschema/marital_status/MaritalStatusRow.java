@@ -17,7 +17,7 @@ public record MaritalStatusRow(MaritalStatusId id) {
     return new MaritalStatusRow(id);
   };
 
-  static RowParser<MaritalStatusRow> _rowParser = RowParsers.of(MaritalStatusId.pgType, t0 -> new MaritalStatusRow(t0), row -> new Object[]{row.id()});;
+  public static RowParser<MaritalStatusRow> _rowParser = RowParsers.of(MaritalStatusId.pgType, MaritalStatusRow::new, row -> new Object[]{row.id()});;
 
   static public PgText<MaritalStatusRow> pgText =
     PgText.from(_rowParser);

@@ -28,13 +28,5 @@ case class JcViewRow(
 )
 
 object JcViewRow {
-  val `_rowParser`: RowParser[JcViewRow] = {
-    RowParsers.of(JobcandidateId.pgType, JobcandidateId.pgType, BusinessentityId.pgType, PgTypes.xml, PgTypes.timestamp)((t0, t1, t2, t3, t4) => new JcViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.id, row.jobcandidateid, row.businessentityid, row.resume, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[JcViewRow] = RowParsers.of(JobcandidateId.pgType, JobcandidateId.pgType, BusinessentityId.pgType, PgTypes.xml, PgTypes.timestamp)(JcViewRow.apply)(row => Array[Any](row.id, row.jobcandidateid, row.businessentityid, row.resume, row.modifieddate))
 }

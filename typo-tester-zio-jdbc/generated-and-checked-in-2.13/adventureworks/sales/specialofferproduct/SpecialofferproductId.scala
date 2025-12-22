@@ -7,6 +7,8 @@ package adventureworks.sales.specialofferproduct
 
 import adventureworks.production.product.ProductId
 import adventureworks.sales.specialoffer.SpecialofferId
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -19,6 +21,17 @@ case class SpecialofferproductId(
 )
 
 object SpecialofferproductId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[SpecialofferproductId] = {
+    new JdbcDecoder[SpecialofferproductId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, SpecialofferproductId) =
+        columIndex + 1 ->
+          SpecialofferproductId(
+            specialofferid = SpecialofferId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            productid = ProductId.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[SpecialofferproductId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val specialofferid = jsonObj.get("specialofferid").toRight("Missing field 'specialofferid'").flatMap(_.as(SpecialofferId.jsonDecoder))

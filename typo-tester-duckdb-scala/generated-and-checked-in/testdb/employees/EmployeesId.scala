@@ -6,9 +6,17 @@
 package testdb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import typo.runtime.DuckDbTypes
+import typo.scaladsl.RowParser
+import typo.scaladsl.RowParsers
+import typo.scaladsl.ScalaDbTypes
 
 /** Type for the composite primary key of table `employees` */
 case class EmployeesId(
   @JsonProperty("emp_number") empNumber: Int,
   @JsonProperty("emp_suffix") empSuffix: String
 )
+
+object EmployeesId {
+  val `_rowParser`: RowParser[EmployeesId] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar)(EmployeesId.apply)(row => Array[Any](row.empNumber, row.empSuffix))
+}

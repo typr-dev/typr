@@ -7,9 +7,16 @@ package adventureworks.production.productlistpricehistory
 
 import adventureworks.production.product.ProductId
 import java.time.LocalDateTime
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
+import typo.runtime.PgTypes
 
 /** Type for the composite primary key of table `production.productlistpricehistory` */
 data class ProductlistpricehistoryId(
   val productid: ProductId,
   val startdate: LocalDateTime
-)
+) {
+  companion object {
+    val _rowParser: RowParser<ProductlistpricehistoryId> = RowParsers.of(ProductId.pgType, PgTypes.timestamp, { t0, t1 -> ProductlistpricehistoryId(t0, t1) }, { row -> arrayOf<Any?>(row.productid, row.startdate) })
+  }
+}

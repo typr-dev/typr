@@ -8,7 +8,6 @@ package testdb.departments;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.Optional;
-import typo.runtime.DuckDbText;
 import typo.runtime.DuckDbTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -39,13 +38,13 @@ public record DepartmentsRow(
   }
   ;
 
-  static RowParser<DepartmentsRow> _rowParser =
+  public static RowParser<DepartmentsRow> _rowParser =
       RowParsers.of(
           DuckDbTypes.varchar,
           DuckDbTypes.varchar,
           DuckDbTypes.varchar,
           DuckDbTypes.numeric.opt(),
-          (t0, t1, t2, t3) -> new DepartmentsRow(t0, t1, t2, t3),
+          DepartmentsRow::new,
           row -> new Object[] {row.deptCode(), row.deptRegion(), row.deptName(), row.budget()});
   ;
 
@@ -54,8 +53,6 @@ public record DepartmentsRow(
     return new DepartmentsRow(compositeId.deptCode(), compositeId.deptRegion(), deptName, budget);
   }
   ;
-
-  public static DuckDbText<DepartmentsRow> duckDbText = DuckDbText.from(_rowParser);
 
   public DepartmentsId compositeId() {
     return new DepartmentsId(deptCode, deptRegion);

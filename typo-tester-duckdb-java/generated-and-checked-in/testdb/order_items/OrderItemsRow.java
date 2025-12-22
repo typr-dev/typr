@@ -8,7 +8,6 @@ package testdb.order_items;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import testdb.customtypes.Defaulted;
-import typo.runtime.DuckDbText;
 import typo.runtime.DuckDbTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -41,13 +40,13 @@ public record OrderItemsRow(
   }
   ;
 
-  static RowParser<OrderItemsRow> _rowParser =
+  public static RowParser<OrderItemsRow> _rowParser =
       RowParsers.of(
           DuckDbTypes.integer,
           DuckDbTypes.integer,
           DuckDbTypes.integer,
           DuckDbTypes.numeric,
-          (t0, t1, t2, t3) -> new OrderItemsRow(t0, t1, t2, t3),
+          OrderItemsRow::new,
           row -> new Object[] {row.orderId(), row.productId(), row.quantity(), row.unitPrice()});
   ;
 
@@ -56,8 +55,6 @@ public record OrderItemsRow(
     return new OrderItemsRow(compositeId.orderId(), compositeId.productId(), quantity, unitPrice);
   }
   ;
-
-  public static DuckDbText<OrderItemsRow> duckDbText = DuckDbText.from(_rowParser);
 
   public OrderItemsId compositeId() {
     return new OrderItemsId(orderId, productId);

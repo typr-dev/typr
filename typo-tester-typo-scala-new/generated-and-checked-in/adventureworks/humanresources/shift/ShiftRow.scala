@@ -49,15 +49,7 @@ case class ShiftRow(
 }
 
 object ShiftRow {
-  val `_rowParser`: RowParser[ShiftRow] = {
-    RowParsers.of(ShiftId.pgType, Name.pgType, PgTypes.time, PgTypes.time, PgTypes.timestamp)((t0, t1, t2, t3, t4) => new ShiftRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[ShiftRow] = RowParsers.of(ShiftId.pgType, Name.pgType, PgTypes.time, PgTypes.time, PgTypes.timestamp)(ShiftRow.apply)(row => Array[Any](row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate))
 
   given pgText: PgText[ShiftRow] = PgText.from(`_rowParser`.underlying)
 }

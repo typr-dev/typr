@@ -51,16 +51,7 @@ case class CreditcardRow(
 }
 
 object CreditcardRow {
-  val `_rowParser`: RowParser[CreditcardRow] = {
-    RowParsers.of(CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, PgTypes.int2, PgTypes.int2, PgTypes.timestamp, (t0, t1, t2, t3, t4, t5) => new CreditcardRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5
-    ), row => Array[Any](row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[CreditcardRow] = RowParsers.of(CustomCreditcardId.pgType, PgTypes.text, PgTypes.text, PgTypes.int2, PgTypes.int2, PgTypes.timestamp, CreditcardRow.apply, row => Array[Any](row.creditcardid, row.cardtype, row.cardnumber, row.expmonth, row.expyear, row.modifieddate))
 
   given pgText: PgText[CreditcardRow] = PgText.from(`_rowParser`)
 }

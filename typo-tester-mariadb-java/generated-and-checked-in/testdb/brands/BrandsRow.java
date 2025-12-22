@@ -8,7 +8,6 @@ package testdb.brands;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -71,7 +70,7 @@ public record BrandsRow(
   }
   ;
 
-  static RowParser<BrandsRow> _rowParser =
+  public static RowParser<BrandsRow> _rowParser =
       RowParsers.of(
           BrandsId.pgType,
           MariaTypes.varchar,
@@ -80,7 +79,7 @@ public record BrandsRow(
           MariaTypes.varchar.opt(),
           MariaTypes.char_.opt(),
           MariaTypes.bool,
-          (t0, t1, t2, t3, t4, t5, t6) -> new BrandsRow(t0, t1, t2, t3, t4, t5, t6),
+          BrandsRow::new,
           row ->
               new Object[] {
                 row.brandId(),
@@ -92,8 +91,6 @@ public record BrandsRow(
                 row.isActive()
               });
   ;
-
-  public static MariaText<BrandsRow> mariaText = MariaText.from(_rowParser);
 
   public BrandsId id() {
     return brandId;

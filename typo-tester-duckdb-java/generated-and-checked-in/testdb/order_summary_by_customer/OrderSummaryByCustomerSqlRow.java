@@ -170,7 +170,7 @@ public record OrderSummaryByCustomerSqlRow(
   }
   ;
 
-  static RowParser<OrderSummaryByCustomerSqlRow> _rowParser =
+  public static RowParser<OrderSummaryByCustomerSqlRow> _rowParser =
       RowParsers.of(
           CustomersId.duckDbType,
           DuckDbTypes.varchar,
@@ -181,8 +181,7 @@ public record OrderSummaryByCustomerSqlRow(
           DuckDbTypes.date.opt(),
           DuckDbTypes.date.opt(),
           DuckDbTypes.double_.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
-              new OrderSummaryByCustomerSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          OrderSummaryByCustomerSqlRow::new,
           row ->
               new Object[] {
                 row.customerId(),

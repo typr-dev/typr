@@ -255,7 +255,7 @@ public record SoViewRow(
   }
   ;
 
-  static RowParser<SoViewRow> _rowParser =
+  public static RowParser<SoViewRow> _rowParser =
       RowParsers.of(
           SpecialofferId.pgType,
           SpecialofferId.pgType,
@@ -269,8 +269,7 @@ public record SoViewRow(
           PgTypes.int4,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) ->
-              new SoViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11),
+          SoViewRow::new,
           row ->
               new Object[] {
                 row.id(),

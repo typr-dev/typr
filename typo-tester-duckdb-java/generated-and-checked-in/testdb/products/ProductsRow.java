@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.Optional;
 import typo.data.Json;
-import typo.runtime.DuckDbText;
 import typo.runtime.DuckDbTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -46,19 +45,17 @@ public record ProductsRow(
   }
   ;
 
-  static RowParser<ProductsRow> _rowParser =
+  public static RowParser<ProductsRow> _rowParser =
       RowParsers.of(
           ProductsId.duckDbType,
           DuckDbTypes.varchar,
           DuckDbTypes.varchar,
           DuckDbTypes.numeric,
           DuckDbTypes.json.opt(),
-          (t0, t1, t2, t3, t4) -> new ProductsRow(t0, t1, t2, t3, t4),
+          ProductsRow::new,
           row ->
               new Object[] {row.productId(), row.sku(), row.name(), row.price(), row.metadata()});
   ;
-
-  public static DuckDbText<ProductsRow> duckDbText = DuckDbText.from(_rowParser);
 
   public ProductsId id() {
     return productId;

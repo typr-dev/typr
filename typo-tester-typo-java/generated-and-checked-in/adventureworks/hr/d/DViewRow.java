@@ -54,14 +54,14 @@ public record DViewRow(
   }
   ;
 
-  static RowParser<DViewRow> _rowParser =
+  public static RowParser<DViewRow> _rowParser =
       RowParsers.of(
           DepartmentId.pgType,
           DepartmentId.pgType,
           Name.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new DViewRow(t0, t1, t2, t3, t4),
+          DViewRow::new,
           row ->
               new Object[] {
                 row.id(), row.departmentid(), row.name(), row.groupname(), row.modifieddate()

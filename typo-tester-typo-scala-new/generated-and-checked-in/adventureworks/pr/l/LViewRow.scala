@@ -30,14 +30,5 @@ case class LViewRow(
 )
 
 object LViewRow {
-  val `_rowParser`: RowParser[LViewRow] = {
-    RowParsers.of(LocationId.pgType, LocationId.pgType, Name.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5) => new LViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5
-    ))(row => Array[Any](row.id, row.locationid, row.name, row.costrate, row.availability, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[LViewRow] = RowParsers.of(LocationId.pgType, LocationId.pgType, Name.pgType, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.timestamp)(LViewRow.apply)(row => Array[Any](row.id, row.locationid, row.name, row.costrate, row.availability, row.modifieddate))
 }

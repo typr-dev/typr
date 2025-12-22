@@ -121,7 +121,7 @@ public record EdhViewRow(
   }
   ;
 
-  static RowParser<EdhViewRow> _rowParser =
+  public static RowParser<EdhViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
@@ -130,7 +130,7 @@ public record EdhViewRow(
           PgTypes.date,
           PgTypes.date,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new EdhViewRow(t0, t1, t2, t3, t4, t5, t6),
+          EdhViewRow::new,
           row ->
               new Object[] {
                 row.id(),

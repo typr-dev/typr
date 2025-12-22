@@ -18,8 +18,6 @@ import testdb.customtypes.Defaulted.UseDefault;
 import typo.data.maria.Inet4;
 import typo.data.maria.Inet6;
 import typo.data.maria.MariaSet;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `mariatestnull` which has not been persisted yet */
 public record MariatestnullRowUnsaved(
@@ -2171,120 +2169,6 @@ public record MariatestnullRowUnsaved(
         inet6Col);
   }
   ;
-
-  public static MariaText<MariatestnullRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            Defaulted.mariaText(MariaTypes.tinyint.opt().mariaText())
-                .unsafeEncode(row.tinyintCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.smallint.opt().mariaText())
-                .unsafeEncode(row.smallintCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.mediumint.opt().mariaText())
-                .unsafeEncode(row.mediumintCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.int_.opt().mariaText()).unsafeEncode(row.intCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bigint.opt().mariaText())
-                .unsafeEncode(row.bigintCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.tinyintUnsigned.opt().mariaText())
-                .unsafeEncode(row.tinyintUCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.smallintUnsigned.opt().mariaText())
-                .unsafeEncode(row.smallintUCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.mediumintUnsigned.opt().mariaText())
-                .unsafeEncode(row.mediumintUCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.intUnsigned.opt().mariaText())
-                .unsafeEncode(row.intUCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bigintUnsigned.opt().mariaText())
-                .unsafeEncode(row.bigintUCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.opt().mariaText())
-                .unsafeEncode(row.decimalCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.opt().mariaText())
-                .unsafeEncode(row.numericCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.float_.opt().mariaText()).unsafeEncode(row.floatCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.double_.opt().mariaText())
-                .unsafeEncode(row.doubleCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.opt().mariaText()).unsafeEncode(row.boolCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bit.opt().mariaText()).unsafeEncode(row.bitCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bit.opt().mariaText()).unsafeEncode(row.bit1Col, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.char_.opt().mariaText()).unsafeEncode(row.charCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText())
-                .unsafeEncode(row.varcharCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.tinytext.opt().mariaText())
-                .unsafeEncode(row.tinytextCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.opt().mariaText()).unsafeEncode(row.textCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.mediumtext.opt().mariaText())
-                .unsafeEncode(row.mediumtextCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.longtextCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.binary.opt().mariaText())
-                .unsafeEncode(row.binaryCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varbinary.opt().mariaText())
-                .unsafeEncode(row.varbinaryCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.tinyblob.opt().mariaText())
-                .unsafeEncode(row.tinyblobCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.blob.opt().mariaText()).unsafeEncode(row.blobCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.mediumblob.opt().mariaText())
-                .unsafeEncode(row.mediumblobCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longblob.opt().mariaText())
-                .unsafeEncode(row.longblobCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.date.opt().mariaText()).unsafeEncode(row.dateCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.time.opt().mariaText()).unsafeEncode(row.timeCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.time.opt().mariaText()).unsafeEncode(row.timeFspCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.datetimeCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.datetimeFspCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.timestamp.opt().mariaText())
-                .unsafeEncode(row.timestampCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.timestamp.opt().mariaText())
-                .unsafeEncode(row.timestampFspCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.year.opt().mariaText()).unsafeEncode(row.yearCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.opt().mariaText()).unsafeEncode(row.enumCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.set.opt().mariaText()).unsafeEncode(row.setCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.jsonCol, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.inet4.opt().mariaText()).unsafeEncode(row.inet4Col, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.inet6.opt().mariaText()).unsafeEncode(row.inet6Col, sb);
-          });
 
   public MariatestnullRow toRow(
       java.util.function.Supplier<Optional<Byte>> tinyintColDefault,

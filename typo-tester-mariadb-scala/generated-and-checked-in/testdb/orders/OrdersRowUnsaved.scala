@@ -13,10 +13,6 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.promotions.PromotionsId
 import typo.data.maria.Inet6
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 case class OrdersRowUnsaved(
@@ -144,8 +140,4 @@ case class OrdersRowUnsaved(
       deliveredAt = deliveredAt.getOrElse(deliveredAtDefault)
     )
   }
-}
-
-object OrdersRowUnsaved {
-  given mariaText: MariaText[OrdersRowUnsaved] = MariaText.instance((row, sb) => { MariaTypes.varchar.mariaText.unsafeEncode(row.orderNumber, sb); sb.append(MariaText.DELIMETER); CustomersId.pgType.mariaText.unsafeEncode(row.customerId, sb); sb.append(MariaText.DELIMETER); ScalaDbTypes.MariaTypes.numeric.mariaText.unsafeEncode(row.subtotal, sb); sb.append(MariaText.DELIMETER); ScalaDbTypes.MariaTypes.numeric.mariaText.unsafeEncode(row.totalAmount, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.text.mariaText).unsafeEncode(row.orderStatus, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.text.mariaText).unsafeEncode(row.paymentStatus, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using CustomerAddressesId.pgType.nullable.mariaText).unsafeEncode(row.shippingAddressId, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using CustomerAddressesId.pgType.nullable.mariaText).unsafeEncode(row.billingAddressId, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.numeric.mariaText).unsafeEncode(row.shippingCost, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.numeric.mariaText).unsafeEncode(row.taxAmount, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.numeric.mariaText).unsafeEncode(row.discountAmount, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.char_.mariaText).unsafeEncode(row.currencyCode, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using PromotionsId.pgType.nullable.mariaText).unsafeEncode(row.promotionId, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.text.nullable.mariaText).unsafeEncode(row.notes, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.mediumtext.nullable.mariaText).unsafeEncode(row.internalNotes, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.inet6.nullable.mariaText).unsafeEncode(row.ipAddress, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.userAgent, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.mariaText).unsafeEncode(row.orderedAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.nullable.mariaText).unsafeEncode(row.confirmedAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.nullable.mariaText).unsafeEncode(row.shippedAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.nullable.mariaText).unsafeEncode(row.deliveredAt, sb) })
 }

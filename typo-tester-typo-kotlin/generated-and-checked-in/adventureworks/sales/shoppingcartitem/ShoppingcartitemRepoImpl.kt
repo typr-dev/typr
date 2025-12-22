@@ -72,7 +72,7 @@ class ShoppingcartitemRepoImpl() : ShoppingcartitemRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"shoppingcartitem\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\", \"productid\", \"datecreated\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"shoppingcartitem\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\", \"productid\", \"datecreated\", \"modifieddate\"\n"))
     return q.updateReturning(ShoppingcartitemRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

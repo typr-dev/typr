@@ -13,7 +13,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.DuckDbText
 import typo.runtime.DuckDbTypes
 
 /** Table: employees
@@ -46,8 +45,5 @@ data class EmployeesRow(
       salary: BigDecimal?,
       hireDate: LocalDate
     ): EmployeesRow = EmployeesRow(compositeId.empNumber, compositeId.empSuffix, deptCode, deptRegion, empName, salary, hireDate)
-
-    val duckDbText: DuckDbText<EmployeesRow> =
-      DuckDbText.from(_rowParser.underlying)
   }
 }

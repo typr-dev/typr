@@ -46,13 +46,13 @@ public record PersonDynamicSqlRow(
   }
   ;
 
-  static RowParser<PersonDynamicSqlRow> _rowParser =
+  public static RowParser<PersonDynamicSqlRow> _rowParser =
       RowParsers.of(
           PgTypes.text.opt(),
           FirstName.pgType,
           Name.pgType.opt(),
           Name.pgType,
-          (t0, t1, t2, t3) -> new PersonDynamicSqlRow(t0, t1, t2, t3),
+          PersonDynamicSqlRow::new,
           row -> new Object[] {row.title(), row.firstname(), row.middlename(), row.lastname()});
   ;
 }

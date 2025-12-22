@@ -83,14 +83,14 @@ public record BusinessentitycontactRow(
   }
   ;
 
-  static RowParser<BusinessentitycontactRow> _rowParser =
+  public static RowParser<BusinessentitycontactRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
           ContacttypeId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new BusinessentitycontactRow(t0, t1, t2, t3, t4),
+          BusinessentitycontactRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

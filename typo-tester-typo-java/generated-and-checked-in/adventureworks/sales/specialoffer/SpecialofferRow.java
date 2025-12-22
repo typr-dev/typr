@@ -262,7 +262,7 @@ public record SpecialofferRow(
   }
   ;
 
-  static RowParser<SpecialofferRow> _rowParser =
+  public static RowParser<SpecialofferRow> _rowParser =
       RowParsers.of(
           SpecialofferId.pgType,
           PgTypes.text,
@@ -275,8 +275,7 @@ public record SpecialofferRow(
           PgTypes.int4.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) ->
-              new SpecialofferRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10),
+          SpecialofferRow::new,
           row ->
               new Object[] {
                 row.specialofferid(),

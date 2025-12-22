@@ -13,8 +13,6 @@ import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.order_items.OrderItemsId;
 import testdb.products.ProductsId;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `reviews` which has not been persisted yet */
 public record ReviewsRowUnsaved(
@@ -470,50 +468,6 @@ public record ReviewsRowUnsaved(
         updatedAt);
   }
   ;
-
-  public static MariaText<ReviewsRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            ProductsId.pgType.mariaText().unsafeEncode(row.productId, sb);
-            sb.append(MariaText.DELIMETER);
-            CustomersId.pgType.mariaText().unsafeEncode(row.customerId, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.tinyintUnsigned.mariaText().unsafeEncode(row.rating, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(OrderItemsId.pgType.opt().mariaText())
-                .unsafeEncode(row.orderItemId, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.varchar.opt().mariaText()).unsafeEncode(row.title, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.opt().mariaText()).unsafeEncode(row.content, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText()).unsafeEncode(row.pros, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText()).unsafeEncode(row.cons, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText()).unsafeEncode(row.images, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText())
-                .unsafeEncode(row.isVerifiedPurchase, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isApproved, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.intUnsigned.mariaText())
-                .unsafeEncode(row.helpfulVotes, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.intUnsigned.mariaText())
-                .unsafeEncode(row.unhelpfulVotes, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.opt().mariaText())
-                .unsafeEncode(row.adminResponse, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.opt().mariaText())
-                .unsafeEncode(row.respondedAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.updatedAt, sb);
-          });
 
   public ReviewsRow toRow(
       java.util.function.Supplier<Optional<OrderItemsId>> orderItemIdDefault,

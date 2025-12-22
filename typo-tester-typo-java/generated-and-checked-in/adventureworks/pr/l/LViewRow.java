@@ -63,7 +63,7 @@ public record LViewRow(
   }
   ;
 
-  static RowParser<LViewRow> _rowParser =
+  public static RowParser<LViewRow> _rowParser =
       RowParsers.of(
           LocationId.pgType,
           LocationId.pgType,
@@ -71,7 +71,7 @@ public record LViewRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5) -> new LViewRow(t0, t1, t2, t3, t4, t5),
+          LViewRow::new,
           row ->
               new Object[] {
                 row.id(),

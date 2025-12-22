@@ -48,12 +48,12 @@ public record ContacttypeRow(
   }
   ;
 
-  static RowParser<ContacttypeRow> _rowParser =
+  public static RowParser<ContacttypeRow> _rowParser =
       RowParsers.of(
           ContacttypeId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new ContacttypeRow(t0, t1, t2),
+          ContacttypeRow::new,
           row -> new Object[] {row.contacttypeid(), row.name(), row.modifieddate()});
   ;
 

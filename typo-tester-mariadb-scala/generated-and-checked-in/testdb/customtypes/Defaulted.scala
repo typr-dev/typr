@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import testdb.DefaultedDeserializer
 import testdb.DefaultedSerializer
-import typo.runtime.MariaText
 
 @JsonSerialize(`using` = classOf[DefaultedSerializer])
 @JsonDeserialize(`using` = classOf[DefaultedDeserializer])
@@ -29,8 +28,6 @@ sealed trait Defaulted[T] {
 }
 
 object Defaulted {
-  given mariaText[T](using t: MariaText[T]): MariaText[Defaulted[T]] = MariaText.instance((ot, sb) => ot.visit({ sb.append("__DEFAULT_VALUE__"): @scala.annotation.nowarn }, value => t.unsafeEncode(value, sb)))
-
   case class Provided[T](value: T) extends Defaulted[T] {
     override def fold[U](
       onDefault: => U,

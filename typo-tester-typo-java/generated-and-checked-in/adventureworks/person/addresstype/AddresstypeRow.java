@@ -57,13 +57,13 @@ public record AddresstypeRow(
   }
   ;
 
-  static RowParser<AddresstypeRow> _rowParser =
+  public static RowParser<AddresstypeRow> _rowParser =
       RowParsers.of(
           AddresstypeId.pgType,
           Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new AddresstypeRow(t0, t1, t2, t3),
+          AddresstypeRow::new,
           row -> new Object[] {row.addresstypeid(), row.name(), row.rowguid(), row.modifieddate()});
   ;
 

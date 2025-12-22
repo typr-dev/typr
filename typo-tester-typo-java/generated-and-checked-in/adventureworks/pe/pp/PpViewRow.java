@@ -55,14 +55,14 @@ public record PpViewRow(
   }
   ;
 
-  static RowParser<PpViewRow> _rowParser =
+  public static RowParser<PpViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
           Phone.pgType,
           PhonenumbertypeId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new PpViewRow(t0, t1, t2, t3, t4),
+          PpViewRow::new,
           row ->
               new Object[] {
                 row.id(),

@@ -8,10 +8,6 @@ package testdb.shipping_carriers
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.kotlindsl.KotlinDbTypes
-import typo.kotlindsl.nullable
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
 
 /** This class corresponds to a row in table `shipping_carriers` which has not been persisted yet */
 data class ShippingCarriersRowUnsaved(
@@ -38,17 +34,4 @@ data class ShippingCarriersRowUnsaved(
     isActiveDefault: () -> Boolean,
     carrierIdDefault: () -> ShippingCarriersId
   ): ShippingCarriersRow = ShippingCarriersRow(carrierId = carrierIdDefault(), code = code, name = name, trackingUrlTemplate = trackingUrlTemplate.getOrElse(trackingUrlTemplateDefault), apiConfig = apiConfig.getOrElse(apiConfigDefault), isActive = isActive.getOrElse(isActiveDefault))
-
-  companion object {
-    val mariaText: MariaText<ShippingCarriersRowUnsaved> =
-      MariaText.instance({ row, sb -> MariaTypes.varchar.mariaText().unsafeEncode(row.code, sb)
-      sb.append(MariaText.DELIMETER)
-      MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.varchar.nullable().mariaText()).unsafeEncode(row.trackingUrlTemplate, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(MariaTypes.longtext.nullable().mariaText()).unsafeEncode(row.apiConfig, sb)
-      sb.append(MariaText.DELIMETER)
-      Defaulted.mariaText(KotlinDbTypes.MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb) })
-  }
 }

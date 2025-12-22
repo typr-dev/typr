@@ -724,6 +724,9 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
     code"Array[Any](${elements.mkCode(", ")})"
   }
 
+  override def typedArrayOf(elementType: jvm.Type, elements: List[jvm.Code]): jvm.Code =
+    code"Array[$elementType](${elements.mkCode(", ")})"
+
   // Scala: == calls .equals() for structural equality
   override def equals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"($left == $right)"

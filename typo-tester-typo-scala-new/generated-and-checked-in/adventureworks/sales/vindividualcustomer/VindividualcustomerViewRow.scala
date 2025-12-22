@@ -56,26 +56,5 @@ case class VindividualcustomerViewRow(
 )
 
 object VindividualcustomerViewRow {
-  val `_rowParser`: RowParser[VindividualcustomerViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int4, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) => new VindividualcustomerViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12,
-      t13,
-      t14,
-      t15,
-      t16,
-      t17
-    ))(row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addresstype, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.demographics))
-  }
+  val `_rowParser`: RowParser[VindividualcustomerViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, Name.pgType, Name.pgType, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int4, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml)(VindividualcustomerViewRow.apply)(row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addresstype, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.demographics))
 }

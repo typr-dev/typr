@@ -65,19 +65,7 @@ case class AddressRow(
 }
 
 object AddressRow {
-  val `_rowParser`: RowParser[AddressRow] = {
-    RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.nullable, PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea.nullable, PgTypes.uuid, PgTypes.timestamp)((t0, t1, t2, t3, t4, t5, t6, t7, t8) => new AddressRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8
-    ))(row => Array[Any](row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[AddressRow] = RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.nullable, PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea.nullable, PgTypes.uuid, PgTypes.timestamp)(AddressRow.apply)(row => Array[Any](row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate))
 
   given pgText: PgText[AddressRow] = PgText.from(`_rowParser`.underlying)
 }

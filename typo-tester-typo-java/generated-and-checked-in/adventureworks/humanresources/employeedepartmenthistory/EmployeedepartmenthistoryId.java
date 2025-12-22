@@ -9,6 +9,9 @@ import adventureworks.humanresources.department.DepartmentId;
 import adventureworks.humanresources.shift.ShiftId;
 import adventureworks.person.businessentity.BusinessentityId;
 import java.time.LocalDate;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `humanresources.employeedepartmenthistory` */
 public record EmployeedepartmenthistoryId(
@@ -34,5 +37,18 @@ public record EmployeedepartmenthistoryId(
   public EmployeedepartmenthistoryId withShiftid(ShiftId shiftid) {
     return new EmployeedepartmenthistoryId(businessentityid, startdate, departmentid, shiftid);
   }
+  ;
+
+  public static RowParser<EmployeedepartmenthistoryId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          PgTypes.date,
+          DepartmentId.pgType,
+          ShiftId.pgType,
+          EmployeedepartmenthistoryId::new,
+          row ->
+              new Object[] {
+                row.businessentityid(), row.startdate(), row.departmentid(), row.shiftid()
+              });
   ;
 }

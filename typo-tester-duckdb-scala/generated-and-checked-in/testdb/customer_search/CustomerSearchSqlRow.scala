@@ -29,13 +29,5 @@ case class CustomerSearchSqlRow(
 )
 
 object CustomerSearchSqlRow {
-  val `_rowParser`: RowParser[CustomerSearchSqlRow] = {
-    RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)((t0, t1, t2, t3, t4) => new CustomerSearchSqlRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
-  }
+  val `_rowParser`: RowParser[CustomerSearchSqlRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)(CustomerSearchSqlRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
 }

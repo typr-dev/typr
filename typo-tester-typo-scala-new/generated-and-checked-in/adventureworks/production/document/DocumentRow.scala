@@ -89,23 +89,7 @@ case class DocumentRow(
 }
 
 object DocumentRow {
-  val `_rowParser`: RowParser[DocumentRow] = {
-    RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.nullable, PgTypes.bpchar, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int2, PgTypes.text.nullable, PgTypes.bytea.nullable, PgTypes.uuid, PgTypes.timestamp, DocumentId.pgType)((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) => new DocumentRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4,
-      t5,
-      t6,
-      t7,
-      t8,
-      t9,
-      t10,
-      t11,
-      t12
-    ))(row => Array[Any](row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode))
-  }
+  val `_rowParser`: RowParser[DocumentRow] = RowParsers.of(PgTypes.text, BusinessentityId.pgType, Flag.pgType, PgTypes.text, PgTypes.text.nullable, PgTypes.bpchar, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int2, PgTypes.text.nullable, PgTypes.bytea.nullable, PgTypes.uuid, PgTypes.timestamp, DocumentId.pgType)(DocumentRow.apply)(row => Array[Any](row.title, row.owner, row.folderflag, row.filename, row.fileextension, row.revision, row.changenumber, row.status, row.documentsummary, row.document, row.rowguid, row.modifieddate, row.documentnode))
 
   given pgText: PgText[DocumentRow] = PgText.from(`_rowParser`.underlying)
 }

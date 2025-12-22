@@ -7,10 +7,16 @@ package adventureworks.person.businessentitycontact
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.contacttype.ContacttypeId
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `person.businessentitycontact` */
 data class BusinessentitycontactId(
   val businessentityid: BusinessentityId,
   val personid: BusinessentityId,
   val contacttypeid: ContacttypeId
-)
+) {
+  companion object {
+    val _rowParser: RowParser<BusinessentitycontactId> = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, ContacttypeId.pgType, { t0, t1, t2 -> BusinessentitycontactId(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.personid, row.contacttypeid) })
+  }
+}

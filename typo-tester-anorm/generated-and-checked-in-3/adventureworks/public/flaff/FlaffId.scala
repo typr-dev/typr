@@ -6,6 +6,9 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
+import anorm.Column
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -36,6 +39,19 @@ object FlaffId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[FlaffId] = {
+    RowParser[FlaffId] { row =>
+      Success(
+        FlaffId(
+          code = row(idx + 0)(using ShortText.column),
+          anotherCode = row(idx + 1)(using Column.columnToString),
+          someNumber = row(idx + 2)(using Column.columnToInt),
+          specifier = row(idx + 3)(using ShortText.column)
+        )
+      )
+    }
   }
 
   given writes: OWrites[FlaffId] = {

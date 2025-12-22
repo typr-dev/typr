@@ -212,7 +212,7 @@ public record WorkorderRow(
   }
   ;
 
-  static RowParser<WorkorderRow> _rowParser =
+  public static RowParser<WorkorderRow> _rowParser =
       RowParsers.of(
           WorkorderId.pgType,
           ProductId.pgType,
@@ -223,8 +223,7 @@ public record WorkorderRow(
           PgTypes.timestamp,
           ScrapreasonId.pgType.opt(),
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
-              new WorkorderRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          WorkorderRow::new,
           row ->
               new Object[] {
                 row.workorderid(),

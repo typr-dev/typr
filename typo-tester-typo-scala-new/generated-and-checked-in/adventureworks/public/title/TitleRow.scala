@@ -17,7 +17,7 @@ case class TitleRow(code: TitleId) {
 }
 
 object TitleRow {
-  val `_rowParser`: RowParser[TitleRow] = RowParsers.of(TitleId.pgType)(t0 => new TitleRow(t0))(row => Array[Any](row.code))
+  val `_rowParser`: RowParser[TitleRow] = RowParsers.of(TitleId.pgType)(TitleRow.apply)(row => Array[Any](row.code))
 
   given pgText: PgText[TitleRow] = PgText.from(`_rowParser`.underlying)
 }

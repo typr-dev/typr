@@ -6,6 +6,9 @@
 package testdb.hardcoded.compositepk.person;
 
 import java.util.Optional;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `compositepk.person` */
 public record PersonId(
@@ -19,4 +22,6 @@ public record PersonId(
   public PersonId withTwo(Optional<String> two) {
     return new PersonId(one, two);
   };
+
+  public static RowParser<PersonId> _rowParser = RowParsers.of(PgTypes.int8, PgTypes.text.opt(), PersonId::new, row -> new Object[]{row.one(), row.two()});;
 }

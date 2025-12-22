@@ -6,9 +6,16 @@
 package adventureworks.person.emailaddress
 
 import adventureworks.person.businessentity.BusinessentityId
+import typo.kotlindsl.KotlinDbTypes
+import typo.kotlindsl.RowParser
+import typo.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `person.emailaddress` */
 data class EmailaddressId(
   val businessentityid: BusinessentityId,
   val emailaddressid: Int
-)
+) {
+  companion object {
+    val _rowParser: RowParser<EmailaddressId> = RowParsers.of(BusinessentityId.pgType, KotlinDbTypes.PgTypes.int4, { t0, t1 -> EmailaddressId(t0, t1) }, { row -> arrayOf<Any?>(row.businessentityid, row.emailaddressid) })
+  }
+}

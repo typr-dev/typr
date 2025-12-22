@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typo.runtime.DuckDbText;
 import typo.runtime.DuckDbTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -51,21 +50,19 @@ public record OrdersRow(
   }
   ;
 
-  static RowParser<OrdersRow> _rowParser =
+  public static RowParser<OrdersRow> _rowParser =
       RowParsers.of(
           OrdersId.duckDbType,
           DuckDbTypes.integer,
           DuckDbTypes.date,
           DuckDbTypes.numeric.opt(),
           DuckDbTypes.varchar.opt(),
-          (t0, t1, t2, t3, t4) -> new OrdersRow(t0, t1, t2, t3, t4),
+          OrdersRow::new,
           row ->
               new Object[] {
                 row.orderId(), row.customerId(), row.orderDate(), row.totalAmount(), row.status()
               });
   ;
-
-  public static DuckDbText<OrdersRow> duckDbText = DuckDbText.from(_rowParser);
 
   public OrdersId id() {
     return orderId;

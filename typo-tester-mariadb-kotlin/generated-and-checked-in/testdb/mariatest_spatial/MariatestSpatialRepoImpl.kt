@@ -32,7 +32,7 @@ class MariatestSpatialRepoImpl() : MariatestSpatialRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(MariatestSpatialId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `mariatest_spatial` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `mariatest_spatial` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -63,7 +63,7 @@ class MariatestSpatialRepoImpl() : MariatestSpatialRepo {
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.multipolygon, unsaved.multipolygonCol), Fragment.lit("")))
     columns.add(Fragment.lit("`geometrycollection_col`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_spatial`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_spatial`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`\n"))
     return q.updateReturning(MariatestSpatialRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -82,7 +82,7 @@ class MariatestSpatialRepoImpl() : MariatestSpatialRepo {
   ): List<MariatestSpatialRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(MariatestSpatialId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col` from `mariatest_spatial` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestSpatialRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col` from `mariatest_spatial` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(MariatestSpatialRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

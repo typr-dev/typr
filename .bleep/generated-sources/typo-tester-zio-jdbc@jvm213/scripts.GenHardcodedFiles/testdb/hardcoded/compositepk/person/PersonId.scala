@@ -5,6 +5,8 @@
  */
 package testdb.hardcoded.compositepk.person
 
+import java.sql.ResultSet
+import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -17,6 +19,17 @@ case class PersonId(
 )
 
 object PersonId {
+  implicit lazy val jdbcDecoder: JdbcDecoder[PersonId] = {
+    new JdbcDecoder[PersonId] {
+      override def unsafeDecode(columIndex: Int, rs: ResultSet): (Int, PersonId) =
+        columIndex + 1 ->
+          PersonId(
+            one = JdbcDecoder.longDecoder.unsafeDecode(columIndex + 0, rs)._2,
+            two = JdbcDecoder.optionDecoder(JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 1, rs)._2
+          )
+    }
+  }
+
   implicit lazy val jsonDecoder: JsonDecoder[PersonId] = {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val one = jsonObj.get("one").toRight("Missing field 'one'").flatMap(_.as(JsonDecoder.long))

@@ -78,7 +78,7 @@ public record SimpleCustomerLookupSqlRow(
   }
   ;
 
-  static RowParser<SimpleCustomerLookupSqlRow> _rowParser =
+  public static RowParser<SimpleCustomerLookupSqlRow> _rowParser =
       RowParsers.of(
           CustomersId.pgType,
           MariaTypes.varchar,
@@ -87,8 +87,7 @@ public record SimpleCustomerLookupSqlRow(
           MariaTypes.text,
           CustomerStatusId.pgType,
           MariaTypes.datetime,
-          (t0, t1, t2, t3, t4, t5, t6) ->
-              new SimpleCustomerLookupSqlRow(t0, t1, t2, t3, t4, t5, t6),
+          SimpleCustomerLookupSqlRow::new,
           row ->
               new Object[] {
                 row.customerId(),

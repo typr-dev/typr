@@ -7,6 +7,8 @@ package adventureworks.production.productlistpricehistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.production.product.ProductId
+import anorm.RowParser
+import anorm.Success
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -32,6 +34,17 @@ object ProductlistpricehistoryId {
         )
       ),
     )
+  }
+
+  def rowParser(idx: Int): RowParser[ProductlistpricehistoryId] = {
+    RowParser[ProductlistpricehistoryId] { row =>
+      Success(
+        ProductlistpricehistoryId(
+          productid = row(idx + 0)(using ProductId.column),
+          startdate = row(idx + 1)(using TypoLocalDateTime.column)
+        )
+      )
+    }
   }
 
   given writes: OWrites[ProductlistpricehistoryId] = {

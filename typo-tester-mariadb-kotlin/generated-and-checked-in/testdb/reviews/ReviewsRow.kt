@@ -15,7 +15,6 @@ import typo.kotlindsl.KotlinDbTypes
 import typo.kotlindsl.RowParser
 import typo.kotlindsl.RowParsers
 import typo.kotlindsl.nullable
-import typo.runtime.MariaText
 import typo.runtime.MariaTypes
 
 /** Table: reviews
@@ -115,8 +114,5 @@ data class ReviewsRow(
 
   companion object {
     val _rowParser: RowParser<ReviewsRow> = RowParsers.of(ReviewsId.pgType, ProductsId.pgType, CustomersId.pgType, OrderItemsId.pgType.nullable(), KotlinDbTypes.MariaTypes.tinyintUnsigned, MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), MariaTypes.longtext.nullable(), MariaTypes.longtext.nullable(), MariaTypes.longtext.nullable(), KotlinDbTypes.MariaTypes.bool, KotlinDbTypes.MariaTypes.bool, KotlinDbTypes.MariaTypes.intUnsigned, KotlinDbTypes.MariaTypes.intUnsigned, MariaTypes.text.nullable(), MariaTypes.datetime.nullable(), MariaTypes.datetime, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17 -> ReviewsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row -> arrayOf<Any?>(row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt) })
-
-    val mariaText: MariaText<ReviewsRow> =
-      MariaText.from(_rowParser.underlying)
   }
 }

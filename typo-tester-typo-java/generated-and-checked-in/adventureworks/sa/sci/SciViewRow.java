@@ -95,7 +95,7 @@ public record SciViewRow(
   }
   ;
 
-  static RowParser<SciViewRow> _rowParser =
+  public static RowParser<SciViewRow> _rowParser =
       RowParsers.of(
           ShoppingcartitemId.pgType,
           ShoppingcartitemId.pgType,
@@ -104,7 +104,7 @@ public record SciViewRow(
           ProductId.pgType,
           PgTypes.timestamp,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new SciViewRow(t0, t1, t2, t3, t4, t5, t6),
+          SciViewRow::new,
           row ->
               new Object[] {
                 row.id(),

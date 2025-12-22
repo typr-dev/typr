@@ -201,6 +201,77 @@ class SelectBuilder<Fields, Row> internal constructor(
     }
 
     /**
+     * Project to 1 column.
+     */
+    fun <T0> map(f0: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T0, *>): SelectBuilder<typo.dsl.Tuples.TupleExpr1<T0>, typo.dsl.Tuples.Tuple1<T0>> {
+        return SelectBuilder(javaBuilder.map { fields -> f0(fields).underlying })
+    }
+
+    /**
+     * Project to 2 columns.
+     */
+    fun <T0, T1> map(
+        f0: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T0, *>,
+        f1: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T1, *>
+    ): SelectBuilder<typo.dsl.Tuples.TupleExpr2<T0, T1>, typo.dsl.Tuples.Tuple2<T0, T1>> {
+        return SelectBuilder(javaBuilder.map(
+            { fields -> f0(fields).underlying },
+            { fields -> f1(fields).underlying }
+        ))
+    }
+
+    /**
+     * Project to 3 columns.
+     */
+    fun <T0, T1, T2> map(
+        f0: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T0, *>,
+        f1: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T1, *>,
+        f2: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T2, *>
+    ): SelectBuilder<typo.dsl.Tuples.TupleExpr3<T0, T1, T2>, typo.dsl.Tuples.Tuple3<T0, T1, T2>> {
+        return SelectBuilder(javaBuilder.map(
+            { fields -> f0(fields).underlying },
+            { fields -> f1(fields).underlying },
+            { fields -> f2(fields).underlying }
+        ))
+    }
+
+    /**
+     * Project to 4 columns.
+     */
+    fun <T0, T1, T2, T3> map(
+        f0: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T0, *>,
+        f1: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T1, *>,
+        f2: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T2, *>,
+        f3: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T3, *>
+    ): SelectBuilder<typo.dsl.Tuples.TupleExpr4<T0, T1, T2, T3>, typo.dsl.Tuples.Tuple4<T0, T1, T2, T3>> {
+        return SelectBuilder(javaBuilder.map(
+            { fields -> f0(fields).underlying },
+            { fields -> f1(fields).underlying },
+            { fields -> f2(fields).underlying },
+            { fields -> f3(fields).underlying }
+        ))
+    }
+
+    /**
+     * Project to 5 columns.
+     */
+    fun <T0, T1, T2, T3, T4> map(
+        f0: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T0, *>,
+        f1: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T1, *>,
+        f2: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T2, *>,
+        f3: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T3, *>,
+        f4: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T4, *>
+    ): SelectBuilder<typo.dsl.Tuples.TupleExpr5<T0, T1, T2, T3, T4>, typo.dsl.Tuples.Tuple5<T0, T1, T2, T3, T4>> {
+        return SelectBuilder(javaBuilder.map(
+            { fields -> f0(fields).underlying },
+            { fields -> f1(fields).underlying },
+            { fields -> f2(fields).underlying },
+            { fields -> f3(fields).underlying },
+            { fields -> f4(fields).underlying }
+        ))
+    }
+
+    /**
      * Helper class for building joins with fluent syntax.
      */
     class PartialJoin<Fields, Row, Fields2, Row2> internal constructor(

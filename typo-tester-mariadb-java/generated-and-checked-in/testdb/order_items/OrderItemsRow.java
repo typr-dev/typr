@@ -12,7 +12,6 @@ import testdb.customtypes.Defaulted;
 import testdb.orders.OrdersId;
 import testdb.products.ProductsId;
 import testdb.warehouses.WarehousesId;
-import typo.runtime.MariaText;
 import typo.runtime.MariaTypes;
 import typo.runtime.RowParser;
 import typo.runtime.RowParsers;
@@ -292,7 +291,7 @@ public record OrderItemsRow(
   }
   ;
 
-  static RowParser<OrderItemsRow> _rowParser =
+  public static RowParser<OrderItemsRow> _rowParser =
       RowParsers.of(
           OrderItemsId.pgType,
           OrdersId.pgType,
@@ -307,8 +306,7 @@ public record OrderItemsRow(
           MariaTypes.text,
           WarehousesId.pgType.opt(),
           MariaTypes.tinytext.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) ->
-              new OrderItemsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12),
+          OrderItemsRow::new,
           row ->
               new Object[] {
                 row.itemId(),
@@ -326,8 +324,6 @@ public record OrderItemsRow(
                 row.notes()
               });
   ;
-
-  public static MariaText<OrderItemsRow> mariaText = MariaText.from(_rowParser);
 
   public OrderItemsId id() {
     return itemId;

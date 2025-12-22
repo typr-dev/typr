@@ -114,10 +114,10 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
         sig(params = List(id.param, varargs), returnType = ConnectionIO.of(TypesScala.Boolean))
       case RepoMethod.Update(_, _, _, param, _) =>
         sig(params = List(param), returnType = ConnectionIO.of(TypesScala.Option.of(param.tpe)))
-      case RepoMethod.Insert(_, _, unsavedParam, rowType, _) =>
-        sig(params = List(unsavedParam), returnType = ConnectionIO.of(rowType))
-      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, rowType) =>
-        sig(params = List(unsavedParam), returnType = ConnectionIO.of(rowType))
+      case RepoMethod.Insert(_, _, _, unsavedParam, _, returningStrategy) =>
+        sig(params = List(unsavedParam), returnType = ConnectionIO.of(returningStrategy.returnType))
+      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _, returningStrategy) =>
+        sig(params = List(unsavedParam), returnType = ConnectionIO.of(returningStrategy.returnType))
       case RepoMethod.InsertStreaming(_, rowType, _) =>
         val unsavedParam = jvm.Param(jvm.Ident("unsaved"), fs2Stream.of(ConnectionIO, rowType))
         sig(params = List(unsavedParam, batchSize), returnType = ConnectionIO.of(TypesScala.Long))
@@ -269,7 +269,8 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
           )
         )
 
-      case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, default, rowType) =>
+      case RepoMethod.InsertUnsaved(relName, cols, unsaved, unsavedParam, _, default, returningStrategy) =>
+        val rowType = returningStrategy.returnType
         val cases0 = unsaved.normalColumns.map { col =>
           val set = frInterpolate(code"${runtimeInterpolateValue(code"${unsavedParam.name}.${col.name}", col.tpe)}${sqlCast.toPgCode(col)}")
           code"""Some(($Fragment.const0(${lang.s(col.dbName.code)}), $set))"""
@@ -413,7 +414,8 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
                  |} yield res""".stripMargin
         )
 
-      case RepoMethod.Insert(relName, cols, unsavedParam, rowType, writeableColumnsWithId) =>
+      case RepoMethod.Insert(relName, cols, _, unsavedParam, writeableColumnsWithId, returningStrategy) =>
+        val rowType = returningStrategy.returnType
         val values = writeableColumnsWithId.map { c =>
           code"${runtimeInterpolateValue(code"${unsavedParam.name}.${c.name}", c.tpe)}${sqlCast.toPgCode(c)}"
         }
@@ -541,7 +543,7 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
               |    ${param.name}
               |  }
               |}""".stripMargin)
-      case RepoMethod.Insert(_, _, unsavedParam, _, _) =>
+      case RepoMethod.Insert(_, _, _, unsavedParam, _, _) =>
         jvm.Body.Expr(code"""|$delayCIO {
                |  val _ = if (map.contains(${unsavedParam.name}.${id.paramName}))
                |    sys.error(s"id $${${unsavedParam.name}.${id.paramName}} already exists")
@@ -571,7 +573,7 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
                |    row
                |  }
                |}""".stripMargin)
-      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _) =>
+      case RepoMethod.InsertUnsaved(_, _, _, unsavedParam, _, _, _) =>
         jvm.Body.Expr(code"insert(${maybeToRow.get.name}(${unsavedParam.name}))")
       case RepoMethod.InsertStreaming(_, _, _) =>
         jvm.Body.Expr(code"""|unsaved.compile.toList.map { rows =>
@@ -781,6 +783,12 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
         case other =>
           code"${Put.of(other)}"
       }
+
+  /** Oracle STRUCT types - not supported in PostgreSQL */
+  override def structInstances(computed: ComputedOracleObjectType): List[jvm.ClassMember] = Nil
+
+  /** Oracle COLLECTION types - not supported in PostgreSQL */
+  override def collectionInstances(computed: ComputedOracleCollectionType): List[jvm.ClassMember] = Nil
 
   override def rowInstances(tpe: jvm.Type, cols: NonEmptyList[ComputedColumn], rowType: DbLib.RowType): List[jvm.Given] = {
     val text = textSupport.map(_.rowInstance(tpe, cols))

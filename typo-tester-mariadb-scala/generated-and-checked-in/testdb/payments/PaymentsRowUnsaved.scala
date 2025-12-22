@@ -12,10 +12,6 @@ import testdb.customtypes.Defaulted.UseDefault
 import testdb.orders.OrdersId
 import testdb.payment_methods.PaymentMethodsId
 import typo.data.maria.Inet6
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `payments` which has not been persisted yet */
 case class PaymentsRowUnsaved(
@@ -88,8 +84,4 @@ case class PaymentsRowUnsaved(
       processedAt = processedAt.getOrElse(processedAtDefault)
     )
   }
-}
-
-object PaymentsRowUnsaved {
-  given mariaText: MariaText[PaymentsRowUnsaved] = MariaText.instance((row, sb) => { OrdersId.pgType.mariaText.unsafeEncode(row.orderId, sb); sb.append(MariaText.DELIMETER); PaymentMethodsId.pgType.mariaText.unsafeEncode(row.methodId, sb); sb.append(MariaText.DELIMETER); ScalaDbTypes.MariaTypes.numeric.mariaText.unsafeEncode(row.amount, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.transactionId, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.char_.mariaText).unsafeEncode(row.currencyCode, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.text.mariaText).unsafeEncode(row.status, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.longtext.nullable.mariaText).unsafeEncode(row.processorResponse, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.errorMessage, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.inet6.nullable.mariaText).unsafeEncode(row.ipAddress, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.mariaText).unsafeEncode(row.createdAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.nullable.mariaText).unsafeEncode(row.processedAt, sb) })
 }

@@ -12,8 +12,6 @@ import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import typo.data.maria.MariaSet;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `promotions` which has not been persisted yet */
 public record PromotionsRowUnsaved(
@@ -394,46 +392,6 @@ public record PromotionsRowUnsaved(
         createdAt);
   }
   ;
-
-  public static MariaText<PromotionsRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            MariaTypes.varchar.mariaText().unsafeEncode(row.code, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.name, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.text.mariaText().unsafeEncode(row.discountType, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.numeric.mariaText().unsafeEncode(row.discountValue, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.datetime.mariaText().unsafeEncode(row.validFrom, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.datetime.mariaText().unsafeEncode(row.validTo, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.text.opt().mariaText())
-                .unsafeEncode(row.description, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.numeric.opt().mariaText())
-                .unsafeEncode(row.minOrderAmount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.intUnsigned.opt().mariaText())
-                .unsafeEncode(row.maxUses, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.intUnsigned.mariaText()).unsafeEncode(row.usesCount, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.tinyintUnsigned.opt().mariaText())
-                .unsafeEncode(row.maxUsesPerCustomer, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.set.opt().mariaText())
-                .unsafeEncode(row.applicableTo, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.longtext.opt().mariaText())
-                .unsafeEncode(row.rulesJson, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.datetime.mariaText()).unsafeEncode(row.createdAt, sb);
-          });
 
   public PromotionsRow toRow(
       java.util.function.Supplier<Optional<String>> descriptionDefault,

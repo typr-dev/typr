@@ -76,6 +76,10 @@ object generate {
     val enums = metaDb.enums.map(ComputedStringEnum(naming))
     val domains = metaDb.domains.map(ComputedDomain(naming, scalaTypeMapper))
     val domainsByName = domains.map(d => (d.underlying.name, d)).toMap
+    val oracleObjectTypes = metaDb.oracleObjectTypes.values.toList
+      .map(ComputedOracleObjectType(naming, scalaTypeMapper))
+    val oracleCollectionTypes = metaDb.oracleCollectionTypes.values.toList
+      .flatMap(ComputedOracleCollectionType(naming, scalaTypeMapper))
     val projectsWithFiles: ProjectGraph[Files, List[jvm.File]] =
       graph.valueFromProject { project =>
         val isRoot = graph == project
@@ -122,6 +126,8 @@ object generate {
         }
 
         val domainFiles = domains.map(d => FileDomain(d, options, language))
+        val oracleObjectTypeFiles = oracleObjectTypes.map(FileOracleObjectType(_, options))
+        val oracleCollectionTypeFiles = oracleCollectionTypes.map(FileOracleCollectionType(_, options))
 
         val adapter = metaDb.dbType.adapter(needsTimestampCasts = false)
         val defaultFile = FileDefault(default, options.jsonLibs, options.dbLib, language)
@@ -131,6 +137,8 @@ object generate {
             defaultFile.file :: defaultFile.additionalFiles,
             enums.map(enm => FileStringEnum(options, enm, adapter)),
             domainFiles,
+            oracleObjectTypeFiles,
+            oracleCollectionTypeFiles,
             customTypes.All.values.map(FileCustomType(options, language)),
             relationFilesByName.map { case (_, f) => f },
             sqlFileFiles
@@ -141,7 +149,7 @@ object generate {
             if (options.keepDependencies) relationFilesByName.map { case (_, f) => f }
             else relationFilesByName.collect { case (name, f) if selector.include(name) => f }
 
-          minimize(mostFiles, entryPoints = sqlFileFiles ++ keptRelations ++ domainFiles)
+          minimize(mostFiles, entryPoints = sqlFileFiles ++ keptRelations ++ domainFiles ++ oracleObjectTypeFiles ++ oracleCollectionTypeFiles)
         }
 
         // package objects have weird scoping, so don't attempt to automatically write imports for them.

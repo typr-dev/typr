@@ -8,9 +8,15 @@ package testdb.product_categories
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.categories.CategoriesId
 import testdb.products.ProductsId
+import typo.scaladsl.RowParser
+import typo.scaladsl.RowParsers
 
 /** Type for the composite primary key of table `product_categories` */
 case class ProductCategoriesId(
   @JsonProperty("product_id") productId: ProductsId,
   @JsonProperty("category_id") categoryId: CategoriesId
 )
+
+object ProductCategoriesId {
+  val `_rowParser`: RowParser[ProductCategoriesId] = RowParsers.of(ProductsId.pgType, CategoriesId.pgType)(ProductCategoriesId.apply)(row => Array[Any](row.productId, row.categoryId))
+}

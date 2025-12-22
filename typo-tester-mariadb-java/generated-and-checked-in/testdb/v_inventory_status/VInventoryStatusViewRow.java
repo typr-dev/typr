@@ -324,7 +324,7 @@ public record VInventoryStatusViewRow(
   }
   ;
 
-  static RowParser<VInventoryStatusViewRow> _rowParser =
+  public static RowParser<VInventoryStatusViewRow> _rowParser =
       RowParsers.of(
           ProductsId.pgType,
           MariaTypes.varchar,
@@ -340,9 +340,7 @@ public record VInventoryStatusViewRow(
           MariaTypes.varchar,
           MariaTypes.varchar.opt(),
           MariaTypes.datetime.opt(),
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) ->
-              new VInventoryStatusViewRow(
-                  t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13),
+          VInventoryStatusViewRow::new,
           row ->
               new Object[] {
                 row.productId(),

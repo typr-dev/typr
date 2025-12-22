@@ -6,9 +6,16 @@
 package testdb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import typo.runtime.DuckDbTypes
+import typo.scaladsl.RowParser
+import typo.scaladsl.RowParsers
 
 /** Type for the composite primary key of table `departments` */
 case class DepartmentsId(
   @JsonProperty("dept_code") deptCode: String,
   @JsonProperty("dept_region") deptRegion: String
 )
+
+object DepartmentsId {
+  val `_rowParser`: RowParser[DepartmentsId] = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar)(DepartmentsId.apply)(row => Array[Any](row.deptCode, row.deptRegion))
+}

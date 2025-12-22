@@ -195,7 +195,7 @@ public record AViewRow(
   }
   ;
 
-  static RowParser<AViewRow> _rowParser =
+  public static RowParser<AViewRow> _rowParser =
       RowParsers.of(
           AddressId.pgType,
           AddressId.pgType,
@@ -207,8 +207,7 @@ public record AViewRow(
           PgTypes.bytea,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new AViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          AViewRow::new,
           row ->
               new Object[] {
                 row.id(),

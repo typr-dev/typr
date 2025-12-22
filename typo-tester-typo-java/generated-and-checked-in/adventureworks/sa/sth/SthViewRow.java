@@ -118,7 +118,7 @@ public record SthViewRow(
   }
   ;
 
-  static RowParser<SthViewRow> _rowParser =
+  public static RowParser<SthViewRow> _rowParser =
       RowParsers.of(
           SalesterritoryId.pgType,
           BusinessentityId.pgType,
@@ -127,7 +127,7 @@ public record SthViewRow(
           PgTypes.timestamp,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new SthViewRow(t0, t1, t2, t3, t4, t5, t6),
+          SthViewRow::new,
           row ->
               new Object[] {
                 row.id(),

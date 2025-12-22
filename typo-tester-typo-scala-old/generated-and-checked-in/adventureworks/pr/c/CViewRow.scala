@@ -25,12 +25,5 @@ case class CViewRow(
 )
 
 object CViewRow {
-  val `_rowParser`: RowParser[CViewRow] = {
-    RowParsers.of(CultureId.pgType, CultureId.pgType, Name.pgType, PgTypes.timestamp, (t0, t1, t2, t3) => new CViewRow(
-      t0,
-      t1,
-      t2,
-      t3
-    ), row => Array[Any](row.id, row.cultureid, row.name, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[CViewRow] = RowParsers.of(CultureId.pgType, CultureId.pgType, Name.pgType, PgTypes.timestamp, CViewRow.apply, row => Array[Any](row.id, row.cultureid, row.name, row.modifieddate))
 }

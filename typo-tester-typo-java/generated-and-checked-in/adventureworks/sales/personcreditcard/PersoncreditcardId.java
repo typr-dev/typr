@@ -7,6 +7,8 @@ package adventureworks.sales.personcreditcard;
 
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.userdefined.CustomCreditcardId;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `sales.personcreditcard` */
 public record PersoncreditcardId(
@@ -19,5 +21,13 @@ public record PersoncreditcardId(
   public PersoncreditcardId withCreditcardid(/* user-picked */ CustomCreditcardId creditcardid) {
     return new PersoncreditcardId(businessentityid, creditcardid);
   }
+  ;
+
+  public static RowParser<PersoncreditcardId> _rowParser =
+      RowParsers.of(
+          BusinessentityId.pgType,
+          CustomCreditcardId.pgType,
+          PersoncreditcardId::new,
+          row -> new Object[] {row.businessentityid(), row.creditcardid()});
   ;
 }

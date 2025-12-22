@@ -118,7 +118,7 @@ class ProductRepoImpl() : ProductRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"product\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"product\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(ProductRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -42,12 +42,12 @@ public record CultureRow(
   }
   ;
 
-  static RowParser<CultureRow> _rowParser =
+  public static RowParser<CultureRow> _rowParser =
       RowParsers.of(
           CultureId.pgType,
           Name.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2) -> new CultureRow(t0, t1, t2),
+          CultureRow::new,
           row -> new Object[] {row.cultureid(), row.name(), row.modifieddate()});
   ;
 

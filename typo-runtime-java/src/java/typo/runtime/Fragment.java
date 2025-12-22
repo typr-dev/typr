@@ -41,6 +41,11 @@ public sealed interface Fragment {
     return new Operation.UpdateReturning<>(this, parser);
   }
 
+  default <T> Operation.UpdateReturningGeneratedKeys<T> updateReturningGeneratedKeys(
+      String[] columnNames, ResultSetParser<T> parser) {
+    return new Operation.UpdateReturningGeneratedKeys<>(this, columnNames, parser);
+  }
+
   default <Row> Operation.UpdateMany<Row> updateMany(RowParser<Row> parser, Iterator<Row> rows) {
     return new Operation.UpdateMany<>(this, parser, rows);
   }

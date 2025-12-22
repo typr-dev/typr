@@ -7,6 +7,7 @@ package adventureworks.humanresources.employeepayhistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.businessentity.BusinessentityId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object EmployeepayhistoryId {
   implicit lazy val decoder: Decoder[EmployeepayhistoryId] = Decoder.forProduct2[EmployeepayhistoryId, BusinessentityId, TypoLocalDateTime]("businessentityid", "ratechangedate")(EmployeepayhistoryId.apply)(BusinessentityId.decoder, TypoLocalDateTime.decoder)
 
   implicit lazy val encoder: Encoder[EmployeepayhistoryId] = Encoder.forProduct2[EmployeepayhistoryId, BusinessentityId, TypoLocalDateTime]("businessentityid", "ratechangedate")(x => (x.businessentityid, x.ratechangedate))(BusinessentityId.encoder, TypoLocalDateTime.encoder)
+
+  implicit lazy val read: Read[EmployeepayhistoryId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(TypoLocalDateTime.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      EmployeepayhistoryId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            ratechangedate = arr(1).asInstanceOf[TypoLocalDateTime]
+      )
+    }
+  }
 }

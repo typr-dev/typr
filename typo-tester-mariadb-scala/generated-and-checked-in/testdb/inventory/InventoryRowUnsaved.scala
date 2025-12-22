@@ -11,10 +11,6 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `inventory` which has not been persisted yet */
 case class InventoryRowUnsaved(
@@ -84,8 +80,4 @@ case class InventoryRowUnsaved(
       updatedAt = updatedAt.getOrElse(updatedAtDefault)
     )
   }
-}
-
-object InventoryRowUnsaved {
-  given mariaText: MariaText[InventoryRowUnsaved] = MariaText.instance((row, sb) => { ProductsId.pgType.mariaText.unsafeEncode(row.productId, sb); sb.append(MariaText.DELIMETER); WarehousesId.pgType.mariaText.unsafeEncode(row.warehouseId, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.int_.mariaText).unsafeEncode(row.quantityOnHand, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.int_.mariaText).unsafeEncode(row.quantityReserved, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.int_.mariaText).unsafeEncode(row.quantityOnOrder, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.int_.mariaText).unsafeEncode(row.reorderPoint, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.int_.mariaText).unsafeEncode(row.reorderQuantity, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.binLocation, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.nullable.mariaText).unsafeEncode(row.lastCountedAt, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.datetime.mariaText).unsafeEncode(row.updatedAt, sb) })
 }

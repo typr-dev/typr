@@ -83,7 +83,7 @@ public record PmViewRow(
   }
   ;
 
-  static RowParser<PmViewRow> _rowParser =
+  public static RowParser<PmViewRow> _rowParser =
       RowParsers.of(
           ProductmodelId.pgType,
           ProductmodelId.pgType,
@@ -92,7 +92,7 @@ public record PmViewRow(
           PgTypes.xml,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new PmViewRow(t0, t1, t2, t3, t4, t5, t6),
+          PmViewRow::new,
           row ->
               new Object[] {
                 row.id(),

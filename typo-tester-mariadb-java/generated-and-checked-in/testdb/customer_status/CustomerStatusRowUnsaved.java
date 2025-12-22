@@ -8,8 +8,6 @@ package testdb.customer_status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typo.runtime.MariaText;
-import typo.runtime.MariaTypes;
 
 /** This class corresponds to a row in table `customer_status` which has not been persisted yet */
 public record CustomerStatusRowUnsaved(
@@ -45,16 +43,6 @@ public record CustomerStatusRowUnsaved(
     return new CustomerStatusRowUnsaved(statusCode, description, isActive);
   }
   ;
-
-  public static MariaText<CustomerStatusRowUnsaved> mariaText =
-      MariaText.instance(
-          (row, sb) -> {
-            CustomerStatusId.pgType.mariaText().unsafeEncode(row.statusCode, sb);
-            sb.append(MariaText.DELIMETER);
-            MariaTypes.varchar.mariaText().unsafeEncode(row.description, sb);
-            sb.append(MariaText.DELIMETER);
-            Defaulted.mariaText(MariaTypes.bool.mariaText()).unsafeEncode(row.isActive, sb);
-          });
 
   public CustomerStatusRow toRow(java.util.function.Supplier<Boolean> isActiveDefault) {
     return new CustomerStatusRow(statusCode, description, isActive.getOrElse(isActiveDefault));

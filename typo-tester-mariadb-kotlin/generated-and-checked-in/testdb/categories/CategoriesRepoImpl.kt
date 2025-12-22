@@ -34,7 +34,7 @@ class CategoriesRepoImpl() : CategoriesRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in categoryIds) { fragments.add(Fragment.encode(CategoriesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `categories` where `category_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `categories` where `category_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -83,7 +83,7 @@ class CategoriesRepoImpl() : CategoriesRepo {
       { value -> columns.add(Fragment.lit("`metadata`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.longtext.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `categories`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `categories`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
     return q.updateReturning(CategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -102,7 +102,7 @@ class CategoriesRepoImpl() : CategoriesRepo {
   ): List<CategoriesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in categoryIds) { fragments.add(Fragment.encode(CategoriesId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata` from `categories` where `category_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(CategoriesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata` from `categories` where `category_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CategoriesRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

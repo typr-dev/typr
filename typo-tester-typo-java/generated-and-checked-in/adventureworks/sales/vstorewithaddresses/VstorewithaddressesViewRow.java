@@ -166,7 +166,7 @@ public record VstorewithaddressesViewRow(
   }
   ;
 
-  static RowParser<VstorewithaddressesViewRow> _rowParser =
+  public static RowParser<VstorewithaddressesViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           Name.pgType,
@@ -177,8 +177,7 @@ public record VstorewithaddressesViewRow(
           Name.pgType,
           PgTypes.text,
           Name.pgType,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8) ->
-              new VstorewithaddressesViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8),
+          VstorewithaddressesViewRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

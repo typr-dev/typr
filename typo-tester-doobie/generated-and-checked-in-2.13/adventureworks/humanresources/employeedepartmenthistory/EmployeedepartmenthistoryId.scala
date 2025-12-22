@@ -9,6 +9,7 @@ import adventureworks.customtypes.TypoLocalDate
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -24,4 +25,20 @@ object EmployeedepartmenthistoryId {
   implicit lazy val decoder: Decoder[EmployeedepartmenthistoryId] = Decoder.forProduct4[EmployeedepartmenthistoryId, BusinessentityId, TypoLocalDate, DepartmentId, ShiftId]("businessentityid", "startdate", "departmentid", "shiftid")(EmployeedepartmenthistoryId.apply)(BusinessentityId.decoder, TypoLocalDate.decoder, DepartmentId.decoder, ShiftId.decoder)
 
   implicit lazy val encoder: Encoder[EmployeedepartmenthistoryId] = Encoder.forProduct4[EmployeedepartmenthistoryId, BusinessentityId, TypoLocalDate, DepartmentId, ShiftId]("businessentityid", "startdate", "departmentid", "shiftid")(x => (x.businessentityid, x.startdate, x.departmentid, x.shiftid))(BusinessentityId.encoder, TypoLocalDate.encoder, DepartmentId.encoder, ShiftId.encoder)
+
+  implicit lazy val read: Read[EmployeedepartmenthistoryId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(TypoLocalDate.get).asInstanceOf[Read[Any]],
+        new Read.Single(DepartmentId.get).asInstanceOf[Read[Any]],
+        new Read.Single(ShiftId.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      EmployeedepartmenthistoryId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            startdate = arr(1).asInstanceOf[TypoLocalDate],
+            departmentid = arr(2).asInstanceOf[DepartmentId],
+            shiftid = arr(3).asInstanceOf[ShiftId]
+      )
+    }
+  }
 }

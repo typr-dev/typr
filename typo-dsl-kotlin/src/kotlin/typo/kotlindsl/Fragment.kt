@@ -33,6 +33,9 @@ class Fragment(val underlying: JavaFragment) {
     fun <T> updateReturning(parser: ResultSetParser<T>): Operation.UpdateReturning<T> =
         Operation.UpdateReturning(this, parser)
 
+    fun <T> updateReturningGeneratedKeys(columnNames: Array<String>, parser: ResultSetParser<T>): Operation.UpdateReturningGeneratedKeys<T> =
+        Operation.UpdateReturningGeneratedKeys(this, columnNames, parser)
+
     fun <Row> updateMany(parser: RowParser<Row>, rows: Iterator<Row>): Operation.UpdateMany<Row> =
         Operation.UpdateMany(this, parser, rows)
 

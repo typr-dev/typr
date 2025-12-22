@@ -234,7 +234,7 @@ public record BomViewRow(
   }
   ;
 
-  static RowParser<BomViewRow> _rowParser =
+  public static RowParser<BomViewRow> _rowParser =
       RowParsers.of(
           PgTypes.int4,
           PgTypes.int4,
@@ -246,8 +246,7 @@ public record BomViewRow(
           PgTypes.int2,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) ->
-              new BomViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9),
+          BomViewRow::new,
           row ->
               new Object[] {
                 row.id(),

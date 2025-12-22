@@ -6,6 +6,9 @@
 package testdb.departments;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import typo.runtime.DuckDbTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `departments` */
 public record DepartmentsId(
@@ -18,5 +21,13 @@ public record DepartmentsId(
   public DepartmentsId withDeptRegion(String deptRegion) {
     return new DepartmentsId(deptCode, deptRegion);
   }
+  ;
+
+  public static RowParser<DepartmentsId> _rowParser =
+      RowParsers.of(
+          DuckDbTypes.varchar,
+          DuckDbTypes.varchar,
+          DepartmentsId::new,
+          row -> new Object[] {row.deptCode(), row.deptRegion()});
   ;
 }

@@ -56,7 +56,7 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(UnitmeasureRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

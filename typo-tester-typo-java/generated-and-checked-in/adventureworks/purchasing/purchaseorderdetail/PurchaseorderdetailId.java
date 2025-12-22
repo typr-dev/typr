@@ -6,6 +6,9 @@
 package adventureworks.purchasing.purchaseorderdetail;
 
 import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId;
+import typo.runtime.PgTypes;
+import typo.runtime.RowParser;
+import typo.runtime.RowParsers;
 
 /** Type for the composite primary key of table `purchasing.purchaseorderdetail` */
 public record PurchaseorderdetailId(
@@ -18,5 +21,13 @@ public record PurchaseorderdetailId(
   public PurchaseorderdetailId withPurchaseorderdetailid(Integer purchaseorderdetailid) {
     return new PurchaseorderdetailId(purchaseorderid, purchaseorderdetailid);
   }
+  ;
+
+  public static RowParser<PurchaseorderdetailId> _rowParser =
+      RowParsers.of(
+          PurchaseorderheaderId.pgType,
+          PgTypes.int4,
+          PurchaseorderdetailId::new,
+          row -> new Object[] {row.purchaseorderid(), row.purchaseorderdetailid()});
   ;
 }

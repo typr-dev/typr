@@ -78,14 +78,14 @@ public record EmailaddressRow(
   }
   ;
 
-  static RowParser<EmailaddressRow> _rowParser =
+  public static RowParser<EmailaddressRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           PgTypes.int4,
           PgTypes.text.opt(),
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4) -> new EmailaddressRow(t0, t1, t2, t3, t4),
+          EmailaddressRow::new,
           row ->
               new Object[] {
                 row.businessentityid(),

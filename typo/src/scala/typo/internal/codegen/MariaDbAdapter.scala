@@ -169,6 +169,10 @@ object MariaDbAdapter extends DbAdapter {
     }
   }
 
+  /** Public interface for looking up types by db.Type - delegates to lookupByDbType */
+  def lookupTypeByDbType(dbType: db.Type, Types: jvm.Type.Qualified, naming: Naming, typeSupport: TypeSupport): Code =
+    lookupByDbType(dbType, typeSupport)
+
   // ═══════════════════════════════════════════════════════════════════════════
   // LAYER 3: Capabilities
   // ═══════════════════════════════════════════════════════════════════════════
@@ -177,6 +181,10 @@ object MariaDbAdapter extends DbAdapter {
   val supportsReturning: Boolean = true // MariaDB 10.5+
   val supportsCopyStreaming: Boolean = false
   val supportsDefaultInCopy: Boolean = false
+
+  /** MariaDB uses SQL RETURNING clause for all inserts */
+  def returningStrategy(cols: NonEmptyList[ComputedColumn], rowType: jvm.Type, maybeId: Option[IdComputed]): ReturningStrategy =
+    ReturningStrategy.SqlReturning(rowType)
 
   // ═══════════════════════════════════════════════════════════════════════════
   // LAYER 4: SQL Templates

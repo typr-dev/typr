@@ -8,11 +8,12 @@ package adventureworks.production.vproductmodelcatalogdescription
 import adventureworks.production.productmodel.ProductmodelId
 import adventureworks.public.Name
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.lang.Object
 import java.time.LocalDateTime
 import java.util.UUID
 import typo.runtime.PgTypes
 import typo.runtime.RowParser
+import typo.runtime.RowParsers
+import typo.runtime.RowParsers.Function25
 
 /** View: production.vproductmodelcatalogdescription */
 case class VproductmodelcatalogdescriptionViewRow(
@@ -49,32 +50,62 @@ case class VproductmodelcatalogdescriptionViewRow(
 
 object VproductmodelcatalogdescriptionViewRow {
   val `_rowParser`: RowParser[VproductmodelcatalogdescriptionViewRow] = {
-    new RowParser(java.util.List.of(ProductmodelId.pgType, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp), (arr: Array[Object]) => new VproductmodelcatalogdescriptionViewRow(
-      arr(0).asInstanceOf[ProductmodelId],
-      arr(1).asInstanceOf[Name],
-      arr(2).asInstanceOf[String],
-      arr(3).asInstanceOf[String],
-      arr(4).asInstanceOf[String],
-      arr(5).asInstanceOf[String],
-      arr(6).asInstanceOf[String],
-      arr(7).asInstanceOf[String],
-      arr(8).asInstanceOf[String],
-      arr(9).asInstanceOf[String],
-      arr(10).asInstanceOf[String],
-      arr(11).asInstanceOf[String],
-      arr(12).asInstanceOf[String],
-      arr(13).asInstanceOf[String],
-      arr(14).asInstanceOf[String],
-      arr(15).asInstanceOf[String],
-      arr(16).asInstanceOf[String],
-      arr(17).asInstanceOf[String],
-      arr(18).asInstanceOf[String],
-      arr(19).asInstanceOf[String],
-      arr(20).asInstanceOf[String],
-      arr(21).asInstanceOf[String],
-      arr(22).asInstanceOf[String],
-      arr(23).asInstanceOf[UUID],
-      arr(24).asInstanceOf[LocalDateTime]
-    ), row => Array[Any](row.productmodelid, row.name, row.summary, row.manufacturer, row.copyright, row.producturl, row.warrantyperiod, row.warrantydescription, row.noofyears, row.maintenancedescription, row.wheel, row.saddle, row.pedal, row.bikeframe, row.crankset, row.pictureangle, row.picturesize, row.productphotoid, row.material, row.color, row.productline, row.style, row.riderexperience, row.rowguid, row.modifieddate))
+    RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, new Function25[ProductmodelId, Name, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, UUID, LocalDateTime, VproductmodelcatalogdescriptionViewRow] {
+      override def apply(
+        t0: ProductmodelId,
+        t1: Name,
+        t2: String,
+        t3: String,
+        t4: String,
+        t5: String,
+        t6: String,
+        t7: String,
+        t8: String,
+        t9: String,
+        t10: String,
+        t11: String,
+        t12: String,
+        t13: String,
+        t14: String,
+        t15: String,
+        t16: String,
+        t17: String,
+        t18: String,
+        t19: String,
+        t20: String,
+        t21: String,
+        t22: String,
+        t23: UUID,
+        t24: LocalDateTime
+      ): VproductmodelcatalogdescriptionViewRow = {
+        new VproductmodelcatalogdescriptionViewRow(
+          t0,
+          t1,
+          t2,
+          t3,
+          t4,
+          t5,
+          t6,
+          t7,
+          t8,
+          t9,
+          t10,
+          t11,
+          t12,
+          t13,
+          t14,
+          t15,
+          t16,
+          t17,
+          t18,
+          t19,
+          t20,
+          t21,
+          t22,
+          t23,
+          t24
+        )
+      }
+    }, row => Array[Any](row.productmodelid, row.name, row.summary, row.manufacturer, row.copyright, row.producturl, row.warrantyperiod, row.warrantydescription, row.noofyears, row.maintenancedescription, row.wheel, row.saddle, row.pedal, row.bikeframe, row.crankset, row.pictureangle, row.picturesize, row.productphotoid, row.material, row.color, row.productline, row.style, row.riderexperience, row.rowguid, row.modifieddate))
   }
 }

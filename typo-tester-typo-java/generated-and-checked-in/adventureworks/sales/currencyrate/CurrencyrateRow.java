@@ -139,7 +139,7 @@ public record CurrencyrateRow(
   }
   ;
 
-  static RowParser<CurrencyrateRow> _rowParser =
+  public static RowParser<CurrencyrateRow> _rowParser =
       RowParsers.of(
           CurrencyrateId.pgType,
           PgTypes.timestamp,
@@ -148,7 +148,7 @@ public record CurrencyrateRow(
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new CurrencyrateRow(t0, t1, t2, t3, t4, t5, t6),
+          CurrencyrateRow::new,
           row ->
               new Object[] {
                 row.currencyrateid(),

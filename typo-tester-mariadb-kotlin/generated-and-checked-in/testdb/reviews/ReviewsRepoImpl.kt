@@ -37,7 +37,7 @@ class ReviewsRepoImpl() : ReviewsRepo {
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in reviewIds) { fragments.add(Fragment.encode(ReviewsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `reviews` where `review_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("delete from `reviews` where `review_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
@@ -128,7 +128,7 @@ class ReviewsRepoImpl() : ReviewsRepo {
       { value -> columns.add(Fragment.lit("`updated_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `reviews`("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `reviews`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`\n"))
     return q.updateReturning(ReviewsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 
@@ -147,7 +147,7 @@ class ReviewsRepoImpl() : ReviewsRepo {
   ): List<ReviewsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in reviewIds) { fragments.add(Fragment.encode(ReviewsId.pgType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at` from `reviews` where `review_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ReviewsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.interpolate(Fragment.lit("select `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at` from `reviews` where `review_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ReviewsRow._rowParser.all()).runUnchecked(c)
   }
 
   override fun selectByIdsTracked(

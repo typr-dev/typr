@@ -31,7 +31,7 @@ case class CurrencyRow(
 }
 
 object CurrencyRow {
-  val `_rowParser`: RowParser[CurrencyRow] = RowParsers.of(CurrencyId.pgType, Name.pgType, PgTypes.timestamp)((t0, t1, t2) => new CurrencyRow(t0, t1, t2))(row => Array[Any](row.currencycode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[CurrencyRow] = RowParsers.of(CurrencyId.pgType, Name.pgType, PgTypes.timestamp)(CurrencyRow.apply)(row => Array[Any](row.currencycode, row.name, row.modifieddate))
 
   given pgText: PgText[CurrencyRow] = PgText.from(`_rowParser`.underlying)
 }

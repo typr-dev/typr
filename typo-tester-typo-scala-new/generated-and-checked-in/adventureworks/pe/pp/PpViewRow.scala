@@ -28,13 +28,5 @@ case class PpViewRow(
 )
 
 object PpViewRow {
-  val `_rowParser`: RowParser[PpViewRow] = {
-    RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, PgTypes.timestamp)((t0, t1, t2, t3, t4) => new PpViewRow(
-      t0,
-      t1,
-      t2,
-      t3,
-      t4
-    ))(row => Array[Any](row.id, row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate))
-  }
+  val `_rowParser`: RowParser[PpViewRow] = RowParsers.of(BusinessentityId.pgType, BusinessentityId.pgType, Phone.pgType, PhonenumbertypeId.pgType, PgTypes.timestamp)(PpViewRow.apply)(row => Array[Any](row.id, row.businessentityid, row.phonenumber, row.phonenumbertypeid, row.modifieddate))
 }

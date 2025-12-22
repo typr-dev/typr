@@ -60,13 +60,13 @@ public record PccViewRow(
   }
   ;
 
-  static RowParser<PccViewRow> _rowParser =
+  public static RowParser<PccViewRow> _rowParser =
       RowParsers.of(
           BusinessentityId.pgType,
           BusinessentityId.pgType,
           CustomCreditcardId.pgType,
           PgTypes.timestamp,
-          (t0, t1, t2, t3) -> new PccViewRow(t0, t1, t2, t3),
+          PccViewRow::new,
           row ->
               new Object[] {
                 row.id(), row.businessentityid(), row.creditcardid(), row.modifieddate()

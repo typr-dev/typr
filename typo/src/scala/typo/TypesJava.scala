@@ -14,6 +14,8 @@ object TypesJava {
     val Jsonb = Qualified("typo.data.Jsonb")
     val Money = Qualified("typo.data.Money")
     val OidVector = Qualified("typo.data.OidVector")
+    val OracleIntervalDS = Qualified("typo.data.OracleIntervalDS")
+    val OracleIntervalYM = Qualified("typo.data.OracleIntervalYM")
     val PgNodeTree = Qualified("typo.data.PgNodeTree")
     val Record = Qualified("typo.data.Record")
     val Regclass = Qualified("typo.data.Regclass")

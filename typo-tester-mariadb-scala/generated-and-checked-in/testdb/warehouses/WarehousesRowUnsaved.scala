@@ -10,10 +10,6 @@ import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typo.runtime.MariaText
-import typo.runtime.MariaTypes
-import typo.scaladsl.MariaTypeOps
-import typo.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `warehouses` which has not been persisted yet */
 case class WarehousesRowUnsaved(
@@ -67,8 +63,4 @@ case class WarehousesRowUnsaved(
       contactPhone = contactPhone.getOrElse(contactPhoneDefault)
     )
   }
-}
-
-object WarehousesRowUnsaved {
-  given mariaText: MariaText[WarehousesRowUnsaved] = MariaText.instance((row, sb) => { MariaTypes.char_.mariaText.unsafeEncode(row.code, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.name, sb); sb.append(MariaText.DELIMETER); MariaTypes.varchar.mariaText.unsafeEncode(row.address, sb); sb.append(MariaText.DELIMETER); MariaTypes.point.mariaText.unsafeEncode(row.location, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.polygon.nullable.mariaText).unsafeEncode(row.serviceArea, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.mariaText).unsafeEncode(row.timezone, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using ScalaDbTypes.MariaTypes.bool.mariaText).unsafeEncode(row.isActive, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.contactEmail, sb); sb.append(MariaText.DELIMETER); Defaulted.mariaText(using MariaTypes.varchar.nullable.mariaText).unsafeEncode(row.contactPhone, sb) })
 }

@@ -7,6 +7,7 @@ package adventureworks.sales.salespersonquotahistory
 
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.person.businessentity.BusinessentityId
+import doobie.util.Read
 import io.circe.Decoder
 import io.circe.Encoder
 
@@ -20,4 +21,16 @@ object SalespersonquotahistoryId {
   implicit lazy val decoder: Decoder[SalespersonquotahistoryId] = Decoder.forProduct2[SalespersonquotahistoryId, BusinessentityId, TypoLocalDateTime]("businessentityid", "quotadate")(SalespersonquotahistoryId.apply)(BusinessentityId.decoder, TypoLocalDateTime.decoder)
 
   implicit lazy val encoder: Encoder[SalespersonquotahistoryId] = Encoder.forProduct2[SalespersonquotahistoryId, BusinessentityId, TypoLocalDateTime]("businessentityid", "quotadate")(x => (x.businessentityid, x.quotadate))(BusinessentityId.encoder, TypoLocalDateTime.encoder)
+
+  implicit lazy val read: Read[SalespersonquotahistoryId] = {
+    new Read.CompositeOfInstances(Array(
+      new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
+        new Read.Single(TypoLocalDateTime.get).asInstanceOf[Read[Any]]
+    ))(scala.reflect.ClassTag.Any).map { arr =>
+      SalespersonquotahistoryId(
+        businessentityid = arr(0).asInstanceOf[BusinessentityId],
+            quotadate = arr(1).asInstanceOf[TypoLocalDateTime]
+      )
+    }
+  }
 }

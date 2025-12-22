@@ -180,6 +180,10 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
 
   def textType: db.Type = db.PgType.Text
 
+  /** Public interface for looking up types by db.Type - delegates to lookupByDbType */
+  def lookupTypeByDbType(dbType: db.Type, Types: jvm.Type.Qualified, naming: Naming, typeSupport: TypeSupport): Code =
+    lookupByDbType(dbType, naming, typeSupport)
+
   private def lookupByDbType(dbType: db.Type, naming: Naming, typeSupport: TypeSupport): Code = {
     // Helper to get primitive type code based on language
     def primitiveType(name: String): Code = {
@@ -292,6 +296,10 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
   val supportsReturning: Boolean = true
   val supportsCopyStreaming: Boolean = true
   val supportsDefaultInCopy: Boolean = true
+
+  /** PostgreSQL uses SQL RETURNING clause for all inserts */
+  def returningStrategy(cols: NonEmptyList[ComputedColumn], rowType: jvm.Type, maybeId: Option[IdComputed]): ReturningStrategy =
+    ReturningStrategy.SqlReturning(rowType)
 
   // ═══════════════════════════════════════════════════════════════════════════
   // LAYER 4: SQL Templates

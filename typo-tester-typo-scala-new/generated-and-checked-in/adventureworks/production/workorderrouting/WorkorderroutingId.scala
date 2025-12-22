@@ -6,6 +6,9 @@
 package adventureworks.production.workorderrouting
 
 import adventureworks.production.workorder.WorkorderId
+import typo.scaladsl.RowParser
+import typo.scaladsl.RowParsers
+import typo.scaladsl.ScalaDbTypes
 
 /** Type for the composite primary key of table `production.workorderrouting` */
 case class WorkorderroutingId(
@@ -13,3 +16,7 @@ case class WorkorderroutingId(
   productid: Int,
   operationsequence: Short
 )
+
+object WorkorderroutingId {
+  val `_rowParser`: RowParser[WorkorderroutingId] = RowParsers.of(WorkorderId.pgType, ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int2)(WorkorderroutingId.apply)(row => Array[Any](row.workorderid, row.productid, row.operationsequence))
+}

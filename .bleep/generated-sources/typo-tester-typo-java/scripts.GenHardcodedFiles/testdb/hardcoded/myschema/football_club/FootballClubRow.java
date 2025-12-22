@@ -26,7 +26,7 @@ public record FootballClubRow(
     return new FootballClubRow(id, name);
   };
 
-  static RowParser<FootballClubRow> _rowParser = RowParsers.of(FootballClubId.pgType, PgTypes.text, (t0, t1) -> new FootballClubRow(t0, t1), row -> new Object[]{row.id(), row.name()});;
+  public static RowParser<FootballClubRow> _rowParser = RowParsers.of(FootballClubId.pgType, PgTypes.text, FootballClubRow::new, row -> new Object[]{row.id(), row.name()});;
 
   static public PgText<FootballClubRow> pgText =
     PgText.from(_rowParser);

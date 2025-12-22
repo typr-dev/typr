@@ -72,7 +72,7 @@ public record CViewRow(
   }
   ;
 
-  static RowParser<CViewRow> _rowParser =
+  public static RowParser<CViewRow> _rowParser =
       RowParsers.of(
           CustomerId.pgType,
           CustomerId.pgType,
@@ -81,7 +81,7 @@ public record CViewRow(
           SalesterritoryId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
-          (t0, t1, t2, t3, t4, t5, t6) -> new CViewRow(t0, t1, t2, t3, t4, t5, t6),
+          CViewRow::new,
           row ->
               new Object[] {
                 row.id(),
