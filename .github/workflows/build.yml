@@ -130,6 +130,14 @@ jobs:
           CI: true
         run: bleep test typo-tester-typo-java
 
+      - name: Sourcegen
+        run: bleep sourcegen
+
+      - name: Run Kotlin Postgres tests
+        env:
+          CI: true
+        run: ./gradlew :typo-tester-typo-kotlin:test
+
   build-mariadb:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -171,6 +179,14 @@ jobs:
           CI: true
         run: bleep test typo-tester-mariadb-java
 
+      - name: Sourcegen
+        run: bleep sourcegen
+
+      - name: Run MariaDB Kotlin tests
+        env:
+          CI: true
+        run: ./gradlew :typo-tester-mariadb-kotlin:test
+
   build-oracle:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -206,11 +222,8 @@ jobs:
           CI: true
         run: bleep test typo-tester-oracle-java
 
-      - name: Sourcegen for Kotlin
-        run: |
-          bleep sourcegen typo-runtime-java
-          bleep sourcegen typo-dsl-java
-          bleep sourcegen typo-dsl-kotlin
+      - name: Sourcegen
+        run: bleep sourcegen
 
       - name: Run Oracle Kotlin tests
         env:
@@ -244,11 +257,8 @@ jobs:
           CI: true
         run: bleep test typo-tester-duckdb-java
 
-      - name: Sourcegen for Kotlin
-        run: |
-          bleep sourcegen typo-runtime-java
-          bleep sourcegen typo-dsl-java
-          bleep sourcegen typo-dsl-kotlin
+      - name: Sourcegen
+        run: bleep sourcegen
 
       - name: Run DuckDB Kotlin tests
         env:
@@ -272,19 +282,31 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Compile OpenAPI testers
+      - name: Compile Scala OpenAPI testers
         run: |
           bleep compile openapi-test-scala-http4s
           bleep compile openapi-test-scala-spring
 
-      - name: Sourcegen for Kotlin/Java OpenAPI
+      - name: Compile Java OpenAPI testers
         run: |
-          bleep sourcegen typo-runtime-java
-          bleep sourcegen typo-dsl-java
-          bleep sourcegen typo-dsl-kotlin
+          bleep compile openapi-test-java-jaxrs-client-jdk
+          bleep compile openapi-test-java-quarkus
+          bleep compile openapi-test-java-spring
 
-      - name: Compile Java/Kotlin OpenAPI testers
-        run: ./gradlew compileKotlin compileJava -x :typo-tester-oracle-kotlin:compileKotlin -x :typo-tester-duckdb-kotlin:compileKotlin
+      - name: Compile Kotlin OpenAPI testers
+        run: |
+          bleep compile openapi-test-kotlin-jaxrs
+          bleep compile openapi-test-kotlin-quarkus
+          bleep compile openapi-test-kotlin-spring
+
+      - name: Sourcegen
+        run: bleep sourcegen
+
+      - name: Compile Gradle OpenAPI testers
+        run: |
+          ./gradlew :openapi-test-kotlin-server-jaxrs-client-jdk:compileKotlin
+          ./gradlew :openapi-test-kotlin-server-spring-client-jdk:compileKotlin
+          ./gradlew :openapi-test-kotlin-server-quarkus-reactive-client-jdk:compileKotlin
 
   build-docs:
     timeout-minutes: 20
