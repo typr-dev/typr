@@ -17,7 +17,7 @@ import adventureworks.production.productcategory.*
 import adventureworks.production.productsubcategory.*
 import adventureworks.public.{Flag, Name}
 import adventureworks.withConnection
-import typo.dsl.*
+import typr.dsl.*
 
 // Setup connection for all examples
 implicit val c: Connection = DriverManager.getConnection("jdbc:postgresql://localhost:6432/Adventureworks?user=postgres&password=password")

@@ -11,8 +11,8 @@ and you need to have that added to your build as well.
 If you want to use the [SQL DSL](what-is/dsl.md), you enable it by [customizing](customization/overview.md) Typo by setting `enableDsl = true`.
 
 ```scala mdoc:silent
-import typo.{Options, Dialect, TypeSupportScala}
-import typo.internal.codegen.LangScala
+import typr.{Options, Dialect, TypeSupportScala}
+import typr.internal.codegen.LangScala
 Options(
   pkg = "mypkg",
   lang = LangScala.javaDsl(Dialect.Scala3, TypeSupportScala),
@@ -23,9 +23,9 @@ Options(
 ```
 
 You also need to add a dependency to your build in that case, which varies by database library:
-- for doobie: https://mvnrepository.com/artifact/com.olvind.typo/typo-dsl-doobie
-- for anorm: https://mvnrepository.com/artifact/com.olvind.typo/typo-dsl-anorm
-- for zio-jdbc: https://mvnrepository.com/artifact/com.olvind.typo/typo-dsl-zio-jdbc
+- for doobie: https://mvnrepository.com/artifact/dev.typr/typr-dsl-doobie
+- for anorm: https://mvnrepository.com/artifact/dev.typr/typr-dsl-anorm
+- for zio-jdbc: https://mvnrepository.com/artifact/dev.typr/typr-dsl-zio-jdbc
 
 ## example script
 
@@ -37,11 +37,11 @@ put it in `gen-db.sc` and run `scala-cli gen-db.sc`
 //
 // remember to give the project a github star if you like it <3
 //
-//> using dep "com.olvind.typo::typo:@VERSION@"
+//> using dep "dev.typr::typo:@VERSION@"
 //> using scala "3.4.2"
 
-import typo.*
-import typo.internal.codegen.LangScala
+import typr.*
+import typr.internal.codegen.LangScala
 
 // adapt to your instance and credentials
 // use hikariPostgres for PostgreSQL, hikariMariaDb for MariaDB

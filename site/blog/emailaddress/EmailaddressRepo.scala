@@ -9,9 +9,9 @@ package emailaddress
 
 import doobie.free.connection.ConnectionIO
 import fs2.Stream
-import typo.dsl.DeleteBuilder
-import typo.dsl.SelectBuilder
-import typo.dsl.UpdateBuilder
+import typr.dsl.DeleteBuilder
+import typr.dsl.SelectBuilder
+import typr.dsl.UpdateBuilder
 
 trait EmailaddressRepo {
   def delete(compositeId: EmailaddressId): ConnectionIO[Boolean]

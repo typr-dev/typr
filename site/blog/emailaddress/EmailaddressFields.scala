@@ -10,9 +10,9 @@ package emailaddress
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import typo.dsl.SqlExpr.Field
-import typo.dsl.SqlExpr.IdField
-import typo.dsl.SqlExpr.OptField
+import typr.dsl.SqlExpr.Field
+import typr.dsl.SqlExpr.IdField
+import typr.dsl.SqlExpr.OptField
 
 trait EmailaddressFields {
   val businessentityid: IdField[BusinessentityId, Row]

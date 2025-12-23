@@ -4,7 +4,7 @@ plugins {
 }
 
 allprojects {
-    group = "com.olvind.typo"
+    group = "dev.typr"
     version = "0.1.0-SNAPSHOT"
 
     repositories {

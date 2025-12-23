@@ -31,7 +31,7 @@ bleep compile
 bleep test
 
 # Run specific test project
-bleep test typo-tester-anorm
+bleep test typr-tester-anorm
 
 # Run code generation scripts
 bleep run GeneratedAdventureWorks
@@ -79,10 +79,10 @@ docker-compose up -d
 ### Main Generation Script (scripts/GeneratedAdventureWorks.scala)
 ```scala
 // Basic setup
-val options = typo.Options(
+val options = typr.Options(
   pkg = "adventureworks",
-  dbLib = typo.DbLib.Anorm,
-  jsonLib = typo.JsonLib.PlayJson,
+  dbLib = typr.DbLib.Anorm,
+  jsonLib = typr.JsonLib.PlayJson,
   enablePrimaryKeyType = true,
   enableTestInserts = true
 )
@@ -210,9 +210,9 @@ bleep run GenerateDocumentation
 ### Testing Changes
 ```bash
 # Test specific database library
-bleep test typo-tester-anorm
-bleep test typo-tester-doobie
-bleep test typo-tester-zio-jdbc
+bleep test typr-tester-anorm
+bleep test typr-tester-doobie
+bleep test typr-tester-zio-jdbc
 
 # Test core functionality
 bleep test typo

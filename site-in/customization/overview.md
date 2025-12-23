@@ -2,11 +2,11 @@
 title: Customizing Typo
 ---
 
-All customizations are done through the `typo.Options` object passed to typo:
+All customizations are done through the `typr.Options` object passed to typo:
 
 ```scala mdoc:silent
-import typo.*
-import typo.internal.codegen.LangScala
+import typr.*
+import typr.internal.codegen.LangScala
 
 val options = Options(
   pkg = "org.foo",

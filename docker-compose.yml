@@ -1,7 +1,7 @@
 # Use postgres/example user/password credentials
 services:
   postgres:
-    image: ghcr.io/oyvindberg/typo/typo-postgres${PG_MAJOR-16}:latest
+    image: ghcr.io/oyvindberg/typr/typr-postgres${PG_MAJOR-16}:latest
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -19,8 +19,8 @@ services:
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: password
-      MARIADB_DATABASE: typo
-      MARIADB_USER: typo
+      MARIADB_DATABASE: typr
+      MARIADB_USER: typr
       MARIADB_PASSWORD: password
     ports:
       - 3307:3306
@@ -28,13 +28,13 @@ services:
       - ./db/mariadb:/docker-entrypoint-initdb.d
 
   oracle:
-    # Multi-arch image works on both ARM64 (local dev) and AMD64 (CI)
+    # Multi-arch image - Docker will select based on host architecture
     image: gvenzl/oracle-free:23-slim
     restart: always
     environment:
       ORACLE_PASSWORD: password
-      APP_USER: typo
-      APP_USER_PASSWORD: typo_password
+      APP_USER: typr
+      APP_USER_PASSWORD: typr_password
     ports:
       - 1521:1521
     volumes:

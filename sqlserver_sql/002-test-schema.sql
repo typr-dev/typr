@@ -1,7 +1,7 @@
 -- Test schema for SQL Server type testing
 -- Comprehensive schema that exercises all SQL Server types
 
-USE typo;
+USE typr;
 GO
 
 -- ==================== Test Table: All Scalar Types ====================

@@ -33,7 +33,7 @@ of your tests it's still very beneficial!
 
 ```scala mdoc:silent
 import adventureworks.person.address.*
-import typo.dsl.*
+import typr.dsl.*
 import java.sql.Connection
 import scala.annotation.nowarn
 

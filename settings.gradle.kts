@@ -1,13 +1,13 @@
-rootProject.name = "typo"
+rootProject.name = "typr"
 
-include("typo-runtime-java")
-include("typo-dsl-java")
-include("typo-dsl-kotlin")
-include("typo-tester-typo-kotlin")
-include("typo-tester-duckdb-kotlin")
-include("typo-tester-mariadb-kotlin")
-include("typo-tester-oracle-kotlin")
-include("typo-tester-sqlserver-kotlin")
+include("typr-runtime-java")
+include("typr-dsl-java")
+include("typr-dsl-kotlin")
+include("typr-tester-typr-kotlin")
+include("typr-tester-duckdb-kotlin")
+include("typr-tester-mariadb-kotlin")
+include("typr-tester-oracle-kotlin")
+include("typr-tester-sqlserver-kotlin")
 include("openapi-test-kotlin-server-jaxrs-client-jdk")
 include("openapi-test-kotlin-server-spring-client-jdk")
 include("openapi-test-kotlin-server-quarkus-reactive-client-jdk")

@@ -24,6 +24,7 @@ import java.net.http.HttpResponse
 import java.time.OffsetDateTime
 import java.util.Optional
 import scala.collection.mutable
+import scala.compiletime.uninitialized
 import scala.jdk.CollectionConverters._
 
 /** Integration tests for the OpenAPI generated Scala Spring server and JDK HTTP client code. These tests start a real Spring Boot server and use the generated client.
@@ -32,11 +33,11 @@ class OpenApiIntegrationTest {
 
   private val TestTime = OffsetDateTime.parse("2024-01-01T12:00:00Z")
 
-  private var context: ConfigurableApplicationContext = _
-  private var client: PetsApiClient = _
-  private var serverImpl: TestPetsApiServer = _
-  private var baseUri: URI = _
-  private var httpClient: HttpClient = _
+  private var context: ConfigurableApplicationContext = uninitialized
+  private var client: PetsApiClient = uninitialized
+  private var serverImpl: TestPetsApiServer = uninitialized
+  private var baseUri: URI = uninitialized
+  private var httpClient: HttpClient = uninitialized
 
   /** Test server implementation */
   class TestPetsApiServer extends PetsApiServer {
@@ -171,7 +172,7 @@ class OpenApiIntegrationTest {
 }
 
 object OpenApiIntegrationTest {
-  private var testServer: PetsApiServer = _
+  private var testServer: PetsApiServer = uninitialized
 
   def setTestServer(server: PetsApiServer): Unit = {
     testServer = server

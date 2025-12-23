@@ -10,11 +10,11 @@ package emailaddress
 import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import typo.dsl.SqlExpr.Field
-import typo.dsl.SqlExpr.FieldLike
-import typo.dsl.SqlExpr.IdField
-import typo.dsl.SqlExpr.OptField
-import typo.dsl.RelationStructure
+import typr.dsl.SqlExpr.Field
+import typr.dsl.SqlExpr.FieldLike
+import typr.dsl.SqlExpr.IdField
+import typr.dsl.SqlExpr.OptField
+import typr.dsl.RelationStructure
 
 class EmailaddressStructure[Row](val prefix: Option[String], val extract: Row => EmailaddressRow, val merge: (Row, EmailaddressRow) => Row)
   extends Relation[EmailaddressFields, EmailaddressRow, Row]

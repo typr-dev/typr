@@ -1,9 +1,9 @@
 -- Simple Oracle test schema for Typo
 -- Demonstrates object types, VARRAYs, nested tables, and views
 
--- Switch to TYPO schema
+-- Switch to TYPR schema
 ALTER SESSION SET CONTAINER = FREEPDB1;
-ALTER SESSION SET CURRENT_SCHEMA = TYPO;
+ALTER SESSION SET CURRENT_SCHEMA = TYPR;
 
 -- Create object types
 CREATE OR REPLACE TYPE money_t AS OBJECT (

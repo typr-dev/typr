@@ -63,7 +63,7 @@ jobs:
           extraFiles: bleep.yaml
 
       - name: Compile for 2.12
-        run: bleep compile typo@jvm212
+        run: bleep compile typr@jvm212
 
   build-postgres:
     runs-on: ubuntu-latest
@@ -104,31 +104,31 @@ jobs:
 
       - name: Compile all Scala versions
         run: |
-          bleep compile typo@jvm213
-          bleep compile typo@jvm3
+          bleep compile typr@jvm213
+          bleep compile typr@jvm3
 
       - name: Run Scala 2.13 Postgres tests
         env:
           CI: true
         run: |
-          bleep test typo-tester-anorm@jvm213
-          bleep test typo-tester-doobie@jvm213
-          bleep test typo-tester-zio-jdbc@jvm213
+          bleep test typr-tester-anorm@jvm213
+          bleep test typr-tester-doobie@jvm213
+          bleep test typr-tester-zio-jdbc@jvm213
 
       - name: Run Scala 3 Postgres tests
         env:
           CI: true
         run: |
-          bleep test typo-tester-anorm@jvm3
-          bleep test typo-tester-doobie@jvm3
-          bleep test typo-tester-zio-jdbc@jvm3
-          bleep test typo-tester-typo-scala-new
-          bleep test typo-tester-typo-scala-old
+          bleep test typr-tester-anorm@jvm3
+          bleep test typr-tester-doobie@jvm3
+          bleep test typr-tester-zio-jdbc@jvm3
+          bleep test typr-tester-typr-scala-new
+          bleep test typr-tester-typr-scala-old
 
       - name: Run Java Postgres tests
         env:
           CI: true
-        run: bleep test typo-tester-typo-java
+        run: bleep test typr-tester-typr-java
 
       - name: Sourcegen
         run: bleep sourcegen
@@ -136,7 +136,7 @@ jobs:
       - name: Run Kotlin Postgres tests
         env:
           CI: true
-        run: ./gradlew :typo-tester-typo-kotlin:test
+        run: ./gradlew :typr-tester-typr-kotlin:test
 
   build-mariadb:
     runs-on: ubuntu-latest
@@ -161,7 +161,7 @@ jobs:
       - name: Wait for MariaDB
         run: |
           for i in {1..30}; do
-            if docker compose exec -T mariadb mariadb -u typo -ppassword -e "SELECT 1" typo 2>/dev/null; then
+            if docker compose exec -T mariadb mariadb -u typr -ppassword -e "SELECT 1" typr 2>/dev/null; then
               echo "MariaDB is ready"
               break
             fi
@@ -172,12 +172,12 @@ jobs:
       - name: Run MariaDB Scala tests
         env:
           CI: true
-        run: bleep test typo-tester-mariadb-scala
+        run: bleep test typr-tester-mariadb-scala
 
       - name: Run MariaDB Java tests
         env:
           CI: true
-        run: bleep test typo-tester-mariadb-java
+        run: bleep test typr-tester-mariadb-java
 
       - name: Sourcegen
         run: bleep sourcegen
@@ -185,7 +185,7 @@ jobs:
       - name: Run MariaDB Kotlin tests
         env:
           CI: true
-        run: ./gradlew :typo-tester-mariadb-kotlin:test
+        run: ./gradlew :typr-tester-mariadb-kotlin:test
 
   build-oracle:
     runs-on: ubuntu-latest
@@ -214,13 +214,13 @@ jobs:
         env:
           CI: true
         run: |
-          bleep test typo-tester-oracle-scala
-          bleep test typo-tester-oracle-scala-new
+          bleep test typr-tester-oracle-scala
+          bleep test typr-tester-oracle-scala-new
 
       - name: Run Oracle Java tests
         env:
           CI: true
-        run: bleep test typo-tester-oracle-java
+        run: bleep test typr-tester-oracle-java
 
       - name: Sourcegen
         run: bleep sourcegen
@@ -228,7 +228,7 @@ jobs:
       - name: Run Oracle Kotlin tests
         env:
           CI: true
-        run: ./gradlew :typo-tester-oracle-kotlin:test
+        run: ./gradlew :typr-tester-oracle-kotlin:test
 
   build-duckdb:
     runs-on: ubuntu-latest
@@ -250,12 +250,12 @@ jobs:
       - name: Run DuckDB Scala tests
         env:
           CI: true
-        run: bleep test typo-tester-duckdb-scala
+        run: bleep test typr-tester-duckdb-scala
 
       - name: Run DuckDB Java tests
         env:
           CI: true
-        run: bleep test typo-tester-duckdb-java
+        run: bleep test typr-tester-duckdb-java
 
       - name: Sourcegen
         run: bleep sourcegen
@@ -263,7 +263,7 @@ jobs:
       - name: Run DuckDB Kotlin tests
         env:
           CI: true
-        run: ./gradlew :typo-tester-duckdb-kotlin:test
+        run: ./gradlew :typr-tester-duckdb-kotlin:test
 
   build-sqlserver:
     runs-on: ubuntu-latest
@@ -291,12 +291,12 @@ jobs:
       - name: Run SQL Server Scala tests
         env:
           CI: true
-        run: bleep test typo-tester-sqlserver-scala
+        run: bleep test typr-tester-sqlserver-scala
 
       - name: Run SQL Server Java tests
         env:
           CI: true
-        run: bleep test typo-tester-sqlserver-java
+        run: bleep test typr-tester-sqlserver-java
 
       - name: Sourcegen
         run: bleep sourcegen
@@ -304,7 +304,7 @@ jobs:
       - name: Run SQL Server Kotlin tests
         env:
           CI: true
-        run: ./gradlew :typo-tester-sqlserver-kotlin:test
+        run: ./gradlew :typr-tester-sqlserver-kotlin:test
 
   build-openapi:
     runs-on: ubuntu-latest
@@ -348,7 +348,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     env:
-      PG_MAJOR: 14
+      PG_MAJOR: 16
     steps:
       - uses: actions/checkout@v4
       - uses: bleep-build/bleep-setup-action@0.0.1

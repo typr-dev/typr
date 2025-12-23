@@ -14,10 +14,10 @@ import doobie.free.connection.ConnectionIO
 import doobie.syntax.string.toSqlInterpolator
 import doobie.util.fragment.Fragment
 import fs2.Stream
-import typo.dsl.DeleteBuilder
-import typo.dsl.SelectBuilder
-import typo.dsl.SelectBuilderSql
-import typo.dsl.UpdateBuilder
+import typr.dsl.DeleteBuilder
+import typr.dsl.SelectBuilder
+import typr.dsl.SelectBuilderSql
+import typr.dsl.UpdateBuilder
 
 class EmailaddressRepoImpl extends EmailaddressRepo {
   override def delete(compositeId: EmailaddressId): ConnectionIO[Boolean] = {

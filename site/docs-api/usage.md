@@ -8,7 +8,7 @@ sidebar_position: 6
 ## Basic Usage
 
 ```scala
-import typo.openapi.codegen._
+import typr.openapi.codegen._
 
 val spec = OpenApiParser.parse(Paths.get("api.yaml"))
 

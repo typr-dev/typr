@@ -4,7 +4,7 @@ title: Testing with random values
 
 This covers a lot of interesting ground, test-wise.
 
-If you enable `enableTestInserts` in `typo.Options` you now get an `TestInsert` class, with a method to insert a row for each table Typo knows about. 
+If you enable `enableTestInserts` in `typr.Options` you now get an `TestInsert` class, with a method to insert a row for each table Typo knows about. 
 All values except ids, foreign keys and so on are *randomly generated*, but you can override them with named parameters.
 
 The idea is that you:

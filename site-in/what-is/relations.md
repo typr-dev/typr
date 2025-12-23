@@ -107,7 +107,7 @@ Delete) operations at your fingertips.
 ```scala mdoc
 import adventureworks.person.address.{AddressFields, AddressRow}
 import java.sql.Connection
-import typo.dsl.{DeleteBuilder, SelectBuilder, UpdateBuilder}
+import typr.dsl.{DeleteBuilder, SelectBuilder, UpdateBuilder}
 
 trait AddressRepo {
   def delete: DeleteBuilder[AddressFields, AddressRow]

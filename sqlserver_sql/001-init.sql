@@ -5,14 +5,14 @@
 WAITFOR DELAY '00:00:05';
 GO
 
--- Create the typo database
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'typo')
+-- Create the typr database
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'typr')
 BEGIN
-    CREATE DATABASE typo;
+    CREATE DATABASE typr;
 END
 GO
 
-USE typo;
+USE typr;
 GO
 
 -- Create a simple test table to verify connectivity
@@ -26,5 +26,5 @@ GO
 INSERT INTO test_connection (message) VALUES ('SQL Server initialized successfully');
 GO
 
-PRINT 'SQL Server typo database initialized!';
+PRINT 'SQL Server typr database initialized!';
 GO

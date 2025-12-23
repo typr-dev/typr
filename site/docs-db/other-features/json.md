@@ -7,7 +7,7 @@ Since Typo has the entire schema in memory anyway, it can also generate JSON cod
 If you want to transfer the row objects anywhere else than to and from
 PostgreSQL or write some generic code across tables, it's very convenient to be able to use 
 
-You add the wanted JSON libraries to `typo.Options` when running typo to get the codecs.
+You add the wanted JSON libraries to `typr.Options` when running typo to get the codecs.
 
 Currently, you can choose between `play-json`, `circe` and `zio-json`. 
 It's likely quite easy to add another one if you want to contribute! 
@@ -15,8 +15,8 @@ It's likely quite easy to add another one if you want to contribute!
 For instance:
 
 ```scala
-import typo.*
-import typo.internal.codegen.LangScala
+import typr.*
+import typr.internal.codegen.LangScala
 
 val options = Options(
   pkg = "org.foo",

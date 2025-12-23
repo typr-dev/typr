@@ -19,3 +19,5 @@ build/
 __pycache__/
 testdb
 testdb.wal
+db/duckdb/test.db
+db/duckdb/test.db.wal

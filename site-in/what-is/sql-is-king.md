@@ -28,7 +28,7 @@ approach for yourself.
 <video
 width="100%"
 controls
-src="https://github.com/oyvindberg/typo/assets/247937/df7c4f2d-b118-4081-81c6-dd03dfe62ee2"
+src="https://github.com/oyvindberg/typr/assets/247937/df7c4f2d-b118-4081-81c6-dd03dfe62ee2"
 />
 
 
@@ -43,7 +43,7 @@ In particular, parameters are optional by default.
 <video
 width="100%"
 controls
-src="https://github.com/oyvindberg/typo/assets/247937/b2965b74-8ee5-4475-8e40-5938ff44d385"
+src="https://github.com/oyvindberg/typr/assets/247937/b2965b74-8ee5-4475-8e40-5938ff44d385"
 />
 
 ## Updates
@@ -54,5 +54,5 @@ Those statements can also return columns, see this video
 <video
 width="100%"
 controls
-src="https://github.com/oyvindberg/typo/assets/247937/e8c3c34a-0691-4ad3-bd44-b73bb14d5997"
+src="https://github.com/oyvindberg/typr/assets/247937/e8c3c34a-0691-4ad3-bd44-b73bb14d5997"
 />

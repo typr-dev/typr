@@ -12,8 +12,8 @@ This is referred to within Typo as a [user-selected type](../type-safety/user-se
 
 
 ```scala
-import typo.{Options, TypeOverride, Dialect, TypeSupportScala}
-import typo.internal.codegen.LangScala
+import typr.{Options, TypeOverride, Dialect, TypeSupportScala}
+import typr.internal.codegen.LangScala
 
 val rewriteColumnTypes = TypeOverride.relation {
   case ("schema.table", "column") => "org.foo.ColumnId"
@@ -33,7 +33,7 @@ The version above is "simplified", in that is takes a descriptive type and explo
 You may prefer the version below which is more cumbersome but more structured:
 
 ```scala
-import typo.db.RelationName
+import typr.db.RelationName
 
 val rewriteMore = TypeOverride.of { 
   case (RelationName(Some(schema), tableName), colName) if schema.contains("foo") && colName.value.startsWith("foo") => "org.foo.Bar" 

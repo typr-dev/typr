@@ -1,8 +1,9 @@
 name: Build and publish Docker image for integration tests
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ 'main' ]
+    branches: [ 'main', 'rename-typo-to-typr' ]
     paths:
       - 'docker/**'
       - '.github/workflows/docker.yml'
@@ -14,7 +15,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/typo-postgres
+  IMAGE_NAME: ${{ github.repository }}/typr-postgres
 
 jobs:
   build-postgres-image:
@@ -24,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        postgres-version: [12, 13, 14, 15, 16]
+        postgres-version: [12, 16]
     permissions:
       contents: read
       packages: write

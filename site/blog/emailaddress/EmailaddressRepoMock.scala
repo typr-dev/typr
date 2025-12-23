@@ -11,15 +11,15 @@ import doobie.free.connection.ConnectionIO
 import doobie.free.connection.delay
 import fs2.Stream
 import scala.annotation.nowarn
-import typo.dsl.DeleteBuilder
-import typo.dsl.DeleteBuilder.DeleteBuilderMock
-import typo.dsl.DeleteParams
-import typo.dsl.SelectBuilder
-import typo.dsl.SelectBuilderMock
-import typo.dsl.SelectParams
-import typo.dsl.UpdateBuilder
-import typo.dsl.UpdateBuilder.UpdateBuilderMock
-import typo.dsl.UpdateParams
+import typr.dsl.DeleteBuilder
+import typr.dsl.DeleteBuilder.DeleteBuilderMock
+import typr.dsl.DeleteParams
+import typr.dsl.SelectBuilder
+import typr.dsl.SelectBuilderMock
+import typr.dsl.SelectParams
+import typr.dsl.UpdateBuilder
+import typr.dsl.UpdateBuilder.UpdateBuilderMock
+import typr.dsl.UpdateParams
 
 class EmailaddressRepoMock(toRow: Function1[EmailaddressRowUnsaved, EmailaddressRow],
                            map: scala.collection.mutable.Map[EmailaddressId, EmailaddressRow] = scala.collection.mutable.Map.empty) extends EmailaddressRepo {

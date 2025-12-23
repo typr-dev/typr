@@ -3,7 +3,7 @@
 
 `typo` helps dog-food the experimental [bleep](https://bleep.build/docs/) Scala build tool while it is approaching first public release. Keep an open mind!
 
-- `git clone https://github.com/oyvindberg/typo`
+- `git clone https://github.com/oyvindberg/typr`
 - [install bleep](https://bleep.build/docs/installing/)
 - run `docker compose up` to get example database
 - run `bleep install-tab-completions-zsh` / `bleep install-tab-completions-bash` and start a new shell to get tab completions

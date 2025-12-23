@@ -23,6 +23,6 @@ This is mainly due to PostgreSQL being inexact when inferring nullability for ar
 The pgtyped project has a metaissue which collects type inference issues in PostgreSQL [here](https://github.com/adelsz/pgtyped/issues/375).
 
 Some effort has been made in Typo to get a better source of nullability by looking at `explain` plans, 
-see [#27](https://github.com/oyvindberg/typo/pull/27).
+see [#27](https://github.com/oyvindberg/typr/pull/27).
 
 

@@ -15,8 +15,8 @@ If multiple downstream projects want to generate the same code, it'll be pulled 
 
 sample:
 ```scala mdoc:silent
-import typo.*
-import typo.internal.codegen.LangScala
+import typr.*
+import typr.internal.codegen.LangScala
 import java.nio.file.Path
 import java.sql.Connection
 

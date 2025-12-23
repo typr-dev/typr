@@ -2,7 +2,7 @@
 title: Customize naming
 ---
 
-You provide a `typo.Naming` instance in `typo.Options` when running typo.
+You provide a `typr.Naming` instance in `typr.Options` when running typo.
 This is responsible for computing all scala names based on names from PostgreSQL.
 
 ### Customize field names
@@ -11,8 +11,8 @@ As an example, say you you have some weird naming standard in your schemas, for 
 This is how it can be prettified in the generated scala code
 
 ```scala mdoc:silent
-import typo.*
-import typo.internal.codegen.LangScala
+import typr.*
+import typr.internal.codegen.LangScala
 
 val lang = LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala)
 

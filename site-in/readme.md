@@ -44,7 +44,7 @@ Much less testing is needed, because the name and type mapping will be correct, 
 <video
 width="100%"
 controls
-src="https://github.com/oyvindberg/typo/assets/247937/df7c4f2d-b118-4081-81c6-dd03dfe62ee2"
+src="https://github.com/oyvindberg/typr/assets/247937/df7c4f2d-b118-4081-81c6-dd03dfe62ee2"
 />
 
 Typo is also much more than this, keep reading to discover :)

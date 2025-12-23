@@ -12,7 +12,7 @@ among the arguments to `generateFromDb` is `selector`, which by default picks al
 See [Selector](selector.md)
 
 ```scala
-import typo.*
+import typr.*
 
 generateFromDb(options, selector = Selector.ExcludePostgresInternal)
 ```

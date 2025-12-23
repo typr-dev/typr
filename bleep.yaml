@@ -17,7 +17,7 @@ projects:
     - org.glassfish.jersey.inject:jersey-hk2:3.1.9
     - org.glassfish.jersey.media:jersey-media-json-jackson:3.1.9
     - org.glassfish.jersey.media:jersey-media-multipart:3.1.9
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     folder: ./openapi-test-java-server-jaxrs-client-jdk
     isTestProject: true
     java:
@@ -41,7 +41,7 @@ projects:
     - org.glassfish.jersey.inject:jersey-hk2:3.1.9
     - org.glassfish.jersey.media:jersey-media-json-jackson:3.1.9
     - org.glassfish.jersey.media:jersey-media-multipart:3.1.9
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     folder: ./openapi-test-java-server-quarkus-reactive-client-jdk
     isTestProject: true
     java:
@@ -62,7 +62,7 @@ projects:
     - org.glassfish.jersey.media:jersey-media-multipart:3.1.9
     - org.springframework.boot:spring-boot-starter-test:3.4.0
     - org.springframework.boot:spring-boot-starter-web:3.4.0
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     folder: ./openapi-test-java-server-spring-client-jdk
     isTestProject: true
     java:
@@ -85,13 +85,11 @@ projects:
     - org.glassfish.jersey.inject:jersey-hk2:3.1.9
     - org.glassfish.jersey.media:jersey-media-json-jackson:3.1.9
     - org.glassfish.jersey.media:jersey-media-multipart:3.1.9
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     folder: ./openapi-test-kotlin-server-jaxrs-client-jdk
     isTestProject: true
     platform:
       name: jvm
-    scala:
-      options: -Xallow-kotlin
     sources: ./testapi
   openapi-test-kotlin-quarkus:
     dependencies:
@@ -107,13 +105,11 @@ projects:
     - jakarta.ws.rs:jakarta.ws.rs-api:3.1.0
     - junit:junit:4.13.2
     - org.glassfish.jersey.media:jersey-media-multipart:3.1.9
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     folder: ./openapi-test-kotlin-server-quarkus-reactive-client-jdk
     isTestProject: true
     platform:
       name: jvm
-    scala:
-      options: -Xallow-kotlin
     sources: ./testapi
   openapi-test-kotlin-spring:
     dependencies:
@@ -128,13 +124,11 @@ projects:
     - junit:junit:4.13.2
     - org.glassfish.jersey.media:jersey-media-multipart:3.1.9
     - org.springframework.boot:spring-boot-starter-web:3.4.0
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     folder: ./openapi-test-kotlin-server-spring-client-jdk
     isTestProject: true
     platform:
       name: jvm
-    scala:
-      options: -Xallow-kotlin
     sources: ./testapi
   openapi-test-scala-http4s:
     dependencies:
@@ -145,7 +139,7 @@ projects:
     - org.http4s::http4s-ember-server:0.23.30
     - org.scalatest::scalatest:3.2.18
     - org.typelevel::cats-effect-testing-scalatest:1.6.0
-    extends: template-scala-3-stable
+    extends: template-scala-3-newest
     folder: ./openapi-test-scala-server-http4s-client-http4s
     isTestProject: true
     scala:
@@ -165,8 +159,8 @@ projects:
     - junit:junit:4.13.2
     - org.glassfish.jersey.media:jersey-media-multipart:3.1.9
     - org.springframework.boot:spring-boot-starter-web:3.4.0
-    dependsOn: typo-runtime-java
-    extends: template-scala-3-stable
+    dependsOn: typr-runtime-java
+    extends: template-scala-3-newest
     folder: ./openapi-test-scala-server-spring-client-jdk
     isTestProject: true
     scala:
@@ -174,10 +168,10 @@ projects:
     sources: ./testapi
   tests:
     dependencies: org.scalatest::scalatest:3.2.18
-    dependsOn: typo
-    extends: template-scala-3-stable
+    dependsOn: typr
+    extends: template-scala-3-newest
     isTestProject: true
-  typo:
+  typr:
     cross:
       jvm212:
         scala:
@@ -202,49 +196,49 @@ projects:
     platform:
       mainClass: com.foo.App
     sources: ./generated-and-checked-in
-  typo-dsl-anorm:
-    dependsOn: typo-runtime-anorm
+  typr-dsl-anorm:
+    dependsOn: typr-runtime-anorm
     extends: template-cross
-    sources: ../typo-dsl-shared
-  typo-dsl-doobie:
-    dependsOn: typo-runtime-doobie
+    sources: ../typr-dsl-shared
+  typr-dsl-doobie:
+    dependsOn: typr-runtime-doobie
     extends: template-cross
-    sources: ../typo-dsl-shared
-  typo-dsl-java:
-    dependsOn: typo-runtime-java
+    sources: ../typr-dsl-shared
+  typr-dsl-java:
+    dependsOn: typr-runtime-java
     java:
       options: --release 24 -proc:none
     platform:
       name: jvm
     sourcegen:
       main: scripts.GeneratedTuples
-      project: typo-scripts
-  typo-dsl-kotlin:
-    dependsOn: typo-dsl-java
+      project: typr-scripts
+  typr-dsl-kotlin:
+    dependsOn: typr-dsl-java
     platform:
       name: jvm
     sourcegen:
       main: scripts.GeneratedRowParsers
-      project: typo-scripts
-  typo-dsl-scala:
-    dependsOn: typo-dsl-java
+      project: typr-scripts
+  typr-dsl-scala:
+    dependsOn: typr-dsl-java
     extends: template-scala-3-newest
     sourcegen:
       main: scripts.GeneratedRowParsers
-      project: typo-scripts
-  typo-dsl-zio-jdbc:
-    dependsOn: typo-runtime-zio-jdbc
+      project: typr-scripts
+  typr-dsl-zio-jdbc:
+    dependsOn: typr-runtime-zio-jdbc
     extends: template-cross
-    sources: ../typo-dsl-shared
-  typo-runtime-anorm:
+    sources: ../typr-dsl-shared
+  typr-runtime-anorm:
     dependencies: org.playframework.anorm::anorm:2.7.0
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     extends: template-cross
-  typo-runtime-doobie:
+  typr-runtime-doobie:
     dependencies: org.tpolecat::doobie-postgres:1.0.0-RC9
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     extends: template-cross
-  typo-runtime-java:
+  typr-runtime-java:
     dependencies:
     - com.oracle.database.jdbc:ojdbc11:23.6.0.24.10
     - com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11
@@ -258,28 +252,28 @@ projects:
       name: jvm
     sourcegen:
       main: scripts.GeneratedRowParsers
-      project: typo-scripts
-  typo-runtime-zio-jdbc:
+      project: typr-scripts
+  typr-runtime-zio-jdbc:
     dependencies: dev.zio::zio-jdbc:0.1.2
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     extends: template-cross
-  typo-scripts:
+  typr-scripts:
     dependencies: build.bleep::bleep-plugin-ci-release:${BLEEP_VERSION}
-    dependsOn: typo
+    dependsOn: typr
     extends: template-scala-3-newest
     scala:
       strict: false
-  typo-scripts-doc:
+  typr-scripts-doc:
     dependencies:
     - build.bleep::bleep-plugin-dynver:${BLEEP_VERSION}
     - build.bleep::bleep-plugin-mdoc:${BLEEP_VERSION}
     dependsOn:
-    - typo
-    - typo-tester-anorm
-    extends: template-scala-3-stable
+    - typr
+    - typr-tester-anorm
+    extends: template-scala-3-newest
     scala:
       strict: false
-  typo-tester-anorm:
+  typr-tester-anorm:
     cross:
       jvm213:
         sources: ./generated-and-checked-in-2.13
@@ -288,13 +282,13 @@ projects:
     dependencies:
     - com.typesafe.play::play-json:2.10.6
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typo-dsl-anorm
-    extends: template-cross
+    dependsOn: typr-dsl-anorm
+    extends: template-cross-scala-3-newest
     isTestProject: true
     sourcegen:
       main: scripts.GenHardcodedFiles
-      project: typo-scripts
-  typo-tester-doobie:
+      project: typr-scripts
+  typr-tester-doobie:
     cross:
       jvm213:
         sources: ./generated-and-checked-in-2.13
@@ -303,14 +297,14 @@ projects:
     dependencies:
     - io.circe::circe-core:0.14.7
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typo-dsl-doobie
+    dependsOn: typr-dsl-doobie
     extends: template-cross-scala-3-newest
     isTestProject: true
     sourcegen:
       main: scripts.GenHardcodedFiles
-      project: typo-scripts
+      project: typr-scripts
     sources: ./generated-and-checked-in
-  typo-tester-duckdb-java:
+  typr-tester-duckdb-java:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -318,14 +312,14 @@ projects:
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-java
+    dependsOn: typr-dsl-java
     isTestProject: true
     java:
       options: -proc:none
     platform:
       name: jvm
     sources: ./generated-and-checked-in
-  typo-tester-duckdb-kotlin:
+  typr-tester-duckdb-kotlin:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -334,16 +328,14 @@ projects:
     - com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-kotlin
+    dependsOn: typr-dsl-kotlin
     isTestProject: true
     platform:
       name: jvm
-    scala:
-      options: -Xallow-kotlin
     sources:
     - ./generated-and-checked-in
     - ./src/kotlin
-  typo-tester-duckdb-scala:
+  typr-tester-duckdb-scala:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -351,11 +343,15 @@ projects:
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-scala
+    dependsOn: typr-dsl-scala
     extends: template-scala-3-newest
     isTestProject: true
-    sources: ./generated-and-checked-in
-  typo-tester-mariadb-java:
+    scala:
+      strict: false
+    sources:
+    - ./generated-and-checked-in
+    - ./src/scala
+  typr-tester-mariadb-java:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -363,25 +359,25 @@ projects:
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-java
+    dependsOn: typr-dsl-java
     isTestProject: true
     java:
       options: -proc:none
     platform:
       name: jvm
     sources: ./generated-and-checked-in
-  typo-tester-mariadb-scala:
+  typr-tester-mariadb-scala:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
     - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typo-dsl-scala
+    dependsOn: typr-dsl-scala
     extends: template-scala-3-newest
     isTestProject: true
     sources: ./generated-and-checked-in
-  typo-tester-sqlserver-java:
+  typr-tester-sqlserver-java:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -390,7 +386,7 @@ projects:
     - com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-java
+    dependsOn: typr-dsl-java
     isTestProject: true
     java:
       options: -proc:none
@@ -399,7 +395,7 @@ projects:
     sources:
     - ./generated-and-checked-in
     - ./src/java
-  typo-tester-sqlserver-kotlin:
+  typr-tester-sqlserver-kotlin:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -409,16 +405,14 @@ projects:
     - com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-kotlin
+    dependsOn: typr-dsl-kotlin
     isTestProject: true
     platform:
       name: jvm
-    scala:
-      options: -Xallow-kotlin
     sources:
     - ./generated-and-checked-in
     - ./src/kotlin
-  typo-tester-sqlserver-scala:
+  typr-tester-sqlserver-scala:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -427,16 +421,13 @@ projects:
     - com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-scala
+    dependsOn: typr-dsl-scala
     extends: template-scala-3-newest
     isTestProject: true
     sources:
     - ./generated-and-checked-in
     - ./src/scala
-  typo-tester-none:
-    extends: template-cross-scala-3-newest
-    sources: ./generated-and-checked-in
-  typo-tester-oracle-java:
+  typr-tester-oracle-java:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -445,14 +436,14 @@ projects:
     - com.novocode:junit-interface:0.11
     - com.oracle.database.jdbc:ojdbc11:23.5.0.24.07
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-java
+    dependsOn: typr-dsl-java
     isTestProject: true
     java:
       options: -proc:none
     platform:
       name: jvm
     sources: ./generated-and-checked-in
-  typo-tester-oracle-kotlin:
+  typr-tester-oracle-kotlin:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -462,14 +453,12 @@ projects:
     - com.novocode:junit-interface:0.11
     - com.oracle.database.jdbc:ojdbc11:23.5.0.24.07
     - junit:junit:4.13.2
-    dependsOn: typo-runtime-java
+    dependsOn: typr-runtime-java
     isTestProject: true
     platform:
       name: jvm
-    scala:
-      options: -Xallow-kotlin
     sources: ./generated-and-checked-in
-  typo-tester-oracle-scala:
+  typr-tester-oracle-scala:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -477,23 +466,23 @@ projects:
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     - com.oracle.database.jdbc:ojdbc11:23.5.0.24.07
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typo-dsl-scala
-    extends: template-scala-3-stable
-    isTestProject: true
-    sources: ./generated-and-checked-in
-  typo-tester-oracle-scala-new:
-    dependencies:
-    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
-    - com.fasterxml.jackson.core:jackson-databind:2.17.2
-    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
-    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
-    - com.oracle.database.jdbc:ojdbc11:23.5.0.24.07
-    - org.scalatest::scalatest:3.2.18
-    dependsOn: typo-dsl-scala
+    dependsOn: typr-dsl-scala
     extends: template-scala-3-newest
     isTestProject: true
     sources: ./generated-and-checked-in
-  typo-tester-typo-java:
+  typr-tester-oracle-scala-new:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.oracle.database.jdbc:ojdbc11:23.5.0.24.07
+    - org.scalatest::scalatest:3.2.18
+    dependsOn: typr-dsl-scala
+    extends: template-scala-3-newest
+    isTestProject: true
+    sources: ./generated-and-checked-in
+  typr-tester-typr-java:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -501,7 +490,7 @@ projects:
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
-    dependsOn: typo-dsl-java
+    dependsOn: typr-dsl-java
     isTestProject: true
     java:
       options: -proc:none
@@ -509,9 +498,9 @@ projects:
       name: jvm
     sourcegen:
       main: scripts.GenHardcodedFiles
-      project: typo-scripts
+      project: typr-scripts
     sources: ./generated-and-checked-in
-  typo-tester-typo-scala-new:
+  typr-tester-typr-scala-new:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -520,11 +509,11 @@ projects:
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typo-dsl-scala
+    dependsOn: typr-dsl-scala
     extends: template-scala-3-newest
     isTestProject: true
     sources: ./generated-and-checked-in
-  typo-tester-typo-scala-old:
+  typr-tester-typr-scala-old:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
@@ -533,11 +522,11 @@ projects:
     - com.novocode:junit-interface:0.11
     - junit:junit:4.13.2
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typo-dsl-java
+    dependsOn: typr-dsl-java
     extends: template-scala-3-newest
     isTestProject: true
     sources: ./generated-and-checked-in
-  typo-tester-zio-jdbc:
+  typr-tester-zio-jdbc:
     cross:
       jvm213:
         sources: ./generated-and-checked-in-2.13
@@ -546,56 +535,56 @@ projects:
     dependencies:
     - dev.zio::zio-json:0.7.0
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typo-dsl-zio-jdbc
+    dependsOn: typr-dsl-zio-jdbc
     extends: template-cross-scala-3-newest
     isTestProject: true
     sourcegen:
       main: scripts.GenHardcodedFiles
-      project: typo-scripts
+      project: typr-scripts
 scripts:
   compile-benchmarks:
     main: scripts.CompileBenchmark
-    project: typo-scripts
+    project: typr-scripts
   generate-adventureworks:
     main: scripts.GeneratedAdventureWorks
-    project: typo-scripts
+    project: typr-scripts
     sourceGlobs: ../adventureworks_sql
   generate-all:
     main: scripts.GenerateAll
-    project: typo-scripts
+    project: typr-scripts
   generate-docs:
     main: scripts.GenDocumentation
-    project: typo-scripts-doc
+    project: typr-scripts-doc
   generate-duckdb:
     main: scripts.GeneratedDuckDb
-    project: typo-scripts
+    project: typr-scripts
   generate-frontpage:
     main: scripts.GeneratedFrontpage
-    project: typo-scripts
+    project: typr-scripts
   generate-oracle:
     main: scripts.GeneratedOracle
-    project: typo-scripts
+    project: typr-scripts
     sourceGlobs: ../oracle_sql
   generate-mariadb:
     main: scripts.GeneratedMariaDb
-    project: typo-scripts
+    project: typr-scripts
     sourceGlobs: ../mariadb_sql
   generate-sqlserver:
     main: scripts.GeneratedSqlServer
-    project: typo-scripts
+    project: typr-scripts
     sourceGlobs: ../sqlserver_sql
   generate-openapi-test:
     main: scripts.GenerateOpenApiTest
-    project: typo-scripts
+    project: typr-scripts
   generate-sources:
     main: scripts.GeneratedSources
-    project: typo-scripts
+    project: typr-scripts
   my-publish-local:
     main: scripts.PublishLocal
-    project: typo-scripts
+    project: typr-scripts
   publish:
     main: scripts.Publish
-    project: typo-scripts
+    project: typr-scripts
 templates:
   template-common:
     java:

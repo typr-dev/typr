@@ -25,7 +25,7 @@ const config = {
 
   // GitHub pages deployment config.
   organizationName: "oyvindberg",
-  projectName: "typo",
+  projectName: "typr",
   trailingSlash: true,
 
   i18n: {
@@ -91,7 +91,7 @@ const config = {
           },
           {to: 'blog', label: 'Blog', position: 'left'},
           {
-            href: "https://github.com/oyvindberg/typo",
+            href: "https://github.com/oyvindberg/typr",
             label: "GitHub",
             position: "right",
           },
@@ -118,7 +118,7 @@ const config = {
             items: [
               {
                 label: "GitHub",
-                to: "https://github.com/oyvindberg/typo",
+                to: "https://github.com/oyvindberg/typr",
               },
             ],
           },

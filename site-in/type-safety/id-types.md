@@ -39,8 +39,8 @@ if you have some tables where you don't want the type-safety this brings, you ca
 code generation by tweaking `Options#enablePrimaryKeyType`:
 
 ```scala mdoc:silent
-import typo.*
-import typo.internal.codegen.LangScala
+import typr.*
+import typr.internal.codegen.LangScala
 
 val options = Options(
   pkg = "mypkg",

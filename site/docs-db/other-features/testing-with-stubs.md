@@ -33,9 +33,9 @@ of your tests it's still very beneficial!
 
 ```scala
 import adventureworks.person.address.*
-import typo.dsl.*
-import typo.dsl.DeleteBuilder.DeleteBuilderMock
-import typo.dsl.UpdateBuilder.UpdateBuilderMock
+import typr.dsl.*
+import typr.dsl.DeleteBuilder.DeleteBuilderMock
+import typr.dsl.UpdateBuilder.UpdateBuilderMock
 import java.sql.Connection
 import scala.annotation.nowarn
 

@@ -15,8 +15,10 @@ import scala.concurrent.{ExecutionContext, Future}
 /** DuckDB-specific SQL file metadata extraction using sqlglot for analysis.
   *
   * Flow:
-  *   1. Read table schema from INFORMATION_SCHEMA 2. Find all SQL files and parse with DecomposedSql 3. Pass schema + SQL contents (rendered with :param syntax) to sqlglot 4. Use sqlglot results for:
-  *      query type, column types, parameter types, nullability, lineage
+  *   1. Read table schema from INFORMATION_SCHEMA
+  *   2. Find all SQL files and parse with DecomposedSql
+  *   3. Pass schema + SQL contents (rendered with :param syntax) to sqlglot
+  *   4. Use sqlglot results for: query type, column types, parameter types, nullability, lineage
   */
 object DuckDbSqlFileMetadata {
 
@@ -98,7 +100,7 @@ object DuckDbSqlFileMetadata {
           c.columnName -> SqlglotColumnSchema(
             `type` = c.dataType.toUpperCase,
             nullable = c.isNullable,
-            primaryKey = false // DuckDB doesn't expose this in information_schema easily
+            primaryKey = false // DuckDB doesn't expose this easily in INFORMATION_SCHEMA
           )
         }.toMap
         tableName -> columnMap
@@ -151,7 +153,6 @@ object DuckDbSqlFileMetadata {
         unnamedIdx += 1
         name
       case DecomposedSql.NamedParam(parsedName) =>
-        // Use the base name without type annotations for sqlglot
         s":${parsedName.name.value}"
     }.mkString
   }
@@ -182,8 +183,6 @@ object DuckDbSqlFileMetadata {
             buildSelectSqlFile(logger, path, scriptsPath, decomposed, result, schema)
 
           case Some("UPDATE") | Some("INSERT") | Some("DELETE") =>
-            // Non-SELECT queries don't return rows (unless they have RETURNING)
-            // For now, treat as Update - RETURNING support can be added later
             buildParams(logger, path, decomposed, result, schema).map { params =>
               val jdbcMetadata = JdbcMetadata(params, MaybeReturnsRows.Update)
               SqlFile(RelPath.relativeTo(scriptsPath, path), decomposed, jdbcMetadata, None)
@@ -194,7 +193,6 @@ object DuckDbSqlFileMetadata {
             None
 
           case None =>
-            // No query type detected - might be empty or unparseable
             if (
               result.columns.isEmpty && decomposed.frags.forall {
                 case DecomposedSql.SqlText(t) => t.trim.isEmpty
@@ -224,7 +222,6 @@ object DuckDbSqlFileMetadata {
       return None
     }
 
-    // Check that all columns have types - fail early if any is missing
     val missingTypes = result.columns.filter(col => col.sourceType.orElse(col.inferredType).isEmpty)
     if (missingTypes.nonEmpty) {
       val missing = missingTypes.map(c => s"${c.name}").mkString(", ")
@@ -234,13 +231,8 @@ object DuckDbSqlFileMetadata {
 
     val cols = result.columns.map { col =>
       val parsedName = ParsedName.of(col.alias.getOrElse(col.name))
-      // For expressions (aggregates, computed columns), prefer inferredType since sourceType is the input column type
-      // For direct column references, prefer sourceType (actual database type from schema) over inferredType
-      val effectiveType =
-        if (col.isExpression) col.inferredType.orElse(col.sourceType).get
-        else col.sourceType.orElse(col.inferredType).get // Safe: checked above
+      val effectiveType = col.sourceType.orElse(col.inferredType).get
 
-      // Nullable if schema says so OR if from a LEFT JOIN
       val isNullable =
         if (col.nullableFromJoin) ColumnNullable.Nullable
         else if (col.nullableInSchema) ColumnNullable.Nullable
@@ -250,11 +242,11 @@ object DuckDbSqlFileMetadata {
         baseColumnName = col.sourceColumn.map(db.ColName.apply),
         baseRelationName = col.sourceTable.map(t => db.RelationName(None, t)),
         catalogName = None,
-        columnClassName = "", // Not used
+        columnClassName = "",
         columnDisplaySize = 0,
         parsedColumnName = parsedName,
         columnName = db.ColName(col.name),
-        columnType = JdbcType.VarChar, // Not used
+        columnType = JdbcType.VarChar,
         columnTypeName = effectiveType,
         format = 0,
         isAutoIncrement = false,
@@ -269,8 +261,7 @@ object DuckDbSqlFileMetadata {
         precision = 0,
         scale = 0,
         schemaName = None,
-        tableName = col.sourceTable,
-        isExpression = col.isExpression
+        tableName = col.sourceTable
       )
     }
 
@@ -287,7 +278,7 @@ object DuckDbSqlFileMetadata {
     }
   }
 
-  /** Build parameter metadata from sqlglot results. Returns None if any parameter is missing type info. */
+  /** Build parameter metadata from sqlglot results */
   private def buildParams(
       logger: TypoLogger,
       path: Path,
@@ -295,26 +286,17 @@ object DuckDbSqlFileMetadata {
       result: SqlglotFileResult,
       schema: Map[String, Map[String, SqlglotColumnSchema]]
   ): Option[List[MetadataParameterColumn]] = {
-    // Group all sqlglot parameters by name for efficient lookup
     val paramsByName: Map[String, List[SqlglotParameterInfo]] = result.parameters.groupBy(_.name)
 
     val paramsWithTypes = decomposed.params.zipWithIndex.map { case (param, idx) =>
-      // Match by position or name
       val (paramName, userOverriddenType) = param match {
         case DecomposedSql.NotNamedParam          => (s"param$idx", None)
         case DecomposedSql.NamedParam(parsedName) => (parsedName.name.value, parsedName.overriddenType)
       }
 
       val matchingParams = paramsByName.getOrElse(paramName, Nil)
+      val sqlglotParam = matchingParams.find(p => p.sourceTable.isDefined && p.sourceColumn.isDefined).orElse(matchingParams.headOption)
 
-      // Prefer parameters with source info, then those with inferred types, then any match
-      val sqlglotParam =
-        matchingParams
-          .find(p => p.sourceTable.isDefined && p.sourceColumn.isDefined)
-          .orElse(matchingParams.find(_.inferredType.isDefined))
-          .orElse(matchingParams.headOption)
-
-      // Try to get the actual type from the schema using sourceTable and sourceColumn
       val schemaType: Option[String] = for {
         p <- sqlglotParam
         sourceTable <- p.sourceTable
@@ -327,22 +309,17 @@ object DuckDbSqlFileMetadata {
         columnSchema <- tableSchema.get(sourceColumn)
       } yield columnSchema.`type`
 
-      // Get DB type from user-specified type override
       val fallbackFromUserType: Option[String] = userOverriddenType.flatMap {
         case OverriddenType.Primitive(p) => Some(duckDbTypeNameFor(p))
-        case OverriddenType.Qualified(_) => None // Qualified types provide their own duckDbType
+        case OverriddenType.Qualified(_) => None
       }
 
-      // Prefer schema type > sqlglot inferred type > user type fallback
       val effectiveType = schemaType.orElse(sqlglotParam.flatMap(_.inferredType)).orElse(fallbackFromUserType)
-
-      // Check nullability from any parameter occurrence (any with nullable hint means nullable)
       val hasNullableHint = matchingParams.exists(_.nullableHint)
 
       (paramName, effectiveType, hasNullableHint)
     }
 
-    // Check for missing types
     val missingTypes = paramsWithTypes.filter(_._2.isEmpty).map(_._1)
     if (missingTypes.nonEmpty) {
       logger.warn(s"Parameters without type information in $path: ${missingTypes.mkString(", ")}, skipping")
@@ -350,13 +327,13 @@ object DuckDbSqlFileMetadata {
     }
 
     Some(paramsWithTypes.map { case (_, effectiveTypeOpt, hasNullableHint) =>
-      val typeName = effectiveTypeOpt.get // Safe: checked above
+      val typeName = effectiveTypeOpt.get
 
       MetadataParameterColumn(
         isNullable = if (hasNullableHint) ParameterNullable.Nullable else ParameterNullable.NullableUnknown,
         isSigned = true,
         parameterMode = ParameterMode.ModeIn,
-        parameterType = JdbcType.VarChar, // Not used
+        parameterType = JdbcType.VarChar,
         parameterTypeName = typeName,
         precision = 0,
         scale = 0
@@ -395,7 +372,7 @@ object DuckDbSqlFileMetadata {
     case WellKnownPrimitive.LocalDate     => "DATE"
     case WellKnownPrimitive.LocalTime     => "TIME"
     case WellKnownPrimitive.LocalDateTime => "TIMESTAMP"
-    case WellKnownPrimitive.Instant       => "TIMESTAMPTZ"
+    case WellKnownPrimitive.Instant       => "TIMESTAMP WITH TIME ZONE"
     case WellKnownPrimitive.UUID          => "UUID"
   }
 }
