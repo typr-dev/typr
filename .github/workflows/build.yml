@@ -25,12 +25,28 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip')"
+    env:
+      PG_MAJOR: 16
     steps:
       - uses: actions/checkout@v4
       - uses: bleep-build/bleep-setup-action@0.0.1
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
+
+      - name: Start Postgres
+        run: docker compose up -d postgres
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            if docker compose exec -T postgres pg_isready -U postgres; then
+              echo "Postgres is ready"
+              break
+            fi
+            echo "Waiting for Postgres... ($i/30)"
+            sleep 2
+          done
 
       - name: Run general tests
         run: bleep test tests
