@@ -1,8 +1,6 @@
 package typo.kotlindsl
 
 import typo.dsl.UpdateBuilder as JavaUpdateBuilder
-import typo.dsl.Structure
-import typo.dsl.SqlExpr
 import typo.dsl.Dialect
 import typo.runtime.Fragment
 import typo.runtime.DbType
@@ -18,29 +16,29 @@ class UpdateBuilder<Fields, Row> internal constructor(
 
     /**
      * Set a field to a new value.
-     * @param field The field to update
+     * @param field The field to update (returns Kotlin FieldLike wrapper)
      * @param value The value to set
      * @param pgType The PostgreSQL type of the value
      */
-    fun <T> set(field: (Fields) -> SqlExpr.FieldLike<T, Row>, value: T, pgType: DbType<T>): UpdateBuilder<Fields, Row> {
-        return UpdateBuilder(javaBuilder.set(field, value, pgType))
+    fun <T> set(field: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T, Row>, value: T, pgType: DbType<T>): UpdateBuilder<Fields, Row> {
+        return UpdateBuilder(javaBuilder.set({ fields -> field(fields).underlying }, value, pgType))
     }
 
     /**
      * Set a field to a new value. The pgType is extracted from the field.
      * Convenience method equivalent to setComputedValue with a constant expression.
-     * @param field The field to update
+     * @param field The field to update (returns Kotlin FieldLike wrapper)
      * @param value The value to set
      */
-    fun <T> setValue(field: (Fields) -> SqlExpr.FieldLike<T, Row>, value: T): UpdateBuilder<Fields, Row> {
-        return UpdateBuilder(javaBuilder.setValue(field, value))
+    fun <T> setValue(field: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T, Row>, value: T): UpdateBuilder<Fields, Row> {
+        return UpdateBuilder(javaBuilder.setValue({ fields -> field(fields).underlying }, value))
     }
 
     /**
      * Set a field using an expression.
      */
-    fun <T> setExpr(field: (Fields) -> SqlExpr.FieldLike<T, Row>, expr: SqlExpr<T>): UpdateBuilder<Fields, Row> {
-        return UpdateBuilder(javaBuilder.setExpr(field, expr))
+    fun <T> setExpr(field: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T, Row>, expr: typo.dsl.SqlExpr<T>): UpdateBuilder<Fields, Row> {
+        return UpdateBuilder(javaBuilder.setExpr({ fields -> field(fields).underlying }, expr))
     }
 
     /**
@@ -49,17 +47,17 @@ class UpdateBuilder<Fields, Row> internal constructor(
      * Example: setComputedValue({ p -> p.name() }) { name -> name.upper(Name.bijection) }
      */
     fun <T> setComputedValue(
-        field: (Fields) -> SqlExpr.FieldLike<T, Row>,
-        compute: (SqlExpr.FieldLike<T, Row>) -> SqlExpr<T>
+        field: (Fields) -> typo.kotlindsl.SqlExpr.FieldLike<T, Row>,
+        compute: (typo.dsl.SqlExpr.FieldLike<T, Row>) -> typo.dsl.SqlExpr<T>
     ): UpdateBuilder<Fields, Row> {
-        return UpdateBuilder(javaBuilder.setComputedValue(field, compute))
+        return UpdateBuilder(javaBuilder.setComputedValue({ fields -> field(fields).underlying }, compute))
     }
 
     /**
      * Add a WHERE clause to the update.
      * Consecutive calls will be combined with AND.
      */
-    fun where(predicate: (Fields) -> SqlExpr<Boolean>): UpdateBuilder<Fields, Row> {
+    fun where(predicate: (Fields) -> typo.dsl.SqlExpr<Boolean>): UpdateBuilder<Fields, Row> {
         return UpdateBuilder(javaBuilder.where(predicate))
     }
 

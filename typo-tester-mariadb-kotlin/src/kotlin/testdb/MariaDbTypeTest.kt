@@ -17,7 +17,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.Year
-import java.util.Optional
 
 /**
  * Tests for all MariaDB data types - equivalent to PostgreSQL ArrayTest for MariaDB.
@@ -84,104 +83,104 @@ class MariaDbTypeTest {
         )
 
         fun mariatestnullRowEmpty(): MariatestnullRow = MariatestnullRow(
-            tinyintCol = Optional.empty(),
-            smallintCol = Optional.empty(),
-            mediumintCol = Optional.empty(),
-            intCol = Optional.empty(),
-            bigintCol = Optional.empty(),
-            tinyintUCol = Optional.empty(),
-            smallintUCol = Optional.empty(),
-            mediumintUCol = Optional.empty(),
-            intUCol = Optional.empty(),
-            bigintUCol = Optional.empty(),
-            decimalCol = Optional.empty(),
-            numericCol = Optional.empty(),
-            floatCol = Optional.empty(),
-            doubleCol = Optional.empty(),
-            boolCol = Optional.empty(),
-            bitCol = Optional.empty(),
-            bit1Col = Optional.empty(),
-            charCol = Optional.empty(),
-            varcharCol = Optional.empty(),
-            tinytextCol = Optional.empty(),
-            textCol = Optional.empty(),
-            mediumtextCol = Optional.empty(),
-            longtextCol = Optional.empty(),
-            binaryCol = Optional.empty(),
-            varbinaryCol = Optional.empty(),
-            tinyblobCol = Optional.empty(),
-            blobCol = Optional.empty(),
-            mediumblobCol = Optional.empty(),
-            longblobCol = Optional.empty(),
-            dateCol = Optional.empty(),
-            timeCol = Optional.empty(),
-            timeFspCol = Optional.empty(),
-            datetimeCol = Optional.empty(),
-            datetimeFspCol = Optional.empty(),
-            timestampCol = Optional.empty(),
-            timestampFspCol = Optional.empty(),
-            yearCol = Optional.empty(),
-            enumCol = Optional.empty(),
-            setCol = Optional.empty(),
-            jsonCol = Optional.empty(),
-            inet4Col = Optional.empty(),
-            inet6Col = Optional.empty()
+            tinyintCol = null,
+            smallintCol = null,
+            mediumintCol = null,
+            intCol = null,
+            bigintCol = null,
+            tinyintUCol = null,
+            smallintUCol = null,
+            mediumintUCol = null,
+            intUCol = null,
+            bigintUCol = null,
+            decimalCol = null,
+            numericCol = null,
+            floatCol = null,
+            doubleCol = null,
+            boolCol = null,
+            bitCol = null,
+            bit1Col = null,
+            charCol = null,
+            varcharCol = null,
+            tinytextCol = null,
+            textCol = null,
+            mediumtextCol = null,
+            longtextCol = null,
+            binaryCol = null,
+            varbinaryCol = null,
+            tinyblobCol = null,
+            blobCol = null,
+            mediumblobCol = null,
+            longblobCol = null,
+            dateCol = null,
+            timeCol = null,
+            timeFspCol = null,
+            datetimeCol = null,
+            datetimeFspCol = null,
+            timestampCol = null,
+            timestampFspCol = null,
+            yearCol = null,
+            enumCol = null,
+            setCol = null,
+            jsonCol = null,
+            inet4Col = null,
+            inet6Col = null
         )
 
         fun mariatestnullRowWithValues(): MariatestnullRow = MariatestnullRow(
             // Integer types
-            tinyintCol = Optional.of(127.toByte()),
-            smallintCol = Optional.of(32767.toShort()),
-            mediumintCol = Optional.of(8388607),
-            intCol = Optional.of(42),
-            bigintCol = Optional.of(9223372036854775807L),
+            tinyintCol = 127.toByte(),
+            smallintCol = 32767.toShort(),
+            mediumintCol = 8388607,
+            intCol = 42,
+            bigintCol = 9223372036854775807L,
             // Unsigned integer types
-            tinyintUCol = Optional.of(255.toShort()),
-            smallintUCol = Optional.of(65535),
-            mediumintUCol = Optional.of(16777215),
-            intUCol = Optional.of(4294967295L),
-            bigintUCol = Optional.of(BigInteger("18446744073709551615")),
+            tinyintUCol = 255.toShort(),
+            smallintUCol = 65535,
+            mediumintUCol = 16777215,
+            intUCol = 4294967295L,
+            bigintUCol = BigInteger("18446744073709551615"),
             // Decimal types
-            decimalCol = Optional.of(BigDecimal("12345.6789")),
-            numericCol = Optional.of(BigDecimal("98765.4321")),
-            floatCol = Optional.of(3.14f),
-            doubleCol = Optional.of(2.718281828459045),
+            decimalCol = BigDecimal("12345.6789"),
+            numericCol = BigDecimal("98765.4321"),
+            floatCol = 3.14f,
+            doubleCol = 2.718281828459045,
             // Boolean
-            boolCol = Optional.of(true),
+            boolCol = true,
             // Bit types
-            bitCol = Optional.of(byteArrayOf(0xF0.toByte())),
-            bit1Col = Optional.of(byteArrayOf(1.toByte())),
+            bitCol = byteArrayOf(0xF0.toByte()),
+            bit1Col = byteArrayOf(1.toByte()),
             // String types
-            charCol = Optional.of("fixed     "),
-            varcharCol = Optional.of("variable"),
-            tinytextCol = Optional.of("tiny text"),
-            textCol = Optional.of("text content"),
-            mediumtextCol = Optional.of("medium text"),
-            longtextCol = Optional.of("long text"),
+            charCol = "fixed     ",
+            varcharCol = "variable",
+            tinytextCol = "tiny text",
+            textCol = "text content",
+            mediumtextCol = "medium text",
+            longtextCol = "long text",
             // Binary types
-            binaryCol = Optional.of(byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A)),
-            varbinaryCol = Optional.of(byteArrayOf(0xDE.toByte(), 0xAD.toByte(), 0xBE.toByte(), 0xEF.toByte())),
-            tinyblobCol = Optional.of(byteArrayOf(0x01)),
-            blobCol = Optional.of(byteArrayOf(0x02, 0x03)),
-            mediumblobCol = Optional.of(byteArrayOf(0x04, 0x05, 0x06)),
-            longblobCol = Optional.of(byteArrayOf(0x07, 0x08, 0x09, 0x0A)),
+            binaryCol = byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A),
+            varbinaryCol = byteArrayOf(0xDE.toByte(), 0xAD.toByte(), 0xBE.toByte(), 0xEF.toByte()),
+            tinyblobCol = byteArrayOf(0x01),
+            blobCol = byteArrayOf(0x02, 0x03),
+            mediumblobCol = byteArrayOf(0x04, 0x05, 0x06),
+            longblobCol = byteArrayOf(0x07, 0x08, 0x09, 0x0A),
             // Date/time types
-            dateCol = Optional.of(LocalDate.of(2024, 12, 2)),
-            timeCol = Optional.of(LocalTime.of(12, 30, 45)),
-            timeFspCol = Optional.of(LocalTime.of(12, 30, 45, 123456000)),
-            datetimeCol = Optional.of(LocalDateTime.of(2024, 12, 2, 14, 30, 45)),
-            datetimeFspCol = Optional.of(LocalDateTime.of(2024, 12, 2, 14, 30, 45, 123456000)),
-            timestampCol = Optional.of(LocalDateTime.of(2024, 12, 2, 10, 0, 0)),
-            timestampFspCol = Optional.of(LocalDateTime.of(2024, 12, 2, 10, 0, 0, 123456000)),
-            yearCol = Optional.of(Year.of(2024)),
+            dateCol = LocalDate.of(2024, 12, 2),
+            timeCol = LocalTime.of(12, 30, 45),
+            timeFspCol = LocalTime.of(12, 30, 45, 123456000),
+            datetimeCol = LocalDateTime.of(2024, 12, 2, 14, 30, 45),
+            datetimeFspCol = LocalDateTime.of(2024, 12, 2, 14, 30, 45, 123456000),
+            timestampCol = LocalDateTime.of(2024, 12, 2, 10, 0, 0),
+            timestampFspCol = LocalDateTime.of(2024, 12, 2, 10, 0, 0, 123456000),
+            yearCol = Year.of(2024),
             // Enum and set
-            enumCol = Optional.of("a"),
-            setCol = Optional.of(MariaSet.of("x", "y")),
+            enumCol = "a",
+            setCol = MariaSet.of("x", "y"),
             // JSON
-            jsonCol = Optional.of("{\"key\": \"value\"}"),
+            jsonCol = "{\"key\": \"value\"}",
             // Network types
-            inet4Col = Optional.of(Inet4("192.168.1.1")),
-            inet6Col = Optional.of(Inet6("::1"))
+            inet4Col = Inet4("192.168.1.1"),
+            inet6Col = Inet6("::1")
         )
     }
 
@@ -255,8 +254,8 @@ class MariaDbTypeTest {
         WithConnection.run { c ->
             val inserted = mariatestRepo.insert(mariaTestRow(), c)
             val selected = mariatestRepo.selectById(inserted.intCol, c)
-            assertTrue(selected.isPresent)
-            assertEquals(inserted.intCol, selected.get().intCol)
+            assertNotNull(selected)
+            assertEquals(inserted.intCol, selected!!.intCol)
         }
     }
 
@@ -278,8 +277,8 @@ class MariaDbTypeTest {
             val updated = inserted.copy(varcharCol = "updated")
             mariatestRepo.update(updated, c)
             val selected = mariatestRepo.selectById(inserted.intCol, c)
-            assertTrue(selected.isPresent)
-            assertEquals("updated", selected.get().varcharCol)
+            assertNotNull(selected)
+            assertEquals("updated", selected!!.varcharCol)
         }
     }
 
@@ -290,7 +289,7 @@ class MariaDbTypeTest {
             val deleted = mariatestRepo.deleteById(inserted.intCol, c)
             assertTrue(deleted)
             val selected = mariatestRepo.selectById(inserted.intCol, c)
-            assertFalse(selected.isPresent)
+            assertNull(selected)
         }
     }
 
@@ -325,14 +324,14 @@ class MariaDbTypeTest {
         WithConnection.run { c ->
             val row = mariatestnullRepo.insert(mariatestnullRowWithValues(), c)
 
-            // Test DSL select.where() for various types
-            assertEquals(row.boolCol, mariatestnullRepo.select().where { p -> p.boolCol().isEqual(row.boolCol.orElse(null)) }.toList(c)[0].boolCol)
-            assertEquals(row.varcharCol, mariatestnullRepo.select().where { p -> p.varcharCol().isEqual(row.varcharCol.orElse(null)) }.toList(c)[0].varcharCol)
-            assertEquals(row.intCol, mariatestnullRepo.select().where { p -> p.intCol().isEqual(row.intCol.orElse(null)) }.toList(c)[0].intCol)
-            assertEquals(row.bigintCol, mariatestnullRepo.select().where { p -> p.bigintCol().isEqual(row.bigintCol.orElse(null)) }.toList(c)[0].bigintCol)
-            assertEquals(row.dateCol, mariatestnullRepo.select().where { p -> p.dateCol().isEqual(row.dateCol.orElse(null)) }.toList(c)[0].dateCol)
-            assertEquals(row.yearCol, mariatestnullRepo.select().where { p -> p.yearCol().isEqual(row.yearCol.orElse(null)) }.toList(c)[0].yearCol)
-            assertEquals(row.enumCol, mariatestnullRepo.select().where { p -> p.enumCol().isEqual(row.enumCol.orElse(null)) }.toList(c)[0].enumCol)
+            // Test DSL select.where() for various types (use !! since we know the test data has non-null values)
+            assertEquals(row.boolCol, mariatestnullRepo.select().where { p -> p.boolCol().isEqual(row.boolCol!!) }.toList(c)[0].boolCol)
+            assertEquals(row.varcharCol, mariatestnullRepo.select().where { p -> p.varcharCol().isEqual(row.varcharCol!!) }.toList(c)[0].varcharCol)
+            assertEquals(row.intCol, mariatestnullRepo.select().where { p -> p.intCol().isEqual(row.intCol!!) }.toList(c)[0].intCol)
+            assertEquals(row.bigintCol, mariatestnullRepo.select().where { p -> p.bigintCol().isEqual(row.bigintCol!!) }.toList(c)[0].bigintCol)
+            assertEquals(row.dateCol, mariatestnullRepo.select().where { p -> p.dateCol().isEqual(row.dateCol!!) }.toList(c)[0].dateCol)
+            assertEquals(row.yearCol, mariatestnullRepo.select().where { p -> p.yearCol().isEqual(row.yearCol!!) }.toList(c)[0].yearCol)
+            assertEquals(row.enumCol, mariatestnullRepo.select().where { p -> p.enumCol().isEqual(row.enumCol!!) }.toList(c)[0].enumCol)
         }
     }
 

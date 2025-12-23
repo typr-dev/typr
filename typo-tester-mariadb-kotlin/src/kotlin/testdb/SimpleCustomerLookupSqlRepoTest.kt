@@ -2,6 +2,7 @@ package testdb
 
 import org.junit.Assert.*
 import org.junit.Test
+import testdb.customtypes.Defaulted
 import testdb.simple_customer_lookup.SimpleCustomerLookupSqlRepoImpl
 import java.util.Random
 
@@ -15,8 +16,19 @@ class SimpleCustomerLookupSqlRepoTest {
 
             val testEmail = "test@example.com"
             val customer = testInsert.Customers(
-                passwordHash = byteArrayOf(1, 2, 3),
                 email = testEmail,
+                passwordHash = byteArrayOf(1, 2, 3),
+                firstName = "John",
+                lastName = "Doe",
+                phone = Defaulted.UseDefault(),
+                status = Defaulted.UseDefault(),
+                tier = Defaulted.UseDefault(),
+                preferences = Defaulted.UseDefault(),
+                marketingFlags = Defaulted.UseDefault(),
+                notes = Defaulted.UseDefault(),
+                createdAt = Defaulted.UseDefault(),
+                updatedAt = Defaulted.UseDefault(),
+                lastLoginAt = Defaulted.UseDefault(),
                 c = c
             )
 

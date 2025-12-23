@@ -2,9 +2,11 @@ package testdb
 
 import org.junit.Assert.*
 import org.junit.Test
+import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
 import testdb.orders.OrdersRepoImpl
 import testdb.update_order_status.UpdateOrderStatusSqlRepoImpl
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.Random
 
@@ -18,24 +20,56 @@ class UpdateOrderStatusSqlRepoTest {
             val testInsert = TestInsert(Random(0))
 
             val customer = testInsert.Customers(
+                email = "test@example.com",
                 passwordHash = byteArrayOf(1, 2, 3),
+                firstName = "John",
+                lastName = "Doe",
+                phone = Defaulted.UseDefault(),
+                status = Defaulted.UseDefault(),
+                tier = Defaulted.UseDefault(),
+                preferences = Defaulted.UseDefault(),
+                marketingFlags = Defaulted.UseDefault(),
+                notes = Defaulted.UseDefault(),
+                createdAt = Defaulted.UseDefault(),
+                updatedAt = Defaulted.UseDefault(),
+                lastLoginAt = Defaulted.UseDefault(),
                 c = c
             )
             val order = testInsert.Orders(
+                orderNumber = "ORD-${testInsert.random.nextInt(100000)}",
                 customerId = customer.customerId,
+                subtotal = BigDecimal("100.00"),
+                totalAmount = BigDecimal("110.00"),
+                orderStatus = Defaulted.UseDefault(),
+                paymentStatus = Defaulted.UseDefault(),
+                shippingAddressId = Defaulted.UseDefault(),
+                billingAddressId = Defaulted.UseDefault(),
+                shippingCost = Defaulted.UseDefault(),
+                taxAmount = Defaulted.UseDefault(),
+                discountAmount = Defaulted.UseDefault(),
+                currencyCode = Defaulted.UseDefault(),
+                promotionId = Defaulted.UseDefault(),
+                notes = Defaulted.UseDefault(),
+                internalNotes = Defaulted.UseDefault(),
+                ipAddress = Defaulted.UseDefault(),
+                userAgent = Defaulted.UseDefault(),
+                orderedAt = Defaulted.UseDefault(),
+                confirmedAt = Defaulted.UseDefault(),
+                shippedAt = Defaulted.UseDefault(),
+                deliveredAt = Defaulted.UseDefault(),
                 c = c
             )
 
             assertEquals("pending", order.orderStatus)
-            assertFalse(order.confirmedAt.isPresent)
+            assertNull(order.confirmedAt)
 
             val rowsAffected = repo.apply("confirmed", order.orderId, c)
             assertEquals(1, rowsAffected)
 
             val updatedOrder = ordersRepo.selectById(order.orderId, c)
-            assertTrue(updatedOrder.isPresent)
-            assertEquals("confirmed", updatedOrder.get().orderStatus)
-            assertTrue(updatedOrder.get().confirmedAt.isPresent)
+            assertNotNull(updatedOrder)
+            assertEquals("confirmed", updatedOrder!!.orderStatus)
+            assertNotNull(updatedOrder.confirmedAt)
         }
     }
 
@@ -45,11 +79,43 @@ class UpdateOrderStatusSqlRepoTest {
             val testInsert = TestInsert(Random(0))
 
             val customer = testInsert.Customers(
+                email = "test2@example.com",
                 passwordHash = byteArrayOf(1, 2, 3),
+                firstName = "Jane",
+                lastName = "Doe",
+                phone = Defaulted.UseDefault(),
+                status = Defaulted.UseDefault(),
+                tier = Defaulted.UseDefault(),
+                preferences = Defaulted.UseDefault(),
+                marketingFlags = Defaulted.UseDefault(),
+                notes = Defaulted.UseDefault(),
+                createdAt = Defaulted.UseDefault(),
+                updatedAt = Defaulted.UseDefault(),
+                lastLoginAt = Defaulted.UseDefault(),
                 c = c
             )
             val order = testInsert.Orders(
+                orderNumber = "ORD-${testInsert.random.nextInt(100000)}",
                 customerId = customer.customerId,
+                subtotal = BigDecimal("100.00"),
+                totalAmount = BigDecimal("110.00"),
+                orderStatus = Defaulted.UseDefault(),
+                paymentStatus = Defaulted.UseDefault(),
+                shippingAddressId = Defaulted.UseDefault(),
+                billingAddressId = Defaulted.UseDefault(),
+                shippingCost = Defaulted.UseDefault(),
+                taxAmount = Defaulted.UseDefault(),
+                discountAmount = Defaulted.UseDefault(),
+                currencyCode = Defaulted.UseDefault(),
+                promotionId = Defaulted.UseDefault(),
+                notes = Defaulted.UseDefault(),
+                internalNotes = Defaulted.UseDefault(),
+                ipAddress = Defaulted.UseDefault(),
+                userAgent = Defaulted.UseDefault(),
+                orderedAt = Defaulted.UseDefault(),
+                confirmedAt = Defaulted.UseDefault(),
+                shippedAt = Defaulted.UseDefault(),
+                deliveredAt = Defaulted.UseDefault(),
                 c = c
             )
 
@@ -57,9 +123,9 @@ class UpdateOrderStatusSqlRepoTest {
             assertEquals(1, rowsAffected)
 
             val updatedOrder = ordersRepo.selectById(order.orderId, c)
-            assertTrue(updatedOrder.isPresent)
-            assertEquals("shipped", updatedOrder.get().orderStatus)
-            assertTrue(updatedOrder.get().shippedAt.isPresent)
+            assertNotNull(updatedOrder)
+            assertEquals("shipped", updatedOrder!!.orderStatus)
+            assertNotNull(updatedOrder.shippedAt)
         }
     }
 
@@ -69,11 +135,43 @@ class UpdateOrderStatusSqlRepoTest {
             val testInsert = TestInsert(Random(0))
 
             val customer = testInsert.Customers(
+                email = "test3@example.com",
                 passwordHash = byteArrayOf(1, 2, 3),
+                firstName = "Bob",
+                lastName = "Smith",
+                phone = Defaulted.UseDefault(),
+                status = Defaulted.UseDefault(),
+                tier = Defaulted.UseDefault(),
+                preferences = Defaulted.UseDefault(),
+                marketingFlags = Defaulted.UseDefault(),
+                notes = Defaulted.UseDefault(),
+                createdAt = Defaulted.UseDefault(),
+                updatedAt = Defaulted.UseDefault(),
+                lastLoginAt = Defaulted.UseDefault(),
                 c = c
             )
             val order = testInsert.Orders(
+                orderNumber = "ORD-${testInsert.random.nextInt(100000)}",
                 customerId = customer.customerId,
+                subtotal = BigDecimal("100.00"),
+                totalAmount = BigDecimal("110.00"),
+                orderStatus = Defaulted.UseDefault(),
+                paymentStatus = Defaulted.UseDefault(),
+                shippingAddressId = Defaulted.UseDefault(),
+                billingAddressId = Defaulted.UseDefault(),
+                shippingCost = Defaulted.UseDefault(),
+                taxAmount = Defaulted.UseDefault(),
+                discountAmount = Defaulted.UseDefault(),
+                currencyCode = Defaulted.UseDefault(),
+                promotionId = Defaulted.UseDefault(),
+                notes = Defaulted.UseDefault(),
+                internalNotes = Defaulted.UseDefault(),
+                ipAddress = Defaulted.UseDefault(),
+                userAgent = Defaulted.UseDefault(),
+                orderedAt = Defaulted.UseDefault(),
+                confirmedAt = Defaulted.UseDefault(),
+                shippedAt = Defaulted.UseDefault(),
+                deliveredAt = Defaulted.UseDefault(),
                 c = c
             )
 

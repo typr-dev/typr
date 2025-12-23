@@ -170,7 +170,7 @@ class ViewTest {
                     sku = "CAT-SKU-001",
                     name = "Catalog Product 1",
                     basePrice = BigDecimal("25.00"),
-                    brandId = Provided(Optional.of(brand.brandId)),
+                    brandId = Provided(brand.brandId),
                     status = Provided("active")
                 ),
                 c
@@ -203,8 +203,8 @@ class ViewTest {
                     sku = "FIELDS-SKU",
                     name = "Fields Product",
                     basePrice = BigDecimal("99.99"),
-                    brandId = Provided(Optional.of(brand.brandId)),
-                    shortDescription = Provided(Optional.of("Short description")),
+                    brandId = Provided(brand.brandId),
+                    shortDescription = Provided("Short description"),
                     status = Provided("active")
                 ),
                 c

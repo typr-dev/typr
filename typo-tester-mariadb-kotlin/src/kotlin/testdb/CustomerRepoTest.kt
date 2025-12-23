@@ -10,7 +10,6 @@ import testdb.customers.CustomersRow
 import testdb.customers.CustomersRowUnsaved
 import testdb.customtypes.Defaulted.Provided
 import testdb.customtypes.Defaulted.UseDefault
-import java.util.Optional
 
 /**
  * Full repository test for customers - tests all CRUD operations and more.
@@ -65,10 +64,10 @@ class CustomerRepoTest {
             val inserted = customersRepo.insert(unsaved, c)
 
             val selected = customersRepo.selectById(inserted.customerId, c)
-            assertTrue(selected.isPresent)
-            assertEquals("test@example.com", selected.get().email)
-            assertEquals("Test", selected.get().firstName)
-            assertEquals("User", selected.get().lastName)
+            assertNotNull(selected)
+            assertEquals("test@example.com", selected!!.email)
+            assertEquals("Test", selected.firstName)
+            assertEquals("User", selected.lastName)
         }
     }
 
@@ -155,11 +154,11 @@ class CustomerRepoTest {
             )
 
             val selected = customersRepo.selectByUniqueEmail("unique@example.com", c)
-            assertTrue(selected.isPresent)
-            assertEquals(inserted.customerId, selected.get().customerId)
+            assertNotNull(selected)
+            assertEquals(inserted.customerId, selected!!.customerId)
 
             val notFound = customersRepo.selectByUniqueEmail("nonexistent@example.com", c)
-            assertFalse(notFound.isPresent)
+            assertNull(notFound)
         }
     }
 
@@ -191,21 +190,21 @@ class CustomerRepoTest {
                 passwordHash = "securepass".toByteArray(),
                 firstName = "Premium",
                 lastName = "Customer",
-                phone = Provided(Optional.of("+1234567890")),
+                phone = Provided("+1234567890"),
                 status = Provided(CustomerStatusId("suspended")),
                 tier = Provided("gold"),
-                preferences = Provided(Optional.of("{\"lang\": \"en\"}")),
-                notes = Provided(Optional.of("Important customer"))
+                preferences = Provided("{\"lang\": \"en\"}"),
+                notes = Provided("Important customer")
             )
 
             val inserted = customersRepo.insert(unsaved, c)
 
             assertEquals("premium@example.com", inserted.email)
-            assertEquals(Optional.of("+1234567890"), inserted.phone)
+            assertEquals("+1234567890", inserted.phone)
             assertEquals("suspended", inserted.status.value)
             assertEquals("gold", inserted.tier)
-            assertEquals(Optional.of("{\"lang\": \"en\"}"), inserted.preferences)
-            assertEquals(Optional.of("Important customer"), inserted.notes)
+            assertEquals("{\"lang\": \"en\"}", inserted.preferences)
+            assertEquals("Important customer", inserted.notes)
         }
     }
 
@@ -232,10 +231,10 @@ class CustomerRepoTest {
             assertTrue(success)
 
             val selected = customersRepo.selectById(inserted.customerId, c)
-            assertTrue(selected.isPresent)
-            assertEquals("After", selected.get().firstName)
-            assertEquals("Changed", selected.get().lastName)
-            assertEquals("silver", selected.get().tier)
+            assertNotNull(selected)
+            assertEquals("After", selected!!.firstName)
+            assertEquals("Changed", selected.lastName)
+            assertEquals("silver", selected.tier)
         }
     }
 
@@ -260,15 +259,15 @@ class CustomerRepoTest {
                 passwordHash = "newhash".toByteArray(),
                 firstName = "New",
                 lastName = "Upsert",
-                phone = Optional.empty(),
+                phone = null,
                 status = CustomerStatusId("pending"),
                 tier = "bronze",
-                preferences = Optional.empty(),
-                marketingFlags = Optional.empty(),
-                notes = Optional.empty(),
+                preferences = null,
+                marketingFlags = null,
+                notes = null,
                 createdAt = initial.createdAt,
                 updatedAt = initial.updatedAt,
-                lastLoginAt = Optional.empty()
+                lastLoginAt = null
             )
 
             val upserted = customersRepo.upsert(row, c)
@@ -331,8 +330,8 @@ class CustomerRepoTest {
 
             val s1 = customersRepo.selectById(c1.customerId, c)
             val s2 = customersRepo.selectById(c2.customerId, c)
-            assertEquals("Modified1", s1.get().firstName)
-            assertEquals("Modified2", s2.get().firstName)
+            assertEquals("Modified1", s1!!.firstName)
+            assertEquals("Modified2", s2!!.firstName)
         }
     }
 
@@ -353,7 +352,7 @@ class CustomerRepoTest {
             assertTrue(deleted)
 
             val selected = customersRepo.selectById(inserted.customerId, c)
-            assertFalse(selected.isPresent)
+            assertNull(selected)
         }
     }
 
@@ -464,9 +463,9 @@ class CustomerRepoTest {
                 .execute(c)
 
             val updated = customersRepo.selectById(customer.customerId, c)
-            assertTrue(updated.isPresent)
-            assertEquals("After", updated.get().firstName)
-            assertEquals("platinum", updated.get().tier)
+            assertNotNull(updated)
+            assertEquals("After", updated!!.firstName)
+            assertEquals("platinum", updated.tier)
         }
     }
 
