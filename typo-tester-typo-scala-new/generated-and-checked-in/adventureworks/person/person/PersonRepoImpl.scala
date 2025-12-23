@@ -39,7 +39,7 @@ class PersonRepoImpl extends PersonRepo {
   override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   sql"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.persontype)}::bpchar, ${Fragment.encode(NameStyle.pgType, unsaved.namestyle)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.title)}, ${Fragment.encode(FirstName.pgType, unsaved.firstname)}::varchar, ${Fragment.encode(Name.pgType.nullable, unsaved.middlename)}::varchar, ${Fragment.encode(Name.pgType, unsaved.lastname)}::varchar, ${Fragment.encode(PgTypes.text.nullable, unsaved.suffix)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.emailpromotion)}::int4, ${Fragment.encode(PgTypes.xml.nullable, unsaved.additionalcontactinfo)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.demographics)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
     """
     .updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -84,7 +84,7 @@ class PersonRepoImpl extends PersonRepo {
     val q: Fragment = {
       sql"""insert into "person"."person"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)

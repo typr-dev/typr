@@ -35,7 +35,7 @@ class CultureRepoImpl extends CultureRepo {
   override def insert(unsaved: CultureRow)(using c: Connection): CultureRow = {
   interpolate(Fragment.lit("""insert into "production"."culture"("cultureid", "name", "modifieddate")
     values ("""), Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "cultureid", "name", "modifieddate"
+    RETURNING "cultureid", "name", "modifieddate"
     """))
     .updateReturning(CultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -54,7 +54,7 @@ class CultureRepoImpl extends CultureRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."culture"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "cultureid", "name", "modifieddate"
+      RETURNING "cultureid", "name", "modifieddate"
       """))
     }
     return q.updateReturning(CultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)

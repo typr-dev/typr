@@ -38,7 +38,7 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
   override fun insert(
     unsaved: MariatestIdentityRow,
     c: Connection
-  ): MariatestIdentityRow = Fragment.interpolate(Fragment.lit("insert into `mariatest_identity`(`name`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(")\nreturning `id`, `name`\n"))
+  ): MariatestIdentityRow = Fragment.interpolate(Fragment.lit("insert into `mariatest_identity`(`name`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(")\nRETURNING `id`, `name`\n"))
     .updateReturning(MariatestIdentityRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,7 +49,7 @@ class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`name`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_identity`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `id`, `name`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_identity`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `id`, `name`\n"))
     return q.updateReturning(MariatestIdentityRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

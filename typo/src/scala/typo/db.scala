@@ -268,8 +268,83 @@ object db {
     case object AnyData extends OracleType
   }
 
+  // SQL Server-specific types
+  sealed trait SqlServerType extends Type
+  object SqlServerType {
+    // ==================== Integer Types ====================
+    case object TinyInt extends SqlServerType // 0-255 (UNSIGNED in SQL Server!)
+    case object SmallInt extends SqlServerType // -32768 to 32767
+    case object Int extends SqlServerType // -2^31 to 2^31-1
+    case object BigInt extends SqlServerType // -2^63 to 2^63-1
+
+    // ==================== Fixed-Point Types ====================
+    case class Decimal(precision: Option[Int], scale: Option[Int]) extends SqlServerType
+    case class Numeric(precision: Option[Int], scale: Option[Int]) extends SqlServerType
+    case object Money extends SqlServerType // -922337203685477.5808 to 922337203685477.5807
+    case object SmallMoney extends SqlServerType // -214748.3648 to 214748.3647
+
+    // ==================== Floating-Point Types ====================
+    case object Float extends SqlServerType // -1.79E+308 to 1.79E+308
+    case object Real extends SqlServerType // -3.40E+38 to 3.40E+38
+
+    // ==================== Boolean Type ====================
+    case object Bit extends SqlServerType // 0 or 1 (boolean)
+
+    // ==================== String Types (Non-Unicode) ====================
+    case class Char(length: Option[Int]) extends SqlServerType // Fixed-length, max 8000
+    case class VarChar(length: Option[Int]) extends SqlServerType // Variable-length, max 8000 or MAX
+    case object Text extends SqlServerType // Deprecated, use VARCHAR(MAX)
+
+    // ==================== String Types (Unicode) ====================
+    case class NChar(length: Option[Int]) extends SqlServerType // Fixed-length Unicode, max 4000
+    case class NVarChar(length: Option[Int]) extends SqlServerType // Variable-length Unicode, max 4000 or MAX
+    case object NText extends SqlServerType // Deprecated, use NVARCHAR(MAX)
+
+    // ==================== Binary Types ====================
+    case class Binary(length: Option[Int]) extends SqlServerType // Fixed-length binary, max 8000
+    case class VarBinary(length: Option[Int]) extends SqlServerType // Variable-length binary, max 8000 or MAX
+    case object Image extends SqlServerType // Deprecated, use VARBINARY(MAX)
+
+    // ==================== Date/Time Types ====================
+    case object Date extends SqlServerType // 0001-01-01 to 9999-12-31
+    case class Time(scale: Option[Int]) extends SqlServerType // Fractional seconds precision 0-7
+    case object DateTime extends SqlServerType // 1753-01-01 to 9999-12-31 (legacy, 3.33ms precision)
+    case object SmallDateTime extends SqlServerType // 1900-01-01 to 2079-06-06 (minute precision)
+    case class DateTime2(scale: Option[Int]) extends SqlServerType // 0001-01-01 to 9999-12-31, 100ns precision
+    case class DateTimeOffset(scale: Option[Int]) extends SqlServerType // DateTime2 with time zone offset
+
+    // ==================== Special Types ====================
+    case object UniqueIdentifier extends SqlServerType // GUID (UUID)
+    case object Xml extends SqlServerType // XML documents
+    case object Json extends SqlServerType // JSON (SQL Server 2016+)
+    case object Vector extends SqlServerType // Vector data (SQL Server 2025)
+
+    // ==================== Spatial Types ====================
+    case object Geography extends SqlServerType // Earth-centric spatial data (lat/long)
+    case object Geometry extends SqlServerType // Planar spatial data (x/y coordinates)
+
+    // ==================== Special System Types ====================
+    case object RowVersion extends SqlServerType // Timestamp/version number (8-byte binary)
+    case object HierarchyId extends SqlServerType // Hierarchical data (tree structures)
+    case object SqlVariant extends SqlServerType // Can store values of various types
+
+    // ==================== Table-Valued Types (SQL Server Unique!) ====================
+    /** Reference to user-defined table type */
+    case class TableTypeRef(name: RelationName, columns: List[TableTypeColumn]) extends SqlServerType
+
+    case class TableTypeColumn(name: String, tpe: Type, nullable: Nullability)
+
+    // ==================== User-Defined Alias Types ====================
+    /** User-defined type alias with optional constraint */
+    case class AliasTypeRef(name: RelationName, underlying: String, underlyingType: Type, hasConstraint: Boolean) extends SqlServerType
+
+    // ==================== CLR Types (Limited Support) ====================
+    /** CLR user-defined type - we'll read as byte[] or String */
+    case class ClrTypeRef(name: RelationName, assemblyName: String, className: String) extends SqlServerType
+  }
+
   // Shared/unknown type - extends PgType, MariaType, and OracleType for pattern matching
-  case class Unknown(sqlType: String) extends PgType with MariaType with DuckDbType with OracleType
+  case class Unknown(sqlType: String) extends PgType with MariaType with DuckDbType with OracleType with SqlServerType
 
   case class Domain(name: RelationName, tpe: Type, originalType: String, isNotNull: Nullability, hasDefault: Boolean, constraintDefinition: Option[String])
   case class StringEnum(name: RelationName, values: NonEmptyList[String])
@@ -322,6 +397,20 @@ object db {
       override def ALWAYS: Boolean = true
       override def `BY DEFAULT`: Boolean = false
       override def asString: String = "AUTO_INCREMENT"
+    }
+
+    /** SQL Server IDENTITY(seed, increment) columns */
+    case class SqlServerIdentity(seed: Long, increment: Long) extends Generated {
+      override def ALWAYS: Boolean = true
+      override def `BY DEFAULT`: Boolean = false
+      override def asString: String = s"IDENTITY($seed, $increment)"
+    }
+
+    /** SQL Server ROWVERSION/TIMESTAMP columns - auto-generated on every insert/update */
+    case object SqlServerRowVersion extends Generated {
+      override def ALWAYS: Boolean = true
+      override def `BY DEFAULT`: Boolean = false
+      override def asString: String = "ROWVERSION"
     }
   }
 

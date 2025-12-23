@@ -40,7 +40,7 @@ class BrandsRepoImpl() : BrandsRepo {
   override fun insert(
     unsaved: BrandsRow,
     c: Connection
-  ): BrandsRow = Fragment.interpolate(Fragment.lit("insert into `brands`(`name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumblob.nullable(), unsaved.logoBlob), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.websiteUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.char_.nullable(), unsaved.countryOfOrigin), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(")\nreturning `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`\n"))
+  ): BrandsRow = Fragment.interpolate(Fragment.lit("insert into `brands`(`name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumblob.nullable(), unsaved.logoBlob), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.websiteUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.char_.nullable(), unsaved.countryOfOrigin), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(")\nRETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`\n"))
     .updateReturning(BrandsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -73,7 +73,7 @@ class BrandsRepoImpl() : BrandsRepo {
       { value -> columns.add(Fragment.lit("`is_active`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `brands`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `brands`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`\n"))
     return q.updateReturning(BrandsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

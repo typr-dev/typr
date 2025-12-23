@@ -92,7 +92,7 @@ public class PersonRepoImpl implements PersonRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"persontype\", \"namestyle\", \"title\","
+                    + "RETURNING \"businessentityid\", \"persontype\", \"namestyle\", \"title\","
                     + " \"firstname\", \"middlename\", \"lastname\", \"suffix\","
                     + " \"emailpromotion\", \"additionalcontactinfo\", \"demographics\","
                     + " \"rowguid\", \"modifieddate\"\n"))
@@ -188,7 +188,7 @@ public class PersonRepoImpl implements PersonRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"persontype\", \"namestyle\", \"title\","
+                    + "RETURNING \"businessentityid\", \"persontype\", \"namestyle\", \"title\","
                     + " \"firstname\", \"middlename\", \"lastname\", \"suffix\","
                     + " \"emailpromotion\", \"additionalcontactinfo\", \"demographics\","
                     + " \"rowguid\", \"modifieddate\"\n"));

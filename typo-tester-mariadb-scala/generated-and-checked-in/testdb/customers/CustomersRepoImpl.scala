@@ -31,7 +31,7 @@ class CustomersRepoImpl extends CustomersRepo {
   override def insert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""insert into `customers`(`email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.email)}, ${Fragment.encode(MariaTypes.binary, unsaved.passwordHash)}, ${Fragment.encode(MariaTypes.varchar, unsaved.firstName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.lastName)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.phone)}, ${Fragment.encode(CustomerStatusId.pgType, unsaved.status)}, ${Fragment.encode(MariaTypes.text, unsaved.tier)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.preferences)}, ${Fragment.encode(MariaTypes.set.nullable, unsaved.marketingFlags)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.notes)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.lastLoginAt)})
-    returning `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`
+    RETURNING `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`
     """
     .updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -86,7 +86,7 @@ class CustomersRepoImpl extends CustomersRepo {
     val q: Fragment = {
       sql"""insert into `customers`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`
+      RETURNING `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`
       """
     }
     return q.updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)

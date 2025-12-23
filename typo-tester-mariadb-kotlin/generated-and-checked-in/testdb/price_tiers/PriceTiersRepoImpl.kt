@@ -39,7 +39,7 @@ class PriceTiersRepoImpl() : PriceTiersRepo {
   override fun insert(
     unsaved: PriceTiersRow,
     c: Connection
-  ): PriceTiersRow = Fragment.interpolate(Fragment.lit("insert into `price_tiers`(`name`, `min_quantity`, `discount_type`, `discount_value`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.intUnsigned, unsaved.minQuantity), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.discountType), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.discountValue), Fragment.lit(")\nreturning `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\n"))
+  ): PriceTiersRow = Fragment.interpolate(Fragment.lit("insert into `price_tiers`(`name`, `min_quantity`, `discount_type`, `discount_value`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.intUnsigned, unsaved.minQuantity), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.discountType), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.discountValue), Fragment.lit(")\nRETURNING `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\n"))
     .updateReturning(PriceTiersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -59,7 +59,7 @@ class PriceTiersRepoImpl() : PriceTiersRepo {
       { value -> columns.add(Fragment.lit("`min_quantity`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.intUnsigned, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `price_tiers`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `price_tiers`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\n"))
     return q.updateReturning(PriceTiersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

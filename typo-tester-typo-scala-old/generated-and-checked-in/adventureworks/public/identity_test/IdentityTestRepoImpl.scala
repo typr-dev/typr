@@ -34,7 +34,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
   override def insert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
   interpolate(Fragment.lit("""insert into "public"."identity-test"("default_generated", "name")
     values ("""), Fragment.encode(PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit(""")
-    returning "always_generated", "default_generated", "name"
+    RETURNING "always_generated", "default_generated", "name"
     """))
     .updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -51,7 +51,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "public"."identity-test"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "always_generated", "default_generated", "name"
+      RETURNING "always_generated", "default_generated", "name"
       """))
     }
     return q.updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)

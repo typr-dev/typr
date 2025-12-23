@@ -39,7 +39,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
   override def insert(unsaved: ProductvendorRow)(using c: Connection): ProductvendorRow = {
   interpolate(Fragment.lit("""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
     values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.averageleadtime), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.standardprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.lastreceiptcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.lastreceiptdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.int4, unsaved.minorderqty), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.maxorderqty), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4.opt(), unsaved.onorderqty), Fragment.lit("::int4, "), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"
+    RETURNING "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"
     """))
     .updateReturning(ProductvendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -74,7 +74,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "purchasing"."productvendor"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"
+      RETURNING "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"
       """))
     }
     return q.updateReturning(ProductvendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)

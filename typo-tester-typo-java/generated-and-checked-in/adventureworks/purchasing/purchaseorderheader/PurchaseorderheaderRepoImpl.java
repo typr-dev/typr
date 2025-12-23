@@ -96,7 +96,7 @@ public class PurchaseorderheaderRepoImpl implements PurchaseorderheaderRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"purchaseorderid\", \"revisionnumber\", \"status\","
+                    + "RETURNING \"purchaseorderid\", \"revisionnumber\", \"status\","
                     + " \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\","
                     + " \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\n"))
         .updateReturning(PurchaseorderheaderRow._rowParser.exactlyOne())
@@ -218,7 +218,7 @@ public class PurchaseorderheaderRepoImpl implements PurchaseorderheaderRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"purchaseorderid\", \"revisionnumber\", \"status\","
+                    + "RETURNING \"purchaseorderid\", \"revisionnumber\", \"status\","
                     + " \"employeeid\", \"vendorid\", \"shipmethodid\", \"orderdate\","
                     + " \"shipdate\", \"subtotal\", \"taxamt\", \"freight\", \"modifieddate\"\n"));
     ;

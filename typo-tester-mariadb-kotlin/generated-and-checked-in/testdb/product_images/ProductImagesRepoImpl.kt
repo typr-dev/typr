@@ -41,7 +41,7 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
   override fun insert(
     unsaved: ProductImagesRow,
     c: Connection
-  ): ProductImagesRow = Fragment.interpolate(Fragment.lit("insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nvalues ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.thumbnailUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.altText), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.imageData), Fragment.lit(")\nreturning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
+  ): ProductImagesRow = Fragment.interpolate(Fragment.lit("insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nvalues ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.thumbnailUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.altText), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.imageData), Fragment.lit(")\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
     .updateReturning(ProductImagesRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -79,7 +79,7 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
       { value -> columns.add(Fragment.lit("`image_data`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.longblob.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_images`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_images`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
     return q.updateReturning(ProductImagesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

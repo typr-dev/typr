@@ -40,7 +40,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
   override def insert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
   sql"""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values (${Fragment.encode(WorkorderId.pgType, unsaved.workorderid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.productid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.operationsequence)}::int2, ${Fragment.encode(LocationId.pgType, unsaved.locationid)}::int2, ${Fragment.encode(PgTypes.timestamp, unsaved.scheduledstartdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.scheduledenddate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.actualstartdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.actualenddate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.actualresourcehrs)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.plannedcost)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.actualcost)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"
+    RETURNING "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"
     """
     .updateReturning(WorkorderroutingRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -77,7 +77,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     val q: Fragment = {
       sql"""insert into "production"."workorderrouting"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"
+      RETURNING "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"
       """
     }
     return q.updateReturning(WorkorderroutingRow.`_rowParser`.exactlyOne()).runUnchecked(c)

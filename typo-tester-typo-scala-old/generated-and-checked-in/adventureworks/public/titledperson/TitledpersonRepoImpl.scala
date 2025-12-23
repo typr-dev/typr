@@ -23,7 +23,7 @@ class TitledpersonRepoImpl extends TitledpersonRepo {
   override def insert(unsaved: TitledpersonRow)(using c: Connection): TitledpersonRow = {
   interpolate(Fragment.lit("""insert into "public"."titledperson"("title_short", "title", "name")
     values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.titleShort), Fragment.lit("::text, "), Fragment.encode(TitleId.pgType, unsaved.title), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(""")
-    returning "title_short", "title", "name"
+    RETURNING "title_short", "title", "name"
     """))
     .updateReturning(TitledpersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

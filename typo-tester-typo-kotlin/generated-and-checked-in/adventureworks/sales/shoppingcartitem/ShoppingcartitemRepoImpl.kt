@@ -39,7 +39,7 @@ class ShoppingcartitemRepoImpl() : ShoppingcartitemRepo {
   override fun insert(
     unsaved: ShoppingcartitemRow,
     c: Connection
-  ): ShoppingcartitemRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"shoppingcartitem\"(\"shoppingcartitemid\", \"shoppingcartid\", \"quantity\", \"productid\", \"datecreated\", \"modifieddate\")\nvalues ("), Fragment.encode(ShoppingcartitemId.pgType, unsaved.shoppingcartitemid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.shoppingcartid), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.quantity), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.datecreated), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\", \"productid\", \"datecreated\", \"modifieddate\"\n"))
+  ): ShoppingcartitemRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"shoppingcartitem\"(\"shoppingcartitemid\", \"shoppingcartid\", \"quantity\", \"productid\", \"datecreated\", \"modifieddate\")\nvalues ("), Fragment.encode(ShoppingcartitemId.pgType, unsaved.shoppingcartitemid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.shoppingcartid), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.quantity), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.datecreated), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\", \"productid\", \"datecreated\", \"modifieddate\"\n"))
     .updateReturning(ShoppingcartitemRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -72,7 +72,7 @@ class ShoppingcartitemRepoImpl() : ShoppingcartitemRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"shoppingcartitem\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\", \"productid\", \"datecreated\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"shoppingcartitem\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\", \"productid\", \"datecreated\", \"modifieddate\"\n"))
     return q.updateReturning(ShoppingcartitemRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

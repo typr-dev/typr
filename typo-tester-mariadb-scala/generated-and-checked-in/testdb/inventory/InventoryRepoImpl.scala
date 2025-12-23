@@ -33,7 +33,7 @@ class InventoryRepoImpl extends InventoryRepo {
   override def insert(unsaved: InventoryRow)(using c: Connection): InventoryRow = {
   sql"""insert into `inventory`(`product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)
     values (${Fragment.encode(ProductsId.pgType, unsaved.productId)}, ${Fragment.encode(WarehousesId.pgType, unsaved.warehouseId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnHand)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityReserved)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderPoint)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderQuantity)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.binLocation)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.lastCountedAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)})
-    returning `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`
+    RETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`
     """
     .updateReturning(InventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -80,7 +80,7 @@ class InventoryRepoImpl extends InventoryRepo {
     val q: Fragment = {
       sql"""insert into `inventory`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`
+      RETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`
       """
     }
     return q.updateReturning(InventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

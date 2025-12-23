@@ -38,7 +38,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
   override def insert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
   sql"""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.emailaddressid)}::int4, ${Fragment.encode(PgTypes.text.nullable, unsaved.emailaddress)}, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
     """
     .updateReturning(EmailaddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -65,7 +65,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     val q: Fragment = {
       sql"""insert into "person"."emailaddress"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(EmailaddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)

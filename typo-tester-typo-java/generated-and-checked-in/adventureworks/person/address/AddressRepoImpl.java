@@ -81,7 +81,7 @@ public class AddressRepoImpl implements AddressRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"addressid\", \"addressline1\", \"addressline2\", \"city\","
+                    + "RETURNING \"addressid\", \"addressline1\", \"addressline2\", \"city\","
                     + " \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\","
                     + " \"modifieddate\"\n"))
         .updateReturning(AddressRow._rowParser.exactlyOne())
@@ -153,7 +153,7 @@ public class AddressRepoImpl implements AddressRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"addressid\", \"addressline1\", \"addressline2\", \"city\","
+                    + "RETURNING \"addressid\", \"addressline1\", \"addressline2\", \"city\","
                     + " \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\","
                     + " \"modifieddate\"\n"));
     ;

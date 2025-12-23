@@ -40,7 +40,7 @@ class WarehousesRepoImpl() : WarehousesRepo {
   override fun insert(
     unsaved: WarehousesRow,
     c: Connection
-  ): WarehousesRow = Fragment.interpolate(Fragment.lit("insert into `warehouses`(`code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)\nvalues ("), Fragment.encode(MariaTypes.char_, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.address), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.location), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon.nullable(), unsaved.serviceArea), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.timezone), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactEmail), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactPhone), Fragment.lit(")\nreturning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
+  ): WarehousesRow = Fragment.interpolate(Fragment.lit("insert into `warehouses`(`code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)\nvalues ("), Fragment.encode(MariaTypes.char_, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.address), Fragment.lit(", "), Fragment.encode(MariaTypes.point, unsaved.location), Fragment.lit(", "), Fragment.encode(MariaTypes.polygon.nullable(), unsaved.serviceArea), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.timezone), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactEmail), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.contactPhone), Fragment.lit(")\nRETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
     .updateReturning(WarehousesRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -82,7 +82,7 @@ class WarehousesRepoImpl() : WarehousesRepo {
       { value -> columns.add(Fragment.lit("`contact_phone`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `warehouses`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `warehouses`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`\n"))
     return q.updateReturning(WarehousesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

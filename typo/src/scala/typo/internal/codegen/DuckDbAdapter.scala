@@ -180,120 +180,118 @@ object DuckDbAdapter extends DbAdapter {
     }
 
     dbType match {
-      // Primitive types with language-specific overrides
-      case db.DuckDbType.Boolean       => primitiveType("boolean_")
-      case db.DuckDbType.TinyInt       => primitiveType("tinyint")
-      case db.DuckDbType.SmallInt      => primitiveType("smallint")
-      case db.DuckDbType.Integer       => primitiveType("integer")
-      case db.DuckDbType.BigInt        => primitiveType("bigint")
-      case db.DuckDbType.Float         => primitiveType("float_")
-      case db.DuckDbType.Double        => primitiveType("double_")
-      case db.DuckDbType.Decimal(_, _) =>
-        // BigDecimal uses java.math.BigDecimal in Kotlin, so use base DuckDbTypes
-        typeSupport match {
-          case TypeSupportKotlin => code"$Types.numeric"
-          case _                 => primitiveType("numeric")
+      case dbType: db.DuckDbType =>
+        dbType match {
+          // Primitive types with language-specific overrides
+          case db.DuckDbType.Boolean       => primitiveType("boolean_")
+          case db.DuckDbType.TinyInt       => primitiveType("tinyint")
+          case db.DuckDbType.SmallInt      => primitiveType("smallint")
+          case db.DuckDbType.Integer       => primitiveType("integer")
+          case db.DuckDbType.BigInt        => primitiveType("bigint")
+          case db.DuckDbType.Float         => primitiveType("float_")
+          case db.DuckDbType.Double        => primitiveType("double_")
+          case db.DuckDbType.Decimal(_, _) =>
+            // BigDecimal uses java.math.BigDecimal in Kotlin, so use base DuckDbTypes
+            typeSupport match {
+              case TypeSupportKotlin => code"$Types.numeric"
+              case _                 => primitiveType("numeric")
+            }
+
+          // Non-primitive types use base Types (except unsigned ints which map to next larger signed type)
+          case db.DuckDbType.HugeInt     => code"$Types.hugeint"
+          case db.DuckDbType.UTinyInt    => primitiveType("smallint") // UByte -> Short
+          case db.DuckDbType.USmallInt   => primitiveType("integer") // UShort -> Int
+          case db.DuckDbType.UInteger    => primitiveType("bigint") // UInt -> Long
+          case db.DuckDbType.UBigInt     => code"$Types.ubigint"
+          case db.DuckDbType.UHugeInt    => code"$Types.uhugeint"
+          case db.DuckDbType.VarChar(_)  => code"$Types.varchar"
+          case db.DuckDbType.Char(_)     => code"$Types.char_"
+          case db.DuckDbType.Text        => code"$Types.text"
+          case db.DuckDbType.Blob        => code"$Types.blob"
+          case db.DuckDbType.Bit(_)      => code"$Types.bit"
+          case db.DuckDbType.Date        => code"$Types.date"
+          case db.DuckDbType.Time        => code"$Types.time"
+          case db.DuckDbType.Timestamp   => code"$Types.timestamp"
+          case db.DuckDbType.TimestampTz => code"$Types.timestamptz"
+          case db.DuckDbType.TimestampS  => code"$Types.timestamp"
+          case db.DuckDbType.TimestampMS => code"$Types.timestamp"
+          case db.DuckDbType.TimestampNS => code"$Types.timestamp"
+          case db.DuckDbType.TimeTz      => code"$Types.timetz"
+          case db.DuckDbType.Interval    => code"$Types.interval"
+          case db.DuckDbType.UUID        => code"$Types.uuid"
+          case db.DuckDbType.Json        => code"$Types.json"
+
+          // Enum
+          case db.DuckDbType.Enum(name, _) =>
+            code"${jvm.Type.Qualified(naming.enumName(db.RelationName(None, name)))}.$typeFieldName"
+
+          // Composite types - use pre-defined array types for primitives
+          case db.DuckDbType.ListType(elementType) =>
+            elementType match {
+              case db.DuckDbType.TinyInt       => code"$Types.tinyintArray"
+              case db.DuckDbType.SmallInt      => code"$Types.smallintArray"
+              case db.DuckDbType.Integer       => code"$Types.integerArray"
+              case db.DuckDbType.BigInt        => code"$Types.bigintArray"
+              case db.DuckDbType.HugeInt       => code"$Types.hugeintArray"
+              case db.DuckDbType.UTinyInt      => code"$Types.utinyintArray"
+              case db.DuckDbType.USmallInt     => code"$Types.usmallintArray"
+              case db.DuckDbType.UInteger      => code"$Types.uintegerArray"
+              case db.DuckDbType.UBigInt       => code"$Types.ubigintArray"
+              case db.DuckDbType.Float         => code"$Types.floatArray"
+              case db.DuckDbType.Double        => code"$Types.doubleArray"
+              case db.DuckDbType.Decimal(_, _) => code"$Types.decimalArray"
+              case db.DuckDbType.Boolean       => code"$Types.booleanArray"
+              case db.DuckDbType.VarChar(_)    => code"$Types.varcharArray"
+              case db.DuckDbType.Text          => code"$Types.varcharArray"
+              case db.DuckDbType.Blob          => code"$Types.blobArray"
+              case db.DuckDbType.Date          => code"$Types.dateArray"
+              case db.DuckDbType.Time          => code"$Types.timeArray"
+              case db.DuckDbType.Timestamp     => code"$Types.timestampArray"
+              case db.DuckDbType.TimestampTz   => code"$Types.timestamptzArray"
+              case db.DuckDbType.Interval      => code"$Types.intervalArray"
+              case db.DuckDbType.UUID          => code"$Types.uuidArray"
+              case db.DuckDbType.Json          => code"$Types.jsonArray"
+              case _                           => code"${lookupByDbType(elementType, naming, TypeSupportJava)}.array()"
+            }
+          case db.DuckDbType.ArrayType(elementType, _) =>
+            elementType match {
+              case db.DuckDbType.TinyInt       => code"$Types.tinyintArray"
+              case db.DuckDbType.SmallInt      => code"$Types.smallintArray"
+              case db.DuckDbType.Integer       => code"$Types.integerArray"
+              case db.DuckDbType.BigInt        => code"$Types.bigintArray"
+              case db.DuckDbType.HugeInt       => code"$Types.hugeintArray"
+              case db.DuckDbType.UTinyInt      => code"$Types.utinyintArray"
+              case db.DuckDbType.USmallInt     => code"$Types.usmallintArray"
+              case db.DuckDbType.UInteger      => code"$Types.uintegerArray"
+              case db.DuckDbType.UBigInt       => code"$Types.ubigintArray"
+              case db.DuckDbType.Float         => code"$Types.floatArray"
+              case db.DuckDbType.Double        => code"$Types.doubleArray"
+              case db.DuckDbType.Decimal(_, _) => code"$Types.decimalArray"
+              case db.DuckDbType.Boolean       => code"$Types.booleanArray"
+              case db.DuckDbType.VarChar(_)    => code"$Types.varcharArray"
+              case db.DuckDbType.Text          => code"$Types.varcharArray"
+              case db.DuckDbType.Blob          => code"$Types.blobArray"
+              case db.DuckDbType.Date          => code"$Types.dateArray"
+              case db.DuckDbType.Time          => code"$Types.timeArray"
+              case db.DuckDbType.Timestamp     => code"$Types.timestampArray"
+              case db.DuckDbType.TimestampTz   => code"$Types.timestamptzArray"
+              case db.DuckDbType.Interval      => code"$Types.intervalArray"
+              case db.DuckDbType.UUID          => code"$Types.uuidArray"
+              case db.DuckDbType.Json          => code"$Types.jsonArray"
+              case _                           => code"${lookupByDbType(elementType, naming, TypeSupportJava)}.array()"
+            }
+          case db.DuckDbType.MapType(keyType, valueType) =>
+            code"${lookupByDbType(keyType, naming, TypeSupportJava)}.mapTo(${lookupByDbType(valueType, naming, TypeSupportJava)})"
+          case db.DuckDbType.StructType(_) =>
+            sys.error(s"DuckDbAdapter.lookupByDbType: STRUCT type not yet supported")
+          case db.DuckDbType.UnionType(_) =>
+            sys.error(s"DuckDbAdapter.lookupByDbType: UNION type not yet supported")
+
+          case db.Unknown(_) =>
+            code"$Types.varchar" // Fallback to varchar for unknown types
         }
-
-      // Non-primitive types use base Types (except unsigned ints which map to next larger signed type)
-      case db.DuckDbType.HugeInt     => code"$Types.hugeint"
-      case db.DuckDbType.UTinyInt    => primitiveType("smallint") // UByte -> Short
-      case db.DuckDbType.USmallInt   => primitiveType("integer") // UShort -> Int
-      case db.DuckDbType.UInteger    => primitiveType("bigint") // UInt -> Long
-      case db.DuckDbType.UBigInt     => code"$Types.ubigint"
-      case db.DuckDbType.UHugeInt    => code"$Types.uhugeint"
-      case db.DuckDbType.VarChar(_)  => code"$Types.varchar"
-      case db.DuckDbType.Char(_)     => code"$Types.char_"
-      case db.DuckDbType.Text        => code"$Types.text"
-      case db.DuckDbType.Blob        => code"$Types.blob"
-      case db.DuckDbType.Bit(_)      => code"$Types.bit"
-      case db.DuckDbType.Date        => code"$Types.date"
-      case db.DuckDbType.Time        => code"$Types.time"
-      case db.DuckDbType.Timestamp   => code"$Types.timestamp"
-      case db.DuckDbType.TimestampTz => code"$Types.timestamptz"
-      case db.DuckDbType.TimestampS  => code"$Types.timestamp"
-      case db.DuckDbType.TimestampMS => code"$Types.timestamp"
-      case db.DuckDbType.TimestampNS => code"$Types.timestamp"
-      case db.DuckDbType.TimeTz      => code"$Types.timetz"
-      case db.DuckDbType.Interval    => code"$Types.interval"
-      case db.DuckDbType.UUID        => code"$Types.uuid"
-      case db.DuckDbType.Json        => code"$Types.json"
-
-      // Enum
-      case db.DuckDbType.Enum(name, _) =>
-        code"${jvm.Type.Qualified(naming.enumName(db.RelationName(None, name)))}.$typeFieldName"
-
-      // Composite types - use pre-defined array types for primitives
-      case db.DuckDbType.ListType(elementType) =>
-        elementType match {
-          case db.DuckDbType.TinyInt       => code"$Types.tinyintArray"
-          case db.DuckDbType.SmallInt      => code"$Types.smallintArray"
-          case db.DuckDbType.Integer       => code"$Types.integerArray"
-          case db.DuckDbType.BigInt        => code"$Types.bigintArray"
-          case db.DuckDbType.HugeInt       => code"$Types.hugeintArray"
-          case db.DuckDbType.UTinyInt      => code"$Types.utinyintArray"
-          case db.DuckDbType.USmallInt     => code"$Types.usmallintArray"
-          case db.DuckDbType.UInteger      => code"$Types.uintegerArray"
-          case db.DuckDbType.UBigInt       => code"$Types.ubigintArray"
-          case db.DuckDbType.Float         => code"$Types.floatArray"
-          case db.DuckDbType.Double        => code"$Types.doubleArray"
-          case db.DuckDbType.Decimal(_, _) => code"$Types.decimalArray"
-          case db.DuckDbType.Boolean       => code"$Types.booleanArray"
-          case db.DuckDbType.VarChar(_)    => code"$Types.varcharArray"
-          case db.DuckDbType.Text          => code"$Types.varcharArray"
-          case db.DuckDbType.Blob          => code"$Types.blobArray"
-          case db.DuckDbType.Date          => code"$Types.dateArray"
-          case db.DuckDbType.Time          => code"$Types.timeArray"
-          case db.DuckDbType.Timestamp     => code"$Types.timestampArray"
-          case db.DuckDbType.TimestampTz   => code"$Types.timestamptzArray"
-          case db.DuckDbType.Interval      => code"$Types.intervalArray"
-          case db.DuckDbType.UUID          => code"$Types.uuidArray"
-          case db.DuckDbType.Json          => code"$Types.jsonArray"
-          case _                           => code"${lookupByDbType(elementType, naming, TypeSupportJava)}.array()"
-        }
-      case db.DuckDbType.ArrayType(elementType, _) =>
-        elementType match {
-          case db.DuckDbType.TinyInt       => code"$Types.tinyintArray"
-          case db.DuckDbType.SmallInt      => code"$Types.smallintArray"
-          case db.DuckDbType.Integer       => code"$Types.integerArray"
-          case db.DuckDbType.BigInt        => code"$Types.bigintArray"
-          case db.DuckDbType.HugeInt       => code"$Types.hugeintArray"
-          case db.DuckDbType.UTinyInt      => code"$Types.utinyintArray"
-          case db.DuckDbType.USmallInt     => code"$Types.usmallintArray"
-          case db.DuckDbType.UInteger      => code"$Types.uintegerArray"
-          case db.DuckDbType.UBigInt       => code"$Types.ubigintArray"
-          case db.DuckDbType.Float         => code"$Types.floatArray"
-          case db.DuckDbType.Double        => code"$Types.doubleArray"
-          case db.DuckDbType.Decimal(_, _) => code"$Types.decimalArray"
-          case db.DuckDbType.Boolean       => code"$Types.booleanArray"
-          case db.DuckDbType.VarChar(_)    => code"$Types.varcharArray"
-          case db.DuckDbType.Text          => code"$Types.varcharArray"
-          case db.DuckDbType.Blob          => code"$Types.blobArray"
-          case db.DuckDbType.Date          => code"$Types.dateArray"
-          case db.DuckDbType.Time          => code"$Types.timeArray"
-          case db.DuckDbType.Timestamp     => code"$Types.timestampArray"
-          case db.DuckDbType.TimestampTz   => code"$Types.timestamptzArray"
-          case db.DuckDbType.Interval      => code"$Types.intervalArray"
-          case db.DuckDbType.UUID          => code"$Types.uuidArray"
-          case db.DuckDbType.Json          => code"$Types.jsonArray"
-          case _                           => code"${lookupByDbType(elementType, naming, TypeSupportJava)}.array()"
-        }
-      case db.DuckDbType.MapType(keyType, valueType) =>
-        code"${lookupByDbType(keyType, naming, TypeSupportJava)}.mapTo(${lookupByDbType(valueType, naming, TypeSupportJava)})"
-      case db.DuckDbType.StructType(_) =>
-        sys.error(s"DuckDbAdapter.lookupByDbType: STRUCT type not yet supported")
-      case db.DuckDbType.UnionType(_) =>
-        sys.error(s"DuckDbAdapter.lookupByDbType: UNION type not yet supported")
-
-      case db.Unknown(_) =>
-        code"$Types.varchar" // Fallback to varchar for unknown types
-
-      case _: db.PgType =>
-        sys.error(s"DuckDbAdapter.lookupByDbType: Cannot lookup PostgreSQL type in DuckDB adapter")
-      case _: db.MariaType =>
-        sys.error(s"DuckDbAdapter.lookupByDbType: Cannot lookup MariaDB type in DuckDB adapter")
-      case _: db.OracleType =>
-        sys.error(s"DuckDbAdapter.lookupByDbType: Cannot lookup Oracle type in DuckDB adapter")
+      case other =>
+        sys.error(s"DuckDbAdapter.lookupByDbType: Cannot lookup from other database: $other")
     }
   }
 
@@ -349,4 +347,7 @@ object DuckDbAdapter extends DbAdapter {
 
   def createTempTableLike(tempName: String, sourceTable: Code): Code =
     code"CREATE TEMPORARY TABLE $tempName AS SELECT * FROM $sourceTable WHERE FALSE"
+
+  def returningClause(columns: Code): Code =
+    code"RETURNING $columns"
 }

@@ -40,7 +40,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
   override def insert(unsaved: SalesorderdetailRow)(using c: Connection): SalesorderdetailRow = {
   sql"""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values (${Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.salesorderdetailid)}::int4, ${Fragment.encode(PgTypes.text.nullable, unsaved.carriertrackingnumber)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.orderqty)}::int2, ${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.unitprice)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.unitpricediscount)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"
+    RETURNING "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"
     """
     .updateReturning(SalesorderdetailRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -79,7 +79,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     val q: Fragment = {
       sql"""insert into "sales"."salesorderdetail"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"
+      RETURNING "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(SalesorderdetailRow.`_rowParser`.exactlyOne()).runUnchecked(c)

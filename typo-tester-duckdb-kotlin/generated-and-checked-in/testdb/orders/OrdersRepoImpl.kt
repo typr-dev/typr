@@ -38,7 +38,7 @@ class OrdersRepoImpl() : OrdersRepo {
   override fun insert(
     unsaved: OrdersRow,
     c: Connection
-  ): OrdersRow = Fragment.interpolate(Fragment.lit("insert into \"orders\"(\"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\")\nvalues ("), Fragment.encode(OrdersId.duckDbType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.status), Fragment.lit(")\nreturning \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\n"))
+  ): OrdersRow = Fragment.interpolate(Fragment.lit("insert into \"orders\"(\"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\")\nvalues ("), Fragment.encode(OrdersId.duckDbType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.status), Fragment.lit(")\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\n"))
     .updateReturning(OrdersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -63,7 +63,7 @@ class OrdersRepoImpl() : OrdersRepo {
       { value -> columns.add(Fragment.lit("\"status\""))
       values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.varchar.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"orders\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"orders\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\n"))
     return q.updateReturning(OrdersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

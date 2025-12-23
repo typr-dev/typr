@@ -38,7 +38,7 @@ class CountryregionRepoImpl() : CountryregionRepo {
   override fun insert(
     unsaved: CountryregionRow,
     c: Connection
-  ): CountryregionRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"countryregioncode\", \"name\", \"modifieddate\"\n"))
+  ): CountryregionRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
     .updateReturning(CountryregionRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -56,7 +56,7 @@ class CountryregionRepoImpl() : CountryregionRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"countryregioncode\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(CountryregionRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -42,7 +42,7 @@ class ProductdocumentRepoImpl() : ProductdocumentRepo {
   override fun insert(
     unsaved: ProductdocumentRow,
     c: Connection
-  ): ProductdocumentRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(DocumentId.pgType, unsaved.documentnode), Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
+  ): ProductdocumentRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"(\"productid\", \"modifieddate\", \"documentnode\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(DocumentId.pgType, unsaved.documentnode), Fragment.lit(")\nRETURNING \"productid\", \"modifieddate\", \"documentnode\"\n"))
     .updateReturning(ProductdocumentRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -63,7 +63,7 @@ class ProductdocumentRepoImpl() : ProductdocumentRepo {
       { value -> columns.add(Fragment.lit("\"documentnode\""))
       values.add(Fragment.interpolate(Fragment.encode(DocumentId.pgType, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdocument\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productid\", \"modifieddate\", \"documentnode\"\n"))
     return q.updateReturning(ProductdocumentRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

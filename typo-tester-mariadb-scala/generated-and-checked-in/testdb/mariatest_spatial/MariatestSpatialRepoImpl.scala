@@ -29,7 +29,7 @@ class MariatestSpatialRepoImpl extends MariatestSpatialRepo {
   override def insert(unsaved: MariatestSpatialRow)(using c: Connection): MariatestSpatialRow = {
   sql"""insert into `mariatest_spatial`(`geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)
     values (${Fragment.encode(MariaTypes.geometry, unsaved.geometryCol)}, ${Fragment.encode(MariaTypes.point, unsaved.pointCol)}, ${Fragment.encode(MariaTypes.linestring, unsaved.linestringCol)}, ${Fragment.encode(MariaTypes.polygon, unsaved.polygonCol)}, ${Fragment.encode(MariaTypes.multipoint, unsaved.multipointCol)}, ${Fragment.encode(MariaTypes.multilinestring, unsaved.multilinestringCol)}, ${Fragment.encode(MariaTypes.multipolygon, unsaved.multipolygonCol)}, ${Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol)})
-    returning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
+    RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
     """
     .updateReturning(MariatestSpatialRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -56,7 +56,7 @@ class MariatestSpatialRepoImpl extends MariatestSpatialRepo {
     val q: Fragment = {
       sql"""insert into `mariatest_spatial`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
+      RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
       """
     }
     return q.updateReturning(MariatestSpatialRow.`_rowParser`.exactlyOne()).runUnchecked(c)

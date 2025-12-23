@@ -102,7 +102,7 @@ public class ShipmentsRepoImpl implements ShipmentsRepo {
             Fragment.encode(MariaTypes.datetime, unsaved.updatedAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `shipment_id`, `order_id`, `carrier_id`, `tracking_number`,"
+                    + "RETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`,"
                     + " `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`,"
                     + " `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`,"
                     + " `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`,"
@@ -258,7 +258,7 @@ public class ShipmentsRepoImpl implements ShipmentsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `shipment_id`, `order_id`, `carrier_id`, `tracking_number`,"
+                    + "RETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`,"
                     + " `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`,"
                     + " `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`,"
                     + " `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`,"

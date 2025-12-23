@@ -37,7 +37,7 @@ class SalespersonRepoImpl extends SalespersonRepo {
   override def insert(unsaved: SalespersonRow)(using c: Connection): SalespersonRow = {
   sql"""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(SalesterritoryId.pgType.nullable, unsaved.territoryid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.salesquota)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.bonus)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.commissionpct)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     """
     .updateReturning(SalespersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -78,7 +78,7 @@ class SalespersonRepoImpl extends SalespersonRepo {
     val q: Fragment = {
       sql"""insert into "sales"."salesperson"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(SalespersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)

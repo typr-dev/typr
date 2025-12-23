@@ -236,4 +236,7 @@ object OracleAdapter extends DbAdapter {
 
   def createTempTableLike(tempName: String, sourceTable: Code): Code =
     code"CREATE GLOBAL TEMPORARY TABLE $tempName AS SELECT * FROM $sourceTable WHERE 1=0"
+
+  def returningClause(columns: Code): Code =
+    code"RETURNING $columns INTO ?"
 }

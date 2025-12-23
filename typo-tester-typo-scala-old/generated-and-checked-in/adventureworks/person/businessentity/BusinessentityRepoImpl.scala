@@ -34,7 +34,7 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
   override def insert(unsaved: BusinessentityRow)(using c: Connection): BusinessentityRow = {
   interpolate(Fragment.lit("""insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "rowguid", "modifieddate"
     """))
     .updateReturning(BusinessentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -56,10 +56,10 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
     );
     val q: Fragment = {
       (if (columns.isEmpty) interpolate(Fragment.lit("""insert into "person"."businessentity" default values
-      returning "businessentityid", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "rowguid", "modifieddate"
       """)) else interpolate(Fragment.lit("""insert into "person"."businessentity"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "rowguid", "modifieddate"
       """)))
     }
     return q.updateReturning(BusinessentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -84,7 +84,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"territoryid\", \"name\", \"countryregioncode\", \"group\","
+                    + "RETURNING \"territoryid\", \"name\", \"countryregioncode\", \"group\","
                     + " \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(SalesterritoryRow._rowParser.exactlyOne())
@@ -187,7 +187,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"territoryid\", \"name\", \"countryregioncode\", \"group\","
+                    + "RETURNING \"territoryid\", \"name\", \"countryregioncode\", \"group\","
                     + " \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;

@@ -36,7 +36,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
   override def insert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
   sql"""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
     values (${Fragment.encode(SalestaxrateId.pgType, unsaved.salestaxrateid)}::int4, ${Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.taxtype)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.taxrate)}::numeric, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"
+    RETURNING "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"
     """
     .updateReturning(SalestaxrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -69,7 +69,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     val q: Fragment = {
       sql"""insert into "sales"."salestaxrate"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"
+      RETURNING "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(SalestaxrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)

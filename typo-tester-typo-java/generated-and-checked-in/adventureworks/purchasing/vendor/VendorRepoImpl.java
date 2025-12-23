@@ -83,7 +83,7 @@ public class VendorRepoImpl implements VendorRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"accountnumber\", \"name\","
+                    + "RETURNING \"businessentityid\", \"accountnumber\", \"name\","
                     + " \"creditrating\", \"preferredvendorstatus\", \"activeflag\","
                     + " \"purchasingwebserviceurl\", \"modifieddate\"\n"))
         .updateReturning(VendorRow._rowParser.exactlyOne())
@@ -155,7 +155,7 @@ public class VendorRepoImpl implements VendorRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"accountnumber\", \"name\","
+                    + "RETURNING \"businessentityid\", \"accountnumber\", \"name\","
                     + " \"creditrating\", \"preferredvendorstatus\", \"activeflag\","
                     + " \"purchasingwebserviceurl\", \"modifieddate\"\n"));
     ;

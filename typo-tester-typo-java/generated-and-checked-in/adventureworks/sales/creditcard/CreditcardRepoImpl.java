@@ -74,7 +74,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\","
+                    + "RETURNING \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\","
                     + " \"expyear\", \"modifieddate\"\n"))
         .updateReturning(CreditcardRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -127,7 +127,7 @@ public class CreditcardRepoImpl implements CreditcardRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\","
+                    + "RETURNING \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\","
                     + " \"expyear\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(CreditcardRow._rowParser.exactlyOne()).runUnchecked(c);

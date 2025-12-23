@@ -54,6 +54,7 @@ class DbLibTypo(
     case DbType.MariaDB    => jvm.Type.Qualified("typo.scaladsl.MariaTypeOps")
     case DbType.DuckDB     => jvm.Type.Qualified("typo.scaladsl.DuckDbTypeOps")
     case DbType.Oracle     => jvm.Type.Qualified("typo.scaladsl.OracleTypeOps")
+    case DbType.SqlServer  => jvm.Type.Qualified("typo.scaladsl.SqlServerTypeOps")
   }
 
   def rowParserFor(rowType: jvm.Type) = code"$rowType.$rowParserName"
@@ -438,6 +439,51 @@ class DbLibTypo(
               )
             )
         }
+
+      case DbType.SqlServer =>
+        // SQL Server doesn't support arrays, use same approach as MariaDB with IN clause
+        id match {
+          case x: IdComputed.Unary =>
+            val colName = adapter.quoteIdent(x.col.dbName.value)
+            val idIdent = jvm.Ident("id")
+            val fragments = jvm.Ident("fragments")
+            val encodeId = code"$Fragment.encode(${lookupType(x)}, $idIdent)"
+            val addStmt = lang.typeSupport.MutableListOps.add(fragments.code, encodeId)
+            jvm.Body.Stmts(
+              List(
+                jvm.LocalVar(fragments, Some(lang.typeSupport.MutableListOps.tpe.of(Fragment)), lang.typeSupport.MutableListOps.empty),
+                lang.arrayForEach(idsParam.name.code, idIdent, jvm.Body.Expr(addStmt)),
+                jvm.Return(
+                  code"""$Fragment.interpolate($Fragment.lit(${jvm.StrLit(
+                      s"select $colNamesStr from $qRelNameStr where $colName in ("
+                    )}), $Fragment.comma(${collectionForComma(fragments.code)}), $Fragment.lit(${jvm.StrLit(s")")})).query(${resultSetParserFor(rowType, "all")})$queryAllRunUnchecked"""
+                )
+              )
+            )
+
+          case x: IdComputed.Composite =>
+            val colNamesJoined = x.cols.toList.map(c => adapter.quoteIdent(c.dbCol.name.value)).mkString(", ")
+            val idIdent = jvm.Ident("id")
+            val fragments = jvm.Ident("fragments")
+            val encodedCols = x.cols.toList.map(c => code"$Fragment.encode(${lookupType(c)}, ${lang.prop(idIdent.code, c.name)})")
+            val commaLit = code"$Fragment.lit(${jvm.StrLit(", ")})"
+            val openParen = code"$Fragment.lit(${jvm.StrLit("(")})"
+            val closeParen = code"$Fragment.lit(${jvm.StrLit(")")})"
+            val tupleArgs = encodedCols.flatMap(e => List(commaLit, e)).drop(1)
+            val tupleExpr = code"$Fragment.interpolate($openParen, ${tupleArgs.mkCode(", ")}, $closeParen)"
+            val addStmt = lang.typeSupport.MutableListOps.add(fragments.code, tupleExpr)
+            jvm.Body.Stmts(
+              List(
+                jvm.LocalVar(fragments, Some(lang.typeSupport.MutableListOps.tpe.of(Fragment)), lang.typeSupport.MutableListOps.empty),
+                lang.arrayForEach(idsParam.name.code, idIdent, jvm.Body.Expr(addStmt)),
+                jvm.Return(
+                  code"""$Fragment.interpolate($Fragment.lit(${jvm.StrLit(
+                      s"select $colNamesStr from $qRelNameStr where ($colNamesJoined) in ("
+                    )}), $Fragment.comma(${collectionForComma(fragments.code)}), $Fragment.lit(${jvm.StrLit(")")})).query(${resultSetParserFor(rowType, "all")})$queryAllRunUnchecked"""
+                )
+              )
+            )
+        }
     }
   }
 
@@ -611,6 +657,52 @@ class DbLibTypo(
 
       case DbType.Oracle =>
         // Oracle: Use same approach as MariaDB (IN clause)
+        id match {
+          case x: IdComputed.Unary =>
+            val colName = adapter.quoteIdent(x.col.dbName.value)
+            val idIdent = jvm.Ident("id")
+            val fragments = jvm.Ident("fragments")
+            val encodeId = code"$Fragment.encode(${lookupType(x)}, $idIdent)"
+            val addStmt = lang.typeSupport.MutableListOps.add(fragments.code, encodeId)
+            jvm.Body.Stmts(
+              List(
+                jvm.LocalVar(fragments, Some(lang.typeSupport.MutableListOps.tpe.of(Fragment)), lang.typeSupport.MutableListOps.empty),
+                lang.arrayForEach(idsParam.name.code, idIdent, jvm.Body.Expr(addStmt)),
+                jvm.Return(
+                  code"""$Fragment.interpolate($Fragment.lit(${jvm.StrLit(s"delete from $qRelNameStr where $colName in (")}), $Fragment.comma(${collectionForComma(
+                      fragments.code
+                    )}), $Fragment.lit(${jvm
+                      .StrLit(s")")})).update().runUnchecked(c)"""
+                )
+              )
+            )
+
+          case x: IdComputed.Composite =>
+            val colNamesJoined = x.cols.toList.map(c => adapter.quoteIdent(c.dbCol.name.value)).mkString(", ")
+            val idIdent = jvm.Ident("id")
+            val fragments = jvm.Ident("fragments")
+            val encodedCols = x.cols.toList.map(c => code"$Fragment.encode(${lookupType(c)}, ${lang.prop(idIdent.code, c.name)})")
+            val commaLit = code"$Fragment.lit(${jvm.StrLit(", ")})"
+            val openParen = code"$Fragment.lit(${jvm.StrLit("(")})"
+            val closeParen = code"$Fragment.lit(${jvm.StrLit(")")})"
+            val tupleArgs = encodedCols.flatMap(e => List(commaLit, e)).drop(1)
+            val tupleExpr = code"$Fragment.interpolate($openParen, ${tupleArgs.mkCode(", ")}, $closeParen)"
+            val addStmt = lang.typeSupport.MutableListOps.add(fragments.code, tupleExpr)
+            jvm.Body.Stmts(
+              List(
+                jvm.LocalVar(fragments, Some(lang.typeSupport.MutableListOps.tpe.of(Fragment)), lang.typeSupport.MutableListOps.empty),
+                lang.arrayForEach(idsParam.name.code, idIdent, jvm.Body.Expr(addStmt)),
+                jvm.Return(
+                  code"""$Fragment.interpolate($Fragment.lit(${jvm.StrLit(
+                      s"delete from $qRelNameStr where ($colNamesJoined) in ("
+                    )}), $Fragment.comma(${collectionForComma(fragments.code)}), $Fragment.lit(${jvm.StrLit(")")})).update().runUnchecked(c)"""
+                )
+              )
+            )
+        }
+
+      case DbType.SqlServer =>
+        // SQL Server doesn't support arrays, use same approach as MariaDB with IN clause
         id match {
           case x: IdComputed.Unary =>
             val colName = adapter.quoteIdent(x.col.dbName.value)
@@ -886,10 +978,12 @@ class DbLibTypo(
           case ReturningStrategy.SqlReturning(_) =>
             // PostgreSQL/MariaDB: Use RETURNING clause
             val sql = SQL {
-              code"""|insert into ${quotedRelName(relName)}(${dbNames(writeableColumnsWithId, isRead = false)})
-                     |values (${values.mkCode(", ")})
-                     |returning ${dbNames(cols, isRead = true)}
-                     |""".stripMargin
+              adapter.insertReturning(
+                tableName = quotedRelName(relName),
+                columns = dbNames(writeableColumnsWithId, isRead = false),
+                values = values.mkCode(", "),
+                returningCols = cols
+              )
             }
             val code = resultSetParserFor(rowType, "exactlyOne")
             jvm.Body.Expr(
@@ -950,7 +1044,7 @@ class DbLibTypo(
             idColumns = dbNames(id.cols, isRead = false),
             values = values.mkCode(", "),
             conflictUpdate = conflictUpdate,
-            returning = Some(dbNames(cols, isRead = true))
+            returning = Some(adapter.returningColumns(cols))
           )
         }
 
@@ -980,7 +1074,7 @@ class DbLibTypo(
             idColumns = dbNames(id.cols, isRead = false),
             values = insertCols.map(c => code"?${adapter.columnWriteCast(c)}").mkCode(", "),
             conflictUpdate = conflictAction,
-            returning = Some(dbNames(cols, isRead = true))
+            returning = Some(adapter.returningColumns(cols))
           )
         }
         val rowParser = code"$rowType.$rowParserName"
@@ -1081,15 +1175,18 @@ class DbLibTypo(
           case ReturningStrategy.SqlReturning(_) =>
             // PostgreSQL/MariaDB: Use RETURNING clause
             val sql = SQL {
-              code"""|insert into ${quotedRelName(relName)}(${jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(columns.name.code)})")})
-                     |values (${jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(values.name.code)})")})
-                     |returning ${dbNames(cols, isRead = true)}
-                     |""".stripMargin
+              adapter.insertReturning(
+                tableName = quotedRelName(relName),
+                columns = jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(columns.name.code)})"),
+                values = jvm.RuntimeInterpolation(code"$Fragment.comma(${collectionForComma(values.name.code)})"),
+                returningCols = cols
+              )
             }
             val sqlEmpty = SQL {
-              code"""|insert into ${quotedRelName(relName)} default values
-                     |returning ${dbNames(cols, isRead = true)}
-                     |""".stripMargin
+              adapter.insertDefaultValuesReturning(
+                tableName = quotedRelName(relName),
+                returningCols = cols
+              )
             }
             val q = {
               val body = if (unsaved.normalColumns.isEmpty) jvm.IfExpr(jvm.ApplyNullary(columns.name, jvm.Ident("isEmpty")), sqlEmpty, sql).code else sql

@@ -40,7 +40,7 @@ class TestSakSoknadsalternativRepoImpl() : TestSakSoknadsalternativRepo {
   override fun insert(
     unsaved: TestSakSoknadsalternativRow,
     c: Connection
-  ): TestSakSoknadsalternativRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nvalues ("), Fragment.encode(PgTypes.text, unsaved.organisasjonskodeSaksbehandler), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(", "), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskodeTilbyder), Fragment.lit(")\nreturning \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\n"))
+  ): TestSakSoknadsalternativRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_sak_soknadsalternativ\"(\"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\")\nvalues ("), Fragment.encode(PgTypes.text, unsaved.organisasjonskodeSaksbehandler), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(", "), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskodeTilbyder), Fragment.lit(")\nRETURNING \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\", \"organisasjonskode_tilbyder\"\n"))
     .updateReturning(TestSakSoknadsalternativRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(

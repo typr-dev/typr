@@ -34,7 +34,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
   override def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
   sql"""insert into "person"."addresstype"("addresstypeid", "name", "rowguid", "modifieddate")
     values (${Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "addresstypeid", "name", "rowguid", "modifieddate"
+    RETURNING "addresstypeid", "name", "rowguid", "modifieddate"
     """
     .updateReturning(AddresstypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -59,7 +59,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     val q: Fragment = {
       sql"""insert into "person"."addresstype"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "addresstypeid", "name", "rowguid", "modifieddate"
+      RETURNING "addresstypeid", "name", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(AddresstypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)

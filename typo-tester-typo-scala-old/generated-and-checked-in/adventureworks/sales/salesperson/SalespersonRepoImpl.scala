@@ -36,7 +36,7 @@ class SalespersonRepoImpl extends SalespersonRepo {
   override def insert(unsaved: SalespersonRow)(using c: Connection): SalespersonRow = {
   interpolate(Fragment.lit("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType.opt(), unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.salesquota), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.bonus), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.commissionpct), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     """))
     .updateReturning(SalespersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -77,7 +77,7 @@ class SalespersonRepoImpl extends SalespersonRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."salesperson"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(SalespersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)

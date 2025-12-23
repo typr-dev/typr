@@ -89,7 +89,7 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"countryregioncode\", \"currencycode\", \"modifieddate\"\n"))
+                    + "RETURNING \"countryregioncode\", \"currencycode\", \"modifieddate\"\n"))
         .updateReturning(CountryregioncurrencyRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -128,7 +128,7 @@ public class CountryregioncurrencyRepoImpl implements CountryregioncurrencyRepo 
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"countryregioncode\", \"currencycode\", \"modifieddate\"\n"));
+                ")\nRETURNING \"countryregioncode\", \"currencycode\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(CountryregioncurrencyRow._rowParser.exactlyOne()).runUnchecked(c);
   }

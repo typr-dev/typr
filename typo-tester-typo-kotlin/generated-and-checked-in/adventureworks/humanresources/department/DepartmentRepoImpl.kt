@@ -38,7 +38,7 @@ class DepartmentRepoImpl() : DepartmentRepo {
   override fun insert(
     unsaved: DepartmentRow,
     c: Connection
-  ): DepartmentRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nvalues ("), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.groupname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
+  ): DepartmentRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nvalues ("), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.groupname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
     .updateReturning(DepartmentRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -61,7 +61,7 @@ class DepartmentRepoImpl() : DepartmentRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
     return q.updateReturning(DepartmentRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

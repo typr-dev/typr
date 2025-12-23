@@ -72,7 +72,7 @@ public class PriceTiersRepoImpl implements PriceTiersRepo {
             Fragment.encode(MariaTypes.numeric, unsaved.discountValue()),
             Fragment.lit(
                 ")\n"
-                    + "returning `tier_id`, `name`, `min_quantity`, `discount_type`,"
+                    + "RETURNING `tier_id`, `name`, `min_quantity`, `discount_type`,"
                     + " `discount_value`\n"))
         .updateReturning(PriceTiersRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -112,7 +112,7 @@ public class PriceTiersRepoImpl implements PriceTiersRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `tier_id`, `name`, `min_quantity`, `discount_type`,"
+                    + "RETURNING `tier_id`, `name`, `min_quantity`, `discount_type`,"
                     + " `discount_value`\n"));
     ;
     return q.updateReturning(PriceTiersRow._rowParser.exactlyOne()).runUnchecked(c);

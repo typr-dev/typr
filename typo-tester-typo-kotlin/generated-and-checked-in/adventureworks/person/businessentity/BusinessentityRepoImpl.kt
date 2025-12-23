@@ -37,7 +37,7 @@ class BusinessentityRepoImpl() : BusinessentityRepo {
   override fun insert(
     unsaved: BusinessentityRow,
     c: Connection
-  ): BusinessentityRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"(\"businessentityid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n"))
+  ): BusinessentityRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"(\"businessentityid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(BusinessentityRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -61,7 +61,7 @@ class BusinessentityRepoImpl() : BusinessentityRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = (if (columns.isEmpty()) Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\" default values\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n")) else Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n")))
+    val q: Fragment = (if (columns.isEmpty()) Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\" default values\nRETURNING \"businessentityid\", \"rowguid\", \"modifieddate\"\n")) else Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"rowguid\", \"modifieddate\"\n")))
     return q.updateReturning(BusinessentityRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -45,7 +45,7 @@ class SalesterritoryhistoryRepoImpl() : SalesterritoryhistoryRepo {
   override fun insert(
     unsaved: SalesterritoryhistoryRow,
     c: Connection
-  ): SalesterritoryhistoryRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesterritoryhistory\"(\"businessentityid\", \"territoryid\", \"startdate\", \"enddate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"territoryid\", \"startdate\", \"enddate\", \"rowguid\", \"modifieddate\"\n"))
+  ): SalesterritoryhistoryRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesterritoryhistory\"(\"businessentityid\", \"territoryid\", \"startdate\", \"enddate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"territoryid\", \"startdate\", \"enddate\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(SalesterritoryhistoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -72,7 +72,7 @@ class SalesterritoryhistoryRepoImpl() : SalesterritoryhistoryRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesterritoryhistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"territoryid\", \"startdate\", \"enddate\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesterritoryhistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"territoryid\", \"startdate\", \"enddate\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(SalesterritoryhistoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -38,7 +38,7 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
   override fun insert(
     unsaved: ScrapreasonRow,
     c: Connection
-  ): ScrapreasonRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ScrapreasonId.pgType, unsaved.scrapreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
+  ): ScrapreasonRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"(\"scrapreasonid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(ScrapreasonId.pgType, unsaved.scrapreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
     .updateReturning(ScrapreasonRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -59,7 +59,7 @@ class ScrapreasonRepoImpl() : ScrapreasonRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"scrapreason\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(ScrapreasonRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -30,7 +30,7 @@ class PriceTiersRepoImpl extends PriceTiersRepo {
   override def insert(unsaved: PriceTiersRow)(using c: Connection): PriceTiersRow = {
   sql"""insert into `price_tiers`(`name`, `min_quantity`, `discount_type`, `discount_value`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.intUnsigned, unsaved.minQuantity)}, ${Fragment.encode(MariaTypes.text, unsaved.discountType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountValue)})
-    returning `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`
+    RETURNING `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`
     """
     .updateReturning(PriceTiersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -51,7 +51,7 @@ class PriceTiersRepoImpl extends PriceTiersRepo {
     val q: Fragment = {
       sql"""insert into `price_tiers`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`
+      RETURNING `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`
       """
     }
     return q.updateReturning(PriceTiersRow.`_rowParser`.exactlyOne()).runUnchecked(c)

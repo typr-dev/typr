@@ -34,7 +34,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
   override def insert(unsaved: CurrencyRow)(using c: Connection): CurrencyRow = {
   sql"""insert into "sales"."currency"("currencycode", "name", "modifieddate")
     values (${Fragment.encode(CurrencyId.pgType, unsaved.currencycode)}::bpchar, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "currencycode", "name", "modifieddate"
+    RETURNING "currencycode", "name", "modifieddate"
     """
     .updateReturning(CurrencyRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -53,7 +53,7 @@ class CurrencyRepoImpl extends CurrencyRepo {
     val q: Fragment = {
       sql"""insert into "sales"."currency"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "currencycode", "name", "modifieddate"
+      RETURNING "currencycode", "name", "modifieddate"
       """
     }
     return q.updateReturning(CurrencyRow.`_rowParser`.exactlyOne()).runUnchecked(c)

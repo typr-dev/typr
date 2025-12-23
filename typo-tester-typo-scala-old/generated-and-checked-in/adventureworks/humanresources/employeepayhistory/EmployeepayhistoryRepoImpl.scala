@@ -38,7 +38,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
   override def insert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.ratechangedate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.rate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.int2, unsaved.payfrequency), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate"
+    RETURNING "businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate"
     """))
     .updateReturning(EmployeepayhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -61,7 +61,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "humanresources"."employeepayhistory"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate"
+      RETURNING "businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate"
       """))
     }
     return q.updateReturning(EmployeepayhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -39,7 +39,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
   override def insert(unsaved: ProductlistpricehistoryRow)(using c: Connection): ProductlistpricehistoryRow = {
   sql"""insert into "production"."productlistpricehistory"("productid", "startdate", "enddate", "listprice", "modifieddate")
     values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.listprice)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productid", "startdate", "enddate", "listprice", "modifieddate"
+    RETURNING "productid", "startdate", "enddate", "listprice", "modifieddate"
     """
     .updateReturning(ProductlistpricehistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class ProductlistpricehistoryRepoImpl extends ProductlistpricehistoryRepo {
     val q: Fragment = {
       sql"""insert into "production"."productlistpricehistory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productid", "startdate", "enddate", "listprice", "modifieddate"
+      RETURNING "productid", "startdate", "enddate", "listprice", "modifieddate"
       """
     }
     return q.updateReturning(ProductlistpricehistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

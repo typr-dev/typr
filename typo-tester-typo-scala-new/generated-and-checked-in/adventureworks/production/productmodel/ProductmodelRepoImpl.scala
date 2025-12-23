@@ -35,7 +35,7 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
   override def insert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
   sql"""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
     values (${Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.xml.nullable, unsaved.catalogdescription)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.instructions)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
+    RETURNING "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
     """
     .updateReturning(ProductmodelRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -64,7 +64,7 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     val q: Fragment = {
       sql"""insert into "production"."productmodel"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
+      RETURNING "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(ProductmodelRow.`_rowParser`.exactlyOne()).runUnchecked(c)

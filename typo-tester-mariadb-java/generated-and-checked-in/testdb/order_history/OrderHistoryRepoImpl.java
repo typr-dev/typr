@@ -79,7 +79,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
             Fragment.encode(MariaTypes.datetime, unsaved.createdAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `history_id`, `order_id`, `previous_status`, `new_status`,"
+                    + "RETURNING `history_id`, `order_id`, `previous_status`, `new_status`,"
                     + " `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
         .updateReturning(OrderHistoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -155,7 +155,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `history_id`, `order_id`, `previous_status`, `new_status`,"
+                    + "RETURNING `history_id`, `order_id`, `previous_status`, `new_status`,"
                     + " `changed_by`, `change_reason`, `metadata`, `created_at`\n"));
     ;
     return q.updateReturning(OrderHistoryRow._rowParser.exactlyOne()).runUnchecked(c);

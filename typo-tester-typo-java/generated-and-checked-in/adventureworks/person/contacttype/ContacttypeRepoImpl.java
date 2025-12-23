@@ -66,7 +66,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
             Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
-            Fragment.lit("::timestamp)\nreturning \"contacttypeid\", \"name\", \"modifieddate\"\n"))
+            Fragment.lit("::timestamp)\nRETURNING \"contacttypeid\", \"name\", \"modifieddate\"\n"))
         .updateReturning(ContacttypeRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -109,7 +109,7 @@ public class ContacttypeRepoImpl implements ContacttypeRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"contacttypeid\", \"name\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"contacttypeid\", \"name\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ContacttypeRow._rowParser.exactlyOne()).runUnchecked(c);
   }

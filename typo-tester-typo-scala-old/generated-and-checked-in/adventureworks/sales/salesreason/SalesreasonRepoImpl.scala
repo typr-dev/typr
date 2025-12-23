@@ -35,7 +35,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
   override def insert(unsaved: SalesreasonRow)(using c: Connection): SalesreasonRow = {
   interpolate(Fragment.lit("""insert into "sales"."salesreason"("salesreasonid", "name", "reasontype", "modifieddate")
     values ("""), Fragment.encode(SalesreasonId.pgType, unsaved.salesreasonid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.reasontype), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "salesreasonid", "name", "reasontype", "modifieddate"
+    RETURNING "salesreasonid", "name", "reasontype", "modifieddate"
     """))
     .updateReturning(SalesreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -58,7 +58,7 @@ class SalesreasonRepoImpl extends SalesreasonRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."salesreason"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "salesreasonid", "name", "reasontype", "modifieddate"
+      RETURNING "salesreasonid", "name", "reasontype", "modifieddate"
       """))
     }
     return q.updateReturning(SalesreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)

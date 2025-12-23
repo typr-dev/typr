@@ -34,7 +34,7 @@ class ShipmentsRepoImpl extends ShipmentsRepo {
   override def insert(unsaved: ShipmentsRow)(using c: Connection): ShipmentsRow = {
   sql"""insert into `shipments`(`order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`)
     values (${Fragment.encode(OrdersId.pgType, unsaved.orderId)}, ${Fragment.encode(ShippingCarriersId.pgType, unsaved.carrierId)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.trackingNumber)}, ${Fragment.encode(MariaTypes.varchar, unsaved.shippingMethod)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.weightKg)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.dimensionsJson)}, ${Fragment.encode(MariaTypes.longblob.nullable, unsaved.labelData)}, ${Fragment.encode(MariaTypes.text, unsaved.status)}, ${Fragment.encode(MariaTypes.date.nullable, unsaved.estimatedDeliveryDate)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.actualDeliveryAt)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.shippingCost)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.insuranceAmount)}, ${Fragment.encode(WarehousesId.pgType.nullable, unsaved.originWarehouseId)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.shippedAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)})
-    returning `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`
+    RETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`
     """
     .updateReturning(ShipmentsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -101,7 +101,7 @@ class ShipmentsRepoImpl extends ShipmentsRepo {
     val q: Fragment = {
       sql"""insert into `shipments`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`
+      RETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`
       """
     }
     return q.updateReturning(ShipmentsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

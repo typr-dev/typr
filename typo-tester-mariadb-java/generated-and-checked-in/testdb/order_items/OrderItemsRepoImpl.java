@@ -92,7 +92,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
             Fragment.encode(MariaTypes.tinytext.opt(), unsaved.notes()),
             Fragment.lit(
                 ")\n"
-                    + "returning `item_id`, `order_id`, `product_id`, `sku`, `product_name`,"
+                    + "RETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`,"
                     + " `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`,"
                     + " `fulfillment_status`, `warehouse_id`, `notes`\n"))
         .updateReturning(OrderItemsRow._rowParser.exactlyOne())
@@ -181,7 +181,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `item_id`, `order_id`, `product_id`, `sku`, `product_name`,"
+                    + "RETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`,"
                     + " `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`,"
                     + " `fulfillment_status`, `warehouse_id`, `notes`\n"));
     ;

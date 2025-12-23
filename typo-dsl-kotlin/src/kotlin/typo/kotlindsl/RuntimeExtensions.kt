@@ -140,6 +140,35 @@ fun <A : Any> OracleType<A>.nullable(): OracleType<A?> {
 }
 
 // ================================
+// SqlServerType Extensions
+// ================================
+
+/**
+ * Kotlin-friendly nullable version of SqlServerType.opt().
+ */
+fun <A : Any> SqlServerType<A>.nullable(): SqlServerType<A?> {
+    val underlying = this.opt()
+
+    // Create wrapper components that convert Optional<A> to A? at boundaries
+    val sqlServerTypename = underlying.typename().to(optionalToNullable<A>()) as SqlServerTypename<A?>
+
+    // Use KotlinNullableSqlServerRead which implements DbRead.Nullable marker interface
+    // This tells RowParser.opt() that this column is already nullable
+    val sqlServerRead: SqlServerRead<A?> = typo.runtime.KotlinNullableSqlServerRead(underlying.read())
+
+    val sqlServerWrite = SqlServerWrite.primitive<A?> { ps, index, value -> underlying.write().set(ps, index, value.toOptional()) }
+
+    val sqlServerText = SqlServerText.instance<A?> { v, sb -> underlying.sqlServerText().unsafeEncode(v.toOptional(), sb) }
+
+    val sqlServerJson = underlying.sqlServerJson().bimap<A?>(
+        SqlFunction { opt -> opt.orNull() },
+        { nullable -> nullable.toOptional() }
+    )
+
+    return SqlServerType.of(sqlServerTypename, sqlServerRead, sqlServerWrite, sqlServerText, sqlServerJson)
+}
+
+// ================================
 // Either Extensions (value-level)
 // ================================
 

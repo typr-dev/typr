@@ -1,6 +1,6 @@
 package typo.scaladsl
 
-import typo.runtime.{DuckDbType, MariaType, OracleType, PgType}
+import typo.runtime.{DuckDbType, MariaType, OracleType, PgType, SqlServerType}
 
 import scala.jdk.CollectionConverters.*
 
@@ -139,5 +139,26 @@ object ScalaDbTypes {
     // Floating point primitives - no conversion needed
     val binaryFloat: OracleType[Float] = typo.runtime.OracleTypes.binaryFloat.bimap(f => f, f => f)
     val binaryDouble: OracleType[Double] = typo.runtime.OracleTypes.binaryDouble.bimap(d => d, d => d)
+  }
+
+  object SqlServerTypes {
+    // Primitives - convert Java boxed types to Scala native types
+    val tinyint: SqlServerType[Short] = typo.runtime.SqlServerTypes.tinyint.bimap(s => s, s => s) // Unsigned!
+    val smallint: SqlServerType[Short] = typo.runtime.SqlServerTypes.smallint.bimap(s => s, s => s)
+    val int_ : SqlServerType[Int] = typo.runtime.SqlServerTypes.int_.bimap(i => i, i => i)
+    val bigint: SqlServerType[Long] = typo.runtime.SqlServerTypes.bigint.bimap(l => l, l => l)
+
+    // Floating point
+    val real: SqlServerType[Float] = typo.runtime.SqlServerTypes.real.bimap(f => f, f => f)
+    val float_ : SqlServerType[Double] = typo.runtime.SqlServerTypes.float_.bimap(d => d, d => d)
+
+    // BigDecimal - convert Java BigDecimal to Scala BigDecimal
+    val decimal: SqlServerType[BigDecimal] = typo.runtime.SqlServerTypes.decimal.bimap(jbd => BigDecimal(jbd), sbd => sbd.bigDecimal)
+    val numeric: SqlServerType[BigDecimal] = typo.runtime.SqlServerTypes.numeric.bimap(jbd => BigDecimal(jbd), sbd => sbd.bigDecimal)
+    val money: SqlServerType[BigDecimal] = typo.runtime.SqlServerTypes.money.bimap(jbd => BigDecimal(jbd), sbd => sbd.bigDecimal)
+    val smallmoney: SqlServerType[BigDecimal] = typo.runtime.SqlServerTypes.smallmoney.bimap(jbd => BigDecimal(jbd), sbd => sbd.bigDecimal)
+
+    // Boolean
+    val bit: SqlServerType[Boolean] = typo.runtime.SqlServerTypes.bit.bimap(b => b, b => b)
   }
 }

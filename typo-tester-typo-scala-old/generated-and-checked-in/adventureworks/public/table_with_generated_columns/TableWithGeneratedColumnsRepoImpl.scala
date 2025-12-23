@@ -33,7 +33,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
   override def insert(unsaved: TableWithGeneratedColumnsRow)(using c: Connection): TableWithGeneratedColumnsRow = {
   interpolate(Fragment.lit("""insert into "public"."table-with-generated-columns"("name")
     values ("""), Fragment.encode(TableWithGeneratedColumnsId.pgType, unsaved.name), Fragment.lit(""")
-    returning "name", "name-type-always"
+    RETURNING "name", "name-type-always"
     """))
     .updateReturning(TableWithGeneratedColumnsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -46,7 +46,7 @@ class TableWithGeneratedColumnsRepoImpl extends TableWithGeneratedColumnsRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "public"."table-with-generated-columns"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "name", "name-type-always"
+      RETURNING "name", "name-type-always"
       """))
     }
     return q.updateReturning(TableWithGeneratedColumnsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -38,7 +38,7 @@ public class PersonRepoImpl implements PersonRepo {
     PersonRow unsaved,
     Connection c
   ) {
-    return interpolate(Fragment.lit("insert into \"compositepk\".\"person\"(\"one\", \"two\", \"name\")\nvalues ("), Fragment.encode(PgTypes.int8, unsaved.one()), Fragment.lit("::int8, "), Fragment.encode(PgTypes.text.opt(), unsaved.two()), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.name()), Fragment.lit(")\nreturning \"one\", \"two\", \"name\"\n"))
+    return interpolate(Fragment.lit("insert into \"compositepk\".\"person\"(\"one\", \"two\", \"name\")\nvalues ("), Fragment.encode(PgTypes.int8, unsaved.one()), Fragment.lit("::int8, "), Fragment.encode(PgTypes.text.opt(), unsaved.two()), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.name()), Fragment.lit(")\nRETURNING \"one\", \"two\", \"name\"\n"))
       .updateReturning(PersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 
@@ -69,7 +69,7 @@ public class PersonRepoImpl implements PersonRepo {
         values.add(interpolate(Fragment.encode(PgTypes.text.opt(), value), Fragment.lit("")));
       }
     );;
-    Fragment q = interpolate(Fragment.lit("insert into \"compositepk\".\"person\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nreturning \"one\", \"two\", \"name\"\n"));;
+    Fragment q = interpolate(Fragment.lit("insert into \"compositepk\".\"person\"("), Fragment.comma(columns), Fragment.lit(")\nvalues ("), Fragment.comma(values), Fragment.lit(")\nRETURNING \"one\", \"two\", \"name\"\n"));;
     return q.updateReturning(PersonRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 

@@ -39,7 +39,7 @@ class CreditcardRepoImpl() : CreditcardRepo {
   override fun insert(
     unsaved: CreditcardRow,
     c: Connection
-  ): CreditcardRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"creditcard\"(\"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\", \"expyear\", \"modifieddate\")\nvalues ("), Fragment.encode(CustomCreditcardId.pgType, unsaved.creditcardid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.cardtype), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.cardnumber), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.expmonth), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.expyear), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\", \"expyear\", \"modifieddate\"\n"))
+  ): CreditcardRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"creditcard\"(\"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\", \"expyear\", \"modifieddate\")\nvalues ("), Fragment.encode(CustomCreditcardId.pgType, unsaved.creditcardid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.cardtype), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.cardnumber), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.expmonth), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.expyear), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\", \"expyear\", \"modifieddate\"\n"))
     .updateReturning(CreditcardRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -66,7 +66,7 @@ class CreditcardRepoImpl() : CreditcardRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"creditcard\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\", \"expyear\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"creditcard\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"creditcardid\", \"cardtype\", \"cardnumber\", \"expmonth\", \"expyear\", \"modifieddate\"\n"))
     return q.updateReturning(CreditcardRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

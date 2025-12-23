@@ -38,7 +38,7 @@ class FlaffRepoImpl extends FlaffRepo {
   override def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   interpolate(Fragment.lit("""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values ("""), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.pgType.opt(), unsaved.parentspecifier), Fragment.lit("""::text)
-    returning "code", "another_code", "some_number", "specifier", "parentspecifier"
+    RETURNING "code", "another_code", "some_number", "specifier", "parentspecifier"
     """))
     .updateReturning(FlaffRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

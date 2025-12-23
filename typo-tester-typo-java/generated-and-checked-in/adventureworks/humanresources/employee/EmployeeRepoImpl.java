@@ -98,7 +98,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
             Fragment.encode(PgTypes.text.opt(), unsaved.organizationnode()),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"nationalidnumber\", \"loginid\","
+                    + "RETURNING \"businessentityid\", \"nationalidnumber\", \"loginid\","
                     + " \"jobtitle\", \"birthdate\", \"maritalstatus\", \"gender\", \"hiredate\","
                     + " \"salariedflag\", \"vacationhours\", \"sickleavehours\", \"currentflag\","
                     + " \"rowguid\", \"modifieddate\", \"organizationnode\"\n"))
@@ -211,7 +211,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"nationalidnumber\", \"loginid\","
+                    + "RETURNING \"businessentityid\", \"nationalidnumber\", \"loginid\","
                     + " \"jobtitle\", \"birthdate\", \"maritalstatus\", \"gender\", \"hiredate\","
                     + " \"salariedflag\", \"vacationhours\", \"sickleavehours\", \"currentflag\","
                     + " \"rowguid\", \"modifieddate\", \"organizationnode\"\n"));

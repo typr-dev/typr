@@ -69,7 +69,7 @@ public class OrdersRepoImpl implements OrdersRepo {
             Fragment.encode(DuckDbTypes.varchar.opt(), unsaved.status()),
             Fragment.lit(
                 ")\n"
-                    + "returning \"order_id\", \"customer_id\", \"order_date\", \"total_amount\","
+                    + "RETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\","
                     + " \"status\"\n"))
         .updateReturning(OrdersRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -119,7 +119,7 @@ public class OrdersRepoImpl implements OrdersRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"order_id\", \"customer_id\", \"order_date\", \"total_amount\","
+                    + "RETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\","
                     + " \"status\"\n"));
     ;
     return q.updateReturning(OrdersRow._rowParser.exactlyOne()).runUnchecked(c);

@@ -35,7 +35,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
   override def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
   interpolate(Fragment.lit("""insert into "person"."addresstype"("addresstypeid", "name", "rowguid", "modifieddate")
     values ("""), Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "addresstypeid", "name", "rowguid", "modifieddate"
+    RETURNING "addresstypeid", "name", "rowguid", "modifieddate"
     """))
     .updateReturning(AddresstypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -60,7 +60,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "person"."addresstype"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "addresstypeid", "name", "rowguid", "modifieddate"
+      RETURNING "addresstypeid", "name", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(AddresstypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)

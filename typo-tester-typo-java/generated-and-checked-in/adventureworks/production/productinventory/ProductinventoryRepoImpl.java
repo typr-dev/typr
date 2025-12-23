@@ -95,7 +95,7 @@ public class ProductinventoryRepoImpl implements ProductinventoryRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\","
+                    + "RETURNING \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(ProductinventoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -157,7 +157,7 @@ public class ProductinventoryRepoImpl implements ProductinventoryRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\","
+                    + "RETURNING \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ProductinventoryRow._rowParser.exactlyOne()).runUnchecked(c);

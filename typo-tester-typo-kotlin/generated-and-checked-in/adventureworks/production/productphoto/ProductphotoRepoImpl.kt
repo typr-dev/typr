@@ -38,7 +38,7 @@ class ProductphotoRepoImpl() : ProductphotoRepo {
   override fun insert(
     unsaved: ProductphotoRow,
     c: Connection
-  ): ProductphotoRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.thumbnailphoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.thumbnailphotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.largephoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.largephotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\n"))
+  ): ProductphotoRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"(\"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.thumbnailphoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.thumbnailphotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.largephoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.nullable(), unsaved.largephotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\n"))
     .updateReturning(ProductphotoRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -65,7 +65,7 @@ class ProductphotoRepoImpl() : ProductphotoRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productphoto\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productphotoid\", \"thumbnailphoto\", \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\", \"modifieddate\"\n"))
     return q.updateReturning(ProductphotoRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

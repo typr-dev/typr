@@ -39,7 +39,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   override fun insert(
     unsaved: OrderItemsRow,
     c: Connection
-  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("insert into \"order_items\"(\"order_id\", \"product_id\", \"quantity\", \"unit_price\")\nvalues ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.productId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.quantity), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric, unsaved.unitPrice), Fragment.lit(")\nreturning \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"))
+  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("insert into \"order_items\"(\"order_id\", \"product_id\", \"quantity\", \"unit_price\")\nvalues ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.productId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.quantity), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric, unsaved.unitPrice), Fragment.lit(")\nRETURNING \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"))
     .updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -59,7 +59,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
       { value -> columns.add(Fragment.lit("\"quantity\""))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"order_items\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"order_items\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"))
     return q.updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

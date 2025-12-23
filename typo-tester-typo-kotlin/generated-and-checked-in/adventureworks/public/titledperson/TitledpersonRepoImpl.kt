@@ -24,7 +24,7 @@ class TitledpersonRepoImpl() : TitledpersonRepo {
   override fun insert(
     unsaved: TitledpersonRow,
     c: Connection
-  ): TitledpersonRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"titledperson\"(\"title_short\", \"title\", \"name\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.titleShort), Fragment.lit("::text, "), Fragment.encode(TitleId.pgType, unsaved.title), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(")\nreturning \"title_short\", \"title\", \"name\"\n"))
+  ): TitledpersonRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"titledperson\"(\"title_short\", \"title\", \"name\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.titleShort), Fragment.lit("::text, "), Fragment.encode(TitleId.pgType, unsaved.title), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(")\nRETURNING \"title_short\", \"title\", \"name\"\n"))
     .updateReturning(TitledpersonRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(

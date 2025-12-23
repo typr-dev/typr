@@ -89,7 +89,7 @@ public class TestSakSoknadsalternativRepoImpl implements TestSakSoknadsalternati
             Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskodeTilbyder()),
             Fragment.lit(
                 ")\n"
-                    + "returning \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\","
+                    + "RETURNING \"organisasjonskode_saksbehandler\", \"utdanningsmulighet_kode\","
                     + " \"organisasjonskode_tilbyder\"\n"))
         .updateReturning(TestSakSoknadsalternativRow._rowParser.exactlyOne())
         .runUnchecked(c);

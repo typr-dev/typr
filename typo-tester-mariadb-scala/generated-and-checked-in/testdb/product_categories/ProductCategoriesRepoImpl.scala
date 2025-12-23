@@ -31,7 +31,7 @@ class ProductCategoriesRepoImpl extends ProductCategoriesRepo {
   override def insert(unsaved: ProductCategoriesRow)(using c: Connection): ProductCategoriesRow = {
   sql"""insert into `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)
     values (${Fragment.encode(ProductsId.pgType, unsaved.productId)}, ${Fragment.encode(CategoriesId.pgType, unsaved.categoryId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isPrimary)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.smallint, unsaved.sortOrder)})
-    returning `product_id`, `category_id`, `is_primary`, `sort_order`
+    RETURNING `product_id`, `category_id`, `is_primary`, `sort_order`
     """
     .updateReturning(ProductCategoriesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -54,7 +54,7 @@ class ProductCategoriesRepoImpl extends ProductCategoriesRepo {
     val q: Fragment = {
       sql"""insert into `product_categories`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `product_id`, `category_id`, `is_primary`, `sort_order`
+      RETURNING `product_id`, `category_id`, `is_primary`, `sort_order`
       """
     }
     return q.updateReturning(ProductCategoriesRow.`_rowParser`.exactlyOne()).runUnchecked(c)

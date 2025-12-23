@@ -36,7 +36,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
   override def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
   sql"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     values (${Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(PgTypes.text, unsaved.group)}, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costlastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
+    RETURNING "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     """
     .updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -81,7 +81,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     val q: Fragment = {
       sql"""insert into "sales"."salesterritory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
+      RETURNING "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

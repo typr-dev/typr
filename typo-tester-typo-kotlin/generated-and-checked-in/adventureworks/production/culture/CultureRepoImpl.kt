@@ -38,7 +38,7 @@ class CultureRepoImpl() : CultureRepo {
   override fun insert(
     unsaved: CultureRow,
     c: Connection
-  ): CultureRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"cultureid\", \"name\", \"modifieddate\"\n"))
+  ): CultureRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"(\"cultureid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"cultureid\", \"name\", \"modifieddate\"\n"))
     .updateReturning(CultureRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -56,7 +56,7 @@ class CultureRepoImpl() : CultureRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"cultureid\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"culture\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"cultureid\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(CultureRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

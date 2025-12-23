@@ -63,9 +63,17 @@ object readSqlFileDirectories {
   }
 
   def queryTypeFor(decomposedSql: DecomposedSql, c: Connection): SqlCommandType = {
-    val pc = c.unwrap(classOf[PgConnection])
-    val q = pc.createQuery(decomposedSql.sqlWithNulls, true, false)
-    Option(q.query.getSqlCommand).map(_.getType).getOrElse(SqlCommandType.BLANK)
+    // Try to use PostgreSQL-specific query type detection if available
+    try {
+      val pc = c.unwrap(classOf[PgConnection])
+      val q = pc.createQuery(decomposedSql.sqlWithNulls, true, false)
+      Option(q.query.getSqlCommand).map(_.getType).getOrElse(SqlCommandType.BLANK)
+    } catch {
+      case _: ClassCastException | _: java.sql.SQLException =>
+        // For non-PostgreSQL databases (SQL Server, MariaDB, etc.), use simple blank check
+        if (decomposedSql.sqlWithNulls.trim.isEmpty) SqlCommandType.BLANK
+        else SqlCommandType.SELECT // Assume SELECT for any non-blank SQL
+    }
   }
   def findSqlFilesUnder(scriptsPath: Path): List[Path] = {
     if (!Files.exists(scriptsPath)) Nil

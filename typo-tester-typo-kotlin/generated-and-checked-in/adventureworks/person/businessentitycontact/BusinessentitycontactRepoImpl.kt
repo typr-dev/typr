@@ -43,7 +43,7 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
   override fun insert(
     unsaved: BusinessentitycontactRow,
     c: Connection
-  ): BusinessentitycontactRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\n"))
+  ): BusinessentitycontactRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"(\"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(BusinessentitycontactRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -68,7 +68,7 @@ class BusinessentitycontactRepoImpl() : BusinessentitycontactRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentitycontact\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"personid\", \"contacttypeid\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(BusinessentitycontactRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

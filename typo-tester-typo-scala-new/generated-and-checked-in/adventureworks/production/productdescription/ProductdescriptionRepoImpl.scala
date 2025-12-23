@@ -33,7 +33,7 @@ class ProductdescriptionRepoImpl extends ProductdescriptionRepo {
   override def insert(unsaved: ProductdescriptionRow)(using c: Connection): ProductdescriptionRow = {
   sql"""insert into "production"."productdescription"("productdescriptionid", "description", "rowguid", "modifieddate")
     values (${Fragment.encode(ProductdescriptionId.pgType, unsaved.productdescriptionid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.description)}, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productdescriptionid", "description", "rowguid", "modifieddate"
+    RETURNING "productdescriptionid", "description", "rowguid", "modifieddate"
     """
     .updateReturning(ProductdescriptionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -58,7 +58,7 @@ class ProductdescriptionRepoImpl extends ProductdescriptionRepo {
     val q: Fragment = {
       sql"""insert into "production"."productdescription"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productdescriptionid", "description", "rowguid", "modifieddate"
+      RETURNING "productdescriptionid", "description", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(ProductdescriptionRow.`_rowParser`.exactlyOne()).runUnchecked(c)

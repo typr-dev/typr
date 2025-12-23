@@ -31,7 +31,7 @@ class CategoriesRepoImpl extends CategoriesRepo {
   override def insert(unsaved: CategoriesRow)(using c: Connection): CategoriesRow = {
   sql"""insert into `categories`(`parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)
     values (${Fragment.encode(CategoriesId.pgType.nullable, unsaved.parentId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.slug)}, ${Fragment.encode(MariaTypes.mediumtext.nullable, unsaved.description)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.imageUrl)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.smallint, unsaved.sortOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isVisible)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.metadata)})
-    returning `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`
+    RETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`
     """
     .updateReturning(CategoriesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -70,7 +70,7 @@ class CategoriesRepoImpl extends CategoriesRepo {
     val q: Fragment = {
       sql"""insert into `categories`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`
+      RETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`
       """
     }
     return q.updateReturning(CategoriesRow.`_rowParser`.exactlyOne()).runUnchecked(c)

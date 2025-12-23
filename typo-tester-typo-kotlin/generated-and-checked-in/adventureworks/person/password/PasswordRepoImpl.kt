@@ -38,7 +38,7 @@ class PasswordRepoImpl() : PasswordRepo {
   override fun insert(
     unsaved: PasswordRow,
     c: Connection
-  ): PasswordRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\n"))
+  ): PasswordRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(PasswordRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -63,7 +63,7 @@ class PasswordRepoImpl() : PasswordRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"password\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"passwordhash\", \"passwordsalt\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(PasswordRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

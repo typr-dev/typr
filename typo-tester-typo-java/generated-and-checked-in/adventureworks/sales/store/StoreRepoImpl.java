@@ -74,7 +74,7 @@ public class StoreRepoImpl implements StoreRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"name\", \"salespersonid\","
+                    + "RETURNING \"businessentityid\", \"name\", \"salespersonid\","
                     + " \"demographics\", \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(StoreRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -132,7 +132,7 @@ public class StoreRepoImpl implements StoreRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"name\", \"salespersonid\","
+                    + "RETURNING \"businessentityid\", \"name\", \"salespersonid\","
                     + " \"demographics\", \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(StoreRow._rowParser.exactlyOne()).runUnchecked(c);

@@ -82,7 +82,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
             Fragment.encode(MariaTypes.varchar.opt(), unsaved.contactPhone()),
             Fragment.lit(
                 ")\n"
-                    + "returning `warehouse_id`, `code`, `name`, `address`, `location`,"
+                    + "RETURNING `warehouse_id`, `code`, `name`, `address`, `location`,"
                     + " `service_area`, `timezone`, `is_active`, `contact_email`,"
                     + " `contact_phone`\n"))
         .updateReturning(WarehousesRow._rowParser.exactlyOne())
@@ -162,7 +162,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `warehouse_id`, `code`, `name`, `address`, `location`,"
+                    + "RETURNING `warehouse_id`, `code`, `name`, `address`, `location`,"
                     + " `service_area`, `timezone`, `is_active`, `contact_email`,"
                     + " `contact_phone`\n"));
     ;

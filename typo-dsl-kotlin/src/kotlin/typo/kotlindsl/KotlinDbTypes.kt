@@ -5,6 +5,7 @@ import typo.runtime.MariaType
 import typo.runtime.OracleType
 import typo.runtime.PgType
 import typo.runtime.SqlFunction
+import typo.runtime.SqlServerType
 
 /**
  * Kotlin-friendly DbType instances that use Kotlin types instead of Java boxed types.
@@ -196,5 +197,47 @@ object KotlinDbTypes {
             SqlFunction { it },
             { it }
         )
+    }
+
+    object SqlServerTypes {
+        // Primitives - convert Java boxed types to Kotlin native types
+        val tinyint: SqlServerType<Short> = typo.runtime.SqlServerTypes.tinyint.bimap(
+            SqlFunction { it },
+            { it }
+        )
+        val smallint: SqlServerType<Short> = typo.runtime.SqlServerTypes.smallint.bimap(
+            SqlFunction { it },
+            { it }
+        )
+        val int_: SqlServerType<Int> = typo.runtime.SqlServerTypes.int_.bimap(
+            SqlFunction { it },
+            { it }
+        )
+        val bigint: SqlServerType<Long> = typo.runtime.SqlServerTypes.bigint.bimap(
+            SqlFunction { it },
+            { it }
+        )
+
+        // Floating point
+        val real: SqlServerType<Float> = typo.runtime.SqlServerTypes.real.bimap(
+            SqlFunction { it },
+            { it }
+        )
+        val float_: SqlServerType<Double> = typo.runtime.SqlServerTypes.float_.bimap(
+            SqlFunction { it },
+            { it }
+        )
+
+        // Boolean
+        val bit: SqlServerType<Boolean> = typo.runtime.SqlServerTypes.bit.bimap(
+            SqlFunction { it },
+            { it }
+        )
+
+        // Decimal types - no conversion needed, already BigDecimal
+        val decimal = typo.runtime.SqlServerTypes.decimal
+        val numeric = typo.runtime.SqlServerTypes.numeric
+        val money = typo.runtime.SqlServerTypes.money
+        val smallmoney = typo.runtime.SqlServerTypes.smallmoney
     }
 }

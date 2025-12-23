@@ -32,7 +32,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
   override def insert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
   interpolate(Fragment.lit("""insert into "public"."test_organisasjon"("organisasjonskode")
     values ("""), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode), Fragment.lit(""")
-    returning "organisasjonskode"
+    RETURNING "organisasjonskode"
     """))
     .updateReturning(TestOrganisasjonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

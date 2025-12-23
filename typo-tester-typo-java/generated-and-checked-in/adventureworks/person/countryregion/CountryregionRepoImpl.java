@@ -69,7 +69,7 @@ public class CountryregionRepoImpl implements CountryregionRepo {
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
-                "::timestamp)\nreturning \"countryregioncode\", \"name\", \"modifieddate\"\n"))
+                "::timestamp)\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
         .updateReturning(CountryregionRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -106,7 +106,7 @@ public class CountryregionRepoImpl implements CountryregionRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"countryregioncode\", \"name\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(CountryregionRow._rowParser.exactlyOne()).runUnchecked(c);
   }

@@ -72,7 +72,7 @@ public class ShiftRepoImpl implements ShiftRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"shiftid\", \"name\", \"starttime\", \"endtime\","
+                    + "RETURNING \"shiftid\", \"name\", \"starttime\", \"endtime\","
                     + " \"modifieddate\"\n"))
         .updateReturning(ShiftRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -123,7 +123,7 @@ public class ShiftRepoImpl implements ShiftRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"shiftid\", \"name\", \"starttime\", \"endtime\","
+                    + "RETURNING \"shiftid\", \"name\", \"starttime\", \"endtime\","
                     + " \"modifieddate\"\n"));
     ;
     return q.updateReturning(ShiftRow._rowParser.exactlyOne()).runUnchecked(c);

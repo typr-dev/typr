@@ -89,7 +89,7 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"specialofferid\", \"productid\", \"rowguid\","
+                    + "RETURNING \"specialofferid\", \"productid\", \"rowguid\","
                     + " \"modifieddate\"\n"))
         .updateReturning(SpecialofferproductRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -138,7 +138,7 @@ public class SpecialofferproductRepoImpl implements SpecialofferproductRepo {
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"));
+                ")\nRETURNING \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(SpecialofferproductRow._rowParser.exactlyOne()).runUnchecked(c);
   }

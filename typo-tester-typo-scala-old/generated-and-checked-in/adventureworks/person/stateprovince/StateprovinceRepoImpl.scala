@@ -38,7 +38,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
   override def insert(unsaved: StateprovinceRow)(using c: Connection): StateprovinceRow = {
   interpolate(Fragment.lit("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
     values ("""), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag), Fragment.lit("::bool, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
+    RETURNING "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     """))
     .updateReturning(StateprovinceRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -73,7 +73,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "person"."stateprovince"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
+      RETURNING "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(StateprovinceRow.`_rowParser`.exactlyOne()).runUnchecked(c)

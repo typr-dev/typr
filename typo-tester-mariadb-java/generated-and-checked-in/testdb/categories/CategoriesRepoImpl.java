@@ -80,7 +80,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
             Fragment.encode(MariaTypes.longtext.opt(), unsaved.metadata()),
             Fragment.lit(
                 ")\n"
-                    + "returning `category_id`, `parent_id`, `name`, `slug`, `description`,"
+                    + "RETURNING `category_id`, `parent_id`, `name`, `slug`, `description`,"
                     + " `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
         .updateReturning(CategoriesRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -165,7 +165,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `category_id`, `parent_id`, `name`, `slug`, `description`,"
+                    + "RETURNING `category_id`, `parent_id`, `name`, `slug`, `description`,"
                     + " `image_url`, `sort_order`, `is_visible`, `metadata`\n"));
     ;
     return q.updateReturning(CategoriesRow._rowParser.exactlyOne()).runUnchecked(c);

@@ -35,7 +35,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
   override def insert(unsaved: CurrencyrateRow)(using c: Connection): CurrencyrateRow = {
   interpolate(Fragment.lit("""insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
     values ("""), Fragment.encode(CurrencyrateId.pgType, unsaved.currencyrateid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.currencyratedate), Fragment.lit("::timestamp, "), Fragment.encode(CurrencyId.pgType, unsaved.fromcurrencycode), Fragment.lit("::bpchar, "), Fragment.encode(CurrencyId.pgType, unsaved.tocurrencycode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric, unsaved.averagerate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.endofdayrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"
+    RETURNING "currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"
     """))
     .updateReturning(CurrencyrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -64,7 +64,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."currencyrate"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"
+      RETURNING "currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"
       """))
     }
     return q.updateReturning(CurrencyrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)

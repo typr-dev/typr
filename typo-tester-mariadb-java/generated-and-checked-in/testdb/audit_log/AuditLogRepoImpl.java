@@ -82,7 +82,7 @@ public class AuditLogRepoImpl implements AuditLogRepo {
             Fragment.encode(MariaTypes.varbinary.opt(), unsaved.sessionId()),
             Fragment.lit(
                 ")\n"
-                    + "returning `log_id`, `table_name`, `record_id`, `action`, `old_values`,"
+                    + "RETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`,"
                     + " `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`\n"))
         .updateReturning(AuditLogRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -172,7 +172,7 @@ public class AuditLogRepoImpl implements AuditLogRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `log_id`, `table_name`, `record_id`, `action`, `old_values`,"
+                    + "RETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`,"
                     + " `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`\n"));
     ;
     return q.updateReturning(AuditLogRow._rowParser.exactlyOne()).runUnchecked(c);

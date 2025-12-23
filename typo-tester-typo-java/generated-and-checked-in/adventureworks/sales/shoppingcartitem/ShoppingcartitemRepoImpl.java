@@ -77,7 +77,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\","
+                    + "RETURNING \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\","
                     + " \"productid\", \"datecreated\", \"modifieddate\"\n"))
         .updateReturning(ShoppingcartitemRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -147,7 +147,7 @@ public class ShoppingcartitemRepoImpl implements ShoppingcartitemRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\","
+                    + "RETURNING \"shoppingcartitemid\", \"shoppingcartid\", \"quantity\","
                     + " \"productid\", \"datecreated\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ShoppingcartitemRow._rowParser.exactlyOne()).runUnchecked(c);

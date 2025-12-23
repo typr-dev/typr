@@ -32,7 +32,7 @@ class TitleRepoImpl extends TitleRepo {
   override def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   interpolate(Fragment.lit("""insert into "public"."title"("code")
     values ("""), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(""")
-    returning "code"
+    RETURNING "code"
     """))
     .updateReturning(TitleRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

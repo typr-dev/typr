@@ -40,7 +40,7 @@ class OnlyPkColumnsRepoImpl() : OnlyPkColumnsRepo {
   override fun insert(
     unsaved: OnlyPkColumnsRow,
     c: Connection
-  ): OnlyPkColumnsRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"only_pk_columns\"(\"key_column_1\", \"key_column_2\")\nvalues ("), Fragment.encode(PgTypes.text, unsaved.keyColumn1), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.keyColumn2), Fragment.lit("::int4)\nreturning \"key_column_1\", \"key_column_2\"\n"))
+  ): OnlyPkColumnsRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"only_pk_columns\"(\"key_column_1\", \"key_column_2\")\nvalues ("), Fragment.encode(PgTypes.text, unsaved.keyColumn1), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.keyColumn2), Fragment.lit("::int4)\nRETURNING \"key_column_1\", \"key_column_2\"\n"))
     .updateReturning(OnlyPkColumnsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(

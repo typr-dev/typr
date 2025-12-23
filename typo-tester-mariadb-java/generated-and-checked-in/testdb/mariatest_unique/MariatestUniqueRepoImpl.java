@@ -66,7 +66,7 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
             Fragment.encode(MariaTypes.varchar, unsaved.code()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.category()),
-            Fragment.lit(")\nreturning `id`, `email`, `code`, `category`\n"))
+            Fragment.lit(")\nRETURNING `id`, `email`, `code`, `category`\n"))
         .updateReturning(MariatestUniqueRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -91,7 +91,7 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning `id`, `email`, `code`, `category`\n"));
+            Fragment.lit(")\nRETURNING `id`, `email`, `code`, `category`\n"));
     ;
     return q.updateReturning(MariatestUniqueRow._rowParser.exactlyOne()).runUnchecked(c);
   }

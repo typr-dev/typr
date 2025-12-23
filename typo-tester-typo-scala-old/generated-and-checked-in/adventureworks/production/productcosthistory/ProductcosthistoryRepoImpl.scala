@@ -38,7 +38,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
   override def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
   interpolate(Fragment.lit("""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
     values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "productid", "startdate", "enddate", "standardcost", "modifieddate"
+    RETURNING "productid", "startdate", "enddate", "standardcost", "modifieddate"
     """))
     .updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -61,7 +61,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."productcosthistory"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "productid", "startdate", "enddate", "standardcost", "modifieddate"
+      RETURNING "productid", "startdate", "enddate", "standardcost", "modifieddate"
       """))
     }
     return q.updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

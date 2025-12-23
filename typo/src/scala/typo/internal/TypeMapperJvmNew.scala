@@ -206,6 +206,48 @@ case class TypeMapperJvmNew(
           case db.OracleType.AnyData                       => TypesJava.Object.withComment("ANYDATA (dynamic type)")
           case db.Unknown(_)                               => TypesJava.runtime.Unknown
         }
+      case x: db.SqlServerType =>
+        x match {
+          case db.SqlServerType.TinyInt                     => lang.Short // SQL Server TINYINT is UNSIGNED (0-255)
+          case db.SqlServerType.SmallInt                    => lang.Short
+          case db.SqlServerType.Int                         => lang.Int
+          case db.SqlServerType.BigInt                      => lang.Long
+          case db.SqlServerType.Decimal(_, _)               => lang.BigDecimal
+          case db.SqlServerType.Numeric(_, _)               => lang.BigDecimal
+          case db.SqlServerType.Money                       => lang.BigDecimal
+          case db.SqlServerType.SmallMoney                  => lang.BigDecimal
+          case db.SqlServerType.Real                        => lang.Float
+          case db.SqlServerType.Float                       => lang.Double
+          case db.SqlServerType.Bit                         => lang.Boolean
+          case db.SqlServerType.Char(_)                     => lang.String
+          case db.SqlServerType.VarChar(_)                  => lang.String
+          case db.SqlServerType.Text                        => lang.String
+          case db.SqlServerType.NChar(_)                    => lang.String
+          case db.SqlServerType.NVarChar(_)                 => lang.String
+          case db.SqlServerType.NText                       => lang.String
+          case db.SqlServerType.Binary(_)                   => lang.ByteArrayType
+          case db.SqlServerType.VarBinary(_)                => lang.ByteArrayType
+          case db.SqlServerType.Image                       => lang.ByteArrayType
+          case db.SqlServerType.Date                        => TypesJava.LocalDate
+          case db.SqlServerType.Time(_)                     => TypesJava.LocalTime
+          case db.SqlServerType.DateTime                    => TypesJava.LocalDateTime
+          case db.SqlServerType.SmallDateTime               => TypesJava.LocalDateTime
+          case db.SqlServerType.DateTime2(_)                => TypesJava.LocalDateTime
+          case db.SqlServerType.DateTimeOffset(_)           => TypesJava.OffsetDateTime
+          case db.SqlServerType.UniqueIdentifier            => TypesJava.UUID
+          case db.SqlServerType.Xml                         => lang.String.withComment("XML")
+          case db.SqlServerType.Json                        => TypesJava.runtime.Json
+          case db.SqlServerType.Vector                      => lang.String.withComment("VECTOR type")
+          case db.SqlServerType.RowVersion                  => lang.ByteArrayType.withComment("ROWVERSION/TIMESTAMP")
+          case db.SqlServerType.HierarchyId                 => lang.String.withComment("HIERARCHYID")
+          case db.SqlServerType.SqlVariant                  => lang.String.withComment("SQL_VARIANT")
+          case db.SqlServerType.Geography                   => jvm.Type.Qualified("com.microsoft.sqlserver.jdbc.Geography")
+          case db.SqlServerType.Geometry                    => jvm.Type.Qualified("com.microsoft.sqlserver.jdbc.Geometry")
+          case db.SqlServerType.TableTypeRef(_, _)          => lang.String.withComment("Table-valued type")
+          case db.SqlServerType.AliasTypeRef(name, _, _, _) => jvm.Type.Qualified(naming.domainName(name))
+          case db.SqlServerType.ClrTypeRef(_, _, _)         => lang.String.withComment("CLR type")
+          case db.Unknown(_)                                => TypesJava.runtime.Unknown
+        }
     }
   }
 }

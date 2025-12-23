@@ -36,7 +36,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
   override def insert(unsaved: BillofmaterialsRow)(using c: Connection): BillofmaterialsRow = {
   interpolate(Fragment.lit("""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values ("""), Fragment.encode(PgTypes.int4, unsaved.billofmaterialsid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType.opt(), unsaved.productassemblyid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.componentid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.int2, unsaved.bomlevel), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.perassemblyqty), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"
+    RETURNING "billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"
     """))
     .updateReturning(BillofmaterialsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -73,7 +73,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."billofmaterials"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"
+      RETURNING "billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"
       """))
     }
     return q.updateReturning(BillofmaterialsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

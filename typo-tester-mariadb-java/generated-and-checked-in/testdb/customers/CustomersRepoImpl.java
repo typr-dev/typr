@@ -92,7 +92,7 @@ public class CustomersRepoImpl implements CustomersRepo {
             Fragment.encode(MariaTypes.datetime.opt(), unsaved.lastLoginAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `customer_id`, `email`, `password_hash`, `first_name`,"
+                    + "RETURNING `customer_id`, `email`, `password_hash`, `first_name`,"
                     + " `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`,"
                     + " `notes`, `created_at`, `updated_at`, `last_login_at`\n"))
         .updateReturning(CustomersRow._rowParser.exactlyOne())
@@ -214,7 +214,7 @@ public class CustomersRepoImpl implements CustomersRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `customer_id`, `email`, `password_hash`, `first_name`,"
+                    + "RETURNING `customer_id`, `email`, `password_hash`, `first_name`,"
                     + " `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`,"
                     + " `notes`, `created_at`, `updated_at`, `last_login_at`\n"));
     ;

@@ -82,7 +82,7 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
             Fragment.encode(MariaTypes.bool, unsaved.isPrimary()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.smallint, unsaved.sortOrder()),
-            Fragment.lit(")\nreturning `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
+            Fragment.lit(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
         .updateReturning(ProductCategoriesRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -125,7 +125,7 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning `product_id`, `category_id`, `is_primary`, `sort_order`\n"));
+            Fragment.lit(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"));
     ;
     return q.updateReturning(ProductCategoriesRow._rowParser.exactlyOne()).runUnchecked(c);
   }

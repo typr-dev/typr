@@ -72,7 +72,7 @@ public class LocationRepoImpl implements LocationRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"locationid\", \"name\", \"costrate\", \"availability\","
+                    + "RETURNING \"locationid\", \"name\", \"costrate\", \"availability\","
                     + " \"modifieddate\"\n"))
         .updateReturning(LocationRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -137,7 +137,7 @@ public class LocationRepoImpl implements LocationRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"locationid\", \"name\", \"costrate\", \"availability\","
+                    + "RETURNING \"locationid\", \"name\", \"costrate\", \"availability\","
                     + " \"modifieddate\"\n"));
     ;
     return q.updateReturning(LocationRow._rowParser.exactlyOne()).runUnchecked(c);

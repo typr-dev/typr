@@ -40,7 +40,7 @@ class OrderHistoryRepoImpl() : OrderHistoryRepo {
   override fun insert(
     unsaved: OrderHistoryRow,
     c: Connection
-  ): OrderHistoryRow = Fragment.interpolate(Fragment.lit("insert into `order_history`(`order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\nvalues ("), Fragment.encode(OrdersId.pgType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.previousStatus), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.newStatus), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changedBy), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changeReason), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.metadata), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(")\nreturning `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
+  ): OrderHistoryRow = Fragment.interpolate(Fragment.lit("insert into `order_history`(`order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\nvalues ("), Fragment.encode(OrdersId.pgType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.previousStatus), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.newStatus), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changedBy), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changeReason), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.metadata), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(")\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
     .updateReturning(OrderHistoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -78,7 +78,7 @@ class OrderHistoryRepoImpl() : OrderHistoryRepo {
       { value -> columns.add(Fragment.lit("`created_at`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `order_history`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `order_history`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
     return q.updateReturning(OrderHistoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

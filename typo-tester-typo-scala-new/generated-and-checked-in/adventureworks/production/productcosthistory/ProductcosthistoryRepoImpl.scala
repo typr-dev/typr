@@ -39,7 +39,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
   override def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
   sql"""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
     values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productid", "startdate", "enddate", "standardcost", "modifieddate"
+    RETURNING "productid", "startdate", "enddate", "standardcost", "modifieddate"
     """
     .updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     val q: Fragment = {
       sql"""insert into "production"."productcosthistory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productid", "startdate", "enddate", "standardcost", "modifieddate"
+      RETURNING "productid", "startdate", "enddate", "standardcost", "modifieddate"
       """
     }
     return q.updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

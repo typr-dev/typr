@@ -35,7 +35,7 @@ class UsersRepoImpl extends UsersRepo {
   override def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   sql"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values (${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.nullable, unsaved.verifiedOn)}::timestamptz)
-    returning "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
+    RETURNING "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     """
     .updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class UsersRepoImpl extends UsersRepo {
     val q: Fragment = {
       sql"""insert into "public"."users"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
+      RETURNING "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
       """
     }
     return q.updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)

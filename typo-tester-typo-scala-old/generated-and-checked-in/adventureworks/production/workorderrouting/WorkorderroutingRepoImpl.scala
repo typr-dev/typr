@@ -39,7 +39,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
   override def insert(unsaved: WorkorderroutingRow)(using c: Connection): WorkorderroutingRow = {
   interpolate(Fragment.lit("""insert into "production"."workorderrouting"("workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate")
     values ("""), Fragment.encode(WorkorderId.pgType, unsaved.workorderid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int2, unsaved.operationsequence), Fragment.lit("::int2, "), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.scheduledstartdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.scheduledenddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.actualstartdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.actualenddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.actualresourcehrs), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.plannedcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.actualcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"
+    RETURNING "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"
     """))
     .updateReturning(WorkorderroutingRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -76,7 +76,7 @@ class WorkorderroutingRepoImpl extends WorkorderroutingRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."workorderrouting"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"
+      RETURNING "workorderid", "productid", "operationsequence", "locationid", "scheduledstartdate", "scheduledenddate", "actualstartdate", "actualenddate", "actualresourcehrs", "plannedcost", "actualcost", "modifieddate"
       """))
     }
     return q.updateReturning(WorkorderroutingRow.`_rowParser`.exactlyOne()).runUnchecked(c)

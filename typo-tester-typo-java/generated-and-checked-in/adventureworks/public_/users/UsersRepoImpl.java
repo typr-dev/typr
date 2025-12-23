@@ -75,7 +75,7 @@ public class UsersRepoImpl implements UsersRepo {
             Fragment.encode(PgTypes.timestamptz.opt(), unsaved.verifiedOn()),
             Fragment.lit(
                 "::timestamptz)\n"
-                    + "returning \"user_id\", \"name\", \"last_name\", \"email\"::text,"
+                    + "RETURNING \"user_id\", \"name\", \"last_name\", \"email\"::text,"
                     + " \"password\", \"created_at\", \"verified_on\"\n"))
         .updateReturning(UsersRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -125,7 +125,7 @@ public class UsersRepoImpl implements UsersRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"user_id\", \"name\", \"last_name\", \"email\"::text,"
+                    + "RETURNING \"user_id\", \"name\", \"last_name\", \"email\"::text,"
                     + " \"password\", \"created_at\", \"verified_on\"\n"));
     ;
     return q.updateReturning(UsersRow._rowParser.exactlyOne()).runUnchecked(c);

@@ -29,7 +29,7 @@ class MariatestUniqueRepoImpl extends MariatestUniqueRepo {
   override def insert(unsaved: MariatestUniqueRow)(using c: Connection): MariatestUniqueRow = {
   sql"""insert into `mariatest_unique`(`email`, `code`, `category`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.email)}, ${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.category)})
-    returning `id`, `email`, `code`, `category`
+    RETURNING `id`, `email`, `code`, `category`
     """
     .updateReturning(MariatestUniqueRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -46,7 +46,7 @@ class MariatestUniqueRepoImpl extends MariatestUniqueRepo {
     val q: Fragment = {
       sql"""insert into `mariatest_unique`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `id`, `email`, `code`, `category`
+      RETURNING `id`, `email`, `code`, `category`
       """
     }
     return q.updateReturning(MariatestUniqueRow.`_rowParser`.exactlyOne()).runUnchecked(c)

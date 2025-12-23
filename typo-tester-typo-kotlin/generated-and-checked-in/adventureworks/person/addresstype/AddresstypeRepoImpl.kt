@@ -38,7 +38,7 @@ class AddresstypeRepoImpl() : AddresstypeRepo {
   override fun insert(
     unsaved: AddresstypeRow,
     c: Connection
-  ): AddresstypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"addresstype\"(\"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+  ): AddresstypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"addresstype\"(\"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(AddresstypeRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -64,7 +64,7 @@ class AddresstypeRepoImpl() : AddresstypeRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"addresstype\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"addresstype\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(AddresstypeRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

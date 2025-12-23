@@ -37,7 +37,7 @@ class ProductmodelillustrationRepoImpl extends ProductmodelillustrationRepo {
   override def insert(unsaved: ProductmodelillustrationRow)(using c: Connection): ProductmodelillustrationRow = {
   sql"""insert into "production"."productmodelillustration"("productmodelid", "illustrationid", "modifieddate")
     values (${Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid)}::int4, ${Fragment.encode(IllustrationId.pgType, unsaved.illustrationid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productmodelid", "illustrationid", "modifieddate"
+    RETURNING "productmodelid", "illustrationid", "modifieddate"
     """
     .updateReturning(ProductmodelillustrationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -56,7 +56,7 @@ class ProductmodelillustrationRepoImpl extends ProductmodelillustrationRepo {
     val q: Fragment = {
       sql"""insert into "production"."productmodelillustration"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productmodelid", "illustrationid", "modifieddate"
+      RETURNING "productmodelid", "illustrationid", "modifieddate"
       """
     }
     return q.updateReturning(ProductmodelillustrationRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -90,7 +90,7 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
-                "::timestamp)\nreturning \"salesorderid\", \"salesreasonid\", \"modifieddate\"\n"))
+                "::timestamp)\nRETURNING \"salesorderid\", \"salesreasonid\", \"modifieddate\"\n"))
         .updateReturning(SalesorderheadersalesreasonRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -130,7 +130,7 @@ public class SalesorderheadersalesreasonRepoImpl implements Salesorderheadersale
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"salesorderid\", \"salesreasonid\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"salesorderid\", \"salesreasonid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(SalesorderheadersalesreasonRow._rowParser.exactlyOne())
         .runUnchecked(c);

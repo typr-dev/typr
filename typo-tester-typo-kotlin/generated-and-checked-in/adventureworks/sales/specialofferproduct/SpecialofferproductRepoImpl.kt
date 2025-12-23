@@ -42,7 +42,7 @@ class SpecialofferproductRepoImpl() : SpecialofferproductRepo {
   override fun insert(
     unsaved: SpecialofferproductRow,
     c: Connection
-  ): SpecialofferproductRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"))
+  ): SpecialofferproductRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"(\"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(SpecialofferproductRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -65,7 +65,7 @@ class SpecialofferproductRepoImpl() : SpecialofferproductRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"specialofferproduct\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"specialofferid\", \"productid\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(SpecialofferproductRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -39,7 +39,7 @@ class DepartmentsRepoImpl() : DepartmentsRepo {
   override fun insert(
     unsaved: DepartmentsRow,
     c: Connection
-  ): DepartmentsRow = Fragment.interpolate(Fragment.lit("insert into \"departments\"(\"dept_code\", \"dept_region\", \"dept_name\", \"budget\")\nvalues ("), Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptName), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.budget), Fragment.lit(")\nreturning \"dept_code\", \"dept_region\", \"dept_name\", \"budget\"\n"))
+  ): DepartmentsRow = Fragment.interpolate(Fragment.lit("insert into \"departments\"(\"dept_code\", \"dept_region\", \"dept_name\", \"budget\")\nvalues ("), Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptName), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.budget), Fragment.lit(")\nRETURNING \"dept_code\", \"dept_region\", \"dept_name\", \"budget\"\n"))
     .updateReturning(DepartmentsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun select(): SelectBuilder<DepartmentsFields, DepartmentsRow> = SelectBuilder.of("\"departments\"", DepartmentsFields.structure, DepartmentsRow._rowParser, Dialect.DUCKDB)

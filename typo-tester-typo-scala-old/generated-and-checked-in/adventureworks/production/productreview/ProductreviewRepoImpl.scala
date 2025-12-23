@@ -36,7 +36,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
   override def insert(unsaved: ProductreviewRow)(using c: Connection): ProductreviewRow = {
   interpolate(Fragment.lit("""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values ("""), Fragment.encode(ProductreviewId.pgType, unsaved.productreviewid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.reviewername), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.reviewdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text, unsaved.emailaddress), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.rating), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.opt(), unsaved.comments), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate"
+    RETURNING "productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate"
     """))
     .updateReturning(ProductreviewRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -69,7 +69,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."productreview"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate"
+      RETURNING "productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate"
       """))
     }
     return q.updateReturning(ProductreviewRow.`_rowParser`.exactlyOne()).runUnchecked(c)

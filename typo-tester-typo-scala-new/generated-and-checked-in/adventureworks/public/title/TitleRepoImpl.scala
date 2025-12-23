@@ -31,7 +31,7 @@ class TitleRepoImpl extends TitleRepo {
   override def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   sql"""insert into "public"."title"("code")
     values (${Fragment.encode(TitleId.pgType, unsaved.code)})
-    returning "code"
+    RETURNING "code"
     """
     .updateReturning(TitleRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

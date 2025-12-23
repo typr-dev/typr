@@ -43,7 +43,7 @@ class ProductinventoryRepoImpl() : ProductinventoryRepo {
   override fun insert(
     unsaved: ProductinventoryRow,
     c: Connection
-  ): ProductinventoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productinventory\"(\"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.text, unsaved.shelf), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.bin), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.quantity), Fragment.lit("::int2, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\", \"rowguid\", \"modifieddate\"\n"))
+  ): ProductinventoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productinventory\"(\"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.text, unsaved.shelf), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.bin), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.quantity), Fragment.lit("::int2, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(ProductinventoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -75,7 +75,7 @@ class ProductinventoryRepoImpl() : ProductinventoryRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productinventory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productinventory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productid\", \"locationid\", \"shelf\", \"bin\", \"quantity\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(ProductinventoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

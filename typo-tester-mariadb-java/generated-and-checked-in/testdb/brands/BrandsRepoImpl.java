@@ -76,7 +76,7 @@ public class BrandsRepoImpl implements BrandsRepo {
             Fragment.encode(MariaTypes.bool, unsaved.isActive()),
             Fragment.lit(
                 ")\n"
-                    + "returning `brand_id`, `name`, `slug`, `logo_blob`, `website_url`,"
+                    + "RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`,"
                     + " `country_of_origin`, `is_active`\n"))
         .updateReturning(BrandsRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -141,7 +141,7 @@ public class BrandsRepoImpl implements BrandsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `brand_id`, `name`, `slug`, `logo_blob`, `website_url`,"
+                    + "RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`,"
                     + " `country_of_origin`, `is_active`\n"));
     ;
     return q.updateReturning(BrandsRow._rowParser.exactlyOne()).runUnchecked(c);

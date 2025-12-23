@@ -35,7 +35,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
   override def insert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
   sql"""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values (${Fragment.encode(ShoppingcartitemId.pgType, unsaved.shoppingcartitemid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.shoppingcartid)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.quantity)}::int4, ${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.datecreated)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate"
+    RETURNING "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate"
     """
     .updateReturning(ShoppingcartitemRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -66,7 +66,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     val q: Fragment = {
       sql"""insert into "sales"."shoppingcartitem"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate"
+      RETURNING "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate"
       """
     }
     return q.updateReturning(ShoppingcartitemRow.`_rowParser`.exactlyOne()).runUnchecked(c)

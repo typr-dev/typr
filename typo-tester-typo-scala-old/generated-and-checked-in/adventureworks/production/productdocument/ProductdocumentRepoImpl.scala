@@ -38,7 +38,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
   override def insert(unsaved: ProductdocumentRow)(using c: Connection): ProductdocumentRow = {
   interpolate(Fragment.lit("""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(DocumentId.pgType, unsaved.documentnode), Fragment.lit(""")
-    returning "productid", "modifieddate", "documentnode"
+    RETURNING "productid", "modifieddate", "documentnode"
     """))
     .updateReturning(ProductdocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -59,7 +59,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."productdocument"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "productid", "modifieddate", "documentnode"
+      RETURNING "productid", "modifieddate", "documentnode"
       """))
     }
     return q.updateReturning(ProductdocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)

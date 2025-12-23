@@ -35,7 +35,7 @@ class AddressRepoImpl extends AddressRepo {
   override def insert(unsaved: AddressRow)(using c: Connection): AddressRow = {
   interpolate(Fragment.lit("""insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
     values ("""), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.addressline2), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit(", "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
+    RETURNING "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
     """))
     .updateReturning(AddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -70,7 +70,7 @@ class AddressRepoImpl extends AddressRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "person"."address"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
+      RETURNING "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(AddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)

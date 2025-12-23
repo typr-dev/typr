@@ -89,7 +89,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"billofmaterialsid\", \"productassemblyid\", \"componentid\","
+                    + "RETURNING \"billofmaterialsid\", \"productassemblyid\", \"componentid\","
                     + " \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\","
                     + " \"perassemblyqty\", \"modifieddate\"\n"))
         .updateReturning(BillofmaterialsRow._rowParser.exactlyOne())
@@ -174,7 +174,7 @@ public class BillofmaterialsRepoImpl implements BillofmaterialsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"billofmaterialsid\", \"productassemblyid\", \"componentid\","
+                    + "RETURNING \"billofmaterialsid\", \"productassemblyid\", \"componentid\","
                     + " \"startdate\", \"enddate\", \"unitmeasurecode\", \"bomlevel\","
                     + " \"perassemblyqty\", \"modifieddate\"\n"));
     ;

@@ -40,7 +40,7 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
   override def insert(unsaved: ProductmodelproductdescriptioncultureRow)(using c: Connection): ProductmodelproductdescriptioncultureRow = {
   interpolate(Fragment.lit("""insert into "production"."productmodelproductdescriptionculture"("productmodelid", "productdescriptionid", "cultureid", "modifieddate")
     values ("""), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(ProductdescriptionId.pgType, unsaved.productdescriptionid), Fragment.lit("::int4, "), Fragment.encode(CultureId.pgType, unsaved.cultureid), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"
+    RETURNING "productmodelid", "productdescriptionid", "cultureid", "modifieddate"
     """))
     .updateReturning(ProductmodelproductdescriptioncultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -61,7 +61,7 @@ class ProductmodelproductdescriptioncultureRepoImpl extends Productmodelproductd
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."productmodelproductdescriptionculture"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "productmodelid", "productdescriptionid", "cultureid", "modifieddate"
+      RETURNING "productmodelid", "productdescriptionid", "cultureid", "modifieddate"
       """))
     }
     return q.updateReturning(ProductmodelproductdescriptioncultureRow.`_rowParser`.exactlyOne()).runUnchecked(c)

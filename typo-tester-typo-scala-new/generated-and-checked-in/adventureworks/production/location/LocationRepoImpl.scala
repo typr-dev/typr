@@ -35,7 +35,7 @@ class LocationRepoImpl extends LocationRepo {
   override def insert(unsaved: LocationRow)(using c: Connection): LocationRow = {
   sql"""insert into "production"."location"("locationid", "name", "costrate", "availability", "modifieddate")
     values (${Fragment.encode(LocationId.pgType, unsaved.locationid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costrate)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.availability)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "locationid", "name", "costrate", "availability", "modifieddate"
+    RETURNING "locationid", "name", "costrate", "availability", "modifieddate"
     """
     .updateReturning(LocationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -64,7 +64,7 @@ class LocationRepoImpl extends LocationRepo {
     val q: Fragment = {
       sql"""insert into "production"."location"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "locationid", "name", "costrate", "availability", "modifieddate"
+      RETURNING "locationid", "name", "costrate", "availability", "modifieddate"
       """
     }
     return q.updateReturning(LocationRow.`_rowParser`.exactlyOne()).runUnchecked(c)

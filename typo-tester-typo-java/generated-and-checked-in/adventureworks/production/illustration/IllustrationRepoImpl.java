@@ -68,7 +68,7 @@ public class IllustrationRepoImpl implements IllustrationRepo {
             Fragment.lit("::xml, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
-                "::timestamp)\nreturning \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
+                "::timestamp)\nRETURNING \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
         .updateReturning(IllustrationRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -111,7 +111,7 @@ public class IllustrationRepoImpl implements IllustrationRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"illustrationid\", \"diagram\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"illustrationid\", \"diagram\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(IllustrationRow._rowParser.exactlyOne()).runUnchecked(c);
   }

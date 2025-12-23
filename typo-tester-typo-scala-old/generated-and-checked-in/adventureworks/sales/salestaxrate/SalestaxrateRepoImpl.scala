@@ -36,7 +36,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
   override def insert(unsaved: SalestaxrateRow)(using c: Connection): SalestaxrateRow = {
   interpolate(Fragment.lit("""insert into "sales"."salestaxrate"("salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate")
     values ("""), Fragment.encode(SalestaxrateId.pgType, unsaved.salestaxrateid), Fragment.lit("::int4, "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.taxrate), Fragment.lit("::numeric, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"
+    RETURNING "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"
     """))
     .updateReturning(SalestaxrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -69,7 +69,7 @@ class SalestaxrateRepoImpl extends SalestaxrateRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."salestaxrate"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"
+      RETURNING "salestaxrateid", "stateprovinceid", "taxtype", "taxrate", "name", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(SalestaxrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)

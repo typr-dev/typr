@@ -42,7 +42,7 @@ class ProductmodelillustrationRepoImpl() : ProductmodelillustrationRepo {
   override fun insert(
     unsaved: ProductmodelillustrationRow,
     c: Connection
-  ): ProductmodelillustrationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodelillustration\"(\"productmodelid\", \"illustrationid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productmodelid\", \"illustrationid\", \"modifieddate\"\n"))
+  ): ProductmodelillustrationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodelillustration\"(\"productmodelid\", \"illustrationid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productmodelid\", \"illustrationid\", \"modifieddate\"\n"))
     .updateReturning(ProductmodelillustrationRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -60,7 +60,7 @@ class ProductmodelillustrationRepoImpl() : ProductmodelillustrationRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodelillustration\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productmodelid\", \"illustrationid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodelillustration\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productmodelid\", \"illustrationid\", \"modifieddate\"\n"))
     return q.updateReturning(ProductmodelillustrationRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

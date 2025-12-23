@@ -31,7 +31,7 @@ class PromotionsRepoImpl extends PromotionsRepo {
   override def insert(unsaved: PromotionsRow)(using c: Connection): PromotionsRow = {
   sql"""insert into `promotions`(`code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.description)}, ${Fragment.encode(MariaTypes.text, unsaved.discountType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountValue)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.minOrderAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.intUnsigned.nullable, unsaved.maxUses)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.intUnsigned, unsaved.usesCount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.tinyintUnsigned.nullable, unsaved.maxUsesPerCustomer)}, ${Fragment.encode(MariaTypes.set.nullable, unsaved.applicableTo)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.rulesJson)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validFrom)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validTo)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isActive)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)})
-    returning `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`
+    RETURNING `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`
     """
     .updateReturning(PromotionsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -90,7 +90,7 @@ class PromotionsRepoImpl extends PromotionsRepo {
     val q: Fragment = {
       sql"""insert into `promotions`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`
+      RETURNING `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`
       """
     }
     return q.updateReturning(PromotionsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

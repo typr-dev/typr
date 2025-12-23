@@ -37,7 +37,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
   override def insert(unsaved: SalesorderheadersalesreasonRow)(using c: Connection): SalesorderheadersalesreasonRow = {
   sql"""insert into "sales"."salesorderheadersalesreason"("salesorderid", "salesreasonid", "modifieddate")
     values (${Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid)}::int4, ${Fragment.encode(SalesreasonId.pgType, unsaved.salesreasonid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "salesorderid", "salesreasonid", "modifieddate"
+    RETURNING "salesorderid", "salesreasonid", "modifieddate"
     """
     .updateReturning(SalesorderheadersalesreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -56,7 +56,7 @@ class SalesorderheadersalesreasonRepoImpl extends SalesorderheadersalesreasonRep
     val q: Fragment = {
       sql"""insert into "sales"."salesorderheadersalesreason"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "salesorderid", "salesreasonid", "modifieddate"
+      RETURNING "salesorderid", "salesreasonid", "modifieddate"
       """
     }
     return q.updateReturning(SalesorderheadersalesreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)

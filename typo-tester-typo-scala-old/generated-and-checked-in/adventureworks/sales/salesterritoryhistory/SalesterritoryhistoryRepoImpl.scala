@@ -40,7 +40,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
   override def insert(unsaved: SalesterritoryhistoryRow)(using c: Connection): SalesterritoryhistoryRow = {
   interpolate(Fragment.lit("""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate"
     """))
     .updateReturning(SalesterritoryhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -67,7 +67,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."salesterritoryhistory"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(SalesterritoryhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

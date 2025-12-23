@@ -82,7 +82,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"workorderid\", \"productid\", \"orderqty\", \"scrappedqty\","
+                    + "RETURNING \"workorderid\", \"productid\", \"orderqty\", \"scrappedqty\","
                     + " \"startdate\", \"enddate\", \"duedate\", \"scrapreasonid\","
                     + " \"modifieddate\"\n"))
         .updateReturning(WorkorderRow._rowParser.exactlyOne())
@@ -153,7 +153,7 @@ public class WorkorderRepoImpl implements WorkorderRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"workorderid\", \"productid\", \"orderqty\", \"scrappedqty\","
+                    + "RETURNING \"workorderid\", \"productid\", \"orderqty\", \"scrappedqty\","
                     + " \"startdate\", \"enddate\", \"duedate\", \"scrapreasonid\","
                     + " \"modifieddate\"\n"));
     ;

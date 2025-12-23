@@ -35,7 +35,7 @@ class TitleRepoImpl() : TitleRepo {
   override fun insert(
     unsaved: TitleRow,
     c: Connection
-  ): TitleRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(")\nreturning \"code\"\n"))
+  ): TitleRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(")\nRETURNING \"code\"\n"))
     .updateReturning(TitleRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(

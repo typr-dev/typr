@@ -65,7 +65,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
             Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
-            Fragment.lit("::timestamp)\nreturning \"currencycode\", \"name\", \"modifieddate\"\n"))
+            Fragment.lit("::timestamp)\nRETURNING \"currencycode\", \"name\", \"modifieddate\"\n"))
         .updateReturning(CurrencyRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -101,7 +101,7 @@ public class CurrencyRepoImpl implements CurrencyRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"currencycode\", \"name\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"currencycode\", \"name\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(CurrencyRow._rowParser.exactlyOne()).runUnchecked(c);
   }

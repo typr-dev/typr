@@ -77,7 +77,7 @@ public class ProductcategoryRepoImpl implements ProductcategoryRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+                    + "RETURNING \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(ProductcategoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -130,7 +130,7 @@ public class ProductcategoryRepoImpl implements ProductcategoryRepo {
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"));
+                ")\nRETURNING \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ProductcategoryRow._rowParser.exactlyOne()).runUnchecked(c);
   }

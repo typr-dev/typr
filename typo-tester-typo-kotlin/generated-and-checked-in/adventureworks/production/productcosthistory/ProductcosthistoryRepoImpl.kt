@@ -43,7 +43,7 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
   override fun insert(
     unsaved: ProductcosthistoryRow,
     c: Connection
-  ): ProductcosthistoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\n"))
+  ): ProductcosthistoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\n"))
     .updateReturning(ProductcosthistoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -65,7 +65,7 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\n"))
     return q.updateReturning(ProductcosthistoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

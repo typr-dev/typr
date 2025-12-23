@@ -37,7 +37,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
   override def insert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
   interpolate(Fragment.lit("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.emailaddressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.opt(), unsaved.emailaddress), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
     """))
     .updateReturning(EmailaddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -64,7 +64,7 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "person"."emailaddress"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(EmailaddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)

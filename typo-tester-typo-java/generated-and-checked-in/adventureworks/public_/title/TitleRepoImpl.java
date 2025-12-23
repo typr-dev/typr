@@ -55,7 +55,7 @@ public class TitleRepoImpl implements TitleRepo {
     return interpolate(
             Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("),
             Fragment.encode(TitleId.pgType, unsaved.code()),
-            Fragment.lit(")\nreturning \"code\"\n"))
+            Fragment.lit(")\nRETURNING \"code\"\n"))
         .updateReturning(TitleRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }

@@ -82,7 +82,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productreviewid\", \"productid\", \"reviewername\","
+                    + "RETURNING \"productreviewid\", \"productid\", \"reviewername\","
                     + " \"reviewdate\", \"emailaddress\", \"rating\", \"comments\","
                     + " \"modifieddate\"\n"))
         .updateReturning(ProductreviewRow._rowParser.exactlyOne())
@@ -154,7 +154,7 @@ public class ProductreviewRepoImpl implements ProductreviewRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productreviewid\", \"productid\", \"reviewername\","
+                    + "RETURNING \"productreviewid\", \"productid\", \"reviewername\","
                     + " \"reviewdate\", \"emailaddress\", \"rating\", \"comments\","
                     + " \"modifieddate\"\n"));
     ;

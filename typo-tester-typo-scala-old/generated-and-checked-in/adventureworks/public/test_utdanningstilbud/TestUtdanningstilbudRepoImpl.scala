@@ -36,7 +36,7 @@ class TestUtdanningstilbudRepoImpl extends TestUtdanningstilbudRepo {
   override def insert(unsaved: TestUtdanningstilbudRow)(using c: Connection): TestUtdanningstilbudRow = {
   interpolate(Fragment.lit("""insert into "public"."test_utdanningstilbud"("organisasjonskode", "utdanningsmulighet_kode")
     values ("""), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode), Fragment.lit(""")
-    returning "organisasjonskode", "utdanningsmulighet_kode"
+    RETURNING "organisasjonskode", "utdanningsmulighet_kode"
     """))
     .updateReturning(TestUtdanningstilbudRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

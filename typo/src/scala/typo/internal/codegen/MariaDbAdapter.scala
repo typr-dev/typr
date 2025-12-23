@@ -222,4 +222,7 @@ object MariaDbAdapter extends DbAdapter {
 
   def createTempTableLike(tempName: String, sourceTable: Code): Code =
     code"CREATE TEMPORARY TABLE $tempName LIKE $sourceTable"
+
+  def returningClause(columns: Code): Code =
+    code"RETURNING $columns"
 }

@@ -38,7 +38,7 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
   override fun insert(
     unsaved: MariatestUniqueRow,
     c: Connection
-  ): MariatestUniqueRow = Fragment.interpolate(Fragment.lit("insert into `mariatest_unique`(`email`, `code`, `category`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.category), Fragment.lit(")\nreturning `id`, `email`, `code`, `category`\n"))
+  ): MariatestUniqueRow = Fragment.interpolate(Fragment.lit("insert into `mariatest_unique`(`email`, `code`, `category`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.category), Fragment.lit(")\nRETURNING `id`, `email`, `code`, `category`\n"))
     .updateReturning(MariatestUniqueRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -53,7 +53,7 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit("")))
     columns.add(Fragment.lit("`category`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.category), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_unique`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `id`, `email`, `code`, `category`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `mariatest_unique`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `id`, `email`, `code`, `category`\n"))
     return q.updateReturning(MariatestUniqueRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

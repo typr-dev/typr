@@ -117,7 +117,7 @@ public class AllScalarTypesRepoImpl implements AllScalarTypesRepo {
             Fragment.encode(DuckDbTypes.varchar, unsaved.colNotNull()),
             Fragment.lit(
                 ")\n"
-                    + "returning \"id\", \"col_tinyint\", \"col_smallint\", \"col_integer\","
+                    + "RETURNING \"id\", \"col_tinyint\", \"col_smallint\", \"col_integer\","
                     + " \"col_bigint\", \"col_hugeint\", \"col_utinyint\", \"col_usmallint\","
                     + " \"col_uinteger\", \"col_ubigint\", \"col_float\", \"col_double\","
                     + " \"col_decimal\", \"col_boolean\", \"col_varchar\", \"col_text\","

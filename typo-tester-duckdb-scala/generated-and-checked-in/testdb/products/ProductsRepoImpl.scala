@@ -32,7 +32,7 @@ class ProductsRepoImpl extends ProductsRepo {
   override def insert(unsaved: ProductsRow)(using c: Connection): ProductsRow = {
   sql"""insert into "products"("product_id", "sku", "name", "price", "metadata")
     values (${Fragment.encode(ProductsId.duckDbType, unsaved.productId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.sku)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, unsaved.price)}, ${Fragment.encode(DuckDbTypes.json.nullable, unsaved.metadata)})
-    returning "product_id", "sku", "name", "price", "metadata"
+    RETURNING "product_id", "sku", "name", "price", "metadata"
     """
     .updateReturning(ProductsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

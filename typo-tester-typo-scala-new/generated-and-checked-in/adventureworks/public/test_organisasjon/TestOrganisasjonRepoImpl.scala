@@ -31,7 +31,7 @@ class TestOrganisasjonRepoImpl extends TestOrganisasjonRepo {
   override def insert(unsaved: TestOrganisasjonRow)(using c: Connection): TestOrganisasjonRow = {
   sql"""insert into "public"."test_organisasjon"("organisasjonskode")
     values (${Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode)})
-    returning "organisasjonskode"
+    RETURNING "organisasjonskode"
     """
     .updateReturning(TestOrganisasjonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

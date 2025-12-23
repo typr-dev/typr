@@ -90,7 +90,7 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productid\", \"productphotoid\", \"primary\","
+                    + "RETURNING \"productid\", \"productphotoid\", \"primary\","
                     + " \"modifieddate\"\n"))
         .updateReturning(ProductproductphotoRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -139,7 +139,7 @@ public class ProductproductphotoRepoImpl implements ProductproductphotoRepo {
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\n"));
+                ")\nRETURNING \"productid\", \"productphotoid\", \"primary\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ProductproductphotoRow._rowParser.exactlyOne()).runUnchecked(c);
   }

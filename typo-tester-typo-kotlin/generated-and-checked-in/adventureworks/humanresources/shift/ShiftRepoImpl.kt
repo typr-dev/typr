@@ -38,7 +38,7 @@ class ShiftRepoImpl() : ShiftRepo {
   override fun insert(
     unsaved: ShiftRow,
     c: Connection
-  ): ShiftRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nvalues ("), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"))
+  ): ShiftRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nvalues ("), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"))
     .updateReturning(ShiftRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -63,7 +63,7 @@ class ShiftRepoImpl() : ShiftRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"))
     return q.updateReturning(ShiftRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

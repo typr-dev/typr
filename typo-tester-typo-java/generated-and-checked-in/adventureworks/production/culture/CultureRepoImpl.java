@@ -66,7 +66,7 @@ public class CultureRepoImpl implements CultureRepo {
             Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
-            Fragment.lit("::timestamp)\nreturning \"cultureid\", \"name\", \"modifieddate\"\n"))
+            Fragment.lit("::timestamp)\nRETURNING \"cultureid\", \"name\", \"modifieddate\"\n"))
         .updateReturning(CultureRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -102,7 +102,7 @@ public class CultureRepoImpl implements CultureRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"cultureid\", \"name\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"cultureid\", \"name\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(CultureRow._rowParser.exactlyOne()).runUnchecked(c);
   }

@@ -94,7 +94,7 @@ public class PersonphoneRepoImpl implements PersonphoneRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"phonenumber\", \"phonenumbertypeid\","
+                    + "RETURNING \"businessentityid\", \"phonenumber\", \"phonenumbertypeid\","
                     + " \"modifieddate\"\n"))
         .updateReturning(PersonphoneRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -140,7 +140,7 @@ public class PersonphoneRepoImpl implements PersonphoneRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"phonenumber\", \"phonenumbertypeid\","
+                    + "RETURNING \"businessentityid\", \"phonenumber\", \"phonenumbertypeid\","
                     + " \"modifieddate\"\n"));
     ;
     return q.updateReturning(PersonphoneRow._rowParser.exactlyOne()).runUnchecked(c);

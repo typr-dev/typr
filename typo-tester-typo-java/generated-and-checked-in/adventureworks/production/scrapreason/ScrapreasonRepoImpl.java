@@ -68,7 +68,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
             Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
-            Fragment.lit("::timestamp)\nreturning \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
+            Fragment.lit("::timestamp)\nRETURNING \"scrapreasonid\", \"name\", \"modifieddate\"\n"))
         .updateReturning(ScrapreasonRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -111,7 +111,7 @@ public class ScrapreasonRepoImpl implements ScrapreasonRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"scrapreasonid\", \"name\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"scrapreasonid\", \"name\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ScrapreasonRow._rowParser.exactlyOne()).runUnchecked(c);
   }

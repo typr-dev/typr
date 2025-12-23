@@ -35,7 +35,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
   override def insert(unsaved: PhonenumbertypeRow)(using c: Connection): PhonenumbertypeRow = {
   interpolate(Fragment.lit("""insert into "person"."phonenumbertype"("phonenumbertypeid", "name", "modifieddate")
     values ("""), Fragment.encode(PhonenumbertypeId.pgType, unsaved.phonenumbertypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "phonenumbertypeid", "name", "modifieddate"
+    RETURNING "phonenumbertypeid", "name", "modifieddate"
     """))
     .updateReturning(PhonenumbertypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -56,7 +56,7 @@ class PhonenumbertypeRepoImpl extends PhonenumbertypeRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "person"."phonenumbertype"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "phonenumbertypeid", "name", "modifieddate"
+      RETURNING "phonenumbertypeid", "name", "modifieddate"
       """))
     }
     return q.updateReturning(PhonenumbertypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)

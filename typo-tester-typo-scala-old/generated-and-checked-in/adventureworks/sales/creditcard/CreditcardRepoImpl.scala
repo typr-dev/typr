@@ -35,7 +35,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
   override def insert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
   interpolate(Fragment.lit("""insert into "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate")
     values ("""), Fragment.encode(CustomCreditcardId.pgType, unsaved.creditcardid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.cardtype), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.cardnumber), Fragment.lit(", "), Fragment.encode(PgTypes.int2, unsaved.expmonth), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.expyear), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"
+    RETURNING "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"
     """))
     .updateReturning(CreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."creditcard"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"
+      RETURNING "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"
       """))
     }
     return q.updateReturning(CreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)

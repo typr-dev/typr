@@ -35,7 +35,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
   override def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
   interpolate(Fragment.lit("""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
     values ("""), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "unitmeasurecode", "name", "modifieddate"
+    RETURNING "unitmeasurecode", "name", "modifieddate"
     """))
     .updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -54,7 +54,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."unitmeasure"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "unitmeasurecode", "name", "modifieddate"
+      RETURNING "unitmeasurecode", "name", "modifieddate"
       """))
     }
     return q.updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)

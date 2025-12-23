@@ -34,7 +34,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
   override def insert(unsaved: SpecialofferRow)(using c: Connection): SpecialofferRow = {
   interpolate(Fragment.lit("""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values ("""), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.description), Fragment.lit(", "), Fragment.encode(PgTypes.numeric, unsaved.discountpct), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.text, unsaved.`type`), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.category), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.int4, unsaved.minqty), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4.opt(), unsaved.maxqty), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate"
+    RETURNING "specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate"
     """))
     .updateReturning(SpecialofferRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -77,7 +77,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."specialoffer"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate"
+      RETURNING "specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(SpecialofferRow.`_rowParser`.exactlyOne()).runUnchecked(c)

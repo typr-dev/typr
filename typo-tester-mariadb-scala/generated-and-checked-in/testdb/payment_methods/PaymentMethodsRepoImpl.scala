@@ -31,7 +31,7 @@ class PaymentMethodsRepoImpl extends PaymentMethodsRepo {
   override def insert(unsaved: PaymentMethodsRow)(using c: Connection): PaymentMethodsRow = {
   sql"""insert into `payment_methods`(`code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.text, unsaved.methodType)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.processorConfig)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isActive)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.tinyint, unsaved.sortOrder)})
-    returning `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`
+    RETURNING `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`
     """
     .updateReturning(PaymentMethodsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -60,7 +60,7 @@ class PaymentMethodsRepoImpl extends PaymentMethodsRepo {
     val q: Fragment = {
       sql"""insert into `payment_methods`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`
+      RETURNING `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`
       """
     }
     return q.updateReturning(PaymentMethodsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

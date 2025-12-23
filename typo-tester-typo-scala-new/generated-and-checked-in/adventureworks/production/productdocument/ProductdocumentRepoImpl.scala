@@ -37,7 +37,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
   override def insert(unsaved: ProductdocumentRow)(using c: Connection): ProductdocumentRow = {
   sql"""insert into "production"."productdocument"("productid", "modifieddate", "documentnode")
     values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp, ${Fragment.encode(DocumentId.pgType, unsaved.documentnode)})
-    returning "productid", "modifieddate", "documentnode"
+    RETURNING "productid", "modifieddate", "documentnode"
     """
     .updateReturning(ProductdocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -58,7 +58,7 @@ class ProductdocumentRepoImpl extends ProductdocumentRepo {
     val q: Fragment = {
       sql"""insert into "production"."productdocument"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productid", "modifieddate", "documentnode"
+      RETURNING "productid", "modifieddate", "documentnode"
       """
     }
     return q.updateReturning(ProductdocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)

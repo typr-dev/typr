@@ -80,7 +80,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productsubcategoryid\", \"productcategoryid\", \"name\","
+                    + "RETURNING \"productsubcategoryid\", \"productcategoryid\", \"name\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(ProductsubcategoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -140,7 +140,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productsubcategoryid\", \"productcategoryid\", \"name\","
+                    + "RETURNING \"productsubcategoryid\", \"productcategoryid\", \"name\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ProductsubcategoryRow._rowParser.exactlyOne()).runUnchecked(c);

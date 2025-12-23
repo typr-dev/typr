@@ -37,7 +37,7 @@ class DocumentRepoImpl extends DocumentRepo {
   override def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
   interpolate(Fragment.lit("""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values ("""), Fragment.encode(PgTypes.text, unsaved.title), Fragment.lit(", "), Fragment.encode(BusinessentityId.pgType, unsaved.owner), Fragment.lit("::int4, "), Fragment.encode(Flag.pgType, unsaved.folderflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text, unsaved.filename), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.fileextension), Fragment.lit(", "), Fragment.encode(PgTypes.bpchar, unsaved.revision), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.int4, unsaved.changenumber), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int2, unsaved.status), Fragment.lit("::int2, "), Fragment.encode(PgTypes.text.opt(), unsaved.documentsummary), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.document), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(DocumentId.pgType, unsaved.documentnode), Fragment.lit(""")
-    returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode"
+    RETURNING "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode"
     """))
     .updateReturning(DocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -84,7 +84,7 @@ class DocumentRepoImpl extends DocumentRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."document"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode"
+      RETURNING "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode"
       """))
     }
     return q.updateReturning(DocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)

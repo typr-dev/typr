@@ -38,7 +38,7 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun insert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersRow = Fragment.interpolate(Fragment.lit("insert into \"customers\"(\"customer_id\", \"name\", \"email\", \"created_at\", \"priority\")\nvalues ("), Fragment.encode(CustomersId.duckDbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.email), Fragment.lit(", "), Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(Priority.duckDbType.nullable(), unsaved.priority), Fragment.lit(")\nreturning \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"))
+  ): CustomersRow = Fragment.interpolate(Fragment.lit("insert into \"customers\"(\"customer_id\", \"name\", \"email\", \"created_at\", \"priority\")\nvalues ("), Fragment.encode(CustomersId.duckDbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.email), Fragment.lit(", "), Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(Priority.duckDbType.nullable(), unsaved.priority), Fragment.lit(")\nRETURNING \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"))
     .updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -63,7 +63,7 @@ class CustomersRepoImpl() : CustomersRepo {
       { value -> columns.add(Fragment.lit("\"priority\""))
       values.add(Fragment.interpolate(Fragment.encode(Priority.duckDbType.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"customers\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"customers\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"))
     return q.updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

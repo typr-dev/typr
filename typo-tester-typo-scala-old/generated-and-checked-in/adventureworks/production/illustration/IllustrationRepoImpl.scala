@@ -34,7 +34,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
   override def insert(unsaved: IllustrationRow)(using c: Connection): IllustrationRow = {
   interpolate(Fragment.lit("""insert into "production"."illustration"("illustrationid", "diagram", "modifieddate")
     values ("""), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.opt(), unsaved.diagram), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "illustrationid", "diagram", "modifieddate"
+    RETURNING "illustrationid", "diagram", "modifieddate"
     """))
     .updateReturning(IllustrationRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -55,7 +55,7 @@ class IllustrationRepoImpl extends IllustrationRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."illustration"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "illustrationid", "diagram", "modifieddate"
+      RETURNING "illustrationid", "diagram", "modifieddate"
       """))
     }
     return q.updateReturning(IllustrationRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -82,7 +82,7 @@ public class MariatestSpatialRepoImpl implements MariatestSpatialRepo {
             Fragment.encode(MariaTypes.geometrycollection, unsaved.geometrycollectionCol()),
             Fragment.lit(
                 ")\n"
-                    + "returning `id`, `geometry_col`, `point_col`, `linestring_col`,"
+                    + "RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`,"
                     + " `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`,"
                     + " `geometrycollection_col`\n"))
         .updateReturning(MariatestSpatialRow._rowParser.exactlyOne())
@@ -135,7 +135,7 @@ public class MariatestSpatialRepoImpl implements MariatestSpatialRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `id`, `geometry_col`, `point_col`, `linestring_col`,"
+                    + "RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`,"
                     + " `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`,"
                     + " `geometrycollection_col`\n"));
     ;

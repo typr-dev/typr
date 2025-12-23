@@ -33,7 +33,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
   override def insert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
   sql"""insert into "public"."identity-test"("default_generated", "name")
     values (${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.defaultGenerated)}::int4, ${Fragment.encode(IdentityTestId.pgType, unsaved.name)})
-    returning "always_generated", "default_generated", "name"
+    RETURNING "always_generated", "default_generated", "name"
     """
     .updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -50,7 +50,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     val q: Fragment = {
       sql"""insert into "public"."identity-test"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "always_generated", "default_generated", "name"
+      RETURNING "always_generated", "default_generated", "name"
       """
     }
     return q.updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)

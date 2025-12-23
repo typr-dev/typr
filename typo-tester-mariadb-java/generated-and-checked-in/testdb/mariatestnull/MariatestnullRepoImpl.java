@@ -124,7 +124,7 @@ public class MariatestnullRepoImpl implements MariatestnullRepo {
             Fragment.encode(MariaTypes.inet6.opt(), unsaved.inet6Col()),
             Fragment.lit(
                 ")\n"
-                    + "returning `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`,"
+                    + "RETURNING `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`,"
                     + " `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`,"
                     + " `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`,"
                     + " `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`,"
@@ -581,7 +581,7 @@ public class MariatestnullRepoImpl implements MariatestnullRepo {
             ? interpolate(
                 Fragment.lit(
                     "insert into `mariatestnull` default values\n"
-                        + "returning `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`,"
+                        + "RETURNING `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`,"
                         + " `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`,"
                         + " `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`,"
                         + " `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`,"
@@ -598,7 +598,7 @@ public class MariatestnullRepoImpl implements MariatestnullRepo {
                 Fragment.comma(values),
                 Fragment.lit(
                     ")\n"
-                        + "returning `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`,"
+                        + "RETURNING `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`,"
                         + " `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`,"
                         + " `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`,"
                         + " `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`,"

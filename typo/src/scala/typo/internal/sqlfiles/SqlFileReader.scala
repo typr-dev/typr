@@ -5,6 +5,7 @@ package sqlfiles
 import typo.internal.external.ExternalTools
 import typo.internal.mariadb.MariaSqlFileMetadata
 import typo.internal.duckdb.DuckDbSqlFileMetadata
+import typo.internal.sqlserver.SqlServerSqlFileMetadata
 
 import java.nio.file.Path
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,6 +22,8 @@ object SqlFileReader {
         DuckDbSqlFileMetadata(logger, scriptsPath, ds, externalTools)
       case DbType.Oracle =>
         readSqlFileDirectories(logger, scriptsPath, ds)
+      case DbType.SqlServer =>
+        SqlServerSqlFileMetadata(logger, scriptsPath, ds, externalTools)
     }
   }
 }

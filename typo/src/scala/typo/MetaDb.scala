@@ -5,6 +5,7 @@ import typo.internal.external.ExternalTools
 import typo.internal.mariadb.{MariaMetaDb, MariaTypeMapperDb}
 import typo.internal.oracle.{OracleMetaDb, OracleTypeMapperDb}
 import typo.internal.pg.{PgMetaDb, PgTypeMapperDb}
+import typo.internal.sqlserver.{SqlServerMetaDb, SqlServerTypeMapperDb}
 import typo.internal.{Lazy, TypeMapperDb}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -22,6 +23,7 @@ case class MetaDb(
     case DbType.MariaDB    => MariaTypeMapperDb()
     case DbType.DuckDB     => DuckDbTypeMapperDb()
     case DbType.Oracle     => OracleTypeMapperDb(oracleObjectTypes, oracleCollectionTypes)
+    case DbType.SqlServer  => SqlServerTypeMapperDb(domains)
   }
 }
 
@@ -40,6 +42,7 @@ object MetaDb {
       case DbType.MariaDB    => MariaMetaDb.fromDb(logger, ds, viewSelector, schemaMode)
       case DbType.DuckDB     => DuckDbMetaDb.fromDb(logger, ds, viewSelector, schemaMode)
       case DbType.Oracle     => OracleMetaDb.fromDb(logger, ds, viewSelector, schemaMode)
+      case DbType.SqlServer  => SqlServerMetaDb.fromDb(logger, ds, viewSelector, schemaMode)
     }
 
   /** Load metadata from PostgreSQL-specific input (for backwards compatibility) */

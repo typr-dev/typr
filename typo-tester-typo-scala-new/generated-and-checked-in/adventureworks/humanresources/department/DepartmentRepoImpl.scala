@@ -34,7 +34,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
   override def insert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
   sql"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     values (${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(Name.pgType, unsaved.groupname)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "departmentid", "name", "groupname", "modifieddate"
+    RETURNING "departmentid", "name", "groupname", "modifieddate"
     """
     .updateReturning(DepartmentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -57,7 +57,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     val q: Fragment = {
       sql"""insert into "humanresources"."department"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "departmentid", "name", "groupname", "modifieddate"
+      RETURNING "departmentid", "name", "groupname", "modifieddate"
       """
     }
     return q.updateReturning(DepartmentRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -41,7 +41,7 @@ class ProductreviewRepoImpl() : ProductreviewRepo {
   override fun insert(
     unsaved: ProductreviewRow,
     c: Connection
-  ): ProductreviewRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productreview\"(\"productreviewid\", \"productid\", \"reviewername\", \"reviewdate\", \"emailaddress\", \"rating\", \"comments\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductreviewId.pgType, unsaved.productreviewid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.reviewername), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.reviewdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text, unsaved.emailaddress), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.rating), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.nullable(), unsaved.comments), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productreviewid\", \"productid\", \"reviewername\", \"reviewdate\", \"emailaddress\", \"rating\", \"comments\", \"modifieddate\"\n"))
+  ): ProductreviewRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productreview\"(\"productreviewid\", \"productid\", \"reviewername\", \"reviewdate\", \"emailaddress\", \"rating\", \"comments\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductreviewId.pgType, unsaved.productreviewid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.reviewername), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.reviewdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text, unsaved.emailaddress), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.rating), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.nullable(), unsaved.comments), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productreviewid\", \"productid\", \"reviewername\", \"reviewdate\", \"emailaddress\", \"rating\", \"comments\", \"modifieddate\"\n"))
     .updateReturning(ProductreviewRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -75,7 +75,7 @@ class ProductreviewRepoImpl() : ProductreviewRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productreview\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productreviewid\", \"productid\", \"reviewername\", \"reviewdate\", \"emailaddress\", \"rating\", \"comments\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productreview\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productreviewid\", \"productid\", \"reviewername\", \"reviewdate\", \"emailaddress\", \"rating\", \"comments\", \"modifieddate\"\n"))
     return q.updateReturning(ProductreviewRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

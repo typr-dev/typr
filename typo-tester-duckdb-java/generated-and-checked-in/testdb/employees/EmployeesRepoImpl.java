@@ -88,7 +88,7 @@ public class EmployeesRepoImpl implements EmployeesRepo {
             Fragment.encode(DuckDbTypes.date, unsaved.hireDate()),
             Fragment.lit(
                 ")\n"
-                    + "returning \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\","
+                    + "RETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\","
                     + " \"emp_name\", \"salary\", \"hire_date\"\n"))
         .updateReturning(EmployeesRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -137,7 +137,7 @@ public class EmployeesRepoImpl implements EmployeesRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\","
+                    + "RETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\","
                     + " \"emp_name\", \"salary\", \"hire_date\"\n"));
     ;
     return q.updateReturning(EmployeesRow._rowParser.exactlyOne()).runUnchecked(c);

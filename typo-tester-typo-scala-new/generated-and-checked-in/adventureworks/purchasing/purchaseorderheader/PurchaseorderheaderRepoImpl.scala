@@ -37,7 +37,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
   override def insert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
   sql"""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
     values (${Fragment.encode(PurchaseorderheaderId.pgType, unsaved.purchaseorderid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.revisionnumber)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.status)}::int2, ${Fragment.encode(BusinessentityId.pgType, unsaved.employeeid)}::int4, ${Fragment.encode(BusinessentityId.pgType, unsaved.vendorid)}::int4, ${Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.orderdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.shipdate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.subtotal)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.taxamt)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.freight)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate"
+    RETURNING "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate"
     """
     .updateReturning(PurchaseorderheaderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -88,7 +88,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     val q: Fragment = {
       sql"""insert into "purchasing"."purchaseorderheader"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate"
+      RETURNING "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate"
       """
     }
     return q.updateReturning(PurchaseorderheaderRow.`_rowParser`.exactlyOne()).runUnchecked(c)

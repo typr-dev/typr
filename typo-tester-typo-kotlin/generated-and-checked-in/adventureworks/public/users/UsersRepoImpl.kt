@@ -39,7 +39,7 @@ class UsersRepoImpl() : UsersRepo {
   override fun insert(
     unsaved: UsersRow,
     c: Connection
-  ): UsersRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"(\"user_id\", \"name\", \"last_name\", \"email\", \"password\", \"created_at\", \"verified_on\")\nvalues ("), Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.nullable(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.verifiedOn), Fragment.lit("::timestamptz)\nreturning \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\n"))
+  ): UsersRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"(\"user_id\", \"name\", \"last_name\", \"email\", \"password\", \"created_at\", \"verified_on\")\nvalues ("), Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.nullable(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.verifiedOn), Fragment.lit("::timestamptz)\nRETURNING \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\n"))
     .updateReturning(UsersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -65,7 +65,7 @@ class UsersRepoImpl() : UsersRepo {
       { value -> columns.add(Fragment.lit("\"created_at\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamptz, value), Fragment.lit("::timestamptz"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\n"))
     return q.updateReturning(UsersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

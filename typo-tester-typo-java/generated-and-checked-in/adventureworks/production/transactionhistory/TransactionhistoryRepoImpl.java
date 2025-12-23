@@ -88,7 +88,7 @@ public class TransactionhistoryRepoImpl implements TransactionhistoryRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"transactionid\", \"productid\", \"referenceorderid\","
+                    + "RETURNING \"transactionid\", \"productid\", \"referenceorderid\","
                     + " \"referenceorderlineid\", \"transactiondate\", \"transactiontype\","
                     + " \"quantity\", \"actualcost\", \"modifieddate\"\n"))
         .updateReturning(TransactionhistoryRow._rowParser.exactlyOne())
@@ -171,7 +171,7 @@ public class TransactionhistoryRepoImpl implements TransactionhistoryRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"transactionid\", \"productid\", \"referenceorderid\","
+                    + "RETURNING \"transactionid\", \"productid\", \"referenceorderid\","
                     + " \"referenceorderlineid\", \"transactiondate\", \"transactiontype\","
                     + " \"quantity\", \"actualcost\", \"modifieddate\"\n"));
     ;

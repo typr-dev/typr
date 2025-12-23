@@ -62,7 +62,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
             Fragment.encode(PgTypes.int4, unsaved.defaultGenerated()),
             Fragment.lit("::int4, "),
             Fragment.encode(IdentityTestId.pgType, unsaved.name()),
-            Fragment.lit(")\nreturning \"always_generated\", \"default_generated\", \"name\"\n"))
+            Fragment.lit(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"))
         .updateReturning(IdentityTestRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -92,7 +92,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"always_generated\", \"default_generated\", \"name\"\n"));
+            Fragment.lit(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"));
     ;
     return q.updateReturning(IdentityTestRow._rowParser.exactlyOne()).runUnchecked(c);
   }

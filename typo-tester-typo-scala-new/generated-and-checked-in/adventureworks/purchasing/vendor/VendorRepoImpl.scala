@@ -39,7 +39,7 @@ class VendorRepoImpl extends VendorRepo {
   override def insert(unsaved: VendorRow)(using c: Connection): VendorRow = {
   sql"""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(AccountNumber.pgType, unsaved.accountnumber)}::varchar, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.creditrating)}::int2, ${Fragment.encode(Flag.pgType, unsaved.preferredvendorstatus)}::bool, ${Fragment.encode(Flag.pgType, unsaved.activeflag)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.purchasingwebserviceurl)}, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"
+    RETURNING "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"
     """
     .updateReturning(VendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -72,7 +72,7 @@ class VendorRepoImpl extends VendorRepo {
     val q: Fragment = {
       sql"""insert into "purchasing"."vendor"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"
+      RETURNING "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"
       """
     }
     return q.updateReturning(VendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)

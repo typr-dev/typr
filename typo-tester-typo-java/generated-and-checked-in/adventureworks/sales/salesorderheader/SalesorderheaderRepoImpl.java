@@ -128,7 +128,7 @@ public class SalesorderheaderRepoImpl implements SalesorderheaderRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"salesorderid\", \"revisionnumber\", \"orderdate\", \"duedate\","
+                    + "RETURNING \"salesorderid\", \"revisionnumber\", \"orderdate\", \"duedate\","
                     + " \"shipdate\", \"status\", \"onlineorderflag\", \"purchaseordernumber\","
                     + " \"accountnumber\", \"customerid\", \"salespersonid\", \"territoryid\","
                     + " \"billtoaddressid\", \"shiptoaddressid\", \"shipmethodid\","
@@ -320,7 +320,7 @@ public class SalesorderheaderRepoImpl implements SalesorderheaderRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"salesorderid\", \"revisionnumber\", \"orderdate\", \"duedate\","
+                    + "RETURNING \"salesorderid\", \"revisionnumber\", \"orderdate\", \"duedate\","
                     + " \"shipdate\", \"status\", \"onlineorderflag\", \"purchaseordernumber\","
                     + " \"accountnumber\", \"customerid\", \"salespersonid\", \"territoryid\","
                     + " \"billtoaddressid\", \"shiptoaddressid\", \"shipmethodid\","

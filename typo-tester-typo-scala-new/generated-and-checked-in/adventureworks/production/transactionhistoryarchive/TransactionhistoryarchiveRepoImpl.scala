@@ -34,7 +34,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
   override def insert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
   sql"""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
     values (${Fragment.encode(TransactionhistoryarchiveId.pgType, unsaved.transactionid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.productid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.referenceorderid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.referenceorderlineid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.transactiondate)}::timestamp, ${Fragment.encode(PgTypes.bpchar, unsaved.transactiontype)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.quantity)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.actualcost)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate"
+    RETURNING "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate"
     """
     .updateReturning(TransactionhistoryarchiveRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -69,7 +69,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     val q: Fragment = {
       sql"""insert into "production"."transactionhistoryarchive"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate"
+      RETURNING "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate"
       """
     }
     return q.updateReturning(TransactionhistoryarchiveRow.`_rowParser`.exactlyOne()).runUnchecked(c)

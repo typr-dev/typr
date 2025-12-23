@@ -78,7 +78,7 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
             Fragment.encode(MariaTypes.date.opt(), unsaved.validTo()),
             Fragment.lit(
                 ")\n"
-                    + "returning `price_id`, `product_id`, `tier_id`, `price`, `currency_code`,"
+                    + "RETURNING `price_id`, `product_id`, `tier_id`, `price`, `currency_code`,"
                     + " `valid_from`, `valid_to`\n"))
         .updateReturning(ProductPricesRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -136,7 +136,7 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `price_id`, `product_id`, `tier_id`, `price`, `currency_code`,"
+                    + "RETURNING `price_id`, `product_id`, `tier_id`, `price`, `currency_code`,"
                     + " `valid_from`, `valid_to`\n"));
     ;
     return q.updateReturning(ProductPricesRow._rowParser.exactlyOne()).runUnchecked(c);

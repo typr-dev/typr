@@ -35,7 +35,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
   override def insert(unsaved: SpecialofferRow)(using c: Connection): SpecialofferRow = {
   sql"""insert into "sales"."specialoffer"("specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate")
     values (${Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.description)}, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.discountpct)}::numeric, ${Fragment.encode(PgTypes.text, unsaved.`type`)}, ${Fragment.encode(PgTypes.text, unsaved.category)}, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.enddate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.minqty)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4.nullable, unsaved.maxqty)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate"
+    RETURNING "specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate"
     """
     .updateReturning(SpecialofferRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -78,7 +78,7 @@ class SpecialofferRepoImpl extends SpecialofferRepo {
     val q: Fragment = {
       sql"""insert into "sales"."specialoffer"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate"
+      RETURNING "specialofferid", "description", "discountpct", "type", "category", "startdate", "enddate", "minqty", "maxqty", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(SpecialofferRow.`_rowParser`.exactlyOne()).runUnchecked(c)

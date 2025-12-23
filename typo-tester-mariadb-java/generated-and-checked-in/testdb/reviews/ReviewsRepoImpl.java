@@ -103,7 +103,7 @@ public class ReviewsRepoImpl implements ReviewsRepo {
             Fragment.encode(MariaTypes.datetime, unsaved.updatedAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `review_id`, `product_id`, `customer_id`, `order_item_id`,"
+                    + "RETURNING `review_id`, `product_id`, `customer_id`, `order_item_id`,"
                     + " `rating`, `title`, `content`, `pros`, `cons`, `images`,"
                     + " `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`,"
                     + " `admin_response`, `responded_at`, `created_at`, `updated_at`\n"))
@@ -274,7 +274,7 @@ public class ReviewsRepoImpl implements ReviewsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `review_id`, `product_id`, `customer_id`, `order_item_id`,"
+                    + "RETURNING `review_id`, `product_id`, `customer_id`, `order_item_id`,"
                     + " `rating`, `title`, `content`, `pros`, `cons`, `images`,"
                     + " `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`,"
                     + " `admin_response`, `responded_at`, `created_at`, `updated_at`\n"));

@@ -206,4 +206,32 @@ public interface Dialect {
           return "OFFSET " + n + " ROWS";
         }
       };
+
+  /** SQL Server dialect - uses square brackets for identifiers and CAST() for casts. */
+  Dialect SQLSERVER =
+      new Dialect() {
+        @Override
+        public String quoteIdent(String name) {
+          return "[" + name + "]";
+        }
+
+        @Override
+        public String escapeIdent(String name) {
+          return name.replace("]", "]]");
+        }
+
+        @Override
+        public Fragment typeCast(Fragment value, String typeName) {
+          if (typeName == null || typeName.isEmpty()) {
+            return value;
+          }
+          return Fragment.lit("CAST(").append(value).append(Fragment.lit(" AS " + typeName + ")"));
+        }
+
+        @Override
+        public String columnRef(String alias, String quotedColumn) {
+          // SQL Server uses simple alias.[column] format
+          return alias + "." + quotedColumn;
+        }
+      };
 }

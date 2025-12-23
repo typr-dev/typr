@@ -37,7 +37,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
   override def insert(unsaved: StateprovinceRow)(using c: Connection): StateprovinceRow = {
   sql"""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
     values (${Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode)}::bpchar, ${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag)}::bool, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
+    RETURNING "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     """
     .updateReturning(StateprovinceRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -72,7 +72,7 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     val q: Fragment = {
       sql"""insert into "person"."stateprovince"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
+      RETURNING "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(StateprovinceRow.`_rowParser`.exactlyOne()).runUnchecked(c)

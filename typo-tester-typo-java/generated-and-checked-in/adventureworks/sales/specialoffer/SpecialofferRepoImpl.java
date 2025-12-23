@@ -85,7 +85,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"specialofferid\", \"description\", \"discountpct\", \"type\","
+                    + "RETURNING \"specialofferid\", \"description\", \"discountpct\", \"type\","
                     + " \"category\", \"startdate\", \"enddate\", \"minqty\", \"maxqty\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(SpecialofferRow._rowParser.exactlyOne())
@@ -174,7 +174,7 @@ public class SpecialofferRepoImpl implements SpecialofferRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"specialofferid\", \"description\", \"discountpct\", \"type\","
+                    + "RETURNING \"specialofferid\", \"description\", \"discountpct\", \"type\","
                     + " \"category\", \"startdate\", \"enddate\", \"minqty\", \"maxqty\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;

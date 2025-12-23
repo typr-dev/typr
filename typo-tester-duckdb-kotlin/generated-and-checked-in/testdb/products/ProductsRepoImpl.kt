@@ -36,7 +36,7 @@ class ProductsRepoImpl() : ProductsRepo {
   override fun insert(
     unsaved: ProductsRow,
     c: Connection
-  ): ProductsRow = Fragment.interpolate(Fragment.lit("insert into \"products\"(\"product_id\", \"sku\", \"name\", \"price\", \"metadata\")\nvalues ("), Fragment.encode(ProductsId.duckDbType, unsaved.productId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.sku), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric, unsaved.price), Fragment.lit(", "), Fragment.encode(DuckDbTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nreturning \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\n"))
+  ): ProductsRow = Fragment.interpolate(Fragment.lit("insert into \"products\"(\"product_id\", \"sku\", \"name\", \"price\", \"metadata\")\nvalues ("), Fragment.encode(ProductsId.duckDbType, unsaved.productId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.sku), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric, unsaved.price), Fragment.lit(", "), Fragment.encode(DuckDbTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nRETURNING \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\n"))
     .updateReturning(ProductsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun select(): SelectBuilder<ProductsFields, ProductsRow> = SelectBuilder.of("\"products\"", ProductsFields.structure, ProductsRow._rowParser, Dialect.DUCKDB)

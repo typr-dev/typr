@@ -87,7 +87,7 @@ public class InventoryRepoImpl implements InventoryRepo {
             Fragment.encode(MariaTypes.datetime, unsaved.updatedAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`,"
+                    + "RETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`,"
                     + " `quantity_reserved`, `quantity_on_order`, `reorder_point`,"
                     + " `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\n"))
         .updateReturning(InventoryRow._rowParser.exactlyOne())
@@ -190,7 +190,7 @@ public class InventoryRepoImpl implements InventoryRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`,"
+                    + "RETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`,"
                     + " `quantity_reserved`, `quantity_on_order`, `reorder_point`,"
                     + " `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\n"));
     ;

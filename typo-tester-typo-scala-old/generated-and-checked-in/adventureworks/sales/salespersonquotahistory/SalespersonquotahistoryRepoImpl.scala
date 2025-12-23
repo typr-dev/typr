@@ -38,7 +38,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
   override def insert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
   interpolate(Fragment.lit("""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.quotadate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.salesquota), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate"
     """))
     .updateReturning(SalespersonquotahistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -63,7 +63,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."salespersonquotahistory"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(SalespersonquotahistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

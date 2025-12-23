@@ -121,7 +121,7 @@ public class ProductRepoImpl implements ProductRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productid\", \"name\", \"productnumber\", \"makeflag\","
+                    + "RETURNING \"productid\", \"name\", \"productnumber\", \"makeflag\","
                     + " \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\","
                     + " \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\","
                     + " \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\","
@@ -276,7 +276,7 @@ public class ProductRepoImpl implements ProductRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productid\", \"name\", \"productnumber\", \"makeflag\","
+                    + "RETURNING \"productid\", \"name\", \"productnumber\", \"makeflag\","
                     + " \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\","
                     + " \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\","
                     + " \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\","

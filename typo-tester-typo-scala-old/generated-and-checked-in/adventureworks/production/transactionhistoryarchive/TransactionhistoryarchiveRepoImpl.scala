@@ -34,7 +34,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
   override def insert(unsaved: TransactionhistoryarchiveRow)(using c: Connection): TransactionhistoryarchiveRow = {
   interpolate(Fragment.lit("""insert into "production"."transactionhistoryarchive"("transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate")
     values ("""), Fragment.encode(TransactionhistoryarchiveId.pgType, unsaved.transactionid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.referenceorderid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.referenceorderlineid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.transactiondate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.bpchar, unsaved.transactiontype), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.int4, unsaved.quantity), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.actualcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate"
+    RETURNING "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate"
     """))
     .updateReturning(TransactionhistoryarchiveRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -69,7 +69,7 @@ class TransactionhistoryarchiveRepoImpl extends TransactionhistoryarchiveRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."transactionhistoryarchive"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate"
+      RETURNING "transactionid", "productid", "referenceorderid", "referenceorderlineid", "transactiondate", "transactiontype", "quantity", "actualcost", "modifieddate"
       """))
     }
     return q.updateReturning(TransactionhistoryarchiveRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -62,7 +62,7 @@ public class TableWithGeneratedColumnsRepoImpl implements TableWithGeneratedColu
             Fragment.lit(
                 "insert into \"public\".\"table-with-generated-columns\"(\"name\")\nvalues ("),
             Fragment.encode(TableWithGeneratedColumnsId.pgType, unsaved.name()),
-            Fragment.lit(")\nreturning \"name\", \"name-type-always\"\n"))
+            Fragment.lit(")\nRETURNING \"name\", \"name-type-always\"\n"))
         .updateReturning(TableWithGeneratedColumnsRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -85,7 +85,7 @@ public class TableWithGeneratedColumnsRepoImpl implements TableWithGeneratedColu
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"name\", \"name-type-always\"\n"));
+            Fragment.lit(")\nRETURNING \"name\", \"name-type-always\"\n"));
     ;
     return q.updateReturning(TableWithGeneratedColumnsRow._rowParser.exactlyOne()).runUnchecked(c);
   }

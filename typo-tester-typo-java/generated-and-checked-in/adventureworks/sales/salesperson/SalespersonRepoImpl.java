@@ -83,7 +83,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"territoryid\", \"salesquota\", \"bonus\","
+                    + "RETURNING \"businessentityid\", \"territoryid\", \"salesquota\", \"bonus\","
                     + " \"commissionpct\", \"salesytd\", \"saleslastyear\", \"rowguid\","
                     + " \"modifieddate\"\n"))
         .updateReturning(SalespersonRow._rowParser.exactlyOne())
@@ -180,7 +180,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"territoryid\", \"salesquota\", \"bonus\","
+                    + "RETURNING \"businessentityid\", \"territoryid\", \"salesquota\", \"bonus\","
                     + " \"commissionpct\", \"salesytd\", \"saleslastyear\", \"rowguid\","
                     + " \"modifieddate\"\n"));
     ;

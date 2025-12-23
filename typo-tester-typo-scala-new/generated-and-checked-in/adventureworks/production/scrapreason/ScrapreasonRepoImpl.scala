@@ -34,7 +34,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
   override def insert(unsaved: ScrapreasonRow)(using c: Connection): ScrapreasonRow = {
   sql"""insert into "production"."scrapreason"("scrapreasonid", "name", "modifieddate")
     values (${Fragment.encode(ScrapreasonId.pgType, unsaved.scrapreasonid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "scrapreasonid", "name", "modifieddate"
+    RETURNING "scrapreasonid", "name", "modifieddate"
     """
     .updateReturning(ScrapreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -55,7 +55,7 @@ class ScrapreasonRepoImpl extends ScrapreasonRepo {
     val q: Fragment = {
       sql"""insert into "production"."scrapreason"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "scrapreasonid", "name", "modifieddate"
+      RETURNING "scrapreasonid", "name", "modifieddate"
       """
     }
     return q.updateReturning(ScrapreasonRow.`_rowParser`.exactlyOne()).runUnchecked(c)

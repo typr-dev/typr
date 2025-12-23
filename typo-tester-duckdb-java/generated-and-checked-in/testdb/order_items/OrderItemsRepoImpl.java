@@ -81,7 +81,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
             Fragment.lit(", "),
             Fragment.encode(DuckDbTypes.numeric, unsaved.unitPrice()),
             Fragment.lit(
-                ")\nreturning \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"))
+                ")\nRETURNING \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"))
         .updateReturning(OrderItemsRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -119,7 +119,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"));
+                ")\nRETURNING \"order_id\", \"product_id\", \"quantity\", \"unit_price\"\n"));
     ;
     return q.updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c);
   }

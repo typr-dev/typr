@@ -35,7 +35,7 @@ class PasswordRepoImpl extends PasswordRepo {
   override def insert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
   interpolate(Fragment.lit("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     """))
     .updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -60,7 +60,7 @@ class PasswordRepoImpl extends PasswordRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "person"."password"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)

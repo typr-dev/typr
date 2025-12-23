@@ -40,7 +40,7 @@ class CategoriesRepoImpl() : CategoriesRepo {
   override fun insert(
     unsaved: CategoriesRow,
     c: Connection
-  ): CategoriesRow = Fragment.interpolate(Fragment.lit("insert into `categories`(`parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nvalues ("), Fragment.encode(CategoriesId.pgType.nullable(), unsaved.parentId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumtext.nullable(), unsaved.description), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVisible), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.metadata), Fragment.lit(")\nreturning `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
+  ): CategoriesRow = Fragment.interpolate(Fragment.lit("insert into `categories`(`parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nvalues ("), Fragment.encode(CategoriesId.pgType.nullable(), unsaved.parentId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumtext.nullable(), unsaved.description), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVisible), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.metadata), Fragment.lit(")\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
     .updateReturning(CategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -83,7 +83,7 @@ class CategoriesRepoImpl() : CategoriesRepo {
       { value -> columns.add(Fragment.lit("`metadata`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.longtext.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `categories`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `categories`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
     return q.updateReturning(CategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

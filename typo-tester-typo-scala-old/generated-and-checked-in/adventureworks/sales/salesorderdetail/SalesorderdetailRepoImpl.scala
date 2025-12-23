@@ -39,7 +39,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
   override def insert(unsaved: SalesorderdetailRow)(using c: Connection): SalesorderdetailRow = {
   interpolate(Fragment.lit("""insert into "sales"."salesorderdetail"("salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate")
     values ("""), Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.salesorderdetailid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.opt(), unsaved.carriertrackingnumber), Fragment.lit(", "), Fragment.encode(PgTypes.int2, unsaved.orderqty), Fragment.lit("::int2, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric, unsaved.unitprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.unitpricediscount), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"
+    RETURNING "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"
     """))
     .updateReturning(SalesorderdetailRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -78,7 +78,7 @@ class SalesorderdetailRepoImpl extends SalesorderdetailRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."salesorderdetail"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"
+      RETURNING "salesorderid", "salesorderdetailid", "carriertrackingnumber", "orderqty", "productid", "specialofferid", "unitprice", "unitpricediscount", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(SalesorderdetailRow.`_rowParser`.exactlyOne()).runUnchecked(c)

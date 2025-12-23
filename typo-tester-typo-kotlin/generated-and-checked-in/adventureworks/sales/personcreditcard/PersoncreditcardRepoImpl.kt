@@ -42,7 +42,7 @@ class PersoncreditcardRepoImpl() : PersoncreditcardRepo {
   override fun insert(
     unsaved: PersoncreditcardRow,
     c: Connection
-  ): PersoncreditcardRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"personcreditcard\"(\"businessentityid\", \"creditcardid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(CustomCreditcardId.pgType, unsaved.creditcardid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"creditcardid\", \"modifieddate\"\n"))
+  ): PersoncreditcardRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"personcreditcard\"(\"businessentityid\", \"creditcardid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(CustomCreditcardId.pgType, unsaved.creditcardid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"creditcardid\", \"modifieddate\"\n"))
     .updateReturning(PersoncreditcardRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -60,7 +60,7 @@ class PersoncreditcardRepoImpl() : PersoncreditcardRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"personcreditcard\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"creditcardid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"personcreditcard\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"creditcardid\", \"modifieddate\"\n"))
     return q.updateReturning(PersoncreditcardRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

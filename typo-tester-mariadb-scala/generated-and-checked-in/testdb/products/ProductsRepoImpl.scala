@@ -32,7 +32,7 @@ class ProductsRepoImpl extends ProductsRepo {
   override def insert(unsaved: ProductsRow)(using c: Connection): ProductsRow = {
   sql"""insert into `products`(`sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(BrandsId.pgType.nullable, unsaved.brandId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.shortDescription)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.fullDescription)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.basePrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.costPrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.weightKg)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.dimensionsJson)}, ${Fragment.encode(MariaTypes.text, unsaved.status)}, ${Fragment.encode(MariaTypes.text, unsaved.taxClass)}, ${Fragment.encode(MariaTypes.set.nullable, unsaved.tags)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.attributes)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.seoMetadata)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.publishedAt)})
-    returning `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
+    RETURNING `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
     """
     .updateReturning(ProductsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -105,7 +105,7 @@ class ProductsRepoImpl extends ProductsRepo {
     val q: Fragment = {
       sql"""insert into `products`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
+      RETURNING `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
       """
     }
     return q.updateReturning(ProductsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

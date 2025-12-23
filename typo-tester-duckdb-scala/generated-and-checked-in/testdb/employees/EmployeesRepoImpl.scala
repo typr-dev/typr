@@ -34,7 +34,7 @@ class EmployeesRepoImpl extends EmployeesRepo {
   override def insert(unsaved: EmployeesRow)(using c: Connection): EmployeesRow = {
   sql"""insert into "employees"("emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date")
     values (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.empNumber)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empName)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.salary)}, ${Fragment.encode(DuckDbTypes.date, unsaved.hireDate)})
-    returning "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
+    RETURNING "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
     """
     .updateReturning(EmployeesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -61,7 +61,7 @@ class EmployeesRepoImpl extends EmployeesRepo {
     val q: Fragment = {
       sql"""insert into "employees"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
+      RETURNING "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
       """
     }
     return q.updateReturning(EmployeesRow.`_rowParser`.exactlyOne()).runUnchecked(c)

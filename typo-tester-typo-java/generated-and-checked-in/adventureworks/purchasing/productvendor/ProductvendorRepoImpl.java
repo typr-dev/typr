@@ -102,7 +102,7 @@ public class ProductvendorRepoImpl implements ProductvendorRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productid\", \"businessentityid\", \"averageleadtime\","
+                    + "RETURNING \"productid\", \"businessentityid\", \"averageleadtime\","
                     + " \"standardprice\", \"lastreceiptcost\", \"lastreceiptdate\","
                     + " \"minorderqty\", \"maxorderqty\", \"onorderqty\", \"unitmeasurecode\","
                     + " \"modifieddate\"\n"))
@@ -178,7 +178,7 @@ public class ProductvendorRepoImpl implements ProductvendorRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productid\", \"businessentityid\", \"averageleadtime\","
+                    + "RETURNING \"productid\", \"businessentityid\", \"averageleadtime\","
                     + " \"standardprice\", \"lastreceiptcost\", \"lastreceiptdate\","
                     + " \"minorderqty\", \"maxorderqty\", \"onorderqty\", \"unitmeasurecode\","
                     + " \"modifieddate\"\n"));

@@ -35,7 +35,7 @@ class TestSakSoknadsalternativRepoImpl extends TestSakSoknadsalternativRepo {
   override def insert(unsaved: TestSakSoknadsalternativRow)(using c: Connection): TestSakSoknadsalternativRow = {
   sql"""insert into "public"."test_sak_soknadsalternativ"("organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder")
     values (${Fragment.encode(PgTypes.text, unsaved.organisasjonskodeSaksbehandler)}, ${Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode)}, ${Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskodeTilbyder)})
-    returning "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
+    RETURNING "organisasjonskode_saksbehandler", "utdanningsmulighet_kode", "organisasjonskode_tilbyder"
     """
     .updateReturning(TestSakSoknadsalternativRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

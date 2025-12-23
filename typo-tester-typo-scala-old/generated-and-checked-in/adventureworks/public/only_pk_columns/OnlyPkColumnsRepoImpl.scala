@@ -35,7 +35,7 @@ class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
   override def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow = {
   interpolate(Fragment.lit("""insert into "public"."only_pk_columns"("key_column_1", "key_column_2")
     values ("""), Fragment.encode(PgTypes.text, unsaved.keyColumn1), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.keyColumn2), Fragment.lit("""::int4)
-    returning "key_column_1", "key_column_2"
+    RETURNING "key_column_1", "key_column_2"
     """))
     .updateReturning(OnlyPkColumnsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

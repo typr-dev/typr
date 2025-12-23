@@ -31,7 +31,7 @@ class ShippingCarriersRepoImpl extends ShippingCarriersRepo {
   override def insert(unsaved: ShippingCarriersRow)(using c: Connection): ShippingCarriersRow = {
   sql"""insert into `shipping_carriers`(`code`, `name`, `tracking_url_template`, `api_config`, `is_active`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.trackingUrlTemplate)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.apiConfig)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isActive)})
-    returning `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`
+    RETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`
     """
     .updateReturning(ShippingCarriersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -58,7 +58,7 @@ class ShippingCarriersRepoImpl extends ShippingCarriersRepo {
     val q: Fragment = {
       sql"""insert into `shipping_carriers`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`
+      RETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`
       """
     }
     return q.updateReturning(ShippingCarriersRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -56,7 +56,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
     return interpolate(
             Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("),
             Fragment.encode(TitleDomainId.pgType, unsaved.code()),
-            Fragment.lit("::text)\nreturning \"code\"\n"))
+            Fragment.lit("::text)\nRETURNING \"code\"\n"))
         .updateReturning(TitleDomainRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }

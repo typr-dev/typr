@@ -69,7 +69,7 @@ public class PhonenumbertypeRepoImpl implements PhonenumbertypeRepo {
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
-                "::timestamp)\nreturning \"phonenumbertypeid\", \"name\", \"modifieddate\"\n"))
+                "::timestamp)\nRETURNING \"phonenumbertypeid\", \"name\", \"modifieddate\"\n"))
         .updateReturning(PhonenumbertypeRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -112,7 +112,7 @@ public class PhonenumbertypeRepoImpl implements PhonenumbertypeRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"phonenumbertypeid\", \"name\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"phonenumbertypeid\", \"name\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(PhonenumbertypeRow._rowParser.exactlyOne()).runUnchecked(c);
   }

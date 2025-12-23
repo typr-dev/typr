@@ -43,7 +43,7 @@ class EmployeepayhistoryRepoImpl() : EmployeepayhistoryRepo {
   override fun insert(
     unsaved: EmployeepayhistoryRow,
     c: Connection
-  ): EmployeepayhistoryRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employeepayhistory\"(\"businessentityid\", \"ratechangedate\", \"rate\", \"payfrequency\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.ratechangedate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.rate), Fragment.lit("::numeric, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.payfrequency), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"ratechangedate\", \"rate\", \"payfrequency\", \"modifieddate\"\n"))
+  ): EmployeepayhistoryRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employeepayhistory\"(\"businessentityid\", \"ratechangedate\", \"rate\", \"payfrequency\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.ratechangedate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.rate), Fragment.lit("::numeric, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.payfrequency), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"ratechangedate\", \"rate\", \"payfrequency\", \"modifieddate\"\n"))
     .updateReturning(EmployeepayhistoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -65,7 +65,7 @@ class EmployeepayhistoryRepoImpl() : EmployeepayhistoryRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employeepayhistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"ratechangedate\", \"rate\", \"payfrequency\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employeepayhistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"ratechangedate\", \"rate\", \"payfrequency\", \"modifieddate\"\n"))
     return q.updateReturning(EmployeepayhistoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -67,7 +67,7 @@ public class ProductsRepoImpl implements ProductsRepo {
             Fragment.lit(", "),
             Fragment.encode(DuckDbTypes.json.opt(), unsaved.metadata()),
             Fragment.lit(
-                ")\nreturning \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\n"))
+                ")\nRETURNING \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\n"))
         .updateReturning(ProductsRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }

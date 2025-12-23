@@ -32,7 +32,7 @@ class ProductImagesRepoImpl extends ProductImagesRepo {
   override def insert(unsaved: ProductImagesRow)(using c: Connection): ProductImagesRow = {
   sql"""insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)
     values (${Fragment.encode(ProductsId.pgType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.imageUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.thumbnailUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.altText)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.tinyintUnsigned, unsaved.sortOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isPrimary)}, ${Fragment.encode(MariaTypes.longblob.nullable, unsaved.imageData)})
-    returning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`
+    RETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`
     """
     .updateReturning(ProductImagesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -67,7 +67,7 @@ class ProductImagesRepoImpl extends ProductImagesRepo {
     val q: Fragment = {
       sql"""insert into `product_images`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`
+      RETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`
       """
     }
     return q.updateReturning(ProductImagesRow.`_rowParser`.exactlyOne()).runUnchecked(c)

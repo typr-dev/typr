@@ -30,7 +30,7 @@ class MariatestSpatialNullRepoImpl extends MariatestSpatialNullRepo {
   override def insert(unsaved: MariatestSpatialNullRow)(using c: Connection): MariatestSpatialNullRow = {
   sql"""insert into `mariatest_spatial_null`(`geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)
     values (${Fragment.encode(MariaTypes.geometry.nullable, unsaved.geometryCol)}, ${Fragment.encode(MariaTypes.point.nullable, unsaved.pointCol)}, ${Fragment.encode(MariaTypes.linestring.nullable, unsaved.linestringCol)}, ${Fragment.encode(MariaTypes.polygon.nullable, unsaved.polygonCol)}, ${Fragment.encode(MariaTypes.multipoint.nullable, unsaved.multipointCol)}, ${Fragment.encode(MariaTypes.multilinestring.nullable, unsaved.multilinestringCol)}, ${Fragment.encode(MariaTypes.multipolygon.nullable, unsaved.multipolygonCol)}, ${Fragment.encode(MariaTypes.geometrycollection.nullable, unsaved.geometrycollectionCol)})
-    returning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
+    RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
     """
     .updateReturning(MariatestSpatialNullRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -72,10 +72,10 @@ class MariatestSpatialNullRepoImpl extends MariatestSpatialNullRepo {
     );
     val q: Fragment = {
       (if (columns.isEmpty) sql"""insert into `mariatest_spatial_null` default values
-      returning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
+      RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
       """ else sql"""insert into `mariatest_spatial_null`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
+      RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
       """)
     }
     return q.updateReturning(MariatestSpatialNullRow.`_rowParser`.exactlyOne()).runUnchecked(c)

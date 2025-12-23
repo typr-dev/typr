@@ -104,7 +104,7 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"territoryid\", \"startdate\", \"enddate\","
+                    + "RETURNING \"businessentityid\", \"territoryid\", \"startdate\", \"enddate\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(SalesterritoryhistoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -164,7 +164,7 @@ public class SalesterritoryhistoryRepoImpl implements SalesterritoryhistoryRepo 
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"territoryid\", \"startdate\", \"enddate\","
+                    + "RETURNING \"businessentityid\", \"territoryid\", \"startdate\", \"enddate\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(SalesterritoryhistoryRow._rowParser.exactlyOne()).runUnchecked(c);

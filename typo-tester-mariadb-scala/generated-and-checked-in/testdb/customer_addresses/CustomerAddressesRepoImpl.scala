@@ -32,7 +32,7 @@ class CustomerAddressesRepoImpl extends CustomerAddressesRepo {
   override def insert(unsaved: CustomerAddressesRow)(using c: Connection): CustomerAddressesRow = {
   sql"""insert into `customer_addresses`(`customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`)
     values (${Fragment.encode(CustomersId.pgType, unsaved.customerId)}, ${Fragment.encode(MariaTypes.text, unsaved.addressType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isDefault)}, ${Fragment.encode(MariaTypes.varchar, unsaved.recipientName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.streetLine1)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.streetLine2)}, ${Fragment.encode(MariaTypes.varchar, unsaved.city)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.stateProvince)}, ${Fragment.encode(MariaTypes.varchar, unsaved.postalCode)}, ${Fragment.encode(MariaTypes.char_, unsaved.countryCode)}, ${Fragment.encode(MariaTypes.point.nullable, unsaved.location)}, ${Fragment.encode(MariaTypes.tinytext.nullable, unsaved.deliveryNotes)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)})
-    returning `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`
+    RETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`
     """
     .updateReturning(CustomerAddressesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -81,7 +81,7 @@ class CustomerAddressesRepoImpl extends CustomerAddressesRepo {
     val q: Fragment = {
       sql"""insert into `customer_addresses`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`
+      RETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`
       """
     }
     return q.updateReturning(CustomerAddressesRow.`_rowParser`.exactlyOne()).runUnchecked(c)

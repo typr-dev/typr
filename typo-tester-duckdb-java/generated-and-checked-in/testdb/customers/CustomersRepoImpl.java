@@ -70,7 +70,7 @@ public class CustomersRepoImpl implements CustomersRepo {
             Fragment.encode(Priority.duckDbType.opt(), unsaved.priority()),
             Fragment.lit(
                 ")\n"
-                    + "returning \"customer_id\", \"name\", \"email\", \"created_at\","
+                    + "RETURNING \"customer_id\", \"name\", \"email\", \"created_at\","
                     + " \"priority\"\n"))
         .updateReturning(CustomersRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -120,7 +120,7 @@ public class CustomersRepoImpl implements CustomersRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"customer_id\", \"name\", \"email\", \"created_at\","
+                    + "RETURNING \"customer_id\", \"name\", \"email\", \"created_at\","
                     + " \"priority\"\n"));
     ;
     return q.updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c);

@@ -100,7 +100,7 @@ public class BusinessentitycontactRepoImpl implements BusinessentitycontactRepo 
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"personid\", \"contacttypeid\","
+                    + "RETURNING \"businessentityid\", \"personid\", \"contacttypeid\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(BusinessentitycontactRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -155,7 +155,7 @@ public class BusinessentitycontactRepoImpl implements BusinessentitycontactRepo 
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"personid\", \"contacttypeid\","
+                    + "RETURNING \"businessentityid\", \"personid\", \"contacttypeid\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(BusinessentitycontactRow._rowParser.exactlyOne()).runUnchecked(c);

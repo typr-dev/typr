@@ -33,7 +33,7 @@ class PaymentsRepoImpl extends PaymentsRepo {
   override def insert(unsaved: PaymentsRow)(using c: Connection): PaymentsRow = {
   sql"""insert into `payments`(`order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`)
     values (${Fragment.encode(OrdersId.pgType, unsaved.orderId)}, ${Fragment.encode(PaymentMethodsId.pgType, unsaved.methodId)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.transactionId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.amount)}, ${Fragment.encode(MariaTypes.char_, unsaved.currencyCode)}, ${Fragment.encode(MariaTypes.text, unsaved.status)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.processorResponse)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.errorMessage)}, ${Fragment.encode(MariaTypes.inet6.nullable, unsaved.ipAddress)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.processedAt)})
-    returning `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`
+    RETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`
     """
     .updateReturning(PaymentsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -82,7 +82,7 @@ class PaymentsRepoImpl extends PaymentsRepo {
     val q: Fragment = {
       sql"""insert into `payments`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`
+      RETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`
       """
     }
     return q.updateReturning(PaymentsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

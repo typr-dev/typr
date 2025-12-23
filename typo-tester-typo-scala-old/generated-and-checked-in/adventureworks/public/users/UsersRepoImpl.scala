@@ -35,7 +35,7 @@ class UsersRepoImpl extends UsersRepo {
   override def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   interpolate(Fragment.lit("""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     values ("""), Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.verifiedOn), Fragment.lit("""::timestamptz)
-    returning "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
+    RETURNING "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     """))
     .updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class UsersRepoImpl extends UsersRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "public"."users"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
+      RETURNING "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
       """))
     }
     return q.updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)

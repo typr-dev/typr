@@ -44,7 +44,7 @@ class FlaffRepoImpl() : FlaffRepo {
   override fun insert(
     unsaved: FlaffRow,
     c: Connection
-  ): FlaffRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nvalues ("), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.pgType.nullable(), unsaved.parentspecifier), Fragment.lit("::text)\nreturning \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\n"))
+  ): FlaffRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nvalues ("), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.pgType.nullable(), unsaved.parentspecifier), Fragment.lit("::text)\nRETURNING \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\n"))
     .updateReturning(FlaffRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(

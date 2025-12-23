@@ -112,7 +112,7 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"departmentid\", \"shiftid\","
+                    + "RETURNING \"businessentityid\", \"departmentid\", \"shiftid\","
                     + " \"startdate\", \"enddate\", \"modifieddate\"\n"))
         .updateReturning(EmployeedepartmenthistoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -164,7 +164,7 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"departmentid\", \"shiftid\","
+                    + "RETURNING \"businessentityid\", \"departmentid\", \"shiftid\","
                     + " \"startdate\", \"enddate\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(EmployeedepartmenthistoryRow._rowParser.exactlyOne()).runUnchecked(c);

@@ -72,7 +72,7 @@ public class PasswordRepoImpl implements PasswordRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"passwordhash\", \"passwordsalt\","
+                    + "RETURNING \"businessentityid\", \"passwordhash\", \"passwordsalt\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(PasswordRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -124,7 +124,7 @@ public class PasswordRepoImpl implements PasswordRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"passwordhash\", \"passwordsalt\","
+                    + "RETURNING \"businessentityid\", \"passwordhash\", \"passwordsalt\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(PasswordRow._rowParser.exactlyOne()).runUnchecked(c);

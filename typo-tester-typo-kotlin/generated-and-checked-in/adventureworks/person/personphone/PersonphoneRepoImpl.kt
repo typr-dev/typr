@@ -44,7 +44,7 @@ class PersonphoneRepoImpl() : PersonphoneRepo {
   override fun insert(
     unsaved: PersonphoneRow,
     c: Connection
-  ): PersonphoneRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"personphone\"(\"businessentityid\", \"phonenumber\", \"phonenumbertypeid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(Phone.pgType, unsaved.phonenumber), Fragment.lit("::varchar, "), Fragment.encode(PhonenumbertypeId.pgType, unsaved.phonenumbertypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"phonenumber\", \"phonenumbertypeid\", \"modifieddate\"\n"))
+  ): PersonphoneRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"personphone\"(\"businessentityid\", \"phonenumber\", \"phonenumbertypeid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(Phone.pgType, unsaved.phonenumber), Fragment.lit("::varchar, "), Fragment.encode(PhonenumbertypeId.pgType, unsaved.phonenumbertypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"phonenumber\", \"phonenumbertypeid\", \"modifieddate\"\n"))
     .updateReturning(PersonphoneRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -64,7 +64,7 @@ class PersonphoneRepoImpl() : PersonphoneRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"personphone\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"phonenumber\", \"phonenumbertypeid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"personphone\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"phonenumber\", \"phonenumbertypeid\", \"modifieddate\"\n"))
     return q.updateReturning(PersonphoneRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -67,7 +67,7 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
             Fragment.encode(MariaTypes.varchar, unsaved.description()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.bool, unsaved.isActive()),
-            Fragment.lit(")\nreturning `status_code`, `description`, `is_active`\n"))
+            Fragment.lit(")\nRETURNING `status_code`, `description`, `is_active`\n"))
         .updateReturning(CustomerStatusRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -101,7 +101,7 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning `status_code`, `description`, `is_active`\n"));
+            Fragment.lit(")\nRETURNING `status_code`, `description`, `is_active`\n"));
     ;
     return q.updateReturning(CustomerStatusRow._rowParser.exactlyOne()).runUnchecked(c);
   }

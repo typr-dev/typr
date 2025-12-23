@@ -38,7 +38,7 @@ class PersonRepoImpl extends PersonRepo {
   override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   interpolate(Fragment.lit("""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.persontype), Fragment.lit("::bpchar, "), Fragment.encode(NameStyle.pgType, unsaved.namestyle), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.opt(), unsaved.title), Fragment.lit(", "), Fragment.encode(FirstName.pgType, unsaved.firstname), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType.opt(), unsaved.middlename), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.lastname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text.opt(), unsaved.suffix), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.emailpromotion), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.opt(), unsaved.additionalcontactinfo), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.opt(), unsaved.demographics), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
     """))
     .updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -83,7 +83,7 @@ class PersonRepoImpl extends PersonRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "person"."person"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)

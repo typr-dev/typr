@@ -35,7 +35,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
   override def insert(unsaved: CreditcardRow)(using c: Connection): CreditcardRow = {
   sql"""insert into "sales"."creditcard"("creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate")
     values (${Fragment.encode(CustomCreditcardId.pgType, unsaved.creditcardid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.cardtype)}, ${Fragment.encode(PgTypes.text, unsaved.cardnumber)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.expmonth)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.expyear)}::int2, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"
+    RETURNING "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"
     """
     .updateReturning(CreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class CreditcardRepoImpl extends CreditcardRepo {
     val q: Fragment = {
       sql"""insert into "sales"."creditcard"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"
+      RETURNING "creditcardid", "cardtype", "cardnumber", "expmonth", "expyear", "modifieddate"
       """
     }
     return q.updateReturning(CreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)

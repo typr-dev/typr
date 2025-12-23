@@ -35,7 +35,7 @@ class Issue142RepoImpl() : Issue142Repo {
   override fun insert(
     unsaved: Issue142Row,
     c: Connection
-  ): Issue142Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\nreturning \"tabellkode\"\n"))
+  ): Issue142Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\nRETURNING \"tabellkode\"\n"))
     .updateReturning(Issue142Row._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(

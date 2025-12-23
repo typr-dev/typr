@@ -93,7 +93,7 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\","
+                    + "RETURNING \"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\","
                     + " \"modifieddate\"\n"))
         .updateReturning(SalespersonquotahistoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -148,7 +148,7 @@ public class SalespersonquotahistoryRepoImpl implements SalespersonquotahistoryR
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\","
+                    + "RETURNING \"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\","
                     + " \"modifieddate\"\n"));
     ;
     return q.updateReturning(SalespersonquotahistoryRow._rowParser.exactlyOne()).runUnchecked(c);

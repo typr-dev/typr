@@ -76,7 +76,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
             Fragment.encode(MariaTypes.tinyint, unsaved.sortOrder()),
             Fragment.lit(
                 ")\n"
-                    + "returning `method_id`, `code`, `name`, `method_type`, `processor_config`,"
+                    + "RETURNING `method_id`, `code`, `name`, `method_type`, `processor_config`,"
                     + " `is_active`, `sort_order`\n"))
         .updateReturning(PaymentMethodsRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -132,7 +132,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `method_id`, `code`, `name`, `method_type`, `processor_config`,"
+                    + "RETURNING `method_id`, `code`, `name`, `method_type`, `processor_config`,"
                     + " `is_active`, `sort_order`\n"));
     ;
     return q.updateReturning(PaymentMethodsRow._rowParser.exactlyOne()).runUnchecked(c);

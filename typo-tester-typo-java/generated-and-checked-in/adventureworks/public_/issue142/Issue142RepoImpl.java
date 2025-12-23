@@ -56,7 +56,7 @@ public class Issue142RepoImpl implements Issue142Repo {
     return interpolate(
             Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("),
             Fragment.encode(Issue142Id.pgType, unsaved.tabellkode()),
-            Fragment.lit(")\nreturning \"tabellkode\"\n"))
+            Fragment.lit(")\nRETURNING \"tabellkode\"\n"))
         .updateReturning(Issue142Row._rowParser.exactlyOne())
         .runUnchecked(c);
   }

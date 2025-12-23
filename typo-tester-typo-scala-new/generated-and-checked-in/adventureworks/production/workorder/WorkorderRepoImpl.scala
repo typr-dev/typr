@@ -37,7 +37,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
   override def insert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
   sql"""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
     values (${Fragment.encode(WorkorderId.pgType, unsaved.workorderid)}::int4, ${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.orderqty)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.scrappedqty)}::int2, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.duedate)}::timestamp, ${Fragment.encode(ScrapreasonId.pgType.nullable, unsaved.scrapreasonid)}::int2, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate"
+    RETURNING "workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate"
     """
     .updateReturning(WorkorderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -70,7 +70,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     val q: Fragment = {
       sql"""insert into "production"."workorder"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate"
+      RETURNING "workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate"
       """
     }
     return q.updateReturning(WorkorderRow.`_rowParser`.exactlyOne()).runUnchecked(c)

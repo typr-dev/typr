@@ -36,7 +36,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
   override def insert(unsaved: WorkorderRow)(using c: Connection): WorkorderRow = {
   interpolate(Fragment.lit("""insert into "production"."workorder"("workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate")
     values ("""), Fragment.encode(WorkorderId.pgType, unsaved.workorderid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.orderqty), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int2, unsaved.scrappedqty), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.duedate), Fragment.lit("::timestamp, "), Fragment.encode(ScrapreasonId.pgType.opt(), unsaved.scrapreasonid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate"
+    RETURNING "workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate"
     """))
     .updateReturning(WorkorderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -69,7 +69,7 @@ class WorkorderRepoImpl extends WorkorderRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."workorder"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate"
+      RETURNING "workorderid", "productid", "orderqty", "scrappedqty", "startdate", "enddate", "duedate", "scrapreasonid", "modifieddate"
       """))
     }
     return q.updateReturning(WorkorderRow.`_rowParser`.exactlyOne()).runUnchecked(c)

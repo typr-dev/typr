@@ -75,7 +75,7 @@ public class ShipmethodRepoImpl implements ShipmethodRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\","
+                    + "RETURNING \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(ShipmethodRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -149,7 +149,7 @@ public class ShipmethodRepoImpl implements ShipmethodRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\","
+                    + "RETURNING \"shipmethodid\", \"name\", \"shipbase\", \"shiprate\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ShipmethodRow._rowParser.exactlyOne()).runUnchecked(c);

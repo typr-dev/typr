@@ -81,7 +81,7 @@ public class DepartmentsRepoImpl implements DepartmentsRepo {
             Fragment.lit(", "),
             Fragment.encode(DuckDbTypes.numeric.opt(), unsaved.budget()),
             Fragment.lit(
-                ")\nreturning \"dept_code\", \"dept_region\", \"dept_name\", \"budget\"\n"))
+                ")\nRETURNING \"dept_code\", \"dept_region\", \"dept_name\", \"budget\"\n"))
         .updateReturning(DepartmentsRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }

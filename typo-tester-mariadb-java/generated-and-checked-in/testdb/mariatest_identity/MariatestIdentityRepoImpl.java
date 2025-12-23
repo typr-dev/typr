@@ -62,7 +62,7 @@ public class MariatestIdentityRepoImpl implements MariatestIdentityRepo {
     return interpolate(
             Fragment.lit("insert into `mariatest_identity`(`name`)\nvalues ("),
             Fragment.encode(MariaTypes.varchar, unsaved.name()),
-            Fragment.lit(")\nreturning `id`, `name`\n"))
+            Fragment.lit(")\nRETURNING `id`, `name`\n"))
         .updateReturning(MariatestIdentityRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -82,7 +82,7 @@ public class MariatestIdentityRepoImpl implements MariatestIdentityRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning `id`, `name`\n"));
+            Fragment.lit(")\nRETURNING `id`, `name`\n"));
     ;
     return q.updateReturning(MariatestIdentityRow._rowParser.exactlyOne()).runUnchecked(c);
   }

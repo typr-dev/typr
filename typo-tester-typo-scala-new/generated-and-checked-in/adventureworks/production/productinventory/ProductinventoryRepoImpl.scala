@@ -38,7 +38,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
   override def insert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
   sql"""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
     values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(LocationId.pgType, unsaved.locationid)}::int2, ${Fragment.encode(PgTypes.text, unsaved.shelf)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.bin)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.quantity)}::int2, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"
+    RETURNING "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"
     """
     .updateReturning(ProductinventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -69,7 +69,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     val q: Fragment = {
       sql"""insert into "production"."productinventory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"
+      RETURNING "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(ProductinventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

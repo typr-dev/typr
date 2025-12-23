@@ -37,7 +37,7 @@ class ProductdescriptionRepoImpl() : ProductdescriptionRepo {
   override fun insert(
     unsaved: ProductdescriptionRow,
     c: Connection
-  ): ProductdescriptionRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdescription\"(\"productdescriptionid\", \"description\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductdescriptionId.pgType, unsaved.productdescriptionid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.description), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productdescriptionid\", \"description\", \"rowguid\", \"modifieddate\"\n"))
+  ): ProductdescriptionRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdescription\"(\"productdescriptionid\", \"description\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductdescriptionId.pgType, unsaved.productdescriptionid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.description), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productdescriptionid\", \"description\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(ProductdescriptionRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -63,7 +63,7 @@ class ProductdescriptionRepoImpl() : ProductdescriptionRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdescription\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productdescriptionid\", \"description\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productdescription\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productdescriptionid\", \"description\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(ProductdescriptionRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

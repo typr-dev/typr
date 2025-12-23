@@ -92,7 +92,7 @@ public class DocumentRepoImpl implements DocumentRepo {
             Fragment.encode(DocumentId.pgType, unsaved.documentnode()),
             Fragment.lit(
                 ")\n"
-                    + "returning \"title\", \"owner\", \"folderflag\", \"filename\","
+                    + "RETURNING \"title\", \"owner\", \"folderflag\", \"filename\","
                     + " \"fileextension\", \"revision\", \"changenumber\", \"status\","
                     + " \"documentsummary\", \"document\", \"rowguid\", \"modifieddate\","
                     + " \"documentnode\"\n"))
@@ -188,7 +188,7 @@ public class DocumentRepoImpl implements DocumentRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"title\", \"owner\", \"folderflag\", \"filename\","
+                    + "RETURNING \"title\", \"owner\", \"folderflag\", \"filename\","
                     + " \"fileextension\", \"revision\", \"changenumber\", \"status\","
                     + " \"documentsummary\", \"document\", \"rowguid\", \"modifieddate\","
                     + " \"documentnode\"\n"));

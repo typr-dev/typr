@@ -34,7 +34,7 @@ class ReviewsRepoImpl extends ReviewsRepo {
   override def insert(unsaved: ReviewsRow)(using c: Connection): ReviewsRow = {
   sql"""insert into `reviews`(`product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`)
     values (${Fragment.encode(ProductsId.pgType, unsaved.productId)}, ${Fragment.encode(CustomersId.pgType, unsaved.customerId)}, ${Fragment.encode(OrderItemsId.pgType.nullable, unsaved.orderItemId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.tinyintUnsigned, unsaved.rating)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.title)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.content)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.pros)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.cons)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.images)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isVerifiedPurchase)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isApproved)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.intUnsigned, unsaved.helpfulVotes)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.intUnsigned, unsaved.unhelpfulVotes)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.adminResponse)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.respondedAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)})
-    returning `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`
+    RETURNING `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`
     """
     .updateReturning(ReviewsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -107,7 +107,7 @@ class ReviewsRepoImpl extends ReviewsRepo {
     val q: Fragment = {
       sql"""insert into `reviews`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`
+      RETURNING `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`
       """
     }
     return q.updateReturning(ReviewsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

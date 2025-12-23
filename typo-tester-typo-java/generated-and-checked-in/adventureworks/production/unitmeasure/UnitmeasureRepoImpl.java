@@ -69,7 +69,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
-                "::timestamp)\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
+                "::timestamp)\nRETURNING \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
         .updateReturning(UnitmeasureRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -106,7 +106,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\"\n"));
+            Fragment.lit(")\nRETURNING \"unitmeasurecode\", \"name\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(UnitmeasureRow._rowParser.exactlyOne()).runUnchecked(c);
   }

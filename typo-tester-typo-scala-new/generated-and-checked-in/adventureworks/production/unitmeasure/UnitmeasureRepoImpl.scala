@@ -34,7 +34,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
   override def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
   sql"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
     values (${Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode)}::bpchar, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "unitmeasurecode", "name", "modifieddate"
+    RETURNING "unitmeasurecode", "name", "modifieddate"
     """
     .updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -53,7 +53,7 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     val q: Fragment = {
       sql"""insert into "production"."unitmeasure"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "unitmeasurecode", "name", "modifieddate"
+      RETURNING "unitmeasurecode", "name", "modifieddate"
       """
     }
     return q.updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)

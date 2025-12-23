@@ -76,7 +76,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productmodelid\", \"name\", \"catalogdescription\","
+                    + "RETURNING \"productmodelid\", \"name\", \"catalogdescription\","
                     + " \"instructions\", \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(ProductmodelRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -140,7 +140,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productmodelid\", \"name\", \"catalogdescription\","
+                    + "RETURNING \"productmodelid\", \"name\", \"catalogdescription\","
                     + " \"instructions\", \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ProductmodelRow._rowParser.exactlyOne()).runUnchecked(c);

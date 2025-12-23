@@ -38,7 +38,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
   override def insert(unsaved: ProductinventoryRow)(using c: Connection): ProductinventoryRow = {
   interpolate(Fragment.lit("""insert into "production"."productinventory"("productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate")
     values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.text, unsaved.shelf), Fragment.lit(", "), Fragment.encode(PgTypes.int2, unsaved.bin), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.quantity), Fragment.lit("::int2, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"
+    RETURNING "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"
     """))
     .updateReturning(ProductinventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -69,7 +69,7 @@ class ProductinventoryRepoImpl extends ProductinventoryRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."productinventory"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"
+      RETURNING "productid", "locationid", "shelf", "bin", "quantity", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(ProductinventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

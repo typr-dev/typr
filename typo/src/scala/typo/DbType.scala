@@ -1,7 +1,8 @@
 package typo
 
+import typo.internal.codegen.{DbAdapter, DuckDbAdapter, MariaDbAdapter, OracleAdapter, PostgresAdapter, SqlServerAdapter}
+
 import java.sql.Connection
-import typo.internal.codegen.{DbAdapter, DuckDbAdapter, MariaDbAdapter, OracleAdapter, PostgresAdapter}
 
 sealed trait DbType {
 
@@ -25,6 +26,9 @@ object DbType {
   case object DuckDB extends DbType {
     def adapter(needsTimestampCasts: Boolean): DbAdapter = DuckDbAdapter
   }
+  case object SqlServer extends DbType {
+    def adapter(needsTimestampCasts: Boolean): DbAdapter = SqlServerAdapter
+  }
 
   case object Oracle extends DbType {
     def adapter(needsTimestampCasts: Boolean): DbAdapter = OracleAdapter
@@ -34,24 +38,28 @@ object DbType {
     val metadata = connection.getMetaData
     val productName = metadata.getDatabaseProductName.toLowerCase
     productName match {
-      case name if name.contains("postgresql") => PostgreSQL
-      case name if name.contains("mariadb")    => MariaDB
-      case name if name.contains("mysql")      => MariaDB
-      case name if name.contains("duckdb")     => DuckDB
-      case name if name.contains("oracle")     => Oracle
-      case other                               => sys.error(s"Unsupported database: $other")
+      case name if name.contains("postgresql")           => PostgreSQL
+      case name if name.contains("mariadb")              => MariaDB
+      case name if name.contains("mysql")                => MariaDB
+      case name if name.contains("duckdb")               => DuckDB
+      case name if name.contains("oracle")               => Oracle
+      case name if name.contains("microsoft sql server") => SqlServer
+      case name if name.contains("sql server")           => SqlServer
+      case other                                         => sys.error(s"Unsupported database: $other")
     }
   }
 
   def detectFromDriver(connection: Connection): DbType = {
     val driverName = connection.getMetaData.getDriverName.toLowerCase
     driverName match {
-      case name if name.contains("postgresql") => PostgreSQL
-      case name if name.contains("mariadb")    => MariaDB
-      case name if name.contains("mysql")      => MariaDB
-      case name if name.contains("duckdb")     => DuckDB
-      case name if name.contains("oracle")     => Oracle
-      case other                               => sys.error(s"Unknown database driver: $other")
+      case name if name.contains("postgresql")            => PostgreSQL
+      case name if name.contains("mariadb")               => MariaDB
+      case name if name.contains("mysql")                 => MariaDB
+      case name if name.contains("duckdb")                => DuckDB
+      case name if name.contains("oracle")                => Oracle
+      case name if name.contains("microsoft jdbc driver") => SqlServer
+      case name if name.contains("sqlserver")             => SqlServer
+      case other                                          => sys.error(s"Unknown database driver: $other")
     }
   }
 }

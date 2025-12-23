@@ -38,7 +38,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
   override def insert(unsaved: PersoncreditcardRow)(using c: Connection): PersoncreditcardRow = {
   interpolate(Fragment.lit("""insert into "sales"."personcreditcard"("businessentityid", "creditcardid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(CustomCreditcardId.pgType, unsaved.creditcardid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "creditcardid", "modifieddate"
+    RETURNING "businessentityid", "creditcardid", "modifieddate"
     """))
     .updateReturning(PersoncreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -57,7 +57,7 @@ class PersoncreditcardRepoImpl extends PersoncreditcardRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."personcreditcard"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "creditcardid", "modifieddate"
+      RETURNING "businessentityid", "creditcardid", "modifieddate"
       """))
     }
     return q.updateReturning(PersoncreditcardRow.`_rowParser`.exactlyOne()).runUnchecked(c)

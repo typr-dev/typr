@@ -102,7 +102,7 @@ public class SalesorderdetailRepoImpl implements SalesorderdetailRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"salesorderid\", \"salesorderdetailid\","
+                    + "RETURNING \"salesorderid\", \"salesorderdetailid\","
                     + " \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\","
                     + " \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(SalesorderdetailRow._rowParser.exactlyOne())
@@ -189,7 +189,7 @@ public class SalesorderdetailRepoImpl implements SalesorderdetailRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"salesorderid\", \"salesorderdetailid\","
+                    + "RETURNING \"salesorderid\", \"salesorderdetailid\","
                     + " \"carriertrackingnumber\", \"orderqty\", \"productid\", \"specialofferid\","
                     + " \"unitprice\", \"unitpricediscount\", \"rowguid\", \"modifieddate\"\n"));
     ;

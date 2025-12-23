@@ -75,7 +75,7 @@ public class OnlyPkColumnsRepoImpl implements OnlyPkColumnsRepo {
             Fragment.encode(PgTypes.text, unsaved.keyColumn1()),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.int4, unsaved.keyColumn2()),
-            Fragment.lit("::int4)\nreturning \"key_column_1\", \"key_column_2\"\n"))
+            Fragment.lit("::int4)\nRETURNING \"key_column_1\", \"key_column_2\"\n"))
         .updateReturning(OnlyPkColumnsRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }

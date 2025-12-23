@@ -68,7 +68,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
             Fragment.lit("::uuid, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
-                "::timestamp)\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n"))
+                "::timestamp)\nRETURNING \"businessentityid\", \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(BusinessentityRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -116,14 +116,14 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
             ? interpolate(
                 Fragment.lit(
                     "insert into \"person\".\"businessentity\" default values\n"
-                        + "returning \"businessentityid\", \"rowguid\", \"modifieddate\"\n"))
+                        + "RETURNING \"businessentityid\", \"rowguid\", \"modifieddate\"\n"))
             : interpolate(
                 Fragment.lit("insert into \"person\".\"businessentity\"("),
                 Fragment.comma(columns),
                 Fragment.lit(")\nvalues ("),
                 Fragment.comma(values),
                 Fragment.lit(
-                    ")\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\"\n")));
+                    ")\nRETURNING \"businessentityid\", \"rowguid\", \"modifieddate\"\n")));
     ;
     return q.updateReturning(BusinessentityRow._rowParser.exactlyOne()).runUnchecked(c);
   }

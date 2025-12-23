@@ -78,7 +78,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\","
+                    + "RETURNING \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\","
                     + " \"name\", \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(SalestaxrateRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -151,7 +151,7 @@ public class SalestaxrateRepoImpl implements SalestaxrateRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\","
+                    + "RETURNING \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\","
                     + " \"name\", \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(SalestaxrateRow._rowParser.exactlyOne()).runUnchecked(c);

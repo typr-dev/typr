@@ -40,7 +40,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
   override def insert(unsaved: SalesterritoryhistoryRow)(using c: Connection): SalesterritoryhistoryRow = {
   sql"""insert into "sales"."salesterritoryhistory"("businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate"
     """
     .updateReturning(SalesterritoryhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -67,7 +67,7 @@ class SalesterritoryhistoryRepoImpl extends SalesterritoryhistoryRepo {
     val q: Fragment = {
       sql"""insert into "sales"."salesterritoryhistory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "territoryid", "startdate", "enddate", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(SalesterritoryhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

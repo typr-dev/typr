@@ -39,7 +39,7 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
   override fun insert(
     unsaved: JobcandidateRow,
     c: Connection
-  ): JobcandidateRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nvalues ("), Fragment.encode(JobcandidateId.pgType, unsaved.jobcandidateid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.resume), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\n"))
+  ): JobcandidateRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"(\"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\")\nvalues ("), Fragment.encode(JobcandidateId.pgType, unsaved.jobcandidateid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.nullable(), unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.resume), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\n"))
     .updateReturning(JobcandidateRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -62,7 +62,7 @@ class JobcandidateRepoImpl() : JobcandidateRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"jobcandidate\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"jobcandidateid\", \"businessentityid\", \"resume\", \"modifieddate\"\n"))
     return q.updateReturning(JobcandidateRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

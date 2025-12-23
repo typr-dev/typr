@@ -92,7 +92,7 @@ public class EmployeepayhistoryRepoImpl implements EmployeepayhistoryRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"ratechangedate\", \"rate\","
+                    + "RETURNING \"businessentityid\", \"ratechangedate\", \"rate\","
                     + " \"payfrequency\", \"modifieddate\"\n"))
         .updateReturning(EmployeepayhistoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -140,7 +140,7 @@ public class EmployeepayhistoryRepoImpl implements EmployeepayhistoryRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"ratechangedate\", \"rate\","
+                    + "RETURNING \"businessentityid\", \"ratechangedate\", \"rate\","
                     + " \"payfrequency\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(EmployeepayhistoryRow._rowParser.exactlyOne()).runUnchecked(c);

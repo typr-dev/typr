@@ -88,7 +88,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"emailaddressid\", \"emailaddress\","
+                    + "RETURNING \"businessentityid\", \"emailaddressid\", \"emailaddress\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(EmailaddressRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -146,7 +146,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"businessentityid\", \"emailaddressid\", \"emailaddress\","
+                    + "RETURNING \"businessentityid\", \"emailaddressid\", \"emailaddress\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(EmailaddressRow._rowParser.exactlyOne()).runUnchecked(c);

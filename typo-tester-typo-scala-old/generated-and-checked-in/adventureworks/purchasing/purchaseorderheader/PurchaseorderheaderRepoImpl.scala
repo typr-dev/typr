@@ -36,7 +36,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
   override def insert(unsaved: PurchaseorderheaderRow)(using c: Connection): PurchaseorderheaderRow = {
   interpolate(Fragment.lit("""insert into "purchasing"."purchaseorderheader"("purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate")
     values ("""), Fragment.encode(PurchaseorderheaderId.pgType, unsaved.purchaseorderid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int2, unsaved.revisionnumber), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.status), Fragment.lit("::int2, "), Fragment.encode(BusinessentityId.pgType, unsaved.employeeid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType, unsaved.vendorid), Fragment.lit("::int4, "), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.orderdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.shipdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.subtotal), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.taxamt), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.freight), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate"
+    RETURNING "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate"
     """))
     .updateReturning(PurchaseorderheaderRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -87,7 +87,7 @@ class PurchaseorderheaderRepoImpl extends PurchaseorderheaderRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "purchasing"."purchaseorderheader"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate"
+      RETURNING "purchaseorderid", "revisionnumber", "status", "employeeid", "vendorid", "shipmethodid", "orderdate", "shipdate", "subtotal", "taxamt", "freight", "modifieddate"
       """))
     }
     return q.updateReturning(PurchaseorderheaderRow.`_rowParser`.exactlyOne()).runUnchecked(c)

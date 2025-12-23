@@ -35,7 +35,7 @@ class ShiftRepoImpl extends ShiftRepo {
   override def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
     values ("""), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "shiftid", "name", "starttime", "endtime", "modifieddate"
+    RETURNING "shiftid", "name", "starttime", "endtime", "modifieddate"
     """))
     .updateReturning(ShiftRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -60,7 +60,7 @@ class ShiftRepoImpl extends ShiftRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "humanresources"."shift"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "shiftid", "name", "starttime", "endtime", "modifieddate"
+      RETURNING "shiftid", "name", "starttime", "endtime", "modifieddate"
       """))
     }
     return q.updateReturning(ShiftRow.`_rowParser`.exactlyOne()).runUnchecked(c)

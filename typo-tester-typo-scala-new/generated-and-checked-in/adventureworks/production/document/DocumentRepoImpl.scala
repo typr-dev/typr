@@ -38,7 +38,7 @@ class DocumentRepoImpl extends DocumentRepo {
   override def insert(unsaved: DocumentRow)(using c: Connection): DocumentRow = {
   sql"""insert into "production"."document"("title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode")
     values (${Fragment.encode(PgTypes.text, unsaved.title)}, ${Fragment.encode(BusinessentityId.pgType, unsaved.owner)}::int4, ${Fragment.encode(Flag.pgType, unsaved.folderflag)}::bool, ${Fragment.encode(PgTypes.text, unsaved.filename)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.fileextension)}, ${Fragment.encode(PgTypes.bpchar, unsaved.revision)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.changenumber)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.status)}::int2, ${Fragment.encode(PgTypes.text.nullable, unsaved.documentsummary)}, ${Fragment.encode(PgTypes.bytea.nullable, unsaved.document)}::bytea, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp, ${Fragment.encode(DocumentId.pgType, unsaved.documentnode)})
-    returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode"
+    RETURNING "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode"
     """
     .updateReturning(DocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -85,7 +85,7 @@ class DocumentRepoImpl extends DocumentRepo {
     val q: Fragment = {
       sql"""insert into "production"."document"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode"
+      RETURNING "title", "owner", "folderflag", "filename", "fileextension", "revision", "changenumber", "status", "documentsummary", "document", "rowguid", "modifieddate", "documentnode"
       """
     }
     return q.updateReturning(DocumentRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -38,7 +38,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
   override def insert(unsaved: EmployeepayhistoryRow)(using c: Connection): EmployeepayhistoryRow = {
   sql"""insert into "humanresources"."employeepayhistory"("businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.ratechangedate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.rate)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.payfrequency)}::int2, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate"
+    RETURNING "businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate"
     """
     .updateReturning(EmployeepayhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -61,7 +61,7 @@ class EmployeepayhistoryRepoImpl extends EmployeepayhistoryRepo {
     val q: Fragment = {
       sql"""insert into "humanresources"."employeepayhistory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate"
+      RETURNING "businessentityid", "ratechangedate", "rate", "payfrequency", "modifieddate"
       """
     }
     return q.updateReturning(EmployeepayhistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

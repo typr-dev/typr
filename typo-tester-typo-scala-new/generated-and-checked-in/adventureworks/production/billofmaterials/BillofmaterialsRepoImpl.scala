@@ -37,7 +37,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
   override def insert(unsaved: BillofmaterialsRow)(using c: Connection): BillofmaterialsRow = {
   sql"""insert into "production"."billofmaterials"("billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate")
     values (${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.billofmaterialsid)}::int4, ${Fragment.encode(ProductId.pgType.nullable, unsaved.productassemblyid)}::int4, ${Fragment.encode(ProductId.pgType, unsaved.componentid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.bomlevel)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.perassemblyqty)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"
+    RETURNING "billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"
     """
     .updateReturning(BillofmaterialsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -74,7 +74,7 @@ class BillofmaterialsRepoImpl extends BillofmaterialsRepo {
     val q: Fragment = {
       sql"""insert into "production"."billofmaterials"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"
+      RETURNING "billofmaterialsid", "productassemblyid", "componentid", "startdate", "enddate", "unitmeasurecode", "bomlevel", "perassemblyqty", "modifieddate"
       """
     }
     return q.updateReturning(BillofmaterialsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

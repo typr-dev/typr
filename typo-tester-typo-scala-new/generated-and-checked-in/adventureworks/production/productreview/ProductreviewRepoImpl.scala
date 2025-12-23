@@ -37,7 +37,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
   override def insert(unsaved: ProductreviewRow)(using c: Connection): ProductreviewRow = {
   sql"""insert into "production"."productreview"("productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate")
     values (${Fragment.encode(ProductreviewId.pgType, unsaved.productreviewid)}::int4, ${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(Name.pgType, unsaved.reviewername)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.reviewdate)}::timestamp, ${Fragment.encode(PgTypes.text, unsaved.emailaddress)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.rating)}::int4, ${Fragment.encode(PgTypes.text.nullable, unsaved.comments)}, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate"
+    RETURNING "productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate"
     """
     .updateReturning(ProductreviewRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -70,7 +70,7 @@ class ProductreviewRepoImpl extends ProductreviewRepo {
     val q: Fragment = {
       sql"""insert into "production"."productreview"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate"
+      RETURNING "productreviewid", "productid", "reviewername", "reviewdate", "emailaddress", "rating", "comments", "modifieddate"
       """
     }
     return q.updateReturning(ProductreviewRow.`_rowParser`.exactlyOne()).runUnchecked(c)

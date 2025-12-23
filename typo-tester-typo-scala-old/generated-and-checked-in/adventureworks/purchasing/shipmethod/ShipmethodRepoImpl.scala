@@ -35,7 +35,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
   override def insert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
   interpolate(Fragment.lit("""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values ("""), Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.shipbase), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.shiprate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"
+    RETURNING "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"
     """))
     .updateReturning(ShipmethodRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -68,7 +68,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "purchasing"."shipmethod"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"
+      RETURNING "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(ShipmethodRow.`_rowParser`.exactlyOne()).runUnchecked(c)

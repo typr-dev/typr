@@ -38,7 +38,7 @@ class SpecialofferproductRepoImpl extends SpecialofferproductRepo {
   override def insert(unsaved: SpecialofferproductRow)(using c: Connection): SpecialofferproductRow = {
   interpolate(Fragment.lit("""insert into "sales"."specialofferproduct"("specialofferid", "productid", "rowguid", "modifieddate")
     values ("""), Fragment.encode(SpecialofferId.pgType, unsaved.specialofferid), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "specialofferid", "productid", "rowguid", "modifieddate"
+    RETURNING "specialofferid", "productid", "rowguid", "modifieddate"
     """))
     .updateReturning(SpecialofferproductRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -61,7 +61,7 @@ class SpecialofferproductRepoImpl extends SpecialofferproductRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."specialofferproduct"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "specialofferid", "productid", "rowguid", "modifieddate"
+      RETURNING "specialofferid", "productid", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(SpecialofferproductRow.`_rowParser`.exactlyOne()).runUnchecked(c)

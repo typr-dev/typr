@@ -72,7 +72,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
+                    + "RETURNING \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
         .updateReturning(DepartmentRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -118,7 +118,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"));
+                ")\nRETURNING \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(DepartmentRow._rowParser.exactlyOne()).runUnchecked(c);
   }

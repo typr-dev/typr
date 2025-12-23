@@ -40,7 +40,7 @@ class ShippingCarriersRepoImpl() : ShippingCarriersRepo {
   override fun insert(
     unsaved: ShippingCarriersRow,
     c: Connection
-  ): ShippingCarriersRow = Fragment.interpolate(Fragment.lit("insert into `shipping_carriers`(`code`, `name`, `tracking_url_template`, `api_config`, `is_active`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.trackingUrlTemplate), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.apiConfig), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(")\nreturning `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
+  ): ShippingCarriersRow = Fragment.interpolate(Fragment.lit("insert into `shipping_carriers`(`code`, `name`, `tracking_url_template`, `api_config`, `is_active`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.trackingUrlTemplate), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.apiConfig), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(")\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
     .updateReturning(ShippingCarriersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -68,7 +68,7 @@ class ShippingCarriersRepoImpl() : ShippingCarriersRepo {
       { value -> columns.add(Fragment.lit("`is_active`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `shipping_carriers`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `shipping_carriers`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
     return q.updateReturning(ShippingCarriersRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

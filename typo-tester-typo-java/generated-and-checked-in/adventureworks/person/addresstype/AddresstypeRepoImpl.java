@@ -70,7 +70,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+                    + "RETURNING \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(AddresstypeRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -123,7 +123,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"));
+                ")\nRETURNING \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(AddresstypeRow._rowParser.exactlyOne()).runUnchecked(c);
   }

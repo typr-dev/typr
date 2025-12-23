@@ -34,7 +34,7 @@ class DepartmentsRepoImpl extends DepartmentsRepo {
   override def insert(unsaved: DepartmentsRow)(using c: Connection): DepartmentsRow = {
   sql"""insert into "departments"("dept_code", "dept_region", "dept_name", "budget")
     values (${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptName)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.budget)})
-    returning "dept_code", "dept_region", "dept_name", "budget"
+    RETURNING "dept_code", "dept_region", "dept_name", "budget"
     """
     .updateReturning(DepartmentsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

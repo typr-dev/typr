@@ -113,7 +113,7 @@ public class WorkorderroutingRepoImpl implements WorkorderroutingRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"workorderid\", \"productid\", \"operationsequence\","
+                    + "RETURNING \"workorderid\", \"productid\", \"operationsequence\","
                     + " \"locationid\", \"scheduledstartdate\", \"scheduledenddate\","
                     + " \"actualstartdate\", \"actualenddate\", \"actualresourcehrs\","
                     + " \"plannedcost\", \"actualcost\", \"modifieddate\"\n"))
@@ -196,7 +196,7 @@ public class WorkorderroutingRepoImpl implements WorkorderroutingRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"workorderid\", \"productid\", \"operationsequence\","
+                    + "RETURNING \"workorderid\", \"productid\", \"operationsequence\","
                     + " \"locationid\", \"scheduledstartdate\", \"scheduledenddate\","
                     + " \"actualstartdate\", \"actualenddate\", \"actualresourcehrs\","
                     + " \"plannedcost\", \"actualcost\", \"modifieddate\"\n"));

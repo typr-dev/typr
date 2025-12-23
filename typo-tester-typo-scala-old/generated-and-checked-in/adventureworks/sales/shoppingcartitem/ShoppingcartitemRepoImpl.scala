@@ -35,7 +35,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
   override def insert(unsaved: ShoppingcartitemRow)(using c: Connection): ShoppingcartitemRow = {
   interpolate(Fragment.lit("""insert into "sales"."shoppingcartitem"("shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate")
     values ("""), Fragment.encode(ShoppingcartitemId.pgType, unsaved.shoppingcartitemid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.shoppingcartid), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.quantity), Fragment.lit("::int4, "), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.datecreated), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate"
+    RETURNING "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate"
     """))
     .updateReturning(ShoppingcartitemRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -66,7 +66,7 @@ class ShoppingcartitemRepoImpl extends ShoppingcartitemRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."shoppingcartitem"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate"
+      RETURNING "shoppingcartitemid", "shoppingcartid", "quantity", "productid", "datecreated", "modifieddate"
       """))
     }
     return q.updateReturning(ShoppingcartitemRow.`_rowParser`.exactlyOne()).runUnchecked(c)

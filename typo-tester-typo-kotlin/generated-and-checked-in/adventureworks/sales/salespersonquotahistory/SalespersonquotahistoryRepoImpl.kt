@@ -42,7 +42,7 @@ class SalespersonquotahistoryRepoImpl() : SalespersonquotahistoryRepo {
   override fun insert(
     unsaved: SalespersonquotahistoryRow,
     c: Connection
-  ): SalespersonquotahistoryRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salespersonquotahistory\"(\"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.quotadate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.salesquota), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\", \"modifieddate\"\n"))
+  ): SalespersonquotahistoryRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salespersonquotahistory\"(\"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.quotadate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.salesquota), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(SalespersonquotahistoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -67,7 +67,7 @@ class SalespersonquotahistoryRepoImpl() : SalespersonquotahistoryRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salespersonquotahistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salespersonquotahistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"quotadate\", \"salesquota\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(SalespersonquotahistoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

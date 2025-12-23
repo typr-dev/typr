@@ -38,7 +38,7 @@ class CurrencyrateRepoImpl() : CurrencyrateRepo {
   override fun insert(
     unsaved: CurrencyrateRow,
     c: Connection
-  ): CurrencyrateRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"currencyrate\"(\"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\", \"tocurrencycode\", \"averagerate\", \"endofdayrate\", \"modifieddate\")\nvalues ("), Fragment.encode(CurrencyrateId.pgType, unsaved.currencyrateid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.currencyratedate), Fragment.lit("::timestamp, "), Fragment.encode(CurrencyId.pgType, unsaved.fromcurrencycode), Fragment.lit("::bpchar, "), Fragment.encode(CurrencyId.pgType, unsaved.tocurrencycode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric, unsaved.averagerate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.endofdayrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\", \"tocurrencycode\", \"averagerate\", \"endofdayrate\", \"modifieddate\"\n"))
+  ): CurrencyrateRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"currencyrate\"(\"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\", \"tocurrencycode\", \"averagerate\", \"endofdayrate\", \"modifieddate\")\nvalues ("), Fragment.encode(CurrencyrateId.pgType, unsaved.currencyrateid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.currencyratedate), Fragment.lit("::timestamp, "), Fragment.encode(CurrencyId.pgType, unsaved.fromcurrencycode), Fragment.lit("::bpchar, "), Fragment.encode(CurrencyId.pgType, unsaved.tocurrencycode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric, unsaved.averagerate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.endofdayrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\", \"tocurrencycode\", \"averagerate\", \"endofdayrate\", \"modifieddate\"\n"))
     .updateReturning(CurrencyrateRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -67,7 +67,7 @@ class CurrencyrateRepoImpl() : CurrencyrateRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"currencyrate\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\", \"tocurrencycode\", \"averagerate\", \"endofdayrate\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"currencyrate\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\", \"tocurrencycode\", \"averagerate\", \"endofdayrate\", \"modifieddate\"\n"))
     return q.updateReturning(CurrencyrateRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

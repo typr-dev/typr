@@ -33,7 +33,7 @@ class ProductPricesRepoImpl extends ProductPricesRepo {
   override def insert(unsaved: ProductPricesRow)(using c: Connection): ProductPricesRow = {
   sql"""insert into `product_prices`(`product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`)
     values (${Fragment.encode(ProductsId.pgType, unsaved.productId)}, ${Fragment.encode(PriceTiersId.pgType.nullable, unsaved.tierId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.price)}, ${Fragment.encode(MariaTypes.char_, unsaved.currencyCode)}, ${Fragment.encode(MariaTypes.date, unsaved.validFrom)}, ${Fragment.encode(MariaTypes.date.nullable, unsaved.validTo)})
-    returning `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`
+    RETURNING `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`
     """
     .updateReturning(ProductPricesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class ProductPricesRepoImpl extends ProductPricesRepo {
     val q: Fragment = {
       sql"""insert into `product_prices`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`
+      RETURNING `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`
       """
     }
     return q.updateReturning(ProductPricesRow.`_rowParser`.exactlyOne()).runUnchecked(c)

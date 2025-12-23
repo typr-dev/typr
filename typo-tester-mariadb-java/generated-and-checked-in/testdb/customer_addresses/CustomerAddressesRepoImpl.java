@@ -94,7 +94,7 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
             Fragment.encode(MariaTypes.datetime, unsaved.createdAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `address_id`, `customer_id`, `address_type`, `is_default`,"
+                    + "RETURNING `address_id`, `customer_id`, `address_type`, `is_default`,"
                     + " `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`,"
                     + " `postal_code`, `country_code`, `location`, `delivery_notes`,"
                     + " `created_at`\n"))
@@ -197,7 +197,7 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `address_id`, `customer_id`, `address_type`, `is_default`,"
+                    + "RETURNING `address_id`, `customer_id`, `address_type`, `is_default`,"
                     + " `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`,"
                     + " `postal_code`, `country_code`, `location`, `delivery_notes`,"
                     + " `created_at`\n"));

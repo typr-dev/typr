@@ -92,7 +92,7 @@ public class ProductlistpricehistoryRepoImpl implements ProductlistpricehistoryR
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productid\", \"startdate\", \"enddate\", \"listprice\","
+                    + "RETURNING \"productid\", \"startdate\", \"enddate\", \"listprice\","
                     + " \"modifieddate\"\n"))
         .updateReturning(ProductlistpricehistoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -142,7 +142,7 @@ public class ProductlistpricehistoryRepoImpl implements ProductlistpricehistoryR
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productid\", \"startdate\", \"enddate\", \"listprice\","
+                    + "RETURNING \"productid\", \"startdate\", \"enddate\", \"listprice\","
                     + " \"modifieddate\"\n"));
     ;
     return q.updateReturning(ProductlistpricehistoryRow._rowParser.exactlyOne()).runUnchecked(c);

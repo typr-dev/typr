@@ -40,7 +40,7 @@ class SalestaxrateRepoImpl() : SalestaxrateRepo {
   override fun insert(
     unsaved: SalestaxrateRow,
     c: Connection
-  ): SalestaxrateRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalestaxrateId.pgType, unsaved.salestaxrateid), Fragment.lit("::int4, "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.taxrate), Fragment.lit("::numeric, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+  ): SalestaxrateRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"(\"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalestaxrateId.pgType, unsaved.salestaxrateid), Fragment.lit("::int4, "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.taxtype), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.taxrate), Fragment.lit("::numeric, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(SalestaxrateRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -75,7 +75,7 @@ class SalestaxrateRepoImpl() : SalestaxrateRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salestaxrate\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"salestaxrateid\", \"stateprovinceid\", \"taxtype\", \"taxrate\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(SalestaxrateRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

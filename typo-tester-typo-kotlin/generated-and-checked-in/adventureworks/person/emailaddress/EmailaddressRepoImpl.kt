@@ -43,7 +43,7 @@ class EmailaddressRepoImpl() : EmailaddressRepo {
   override fun insert(
     unsaved: EmailaddressRow,
     c: Connection
-  ): EmailaddressRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"emailaddress\"(\"businessentityid\", \"emailaddressid\", \"emailaddress\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.emailaddressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.nullable(), unsaved.emailaddress), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"emailaddressid\", \"emailaddress\", \"rowguid\", \"modifieddate\"\n"))
+  ): EmailaddressRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"emailaddress\"(\"businessentityid\", \"emailaddressid\", \"emailaddress\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.emailaddressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.nullable(), unsaved.emailaddress), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"emailaddressid\", \"emailaddress\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(EmailaddressRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -71,7 +71,7 @@ class EmailaddressRepoImpl() : EmailaddressRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"emailaddress\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"emailaddressid\", \"emailaddress\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"emailaddress\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"emailaddressid\", \"emailaddress\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(EmailaddressRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

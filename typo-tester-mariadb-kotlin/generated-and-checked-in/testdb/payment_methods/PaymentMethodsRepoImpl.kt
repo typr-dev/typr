@@ -40,7 +40,7 @@ class PaymentMethodsRepoImpl() : PaymentMethodsRepo {
   override fun insert(
     unsaved: PaymentMethodsRow,
     c: Connection
-  ): PaymentMethodsRow = Fragment.interpolate(Fragment.lit("insert into `payment_methods`(`code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.methodType), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.processorConfig), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyint, unsaved.sortOrder), Fragment.lit(")\nreturning `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`\n"))
+  ): PaymentMethodsRow = Fragment.interpolate(Fragment.lit("insert into `payment_methods`(`code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.methodType), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.processorConfig), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.tinyint, unsaved.sortOrder), Fragment.lit(")\nRETURNING `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`\n"))
     .updateReturning(PaymentMethodsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -70,7 +70,7 @@ class PaymentMethodsRepoImpl() : PaymentMethodsRepo {
       { value -> columns.add(Fragment.lit("`sort_order`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.tinyint, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `payment_methods`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `payment_methods`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `method_id`, `code`, `name`, `method_type`, `processor_config`, `is_active`, `sort_order`\n"))
     return q.updateReturning(PaymentMethodsRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

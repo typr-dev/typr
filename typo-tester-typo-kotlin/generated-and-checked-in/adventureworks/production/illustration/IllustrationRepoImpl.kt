@@ -38,7 +38,7 @@ class IllustrationRepoImpl() : IllustrationRepo {
   override fun insert(
     unsaved: IllustrationRow,
     c: Connection
-  ): IllustrationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nvalues ("), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.diagram), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
+  ): IllustrationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"(\"illustrationid\", \"diagram\", \"modifieddate\")\nvalues ("), Fragment.encode(IllustrationId.pgType, unsaved.illustrationid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.diagram), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
     .updateReturning(IllustrationRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -59,7 +59,7 @@ class IllustrationRepoImpl() : IllustrationRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"illustration\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"illustrationid\", \"diagram\", \"modifieddate\"\n"))
     return q.updateReturning(IllustrationRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -34,7 +34,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
   override def insert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
   sql"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
     values (${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "countryregioncode", "name", "modifieddate"
+    RETURNING "countryregioncode", "name", "modifieddate"
     """
     .updateReturning(CountryregionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -53,7 +53,7 @@ class CountryregionRepoImpl extends CountryregionRepo {
     val q: Fragment = {
       sql"""insert into "person"."countryregion"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "countryregioncode", "name", "modifieddate"
+      RETURNING "countryregioncode", "name", "modifieddate"
       """
     }
     return q.updateReturning(CountryregionRow.`_rowParser`.exactlyOne()).runUnchecked(c)

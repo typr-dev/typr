@@ -26,6 +26,7 @@ dependencies {
     api("org.mariadb.jdbc:mariadb-java-client:3.5.1")
     api("org.duckdb:duckdb_jdbc:1.1.3")
     api("com.oracle.database.jdbc:ojdbc11:23.6.0.24.10")
+    api("com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11")
 }
 
 tasks.withType<JavaCompile> {

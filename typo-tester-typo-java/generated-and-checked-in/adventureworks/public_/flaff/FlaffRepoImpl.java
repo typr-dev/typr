@@ -95,7 +95,7 @@ public class FlaffRepoImpl implements FlaffRepo {
             Fragment.encode(ShortText.pgType.opt(), unsaved.parentspecifier()),
             Fragment.lit(
                 "::text)\n"
-                    + "returning \"code\", \"another_code\", \"some_number\", \"specifier\","
+                    + "RETURNING \"code\", \"another_code\", \"some_number\", \"specifier\","
                     + " \"parentspecifier\"\n"))
         .updateReturning(FlaffRow._rowParser.exactlyOne())
         .runUnchecked(c);

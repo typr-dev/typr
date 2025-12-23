@@ -35,7 +35,7 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
   override fun insert(
     unsaved: TitleDomainRow,
     c: Connection
-  ): TitleDomainRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("::text)\nreturning \"code\"\n"))
+  ): TitleDomainRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("::text)\nRETURNING \"code\"\n"))
     .updateReturning(TitleDomainRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(

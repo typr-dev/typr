@@ -25,6 +25,11 @@ implicit class OracleTypeOps[A](private val oracleType: OracleType[A]) extends A
     oracleType.opt.to(Bijections.optionalToOption[A])
 }
 
+implicit class SqlServerTypeOps[A](private val sqlServerType: SqlServerType[A]) extends AnyVal {
+  def nullable: SqlServerType[Option[A]] =
+    sqlServerType.opt.to(Bijections.optionalToOption[A])
+}
+
 implicit class DbTypeOps[A](private val dbType: DbType[A]) extends AnyVal {
   def nullable: DbType[Option[A]] =
     dbType.opt.to(Bijections.optionalToOption[A])

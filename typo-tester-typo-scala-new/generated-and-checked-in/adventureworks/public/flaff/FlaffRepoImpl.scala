@@ -39,7 +39,7 @@ class FlaffRepoImpl extends FlaffRepo {
   override def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   sql"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
     values (${Fragment.encode(ShortText.pgType, unsaved.code)}::text, ${Fragment.encode(PgTypes.text, unsaved.anotherCode)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.someNumber)}::int4, ${Fragment.encode(ShortText.pgType, unsaved.specifier)}::text, ${Fragment.encode(ShortText.pgType.nullable, unsaved.parentspecifier)}::text)
-    returning "code", "another_code", "some_number", "specifier", "parentspecifier"
+    RETURNING "code", "another_code", "some_number", "specifier", "parentspecifier"
     """
     .updateReturning(FlaffRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

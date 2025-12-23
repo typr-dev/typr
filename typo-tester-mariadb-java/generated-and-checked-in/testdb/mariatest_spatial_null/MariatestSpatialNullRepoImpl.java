@@ -82,7 +82,7 @@ public class MariatestSpatialNullRepoImpl implements MariatestSpatialNullRepo {
             Fragment.encode(MariaTypes.geometrycollection.opt(), unsaved.geometrycollectionCol()),
             Fragment.lit(
                 ")\n"
-                    + "returning `id`, `geometry_col`, `point_col`, `linestring_col`,"
+                    + "RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`,"
                     + " `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`,"
                     + " `geometrycollection_col`\n"))
         .updateReturning(MariatestSpatialNullRow._rowParser.exactlyOne())
@@ -187,7 +187,7 @@ public class MariatestSpatialNullRepoImpl implements MariatestSpatialNullRepo {
             ? interpolate(
                 Fragment.lit(
                     "insert into `mariatest_spatial_null` default values\n"
-                        + "returning `id`, `geometry_col`, `point_col`, `linestring_col`,"
+                        + "RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`,"
                         + " `polygon_col`, `multipoint_col`, `multilinestring_col`,"
                         + " `multipolygon_col`, `geometrycollection_col`\n"))
             : interpolate(
@@ -197,7 +197,7 @@ public class MariatestSpatialNullRepoImpl implements MariatestSpatialNullRepo {
                 Fragment.comma(values),
                 Fragment.lit(
                     ")\n"
-                        + "returning `id`, `geometry_col`, `point_col`, `linestring_col`,"
+                        + "RETURNING `id`, `geometry_col`, `point_col`, `linestring_col`,"
                         + " `polygon_col`, `multipoint_col`, `multilinestring_col`,"
                         + " `multipolygon_col`, `geometrycollection_col`\n")));
     ;

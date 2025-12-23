@@ -186,7 +186,7 @@ public class PgtestRepoImpl implements PgtestRepo {
             Fragment.encode(PgTypes.xmlArray, unsaved.xmles()),
             Fragment.lit(
                 "::xml[])\n"
-                    + "returning \"bool\", \"box\", \"bpchar\", \"bytea\", \"char\", \"circle\","
+                    + "RETURNING \"bool\", \"box\", \"bpchar\", \"bytea\", \"char\", \"circle\","
                     + " \"date\", \"float4\", \"float8\", \"hstore\", \"inet\", \"int2\","
                     + " \"int2vector\", \"int4\", \"int8\", \"interval\", \"json\", \"jsonb\","
                     + " \"line\", \"lseg\", \"money\"::numeric, \"mydomain\", \"myenum\", \"name\","

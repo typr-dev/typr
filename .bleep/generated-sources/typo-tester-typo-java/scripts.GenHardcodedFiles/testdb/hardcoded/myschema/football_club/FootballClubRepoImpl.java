@@ -49,7 +49,7 @@ public class FootballClubRepoImpl implements FootballClubRepo {
     FootballClubRow unsaved,
     Connection c
   ) {
-    return interpolate(Fragment.lit("insert into \"myschema\".\"football_club\"(\"id\", \"name\")\nvalues ("), Fragment.encode(FootballClubId.pgType, unsaved.id()), Fragment.lit("::int8, "), Fragment.encode(PgTypes.text, unsaved.name()), Fragment.lit(")\nreturning \"id\", \"name\"\n"))
+    return interpolate(Fragment.lit("insert into \"myschema\".\"football_club\"(\"id\", \"name\")\nvalues ("), Fragment.encode(FootballClubId.pgType, unsaved.id()), Fragment.lit("::int8, "), Fragment.encode(PgTypes.text, unsaved.name()), Fragment.lit(")\nRETURNING \"id\", \"name\"\n"))
       .updateReturning(FootballClubRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 

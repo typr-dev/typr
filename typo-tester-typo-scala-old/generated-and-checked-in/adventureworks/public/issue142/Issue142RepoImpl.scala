@@ -32,7 +32,7 @@ class Issue142RepoImpl extends Issue142Repo {
   override def insert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
   interpolate(Fragment.lit("""insert into "public"."issue142"("tabellkode")
     values ("""), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(""")
-    returning "tabellkode"
+    RETURNING "tabellkode"
     """))
     .updateReturning(Issue142Row.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

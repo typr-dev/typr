@@ -31,7 +31,7 @@ class BrandsRepoImpl extends BrandsRepo {
   override def insert(unsaved: BrandsRow)(using c: Connection): BrandsRow = {
   sql"""insert into `brands`(`name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.slug)}, ${Fragment.encode(MariaTypes.mediumblob.nullable, unsaved.logoBlob)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.websiteUrl)}, ${Fragment.encode(MariaTypes.char_.nullable, unsaved.countryOfOrigin)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isActive)})
-    returning `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
+    RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
     """
     .updateReturning(BrandsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class BrandsRepoImpl extends BrandsRepo {
     val q: Fragment = {
       sql"""insert into `brands`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
+      RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
       """
     }
     return q.updateReturning(BrandsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

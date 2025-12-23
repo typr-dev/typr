@@ -38,7 +38,7 @@ class CurrencyRepoImpl() : CurrencyRepo {
   override fun insert(
     unsaved: CurrencyRow,
     c: Connection
-  ): CurrencyRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"currency\"(\"currencycode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CurrencyId.pgType, unsaved.currencycode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"currencycode\", \"name\", \"modifieddate\"\n"))
+  ): CurrencyRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"currency\"(\"currencycode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CurrencyId.pgType, unsaved.currencycode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"currencycode\", \"name\", \"modifieddate\"\n"))
     .updateReturning(CurrencyRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -56,7 +56,7 @@ class CurrencyRepoImpl() : CurrencyRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"currency\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"currencycode\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"currency\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"currencycode\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(CurrencyRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

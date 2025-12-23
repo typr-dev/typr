@@ -42,7 +42,7 @@ class CountryregioncurrencyRepoImpl() : CountryregioncurrencyRepo {
   override fun insert(
     unsaved: CountryregioncurrencyRow,
     c: Connection
-  ): CountryregioncurrencyRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"countryregioncurrency\"(\"countryregioncode\", \"currencycode\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(CurrencyId.pgType, unsaved.currencycode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"countryregioncode\", \"currencycode\", \"modifieddate\"\n"))
+  ): CountryregioncurrencyRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"countryregioncurrency\"(\"countryregioncode\", \"currencycode\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(CurrencyId.pgType, unsaved.currencycode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"countryregioncode\", \"currencycode\", \"modifieddate\"\n"))
     .updateReturning(CountryregioncurrencyRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -60,7 +60,7 @@ class CountryregioncurrencyRepoImpl() : CountryregioncurrencyRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"countryregioncurrency\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"countryregioncode\", \"currencycode\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"countryregioncurrency\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"countryregioncode\", \"currencycode\", \"modifieddate\"\n"))
     return q.updateReturning(CountryregioncurrencyRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

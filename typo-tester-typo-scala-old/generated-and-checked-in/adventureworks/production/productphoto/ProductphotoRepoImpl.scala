@@ -34,7 +34,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
   override def insert(unsaved: ProductphotoRow)(using c: Connection): ProductphotoRow = {
   interpolate(Fragment.lit("""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
     values ("""), Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bytea.opt(), unsaved.thumbnailphoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.opt(), unsaved.thumbnailphotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.largephoto), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.text.opt(), unsaved.largephotofilename), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"
+    RETURNING "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"
     """))
     .updateReturning(ProductphotoRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -61,7 +61,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "production"."productphoto"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"
+      RETURNING "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"
       """))
     }
     return q.updateReturning(ProductphotoRow.`_rowParser`.exactlyOne()).runUnchecked(c)

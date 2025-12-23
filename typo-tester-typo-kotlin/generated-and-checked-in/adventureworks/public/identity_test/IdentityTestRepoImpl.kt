@@ -37,7 +37,7 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
   override fun insert(
     unsaved: IdentityTestRow,
     c: Connection
-  ): IdentityTestRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nvalues ("), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit(")\nreturning \"always_generated\", \"default_generated\", \"name\"\n"))
+  ): IdentityTestRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nvalues ("), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"))
     .updateReturning(IdentityTestRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -53,7 +53,7 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
       { value -> columns.add(Fragment.lit("\"default_generated\""))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"always_generated\", \"default_generated\", \"name\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"))
     return q.updateReturning(IdentityTestRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

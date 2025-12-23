@@ -40,7 +40,7 @@ class ProductCategoriesRepoImpl() : ProductCategoriesRepo {
   override fun insert(
     unsaved: ProductCategoriesRow,
     c: Connection
-  ): ProductCategoriesRow = Fragment.interpolate(Fragment.lit("insert into `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)\nvalues ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(CategoriesId.pgType, unsaved.categoryId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(")\nreturning `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
+  ): ProductCategoriesRow = Fragment.interpolate(Fragment.lit("insert into `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)\nvalues ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(CategoriesId.pgType, unsaved.categoryId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
     .updateReturning(ProductCategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -63,7 +63,7 @@ class ProductCategoriesRepoImpl() : ProductCategoriesRepo {
       { value -> columns.add(Fragment.lit("`sort_order`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.smallint, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_categories`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_categories`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
     return q.updateReturning(ProductCategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

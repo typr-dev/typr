@@ -39,7 +39,7 @@ class ProductsubcategoryRepoImpl() : ProductsubcategoryRepo {
   override fun insert(
     unsaved: ProductsubcategoryRow,
     c: Connection
-  ): ProductsubcategoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productsubcategory\"(\"productsubcategoryid\", \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductsubcategoryId.pgType, unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productsubcategoryid\", \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+  ): ProductsubcategoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productsubcategory\"(\"productsubcategoryid\", \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductsubcategoryId.pgType, unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productsubcategoryid\", \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(ProductsubcategoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -67,7 +67,7 @@ class ProductsubcategoryRepoImpl() : ProductsubcategoryRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productsubcategory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productsubcategoryid\", \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productsubcategory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productsubcategoryid\", \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(ProductsubcategoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

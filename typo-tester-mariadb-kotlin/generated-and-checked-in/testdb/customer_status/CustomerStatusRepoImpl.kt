@@ -39,7 +39,7 @@ class CustomerStatusRepoImpl() : CustomerStatusRepo {
   override fun insert(
     unsaved: CustomerStatusRow,
     c: Connection
-  ): CustomerStatusRow = Fragment.interpolate(Fragment.lit("insert into `customer_status`(`status_code`, `description`, `is_active`)\nvalues ("), Fragment.encode(CustomerStatusId.pgType, unsaved.statusCode), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.description), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(")\nreturning `status_code`, `description`, `is_active`\n"))
+  ): CustomerStatusRow = Fragment.interpolate(Fragment.lit("insert into `customer_status`(`status_code`, `description`, `is_active`)\nvalues ("), Fragment.encode(CustomerStatusId.pgType, unsaved.statusCode), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.description), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isActive), Fragment.lit(")\nRETURNING `status_code`, `description`, `is_active`\n"))
     .updateReturning(CustomerStatusRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -57,7 +57,7 @@ class CustomerStatusRepoImpl() : CustomerStatusRepo {
       { value -> columns.add(Fragment.lit("`is_active`"))
       values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customer_status`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `status_code`, `description`, `is_active`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customer_status`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `status_code`, `description`, `is_active`\n"))
     return q.updateReturning(CustomerStatusRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

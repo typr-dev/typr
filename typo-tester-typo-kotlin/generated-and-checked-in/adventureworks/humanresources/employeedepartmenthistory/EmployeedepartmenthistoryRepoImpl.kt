@@ -47,7 +47,7 @@ class EmployeedepartmenthistoryRepoImpl() : EmployeedepartmenthistoryRepo {
   override fun insert(
     unsaved: EmployeedepartmenthistoryRow,
     c: Connection
-  ): EmployeedepartmenthistoryRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employeedepartmenthistory\"(\"businessentityid\", \"departmentid\", \"shiftid\", \"startdate\", \"enddate\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int2, "), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.date, unsaved.startdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.date.nullable(), unsaved.enddate), Fragment.lit("::date, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"businessentityid\", \"departmentid\", \"shiftid\", \"startdate\", \"enddate\", \"modifieddate\"\n"))
+  ): EmployeedepartmenthistoryRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employeedepartmenthistory\"(\"businessentityid\", \"departmentid\", \"shiftid\", \"startdate\", \"enddate\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int2, "), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.date, unsaved.startdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.date.nullable(), unsaved.enddate), Fragment.lit("::date, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"departmentid\", \"shiftid\", \"startdate\", \"enddate\", \"modifieddate\"\n"))
     .updateReturning(EmployeedepartmenthistoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -71,7 +71,7 @@ class EmployeedepartmenthistoryRepoImpl() : EmployeedepartmenthistoryRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employeedepartmenthistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"businessentityid\", \"departmentid\", \"shiftid\", \"startdate\", \"enddate\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"employeedepartmenthistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"businessentityid\", \"departmentid\", \"shiftid\", \"startdate\", \"enddate\", \"modifieddate\"\n"))
     return q.updateReturning(EmployeedepartmenthistoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

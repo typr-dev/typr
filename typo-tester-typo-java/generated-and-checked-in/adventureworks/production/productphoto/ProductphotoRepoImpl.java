@@ -76,7 +76,7 @@ public class ProductphotoRepoImpl implements ProductphotoRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productphotoid\", \"thumbnailphoto\","
+                    + "RETURNING \"productphotoid\", \"thumbnailphoto\","
                     + " \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\","
                     + " \"modifieddate\"\n"))
         .updateReturning(ProductphotoRow._rowParser.exactlyOne())
@@ -138,7 +138,7 @@ public class ProductphotoRepoImpl implements ProductphotoRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productphotoid\", \"thumbnailphoto\","
+                    + "RETURNING \"productphotoid\", \"thumbnailphoto\","
                     + " \"thumbnailphotofilename\", \"largephoto\", \"largephotofilename\","
                     + " \"modifieddate\"\n"));
     ;

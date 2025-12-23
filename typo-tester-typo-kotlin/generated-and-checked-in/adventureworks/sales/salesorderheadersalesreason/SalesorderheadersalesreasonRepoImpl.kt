@@ -42,7 +42,7 @@ class SalesorderheadersalesreasonRepoImpl() : SalesorderheadersalesreasonRepo {
   override fun insert(
     unsaved: SalesorderheadersalesreasonRow,
     c: Connection
-  ): SalesorderheadersalesreasonRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderheadersalesreason\"(\"salesorderid\", \"salesreasonid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4, "), Fragment.encode(SalesreasonId.pgType, unsaved.salesreasonid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"salesorderid\", \"salesreasonid\", \"modifieddate\"\n"))
+  ): SalesorderheadersalesreasonRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderheadersalesreason\"(\"salesorderid\", \"salesreasonid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesorderheaderId.pgType, unsaved.salesorderid), Fragment.lit("::int4, "), Fragment.encode(SalesreasonId.pgType, unsaved.salesreasonid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"salesorderid\", \"salesreasonid\", \"modifieddate\"\n"))
     .updateReturning(SalesorderheadersalesreasonRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -60,7 +60,7 @@ class SalesorderheadersalesreasonRepoImpl() : SalesorderheadersalesreasonRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderheadersalesreason\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"salesorderid\", \"salesreasonid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesorderheadersalesreason\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"salesorderid\", \"salesreasonid\", \"modifieddate\"\n"))
     return q.updateReturning(SalesorderheadersalesreasonRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

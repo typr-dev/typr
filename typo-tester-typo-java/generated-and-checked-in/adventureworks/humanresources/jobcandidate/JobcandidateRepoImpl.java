@@ -74,7 +74,7 @@ public class JobcandidateRepoImpl implements JobcandidateRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"jobcandidateid\", \"businessentityid\", \"resume\","
+                    + "RETURNING \"jobcandidateid\", \"businessentityid\", \"resume\","
                     + " \"modifieddate\"\n"))
         .updateReturning(JobcandidateRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -125,7 +125,7 @@ public class JobcandidateRepoImpl implements JobcandidateRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"jobcandidateid\", \"businessentityid\", \"resume\","
+                    + "RETURNING \"jobcandidateid\", \"businessentityid\", \"resume\","
                     + " \"modifieddate\"\n"));
     ;
     return q.updateReturning(JobcandidateRow._rowParser.exactlyOne()).runUnchecked(c);

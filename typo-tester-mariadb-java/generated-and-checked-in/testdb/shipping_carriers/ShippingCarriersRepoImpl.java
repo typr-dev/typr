@@ -75,7 +75,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
             Fragment.encode(MariaTypes.bool, unsaved.isActive()),
             Fragment.lit(
                 ")\n"
-                    + "returning `carrier_id`, `code`, `name`, `tracking_url_template`,"
+                    + "RETURNING `carrier_id`, `code`, `name`, `tracking_url_template`,"
                     + " `api_config`, `is_active`\n"))
         .updateReturning(ShippingCarriersRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -129,7 +129,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `carrier_id`, `code`, `name`, `tracking_url_template`,"
+                    + "RETURNING `carrier_id`, `code`, `name`, `tracking_url_template`,"
                     + " `api_config`, `is_active`\n"));
     ;
     return q.updateReturning(ShippingCarriersRow._rowParser.exactlyOne()).runUnchecked(c);

@@ -101,7 +101,7 @@ public class ProductsRepoImpl implements ProductsRepo {
             Fragment.encode(MariaTypes.datetime.opt(), unsaved.publishedAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `product_id`, `sku`, `brand_id`, `name`, `short_description`,"
+                    + "RETURNING `product_id`, `sku`, `brand_id`, `name`, `short_description`,"
                     + " `full_description`, `base_price`, `cost_price`, `weight_kg`,"
                     + " `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`,"
                     + " `seo_metadata`, `created_at`, `updated_at`, `published_at`\n"))
@@ -269,7 +269,7 @@ public class ProductsRepoImpl implements ProductsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `product_id`, `sku`, `brand_id`, `name`, `short_description`,"
+                    + "RETURNING `product_id`, `sku`, `brand_id`, `name`, `short_description`,"
                     + " `full_description`, `base_price`, `cost_price`, `weight_kg`,"
                     + " `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`,"
                     + " `seo_metadata`, `created_at`, `updated_at`, `published_at`\n"));

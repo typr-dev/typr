@@ -39,7 +39,7 @@ class ProductmodelRepoImpl() : ProductmodelRepo {
   override fun insert(
     unsaved: ProductmodelRow,
     c: Connection
-  ): ProductmodelRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.catalogdescription), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.instructions), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\n"))
+  ): ProductmodelRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.catalogdescription), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.instructions), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(ProductmodelRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -69,7 +69,7 @@ class ProductmodelRepoImpl() : ProductmodelRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productmodel\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productmodelid\", \"name\", \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(ProductmodelRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

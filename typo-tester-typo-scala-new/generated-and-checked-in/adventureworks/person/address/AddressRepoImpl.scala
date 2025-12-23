@@ -35,7 +35,7 @@ class AddressRepoImpl extends AddressRepo {
   override def insert(unsaved: AddressRow)(using c: Connection): AddressRow = {
   sql"""insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
     values (${Fragment.encode(AddressId.pgType, unsaved.addressid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.addressline1)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.addressline2)}, ${Fragment.encode(PgTypes.text, unsaved.city)}, ${Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.postalcode)}, ${Fragment.encode(PgTypes.bytea.nullable, unsaved.spatiallocation)}::bytea, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
+    RETURNING "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
     """
     .updateReturning(AddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -70,7 +70,7 @@ class AddressRepoImpl extends AddressRepo {
     val q: Fragment = {
       sql"""insert into "person"."address"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
+      RETURNING "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(AddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)

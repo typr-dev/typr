@@ -85,7 +85,7 @@ public class ProductdocumentRepoImpl implements ProductdocumentRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit("::timestamp, "),
             Fragment.encode(DocumentId.pgType, unsaved.documentnode()),
-            Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"))
+            Fragment.lit(")\nRETURNING \"productid\", \"modifieddate\", \"documentnode\"\n"))
         .updateReturning(ProductdocumentRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -127,7 +127,7 @@ public class ProductdocumentRepoImpl implements ProductdocumentRepo {
             Fragment.comma(columns),
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
-            Fragment.lit(")\nreturning \"productid\", \"modifieddate\", \"documentnode\"\n"));
+            Fragment.lit(")\nRETURNING \"productid\", \"modifieddate\", \"documentnode\"\n"));
     ;
     return q.updateReturning(ProductdocumentRow._rowParser.exactlyOne()).runUnchecked(c);
   }

@@ -36,7 +36,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
   override def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
   interpolate(Fragment.lit("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     values ("""), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
+    RETURNING "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     """))
     .updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -81,7 +81,7 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."salesterritory"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
+      RETURNING "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

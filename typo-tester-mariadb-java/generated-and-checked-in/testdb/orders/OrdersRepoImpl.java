@@ -112,7 +112,7 @@ public class OrdersRepoImpl implements OrdersRepo {
             Fragment.encode(MariaTypes.datetime.opt(), unsaved.deliveredAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `order_id`, `order_number`, `customer_id`, `order_status`,"
+                    + "RETURNING `order_id`, `order_number`, `customer_id`, `order_status`,"
                     + " `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`,"
                     + " `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`,"
                     + " `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`,"
@@ -316,7 +316,7 @@ public class OrdersRepoImpl implements OrdersRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `order_id`, `order_number`, `customer_id`, `order_status`,"
+                    + "RETURNING `order_id`, `order_number`, `customer_id`, `order_status`,"
                     + " `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`,"
                     + " `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`,"
                     + " `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`,"

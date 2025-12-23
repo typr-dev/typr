@@ -38,7 +38,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
   override def insert(unsaved: BusinessentitycontactRow)(using c: Connection): BusinessentitycontactRow = {
   sql"""insert into "person"."businessentitycontact"("businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(BusinessentityId.pgType, unsaved.personid)}::int4, ${Fragment.encode(ContacttypeId.pgType, unsaved.contacttypeid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"
     """
     .updateReturning(BusinessentitycontactRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -63,7 +63,7 @@ class BusinessentitycontactRepoImpl extends BusinessentitycontactRepo {
     val q: Fragment = {
       sql"""insert into "person"."businessentitycontact"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "personid", "contacttypeid", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(BusinessentitycontactRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -83,7 +83,7 @@ public class TestUtdanningstilbudRepoImpl implements TestUtdanningstilbudRepo {
             Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode()),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.text, unsaved.utdanningsmulighetKode()),
-            Fragment.lit(")\nreturning \"organisasjonskode\", \"utdanningsmulighet_kode\"\n"))
+            Fragment.lit(")\nRETURNING \"organisasjonskode\", \"utdanningsmulighet_kode\"\n"))
         .updateReturning(TestUtdanningstilbudRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }

@@ -84,7 +84,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\","
+                    + "RETURNING \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\","
                     + " \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\","
                     + " \"modifieddate\"\n"))
         .updateReturning(StateprovinceRow._rowParser.exactlyOne())
@@ -164,7 +164,7 @@ public class StateprovinceRepoImpl implements StateprovinceRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\","
+                    + "RETURNING \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\","
                     + " \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\","
                     + " \"modifieddate\"\n"));
     ;

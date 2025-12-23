@@ -36,7 +36,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
   override def insert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.lit(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date, "), Fragment.encode(Flag.pgType, unsaved.salariedflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.lit("::int2, "), Fragment.encode(Flag.pgType, unsaved.currentflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text.opt(), unsaved.organizationnode), Fragment.lit(""")
-    returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
+    RETURNING "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     """))
     .updateReturning(EmployeeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -91,7 +91,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "humanresources"."employee"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
+      RETURNING "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
       """))
     }
     return q.updateReturning(EmployeeRow.`_rowParser`.exactlyOne()).runUnchecked(c)

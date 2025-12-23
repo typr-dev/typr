@@ -36,7 +36,7 @@ class CustomerRepoImpl extends CustomerRepo {
   override def insert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
   sql"""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values (${Fragment.encode(CustomerId.pgType, unsaved.customerid)}::int4, ${Fragment.encode(BusinessentityId.pgType.nullable, unsaved.personid)}::int4, ${Fragment.encode(BusinessentityId.pgType.nullable, unsaved.storeid)}::int4, ${Fragment.encode(SalesterritoryId.pgType.nullable, unsaved.territoryid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"
+    RETURNING "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"
     """
     .updateReturning(CustomerRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -65,7 +65,7 @@ class CustomerRepoImpl extends CustomerRepo {
     val q: Fragment = {
       sql"""insert into "sales"."customer"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"
+      RETURNING "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(CustomerRow.`_rowParser`.exactlyOne()).runUnchecked(c)

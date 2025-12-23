@@ -38,7 +38,7 @@ class LocationRepoImpl() : LocationRepo {
   override fun insert(
     unsaved: LocationRow,
     c: Connection
-  ): LocationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nvalues ("), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.costrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.availability), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\n"))
+  ): LocationRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"(\"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\")\nvalues ("), Fragment.encode(LocationId.pgType, unsaved.locationid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.numeric, unsaved.costrate), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.availability), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\n"))
     .updateReturning(LocationRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -69,7 +69,7 @@ class LocationRepoImpl() : LocationRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"location\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"locationid\", \"name\", \"costrate\", \"availability\", \"modifieddate\"\n"))
     return q.updateReturning(LocationRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

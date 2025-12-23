@@ -36,7 +36,7 @@ class CustomerRepoImpl extends CustomerRepo {
   override def insert(unsaved: CustomerRow)(using c: Connection): CustomerRow = {
   interpolate(Fragment.lit("""insert into "sales"."customer"("customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate")
     values ("""), Fragment.encode(CustomerId.pgType, unsaved.customerid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.opt(), unsaved.personid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.opt(), unsaved.storeid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType.opt(), unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"
+    RETURNING "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"
     """))
     .updateReturning(CustomerRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -65,7 +65,7 @@ class CustomerRepoImpl extends CustomerRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."customer"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"
+      RETURNING "customerid", "personid", "storeid", "territoryid", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(CustomerRow.`_rowParser`.exactlyOne()).runUnchecked(c)

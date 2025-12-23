@@ -91,7 +91,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productid\", \"startdate\", \"enddate\", \"standardcost\","
+                    + "RETURNING \"productid\", \"startdate\", \"enddate\", \"standardcost\","
                     + " \"modifieddate\"\n"))
         .updateReturning(ProductcosthistoryRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -140,7 +140,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"productid\", \"startdate\", \"enddate\", \"standardcost\","
+                    + "RETURNING \"productid\", \"startdate\", \"enddate\", \"standardcost\","
                     + " \"modifieddate\"\n"));
     ;
     return q.updateReturning(ProductcosthistoryRow._rowParser.exactlyOne()).runUnchecked(c);

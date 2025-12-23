@@ -88,7 +88,7 @@ public class PersoncreditcardRepoImpl implements PersoncreditcardRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"businessentityid\", \"creditcardid\", \"modifieddate\"\n"))
+                    + "RETURNING \"businessentityid\", \"creditcardid\", \"modifieddate\"\n"))
         .updateReturning(PersoncreditcardRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -128,7 +128,7 @@ public class PersoncreditcardRepoImpl implements PersoncreditcardRepo {
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"businessentityid\", \"creditcardid\", \"modifieddate\"\n"));
+                ")\nRETURNING \"businessentityid\", \"creditcardid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(PersoncreditcardRow._rowParser.exactlyOne()).runUnchecked(c);
   }

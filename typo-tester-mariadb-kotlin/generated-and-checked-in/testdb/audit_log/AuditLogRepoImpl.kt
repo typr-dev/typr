@@ -39,7 +39,7 @@ class AuditLogRepoImpl() : AuditLogRepo {
   override fun insert(
     unsaved: AuditLogRow,
     c: Connection
-  ): AuditLogRow = Fragment.interpolate(Fragment.lit("insert into `audit_log`(`table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.tableName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.recordId), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.action), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.oldValues), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.newValues), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changedBy), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.changedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.inet6.nullable(), unsaved.clientIp), Fragment.lit(", "), Fragment.encode(MariaTypes.varbinary.nullable(), unsaved.sessionId), Fragment.lit(")\nreturning `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`\n"))
+  ): AuditLogRow = Fragment.interpolate(Fragment.lit("insert into `audit_log`(`table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.tableName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.recordId), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.action), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.oldValues), Fragment.lit(", "), Fragment.encode(MariaTypes.longtext.nullable(), unsaved.newValues), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changedBy), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.changedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.inet6.nullable(), unsaved.clientIp), Fragment.lit(", "), Fragment.encode(MariaTypes.varbinary.nullable(), unsaved.sessionId), Fragment.lit(")\nRETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`\n"))
     .updateReturning(AuditLogRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -84,7 +84,7 @@ class AuditLogRepoImpl() : AuditLogRepo {
       { value -> columns.add(Fragment.lit("`session_id`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varbinary.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `audit_log`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `audit_log`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`\n"))
     return q.updateReturning(AuditLogRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

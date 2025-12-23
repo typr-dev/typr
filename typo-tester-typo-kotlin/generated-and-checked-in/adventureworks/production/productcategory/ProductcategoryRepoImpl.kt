@@ -38,7 +38,7 @@ class ProductcategoryRepoImpl() : ProductcategoryRepo {
   override fun insert(
     unsaved: ProductcategoryRow,
     c: Connection
-  ): ProductcategoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcategory\"(\"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+  ): ProductcategoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcategory\"(\"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(ProductcategoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -64,7 +64,7 @@ class ProductcategoryRepoImpl() : ProductcategoryRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcategory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcategory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     return q.updateReturning(ProductcategoryRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

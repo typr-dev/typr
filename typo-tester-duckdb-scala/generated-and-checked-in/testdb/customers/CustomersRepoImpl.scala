@@ -33,7 +33,7 @@ class CustomersRepoImpl extends CustomersRepo {
   override def insert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""insert into "customers"("customer_id", "name", "email", "created_at", "priority")
     values (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.nullable, unsaved.priority)})
-    returning "customer_id", "name", "email", "created_at", "priority"
+    RETURNING "customer_id", "name", "email", "created_at", "priority"
     """
     .updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -58,7 +58,7 @@ class CustomersRepoImpl extends CustomersRepo {
     val q: Fragment = {
       sql"""insert into "customers"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "customer_id", "name", "email", "created_at", "priority"
+      RETURNING "customer_id", "name", "email", "created_at", "priority"
       """
     }
     return q.updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)

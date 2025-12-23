@@ -96,7 +96,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
             Fragment.encode(MariaTypes.datetime, unsaved.createdAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `promotion_id`, `code`, `name`, `description`, `discount_type`,"
+                    + "RETURNING `promotion_id`, `code`, `name`, `description`, `discount_type`,"
                     + " `discount_value`, `min_order_amount`, `max_uses`, `uses_count`,"
                     + " `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`,"
                     + " `valid_to`, `is_active`, `created_at`\n"))
@@ -227,7 +227,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `promotion_id`, `code`, `name`, `description`, `discount_type`,"
+                    + "RETURNING `promotion_id`, `code`, `name`, `description`, `discount_type`,"
                     + " `discount_value`, `min_order_amount`, `max_uses`, `uses_count`,"
                     + " `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`,"
                     + " `valid_to`, `is_active`, `created_at`\n"));

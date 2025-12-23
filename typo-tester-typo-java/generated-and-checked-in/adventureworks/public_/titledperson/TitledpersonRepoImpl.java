@@ -39,7 +39,7 @@ public class TitledpersonRepoImpl implements TitledpersonRepo {
             Fragment.encode(TitleId.pgType, unsaved.title()),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.text, unsaved.name()),
-            Fragment.lit(")\nreturning \"title_short\", \"title\", \"name\"\n"))
+            Fragment.lit(")\nRETURNING \"title_short\", \"title\", \"name\"\n"))
         .updateReturning(TitledpersonRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }

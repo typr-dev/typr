@@ -42,7 +42,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
   override def insert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   sql"""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.nullable, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
+    RETURNING "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     """
     .updateReturning(EmployeedepartmenthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -67,7 +67,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     val q: Fragment = {
       sql"""insert into "humanresources"."employeedepartmenthistory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
+      RETURNING "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
       """
     }
     return q.updateReturning(EmployeedepartmenthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

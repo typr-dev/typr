@@ -37,7 +37,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
   override def insert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
   sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.nationalidnumber)}, ${Fragment.encode(PgTypes.text, unsaved.loginid)}, ${Fragment.encode(PgTypes.text, unsaved.jobtitle)}, ${Fragment.encode(PgTypes.date, unsaved.birthdate)}::date, ${Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus)}::bpchar, ${Fragment.encode(PgTypes.bpchar, unsaved.gender)}::bpchar, ${Fragment.encode(PgTypes.date, unsaved.hiredate)}::date, ${Fragment.encode(Flag.pgType, unsaved.salariedflag)}::bool, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.vacationhours)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.sickleavehours)}::int2, ${Fragment.encode(Flag.pgType, unsaved.currentflag)}::bool, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp, ${Fragment.encode(PgTypes.text.nullable, unsaved.organizationnode)})
-    returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
+    RETURNING "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     """
     .updateReturning(EmployeeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -92,7 +92,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     val q: Fragment = {
       sql"""insert into "humanresources"."employee"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
+      RETURNING "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
       """
     }
     return q.updateReturning(EmployeeRow.`_rowParser`.exactlyOne()).runUnchecked(c)

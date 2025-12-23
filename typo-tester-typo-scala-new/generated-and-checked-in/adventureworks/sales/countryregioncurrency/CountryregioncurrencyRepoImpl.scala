@@ -37,7 +37,7 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
   override def insert(unsaved: CountryregioncurrencyRow)(using c: Connection): CountryregioncurrencyRow = {
   sql"""insert into "sales"."countryregioncurrency"("countryregioncode", "currencycode", "modifieddate")
     values (${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(CurrencyId.pgType, unsaved.currencycode)}::bpchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "countryregioncode", "currencycode", "modifieddate"
+    RETURNING "countryregioncode", "currencycode", "modifieddate"
     """
     .updateReturning(CountryregioncurrencyRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -56,7 +56,7 @@ class CountryregioncurrencyRepoImpl extends CountryregioncurrencyRepo {
     val q: Fragment = {
       sql"""insert into "sales"."countryregioncurrency"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "countryregioncode", "currencycode", "modifieddate"
+      RETURNING "countryregioncode", "currencycode", "modifieddate"
       """
     }
     return q.updateReturning(CountryregioncurrencyRow.`_rowParser`.exactlyOne()).runUnchecked(c)

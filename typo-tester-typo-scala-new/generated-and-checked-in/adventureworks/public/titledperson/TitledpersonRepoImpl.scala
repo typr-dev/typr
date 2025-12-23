@@ -24,7 +24,7 @@ class TitledpersonRepoImpl extends TitledpersonRepo {
   override def insert(unsaved: TitledpersonRow)(using c: Connection): TitledpersonRow = {
   sql"""insert into "public"."titledperson"("title_short", "title", "name")
     values (${Fragment.encode(TitleDomainId.pgType, unsaved.titleShort)}::text, ${Fragment.encode(TitleId.pgType, unsaved.title)}, ${Fragment.encode(PgTypes.text, unsaved.name)})
-    returning "title_short", "title", "name"
+    RETURNING "title_short", "title", "name"
     """
     .updateReturning(TitledpersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

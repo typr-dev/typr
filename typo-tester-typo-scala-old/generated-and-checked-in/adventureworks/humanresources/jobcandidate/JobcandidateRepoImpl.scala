@@ -35,7 +35,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
   override def insert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
     values ("""), Fragment.encode(JobcandidateId.pgType, unsaved.jobcandidateid), Fragment.lit("::int4, "), Fragment.encode(BusinessentityId.pgType.opt(), unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.opt(), unsaved.resume), Fragment.lit("::xml, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "jobcandidateid", "businessentityid", "resume", "modifieddate"
+    RETURNING "jobcandidateid", "businessentityid", "resume", "modifieddate"
     """))
     .updateReturning(JobcandidateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -58,7 +58,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "humanresources"."jobcandidate"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "jobcandidateid", "businessentityid", "resume", "modifieddate"
+      RETURNING "jobcandidateid", "businessentityid", "resume", "modifieddate"
       """))
     }
     return q.updateReturning(JobcandidateRow.`_rowParser`.exactlyOne()).runUnchecked(c)

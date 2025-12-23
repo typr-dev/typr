@@ -32,7 +32,7 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
   override def insert(unsaved: OrderItemsRow)(using c: Connection): OrderItemsRow = {
   sql"""insert into "order_items"("order_id", "product_id", "quantity", "unit_price")
     values (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.productId)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, unsaved.unitPrice)})
-    returning "order_id", "product_id", "quantity", "unit_price"
+    RETURNING "order_id", "product_id", "quantity", "unit_price"
     """
     .updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -53,7 +53,7 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
     val q: Fragment = {
       sql"""insert into "order_items"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "order_id", "product_id", "quantity", "unit_price"
+      RETURNING "order_id", "product_id", "quantity", "unit_price"
       """
     }
     return q.updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

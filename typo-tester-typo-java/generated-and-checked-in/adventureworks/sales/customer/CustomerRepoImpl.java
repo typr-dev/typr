@@ -75,7 +75,7 @@ public class CustomerRepoImpl implements CustomerRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"customerid\", \"personid\", \"storeid\", \"territoryid\","
+                    + "RETURNING \"customerid\", \"personid\", \"storeid\", \"territoryid\","
                     + " \"rowguid\", \"modifieddate\"\n"))
         .updateReturning(CustomerRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -141,7 +141,7 @@ public class CustomerRepoImpl implements CustomerRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"customerid\", \"personid\", \"storeid\", \"territoryid\","
+                    + "RETURNING \"customerid\", \"personid\", \"storeid\", \"territoryid\","
                     + " \"rowguid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(CustomerRow._rowParser.exactlyOne()).runUnchecked(c);

@@ -34,7 +34,7 @@ class PasswordRepoImpl extends PasswordRepo {
   override def insert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
   sql"""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.passwordhash)}, ${Fragment.encode(PgTypes.text, unsaved.passwordsalt)}, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     """
     .updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -59,7 +59,7 @@ class PasswordRepoImpl extends PasswordRepo {
     val q: Fragment = {
       sql"""insert into "person"."password"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)

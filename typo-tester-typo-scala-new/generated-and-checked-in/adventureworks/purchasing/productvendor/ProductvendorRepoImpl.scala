@@ -40,7 +40,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
   override def insert(unsaved: ProductvendorRow)(using c: Connection): ProductvendorRow = {
   sql"""insert into "purchasing"."productvendor"("productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate")
     values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.averageleadtime)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardprice)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.lastreceiptcost)}::numeric, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.lastreceiptdate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.minorderqty)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.maxorderqty)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.int4.nullable, unsaved.onorderqty)}::int4, ${Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode)}::bpchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"
+    RETURNING "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"
     """
     .updateReturning(ProductvendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -75,7 +75,7 @@ class ProductvendorRepoImpl extends ProductvendorRepo {
     val q: Fragment = {
       sql"""insert into "purchasing"."productvendor"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"
+      RETURNING "productid", "businessentityid", "averageleadtime", "standardprice", "lastreceiptcost", "lastreceiptdate", "minorderqty", "maxorderqty", "onorderqty", "unitmeasurecode", "modifieddate"
       """
     }
     return q.updateReturning(ProductvendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)

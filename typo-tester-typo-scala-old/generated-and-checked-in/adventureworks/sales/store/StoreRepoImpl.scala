@@ -36,7 +36,7 @@ class StoreRepoImpl extends StoreRepo {
   override def insert(unsaved: StoreRow)(using c: Connection): StoreRow = {
   interpolate(Fragment.lit("""insert into "sales"."store"("businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(BusinessentityId.pgType.opt(), unsaved.salespersonid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.opt(), unsaved.demographics), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"
     """))
     .updateReturning(StoreRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -63,7 +63,7 @@ class StoreRepoImpl extends StoreRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "sales"."store"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "name", "salespersonid", "demographics", "rowguid", "modifieddate"
       """))
     }
     return q.updateReturning(StoreRow.`_rowParser`.exactlyOne()).runUnchecked(c)

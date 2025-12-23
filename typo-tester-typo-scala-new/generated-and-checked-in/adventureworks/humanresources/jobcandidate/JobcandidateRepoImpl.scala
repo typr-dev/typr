@@ -35,7 +35,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
   override def insert(unsaved: JobcandidateRow)(using c: Connection): JobcandidateRow = {
   sql"""insert into "humanresources"."jobcandidate"("jobcandidateid", "businessentityid", "resume", "modifieddate")
     values (${Fragment.encode(JobcandidateId.pgType, unsaved.jobcandidateid)}::int4, ${Fragment.encode(BusinessentityId.pgType.nullable, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.xml.nullable, unsaved.resume)}::xml, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "jobcandidateid", "businessentityid", "resume", "modifieddate"
+    RETURNING "jobcandidateid", "businessentityid", "resume", "modifieddate"
     """
     .updateReturning(JobcandidateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -58,7 +58,7 @@ class JobcandidateRepoImpl extends JobcandidateRepo {
     val q: Fragment = {
       sql"""insert into "humanresources"."jobcandidate"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "jobcandidateid", "businessentityid", "resume", "modifieddate"
+      RETURNING "jobcandidateid", "businessentityid", "resume", "modifieddate"
       """
     }
     return q.updateReturning(JobcandidateRow.`_rowParser`.exactlyOne()).runUnchecked(c)

@@ -79,7 +79,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
             Fragment.encode(MariaTypes.longblob.opt(), unsaved.imageData()),
             Fragment.lit(
                 ")\n"
-                    + "returning `image_id`, `product_id`, `image_url`, `thumbnail_url`,"
+                    + "RETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`,"
                     + " `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
         .updateReturning(ProductImagesRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -156,7 +156,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `image_id`, `product_id`, `image_url`, `thumbnail_url`,"
+                    + "RETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`,"
                     + " `alt_text`, `sort_order`, `is_primary`, `image_data`\n"));
     ;
     return q.updateReturning(ProductImagesRow._rowParser.exactlyOne()).runUnchecked(c);

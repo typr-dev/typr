@@ -34,7 +34,7 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
   override def insert(unsaved: OrderItemsRow)(using c: Connection): OrderItemsRow = {
   sql"""insert into `order_items`(`order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`)
     values (${Fragment.encode(OrdersId.pgType, unsaved.orderId)}, ${Fragment.encode(ProductsId.pgType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(MariaTypes.varchar, unsaved.productName)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.smallintUnsigned, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.unitPrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.lineTotal)}, ${Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus)}, ${Fragment.encode(WarehousesId.pgType.nullable, unsaved.warehouseId)}, ${Fragment.encode(MariaTypes.tinytext.nullable, unsaved.notes)})
-    returning `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`
+    RETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`
     """
     .updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -79,7 +79,7 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
     val q: Fragment = {
       sql"""insert into `order_items`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`
+      RETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`
       """
     }
     return q.updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)

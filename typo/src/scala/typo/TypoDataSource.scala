@@ -57,6 +57,17 @@ object TypoDataSource {
     TypoDataSource(ds, DbType.Oracle)
   }
 
+  /** Create a TypoDataSource for SQL Server */
+  def hikariSqlServer(server: String, port: Int, databaseName: String, username: String, password: String): TypoDataSource = {
+    val config = new HikariConfig
+    config.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+    config.setJdbcUrl(s"jdbc:sqlserver://$server:$port;databaseName=$databaseName;encrypt=false;trustServerCertificate=true")
+    config.setUsername(username)
+    config.setPassword(password)
+    val ds = new HikariDataSource(config)
+    TypoDataSource(ds, DbType.SqlServer)
+  }
+
   /** Create a TypoDataSource with auto-detection of database type */
   def hikari(ds: DataSource): TypoDataSource = {
     val conn = ds.getConnection

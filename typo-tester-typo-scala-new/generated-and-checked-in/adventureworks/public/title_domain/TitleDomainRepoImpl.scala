@@ -31,7 +31,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
   override def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
   sql"""insert into "public"."title_domain"("code")
     values (${Fragment.encode(TitleDomainId.pgType, unsaved.code)}::text)
-    returning "code"
+    RETURNING "code"
     """
     .updateReturning(TitleDomainRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }

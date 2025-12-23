@@ -70,7 +70,7 @@ public class SalesreasonRepoImpl implements SalesreasonRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"))
+                    + "RETURNING \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"))
         .updateReturning(SalesreasonRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -117,7 +117,7 @@ public class SalesreasonRepoImpl implements SalesreasonRepo {
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"));
+                ")\nRETURNING \"salesreasonid\", \"name\", \"reasontype\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(SalesreasonRow._rowParser.exactlyOne()).runUnchecked(c);
   }

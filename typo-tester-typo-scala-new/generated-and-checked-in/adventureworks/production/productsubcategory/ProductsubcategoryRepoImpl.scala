@@ -35,7 +35,7 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
   override def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
   sql"""insert into "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate")
     values (${Fragment.encode(ProductsubcategoryId.pgType, unsaved.productsubcategoryid)}::int4, ${Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
+    RETURNING "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
     """
     .updateReturning(ProductsubcategoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -62,7 +62,7 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     val q: Fragment = {
       sql"""insert into "production"."productsubcategory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
+      RETURNING "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(ProductsubcategoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

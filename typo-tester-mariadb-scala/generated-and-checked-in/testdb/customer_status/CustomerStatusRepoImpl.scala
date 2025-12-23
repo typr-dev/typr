@@ -30,7 +30,7 @@ class CustomerStatusRepoImpl extends CustomerStatusRepo {
   override def insert(unsaved: CustomerStatusRow)(using c: Connection): CustomerStatusRow = {
   sql"""insert into `customer_status`(`status_code`, `description`, `is_active`)
     values (${Fragment.encode(CustomerStatusId.pgType, unsaved.statusCode)}, ${Fragment.encode(MariaTypes.varchar, unsaved.description)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isActive)})
-    returning `status_code`, `description`, `is_active`
+    RETURNING `status_code`, `description`, `is_active`
     """
     .updateReturning(CustomerStatusRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -49,7 +49,7 @@ class CustomerStatusRepoImpl extends CustomerStatusRepo {
     val q: Fragment = {
       sql"""insert into `customer_status`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `status_code`, `description`, `is_active`
+      RETURNING `status_code`, `description`, `is_active`
       """
     }
     return q.updateReturning(CustomerStatusRow.`_rowParser`.exactlyOne()).runUnchecked(c)

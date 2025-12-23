@@ -33,7 +33,7 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
   override def insert(unsaved: BusinessentityRow)(using c: Connection): BusinessentityRow = {
   sql"""insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "rowguid", "modifieddate"
     """
     .updateReturning(BusinessentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -55,10 +55,10 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
     );
     val q: Fragment = {
       (if (columns.isEmpty) sql"""insert into "person"."businessentity" default values
-      returning "businessentityid", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "rowguid", "modifieddate"
       """ else sql"""insert into "person"."businessentity"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "rowguid", "modifieddate"
       """)
     }
     return q.updateReturning(BusinessentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)

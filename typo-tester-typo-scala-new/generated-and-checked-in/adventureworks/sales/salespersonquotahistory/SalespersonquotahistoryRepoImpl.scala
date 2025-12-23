@@ -38,7 +38,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
   override def insert(unsaved: SalespersonquotahistoryRow)(using c: Connection): SalespersonquotahistoryRow = {
   sql"""insert into "sales"."salespersonquotahistory"("businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate")
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.quotadate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesquota)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate"
+    RETURNING "businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate"
     """
     .updateReturning(SalespersonquotahistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -63,7 +63,7 @@ class SalespersonquotahistoryRepoImpl extends SalespersonquotahistoryRepo {
     val q: Fragment = {
       sql"""insert into "sales"."salespersonquotahistory"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate"
+      RETURNING "businessentityid", "quotadate", "salesquota", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(SalespersonquotahistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)

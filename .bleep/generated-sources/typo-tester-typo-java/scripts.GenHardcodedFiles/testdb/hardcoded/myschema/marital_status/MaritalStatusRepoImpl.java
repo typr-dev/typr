@@ -48,7 +48,7 @@ public class MaritalStatusRepoImpl implements MaritalStatusRepo {
     MaritalStatusRow unsaved,
     Connection c
   ) {
-    return interpolate(Fragment.lit("insert into \"myschema\".\"marital_status\"(\"id\")\nvalues ("), Fragment.encode(MaritalStatusId.pgType, unsaved.id()), Fragment.lit("::int8)\nreturning \"id\"\n"))
+    return interpolate(Fragment.lit("insert into \"myschema\".\"marital_status\"(\"id\")\nvalues ("), Fragment.encode(MaritalStatusId.pgType, unsaved.id()), Fragment.lit("::int8)\nRETURNING \"id\"\n"))
       .updateReturning(MaritalStatusRow._rowParser.exactlyOne()).runUnchecked(c);
   };
 

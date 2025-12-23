@@ -35,7 +35,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
   override def insert(unsaved: ShipmethodRow)(using c: Connection): ShipmethodRow = {
   sql"""insert into "purchasing"."shipmethod"("shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate")
     values (${Fragment.encode(ShipmethodId.pgType, unsaved.shipmethodid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.shipbase)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.shiprate)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"
+    RETURNING "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"
     """
     .updateReturning(ShipmethodRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -68,7 +68,7 @@ class ShipmethodRepoImpl extends ShipmethodRepo {
     val q: Fragment = {
       sql"""insert into "purchasing"."shipmethod"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"
+      RETURNING "shipmethodid", "name", "shipbase", "shiprate", "rowguid", "modifieddate"
       """
     }
     return q.updateReturning(ShipmethodRow.`_rowParser`.exactlyOne()).runUnchecked(c)

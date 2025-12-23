@@ -38,7 +38,7 @@ class VendorRepoImpl extends VendorRepo {
   override def insert(unsaved: VendorRow)(using c: Connection): VendorRow = {
   interpolate(Fragment.lit("""insert into "purchasing"."vendor"("businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate")
     values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(AccountNumber.pgType, unsaved.accountnumber), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.int2, unsaved.creditrating), Fragment.lit("::int2, "), Fragment.encode(Flag.pgType, unsaved.preferredvendorstatus), Fragment.lit("::bool, "), Fragment.encode(Flag.pgType, unsaved.activeflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.opt(), unsaved.purchasingwebserviceurl), Fragment.lit(", "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
-    returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"
+    RETURNING "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"
     """))
     .updateReturning(VendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -71,7 +71,7 @@ class VendorRepoImpl extends VendorRepo {
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "purchasing"."vendor"("""), Fragment.comma(columns), Fragment.lit(""")
       values ("""), Fragment.comma(values), Fragment.lit(""")
-      returning "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"
+      RETURNING "businessentityid", "accountnumber", "name", "creditrating", "preferredvendorstatus", "activeflag", "purchasingwebserviceurl", "modifieddate"
       """))
     }
     return q.updateReturning(VendorRow.`_rowParser`.exactlyOne()).runUnchecked(c)

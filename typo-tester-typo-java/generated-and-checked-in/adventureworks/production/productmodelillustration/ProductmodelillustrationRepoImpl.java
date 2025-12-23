@@ -90,7 +90,7 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"productmodelid\", \"illustrationid\", \"modifieddate\"\n"))
+                    + "RETURNING \"productmodelid\", \"illustrationid\", \"modifieddate\"\n"))
         .updateReturning(ProductmodelillustrationRow._rowParser.exactlyOne())
         .runUnchecked(c);
   }
@@ -131,7 +131,7 @@ public class ProductmodelillustrationRepoImpl implements Productmodelillustratio
             Fragment.lit(")\nvalues ("),
             Fragment.comma(values),
             Fragment.lit(
-                ")\nreturning \"productmodelid\", \"illustrationid\", \"modifieddate\"\n"));
+                ")\nRETURNING \"productmodelid\", \"illustrationid\", \"modifieddate\"\n"));
     ;
     return q.updateReturning(ProductmodelillustrationRow._rowParser.exactlyOne()).runUnchecked(c);
   }

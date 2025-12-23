@@ -339,6 +339,9 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
 
   def createTempTableLike(tempName: String, sourceTable: Code): Code =
     code"create temporary table $tempName (like $sourceTable) on commit drop"
+
+  def returningClause(columns: Code): Code =
+    code"RETURNING $columns"
 }
 
 object PostgresAdapter {

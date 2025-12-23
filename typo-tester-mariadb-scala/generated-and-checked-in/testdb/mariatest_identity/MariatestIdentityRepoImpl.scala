@@ -29,7 +29,7 @@ class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
   override def insert(unsaved: MariatestIdentityRow)(using c: Connection): MariatestIdentityRow = {
   sql"""insert into `mariatest_identity`(`name`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.name)})
-    returning `id`, `name`
+    RETURNING `id`, `name`
     """
     .updateReturning(MariatestIdentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -42,7 +42,7 @@ class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
     val q: Fragment = {
       sql"""insert into `mariatest_identity`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `id`, `name`
+      RETURNING `id`, `name`
       """
     }
     return q.updateReturning(MariatestIdentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)

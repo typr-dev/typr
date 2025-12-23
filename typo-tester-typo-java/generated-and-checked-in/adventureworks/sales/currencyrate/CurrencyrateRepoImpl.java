@@ -78,7 +78,7 @@ public class CurrencyrateRepoImpl implements CurrencyrateRepo {
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
                 "::timestamp)\n"
-                    + "returning \"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\","
+                    + "RETURNING \"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\","
                     + " \"tocurrencycode\", \"averagerate\", \"endofdayrate\", \"modifieddate\"\n"))
         .updateReturning(CurrencyrateRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -144,7 +144,7 @@ public class CurrencyrateRepoImpl implements CurrencyrateRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning \"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\","
+                    + "RETURNING \"currencyrateid\", \"currencyratedate\", \"fromcurrencycode\","
                     + " \"tocurrencycode\", \"averagerate\", \"endofdayrate\","
                     + " \"modifieddate\"\n"));
     ;

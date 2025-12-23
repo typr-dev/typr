@@ -89,7 +89,7 @@ public class PaymentsRepoImpl implements PaymentsRepo {
             Fragment.encode(MariaTypes.datetime.opt(), unsaved.processedAt()),
             Fragment.lit(
                 ")\n"
-                    + "returning `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`,"
+                    + "RETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`,"
                     + " `currency_code`, `status`, `processor_response`, `error_message`,"
                     + " `ip_address`, `created_at`, `processed_at`\n"))
         .updateReturning(PaymentsRow._rowParser.exactlyOne())
@@ -198,7 +198,7 @@ public class PaymentsRepoImpl implements PaymentsRepo {
             Fragment.comma(values),
             Fragment.lit(
                 ")\n"
-                    + "returning `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`,"
+                    + "RETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`,"
                     + " `currency_code`, `status`, `processor_response`, `error_message`,"
                     + " `ip_address`, `created_at`, `processed_at`\n"));
     ;

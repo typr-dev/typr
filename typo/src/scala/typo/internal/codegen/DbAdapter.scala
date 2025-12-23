@@ -127,4 +127,61 @@ trait DbAdapter {
   /** Generate temp table creation */
   def createTempTableLike(tempName: String, sourceTable: Code): Code
 
+  /** Format columns for use in RETURNING/OUTPUT clause. Most databases use columns as-is, SQL Server needs INSERTED. prefix */
+  def returningColumns(cols: NonEmptyList[ComputedColumn]): Code =
+    cols.map(c => quotedColName(c) ++ columnReadCast(c)).mkCode(", ")
+
+  /** Quote a column name */
+  protected def quotedColName(c: ComputedColumn): Code =
+    jvm.Code.Str(quoteIdent(c.dbName.value))
+
+  /** Generate RETURNING clause for INSERT statements. PostgreSQL/DuckDB use RETURNING, SQL Server uses OUTPUT INSERTED.* */
+  def returningClause(columns: Code): Code
+
+  /** Whether the RETURNING/OUTPUT clause goes before VALUES (SQL Server) or after (PostgreSQL/MariaDB/DuckDB) */
+  def returningBeforeValues: Boolean = false
+
+  /** Generate INSERT SQL with RETURNING/OUTPUT clause in the correct position */
+  def insertReturning(
+      tableName: Code,
+      columns: Code,
+      values: Code,
+      returningCols: NonEmptyList[ComputedColumn]
+  ): Code = {
+    val returning = returningClause(returningColumns(returningCols))
+    if (returningBeforeValues) {
+      // SQL Server: INSERT ... OUTPUT ... VALUES ...
+      code"""|insert into $tableName($columns)
+             |$returning
+             |values ($values)
+             |""".stripMargin
+    } else {
+      // PostgreSQL/MariaDB/DuckDB: INSERT ... VALUES ... RETURNING ...
+      code"""|insert into $tableName($columns)
+             |values ($values)
+             |$returning
+             |""".stripMargin
+    }
+  }
+
+  /** Generate INSERT DEFAULT VALUES with RETURNING/OUTPUT clause */
+  def insertDefaultValuesReturning(
+      tableName: Code,
+      returningCols: NonEmptyList[ComputedColumn]
+  ): Code = {
+    val returning = returningClause(returningColumns(returningCols))
+    if (returningBeforeValues) {
+      // SQL Server: INSERT ... OUTPUT ... DEFAULT VALUES
+      code"""|insert into $tableName
+             |$returning
+             |default values
+             |""".stripMargin
+    } else {
+      // PostgreSQL/MariaDB/DuckDB: INSERT ... DEFAULT VALUES RETURNING ...
+      code"""|insert into $tableName default values
+             |$returning
+             |""".stripMargin
+    }
+  }
+
 }

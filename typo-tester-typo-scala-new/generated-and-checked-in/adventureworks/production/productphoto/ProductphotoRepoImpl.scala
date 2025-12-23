@@ -34,7 +34,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
   override def insert(unsaved: ProductphotoRow)(using c: Connection): ProductphotoRow = {
   sql"""insert into "production"."productphoto"("productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate")
     values (${Fragment.encode(ProductphotoId.pgType, unsaved.productphotoid)}::int4, ${Fragment.encode(PgTypes.bytea.nullable, unsaved.thumbnailphoto)}::bytea, ${Fragment.encode(PgTypes.text.nullable, unsaved.thumbnailphotofilename)}, ${Fragment.encode(PgTypes.bytea.nullable, unsaved.largephoto)}::bytea, ${Fragment.encode(PgTypes.text.nullable, unsaved.largephotofilename)}, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"
+    RETURNING "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"
     """
     .updateReturning(ProductphotoRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -61,7 +61,7 @@ class ProductphotoRepoImpl extends ProductphotoRepo {
     val q: Fragment = {
       sql"""insert into "production"."productphoto"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"
+      RETURNING "productphotoid", "thumbnailphoto", "thumbnailphotofilename", "largephoto", "largephotofilename", "modifieddate"
       """
     }
     return q.updateReturning(ProductphotoRow.`_rowParser`.exactlyOne()).runUnchecked(c)

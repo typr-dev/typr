@@ -30,7 +30,7 @@ class AuditLogRepoImpl extends AuditLogRepo {
   override def insert(unsaved: AuditLogRow)(using c: Connection): AuditLogRow = {
   sql"""insert into `audit_log`(`table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`)
     values (${Fragment.encode(MariaTypes.varchar, unsaved.tableName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.recordId)}, ${Fragment.encode(MariaTypes.text, unsaved.action)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.oldValues)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.newValues)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.changedBy)}, ${Fragment.encode(MariaTypes.datetime, unsaved.changedAt)}, ${Fragment.encode(MariaTypes.inet6.nullable, unsaved.clientIp)}, ${Fragment.encode(MariaTypes.varbinary.nullable, unsaved.sessionId)})
-    returning `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
+    RETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
     """
     .updateReturning(AuditLogRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -71,7 +71,7 @@ class AuditLogRepoImpl extends AuditLogRepo {
     val q: Fragment = {
       sql"""insert into `audit_log`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
+      RETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
       """
     }
     return q.updateReturning(AuditLogRow.`_rowParser`.exactlyOne()).runUnchecked(c)

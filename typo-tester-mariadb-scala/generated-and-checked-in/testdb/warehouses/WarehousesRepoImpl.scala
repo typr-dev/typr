@@ -31,7 +31,7 @@ class WarehousesRepoImpl extends WarehousesRepo {
   override def insert(unsaved: WarehousesRow)(using c: Connection): WarehousesRow = {
   sql"""insert into `warehouses`(`code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)
     values (${Fragment.encode(MariaTypes.char_, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.address)}, ${Fragment.encode(MariaTypes.point, unsaved.location)}, ${Fragment.encode(MariaTypes.polygon.nullable, unsaved.serviceArea)}, ${Fragment.encode(MariaTypes.varchar, unsaved.timezone)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isActive)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.contactEmail)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.contactPhone)})
-    returning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
+    RETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
     """
     .updateReturning(WarehousesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -70,7 +70,7 @@ class WarehousesRepoImpl extends WarehousesRepo {
     val q: Fragment = {
       sql"""insert into `warehouses`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
+      RETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
       """
     }
     return q.updateReturning(WarehousesRow.`_rowParser`.exactlyOne()).runUnchecked(c)

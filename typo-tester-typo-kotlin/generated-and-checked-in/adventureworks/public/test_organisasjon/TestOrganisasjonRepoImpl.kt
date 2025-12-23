@@ -35,7 +35,7 @@ class TestOrganisasjonRepoImpl() : TestOrganisasjonRepo {
   override fun insert(
     unsaved: TestOrganisasjonRow,
     c: Connection
-  ): TestOrganisasjonRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_organisasjon\"(\"organisasjonskode\")\nvalues ("), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode), Fragment.lit(")\nreturning \"organisasjonskode\"\n"))
+  ): TestOrganisasjonRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"test_organisasjon\"(\"organisasjonskode\")\nvalues ("), Fragment.encode(TestOrganisasjonId.pgType, unsaved.organisasjonskode), Fragment.lit(")\nRETURNING \"organisasjonskode\"\n"))
     .updateReturning(TestOrganisasjonRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(

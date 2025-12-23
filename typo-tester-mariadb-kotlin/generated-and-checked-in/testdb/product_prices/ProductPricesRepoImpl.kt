@@ -42,7 +42,7 @@ class ProductPricesRepoImpl() : ProductPricesRepo {
   override fun insert(
     unsaved: ProductPricesRow,
     c: Connection
-  ): ProductPricesRow = Fragment.interpolate(Fragment.lit("insert into `product_prices`(`product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`)\nvalues ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(PriceTiersId.pgType.nullable(), unsaved.tierId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.price), Fragment.lit(", "), Fragment.encode(MariaTypes.char_, unsaved.currencyCode), Fragment.lit(", "), Fragment.encode(MariaTypes.date, unsaved.validFrom), Fragment.lit(", "), Fragment.encode(MariaTypes.date.nullable(), unsaved.validTo), Fragment.lit(")\nreturning `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`\n"))
+  ): ProductPricesRow = Fragment.interpolate(Fragment.lit("insert into `product_prices`(`product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`)\nvalues ("), Fragment.encode(ProductsId.pgType, unsaved.productId), Fragment.lit(", "), Fragment.encode(PriceTiersId.pgType.nullable(), unsaved.tierId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.price), Fragment.lit(", "), Fragment.encode(MariaTypes.char_, unsaved.currencyCode), Fragment.lit(", "), Fragment.encode(MariaTypes.date, unsaved.validFrom), Fragment.lit(", "), Fragment.encode(MariaTypes.date.nullable(), unsaved.validTo), Fragment.lit(")\nRETURNING `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`\n"))
     .updateReturning(ProductPricesRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -72,7 +72,7 @@ class ProductPricesRepoImpl() : ProductPricesRepo {
       { value -> columns.add(Fragment.lit("`valid_to`"))
       values.add(Fragment.interpolate(Fragment.encode(MariaTypes.date.nullable(), value), Fragment.lit(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_prices`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_prices`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `price_id`, `product_id`, `tier_id`, `price`, `currency_code`, `valid_from`, `valid_to`\n"))
     return q.updateReturning(ProductPricesRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

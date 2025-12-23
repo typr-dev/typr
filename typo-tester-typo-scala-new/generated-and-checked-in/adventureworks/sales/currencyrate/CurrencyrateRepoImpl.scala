@@ -35,7 +35,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
   override def insert(unsaved: CurrencyrateRow)(using c: Connection): CurrencyrateRow = {
   sql"""insert into "sales"."currencyrate"("currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate")
     values (${Fragment.encode(CurrencyrateId.pgType, unsaved.currencyrateid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.currencyratedate)}::timestamp, ${Fragment.encode(CurrencyId.pgType, unsaved.fromcurrencycode)}::bpchar, ${Fragment.encode(CurrencyId.pgType, unsaved.tocurrencycode)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.averagerate)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.endofdayrate)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
-    returning "currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"
+    RETURNING "currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"
     """
     .updateReturning(CurrencyrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -64,7 +64,7 @@ class CurrencyrateRepoImpl extends CurrencyrateRepo {
     val q: Fragment = {
       sql"""insert into "sales"."currencyrate"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning "currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"
+      RETURNING "currencyrateid", "currencyratedate", "fromcurrencycode", "tocurrencycode", "averagerate", "endofdayrate", "modifieddate"
       """
     }
     return q.updateReturning(CurrencyrateRow.`_rowParser`.exactlyOne()).runUnchecked(c)

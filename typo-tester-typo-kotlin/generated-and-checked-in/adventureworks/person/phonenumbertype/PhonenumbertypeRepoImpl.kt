@@ -38,7 +38,7 @@ class PhonenumbertypeRepoImpl() : PhonenumbertypeRepo {
   override fun insert(
     unsaved: PhonenumbertypeRow,
     c: Connection
-  ): PhonenumbertypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"phonenumbertype\"(\"phonenumbertypeid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(PhonenumbertypeId.pgType, unsaved.phonenumbertypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nreturning \"phonenumbertypeid\", \"name\", \"modifieddate\"\n"))
+  ): PhonenumbertypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"phonenumbertype\"(\"phonenumbertypeid\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(PhonenumbertypeId.pgType, unsaved.phonenumbertypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"phonenumbertypeid\", \"name\", \"modifieddate\"\n"))
     .updateReturning(PhonenumbertypeRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -59,7 +59,7 @@ class PhonenumbertypeRepoImpl() : PhonenumbertypeRepo {
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
       values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"phonenumbertype\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nreturning \"phonenumbertypeid\", \"name\", \"modifieddate\"\n"))
+    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"phonenumbertype\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"phonenumbertypeid\", \"name\", \"modifieddate\"\n"))
     return q.updateReturning(PhonenumbertypeRow._rowParser.exactlyOne()).runUnchecked(c)
   }
 

@@ -31,7 +31,7 @@ class OrderHistoryRepoImpl extends OrderHistoryRepo {
   override def insert(unsaved: OrderHistoryRow)(using c: Connection): OrderHistoryRow = {
   sql"""insert into `order_history`(`order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)
     values (${Fragment.encode(OrdersId.pgType, unsaved.orderId)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.previousStatus)}, ${Fragment.encode(MariaTypes.text, unsaved.newStatus)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.changedBy)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.changeReason)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.metadata)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)})
-    returning `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`
+    RETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`
     """
     .updateReturning(OrderHistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -66,7 +66,7 @@ class OrderHistoryRepoImpl extends OrderHistoryRepo {
     val q: Fragment = {
       sql"""insert into `order_history`(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
-      returning `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`
+      RETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`
       """
     }
     return q.updateReturning(OrderHistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
