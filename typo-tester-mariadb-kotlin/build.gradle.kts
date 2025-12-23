@@ -7,10 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation(files(
-        "../.bleep/builds/normal/.bloop/typo-dsl-java/classes",
-        "../.bleep/builds/normal/.bloop/typo-runtime-java/classes"
-    ))
+    api(project(":typo-dsl-kotlin"))
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2")

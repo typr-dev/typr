@@ -99,6 +99,9 @@ object KotlinDbTypes {
             { it }
         )
 
+        // Decimal/Numeric
+        val numeric: MariaType<java.math.BigDecimal> = typo.runtime.MariaTypes.numeric
+
         // Boolean
         val bool: MariaType<Boolean> = typo.runtime.MariaTypes.bool.bimap(
             SqlFunction { it },
