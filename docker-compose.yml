@@ -1,6 +1,6 @@
 # Use postgres/example user/password credentials
 services:
-  db:
+  postgres:
     image: ghcr.io/oyvindberg/typo/typo-postgres${PG_MAJOR-16}:latest
     restart: always
     environment:
@@ -28,15 +28,13 @@ services:
       - ./db/mariadb:/docker-entrypoint-initdb.d
 
   oracle:
-    # Use regular (non-slim) image - slim requires decompression which can fail
-    image: gvenzl/oracle-free:23-arm64
+    # Multi-arch image works on both ARM64 (local dev) and AMD64 (CI)
+    image: gvenzl/oracle-free:23-slim
     restart: always
     environment:
       ORACLE_PASSWORD: password
       APP_USER: typo
       APP_USER_PASSWORD: typo_password
-    # Native ARM64 support available since Oracle 23.5 (Sep 2024)
-    # Docker will automatically pull the correct image for the platform
     ports:
       - 1521:1521
     volumes:
@@ -50,6 +48,12 @@ services:
           memory: 4g
         reservations:
           memory: 2g
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
 
 volumes:
   oracle-data:
