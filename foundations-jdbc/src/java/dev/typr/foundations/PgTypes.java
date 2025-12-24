@@ -259,6 +259,10 @@ public interface PgTypes {
   PgType<short[]> smallintArrayUnboxed = int2ArrayUnboxed.renamed("smallint");
   PgType<String> bpchar =
       PgType.of("bpchar", PgRead.readString, PgWrite.writeString, PgText.textString, PgJson.text);
+  // PostgreSQL internal single-character type used in system catalogs (e.g., pg_class.relkind)
+  PgType<String> pgchar =
+      PgType.of("char", PgRead.readString, PgWrite.writeString, PgText.textString, PgJson.text);
+  PgType<String[]> pgcharArray = pgchar.array(PgRead.readStringArray, String[]::new);
   PgType<String> text =
       PgType.of("text", PgRead.readString, PgWrite.writeString, PgText.textString, PgJson.text);
   PgType<String[]> bpcharArray = bpchar.array(PgRead.readStringArray, String[]::new);

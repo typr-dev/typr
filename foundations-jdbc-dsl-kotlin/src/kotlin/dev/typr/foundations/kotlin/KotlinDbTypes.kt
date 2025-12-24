@@ -34,6 +34,10 @@ object KotlinDbTypes {
             SqlFunction { it },
             { it }
         )
+        val oid: PgType<Long> = dev.typr.foundations.PgTypes.oid.bimap(
+            SqlFunction { it },
+            { it }
+        )
         val float4: PgType<Float> = dev.typr.foundations.PgTypes.float4.bimap(
             SqlFunction { it },
             { it }
