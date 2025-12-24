@@ -1,28 +1,26 @@
-# Typo - Type-Safe PostgreSQL Code Generator for Scala
+# Typr - Type-Safe Database Code Generator for JVM Languages
 
 ## Project Overview
 
-Typo is a PostgreSQL-specific code generator that creates type-safe Scala code from database schemas. It follows a "SQL is King" philosophy, generating strongly-typed database access code that works with popular Scala database libraries (Anorm, Doobie, ZIO-JDBC).
+Typr is a database code generator that creates type-safe JVM code from database schemas. It follows a "SQL is King" philosophy, generating strongly-typed database access code for Scala, Java, and Kotlin that works with popular database libraries.
 
-## Architecture
+### Supported Languages
+- **Scala** (2.13, 3.3, 3.7) - with cross-compilation support
+- **Java** (21+) - using records and modern Java features
+- **Kotlin** (2.0+) - with data classes and nullable types
 
-### Core Components
-- **`typo/`** - Main code generator with database introspection and code generation
-- **`typo-dsl-*`** - DSL implementations for different database libraries
-- **`typo-runtime-*`** - Runtime support libraries for generated code
-- **`typo-tester-*`** - Test projects demonstrating generated code usage
+### Supported Databases
+- **PostgreSQL** - full support including domains, enums, arrays, JSON, UUID
+- **MariaDB/MySQL** - including unsigned types and MySQL-specific features
+- **DuckDB** - embedded analytical database
+- **SQL Server** - T-SQL specific features
+- **Oracle** - including OBJECT and MULTISET types
 
-### Key Philosophy
-- SQL files are first-class citizens (stored in dedicated `.sql` files)
-- Type safety propagates through foreign key relationships
-- Generates idiomatic Scala code for each supported database library
-- PostgreSQL-specific optimizations and type support
+## Build System
 
-## Build System - Bleep
+This project uses **Bleep** (https://bleep.build/) as the primary build tool. Kotlin modules are also buildable with Gradle.
 
-This project uses **Bleep** (https://github.com/oyvindberg/bleep) as the build tool:
-
-### Common Commands
+### Common Bleep Commands
 ```bash
 # Compile all projects
 bleep compile
@@ -30,70 +28,336 @@ bleep compile
 # Run tests
 bleep test
 
-# Run specific test project
-bleep test typr-tester-anorm
+# Format code (always run before testing/committing)
+bleep fmt
 
-# Run code generation scripts
-bleep run GeneratedAdventureWorks
-bleep run GeneratedAdventureWorks -- --watch  # Watch mode for SQL files
+# Code generation scripts
+bleep generate-adventureworks    # PostgreSQL AdventureWorks schema
+bleep generate-mariadb           # MariaDB test schema
+bleep generate-duckdb            # DuckDB test schema
+bleep generate-oracle            # Oracle test schema
+bleep generate-sqlserver         # SQL Server test schema
+bleep generate-openapi-test      # OpenAPI code generation
+bleep generate-frontpage         # Website example code
+bleep generate-sources           # Typr's internal generated code
+bleep generate-all               # Run multiple generators in parallel
 
-# Cross-compile for different Scala versions
-bleep compile @jvm212  # Scala 2.12
-bleep compile @jvm213  # Scala 2.13
-bleep compile @jvm3    # Scala 3.3
+# Documentation
+bleep generate-docs              # Generate documentation with mdoc
 ```
 
-### Key Scripts (defined in bleep.yaml)
-- **`GeneratedAdventureWorks`** - Main code generation from AdventureWorks DB
-- **`GeneratedSources`** - Generate Typo's internal code from database
-- **`GenerateDocumentation`** - Generate documentation using mdoc
-
-## Development Environment
-
-### Database Setup
+### Gradle for Kotlin
+Kotlin modules have Gradle build files for IDE support and alternative building:
 ```bash
-# Start PostgreSQL and MariaDB with test data
+./gradlew :testers:pg:kotlin:build
+./gradlew :typr-dsl-kotlin:build
+```
+
+The Gradle project includes:
+- `typr-runtime-java` - Java runtime module
+- `typr-dsl-java` - Java DSL module
+- `typr-dsl-kotlin` - Kotlin DSL module
+- All Kotlin testers (`testers:pg:kotlin`, `testers:mariadb:kotlin`, etc.)
+- OpenAPI Kotlin testers (`testers:openapi:kotlin:jaxrs`, `spring`, `quarkus`)
+
+## Tester Project Layout
+
+Each tester project follows a consistent structure with generated code and manually written tests:
+
+### Directory Structure
+```
+testers/{database}/{language}/
+├── generated-and-checked-in/     # Generated code (committed to git)
+│   └── {package}/                # Package structure matching generation options
+│       ├── {schema}/             # Schema-specific code
+│       │   ├── {table}/          # Table repositories, row types, ID types
+│       │   └── ...
+│       └── ...
+├── src/                          # Manually written test code
+│   └── {lang}/                   # java/, kotlin/, or scala/
+│       └── {package}/            # Test files (e.g., *Test.java, *Test.scala)
+├── build.gradle.kts              # Kotlin testers only - Gradle build file
+└── gradle.properties             # Kotlin testers only - Gradle properties
+```
+
+### Scala Cross-Compilation
+Scala testers with cross-compilation have separate generated folders per version:
+```
+testers/pg/scala/anorm/
+├── generated-and-checked-in-2.13/    # Scala 2.13 generated code
+├── generated-and-checked-in-3/       # Scala 3 generated code
+└── src/scala/                        # Shared test code
+```
+
+### Examples
+
+**Java tester** (`testers/pg/java/`):
+- `generated-and-checked-in/adventureworks/` - Generated repos, rows, IDs
+- `src/java/adventureworks/` - Test files like `DomainInsertImpl.java`, `SeekDbTest.java`
+
+**Kotlin tester** (`testers/pg/kotlin/`):
+- `generated-and-checked-in/` - Generated Kotlin code
+- `src/kotlin/` - Test files
+- `build.gradle.kts` - Gradle build configuration
+
+**Scala Anorm tester** (`testers/pg/scala/anorm/`):
+- `generated-and-checked-in-2.13/` - Scala 2.13 variant
+- `generated-and-checked-in-3/` - Scala 3 variant
+- `src/scala/adventureworks/` - Tests like `ArrayTest.scala`, `RecordTest.scala`
+
+### Generation Variants
+
+The `GeneratedAdventureWorks.scala` script generates multiple variants:
+- Scala 2.13 + Anorm + PlayJson
+- Scala 3 + Anorm + PlayJson
+- Scala 2.13 + Doobie + Circe
+- Scala 3 + Doobie + Circe
+- Scala 2.13 + ZIO-JDBC + ZioJson
+- Scala 3 + ZIO-JDBC + ZioJson
+- Java + Typo DSL + Jackson
+- Scala 3 with Java types + Typo DSL + Jackson
+- Scala 3 with Scala types + Typo DSL + Jackson
+
+## Docker-Compose Database Setup
+
+### Starting Databases
+```bash
+# Start all databases
 docker-compose up -d
 
-# PostgreSQL runs on localhost:6432
-# Database: Adventureworks
-# User: postgres
-# Password: password
-
-# MariaDB runs on localhost:3307
-# Database: typo
-# User: typo
-# Password: password
+# Check container status
+docker-compose ps
 ```
 
-### Generated Code Structure
-- **Row Classes** - Case classes mirroring table structure
-- **ID Types** - Strongly-typed primary keys (e.g., `UserId(value: Long)`)
-- **Repository Interfaces** - Complete CRUD operations
-- **Unsaved Row Types** - For insertions with default handling
-- **SQL DSL** - Type-safe query building (optional)
+### Database Connections
+| Database   | Port | Database     | User     | Password            |
+|------------|------|--------------|----------|---------------------|
+| PostgreSQL | 6432 | Adventureworks | postgres | password           |
+| MariaDB    | 3307 | typr         | typr     | password            |
+| Oracle     | 1521 | -            | typr     | typr_password       |
+| SQL Server | 1433 | -            | sa       | YourStrong@Passw0rd |
 
-## Code Generation Process
+### Database Initialization
 
-### Main Generation Script (scripts/GeneratedAdventureWorks.scala)
+**PostgreSQL** uses mounted volumes and init scripts:
+- `init/install.sh` - Main initialization script
+- `db/pg/` - Schema files mounted to `/docker-entrypoint-initdb.d/pg/`
+- Files executed: `install.sql`, `test-tables.sql`, `issue148.sql`, `frontpage/schema.sql`
+
+**MariaDB** auto-executes SQL files from mounted directory:
+- `db/mariadb/` - Schema files mounted to `/docker-entrypoint-initdb.d/`
+- Files executed in order: `01-test-tables.sql`, `02-ordering-system.sql`
+
+**Oracle** uses container init scripts:
+- `db/oracle/` - Mounted to `/container-entrypoint-initdb.d/`
+- Files: `00-init.sql`, `01-comprehensive-schema.sql`
+
+**SQL Server** requires manual initialization or application-level setup.
+
+### Ensuring Databases Are Up to Date
+
+**PostgreSQL schema changes:**
+```bash
+# 1. Add/modify SQL files in db/pg/
+# 2. Update init/install.sh if adding new files
+# 3. Restart to reinitialize
+docker-compose down
+docker-compose up -d
+
+# 4. Regenerate code
+bleep generate-adventureworks
+```
+
+**MariaDB schema changes:**
+```bash
+# 1. Modify files in db/mariadb/ (numbered for execution order)
+# 2. Restart to reinitialize
+docker-compose down
+docker-compose up -d
+
+# 3. Regenerate code
+bleep generate-mariadb
+```
+
+**Oracle schema changes:**
+```bash
+# 1. Modify files in db/oracle/
+# 2. Remove volume to force reinitialization
+docker-compose down
+docker volume rm typr_oracle-data
+docker-compose up -d
+
+# 3. Wait for Oracle to be ready (can take 1-2 minutes)
+docker-compose logs -f oracle
+
+# 4. Regenerate code
+bleep generate-oracle
+```
+
+**Complete reset (all databases):**
+```bash
+docker-compose down -v    # -v removes volumes
+docker-compose up -d
+# Wait for all databases to initialize
+bleep generate-all
+```
+
+### Persistent Volumes
+- `oracle-data` - Oracle database files (persists across restarts)
+- `sqlserver-data` - SQL Server database files
+
+To fully reset a database with persistent volumes, you must remove the volume:
+```bash
+docker volume rm typr_oracle-data
+docker volume rm typr_sqlserver-data
+```
+
+## SQL File Locations
+
+There are two types of SQL file locations:
+
+### Schema Files (`db/{database}/`)
+Schema definition files mounted into Docker containers for database initialization:
+- `db/pg/` - PostgreSQL (install.sql, test-tables.sql, frontpage/, issue*.sql)
+- `db/mariadb/` - MariaDB (01-test-tables.sql, 02-ordering-system.sql)
+- `db/oracle/` - Oracle (00-init.sql, 01-comprehensive-schema.sql)
+- `db/duckdb/` - DuckDB schemas
+
+### Query Files (`{database}_sql/`)
+SQL query files that Typr uses to generate typed query classes:
+- `adventureworks_sql/` - PostgreSQL SQL queries for AdventureWorks
+- `mariadb_sql/` - MariaDB SQL queries
+- `sqlserver_sql/` - SQL Server SQL queries
+
+These files contain parameterized SQL that generates typed repository methods:
+```sql
+-- mariadb_sql/customer_orders.sql
+SELECT c.customer_id, c.name, COUNT(o.order_id) as order_count
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE c.customer_id = :customer_id:int!
+GROUP BY c.customer_id, c.name
+```
+
+## DSL Architecture
+
+### Core DSL (Modern)
+The DSL is implemented in **Java** (`typr-dsl-java`) and wrapped for other languages:
+
+```
+typr-dsl-java     <-- Core implementation (Java)
+       |
+       +-- typr-dsl-kotlin   (Kotlin wrapper)
+       +-- typr-dsl-scala    (Scala wrapper)
+```
+
+**Important**: When making changes to the DSL, you must update all three implementations to keep them in sync. The Java implementation is the source of truth.
+
+### Legacy DSL Modules
+The following modules are **legacy** and will not be improved:
+- `typr-dsl-anorm` - Anorm integration (Scala only, PostgreSQL only)
+- `typr-dsl-doobie` - Doobie integration (Scala only, PostgreSQL only)
+- `typr-dsl-zio-jdbc` - ZIO-JDBC integration (Scala only, PostgreSQL only)
+- `typr-runtime-anorm` - Anorm runtime (Scala only, PostgreSQL only)
+- `typr-runtime-doobie` - Doobie runtime (Scala only, PostgreSQL only)
+- `typr-runtime-zio-jdbc` - ZIO-JDBC runtime (Scala only, PostgreSQL only)
+
+These legacy modules only support PostgreSQL and Scala. They exist for backward compatibility but new features target the modern Typo DSL which works across all databases and languages.
+
+**Future plan**: Replace legacy integrations with a higher-kinded type abstraction in codegen.
+
+### JSON Libraries
+- **Jackson** - Multi-language (Java, Kotlin, Scala)
+- **Circe** - Scala functional JSON
+- **Play JSON** - Play Framework JSON
+- **ZIO JSON** - ZIO ecosystem JSON
+
+## Project Structure
+
+```
+typr/                              # Main code generator
+├── src/scala/typr/                # Public API
+│   ├── Lang.scala                 # Language abstraction
+│   ├── Options.scala              # Generation options
+│   ├── DbType.scala               # Database type detection
+│   ├── generateFromDb.scala       # Main entry point
+│   └── internal/                  # Implementation
+│       ├── codegen/               # Language-specific code generation
+│       │   ├── LangScala.scala    # Scala code generation
+│       │   ├── LangJava.scala     # Java code generation
+│       │   └── LangKotlin.scala   # Kotlin code generation
+│       ├── pg/                    # PostgreSQL adapter
+│       ├── mariadb/               # MariaDB adapter
+│       ├── oracle/                # Oracle adapter
+│       ├── duckdb/                # DuckDB adapter
+│       └── sqlserver/             # SQL Server adapter
+│   └── openapi/                   # OpenAPI code generation
+
+testers/                           # Integration test projects
+├── pg/                            # PostgreSQL testers
+│   ├── java/                      # Java tester
+│   ├── kotlin/                    # Kotlin tester (Gradle buildable)
+│   └── scala/                     # Scala testers (anorm, doobie, zio-jdbc, scalatypes, javatypes)
+├── mariadb/                       # MariaDB testers (java, kotlin, scala)
+├── duckdb/                        # DuckDB testers (java, kotlin, scala)
+├── oracle/                        # Oracle testers (java, kotlin, scala)
+├── sqlserver/                     # SQL Server testers (java, kotlin, scala)
+└── openapi/                       # OpenAPI framework testers
+    ├── java/                      # JAX-RS, Spring, Quarkus
+    ├── kotlin/                    # JAX-RS, Spring, Quarkus
+    └── scala/                     # HTTP4s, Spring
+
+typr-runtime-java/                 # Java runtime (base for all languages)
+typr-dsl-java/                     # Java SQL DSL (core implementation)
+typr-dsl-kotlin/                   # Kotlin SQL DSL (wraps Java DSL)
+typr-dsl-scala/                    # Scala SQL DSL (wraps Java DSL)
+typr-dsl-anorm/                    # [LEGACY] Anorm-specific DSL (Scala, PostgreSQL only)
+typr-dsl-doobie/                   # [LEGACY] Doobie-specific DSL (Scala, PostgreSQL only)
+typr-dsl-zio-jdbc/                 # [LEGACY] ZIO-JDBC-specific DSL (Scala, PostgreSQL only)
+
+typr-scripts/                      # Generation scripts
+├── GeneratedAdventureWorks.scala  # PostgreSQL generation
+├── GeneratedMariaDb.scala         # MariaDB generation
+├── GeneratedDuckDb.scala          # DuckDB generation
+├── GeneratedOracle.scala          # Oracle generation
+├── GeneratedSqlServer.scala       # SQL Server generation
+├── GenerateOpenApiTest.scala      # OpenAPI generation
+├── GenerateAll.scala              # Run all generators
+└── ...
+
+db/                                # Schema files (mounted to Docker)
+├── pg/                            # PostgreSQL schemas
+├── mariadb/                       # MariaDB schemas
+├── duckdb/                        # DuckDB schemas
+└── oracle/                        # Oracle schemas
+
+adventureworks_sql/                # PostgreSQL SQL query files
+mariadb_sql/                       # MariaDB SQL query files
+sqlserver_sql/                     # SQL Server SQL query files
+```
+
+## Code Generation
+
+### Main Entry Point
 ```scala
-// Basic setup
-val options = typr.Options(
-  pkg = "adventureworks",
-  dbLib = typr.DbLib.Anorm,
-  jsonLib = typr.JsonLib.PlayJson,
-  enablePrimaryKeyType = true,
-  enableTestInserts = true
+typr.generateFromDb(
+  dataSource = TypoDataSource.fromDataSource(ds),
+  options = Options(
+    pkg = "myapp",
+    lang = Lang.Kotlin,           // Lang.Scala, Lang.Java, Lang.Kotlin
+    dbLib = DbLib.Typo,           // DbLib.Typo (modern) or DbLib.Anorm/Doobie/ZioJdbc (legacy, Scala+PostgreSQL only)
+    jsonLibs = List(JsonLib.Jackson)
+  ),
+  targetFolder = Path.of("generated"),
+  selector = Selector.All
 )
-
-// Generate code
-typo.generate(options, db, sqlFiles, folder)
 ```
 
 ### Key Configuration Options
 - `pkg` - Base package name
-- `dbLib` - Database library (Anorm, Doobie, ZioJdbc)
-- `jsonLib` - JSON library (PlayJson, Circe, ZioJson)
+- `lang` - Target language (Lang.Scala, Lang.Java, Lang.Kotlin)
+- `dbLib` - Database library: Typo (modern, all DBs) or Anorm/Doobie/ZioJdbc (legacy, PostgreSQL+Scala only)
+- `jsonLibs` - JSON libraries (Jackson, Circe, PlayJson, ZioJson)
 - `enablePrimaryKeyType` - Generate type-safe ID types
 - `enableTestInserts` - Generate test data helpers
 - `enableDsl` - Generate SQL DSL
@@ -103,8 +367,8 @@ typo.generate(options, db, sqlFiles, folder)
 ```scala
 // Custom type mappings
 TypeOverride.relation {
-  case (_, "firstname") => "adventureworks.userdefined.FirstName"
-  case ("sales.creditcard", "creditcardid") => "adventureworks.userdefined.CustomCreditcardId"
+  case (_, "firstname") => "myapp.userdefined.FirstName"
+  case ("sales.creditcard", "creditcardid") => "myapp.userdefined.CustomCreditcardId"
 }
 
 // Nullability overrides
@@ -113,60 +377,17 @@ NullabilityOverride.relation {
 }
 ```
 
-## Testing
+## Generated Code Structure
 
-### Test Structure
-- **Unit Tests** - Individual repository methods
-- **Integration Tests** - Real database operations
-- **DSL Tests** - Type-safe query DSL
-- **Snapshot Tests** - Generated SQL verification
-
-### TestInsert Pattern
-```scala
-// Generated test data factory
-val testInsert = new TestInsert(new Random(0), DomainInsert)
-val productCategory = testInsert.productionProductcategory()
-val product = testInsert.productionProduct(productcategory = productCategory.productcategoryid)
-```
-
-### Running Tests
-```bash
-# All tests (transactional, rolled back)
-bleep test
-
-# Specific test class
-bleep test --only DepartmentTest
-
-# Watch mode
-bleep test --watch
-```
-
-## SQL Files Integration
-
-### SQL File Syntax
-```sql
--- Parameters: :param_name:type! (required), :param_name:type? (optional)
-SELECT p.productid, p.name as product_name!
-FROM production.product p
-WHERE p.productcategory = :category_id:adventureworks.production.productcategory.ProductcategoryId!
-```
-
-### Type Annotations
-- `!` suffix - Column is non-null
-- `?` suffix - Parameter is optional
-- Custom types reference generated types
-
-## Key Features
-
-### Type Safety
-- **Type Flow** - Foreign key relationships propagate specific types
-- **ID Types** - Prevents mixing different entity IDs
-- **Nullability Inference** - Comprehensive null-safety analysis
-- **Custom Types** - Support for PostgreSQL domains, enums, arrays
+- **Row Classes** - Data classes mirroring table structure (case class/record/data class)
+- **ID Types** - Strongly-typed primary keys (e.g., `UserId(value: Long)`)
+- **Repository Interfaces** - Complete CRUD operations
+- **Unsaved Row Types** - For insertions with default handling
+- **SQL DSL** - Type-safe query building (optional)
 
 ### SQL DSL Example
 ```scala
-// Type-safe query building
+// Type-safe query building (works in all languages)
 val query = select
   .from(person)
   .join(address)
@@ -176,202 +397,116 @@ val query = select
   .limit(10)
 ```
 
-### Generated Repository Methods
-```scala
-// CRUD operations
-def insert(unsaved: PersonRowUnsaved): PersonRow
-def update(row: PersonRow): Boolean
-def delete(id: PersonId): Boolean
-def selectAll: List[PersonRow]
-def selectById(id: PersonId): Option[PersonRow]
+## SQL Files Integration
+
+### SQL File Syntax
+```sql
+-- Parameters: :param_name:type! (required), :param_name:type? (optional)
+SELECT p.productid, p.name as product_name!
+FROM production.product p
+WHERE p.productcategory = :category_id:myapp.production.productcategory.ProductcategoryId!
 ```
+
+### Type Annotations
+- `!` suffix - Column is non-null
+- `?` suffix - Parameter is optional
+- Custom types reference generated types
 
 ## Development Workflow
 
-### Making Changes
-1. **Code Generation Changes** - Modify scripts in `scripts/`
-2. **Core Changes** - Edit `typo/` source code
-3. **Test Changes** - Update test files in `typo-tester-*`
-4. **Documentation** - Update files in `site-in/`
+### Working on Issues
+1. **Create Test Case**: Add SQL file in `db/pg/issueNNN.sql` (or appropriate database folder)
+2. **Update Install Script**: Add to `init/install.sh` for PostgreSQL
+3. **Restart Database**: `docker-compose down && docker-compose up -d`
+4. **Generate Code**: Run appropriate generator (e.g., `bleep generate-adventureworks`)
+5. **Trace Issue**: Examine generated code
+6. **Commit Test Setup**: Commit before making changes
+7. **Implement Fix**: Make code changes
+8. **Format and Test**: `bleep fmt && bleep test`
+9. **Commit Fix**: Reference issue number
 
-### Regenerating Code
+### Testing
 ```bash
-# Watch for SQL file changes and regenerate
-bleep run GeneratedAdventureWorks -- --watch
+# Run all tests
+bleep test
 
-# Regenerate documentation
-bleep run GenerateDocumentation
-```
+# Test specific database/language combination
+bleep test testers/pg/scala/anorm
+bleep test testers/pg/java
+bleep test testers/mariadb/scala
 
-### Testing Changes
-```bash
-# Test specific database library
-bleep test typr-tester-anorm
-bleep test typr-tester-doobie
-bleep test typr-tester-zio-jdbc
-
-# Test core functionality
-bleep test typo
+# Kotlin tests via Gradle
+./gradlew :testers:pg:kotlin:test
 ```
 
 ## Documentation
 
-### Building Documentation Site
+### Building Documentation
 ```bash
-cd site
-npm install
-npm run build
-npm run serve
-```
-
-### Documentation Structure
-- **`site-in/`** - Source markdown files
-- **`site/`** - Generated Docusaurus site
-- **Type Safety** - Documentation on type system features
-- **Customization** - Guides for customizing generation
-- **Patterns** - Common usage patterns
-
-## Common Tasks
-
-### Adding New Database Library Support
-1. Create `typo-dsl-newlib` module
-2. Create `typo-runtime-newlib` module
-3. Add to `DbLib` enum in core
-4. Implement code generation templates
-5. Add test project `typo-tester-newlib`
-
-### Adding New PostgreSQL Type Support
-1. Add to `PgType` enum
-2. Update type mapping in `ScalaType`
-3. Add runtime support if needed
-4. Update tests and documentation
-
-### Debugging Generated Code
-- Generated code is in `generated-and-checked-in/` directories
-- Use `--watch` mode to see changes in real-time
-- Check `bleep.yaml` for script configurations
-- Use database introspection tools to verify schema
-
-### Working with Frontpage Code Examples
-
-The website's code examples are generated from real Typo code using the `frontpage` schema in the test database. This ensures that all examples shown on the website are accurate and compile correctly.
-
-**Schema Location**: `db/pg/frontpage/` contains:
-- `schema.sql` - Database schema for frontpage examples
-- `*.sql` - SQL files that generate Typo repositories and types
-
-**Generation Process**:
-1. **Modify Schema**: Edit files in `db/pg/frontpage/` to change database structure or add new examples
-2. **Restart Database**: Run `docker-compose down && docker-compose up -d` to apply schema changes  
-3. **Generate Code**: Run `bleep run GeneratedFrontpage` to generate fresh Scala code
-4. **Update Website**: Manually copy the generated code from `frontpage-generated/` into website components in `site/src/components/FeatureShowcase/index.js`
-
-**Important Notes**:
-- The `frontpage-generated/` directory is gitignored - we don't check in generated code
-- The frontpage schema uses real PostgreSQL features (domains, enums, foreign keys) to showcase Typo's capabilities
-- Always verify examples compile by running `bleep generate-docs` after updating website code
-- This is the only part of the documentation workflow that requires manual copying of generated code
-- Website logo and favicon can be regenerated using `site/scripts/generate-logo.js` and `npm run generate-favicon`
-
-**Example Workflow**:
-```bash
-# 1. Edit schema
-vi db/pg/frontpage/schema.sql
-
-# 2. Restart database
-docker-compose down && docker-compose up -d
-
-# 3. Generate fresh code
-bleep run GeneratedFrontpage
-
-# 4. Copy relevant parts to website (manual step)
-# Look in frontpage-generated/ for the code you need
-
-# 5. Verify documentation builds
 bleep generate-docs
+cd site && npm install && npm run build
 ```
+
+### Frontpage Examples
+Website code examples come from the `frontpage` schema:
+1. Edit `db/pg/frontpage/schema.sql`
+2. Restart database: `docker-compose down && docker-compose up -d`
+3. Generate: `bleep generate-frontpage`
+4. Copy from `frontpage-generated/` to website components
+
+## Key Files
+
+- `bleep.yaml` - Main build configuration (all projects, scripts, templates)
+- `build.gradle.kts` - Root Gradle config for Kotlin modules
+- `settings.gradle.kts` - Gradle project structure
+- `docker-compose.yml` - Database infrastructure (PostgreSQL, MariaDB, Oracle, SQL Server)
+- `init/install.sh` - PostgreSQL initialization script
 
 ## Troubleshooting
 
 ### Common Issues
-- **Database Connection** - Ensure PostgreSQL is running on port 6432
-- **Generated Code Compilation** - Check type overrides and nullability settings
-- **SQL File Syntax** - Verify parameter syntax and type annotations
-- **Bleep Issues** - Check `bleep.yaml` syntax and script configurations
+- **Database Connection**: Ensure Docker containers are running
+- **Kotlin Compilation**: Use Gradle for Kotlin modules if Bleep has issues
+- **Generated Code Errors**: Re-run appropriate generator after schema changes
+- **Oracle slow to start**: Wait 1-2 minutes, check `docker-compose logs -f oracle`
+- **Stale data**: Remove volumes with `docker-compose down -v`
 
 ### Debug Commands
 ```bash
-# Check database connection
+# Check PostgreSQL connection
 psql -h localhost -p 6432 -U postgres -d Adventureworks
 
-# Verify generated code
-find . -name "generated-and-checked-in" -type d
+# Check MariaDB connection
+mysql -h 127.0.0.1 -P 3307 -u typr -ppassword typr
 
-# Check Bleep configuration
+# Check Oracle connection
+sqlplus typr/typr_password@localhost:1521/FREEPDB1
+
+# Check SQL Server connection
+sqlcmd -S localhost,1433 -U sa -P 'YourStrong@Passw0rd'
+
+# List Bleep projects
 bleep projects --json
+
+# Check Docker container logs
+docker-compose logs -f postgres
+docker-compose logs -f oracle
 ```
-
-This project represents a sophisticated approach to type-safe database access in Scala, with comprehensive tooling and extensive test coverage.
-
-## Development Workflow
-
-When working on Typo issues, follow this workflow:
-
-1. **Create Test Case**: Add a minimal reproduction SQL file in `db/pg/issueNNN.sql`
-2. **Update Install Script**: Add the SQL file to `init/install.sh`  
-3. **Restart Database**: Run `docker-compose down && docker-compose up -d`
-4. **Generate Code**: Run `bleep generate-adventureworks` to generate test code
-5. **Trace Issue**: Examine generated code to understand the problem
-6. **Commit Test Setup**: Always commit the test setup before making changes
-7. **Implement Fix**: Make necessary code changes
-8. **Format Code**: Always run `bleep fmt` before testing
-9. **Run Tests**: Always run `bleep test` before committing
-10. **Commit Fix**: Commit with descriptive message referencing the issue
-
-### Debugging and Development Approach
-
-**General Problem-Solving Process**:
-1. **Create Minimal Reproduction**: Add minimal test case to `db/pg/issueNNN.sql`
-2. **Set up Test Environment**: Update `init/install.sh`, restart database, regenerate code
-3. **Understand the Issue**: Trace through generated code to identify root cause
-4. **Test-Driven Development**:
-    - Add debug logging to capture relevant data
-    - Create comprehensive test suite covering edge cases
-    - Use static test data based on debug output
-    - Implement fix and verify all tests pass
-5. **Code Quality**: Always run `bleep fmt` and `bleep test` before committing
-6. **Commit**: Clear commit message referencing the issue number
-
-**Debug Techniques**:
-- **Temporary Logging**: Add `println` statements to capture runtime data
-- **Static Analysis**: Read generated code to understand behavior
-- **Test Coverage**: Create tests for various scenarios (different names, ordering, edge cases)
-- **Incremental Testing**: Verify each component works in isolation
-
-**Code Generation Issues**:
-- **Schema Analysis**: Use database introspection to understand relationships
-- **AST Manipulation**: Modify code generation trees (`sc.Code`, `sc.Type`, etc.)
-- **Template Generation**: Update generation logic in core modules
-- **Verification**: Check generated code produces expected output
-
-**Testing Strategy**:
-- **Unit Tests**: Test individual components in isolation
-- **Integration Tests**: Test full generation pipeline
-- **Regression Tests**: Ensure fixes don't break existing functionality
-- **Edge Case Coverage**: Test boundary conditions and unusual schemas
 
 ## Project Memories and Notes
 
-### Code Generation and Development Workflow
-- You need to run `bleep generate-adventureworks` to see the effect on codegen based on what is in the test database. Do this before running tests
+### Code Generation Philosophy
+- Never generate code that relies on derivation - we are the deriver
+- Run appropriate generator (e.g., `bleep generate-adventureworks`) before testing to see codegen effects
 
-### Development Philosophy
-- We should never generate code which relies on derivation. *we* are the deriver
+### Development Rules
+- Always run `bleep fmt` before testing
+- Always run `bleep test` before committing
+- Always run bleep with `--no-color`
 
-### Memories
+### Strict Orders
 - **NEVER REPORT SUCCESS IF ITS NOT A SUCCESS.**
-- never ever use default parameters for anything
-- always run bleep with --no-color
-- UNDER NO CIRCUMSTANCES ARE YOU USING UNTYPED HTTP CLIENTS WHEN IMPLEMENTING INTEGRATION TESTS. WE ARE TESTING GENERATED CODE IN BOTH ENDS HERE
+- Never ever use default parameters for anything
+ CODE IN BOTH ENDS HERE
 - YOU ARE NOT UNDER ANY CIRCUMSTANCE ALLOWED TO CAST TO CHEAT THE TYPE SYSTEM. IF YOU COME ACROSS A SITUATION WHERE YOU HAVE NO OTHER CHOICE, STOP AND ASK USER
 - NEVER EVER PERFORM DESTRUCTIVE GIT ACTIONS IN GIT WHERE CHANGES ARE IRREVOCABLY LOST. GIT CHECKOUT FILE? STASH CHANGES INSTEAD. GIT RESET HARD? A STASH INSTEAD
