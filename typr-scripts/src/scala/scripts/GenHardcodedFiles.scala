@@ -138,13 +138,15 @@ object GenHardcodedFiles extends BleepCodegenScript("GenHardcodedFiles") {
       val dialect: Dialect =
         if (target.project.value.contains("jvm3")) Dialect.Scala3 else Dialect.Scala2XSource3
 
-      val isTypoScala = target.project.value.contains("typr-scala")
+      val projectName = target.project.value
+      val isTypoScala = projectName.contains("typr-scala") || projectName.contains("/scalatypes")
+      val isJava = projectName.contains("typr-java") || projectName.endsWith("/java")
       val (language, dbLib, jsonLib, dslEnabled) =
-        if (target.project.value.contains("doobie"))
+        if (projectName.contains("doobie"))
           (LangScala.javaDsl(dialect, TypeSupportScala), Some(DbLibName.Doobie), JsonLibName.Circe, true)
-        else if (target.project.value.contains("zio-jdbc"))
+        else if (projectName.contains("zio-jdbc"))
           (LangScala.javaDsl(dialect, TypeSupportScala), Some(DbLibName.ZioJdbc), JsonLibName.ZioJson, true)
-        else if (target.project.value.contains("typr-java"))
+        else if (isJava)
           (LangJava, Some(DbLibName.Typo), JsonLibName.Jackson, true)
         else if (isTypoScala)
           (LangScala.scalaDsl(Dialect.Scala3, TypeSupportJava), Some(DbLibName.Typo), JsonLibName.Jackson, true)
