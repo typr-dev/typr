@@ -51,4 +51,8 @@ object SqlExprExtensions {
       underlying.substring(from, count, Bijections.identity[String])
     }
   }
+
+  // Type-safe in() methods are defined on each TupleExprN record in Java.
+  // For Scala lists, use: tupleExpr.in(scalaList.asJava)
+  // Import scala.jdk.CollectionConverters._ for asJava
 }

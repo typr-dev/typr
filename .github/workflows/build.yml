@@ -55,20 +55,6 @@ jobs:
       - name: Run general tests
         run: bleep test tests
 
-  build-scala212:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
-      - uses: coursier/cache-action@v6
-        with:
-          extraFiles: bleep.yaml
-
-      - name: Compile for 2.12
-        run: bleep compile typr@jvm212
-
   build-postgres:
     runs-on: ubuntu-latest
     timeout-minutes: 25

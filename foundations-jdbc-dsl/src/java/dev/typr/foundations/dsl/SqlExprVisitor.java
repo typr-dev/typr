@@ -36,6 +36,10 @@ public interface SqlExprVisitor<T, Row, Result> {
   <F extends Tuples.TupleExpr<R>, R extends Tuples.Tuple> Result visitInSubqueryExpr(
       SqlExpr.InSubquery<?, F, R> inSubquery);
 
+  Result visitTupleInExpr(SqlExpr.TupleIn tupleIn);
+
+  <F, R> Result visitTupleInSubqueryExpr(SqlExpr.TupleInSubquery<F, R> tupleInSubquery);
+
   <F, R> Result visitExistsExpr(SqlExpr.Exists<F, R> exists);
 
   // These can return T
@@ -131,6 +135,9 @@ public interface SqlExprVisitor<T, Row, Result> {
       case SqlExpr.RowExpr rowExpr -> visitRowExpr(rowExpr);
       case SqlExpr.CompositeIn<?, ?> compositeIn -> visitCompositeInExpr(compositeIn);
       case SqlExpr.InSubquery<?, ?, ?> inSubquery -> visitInSubqueryExpr(inSubquery);
+      case SqlExpr.TupleIn tupleIn -> visitTupleInExpr(tupleIn);
+      case SqlExpr.TupleInSubquery<?, ?> tupleInSubquery ->
+          visitTupleInSubqueryExpr(tupleInSubquery);
       case SqlExpr.Exists<?, ?> exists -> visitExistsExpr(exists);
       case SqlExpr.IncludeIf<?> includeIf -> visitIncludeIf(includeIf);
       // Aggregate functions

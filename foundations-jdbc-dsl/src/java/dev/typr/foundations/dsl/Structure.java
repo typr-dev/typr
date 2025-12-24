@@ -2,6 +2,7 @@ package dev.typr.foundations.dsl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -180,6 +181,24 @@ public interface Structure<Fields, Row> {
           public <F, R> Optional<T> visitExistsExpr(SqlExpr.Exists<F, R> exists) {
             // For Exists expressions, T is always Boolean
             Boolean result = evaluateExistsExpression(exists);
+            return Optional.of((T) result);
+          }
+
+          @Override
+          @SuppressWarnings("unchecked")
+          public Optional<T> visitTupleInExpr(SqlExpr.TupleIn tupleIn) {
+            // For TupleIn expressions, T is always Boolean
+            Boolean result = evaluateTupleInExpression(Structure.this, tupleIn, row);
+            return Optional.of((T) result);
+          }
+
+          @Override
+          @SuppressWarnings("unchecked")
+          public <F, R> Optional<T> visitTupleInSubqueryExpr(
+              SqlExpr.TupleInSubquery<F, R> tupleInSubquery) {
+            // For TupleInSubquery expressions, T is always Boolean
+            Boolean result =
+                evaluateTupleInSubqueryExpression(Structure.this, tupleInSubquery, row);
             return Optional.of((T) result);
           }
 
@@ -532,6 +551,82 @@ public interface Structure<Fields, Row> {
     // For mock queries, we pass null for the connection since mock doesn't use it
     List<R> subqueryResults = exists.subquery().toList(null);
     return !subqueryResults.isEmpty();
+  }
+
+  /**
+   * Mock-only: Evaluate a TupleIn expression. Returns true if the tuple expression's evaluated
+   * values match any of the in-memory tuple values.
+   */
+  private static <Row> Boolean evaluateTupleInExpression(
+      Structure<?, Row> structure, SqlExpr.TupleIn tupleIn, Row row) {
+    // Evaluate the tuple expression to get actual values
+    List<Object> thisRow = new ArrayList<>();
+    for (SqlExpr<?> expr : tupleIn.tuple().exprs()) {
+      Optional<?> value = structure.untypedEval(expr, row);
+      if (value.isEmpty()) {
+        return Boolean.FALSE;
+      }
+      thisRow.add(value.get());
+    }
+
+    // Check if thisRow matches any of the value tuples
+    for (Tuples.Tuple valueTuple : tupleIn.values()) {
+      Object[] tupleValues = valueTuple.asArray();
+      if (thisRow.size() != tupleValues.length) {
+        continue;
+      }
+      boolean matches = true;
+      for (int i = 0; i < thisRow.size(); i++) {
+        if (!Objects.equals(thisRow.get(i), tupleValues[i])) {
+          matches = false;
+          break;
+        }
+      }
+      if (matches) {
+        return Boolean.TRUE;
+      }
+    }
+    return Boolean.FALSE;
+  }
+
+  /**
+   * Mock-only: Evaluate a TupleInSubquery expression. Returns true if the tuple expression's
+   * evaluated values match any row in the subquery results.
+   */
+  private static <Row, F, R> Boolean evaluateTupleInSubqueryExpression(
+      Structure<?, Row> structure, SqlExpr.TupleInSubquery<F, R> tupleInSubquery, Row row) {
+    // Evaluate the tuple expression to get actual values
+    List<Object> thisRow = new ArrayList<>();
+    for (SqlExpr<?> expr : tupleInSubquery.tuple().exprs()) {
+      Optional<?> value = structure.untypedEval(expr, row);
+      if (value.isEmpty()) {
+        return Boolean.FALSE;
+      }
+      thisRow.add(value.get());
+    }
+
+    // Execute the subquery and check if thisRow matches any result
+    List<R> subqueryResults = tupleInSubquery.subquery().toList(null);
+    for (R subqueryRow : subqueryResults) {
+      // subqueryRow should be a Tuple if the subquery was mapped
+      if (subqueryRow instanceof Tuples.Tuple tuple) {
+        Object[] tupleValues = tuple.asArray();
+        if (thisRow.size() != tupleValues.length) {
+          continue;
+        }
+        boolean matches = true;
+        for (int i = 0; i < thisRow.size(); i++) {
+          if (!Objects.equals(thisRow.get(i), tupleValues[i])) {
+            matches = false;
+            break;
+          }
+        }
+        if (matches) {
+          return Boolean.TRUE;
+        }
+      }
+    }
+    return Boolean.FALSE;
   }
 
   /**
