@@ -6,9 +6,6 @@ import typr.runtime.internal.RandomHelper
 import java.util.Random
 
 class DomainInsertImpl extends TestDomainInsert {
-  override def publicAccountNumber(random: Random): AccountNumber =
-    AccountNumber(RandomHelper.alphanumeric(random, 10))
-
   override def publicFlag(random: Random): Flag =
     Flag(random.nextBoolean())
 
@@ -21,12 +18,6 @@ class DomainInsertImpl extends TestDomainInsert {
   override def publicNameStyle(random: Random): NameStyle =
     NameStyle(random.nextBoolean())
 
-  override def publicPhone(random: Random): Phone =
-    Phone(RandomHelper.alphanumeric(random, 10))
-
   override def publicShortText(random: Random): ShortText =
     ShortText(RandomHelper.alphanumeric(random, 10))
-
-  override def publicOrderNumber(random: Random): OrderNumber =
-    OrderNumber(RandomHelper.alphanumeric(random, 10))
 }

@@ -27,7 +27,47 @@ object GeneratedAdventureWorks {
       .use { logger =>
         val ds = TypoDataSource.hikariPostgres(server = "localhost", port = 6432, databaseName = "Adventureworks", username = "postgres", password = "password")
         val scriptsPath = buildDir.resolve("adventureworks_sql")
-        val selector = Selector.ExcludePostgresInternal and !Selector.schemas("frontpage")
+        // Only include tables actually used by tests to reduce compile time
+        // This reduces generated repos from ~177 to ~31
+        val usedTables = Selector.relationNames(
+          // humanresources
+          "department",
+          "employee",
+          // person
+          "address",
+          "addresstype",
+          "businessentity",
+          "businessentityaddress",
+          "countryregion",
+          "emailaddress",
+          "password",
+          "person",
+          "stateprovince",
+          // production
+          "product",
+          "productcategory",
+          "productcosthistory",
+          "productmodel",
+          "productsubcategory",
+          "unitmeasure",
+          // public
+          "flaff",
+          "identity-test",
+          "issue142",
+          "issue142_2",
+          "only_pk_columns",
+          "pgtest",
+          "pgtestnull",
+          "title",
+          "title_domain",
+          "titledperson",
+          "users",
+          // sales
+          "salesperson",
+          "salesterritory"
+        )
+        val usedSchemas = Selector.schemas("humanresources", "person", "production", "public", "sales")
+        val selector = Selector.ExcludePostgresInternal and !Selector.schemas("frontpage") and usedSchemas and usedTables
         val typoLogger = TypoLogger.Console
         val externalTools = ExternalTools.init(typoLogger, ExternalToolsConfig.default)
         val metadb = Await.result(MetaDb.fromDb(typoLogger, ds, selector, schemaMode = SchemaMode.MultiSchema, externalTools), Duration.Inf)
@@ -43,16 +83,15 @@ object GeneratedAdventureWorks {
           Duration.Inf
         )
         val variants: Seq[(Lang, DbLibName, JsonLibName, String, String)] = List(
-          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "typr-tester-anorm", "-2.13"),
-          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "typr-tester-anorm", "-3"),
-          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "typr-tester-doobie", "-2.13"),
-          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "typr-tester-doobie", "-3"),
-          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "typr-tester-zio-jdbc", "-2.13"),
-          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "typr-tester-zio-jdbc", "-3"),
-          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "typr-tester-typr-java", ""),
-          (LangScala.javaDsl(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-typr-scala-old", ""),
-          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-typr-scala-new", ""),
-          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-typr-kotlin", "")
+          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "testers/pg/scala/anorm", "-2.13"),
+          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "testers/pg/scala/anorm", "-3"),
+          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "testers/pg/scala/doobie", "-2.13"),
+          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "testers/pg/scala/doobie", "-3"),
+          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "testers/pg/scala/zio-jdbc", "-2.13"),
+          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "testers/pg/scala/zio-jdbc", "-3"),
+          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "testers/pg/java", ""),
+          (LangScala.javaDsl(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, JsonLibName.Jackson, "testers/pg/scala/javatypes", ""),
+          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "testers/pg/scala/scalatypes", "")
         )
 
         def go(): Unit = {

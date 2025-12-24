@@ -6,11 +6,6 @@ import typr.runtime.internal.RandomHelper;
 
 public class DomainInsertImpl implements TestDomainInsert {
   @Override
-  public AccountNumber publicAccountNumber(Random random) {
-    return new AccountNumber(RandomHelper.alphanumeric(random, 10));
-  }
-
-  @Override
   public Flag publicFlag(Random random) {
     return new Flag(random.nextBoolean());
   }
@@ -31,17 +26,7 @@ public class DomainInsertImpl implements TestDomainInsert {
   }
 
   @Override
-  public Phone publicPhone(Random random) {
-    return new Phone(RandomHelper.alphanumeric(random, 10));
-  }
-
-  @Override
   public ShortText publicShortText(Random random) {
     return new ShortText(RandomHelper.alphanumeric(random, 10));
-  }
-
-  @Override
-  public OrderNumber publicOrderNumber(Random random) {
-    return new OrderNumber(RandomHelper.alphanumeric(random, 10));
   }
 }
