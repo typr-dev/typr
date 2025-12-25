@@ -61,6 +61,15 @@ const config = {
         sidebarPath: require.resolve('./sidebars-api.js'),
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'jdbc',
+        path: 'docs-jdbc',
+        routeBasePath: 'jdbc',
+        sidebarPath: require.resolve('./sidebars-jdbc.js'),
+      },
+    ],
   ],
 
   clientModules: [
@@ -89,6 +98,12 @@ const config = {
             position: 'left',
             activeBaseRegex: '/api/',
           },
+          {
+            to: '/jdbc/',
+            label: 'Foundations JDBC',
+            position: 'left',
+            activeBaseRegex: '/jdbc/',
+          },
           {to: 'blog', label: 'Blog', position: 'left'},
           {
             href: "https://github.com/oyvindberg/typr",
@@ -110,6 +125,10 @@ const config = {
               {
                 label: "Typo API",
                 to: "/api/",
+              },
+              {
+                label: "Foundations JDBC",
+                to: "/jdbc/",
               },
             ],
           },

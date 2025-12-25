@@ -18,59 +18,7 @@ Typr is a database code generator that creates type-safe JVM code from database 
 
 ## Foundations JDBC
 
-The `foundations-jdbc` module is a standalone JDBC wrapper library that makes JDBC actually usable.
-
-### The Problem with JDBC
-
-JDBC is notoriously difficult to use correctly. The API is verbose, error-prone, and makes it almost impossible to handle all column types properly. Most JDBC code in the wild has subtle bugs around null handling, type conversions, and resource management.
-
-### Our Solution
-
-We've modeled JDBC to perfection. Every column type across all supported databases (PostgreSQL, MariaDB, DuckDB, Oracle, SQL Server) has been carefully implemented with full roundtrip support. This means you can read a value from the database and write it back without loss or corruption - something that sounds obvious but is surprisingly hard to achieve with raw JDBC.
-
-### Key Features
-
-**Type-Safe Database Types** - Each database has its own type hierarchy (`PgType`, `MariaType`, `DuckDbType`, `OracleType`, `SqlServerType`) that knows how to read and write values correctly:
-```java
-// PostgreSQL array of integers
-PgType<int[]> intArray = PgTypes.int4.array();
-
-// MariaDB JSON
-MariaType<JsonNode> json = MariaTypes.json(mapper);
-
-// Oracle nested table
-OracleType<List<MyObject>> nested = OracleTypes.nestedTable("MY_TYPE", myObjectType);
-```
-
-**JSON Codecs** - Built-in JSON serialization powers advanced features like cross-database MULTISET functionality, allowing complex nested structures to be serialized and deserialized seamlessly.
-
-**Streaming Inserts** - Efficient bulk inserts using iterators, avoiding memory issues with large datasets:
-```java
-repo.insertStreaming(records.iterator(), batchSize);
-```
-
-**No Reflection** - The entire library is reflection-free, making it fully compatible with GraalVM native-image. All type information is preserved at compile time.
-
-**Native Types for Kotlin and Scala** - The library includes `foundations-jdbc-dsl-kotlin` and `foundations-jdbc-dsl-scala` modules that provide idiomatic wrappers:
-```kotlin
-// Kotlin - nullable types map naturally
-val name: String? = row.getString("name")
-
-// Scala - Option types
-val name: Option[String] = row.get[String]("name")
-```
-
-**Fragment Builder** - Type-safe SQL fragment construction:
-```java
-Fragment query = Fragment.Builder()
-    .sql("SELECT * FROM users WHERE id = ")
-    .param(PgTypes.int4, userId)
-    .sql(" AND active = ")
-    .param(PgTypes.bool, true)
-    .done();
-```
-
-This library provides the solid foundation that Typr's generated code builds upon, but it can also be used independently for projects that need reliable JDBC access without code generation.
+`foundations-jdbc` is a standalone JDBC wrapper library with perfect type modeling for all supported databases. See `site/docs-jdbc/` for full documentation.
 
 ## Build System
 
