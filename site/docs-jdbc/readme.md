@@ -312,7 +312,9 @@ PgType<Jsonb> jsonbType = PgTypes.jsonb;
 
 #### Parsing Nested Results from JSON
 
-A powerful use case is fetching nested data as JSON and parsing it with a RowParser. This enables MULTISET-like queries across all databases:
+A powerful use case is fetching nested data as JSON and parsing it with a RowParser. This enables MULTISET-like queries across all databases.
+
+The RowParser can create a `DbType<List<Row>>` that knows how to parse JSON arrays:
 
 ```java
 // Define a row parser for the nested data
@@ -322,33 +324,35 @@ RowParser<Email> emailParser = RowParsers.of(
     Email::new
 );
 
+// Create a DbType for List<Email> from JSON, with column names for JSON object lookup
+PgType<List<Email>> emailListType = emailParser.jsonListType(
+    PgTypes.json,                // the JSON column type
+    List.of("id", "email")       // column names in the JSON objects
+);
+
+// Now use it like any other DbType in a RowParser
+RowParser<PersonWithEmails> personParser = RowParsers.of(
+    PgTypes.int4,      // id
+    PgTypes.text,      // name
+    emailListType,     // emails as JSON array
+    PersonWithEmails::new
+);
+
 // Query that returns child rows as JSON array
 // PostgreSQL: json_agg(jsonb_build_object('id', e.id, 'email', e.email))
 // MariaDB: JSON_ARRAYAGG(JSON_OBJECT('id', e.id, 'email', e.email))
 String sql = """
     SELECT p.id, p.name,
            (SELECT COALESCE(json_agg(jsonb_build_object('id', e.id, 'email', e.email)), '[]')
-            FROM emails e WHERE e.person_id = p.id) as emails_json
+            FROM emails e WHERE e.person_id = p.id) as emails
     FROM persons p WHERE p.id = ?
     """;
 
-// Execute and parse the JSON column
-try (PreparedStatement ps = conn.prepareStatement(sql)) {
-    ps.setInt(1, personId);
-    try (ResultSet rs = ps.executeQuery()) {
-        if (rs.next()) {
-            int id = rs.getInt(1);
-            String name = rs.getString(2);
-            String emailsJson = rs.getString(3);
-
-            // Parse the JSON array into typed Email objects
-            List<Email> emails = emailParser.parseJsonArray(
-                emailsJson,
-                List.of("id", "email")  // column names in the JSON
-            );
-        }
-    }
-}
+// Execute - the JSON parsing is handled automatically by the row parser
+List<PersonWithEmails> results = Fragment.of(sql)
+    .param(PgTypes.int4, personId)
+    .query(personParser)
+    .runUnchecked(connection);
 ```
 
 The JSON codecs enable features like:
