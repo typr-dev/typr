@@ -13,8 +13,8 @@ Foundations JDBC provides comprehensive support for Oracle data types, including
 | Oracle Type | Java Type | Notes |
 |-------------|-----------|-------|
 | `NUMBER` | `BigDecimal` | Arbitrary precision |
-| `NUMBER(p,0)` where p≤9 | `Integer` | 32-bit integer |
-| `NUMBER(p,0)` where 9<p≤18 | `Long` | 64-bit integer |
+| `NUMBER(p,0)` where p &lt;= 9 | `Integer` | 32-bit integer |
+| `NUMBER(p,0)` where 9 &lt; p &lt;= 18 | `Long` | 64-bit integer |
 | `NUMBER(p,s)` | `BigDecimal` | Fixed precision/scale |
 
 ```java
