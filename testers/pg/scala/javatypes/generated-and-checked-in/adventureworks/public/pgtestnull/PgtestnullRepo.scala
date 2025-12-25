@@ -5,10 +5,10 @@
  */
 package adventureworks.public.pgtestnull
 
+import dev.typr.foundations.dsl.DeleteBuilder
+import dev.typr.foundations.dsl.SelectBuilder
+import dev.typr.foundations.dsl.UpdateBuilder
 import java.sql.Connection
-import typr.dsl.DeleteBuilder
-import typr.dsl.SelectBuilder
-import typr.dsl.UpdateBuilder
 
 trait PgtestnullRepo {
   def delete: DeleteBuilder[PgtestnullFields, PgtestnullRow]

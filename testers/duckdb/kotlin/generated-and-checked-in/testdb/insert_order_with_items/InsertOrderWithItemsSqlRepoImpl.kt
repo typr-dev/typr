@@ -5,14 +5,14 @@
  */
 package testdb.insert_order_with_items
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.sql.Connection
 import java.time.LocalDate
 import testdb.customers.CustomersId
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 class InsertOrderWithItemsSqlRepoImpl() : InsertOrderWithItemsSqlRepo {
   override fun apply(

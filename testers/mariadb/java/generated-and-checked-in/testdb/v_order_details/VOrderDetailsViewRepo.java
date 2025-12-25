@@ -5,9 +5,9 @@
  */
 package testdb.v_order_details;
 
+import dev.typr.foundations.dsl.SelectBuilder;
 import java.sql.Connection;
 import java.util.List;
-import typr.dsl.SelectBuilder;
 
 public interface VOrderDetailsViewRepo {
   SelectBuilder<VOrderDetailsViewFields, VOrderDetailsViewRow> select();

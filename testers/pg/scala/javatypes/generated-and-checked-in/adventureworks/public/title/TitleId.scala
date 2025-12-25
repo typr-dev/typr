@@ -5,8 +5,8 @@
  */
 package adventureworks.public.title
 
-import typr.runtime.PgType
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
 
 /** Type for the primary key of table `public.title`. It has some known values: 
  *  - dr

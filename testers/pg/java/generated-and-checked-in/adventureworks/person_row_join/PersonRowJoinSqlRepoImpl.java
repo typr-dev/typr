@@ -5,10 +5,10 @@
  */
 package adventureworks.person_row_join;
 
+import dev.typr.foundations.Fragment;
 import java.sql.Connection;
 import java.util.List;
-import typr.runtime.Fragment;
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
 public class PersonRowJoinSqlRepoImpl implements PersonRowJoinSqlRepo {
   @Override

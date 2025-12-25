@@ -6,9 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.dsl.Bijection
-import typr.runtime.PgType
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.dsl.Bijection
 
 /** Domain `public.Name`
  * No constraint

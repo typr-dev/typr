@@ -8,14 +8,14 @@ package adventureworks.public.issue142_2
 import adventureworks.public.issue142.Issue142Fields
 import adventureworks.public.issue142.Issue142Id
 import adventureworks.public.issue142.Issue142Row
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.ForeignKey
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.IdField
 import kotlin.collections.List
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.ForeignKey
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.IdField
-import typr.runtime.RowParser
 
 interface Issue1422Fields : FieldsExpr<Issue1422Row> {
   abstract override fun columns(): List<FieldLike<*, Issue1422Row>>
@@ -37,6 +37,6 @@ interface Issue1422Fields : FieldsExpr<Issue1422Row> {
       override fun withPaths(_path: List<Path>): RelationStructure<Issue1422Fields, Issue1422Row> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

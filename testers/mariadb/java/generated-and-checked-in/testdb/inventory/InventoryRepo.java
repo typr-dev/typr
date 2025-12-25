@@ -5,6 +5,9 @@
  */
 package testdb.inventory;
 
+import dev.typr.foundations.dsl.DeleteBuilder;
+import dev.typr.foundations.dsl.SelectBuilder;
+import dev.typr.foundations.dsl.UpdateBuilder;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
@@ -12,9 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import testdb.products.ProductsId;
 import testdb.warehouses.WarehousesId;
-import typr.dsl.DeleteBuilder;
-import typr.dsl.SelectBuilder;
-import typr.dsl.UpdateBuilder;
 
 public interface InventoryRepo {
   DeleteBuilder<InventoryFields, InventoryRow> delete();

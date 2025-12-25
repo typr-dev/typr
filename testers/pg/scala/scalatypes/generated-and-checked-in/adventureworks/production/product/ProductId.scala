@@ -6,10 +6,10 @@
 package adventureworks.production.product
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.runtime.PgType
-import typr.runtime.PgTypes
-import typr.scaladsl.Bijection
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.Bijection
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the primary key of table `production.product` */
 case class ProductId(@JsonValue value: Int) extends scala.AnyVal

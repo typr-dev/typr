@@ -6,9 +6,9 @@
 package testdb.mariatest_spatial_null
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.runtime.MariaType
-import typr.scaladsl.Bijection
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.MariaType
+import dev.typr.foundations.scala.Bijection
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the primary key of table `mariatest_spatial_null` */
 case class MariatestSpatialNullId(@JsonValue value: Int) extends scala.AnyVal

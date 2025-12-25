@@ -5,10 +5,10 @@
  */
 package testdb.v_product_catalog
 
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.Dialect
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class VProductCatalogViewRepoImpl extends VProductCatalogViewRepo {
   override def select: SelectBuilder[VProductCatalogViewFields, VProductCatalogViewRow] = SelectBuilder.of("`v_product_catalog`", VProductCatalogViewFields.structure, VProductCatalogViewRow.`_rowParser`, Dialect.MARIADB)

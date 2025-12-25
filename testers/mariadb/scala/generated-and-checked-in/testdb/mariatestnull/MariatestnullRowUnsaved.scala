@@ -6,6 +6,9 @@
 package testdb.mariatestnull
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.data.maria.Inet4
+import dev.typr.foundations.data.maria.Inet6
+import dev.typr.foundations.data.maria.MariaSet
 import java.math.BigInteger
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -13,9 +16,6 @@ import java.time.LocalTime
 import java.time.Year
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typr.data.maria.Inet4
-import typr.data.maria.Inet6
-import typr.data.maria.MariaSet
 
 /** This class corresponds to a row in table `mariatestnull` which has not been persisted yet */
 case class MariatestnullRowUnsaved(

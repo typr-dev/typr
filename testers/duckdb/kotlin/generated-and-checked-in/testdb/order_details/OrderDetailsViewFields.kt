@@ -5,17 +5,17 @@
  */
 package testdb.order_details
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.DuckDbTypes
-import typr.runtime.RowParser
 
 interface OrderDetailsViewFields : FieldsExpr<OrderDetailsViewRow> {
   abstract override fun columns(): List<FieldLike<*, OrderDetailsViewRow>>
@@ -59,6 +59,6 @@ interface OrderDetailsViewFields : FieldsExpr<OrderDetailsViewRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<OrderDetailsViewFields, OrderDetailsViewRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

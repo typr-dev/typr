@@ -5,19 +5,19 @@
  */
 package adventureworks.public.identity_test
 
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.runtime.streamingInsert
 
 class IdentityTestRepoImpl() : IdentityTestRepo {
   override fun delete(): DeleteBuilder<IdentityTestFields, IdentityTestRow> = DeleteBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure, Dialect.POSTGRESQL)

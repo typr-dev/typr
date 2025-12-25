@@ -6,6 +6,10 @@
 package testdb.all_scalar_types;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.Json;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Duration;
@@ -16,10 +20,6 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import testdb.Mood;
-import typr.data.Json;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: all_scalar_types Primary key: id */
 public record AllScalarTypesRow(

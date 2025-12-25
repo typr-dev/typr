@@ -29,22 +29,29 @@ object generate {
     val naming = publicOptions.naming(pkg, publicOptions.lang)
     val language = publicOptions.lang
 
-    /** Old DbLibs (Anorm, Doobie, ZioJdbc) use typr.dsl (Java DSL) */
-    def requireScalaWithJavaDsl(lib: String): LangScala = language match {
-      case s: LangScala => s.copy(dsl = DslQualifiedNames.Java)
+    /** Old DbLibs (Anorm, Doobie, ZioJdbc) use typr.dsl (Legacy DSL) */
+    def requireScalaWithLegacyDsl(lib: String): LangScala = language match {
+      case s: LangScala => s.copy(dsl = DslQualifiedNames.Legacy)
       case _            => sys.error(s"You have chosen to generate code for ${lib}, which is a scala library. You need to pick scala as language")
     }
 
     val options = InternalOptions(
       dbLib = publicOptions.dbLib.map {
         case DbLibName.Anorm =>
-          new DbLibAnorm(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, requireScalaWithJavaDsl("anorm"))
+          new DbLibAnorm(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, requireScalaWithLegacyDsl("anorm"))
         case DbLibName.Doobie =>
-          new DbLibDoobie(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.fixVerySlowImplicit, requireScalaWithJavaDsl("doobie"))
+          new DbLibDoobie(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.fixVerySlowImplicit, requireScalaWithLegacyDsl("doobie"))
         case DbLibName.Typo =>
           new DbLibTypo(language, default, publicOptions.enableStreamingInserts, metaDb.dbType.adapter(needsTimestampCasts = false), naming)
         case DbLibName.ZioJdbc =>
-          new DbLibZioJdbc(pkg, publicOptions.inlineImplicits, dslEnabled = publicOptions.enableDsl, default, publicOptions.enableStreamingInserts, requireScalaWithJavaDsl("zio-jdbc"))
+          new DbLibZioJdbc(
+            pkg,
+            publicOptions.inlineImplicits,
+            dslEnabled = publicOptions.enableDsl,
+            default,
+            publicOptions.enableStreamingInserts,
+            requireScalaWithLegacyDsl("zio-jdbc")
+          )
       },
       lang = language,
       debugTypes = publicOptions.debugTypes,
@@ -56,9 +63,9 @@ object generate {
       generateMockRepos = publicOptions.generateMockRepos,
       enablePrimaryKeyType = publicOptions.enablePrimaryKeyType,
       jsonLibs = publicOptions.jsonLibs.map {
-        case JsonLibName.Circe    => JsonLibCirce(pkg, default, publicOptions.inlineImplicits, requireScalaWithJavaDsl("circe"))
-        case JsonLibName.PlayJson => JsonLibPlay(pkg, default, publicOptions.inlineImplicits, requireScalaWithJavaDsl("play-json"))
-        case JsonLibName.ZioJson  => JsonLibZioJson(pkg, default, publicOptions.inlineImplicits, requireScalaWithJavaDsl("zio-json"))
+        case JsonLibName.Circe    => JsonLibCirce(pkg, default, publicOptions.inlineImplicits, requireScalaWithLegacyDsl("circe"))
+        case JsonLibName.PlayJson => JsonLibPlay(pkg, default, publicOptions.inlineImplicits, requireScalaWithLegacyDsl("play-json"))
+        case JsonLibName.ZioJson  => JsonLibZioJson(pkg, default, publicOptions.inlineImplicits, requireScalaWithLegacyDsl("zio-json"))
         case JsonLibName.Jackson  => JsonLibJackson(pkg, default, language)
       },
       keepDependencies = publicOptions.keepDependencies,

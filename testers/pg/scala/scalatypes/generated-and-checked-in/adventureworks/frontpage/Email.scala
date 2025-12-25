@@ -6,9 +6,9 @@
 package adventureworks.frontpage
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.runtime.PgType
-import typr.runtime.PgTypes
-import typr.scaladsl.Bijection
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.Bijection
 
 /** Domain `frontpage.email`
  * Constraint: CHECK ((VALUE ~ '^[^@]+@[^@]+\.[^@]+$'::text))

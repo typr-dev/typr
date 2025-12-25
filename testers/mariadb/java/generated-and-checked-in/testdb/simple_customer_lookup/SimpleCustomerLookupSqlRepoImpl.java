@@ -5,12 +5,12 @@
  */
 package testdb.simple_customer_lookup;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.MariaTypes;
 import java.sql.Connection;
 import java.util.List;
-import typr.runtime.Fragment;
-import typr.runtime.MariaTypes;
 
 public class SimpleCustomerLookupSqlRepoImpl implements SimpleCustomerLookupSqlRepo {
   @Override

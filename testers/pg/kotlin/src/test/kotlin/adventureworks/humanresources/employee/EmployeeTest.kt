@@ -11,7 +11,7 @@ import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import org.junit.Assert.*
 import org.junit.Test
-import typr.data.Xml
+import dev.typr.foundations.data.Xml
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID

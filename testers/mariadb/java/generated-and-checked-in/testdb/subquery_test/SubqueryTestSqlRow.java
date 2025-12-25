@@ -6,12 +6,12 @@
 package testdb.subquery_test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import java.util.Optional;
 import testdb.customers.CustomersId;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** SQL file: subquery_test.sql */
 public record SubqueryTestSqlRow(

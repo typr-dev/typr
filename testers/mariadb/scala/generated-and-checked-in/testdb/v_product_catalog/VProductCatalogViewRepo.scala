@@ -5,8 +5,8 @@
  */
 package testdb.v_product_catalog
 
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.SelectBuilder
 
 trait VProductCatalogViewRepo {
   def select: SelectBuilder[VProductCatalogViewFields, VProductCatalogViewRow]

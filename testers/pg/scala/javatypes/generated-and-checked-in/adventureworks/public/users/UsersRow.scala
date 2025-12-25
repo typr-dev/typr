@@ -7,13 +7,13 @@ package adventureworks.public.users
 
 import adventureworks.customtypes.Defaulted
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
+import dev.typr.foundations.data.Unknown
 import java.time.Instant
 import java.util.Optional
-import typr.data.Unknown
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** Table: public.users
  * Primary key: user_id

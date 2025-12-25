@@ -5,17 +5,17 @@
  */
 package testdb.departments
 
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.DeleteBuilderMock
+import dev.typr.foundations.scala.DeleteParams
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.SelectBuilderMock
+import dev.typr.foundations.scala.SelectParams
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.scala.UpdateBuilderMock
+import dev.typr.foundations.scala.UpdateParams
 import java.lang.RuntimeException
 import java.sql.Connection
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.DeleteBuilderMock
-import typr.scaladsl.DeleteParams
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.SelectBuilderMock
-import typr.scaladsl.SelectParams
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.UpdateBuilderMock
-import typr.scaladsl.UpdateParams
 
 case class DepartmentsRepoMock(map: scala.collection.mutable.Map[DepartmentsId, DepartmentsRow] = scala.collection.mutable.Map.empty[DepartmentsId, DepartmentsRow]) extends DepartmentsRepo {
   override def delete: DeleteBuilder[DepartmentsFields, DepartmentsRow] = DeleteBuilderMock(DepartmentsFields.structure, () => map.values.toList, DeleteParams.empty(), row => row.compositeId, id => map.remove(id): @scala.annotation.nowarn)

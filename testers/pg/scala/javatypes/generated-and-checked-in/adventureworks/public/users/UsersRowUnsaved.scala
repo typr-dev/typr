@@ -8,11 +8,11 @@ package adventureworks.public.users
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.data.Unknown
 import java.time.Instant
 import java.util.Optional
-import typr.data.Unknown
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** This class corresponds to a row in table `public.users` which has not been persisted yet */
 case class UsersRowUnsaved(

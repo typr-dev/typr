@@ -5,15 +5,15 @@
  */
 package testdb.customer_search;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.Fragment;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import testdb.Priority;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.Fragment;
 
 public class CustomerSearchSqlRepoImpl implements CustomerSearchSqlRepo {
   @Override

@@ -5,14 +5,14 @@
  */
 package testdb.order_items_bulk_insert;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.Fragment;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import testdb.orders.OrdersId;
 import testdb.products.ProductsId;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.Fragment;
 
 public class OrderItemsBulkInsertSqlRepoImpl implements OrderItemsBulkInsertSqlRepo {
   @Override

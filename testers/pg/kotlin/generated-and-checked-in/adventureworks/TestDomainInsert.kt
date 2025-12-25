@@ -5,23 +5,15 @@
  */
 package adventureworks
 
-import adventureworks.public.AccountNumber
 import adventureworks.public.Flag
 import adventureworks.public.Mydomain
 import adventureworks.public.Name
 import adventureworks.public.NameStyle
-import adventureworks.public.OrderNumber
-import adventureworks.public.Phone
 import adventureworks.public.ShortText
 import java.util.Random
 
 /** Methods to generate random data for domain types */
 interface TestDomainInsert {
-  /** Domain `public.AccountNumber`
-    * No constraint
-    */
-  abstract fun publicAccountNumber(random: Random): AccountNumber
-
   /** Domain `public.Flag`
     * No constraint
     */
@@ -41,16 +33,6 @@ interface TestDomainInsert {
     * No constraint
     */
   abstract fun publicNameStyle(random: Random): NameStyle
-
-  /** Domain `public.OrderNumber`
-    * No constraint
-    */
-  abstract fun publicOrderNumber(random: Random): OrderNumber
-
-  /** Domain `public.Phone`
-    * No constraint
-    */
-  abstract fun publicPhone(random: Random): Phone
 
   /** Domain `public.short_text`
     * Constraint: CHECK ((length(VALUE) <= 55))

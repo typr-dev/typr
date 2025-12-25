@@ -5,10 +5,10 @@
  */
 package testdb.update_order_status
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.Fragment
 import java.sql.Connection
 import testdb.orders.OrdersId
-import typr.kotlindsl.Fragment
-import typr.runtime.MariaTypes
 
 class UpdateOrderStatusSqlRepoImpl() : UpdateOrderStatusSqlRepo {
   override fun apply(

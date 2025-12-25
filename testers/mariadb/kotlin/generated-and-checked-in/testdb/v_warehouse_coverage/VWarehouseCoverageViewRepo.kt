@@ -5,9 +5,9 @@
  */
 package testdb.v_warehouse_coverage
 
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.SelectBuilder
 
 interface VWarehouseCoverageViewRepo {
   abstract fun select(): SelectBuilder<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow>

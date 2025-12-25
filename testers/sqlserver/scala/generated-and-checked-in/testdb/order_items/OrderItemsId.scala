@@ -6,9 +6,9 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.runtime.SqlServerType
-import typr.scaladsl.Bijection
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.SqlServerType
+import dev.typr.foundations.scala.Bijection
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the primary key of table `order_items` */
 case class OrderItemsId(@JsonValue value: Int) extends scala.AnyVal

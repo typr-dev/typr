@@ -7,12 +7,12 @@ package adventureworks.person.addresstype
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
 
 /** Table: person.addresstype
  * Types of addresses stored in the Address table.

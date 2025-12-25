@@ -6,10 +6,10 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.MariaType
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.Bijection
 import java.math.BigInteger
-import typr.kotlindsl.Bijection
-import typr.runtime.MariaType
-import typr.runtime.MariaTypes
 
 /** Type for the primary key of table `orders` */
 data class OrdersId(@JsonValue val value: BigInteger) {

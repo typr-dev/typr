@@ -7,6 +7,20 @@ package adventureworks.public_.pgtest;
 
 import adventureworks.public_.Mydomain;
 import adventureworks.public_.Myenum;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.data.Inet;
+import dev.typr.foundations.data.Int2Vector;
+import dev.typr.foundations.data.Json;
+import dev.typr.foundations.data.Jsonb;
+import dev.typr.foundations.data.Money;
+import dev.typr.foundations.data.Vector;
+import dev.typr.foundations.data.Xml;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -25,20 +39,6 @@ import org.postgresql.geometric.PGpath;
 import org.postgresql.geometric.PGpoint;
 import org.postgresql.geometric.PGpolygon;
 import org.postgresql.util.PGInterval;
-import typr.data.Inet;
-import typr.data.Int2Vector;
-import typr.data.Json;
-import typr.data.Jsonb;
-import typr.data.Money;
-import typr.data.Vector;
-import typr.data.Xml;
-import typr.dsl.FieldsExpr;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.runtime.PgTypes;
-import typr.runtime.RowParser;
 
 public interface PgtestFields extends FieldsExpr<PgtestRow> {
   record Impl(List<Path> _path) implements PgtestFields, RelationStructure<PgtestFields, PgtestRow> {

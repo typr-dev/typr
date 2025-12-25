@@ -5,18 +5,18 @@
  */
 package oracledb.customers
 
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.scala.RelationStructure
+import dev.typr.foundations.scala.SqlExpr.Field
+import dev.typr.foundations.scala.SqlExpr.IdField
+import dev.typr.foundations.scala.SqlExpr.OptField
 import java.time.LocalDateTime
 import oracledb.AddressT
 import oracledb.MoneyT
-import typr.dsl.FieldsExpr0
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.runtime.OracleTypes
-import typr.runtime.RowParser
-import typr.scaladsl.RelationStructure
-import typr.scaladsl.SqlExpr.Field
-import typr.scaladsl.SqlExpr.IdField
-import typr.scaladsl.SqlExpr.OptField
 
 trait CustomersFields extends FieldsExpr0[CustomersRow] {
   def customerId: IdField[CustomersId, CustomersRow]

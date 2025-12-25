@@ -6,10 +6,10 @@
 package testdb.order_history
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.MariaType
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.Bijection
 import java.math.BigInteger
-import typr.runtime.MariaType
-import typr.runtime.MariaTypes
-import typr.scaladsl.Bijection
 
 /** Type for the primary key of table `order_history` */
 case class OrderHistoryId(@JsonValue value: BigInteger) extends scala.AnyVal

@@ -6,15 +6,15 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.scala.OracleTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import oracledb.MoneyT
 import oracledb.customtypes.Defaulted
 import oracledb.departments.DepartmentsId
-import typr.runtime.OracleTypes
-import typr.scaladsl.OracleTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: EMPLOYEES
  * Composite primary key: EMP_NUMBER, EMP_SUFFIX

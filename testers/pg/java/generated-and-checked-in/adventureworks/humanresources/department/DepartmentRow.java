@@ -7,11 +7,11 @@ package adventureworks.humanresources.department;
 
 import adventureworks.customtypes.Defaulted;
 import adventureworks.public_.Name;
+import dev.typr.foundations.PgText;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.time.LocalDateTime;
-import typr.runtime.PgText;
-import typr.runtime.PgTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: humanresources.department
   * Lookup table containing the departments within the Adventure Works Cycles company.

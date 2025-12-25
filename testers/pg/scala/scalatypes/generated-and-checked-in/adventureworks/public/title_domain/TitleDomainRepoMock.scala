@@ -5,17 +5,17 @@
  */
 package adventureworks.public.title_domain
 
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.DeleteBuilderMock
+import dev.typr.foundations.scala.DeleteParams
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.SelectBuilderMock
+import dev.typr.foundations.scala.SelectParams
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.scala.UpdateBuilderMock
+import dev.typr.foundations.scala.UpdateParams
 import java.lang.RuntimeException
 import java.sql.Connection
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.DeleteBuilderMock
-import typr.scaladsl.DeleteParams
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.SelectBuilderMock
-import typr.scaladsl.SelectParams
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.UpdateBuilderMock
-import typr.scaladsl.UpdateParams
 
 case class TitleDomainRepoMock(map: scala.collection.mutable.Map[TitleDomainId, TitleDomainRow] = scala.collection.mutable.Map.empty[TitleDomainId, TitleDomainRow]) extends TitleDomainRepo {
   override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilderMock(TitleDomainFields.structure, () => map.values.toList, DeleteParams.empty(), row => row.code, id => map.remove(id): @scala.annotation.nowarn)

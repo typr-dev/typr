@@ -5,13 +5,13 @@
  */
 package testdb.department_employee_details
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.sql.Connection
 import java.time.LocalDate
 import kotlin.collections.List
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 class DepartmentEmployeeDetailsSqlRepoImpl() : DepartmentEmployeeDetailsSqlRepo {
   override fun apply(

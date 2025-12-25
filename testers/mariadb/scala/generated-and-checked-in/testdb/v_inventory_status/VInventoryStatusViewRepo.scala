@@ -5,8 +5,8 @@
  */
 package testdb.v_inventory_status
 
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.SelectBuilder
 
 trait VInventoryStatusViewRepo {
   def select: SelectBuilder[VInventoryStatusViewFields, VInventoryStatusViewRow]

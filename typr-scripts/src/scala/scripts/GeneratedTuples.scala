@@ -36,17 +36,17 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
          |
          |        @Override
          |        @SuppressWarnings("unchecked")
-         |        public typr.runtime.DbType<Tuple$n<$tparamsDecl>> dbType() {
+         |        public dev.typr.foundations.DbType<Tuple$n<$tparamsDecl>> dbType() {
          |            // TupleExpr is used in projections where columns are rendered individually via exprs().
          |            // For now, throw since we don't have a proper DbType for tuples.
          |            throw new UnsupportedOperationException("TupleExpr$n.dbType() - use exprs() to get individual column types");
          |        }
          |
          |        @Override
-         |        public typr.runtime.Fragment render(typr.dsl.RenderCtx ctx, java.util.concurrent.atomic.AtomicInteger counter) {
+         |        public dev.typr.foundations.Fragment render(dev.typr.foundations.dsl.RenderCtx ctx, java.util.concurrent.atomic.AtomicInteger counter) {
          |            // Render all sub-expressions as a comma-separated list
-         |            java.util.List<typr.runtime.Fragment> fragments = java.util.List.of($renderArgs);
-         |            return typr.runtime.Fragment.comma(fragments);
+         |            java.util.List<dev.typr.foundations.Fragment> fragments = java.util.List.of($renderArgs);
+         |            return dev.typr.foundations.Fragment.comma(fragments);
          |        }
          |    }""".stripMargin
     }
@@ -70,7 +70,7 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
     }
 
     val tuplesContents =
-      s"""|package typr.dsl;
+      s"""|package dev.typr.foundations.dsl;
           |
           |/**
           | * Generated tuple types for the DSL.
@@ -121,8 +121,8 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
           |         * Recursively flattens nested multi-column expressions.
           |         */
           |        @Override
-          |        default java.util.List<typr.runtime.DbType<?>> flattenedDbTypes() {
-          |            java.util.List<typr.runtime.DbType<?>> result = new java.util.ArrayList<>();
+          |        default java.util.List<dev.typr.foundations.DbType<?>> flattenedDbTypes() {
+          |            java.util.List<dev.typr.foundations.DbType<?>> result = new java.util.ArrayList<>();
           |            for (SqlExpr<?> expr : exprs()) {
           |                result.addAll(expr.flattenedDbTypes());
           |            }
@@ -173,7 +173,7 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
     }
 
     val selectBuilderMapContents =
-      s"""|package typr.dsl;
+      s"""|package dev.typr.foundations.dsl;
           |
           |/**
           | * Generated typed map method overloads for {@link SelectBuilder}.
@@ -204,8 +204,8 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
           |""".stripMargin
 
     targets.foreach { target =>
-      FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("typr/dsl/Tuples.java"), tuplesContents)
-      FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("typr/dsl/SelectBuilderMap.java"), selectBuilderMapContents)
+      FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/dsl/Tuples.java"), tuplesContents)
+      FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/dsl/SelectBuilderMap.java"), selectBuilderMapContents)
     }
   }
 }

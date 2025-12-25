@@ -5,10 +5,10 @@
  */
 package testdb.v_customer_summary
 
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.Dialect
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class VCustomerSummaryViewRepoImpl extends VCustomerSummaryViewRepo {
   override def select: SelectBuilder[VCustomerSummaryViewFields, VCustomerSummaryViewRow] = SelectBuilder.of("`v_customer_summary`", VCustomerSummaryViewFields.structure, VCustomerSummaryViewRow.`_rowParser`, Dialect.MARIADB)

@@ -1,7 +1,7 @@
 package adventureworks
 
 import adventureworks.public.*
-import typr.runtime.internal.RandomHelper
+import dev.typr.foundations.internal.RandomHelper
 
 import java.util.Random
 

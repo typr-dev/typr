@@ -27,14 +27,14 @@ object OracleAdapter extends DbAdapter {
   // LAYER 2: Runtime Type System
   // ═══════════════════════════════════════════════════════════════════════════
 
-  val Types: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.OracleTypes")
-  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.OracleType")
+  val Types: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.OracleTypes")
+  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.OracleType")
   // Oracle doesn't support text-based streaming inserts (COPY), so TextClass throws if accessed
   def TextClass: jvm.Type.Qualified = sys.error("Oracle doesn't support text-based streaming inserts")
-  val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.KotlinDbTypes")
-  val KotlinNullableExtension: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.nullable")
-  val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.ScalaDbTypes")
-  val ScalaDbTypeOps: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.OracleTypeOps")
+  val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.KotlinDbTypes")
+  val KotlinNullableExtension: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.nullable")
+  val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.ScalaDbTypes")
+  val ScalaDbTypeOps: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.OracleTypeOps")
 
   val typeFieldName: jvm.Ident = jvm.Ident("oracleType")
   // Oracle doesn't support text-based streaming inserts (COPY), so textFieldName throws if accessed

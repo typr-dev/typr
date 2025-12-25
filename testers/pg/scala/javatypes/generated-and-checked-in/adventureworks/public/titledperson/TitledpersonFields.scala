@@ -11,15 +11,15 @@ import adventureworks.public.title.TitleRow
 import adventureworks.public.title_domain.TitleDomainFields
 import adventureworks.public.title_domain.TitleDomainId
 import adventureworks.public.title_domain.TitleDomainRow
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.ForeignKey
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.RelationStructure
+import dev.typr.foundations.dsl.SqlExpr.Field
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import java.util.Optional
-import typr.dsl.FieldsExpr0
-import typr.dsl.ForeignKey
-import typr.dsl.Path
-import typr.dsl.RelationStructure
-import typr.dsl.SqlExpr.Field
-import typr.dsl.SqlExpr.FieldLike
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
 
 trait TitledpersonFields extends FieldsExpr0[TitledpersonRow] {
   def titleShort: Field[TitleDomainId, TitledpersonRow]

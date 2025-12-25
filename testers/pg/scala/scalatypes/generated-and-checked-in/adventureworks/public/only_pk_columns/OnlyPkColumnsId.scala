@@ -6,10 +6,10 @@
 package adventureworks.public.only_pk_columns
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.PgTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the composite primary key of table `public.only_pk_columns` */
 case class OnlyPkColumnsId(

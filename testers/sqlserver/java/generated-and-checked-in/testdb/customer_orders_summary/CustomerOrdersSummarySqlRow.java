@@ -6,14 +6,14 @@
 package testdb.customer_orders_summary;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.SqlServerTypes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customers.CustomersId;
 import testdb.orders.OrdersId;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
-import typr.runtime.SqlServerTypes;
 
 /** SQL file: customer-orders-summary.sql */
 public record CustomerOrdersSummarySqlRow(

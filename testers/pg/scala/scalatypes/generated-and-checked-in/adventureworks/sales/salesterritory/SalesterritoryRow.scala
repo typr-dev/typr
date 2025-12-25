@@ -8,13 +8,13 @@ package adventureworks.sales.salesterritory
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: sales.salesterritory
  * Sales territory lookup table.

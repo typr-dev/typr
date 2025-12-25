@@ -5,8 +5,8 @@
  */
 package testdb.customer_orders
 
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.SelectBuilder
 
 trait CustomerOrdersViewRepo {
   def select: SelectBuilder[CustomerOrdersViewFields, CustomerOrdersViewRow]

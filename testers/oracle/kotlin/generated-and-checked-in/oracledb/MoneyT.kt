@@ -6,11 +6,11 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleObject
+import dev.typr.foundations.OracleType
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
 import java.math.BigDecimal
-import typr.kotlindsl.KotlinDbTypes
-import typr.runtime.OracleObject
-import typr.runtime.OracleType
-import typr.runtime.OracleTypes
 
 /** Oracle Object Type: MONEY_T */
 data class MoneyT(

@@ -6,9 +6,9 @@
 package oracledb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.OracleTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 
 /** Type for the composite primary key of table `DEPARTMENTS` */
 case class DepartmentsId(

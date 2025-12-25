@@ -8,12 +8,12 @@ package adventureworks.production.productsubcategory
 import adventureworks.customtypes.Defaulted
 import adventureworks.production.productcategory.ProductcategoryId
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: production.productsubcategory
   * Product subcategories. See ProductCategory table.

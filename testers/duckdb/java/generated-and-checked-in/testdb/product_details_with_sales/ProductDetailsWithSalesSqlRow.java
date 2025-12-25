@@ -6,13 +6,13 @@
 package testdb.product_details_with_sales;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.Json;
 import java.math.BigDecimal;
 import java.util.Optional;
 import testdb.products.ProductsId;
-import typr.data.Json;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** SQL file: product_details_with_sales.sql */
 public record ProductDetailsWithSalesSqlRow(
@@ -30,7 +30,7 @@ public record ProductDetailsWithSalesSqlRow(
     @JsonProperty("times_ordered") Optional<Long> timesOrdered,
     /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
     @JsonProperty("total_quantity_sold") Optional<Long> totalQuantitySold,
-    /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
+    /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
     @JsonProperty("total_revenue") Optional<Double> totalRevenue,
     /** Points to {@link testdb.order_items.OrderItemsRow#orderId()} */
     Optional<String> popularity) {
@@ -139,7 +139,7 @@ public record ProductDetailsWithSalesSqlRow(
   }
   ;
 
-  /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
+  /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
   public ProductDetailsWithSalesSqlRow withTotalRevenue(Optional<Double> totalRevenue) {
     return new ProductDetailsWithSalesSqlRow(
         productId,

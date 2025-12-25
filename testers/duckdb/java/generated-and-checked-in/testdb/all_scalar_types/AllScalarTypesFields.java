@@ -5,6 +5,16 @@
  */
 package testdb.all_scalar_types;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.data.Json;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.IdField;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Duration;
@@ -16,16 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import testdb.Mood;
-import typr.data.Json;
-import typr.dsl.FieldsExpr;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.IdField;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
 
 public interface AllScalarTypesFields extends FieldsExpr<AllScalarTypesRow> {
   record Impl(List<Path> _path)

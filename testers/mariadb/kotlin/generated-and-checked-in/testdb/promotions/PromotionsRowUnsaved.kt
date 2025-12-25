@@ -6,11 +6,11 @@
 package testdb.promotions
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.data.maria.MariaSet
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typr.data.maria.MariaSet
 
 /** This class corresponds to a row in table `promotions` which has not been persisted yet */
 data class PromotionsRowUnsaved(

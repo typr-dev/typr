@@ -6,6 +6,12 @@
 package testdb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.math.BigInteger
 import java.time.Duration
 import java.time.LocalDate
@@ -14,12 +20,6 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.UUID
 import testdb.Mood
-import typr.data.Json
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: all_scalar_types
  * Primary key: id

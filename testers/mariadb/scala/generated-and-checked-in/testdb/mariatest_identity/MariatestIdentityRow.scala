@@ -5,9 +5,9 @@
  */
 package testdb.mariatest_identity
 
-import typr.runtime.MariaTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 
 /** Table: mariatest_identity
  * Primary key: id

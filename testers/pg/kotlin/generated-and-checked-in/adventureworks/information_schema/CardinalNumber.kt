@@ -6,11 +6,11 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.kotlindsl.Bijection
-import typr.kotlindsl.KotlinDbTypes
-import typr.runtime.PgType
-import typr.runtime.PgTypes
-import typr.runtime.internal.arrayMap
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.internal.arrayMap
+import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** Domain `information_schema.cardinal_number`
   * Constraint: CHECK ((VALUE >= 0))

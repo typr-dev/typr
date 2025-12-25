@@ -6,13 +6,13 @@
 package testdb.customer_search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.Priority;
 import testdb.customers.CustomersId;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** SQL file: customer_search.sql */
 public record CustomerSearchSqlRow(

@@ -5,10 +5,10 @@
  */
 package testdb.v_inventory_status
 
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.Dialect
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class VInventoryStatusViewRepoImpl extends VInventoryStatusViewRepo {
   override def select: SelectBuilder[VInventoryStatusViewFields, VInventoryStatusViewRow] = SelectBuilder.of("`v_inventory_status`", VInventoryStatusViewFields.structure, VInventoryStatusViewRow.`_rowParser`, Dialect.MARIADB)

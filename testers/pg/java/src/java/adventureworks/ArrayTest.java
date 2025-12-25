@@ -9,6 +9,7 @@ import adventureworks.public_.pgtest.PgtestRepoImpl;
 import adventureworks.public_.pgtest.PgtestRow;
 import adventureworks.public_.pgtestnull.PgtestnullRepoImpl;
 import adventureworks.public_.pgtestnull.PgtestnullRow;
+import dev.typr.foundations.data.*;
 import java.math.BigDecimal;
 import java.time.*;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.UUID;
 import org.junit.Test;
 import org.postgresql.geometric.*;
 import org.postgresql.util.PGInterval;
-import typr.data.*;
 
 /** Tests for array types and DSL operations - equivalent to Scala ArrayTest. */
 public class ArrayTest {

@@ -6,9 +6,9 @@
 package testdb.warehouses
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.runtime.MariaType
-import typr.scaladsl.Bijection
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.MariaType
+import dev.typr.foundations.scala.Bijection
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the primary key of table `warehouses` */
 case class WarehousesId(@JsonValue value: Short) extends scala.AnyVal

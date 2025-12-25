@@ -9,11 +9,11 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `sales.salesterritory` which has not been persisted yet */
 case class SalesterritoryRowUnsaved(

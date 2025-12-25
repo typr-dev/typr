@@ -5,6 +5,7 @@
  */
 package oracledb
 
+import dev.typr.foundations.internal.RandomHelper
 import java.sql.Connection
 import java.time.LocalDateTime
 import java.util.Optional
@@ -29,7 +30,6 @@ import oracledb.employees.EmployeesRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
-import typr.runtime.internal.RandomHelper
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 case class TestInsert(random: Random) {

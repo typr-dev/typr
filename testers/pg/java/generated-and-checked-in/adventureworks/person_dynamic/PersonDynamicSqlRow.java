@@ -7,10 +7,10 @@ package adventureworks.person_dynamic;
 
 import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.util.Optional;
-import typr.runtime.PgTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** SQL file: person_dynamic.sql */
 public record PersonDynamicSqlRow(

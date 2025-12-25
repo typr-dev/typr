@@ -8,7 +8,7 @@ import adventureworks.public.{Flag, Name}
 import adventureworks.userdefined.FirstName
 import org.junit.Assert.*
 import org.junit.Test
-import typr.data.Xml
+import dev.typr.foundations.data.Xml
 
 import java.time.LocalDate
 import java.util.UUID

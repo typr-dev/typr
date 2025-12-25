@@ -6,6 +6,7 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.data.maria.Inet6
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customer_addresses.CustomerAddressesId
@@ -13,7 +14,6 @@ import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.promotions.PromotionsId
-import typr.data.maria.Inet6
 
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 data class OrdersRowUnsaved(

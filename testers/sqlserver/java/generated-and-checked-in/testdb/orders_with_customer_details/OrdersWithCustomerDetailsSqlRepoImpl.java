@@ -5,15 +5,15 @@
  */
 package testdb.orders_with_customer_details;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.SqlServerTypes;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import typr.runtime.Fragment;
-import typr.runtime.SqlServerTypes;
 
 public class OrdersWithCustomerDetailsSqlRepoImpl implements OrdersWithCustomerDetailsSqlRepo {
   @Override

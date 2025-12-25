@@ -8,17 +8,17 @@ package testdb.all_scalar_types
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.microsoft.sqlserver.jdbc.Geography
 import com.microsoft.sqlserver.jdbc.Geometry
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SqlServerTypeOps
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.UUID
 import testdb.customtypes.Defaulted
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SqlServerTypeOps
 
 /** Table: all_scalar_types
  * Primary key: id

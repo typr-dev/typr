@@ -8,10 +8,10 @@ package adventureworks.public.titledperson
 import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgText
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 
 /** Table: public.titledperson */
 data class TitledpersonRow(

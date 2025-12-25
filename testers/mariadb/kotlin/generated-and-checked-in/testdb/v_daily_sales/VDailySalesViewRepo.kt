@@ -5,9 +5,9 @@
  */
 package testdb.v_daily_sales
 
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.SelectBuilder
 
 interface VDailySalesViewRepo {
   abstract fun select(): SelectBuilder<VDailySalesViewFields, VDailySalesViewRow>

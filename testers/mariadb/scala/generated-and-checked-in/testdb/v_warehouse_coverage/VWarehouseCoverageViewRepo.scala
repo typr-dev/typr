@@ -5,8 +5,8 @@
  */
 package testdb.v_warehouse_coverage
 
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.SelectBuilder
 
 trait VWarehouseCoverageViewRepo {
   def select: SelectBuilder[VWarehouseCoverageViewFields, VWarehouseCoverageViewRow]

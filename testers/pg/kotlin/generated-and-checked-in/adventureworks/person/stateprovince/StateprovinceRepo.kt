@@ -5,13 +5,13 @@
  */
 package adventureworks.person.stateprovince
 
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
 import java.sql.Connection
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
 
 interface StateprovinceRepo {
   abstract fun delete(): DeleteBuilder<StateprovinceFields, StateprovinceRow>

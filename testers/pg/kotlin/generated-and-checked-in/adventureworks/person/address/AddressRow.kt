@@ -7,13 +7,13 @@ package adventureworks.person.address
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.stateprovince.StateprovinceId
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: person.address
   * Street address information for customers, employees, and vendors.

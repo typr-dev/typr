@@ -5,6 +5,14 @@
  */
 package testdb.mariatest_spatial
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.scala.RelationStructure
+import dev.typr.foundations.scala.SqlExpr.Field
+import dev.typr.foundations.scala.SqlExpr.IdField
 import org.mariadb.jdbc.`type`.Geometry
 import org.mariadb.jdbc.`type`.GeometryCollection
 import org.mariadb.jdbc.`type`.LineString
@@ -13,14 +21,6 @@ import org.mariadb.jdbc.`type`.MultiPoint
 import org.mariadb.jdbc.`type`.MultiPolygon
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
-import typr.dsl.FieldsExpr0
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.runtime.MariaTypes
-import typr.runtime.RowParser
-import typr.scaladsl.RelationStructure
-import typr.scaladsl.SqlExpr.Field
-import typr.scaladsl.SqlExpr.IdField
 
 trait MariatestSpatialFields extends FieldsExpr0[MariatestSpatialRow] {
   def id: IdField[MariatestSpatialId, MariatestSpatialRow]

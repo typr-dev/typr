@@ -5,9 +5,9 @@
  */
 package testdb.customer_orders_view
 
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.SelectBuilder
 
 interface CustomerOrdersViewViewRepo {
   abstract fun select(): SelectBuilder<CustomerOrdersViewViewFields, CustomerOrdersViewViewRow>

@@ -8,9 +8,9 @@ package adventureworks.humanresources.department
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
 import java.time.LocalDateTime
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** This class corresponds to a row in table `humanresources.department` which has not been persisted yet */
 data class DepartmentRowUnsaved(

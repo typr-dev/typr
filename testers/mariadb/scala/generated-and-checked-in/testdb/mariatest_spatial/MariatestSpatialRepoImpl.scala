@@ -5,15 +5,15 @@
  */
 package testdb.mariatest_spatial
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
-import typr.runtime.MariaTypes
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class MariatestSpatialRepoImpl extends MariatestSpatialRepo {
   override def delete: DeleteBuilder[MariatestSpatialFields, MariatestSpatialRow] = DeleteBuilder.of("`mariatest_spatial`", MariatestSpatialFields.structure, Dialect.MARIADB)

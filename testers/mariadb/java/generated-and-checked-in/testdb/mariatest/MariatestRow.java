@@ -6,6 +6,12 @@
 package testdb.mariatest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.maria.Inet4;
+import dev.typr.foundations.data.maria.Inet6;
+import dev.typr.foundations.data.maria.MariaSet;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -13,12 +19,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Year;
 import testdb.customtypes.Defaulted;
-import typr.data.maria.Inet4;
-import typr.data.maria.Inet6;
-import typr.data.maria.MariaSet;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: mariatest Primary key: int_col */
 public record MariatestRow(

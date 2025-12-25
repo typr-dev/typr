@@ -6,14 +6,14 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundations.scala.MariaTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import testdb.customer_status.CustomerStatusId
 import testdb.customtypes.Defaulted
-import typr.data.maria.MariaSet
-import typr.runtime.MariaTypes
-import typr.scaladsl.MariaTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
 
 /** Table: customers
  * Primary key: customer_id

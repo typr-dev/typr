@@ -5,11 +5,11 @@
  */
 package testdb.v_warehouse_coverage
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class VWarehouseCoverageViewRepoImpl() : VWarehouseCoverageViewRepo {
   override fun select(): SelectBuilder<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow> = SelectBuilder.of("`v_warehouse_coverage`", VWarehouseCoverageViewFields.structure, VWarehouseCoverageViewRow._rowParser, Dialect.MARIADB)

@@ -10,14 +10,14 @@ import adventureworks.person.person.PersonRepoImpl;
 import adventureworks.public_.Name;
 import adventureworks.sales.salesperson.SalespersonRepoImpl;
 import adventureworks.userdefined.FirstName;
+import dev.typr.foundations.dsl.Bijection;
+import dev.typr.foundations.dsl.SqlExpr;
+import dev.typr.foundations.dsl.Tuples;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
-import typr.dsl.Bijection;
-import typr.dsl.SqlExpr;
-import typr.dsl.Tuples;
 
 /** Tests for DSL join chains - equivalent to Scala DSLTest. */
 public class DSLTest extends SnapshotTest {
@@ -581,7 +581,7 @@ public class DSLTest extends SnapshotTest {
                               .isEqual(person1.businessentityid())
                               .or(
                                   p.businessentityid().isEqual(person2.businessentityid()),
-                                  typr.dsl.Bijection.asBool()))
+                                  dev.typr.foundations.dsl.Bijection.asBool()))
                   .where(p -> p.businessentityid().inSubquery(subquery));
 
           // Verify SQL generation
@@ -1826,7 +1826,8 @@ public class DSLTest extends SnapshotTest {
                       p -> p.firstname(),
                       p ->
                           p.lastname()
-                              .includeIf(new SqlExpr.ConstReq<>(true, typr.runtime.PgTypes.bool)));
+                              .includeIf(
+                                  new SqlExpr.ConstReq<>(true, dev.typr.foundations.PgTypes.bool)));
 
           var results = query.toList(c);
           assertEquals(1, results.size());
@@ -1875,7 +1876,9 @@ public class DSLTest extends SnapshotTest {
                       p -> p.firstname(),
                       p ->
                           p.lastname()
-                              .includeIf(new SqlExpr.ConstReq<>(false, typr.runtime.PgTypes.bool)));
+                              .includeIf(
+                                  new SqlExpr.ConstReq<>(
+                                      false, dev.typr.foundations.PgTypes.bool)));
 
           var results = query.toList(c);
           assertEquals(1, results.size());
@@ -2027,7 +2030,8 @@ public class DSLTest extends SnapshotTest {
                   .having(
                       p ->
                           SqlExpr.count()
-                              .greaterThan(new SqlExpr.ConstReq<>(1L, typr.runtime.PgTypes.int8)))
+                              .greaterThan(
+                                  new SqlExpr.ConstReq<>(1L, dev.typr.foundations.PgTypes.int8)))
                   .select(p -> Tuples.of(p.persontype(), SqlExpr.count()));
 
           // Verify SQL generation
@@ -2114,7 +2118,7 @@ public class DSLTest extends SnapshotTest {
             tuple -> {
               // Create a match condition - this is artificial for testing
               // We're testing that the join mechanism works, not the semantics
-              return new SqlExpr.ConstReq<>(true, typr.runtime.PgTypes.bool);
+              return new SqlExpr.ConstReq<>(true, dev.typr.foundations.PgTypes.bool);
             });
 
     // The join should produce results (grouped results x businessentities)
@@ -2312,7 +2316,7 @@ public class DSLTest extends SnapshotTest {
                               d.name()
                                   .isEqual(new Name("Engineering"))
                                   .or(d.name().isEqual(new Name("Sales")), Bijection.asBool())),
-                  tuple -> new SqlExpr.ConstReq<>(true, typr.runtime.PgTypes.bool));
+                  tuple -> new SqlExpr.ConstReq<>(true, dev.typr.foundations.PgTypes.bool));
 
           // Verify SQL generation includes subquery for grouped results
           compareFragment("groupByThenJoinOnSql", joined.sql());

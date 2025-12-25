@@ -5,17 +5,17 @@
  */
 package testdb.v_order_details
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.scala.RelationStructure
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SqlExpr.Field
+import dev.typr.foundations.scala.SqlExpr.OptField
 import java.time.LocalDateTime
 import testdb.orders.OrdersId
-import typr.dsl.FieldsExpr0
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.runtime.MariaTypes
-import typr.runtime.RowParser
-import typr.scaladsl.RelationStructure
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SqlExpr.Field
-import typr.scaladsl.SqlExpr.OptField
 
 trait VOrderDetailsViewFields extends FieldsExpr0[VOrderDetailsViewRow] {
   def orderId: Field[OrdersId, VOrderDetailsViewRow]

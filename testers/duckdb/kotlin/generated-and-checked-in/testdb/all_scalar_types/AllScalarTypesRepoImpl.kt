@@ -5,20 +5,20 @@
  */
 package testdb.all_scalar_types
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
 import testdb.Mood
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 class AllScalarTypesRepoImpl() : AllScalarTypesRepo {
   override fun delete(): DeleteBuilder<AllScalarTypesFields, AllScalarTypesRow> = DeleteBuilder.of("\"all_scalar_types\"", AllScalarTypesFields.structure, Dialect.DUCKDB)

@@ -6,9 +6,9 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.OracleTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 
 /** Type for the composite primary key of table `EMPLOYEES` */
 case class EmployeesId(

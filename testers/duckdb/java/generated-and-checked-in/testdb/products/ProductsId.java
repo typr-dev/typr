@@ -6,10 +6,10 @@
 package testdb.products;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import typr.dsl.Bijection;
-import typr.runtime.DuckDbType;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.internal.arrayMap;
+import dev.typr.foundations.DuckDbType;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.dsl.Bijection;
+import dev.typr.foundations.internal.arrayMap;
 
 /** Type for the primary key of table `products` */
 public record ProductsId(@JsonValue Integer value) {

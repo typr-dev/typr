@@ -6,16 +6,16 @@
 package testdb.reviews
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.MariaTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
 import testdb.order_items.OrderItemsId
 import testdb.products.ProductsId
-import typr.runtime.MariaTypes
-import typr.scaladsl.MariaTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: reviews
  * Primary key: review_id

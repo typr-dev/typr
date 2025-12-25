@@ -8,13 +8,13 @@ package adventureworks.sales.salesterritory
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: sales.salesterritory
   * Sales territory lookup table.

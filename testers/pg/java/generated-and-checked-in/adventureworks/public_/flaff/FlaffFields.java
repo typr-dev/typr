@@ -6,20 +6,20 @@
 package adventureworks.public_.flaff;
 
 import adventureworks.public_.ShortText;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.ForeignKey;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr;
+import dev.typr.foundations.dsl.SqlExpr.CompositeIn;
+import dev.typr.foundations.dsl.SqlExpr.CompositeIn.Part;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.IdField;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.util.List;
 import java.util.Optional;
-import typr.dsl.FieldsExpr;
-import typr.dsl.ForeignKey;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr;
-import typr.dsl.SqlExpr.CompositeIn;
-import typr.dsl.SqlExpr.CompositeIn.Part;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.IdField;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.PgTypes;
-import typr.runtime.RowParser;
 
 public interface FlaffFields extends FieldsExpr<FlaffRow> {
   record Impl(List<Path> _path) implements FlaffFields, RelationStructure<FlaffFields, FlaffRow> {

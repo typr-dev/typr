@@ -6,10 +6,10 @@
 package adventureworks.public.identity_test
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.kotlindsl.Bijection
-import typr.runtime.PgType
-import typr.runtime.PgTypes
-import typr.runtime.internal.arrayMap
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.internal.arrayMap
+import dev.typr.foundations.kotlin.Bijection
 
 /** Type for the primary key of table `public.identity-test` */
 data class IdentityTestId(@JsonValue val value: String) {

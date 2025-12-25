@@ -7,16 +7,16 @@ package adventureworks.public.titledperson
 
 import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import kotlin.collections.Iterator
 import kotlin.collections.List
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
 
 class TitledpersonRepoImpl() : TitledpersonRepo {
   override fun delete(): DeleteBuilder<TitledpersonFields, TitledpersonRow> = DeleteBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure, Dialect.POSTGRESQL)

@@ -5,12 +5,12 @@
  */
 package testdb.customer_orders
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import kotlin.collections.List
 import testdb.customers.CustomersId
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.nullable
-import typr.runtime.MariaTypes
 
 class CustomerOrdersSqlRepoImpl() : CustomerOrdersSqlRepo {
   override fun apply(

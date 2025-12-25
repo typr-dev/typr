@@ -5,10 +5,10 @@
  */
 package testdb.v_order_details
 
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.Dialect
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class VOrderDetailsViewRepoImpl extends VOrderDetailsViewRepo {
   override def select: SelectBuilder[VOrderDetailsViewFields, VOrderDetailsViewRow] = SelectBuilder.of("`v_order_details`", VOrderDetailsViewFields.structure, VOrderDetailsViewRow.`_rowParser`, Dialect.MARIADB)

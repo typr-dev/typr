@@ -5,8 +5,8 @@
  */
 package adventureworks.public
 
-import typr.runtime.PgType
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
 
 /** Enum `public.myenum`
  *  - a

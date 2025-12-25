@@ -6,7 +6,7 @@
 package adventureworks.person_row_join
 
 import java.sql.Connection
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class PersonRowJoinSqlRepoImpl extends PersonRowJoinSqlRepo {
   override def apply(using c: Connection): List[PersonRowJoinSqlRow] = {

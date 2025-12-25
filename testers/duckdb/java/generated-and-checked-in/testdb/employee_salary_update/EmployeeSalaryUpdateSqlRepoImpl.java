@@ -5,13 +5,13 @@
  */
 package testdb.employee_salary_update;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.Fragment;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.Optional;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.Fragment;
 
 public class EmployeeSalaryUpdateSqlRepoImpl implements EmployeeSalaryUpdateSqlRepo {
   @Override

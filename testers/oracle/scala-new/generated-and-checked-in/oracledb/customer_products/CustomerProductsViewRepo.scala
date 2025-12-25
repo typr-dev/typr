@@ -5,8 +5,8 @@
  */
 package oracledb.customer_products
 
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.SelectBuilder
 
 trait CustomerProductsViewRepo {
   def select: SelectBuilder[CustomerProductsViewFields, CustomerProductsViewRow]

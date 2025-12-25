@@ -5,6 +5,17 @@
  */
 package testdb.payments;
 
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.data.maria.Inet6;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.ForeignKey;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.IdField;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,17 +26,6 @@ import testdb.orders.OrdersRow;
 import testdb.payment_methods.PaymentMethodsFields;
 import testdb.payment_methods.PaymentMethodsId;
 import testdb.payment_methods.PaymentMethodsRow;
-import typr.data.maria.Inet6;
-import typr.dsl.FieldsExpr;
-import typr.dsl.ForeignKey;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.IdField;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
 
 public interface PaymentsFields extends FieldsExpr<PaymentsRow> {
   record Impl(List<Path> _path)

@@ -7,13 +7,13 @@ package adventureworks.production.productcosthistory
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.production.product.ProductId
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: production.productcosthistory
   * Changes in the cost of a product over time.

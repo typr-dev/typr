@@ -6,10 +6,10 @@
 package adventureworks.humanresources.department;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import typr.dsl.Bijection;
-import typr.runtime.PgType;
-import typr.runtime.PgTypes;
-import typr.runtime.internal.arrayMap;
+import dev.typr.foundations.PgType;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.dsl.Bijection;
+import dev.typr.foundations.internal.arrayMap;
 
 /** Type for the primary key of table `humanresources.department` */
 public record DepartmentId(@JsonValue Integer value) {

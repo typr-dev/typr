@@ -5,14 +5,14 @@
  */
 package adventureworks.public.users
 
+import dev.typr.foundations.data.Unknown
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
 import java.sql.Connection
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
-import typr.data.Unknown
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
 
 interface UsersRepo {
   abstract fun delete(): DeleteBuilder<UsersFields, UsersRow>

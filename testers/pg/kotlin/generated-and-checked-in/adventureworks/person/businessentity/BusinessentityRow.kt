@@ -6,12 +6,12 @@
 package adventureworks.person.businessentity
 
 import adventureworks.customtypes.Defaulted
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: person.businessentity
   * Source of the ID that connects vendors, customers, and employees with address and contact information.

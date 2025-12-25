@@ -5,11 +5,11 @@
  */
 package testdb.update_customer_email
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.sql.Connection
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class UpdateCustomerEmailSqlRepoImpl extends UpdateCustomerEmailSqlRepo {
   override def apply(

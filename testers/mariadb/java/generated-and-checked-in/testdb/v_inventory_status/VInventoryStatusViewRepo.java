@@ -5,9 +5,9 @@
  */
 package testdb.v_inventory_status;
 
+import dev.typr.foundations.dsl.SelectBuilder;
 import java.sql.Connection;
 import java.util.List;
-import typr.dsl.SelectBuilder;
 
 public interface VInventoryStatusViewRepo {
   SelectBuilder<VInventoryStatusViewFields, VInventoryStatusViewRow> select();

@@ -149,7 +149,7 @@ object TypeSupportScala extends TypeSupport {
       code"$iterator.foreach($lambda)"
 
     def toJavaIterator(iterator: jvm.Code): jvm.Code =
-      code"${jvm.Import(jvm.Type.Qualified("typr.scaladsl.ScalaIteratorOps"))}$iterator.toJavaIterator"
+      code"${jvm.Import(jvm.Type.Qualified("dev.typr.foundations.scala.ScalaIteratorOps"))}$iterator.toJavaIterator"
   }
 
   override object MutableListOps extends MutableListSupport {

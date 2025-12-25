@@ -6,13 +6,13 @@
 package testdb.customer_search
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customers.CustomersId
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
 
 /** SQL file: customer_search.sql */
 case class CustomerSearchSqlRow(

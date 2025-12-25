@@ -5,9 +5,9 @@
  */
 package oracledb.customer_products;
 
+import dev.typr.foundations.dsl.SelectBuilder;
 import java.sql.Connection;
 import java.util.List;
-import typr.dsl.SelectBuilder;
 
 public interface CustomerProductsViewRepo {
   SelectBuilder<CustomerProductsViewFields, CustomerProductsViewRow> select();

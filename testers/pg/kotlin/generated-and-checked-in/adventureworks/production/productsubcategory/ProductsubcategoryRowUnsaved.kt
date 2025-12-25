@@ -9,10 +9,10 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.production.productcategory.ProductcategoryId
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** This class corresponds to a row in table `production.productsubcategory` which has not been persisted yet */
 data class ProductsubcategoryRowUnsaved(

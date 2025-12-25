@@ -5,11 +5,11 @@
  */
 package adventureworks.update_person
 
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import java.time.LocalDateTime
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.nullable
-import typr.runtime.PgTypes
 
 class UpdatePersonSqlRepoImpl() : UpdatePersonSqlRepo {
   override fun apply(

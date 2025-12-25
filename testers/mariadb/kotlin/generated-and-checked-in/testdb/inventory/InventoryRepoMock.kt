@@ -5,6 +5,15 @@
  */
 package testdb.inventory
 
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.DeleteBuilderMock
+import dev.typr.foundations.kotlin.DeleteParams
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.SelectBuilderMock
+import dev.typr.foundations.kotlin.SelectParams
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.kotlin.UpdateBuilderMock
+import dev.typr.foundations.kotlin.UpdateParams
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
@@ -14,15 +23,6 @@ import kotlin.collections.Map
 import kotlin.collections.MutableMap
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.DeleteBuilderMock
-import typr.kotlindsl.DeleteParams
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.SelectBuilderMock
-import typr.kotlindsl.SelectParams
-import typr.kotlindsl.UpdateBuilder
-import typr.kotlindsl.UpdateBuilderMock
-import typr.kotlindsl.UpdateParams
 
 data class InventoryRepoMock(
   val toRow: (InventoryRowUnsaved) -> InventoryRow,

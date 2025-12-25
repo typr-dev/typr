@@ -6,13 +6,13 @@
 package oracledb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 import java.util.Optional
 import oracledb.MoneyT
 import oracledb.TagVarrayT
 import oracledb.customtypes.Defaulted
-import typr.runtime.OracleTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** Table: PRODUCTS
  * Primary key: PRODUCT_ID

@@ -6,10 +6,10 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.OracleObject
-import typr.runtime.OracleType
-import typr.runtime.OracleTypes
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.OracleObject
+import dev.typr.foundations.OracleType
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Oracle Object Type: MONEY_T */
 case class MoneyT(

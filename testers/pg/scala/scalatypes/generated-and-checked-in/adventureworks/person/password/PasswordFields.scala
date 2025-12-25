@@ -8,17 +8,17 @@ package adventureworks.person.password
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.scala.ForeignKey
+import dev.typr.foundations.scala.RelationStructure
+import dev.typr.foundations.scala.SqlExpr.Field
+import dev.typr.foundations.scala.SqlExpr.IdField
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.dsl.FieldsExpr0
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.scaladsl.ForeignKey
-import typr.scaladsl.RelationStructure
-import typr.scaladsl.SqlExpr.Field
-import typr.scaladsl.SqlExpr.IdField
 
 trait PasswordFields extends FieldsExpr0[PasswordRow] {
   def businessentityid: IdField[BusinessentityId, PasswordRow]

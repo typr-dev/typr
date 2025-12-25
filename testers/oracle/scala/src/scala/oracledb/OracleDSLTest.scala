@@ -4,7 +4,7 @@ import oracledb.customers.{CustomersRepoImpl, CustomersRowUnsaved}
 import oracledb.customtypes.Defaulted
 import oracledb.products.{ProductsRepoImpl, ProductsRowUnsaved}
 import org.scalatest.funsuite.AnyFunSuite
-import typr.dsl.Bijection
+import dev.typr.foundations.dsl.Bijection
 
 class OracleDSLTest extends AnyFunSuite {
   val customersRepo: CustomersRepoImpl = new CustomersRepoImpl

@@ -5,6 +5,15 @@
  */
 package testdb.order_items;
 
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.SqlServerTypes;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.ForeignKey;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.IdField;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -14,15 +23,6 @@ import testdb.orders.OrdersRow;
 import testdb.products.ProductsFields;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
-import typr.dsl.FieldsExpr;
-import typr.dsl.ForeignKey;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.IdField;
-import typr.runtime.RowParser;
-import typr.runtime.SqlServerTypes;
 
 public interface OrderItemsFields extends FieldsExpr<OrderItemsRow> {
   record Impl(List<Path> _path)

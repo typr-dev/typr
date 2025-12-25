@@ -27,13 +27,13 @@ object DuckDbAdapter extends DbAdapter {
   // LAYER 2: Runtime Type System
   // ═══════════════════════════════════════════════════════════════════════════
 
-  val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.KotlinDbTypes")
-  val KotlinNullableExtension: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.nullable")
-  val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.ScalaDbTypes")
-  val ScalaDbTypeOps: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.DuckDbTypeOps")
-  val Types: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.DuckDbTypes")
-  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.DuckDbType")
-  val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.DuckDbText")
+  val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.KotlinDbTypes")
+  val KotlinNullableExtension: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.nullable")
+  val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.ScalaDbTypes")
+  val ScalaDbTypeOps: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.DuckDbTypeOps")
+  val Types: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.DuckDbTypes")
+  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.DuckDbType")
+  val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.DuckDbText")
   val typeFieldName: jvm.Ident = jvm.Ident("duckDbType")
   val textFieldName: jvm.Ident = jvm.Ident("duckDbText")
   def dialectRef(lang: Lang): Code = code"${lang.dsl.Dialect}.DUCKDB"

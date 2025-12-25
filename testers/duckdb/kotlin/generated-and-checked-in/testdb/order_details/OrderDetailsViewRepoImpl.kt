@@ -5,11 +5,11 @@
  */
 package testdb.order_details
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class OrderDetailsViewRepoImpl() : OrderDetailsViewRepo {
   override fun select(): SelectBuilder<OrderDetailsViewFields, OrderDetailsViewRow> = SelectBuilder.of("\"order_details\"", OrderDetailsViewFields.structure, OrderDetailsViewRow._rowParser, Dialect.DUCKDB)

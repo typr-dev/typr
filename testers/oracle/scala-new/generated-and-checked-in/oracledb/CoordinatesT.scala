@@ -6,9 +6,9 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.OracleObject
-import typr.runtime.OracleType
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.OracleObject
+import dev.typr.foundations.OracleType
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Oracle Object Type: COORDINATES_T */
 case class CoordinatesT(

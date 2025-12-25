@@ -5,6 +5,16 @@
  */
 package testdb.mariatestnull;
 
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.data.maria.Inet4;
+import dev.typr.foundations.data.maria.Inet6;
+import dev.typr.foundations.data.maria.MariaSet;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -13,16 +23,6 @@ import java.time.LocalTime;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
-import typr.data.maria.Inet4;
-import typr.data.maria.Inet6;
-import typr.data.maria.MariaSet;
-import typr.dsl.FieldsExpr;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
 
 public interface MariatestnullFields extends FieldsExpr<MariatestnullRow> {
   record Impl(List<Path> _path)

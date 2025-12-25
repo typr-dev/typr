@@ -5,9 +5,9 @@
  */
 package oracledb
 
-import typr.runtime.OracleType
-import typr.runtime.OracleTypes
-import typr.runtime.OracleVArray
+import dev.typr.foundations.OracleType
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.OracleVArray
 
 /** Oracle VARRAY Type: EMAIL_VARRAY_T (max size: 5) */
 data class EmailVarrayT(val value: Array<String>) {

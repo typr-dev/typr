@@ -5,19 +5,19 @@
  */
 package testdb.order_items
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.runtime.DuckDbTypes
 
 class OrderItemsRepoImpl() : OrderItemsRepo {
   override fun delete(): DeleteBuilder<OrderItemsFields, OrderItemsRow> = DeleteBuilder.of("\"order_items\"", OrderItemsFields.structure, Dialect.DUCKDB)

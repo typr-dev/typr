@@ -7,19 +7,19 @@ package adventureworks.sales.salesperson
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.PgTypeOps
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.ScalaIteratorOps
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.PgTypeOps
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.ScalaIteratorOps
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class SalespersonRepoImpl extends SalespersonRepo {
   override def delete: DeleteBuilder[SalespersonFields, SalespersonRow] = DeleteBuilder.of(""""sales"."salesperson"""", SalespersonFields.structure, Dialect.POSTGRESQL)

@@ -5,13 +5,13 @@
  */
 package testdb.orders_with_customer_details
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SqlServerTypeOps
 import java.sql.Connection
 import java.time.LocalDateTime
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SqlServerTypeOps
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class OrdersWithCustomerDetailsSqlRepoImpl extends OrdersWithCustomerDetailsSqlRepo {
   override def apply(

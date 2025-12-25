@@ -5,18 +5,18 @@
  */
 package oracledb.employees
 
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.OracleTypeOps
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import oracledb.MoneyT
 import scala.collection.mutable.ListBuffer
-import typr.runtime.OracleTypes
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.OracleTypeOps
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class EmployeesRepoImpl extends EmployeesRepo {
   override def delete: DeleteBuilder[EmployeesFields, EmployeesRow] = DeleteBuilder.of(""""EMPLOYEES"""", EmployeesFields.structure, Dialect.ORACLE)

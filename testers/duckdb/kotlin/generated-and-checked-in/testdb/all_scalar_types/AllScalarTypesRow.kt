@@ -6,6 +6,12 @@
 package testdb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.Duration
@@ -15,12 +21,6 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.UUID
 import testdb.Mood
-import typr.data.Json
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 /** Table: all_scalar_types
   * Primary key: id

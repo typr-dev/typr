@@ -7,11 +7,11 @@ package adventureworks.person.countryregion
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.time.LocalDateTime
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: person.countryregion
   * Lookup table containing the ISO standard codes for countries and regions.

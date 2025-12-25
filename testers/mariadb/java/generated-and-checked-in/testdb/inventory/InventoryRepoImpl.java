@@ -5,8 +5,14 @@
  */
 package testdb.inventory;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.dsl.DeleteBuilder;
+import dev.typr.foundations.dsl.Dialect;
+import dev.typr.foundations.dsl.SelectBuilder;
+import dev.typr.foundations.dsl.UpdateBuilder;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import testdb.products.ProductsId;
 import testdb.warehouses.WarehousesId;
-import typr.dsl.DeleteBuilder;
-import typr.dsl.Dialect;
-import typr.dsl.SelectBuilder;
-import typr.dsl.UpdateBuilder;
-import typr.runtime.Fragment;
-import typr.runtime.MariaTypes;
 
 public class InventoryRepoImpl implements InventoryRepo {
   @Override

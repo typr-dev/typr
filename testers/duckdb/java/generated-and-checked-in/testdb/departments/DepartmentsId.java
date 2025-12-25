@@ -6,9 +6,9 @@
 package testdb.departments;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 
 /** Type for the composite primary key of table `departments` */
 public record DepartmentsId(

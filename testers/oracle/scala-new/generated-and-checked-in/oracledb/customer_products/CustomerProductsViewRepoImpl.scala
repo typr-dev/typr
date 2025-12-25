@@ -5,10 +5,10 @@
  */
 package oracledb.customer_products
 
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.Dialect
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class CustomerProductsViewRepoImpl extends CustomerProductsViewRepo {
   override def select: SelectBuilder[CustomerProductsViewFields, CustomerProductsViewRow] = SelectBuilder.of(""""CUSTOMER_PRODUCTS"""", CustomerProductsViewFields.structure, CustomerProductsViewRow.`_rowParser`, Dialect.ORACLE)

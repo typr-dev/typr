@@ -5,6 +5,19 @@
  */
 package oracledb.employees;
 
+import dev.typr.foundations.OracleTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.ForeignKey;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr;
+import dev.typr.foundations.dsl.SqlExpr.CompositeIn;
+import dev.typr.foundations.dsl.SqlExpr.CompositeIn.Part;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.IdField;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,19 +26,6 @@ import oracledb.MoneyT;
 import oracledb.departments.DepartmentsFields;
 import oracledb.departments.DepartmentsId;
 import oracledb.departments.DepartmentsRow;
-import typr.dsl.FieldsExpr;
-import typr.dsl.ForeignKey;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr;
-import typr.dsl.SqlExpr.CompositeIn;
-import typr.dsl.SqlExpr.CompositeIn.Part;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.IdField;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.OracleTypes;
-import typr.runtime.RowParser;
 
 public interface EmployeesFields extends FieldsExpr<EmployeesRow> {
   record Impl(List<Path> _path)

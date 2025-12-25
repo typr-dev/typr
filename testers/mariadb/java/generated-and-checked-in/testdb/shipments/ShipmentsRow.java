@@ -6,6 +6,9 @@
 package testdb.shipments;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,9 +17,6 @@ import testdb.customtypes.Defaulted;
 import testdb.orders.OrdersId;
 import testdb.shipping_carriers.ShippingCarriersId;
 import testdb.warehouses.WarehousesId;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: shipments Primary key: shipment_id */
 public record ShipmentsRow(

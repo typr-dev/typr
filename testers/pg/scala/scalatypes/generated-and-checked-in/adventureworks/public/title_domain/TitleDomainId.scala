@@ -6,7 +6,7 @@
 package adventureworks.public.title_domain
 
 import adventureworks.public.ShortText
-import typr.runtime.PgType
+import dev.typr.foundations.PgType
 
 /** Type for the primary key of table `public.title_domain`. It has some known values: 
  *  - dr

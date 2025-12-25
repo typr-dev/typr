@@ -6,10 +6,10 @@
 package testdb.product_categories
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import testdb.categories.CategoriesId
 import testdb.products.ProductsId
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
 
 /** Type for the composite primary key of table `product_categories` */
 data class ProductCategoriesId(

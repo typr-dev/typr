@@ -5,20 +5,20 @@
  */
 package testdb.departments
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.CompositeIn
+import dev.typr.foundations.kotlin.SqlExpr.CompositeIn.Part
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.IdField
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import kotlin.collections.List
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.CompositeIn
-import typr.kotlindsl.SqlExpr.CompositeIn.Part
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.IdField
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.DuckDbTypes
-import typr.runtime.RowParser
 
 interface DepartmentsFields : FieldsExpr<DepartmentsRow> {
   abstract fun budget(): OptField<BigDecimal, DepartmentsRow>
@@ -54,6 +54,6 @@ interface DepartmentsFields : FieldsExpr<DepartmentsRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<DepartmentsFields, DepartmentsRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

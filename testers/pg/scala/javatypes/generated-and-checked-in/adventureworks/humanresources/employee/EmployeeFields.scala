@@ -9,20 +9,20 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
 import adventureworks.public.Flag
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.ForeignKey
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.RelationStructure
+import dev.typr.foundations.dsl.SqlExpr.Field
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.dsl.SqlExpr.IdField
+import dev.typr.foundations.dsl.SqlExpr.OptField
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
-import typr.dsl.FieldsExpr0
-import typr.dsl.ForeignKey
-import typr.dsl.Path
-import typr.dsl.RelationStructure
-import typr.dsl.SqlExpr.Field
-import typr.dsl.SqlExpr.FieldLike
-import typr.dsl.SqlExpr.IdField
-import typr.dsl.SqlExpr.OptField
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
 
 trait EmployeeFields extends FieldsExpr0[EmployeeRow] {
   def businessentityid: IdField[BusinessentityId, EmployeeRow]

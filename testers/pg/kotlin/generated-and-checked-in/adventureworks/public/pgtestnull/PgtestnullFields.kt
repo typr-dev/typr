@@ -7,6 +7,21 @@ package adventureworks.public.pgtestnull
 
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.data.Inet
+import dev.typr.foundations.data.Int2Vector
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.data.Jsonb
+import dev.typr.foundations.data.Money
+import dev.typr.foundations.data.Vector
+import dev.typr.foundations.data.Xml
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
@@ -24,21 +39,6 @@ import org.postgresql.geometric.PGpath
 import org.postgresql.geometric.PGpoint
 import org.postgresql.geometric.PGpolygon
 import org.postgresql.util.PGInterval
-import typr.data.Inet
-import typr.data.Int2Vector
-import typr.data.Json
-import typr.data.Jsonb
-import typr.data.Money
-import typr.data.Vector
-import typr.data.Xml
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
 
 interface PgtestnullFields : FieldsExpr<PgtestnullRow> {
   abstract fun bool(): OptField<Boolean, PgtestnullRow>
@@ -334,6 +334,6 @@ interface PgtestnullFields : FieldsExpr<PgtestnullRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<PgtestnullFields, PgtestnullRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

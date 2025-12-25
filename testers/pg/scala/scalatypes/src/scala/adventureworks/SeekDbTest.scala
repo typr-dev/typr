@@ -3,7 +3,7 @@ package adventureworks
 import adventureworks.person.businessentity.*
 import org.junit.Assert.*
 import org.junit.Test
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgTypes
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -28,9 +28,13 @@ class SeekDbTest {
       val _ = businessentityRepo.insertStreaming(rows.iterator, 100)
 
       val rows1 = businessentityRepo.select
-        .maybeSeek(f => f.modifieddate.asc, Option.empty[LocalDateTime], (v: LocalDateTime) => new typr.dsl.SqlExpr.ConstReq(v, timestampPgType))
-        .maybeSeek(f => f.businessentityid.asc, Option.empty[BusinessentityId], (v: BusinessentityId) => new typr.dsl.SqlExpr.ConstReq(v, BusinessentityId.pgType))
-        .maybeSeek(f => f.rowguid.asc, Option.empty[UUID], (v: UUID) => new typr.dsl.SqlExpr.ConstReq(v, PgTypes.uuid))
+        .maybeSeek(f => f.modifieddate.asc, Option.empty[LocalDateTime], (v: LocalDateTime) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, timestampPgType))
+        .maybeSeek(
+          f => f.businessentityid.asc,
+          Option.empty[BusinessentityId],
+          (v: BusinessentityId) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, BusinessentityId.pgType)
+        )
+        .maybeSeek(f => f.rowguid.asc, Option.empty[UUID], (v: UUID) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
         .toList
 
@@ -38,9 +42,13 @@ class SeekDbTest {
 
       val lastRow = rows1.last
       val rows2 = businessentityRepo.select
-        .maybeSeek(f => f.modifieddate.asc, Some(lastRow.modifieddate), (v: LocalDateTime) => new typr.dsl.SqlExpr.ConstReq(v, timestampPgType))
-        .maybeSeek(f => f.businessentityid.asc, Some(lastRow.businessentityid), (v: BusinessentityId) => new typr.dsl.SqlExpr.ConstReq(v, BusinessentityId.pgType))
-        .maybeSeek(f => f.rowguid.asc, Some(lastRow.rowguid), (v: UUID) => new typr.dsl.SqlExpr.ConstReq(v, PgTypes.uuid))
+        .maybeSeek(f => f.modifieddate.asc, Some(lastRow.modifieddate), (v: LocalDateTime) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, timestampPgType))
+        .maybeSeek(
+          f => f.businessentityid.asc,
+          Some(lastRow.businessentityid),
+          (v: BusinessentityId) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, BusinessentityId.pgType)
+        )
+        .maybeSeek(f => f.rowguid.asc, Some(lastRow.rowguid), (v: UUID) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
         .toList
 
@@ -75,9 +83,13 @@ class SeekDbTest {
       val _ = businessentityRepo.insertStreaming(rows.iterator, 100)
 
       val rows1 = businessentityRepo.select
-        .maybeSeek(f => f.modifieddate.desc, Option.empty[LocalDateTime], (v: LocalDateTime) => new typr.dsl.SqlExpr.ConstReq(v, timestampPgType))
-        .maybeSeek(f => f.businessentityid.asc, Option.empty[BusinessentityId], (v: BusinessentityId) => new typr.dsl.SqlExpr.ConstReq(v, BusinessentityId.pgType))
-        .maybeSeek(f => f.rowguid.asc, Option.empty[UUID], (v: UUID) => new typr.dsl.SqlExpr.ConstReq(v, PgTypes.uuid))
+        .maybeSeek(f => f.modifieddate.desc, Option.empty[LocalDateTime], (v: LocalDateTime) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, timestampPgType))
+        .maybeSeek(
+          f => f.businessentityid.asc,
+          Option.empty[BusinessentityId],
+          (v: BusinessentityId) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, BusinessentityId.pgType)
+        )
+        .maybeSeek(f => f.rowguid.asc, Option.empty[UUID], (v: UUID) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
         .toList
 
@@ -85,9 +97,13 @@ class SeekDbTest {
 
       val lastRow = rows1.last
       val rows2 = businessentityRepo.select
-        .maybeSeek(f => f.modifieddate.desc, Some(lastRow.modifieddate), (v: LocalDateTime) => new typr.dsl.SqlExpr.ConstReq(v, timestampPgType))
-        .maybeSeek(f => f.businessentityid.asc, Some(lastRow.businessentityid), (v: BusinessentityId) => new typr.dsl.SqlExpr.ConstReq(v, BusinessentityId.pgType))
-        .maybeSeek(f => f.rowguid.asc, Some(lastRow.rowguid), (v: UUID) => new typr.dsl.SqlExpr.ConstReq(v, PgTypes.uuid))
+        .maybeSeek(f => f.modifieddate.desc, Some(lastRow.modifieddate), (v: LocalDateTime) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, timestampPgType))
+        .maybeSeek(
+          f => f.businessentityid.asc,
+          Some(lastRow.businessentityid),
+          (v: BusinessentityId) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, BusinessentityId.pgType)
+        )
+        .maybeSeek(f => f.rowguid.asc, Some(lastRow.rowguid), (v: UUID) => new dev.typr.foundations.dsl.SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
         .toList
 

@@ -11,15 +11,15 @@ import adventureworks.public.title.TitleRow
 import adventureworks.public.title_domain.TitleDomainFields
 import adventureworks.public.title_domain.TitleDomainId
 import adventureworks.public.title_domain.TitleDomainRow
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.ForeignKey
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.Field
 import kotlin.collections.List
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.ForeignKey
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.Field
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
 
 interface TitledpersonFields : FieldsExpr<TitledpersonRow> {
   abstract override fun columns(): List<FieldLike<*, TitledpersonRow>>
@@ -51,6 +51,6 @@ interface TitledpersonFields : FieldsExpr<TitledpersonRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<TitledpersonFields, TitledpersonRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

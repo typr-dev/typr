@@ -6,10 +6,10 @@
 package adventureworks.update_person_returning
 
 import adventureworks.userdefined.FirstName
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
-import typr.runtime.PgTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
 
 /** SQL file: update_person_returning.sql */
 case class UpdatePersonReturningSqlRow(

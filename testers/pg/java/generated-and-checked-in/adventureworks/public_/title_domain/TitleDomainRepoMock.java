@@ -5,6 +5,15 @@
  */
 package adventureworks.public_.title_domain;
 
+import dev.typr.foundations.dsl.DeleteBuilder;
+import dev.typr.foundations.dsl.DeleteBuilderMock;
+import dev.typr.foundations.dsl.DeleteParams;
+import dev.typr.foundations.dsl.SelectBuilder;
+import dev.typr.foundations.dsl.SelectBuilderMock;
+import dev.typr.foundations.dsl.SelectParams;
+import dev.typr.foundations.dsl.UpdateBuilder;
+import dev.typr.foundations.dsl.UpdateBuilderMock;
+import dev.typr.foundations.dsl.UpdateParams;
 import java.lang.RuntimeException;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -15,15 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import typr.dsl.DeleteBuilder;
-import typr.dsl.DeleteBuilderMock;
-import typr.dsl.DeleteParams;
-import typr.dsl.SelectBuilder;
-import typr.dsl.SelectBuilderMock;
-import typr.dsl.SelectParams;
-import typr.dsl.UpdateBuilder;
-import typr.dsl.UpdateBuilderMock;
-import typr.dsl.UpdateParams;
 
 public record TitleDomainRepoMock(HashMap<TitleDomainId, TitleDomainRow> map) implements TitleDomainRepo {
   public TitleDomainRepoMock() {

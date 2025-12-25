@@ -3,8 +3,8 @@ package adventureworks.production.product
 import adventureworks.SnapshotTest
 import adventureworks.public.Name
 import org.junit.Test
-import typr.dsl.SqlExpr
-import typr.runtime.PgTypes
+import dev.typr.foundations.dsl.SqlExpr
+import dev.typr.foundations.PgTypes
 
 import java.math.BigDecimal
 import java.util.Optional

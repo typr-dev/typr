@@ -5,11 +5,11 @@
  */
 package adventureworks.public.users
 
+import dev.typr.foundations.data.Unknown
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
-import typr.data.Unknown
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
 
 trait UsersRepo {
   def delete: DeleteBuilder[UsersFields, UsersRow]

@@ -6,14 +6,14 @@
 package testdb.order_details
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import testdb.order_items.OrderItemsId
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
-import typr.runtime.MariaTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** SQL file: order_details.sql */
 case class OrderDetailsSqlRow(

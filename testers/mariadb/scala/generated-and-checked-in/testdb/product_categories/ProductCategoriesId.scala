@@ -6,10 +6,10 @@
 package testdb.product_categories
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 import testdb.categories.CategoriesId
 import testdb.products.ProductsId
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
 
 /** Type for the composite primary key of table `product_categories` */
 case class ProductCategoriesId(

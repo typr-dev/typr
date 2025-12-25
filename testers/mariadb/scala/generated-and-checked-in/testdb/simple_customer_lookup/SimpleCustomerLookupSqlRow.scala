@@ -6,12 +6,12 @@
 package testdb.simple_customer_lookup
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
-import typr.runtime.MariaTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
 
 /** SQL file: simple_customer_lookup.sql */
 case class SimpleCustomerLookupSqlRow(

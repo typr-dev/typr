@@ -5,10 +5,10 @@
  */
 package testdb.price_tiers
 
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
 
 trait PriceTiersRepo {
   def delete: DeleteBuilder[PriceTiersFields, PriceTiersRow]

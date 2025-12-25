@@ -5,8 +5,8 @@
  */
 package testdb.v_customer_summary
 
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.SelectBuilder
 
 trait VCustomerSummaryViewRepo {
   def select: SelectBuilder[VCustomerSummaryViewFields, VCustomerSummaryViewRow]

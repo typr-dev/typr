@@ -5,19 +5,19 @@
  */
 package adventureworks.public_.users;
 
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.data.Unknown;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.IdField;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import typr.data.Unknown;
-import typr.dsl.FieldsExpr;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.IdField;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.PgTypes;
-import typr.runtime.RowParser;
 
 public interface UsersFields extends FieldsExpr<UsersRow> {
   record Impl(List<Path> _path) implements UsersFields, RelationStructure<UsersFields, UsersRow> {

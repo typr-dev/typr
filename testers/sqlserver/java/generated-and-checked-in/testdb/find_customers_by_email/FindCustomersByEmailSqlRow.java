@@ -6,12 +6,12 @@
 package testdb.find_customers_by_email;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.SqlServerTypes;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customers.CustomersId;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
-import typr.runtime.SqlServerTypes;
 
 /** SQL file: find-customers-by-email.sql */
 public record FindCustomersByEmailSqlRow(

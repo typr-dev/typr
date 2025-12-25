@@ -5,9 +5,9 @@
  */
 package adventureworks.public
 
-import typr.runtime.PgType
-import typr.runtime.PgTypes
-import typr.runtime.internal.arrayMap
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.internal.arrayMap
 
 enum class Myenum(val value: kotlin.String) {
     a("a"),

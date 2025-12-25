@@ -6,12 +6,12 @@
 package testdb.v_daily_sales;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** View: v_daily_sales VIEW */
 public record VDailySalesViewRow(

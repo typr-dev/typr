@@ -65,9 +65,9 @@ object GeneratedDuckDb {
 
         // Generate for multiple languages to test all code paths
         val variants: Seq[(Lang, DbLibName, JsonLibName, String, String)] = List(
-          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "typr-tester-duckdb-java", ""),
-          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-duckdb-scala", ""),
-          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-duckdb-kotlin", "")
+          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "testers/duckdb/java", ""),
+          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "testers/duckdb/scala", ""),
+          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "testers/duckdb/kotlin", "")
         )
 
         def go(): Unit = {

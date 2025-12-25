@@ -5,12 +5,12 @@
  */
 package testdb.product_details_with_sales
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 class ProductDetailsWithSalesSqlRepoImpl() : ProductDetailsWithSalesSqlRepo {
   override fun apply(

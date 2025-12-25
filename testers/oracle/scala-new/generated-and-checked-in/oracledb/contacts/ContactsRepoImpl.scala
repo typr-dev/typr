@@ -5,18 +5,18 @@
  */
 package oracledb.contacts
 
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.OracleTypeOps
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import oracledb.EmailTableT
 import oracledb.TagVarrayT
 import scala.collection.mutable.ListBuffer
-import typr.runtime.OracleTypes
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.OracleTypeOps
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class ContactsRepoImpl extends ContactsRepo {
   override def delete: DeleteBuilder[ContactsFields, ContactsRow] = DeleteBuilder.of(""""CONTACTS"""", ContactsFields.structure, Dialect.ORACLE)

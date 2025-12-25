@@ -6,19 +6,19 @@
 package adventureworks.humanresources.department
 
 import adventureworks.public.Name
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
 
 class DepartmentRepoImpl() : DepartmentRepo {
   override fun delete(): DeleteBuilder<DepartmentFields, DepartmentRow> = DeleteBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure, Dialect.POSTGRESQL)

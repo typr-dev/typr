@@ -5,20 +5,20 @@
  */
 package testdb.v_customer_summary;
 
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customers.CustomersId;
-import typr.dsl.FieldsExpr;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
 
 public interface VCustomerSummaryViewFields extends FieldsExpr<VCustomerSummaryViewRow> {
   record Impl(List<Path> _path)

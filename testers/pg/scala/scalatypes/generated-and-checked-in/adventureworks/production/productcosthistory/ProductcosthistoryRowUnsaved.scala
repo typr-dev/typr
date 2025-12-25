@@ -8,11 +8,11 @@ package adventureworks.production.productcosthistory
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.production.product.ProductId
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.PgTypeOps
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.scaladsl.PgTypeOps
-import typr.scaladsl.ScalaDbTypes
 
 /** This class corresponds to a row in table `production.productcosthistory` which has not been persisted yet */
 case class ProductcosthistoryRowUnsaved(

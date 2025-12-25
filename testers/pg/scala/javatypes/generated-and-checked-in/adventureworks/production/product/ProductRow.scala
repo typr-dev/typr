@@ -11,14 +11,14 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowParsers.Function25
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
-import typr.runtime.RowParsers.Function25
 
 /** Table: production.product
  * Products sold or used in the manfacturing of sold products.

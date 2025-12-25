@@ -5,11 +5,11 @@
  */
 package testdb.subquery_test;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
 import java.sql.Connection;
 import java.util.List;
-import typr.runtime.Fragment;
 
 public class SubqueryTestSqlRepoImpl implements SubqueryTestSqlRepo {
   @Override

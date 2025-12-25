@@ -6,17 +6,17 @@
 package testdb.payments
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.data.maria.Inet6
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
 import testdb.payment_methods.PaymentMethodsId
-import typr.data.maria.Inet6
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.MariaTypes
 
 /** Table: payments
   * Primary key: payment_id

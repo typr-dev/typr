@@ -6,6 +6,15 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
+import dev.typr.foundations.dsl.DeleteBuilder
+import dev.typr.foundations.dsl.DeleteBuilderMock
+import dev.typr.foundations.dsl.DeleteParams
+import dev.typr.foundations.dsl.SelectBuilder
+import dev.typr.foundations.dsl.SelectBuilderMock
+import dev.typr.foundations.dsl.SelectParams
+import dev.typr.foundations.dsl.UpdateBuilder
+import dev.typr.foundations.dsl.UpdateBuilderMock
+import dev.typr.foundations.dsl.UpdateParams
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.ArrayList
@@ -13,15 +22,6 @@ import java.util.HashMap
 import java.util.Optional
 import java.util.function.Function
 import java.util.stream.Collectors
-import typr.dsl.DeleteBuilder
-import typr.dsl.DeleteBuilderMock
-import typr.dsl.DeleteParams
-import typr.dsl.SelectBuilder
-import typr.dsl.SelectBuilderMock
-import typr.dsl.SelectParams
-import typr.dsl.UpdateBuilder
-import typr.dsl.UpdateBuilderMock
-import typr.dsl.UpdateParams
 
 case class Issue1422RepoMock(map: HashMap[Issue142Id, Issue1422Row] = new HashMap[Issue142Id, Issue1422Row]()) extends Issue1422Repo {
   override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilderMock(Issue1422Fields.structure, () => new ArrayList(map.values()), DeleteParams.empty(), row => row.tabellkode, id => map.remove(id): @scala.annotation.nowarn)

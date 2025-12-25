@@ -6,13 +6,13 @@
 package testdb.product_details_with_sales
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.products.ProductsId
-import typr.data.Json
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** SQL file: product_details_with_sales.sql */
 case class ProductDetailsWithSalesSqlRow(
@@ -30,7 +30,7 @@ case class ProductDetailsWithSalesSqlRow(
   @JsonProperty("times_ordered") timesOrdered: Option[Long],
   /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_quantity_sold") totalQuantitySold: Option[Long],
-  /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
+  /** Points to [[testdb.order_items.OrderItemsRow.unitPrice]] */
   @JsonProperty("total_revenue") totalRevenue: Option[Double],
   /** Points to [[testdb.order_items.OrderItemsRow.orderId]] */
   popularity: Option[String]

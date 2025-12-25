@@ -5,9 +5,9 @@
  */
 package testdb;
 
-import typr.runtime.DuckDbType;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.internal.arrayMap;
+import dev.typr.foundations.DuckDbType;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.internal.arrayMap;
 
 public enum Mood {
   happy("happy"),

@@ -20,7 +20,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation(project(":typr-runtime-java"))
+    implementation(project(":foundations-jdbc"))
     implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-http:3.1.9")
     implementation("org.glassfish.jersey.inject:jersey-hk2:3.1.9")
     implementation("org.glassfish.jersey.media:jersey-media-json-jackson:3.1.9")

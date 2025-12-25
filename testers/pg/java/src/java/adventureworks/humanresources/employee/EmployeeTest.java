@@ -13,11 +13,11 @@ import adventureworks.person.person.PersonRowUnsaved;
 import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
+import dev.typr.foundations.data.Xml;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
-import typr.data.Xml;
 
 public class EmployeeTest {
   private final EmployeeRepoImpl employeeRepo = new EmployeeRepoImpl();

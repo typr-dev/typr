@@ -6,12 +6,12 @@
 package testdb.order_items;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.SqlServerTypes;
 import java.math.BigDecimal;
 import testdb.orders.OrdersId;
 import testdb.products.ProductsId;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
-import typr.runtime.SqlServerTypes;
 
 /** Table: order_items Primary key: order_item_id */
 public record OrderItemsRow(

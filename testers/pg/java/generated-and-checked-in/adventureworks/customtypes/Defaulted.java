@@ -9,7 +9,7 @@ import adventureworks.DefaultedDeserializer;
 import adventureworks.DefaultedSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import typr.runtime.PgText;
+import dev.typr.foundations.PgText;
 
 /** This signals a value where if you don't provide it, postgres will generate it for you */
 @JsonSerialize(using = DefaultedSerializer.class)

@@ -1,9 +1,9 @@
 package adventureworks.userdefined;
 
-import typr.runtime.PgText;
-import typr.runtime.PgType;
-import typr.runtime.PgTypes;
-import typr.runtime.internal.arrayMap;
+import dev.typr.foundations.PgText;
+import dev.typr.foundations.PgType;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.internal.arrayMap;
 
 /** Type for the primary key of table `sales.creditcard` */
 public record CustomCreditcardId(Integer value) {

@@ -5,11 +5,11 @@
  */
 package oracledb
 
+import dev.typr.foundations.OracleNestedTable
+import dev.typr.foundations.OracleType
+import dev.typr.foundations.OracleTypes
 import scala.jdk.CollectionConverters.ListHasAsScala
 import scala.jdk.CollectionConverters.SeqHasAsJava
-import typr.runtime.OracleNestedTable
-import typr.runtime.OracleType
-import typr.runtime.OracleTypes
 
 /** Oracle Nested Table Type: EMAIL_TABLE_T */
 case class EmailTableT(value: Array[String])

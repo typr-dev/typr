@@ -5,12 +5,12 @@
  */
 package testdb.customer_orders_summary
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SqlServerTypeOps
 import java.sql.Connection
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SqlServerTypeOps
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class CustomerOrdersSummarySqlRepoImpl extends CustomerOrdersSummarySqlRepo {
   override def apply(

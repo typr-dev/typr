@@ -6,10 +6,10 @@
 package testdb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.DuckDbTypes
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 
 /** Type for the composite primary key of table `employees` */
 data class EmployeesId(

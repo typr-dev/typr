@@ -5,13 +5,13 @@
  */
 package testdb.customer_orders;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.dsl.Dialect;
+import dev.typr.foundations.dsl.SelectBuilder;
 import java.sql.Connection;
 import java.util.List;
-import typr.dsl.Dialect;
-import typr.dsl.SelectBuilder;
-import typr.runtime.Fragment;
 
 public class CustomerOrdersViewRepoImpl implements CustomerOrdersViewRepo {
   @Override

@@ -5,16 +5,16 @@
  */
 package adventureworks.public.only_pk_columns
 
-import typr.dsl.FieldsExpr0
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.scaladsl.RelationStructure
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SqlExpr
-import typr.scaladsl.SqlExpr.CompositeIn
-import typr.scaladsl.SqlExpr.IdField
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.scala.RelationStructure
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SqlExpr
+import dev.typr.foundations.scala.SqlExpr.CompositeIn
+import dev.typr.foundations.scala.SqlExpr.IdField
 
 trait OnlyPkColumnsFields extends FieldsExpr0[OnlyPkColumnsRow] {
   def keyColumn1: IdField[String, OnlyPkColumnsRow]

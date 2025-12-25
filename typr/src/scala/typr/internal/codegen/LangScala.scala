@@ -816,11 +816,15 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
 
 object LangScala {
 
-  /** LangScala using the Java DSL (typr.dsl) - for old DbLibs (Anorm, Doobie, ZioJdbc) */
+  /** LangScala using the Java DSL (dev.typr.foundations.dsl) - for DbLibTypo with Java types */
   def javaDsl(dialect: Dialect, typeSupport: TypeSupport): LangScala =
     LangScala(dialect, typeSupport, DslQualifiedNames.Java)
 
-  /** LangScala using the Java DSL (typr.dsl) - for DbLibTypo */
+  /** LangScala using the Scala DSL (dev.typr.foundations.scala) - for DbLibTypo with Scala types */
   def scalaDsl(dialect: Dialect, typeSupport: TypeSupport): LangScala =
     LangScala(dialect, typeSupport, DslQualifiedNames.Scala)
+
+  /** LangScala using the Legacy DSL (typr.dsl) - for old DbLibs (Anorm, Doobie, ZioJdbc) */
+  def legacyDsl(dialect: Dialect, typeSupport: TypeSupport): LangScala =
+    LangScala(dialect, typeSupport, DslQualifiedNames.Legacy)
 }

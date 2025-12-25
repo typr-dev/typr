@@ -5,6 +5,7 @@
  */
 package testdb;
 
+import dev.typr.foundations.data.Json;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -39,7 +40,6 @@ import testdb.orders.OrdersRowUnsaved;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRepoImpl;
 import testdb.products.ProductsRow;
-import typr.data.Json;
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 public record TestInsert(Random random) {

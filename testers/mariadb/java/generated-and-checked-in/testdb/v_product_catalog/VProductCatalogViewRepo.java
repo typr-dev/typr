@@ -5,9 +5,9 @@
  */
 package testdb.v_product_catalog;
 
+import dev.typr.foundations.dsl.SelectBuilder;
 import java.sql.Connection;
 import java.util.List;
-import typr.dsl.SelectBuilder;
 
 public interface VProductCatalogViewRepo {
   SelectBuilder<VProductCatalogViewFields, VProductCatalogViewRow> select();

@@ -6,15 +6,15 @@
 package testdb.reviews;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customers.CustomersId;
 import testdb.customtypes.Defaulted;
 import testdb.order_items.OrderItemsId;
 import testdb.products.ProductsId;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: reviews Primary key: review_id */
 public record ReviewsRow(

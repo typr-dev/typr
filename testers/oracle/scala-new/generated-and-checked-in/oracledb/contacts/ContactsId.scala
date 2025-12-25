@@ -6,11 +6,11 @@
 package oracledb.contacts
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.runtime.OracleType
-import typr.scaladsl.Bijection
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.OracleType
+import dev.typr.foundations.scala.Bijection
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the primary key of table `CONTACTS` */
 case class ContactsId(@JsonValue value: BigDecimal) extends scala.AnyVal

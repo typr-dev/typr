@@ -5,12 +5,12 @@
  */
 package testdb.customer_orders
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.MariaTypeOps
 import java.sql.Connection
 import testdb.customers.CustomersId
-import typr.runtime.MariaTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.MariaTypeOps
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class CustomerOrdersSqlRepoImpl extends CustomerOrdersSqlRepo {
   override def apply(

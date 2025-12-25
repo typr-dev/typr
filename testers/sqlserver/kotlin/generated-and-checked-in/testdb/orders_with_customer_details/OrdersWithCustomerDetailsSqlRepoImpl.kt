@@ -5,14 +5,14 @@
  */
 package testdb.orders_with_customer_details
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.sql.Connection
 import java.time.LocalDateTime
 import kotlin.collections.List
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.nullable
-import typr.runtime.SqlServerTypes
 
 class OrdersWithCustomerDetailsSqlRepoImpl() : OrdersWithCustomerDetailsSqlRepo {
   override fun apply(

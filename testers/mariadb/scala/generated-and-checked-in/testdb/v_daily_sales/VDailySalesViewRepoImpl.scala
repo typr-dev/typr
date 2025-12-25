@@ -5,10 +5,10 @@
  */
 package testdb.v_daily_sales
 
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.Dialect
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class VDailySalesViewRepoImpl extends VDailySalesViewRepo {
   override def select: SelectBuilder[VDailySalesViewFields, VDailySalesViewRow] = SelectBuilder.of("`v_daily_sales`", VDailySalesViewFields.structure, VDailySalesViewRow.`_rowParser`, Dialect.MARIADB)

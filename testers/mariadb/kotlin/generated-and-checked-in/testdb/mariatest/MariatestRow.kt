@@ -6,6 +6,13 @@
 package testdb.mariatest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.data.maria.Inet4
+import dev.typr.foundations.data.maria.Inet6
+import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
@@ -13,13 +20,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.Year
 import testdb.customtypes.Defaulted
-import typr.data.maria.Inet4
-import typr.data.maria.Inet6
-import typr.data.maria.MariaSet
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.MariaTypes
 
 /** Table: mariatest
   * Primary key: int_col

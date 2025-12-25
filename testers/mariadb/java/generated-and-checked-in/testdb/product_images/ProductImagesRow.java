@@ -6,12 +6,12 @@
 package testdb.product_images;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.products.ProductsId;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: product_images Primary key: image_id */
 public record ProductImagesRow(

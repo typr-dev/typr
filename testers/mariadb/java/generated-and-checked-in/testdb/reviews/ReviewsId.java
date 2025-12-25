@@ -6,10 +6,10 @@
 package testdb.reviews;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import dev.typr.foundations.MariaType;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.dsl.Bijection;
 import java.math.BigInteger;
-import typr.dsl.Bijection;
-import typr.runtime.MariaType;
-import typr.runtime.MariaTypes;
 
 /** Type for the primary key of table `reviews` */
 public record ReviewsId(@JsonValue BigInteger value) {

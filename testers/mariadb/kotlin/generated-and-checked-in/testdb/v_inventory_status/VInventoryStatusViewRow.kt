@@ -6,14 +6,14 @@
 package testdb.v_inventory_status
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.time.LocalDateTime
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.MariaTypes
 
 /** View: v_inventory_status
   * VIEW

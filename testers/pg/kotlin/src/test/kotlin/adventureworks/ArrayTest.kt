@@ -22,13 +22,13 @@ import org.postgresql.geometric.PGpath
 import org.postgresql.geometric.PGpoint
 import org.postgresql.geometric.PGpolygon
 import org.postgresql.util.PGInterval
-import typr.data.Inet
-import typr.data.Int2Vector
-import typr.data.Json
-import typr.data.Jsonb
-import typr.data.Money
-import typr.data.Vector
-import typr.data.Xml
+import dev.typr.foundations.data.Inet
+import dev.typr.foundations.data.Int2Vector
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.data.Jsonb
+import dev.typr.foundations.data.Money
+import dev.typr.foundations.data.Vector
+import dev.typr.foundations.data.Xml
 
 class ArrayTest {
     private val pgtestnullRepo = PgtestnullRepoImpl()

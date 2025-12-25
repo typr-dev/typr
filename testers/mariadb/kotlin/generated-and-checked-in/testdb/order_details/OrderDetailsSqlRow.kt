@@ -6,15 +6,15 @@
 package testdb.order_details
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.order_items.OrderItemsId
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.MariaTypes
 
 /** SQL file: order_details.sql */
 data class OrderDetailsSqlRow(

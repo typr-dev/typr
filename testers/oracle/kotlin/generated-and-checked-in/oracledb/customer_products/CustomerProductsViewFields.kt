@@ -5,19 +5,19 @@
  */
 package oracledb.customer_products
 
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import kotlin.collections.List
 import oracledb.AddressT
 import oracledb.MoneyT
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.OracleTypes
-import typr.runtime.RowParser
 
 interface CustomerProductsViewFields : FieldsExpr<CustomerProductsViewRow> {
   abstract fun billingAddress(): OptField<AddressT, CustomerProductsViewRow>
@@ -57,6 +57,6 @@ interface CustomerProductsViewFields : FieldsExpr<CustomerProductsViewRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<CustomerProductsViewFields, CustomerProductsViewRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

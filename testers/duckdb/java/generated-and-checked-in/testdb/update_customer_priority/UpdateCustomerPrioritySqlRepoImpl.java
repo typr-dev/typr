@@ -5,12 +5,12 @@
  */
 package testdb.update_customer_priority;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
 import java.sql.Connection;
 import testdb.Priority;
 import testdb.customers.CustomersId;
-import typr.runtime.Fragment;
 
 public class UpdateCustomerPrioritySqlRepoImpl implements UpdateCustomerPrioritySqlRepo {
   @Override

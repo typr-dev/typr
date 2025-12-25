@@ -5,12 +5,12 @@
  */
 package testdb.update_order_status;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.MariaTypes;
 import java.sql.Connection;
 import testdb.orders.OrdersId;
-import typr.runtime.Fragment;
-import typr.runtime.MariaTypes;
 
 public class UpdateOrderStatusSqlRepoImpl implements UpdateOrderStatusSqlRepo {
   @Override

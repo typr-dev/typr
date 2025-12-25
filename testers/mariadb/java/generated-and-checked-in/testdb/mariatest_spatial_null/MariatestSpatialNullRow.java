@@ -6,6 +6,9 @@
 package testdb.mariatest_spatial_null;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.util.Optional;
 import org.mariadb.jdbc.type.Geometry;
 import org.mariadb.jdbc.type.GeometryCollection;
@@ -16,9 +19,6 @@ import org.mariadb.jdbc.type.MultiPolygon;
 import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
 import testdb.customtypes.Defaulted;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: mariatest_spatial_null Primary key: id */
 public record MariatestSpatialNullRow(

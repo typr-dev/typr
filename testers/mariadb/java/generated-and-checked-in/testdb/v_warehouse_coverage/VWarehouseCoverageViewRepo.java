@@ -5,9 +5,9 @@
  */
 package testdb.v_warehouse_coverage;
 
+import dev.typr.foundations.dsl.SelectBuilder;
 import java.sql.Connection;
 import java.util.List;
-import typr.dsl.SelectBuilder;
 
 public interface VWarehouseCoverageViewRepo {
   SelectBuilder<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow> select();

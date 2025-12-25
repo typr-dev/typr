@@ -8,8 +8,8 @@ package adventureworks.public.identity_test
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.kotlindsl.KotlinDbTypes
-import typr.runtime.PgText
+import dev.typr.foundations.PgText
+import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** This class corresponds to a row in table `public.identity-test` which has not been persisted yet */
 data class IdentityTestRowUnsaved(

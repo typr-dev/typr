@@ -8,10 +8,10 @@ package adventureworks.public.titledperson
 import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 
 /** Table: public.titledperson */
 case class TitledpersonRow(

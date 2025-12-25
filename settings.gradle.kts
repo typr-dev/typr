@@ -1,8 +1,8 @@
 rootProject.name = "typr"
 
-include("typr-runtime-java")
-include("typr-dsl-java")
-include("typr-dsl-kotlin")
+include("foundations-jdbc")
+include("foundations-jdbc-dsl")
+include("foundations-jdbc-dsl-kotlin")
 
 // PostgreSQL Kotlin testers
 include("testers:pg:kotlin")

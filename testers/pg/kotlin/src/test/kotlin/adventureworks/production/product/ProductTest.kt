@@ -82,7 +82,7 @@ class ProductTest {
             // Test orderBy
             val ordered = productRepo.select()
                 .where { f -> f.productid().`in`(arrayOf(product1.productid, product2.productid), ProductId.pgType) }
-                .orderBy { f -> typr.dsl.SortOrder.desc(f.listprice().underlying) }
+                .orderBy { f -> dev.typr.foundations.dsl.SortOrder.desc(f.listprice().underlying) }
                 .toList(c)
 
             assertEquals(2, ordered.size)

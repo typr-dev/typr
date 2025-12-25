@@ -5,11 +5,11 @@
  */
 package testdb.update_order_status
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.Fragment
 import java.sql.Connection
 import testdb.orders.OrdersId
-import typr.runtime.MariaTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class UpdateOrderStatusSqlRepoImpl extends UpdateOrderStatusSqlRepo {
   override def apply(

@@ -6,9 +6,9 @@
 package testdb.promotions
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.kotlindsl.Bijection
-import typr.kotlindsl.KotlinDbTypes
-import typr.runtime.MariaType
+import dev.typr.foundations.MariaType
+import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** Type for the primary key of table `promotions` */
 data class PromotionsId(@JsonValue val value: Long) {

@@ -5,17 +5,17 @@
  */
 package testdb.all_scalar_types
 
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.DeleteBuilderMock
+import dev.typr.foundations.scala.DeleteParams
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.SelectBuilderMock
+import dev.typr.foundations.scala.SelectParams
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.scala.UpdateBuilderMock
+import dev.typr.foundations.scala.UpdateParams
 import java.lang.RuntimeException
 import java.sql.Connection
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.DeleteBuilderMock
-import typr.scaladsl.DeleteParams
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.SelectBuilderMock
-import typr.scaladsl.SelectParams
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.UpdateBuilderMock
-import typr.scaladsl.UpdateParams
 
 case class AllScalarTypesRepoMock(map: scala.collection.mutable.Map[AllScalarTypesId, AllScalarTypesRow] = scala.collection.mutable.Map.empty[AllScalarTypesId, AllScalarTypesRow]) extends AllScalarTypesRepo {
   override def delete: DeleteBuilder[AllScalarTypesFields, AllScalarTypesRow] = DeleteBuilderMock(AllScalarTypesFields.structure, () => map.values.toList, DeleteParams.empty(), row => row.id, id => map.remove(id): @scala.annotation.nowarn)

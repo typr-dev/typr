@@ -5,17 +5,17 @@
  */
 package testdb.customers
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
 import testdb.Priority
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.Fragment
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class CustomersRepoImpl extends CustomersRepo {
   override def delete: DeleteBuilder[CustomersFields, CustomersRow] = DeleteBuilder.of(""""customers"""", CustomersFields.structure, Dialect.DUCKDB)

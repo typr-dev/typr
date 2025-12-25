@@ -8,22 +8,22 @@ package adventureworks.production.productcosthistory
 import adventureworks.production.product.ProductFields
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRow
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.ForeignKey
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.CompositeIn
+import dev.typr.foundations.kotlin.SqlExpr.CompositeIn.Part
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.IdField
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.ForeignKey
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.CompositeIn
-import typr.kotlindsl.SqlExpr.CompositeIn.Part
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.IdField
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
 
 interface ProductcosthistoryFields : FieldsExpr<ProductcosthistoryRow> {
   abstract override fun columns(): List<FieldLike<*, ProductcosthistoryRow>>
@@ -65,6 +65,6 @@ interface ProductcosthistoryFields : FieldsExpr<ProductcosthistoryRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<ProductcosthistoryFields, ProductcosthistoryRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

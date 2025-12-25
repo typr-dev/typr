@@ -5,14 +5,14 @@
  */
 package testdb.customer_search
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.sql.Connection
 import java.time.LocalDateTime
 import testdb.Priority
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class CustomerSearchSqlRepoImpl extends CustomerSearchSqlRepo {
   override def apply(

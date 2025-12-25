@@ -6,12 +6,12 @@
 package oracledb.customer_products
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 import java.util.Optional
 import oracledb.AddressT
 import oracledb.MoneyT
-import typr.runtime.OracleTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** View: CUSTOMER_PRODUCTS */
 case class CustomerProductsViewRow(

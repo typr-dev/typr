@@ -5,9 +5,9 @@
  */
 package adventureworks.public_.title_domain;
 
-import typr.runtime.PgText;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
+import dev.typr.foundations.PgText;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 
 /** Table: public.title_domain
   * Primary key: code

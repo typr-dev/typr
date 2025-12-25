@@ -6,13 +6,13 @@
 package oracledb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.scala.OracleTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import oracledb.customtypes.Defaulted
-import typr.runtime.OracleTypes
-import typr.scaladsl.OracleTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: ALL_SCALAR_TYPES
  * Primary key: ID
