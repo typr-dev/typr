@@ -115,7 +115,7 @@ RowParser<Person> personParser = RowParsers.of(
     PgTypes.int4,           // id
     PgTypes.text,           // name
     PgTypes.timestamptz,    // createdAt
-    (id, name, createdAt) -> new Person(id, name, createdAt),
+    Person::new,
     person -> new Object[]{person.id(), person.name(), person.createdAt()}
 );
 
@@ -132,7 +132,7 @@ val personParser: RowParser<Person> = RowParsers.of(
     PgTypes.int4,           // id
     PgTypes.text,           // name
     PgTypes.timestamptz,    // createdAt
-    { id, name, createdAt -> Person(id, name, createdAt) },
+    ::Person,
     { person -> arrayOf(person.id, person.name, person.createdAt) }
 )
 
@@ -149,7 +149,7 @@ val personParser: RowParser[Person] = RowParsers.of(
   PgTypes.int4,           // id
   PgTypes.text,           // name
   PgTypes.timestamptz,    // createdAt
-  (id, name, createdAt) => Person(id, name, createdAt),
+  Person.apply,
   person => Array(person.id, person.name, person.createdAt)
 )
 
@@ -251,17 +251,14 @@ val users: List<User> = query.query(userParser).runUnchecked(connection)
 <TabItem value="scala" label="Scala">
 
 ```scala
-val query = buildFragment { b =>
-  b.sql("SELECT * FROM users WHERE id = ")
-  b.param(PgTypes.int4, userId)
-  b.sql(" AND status = ")
-  b.param(PgTypes.text, "active")
-  b.sql(" AND created_at > ")
-  b.param(PgTypes.timestamptz, cutoffDate)
-}
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.Fragment.sql
 
-// Or use string interpolation
-val query = sql"SELECT * FROM users WHERE id = ${userId: PgTypes.int4}"
+// Use string interpolation with Fragment.encode for type-safe parameters
+val query = sql"""SELECT * FROM users
+  WHERE id = ${Fragment.encode(PgTypes.int4, userId)}
+  AND status = ${Fragment.encode(PgTypes.text, "active")}
+  AND created_at > ${Fragment.encode(PgTypes.timestamptz, cutoffDate)}"""
 
 // Execute safely
 val users: List[User] = query.query(userParser).runUnchecked(connection)
