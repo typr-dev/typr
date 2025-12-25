@@ -288,61 +288,32 @@ Type conversion error:
 
 ### JSON Codecs
 
-Built-in JSON serialization powers advanced features like cross-database MULTISET functionality:
+Every database type includes a JSON codec (`DbJson<A>`) that can serialize values to and from a dependency-free JSON representation. This powers advanced features like cross-database MULTISET functionality, where nested result sets are returned as JSON arrays.
 
-<Tabs groupId="language">
-<TabItem value="java" label="Java">
+The library uses its own `JsonValue` sealed interface - no Jackson, Gson, or other dependencies required:
 
 ```java
-// Create a JSON codec for your type
-PgType<MyData> jsonType = PgTypes.jsonb(
-    objectMapper,
-    new TypeReference<MyData>() {}
-);
+// JsonValue is a sealed interface with these variants:
+// JNull, JBool, JNumber, JString, JArray, JObject
 
-// Use it like any other type
-Fragment.Builder()
-    .sql("INSERT INTO data (payload) VALUES (")
-    .param(jsonType, myData)
-    .sql(")")
-    .done();
+// Every type has a built-in JSON codec
+PgType<Integer> intType = PgTypes.int4;
+JsonValue json = intType.json().toJson(42);        // JNumber("42")
+Integer value = intType.json().fromJson(json);     // 42
+
+// Works for complex types too
+PgType<int[]> arrayType = PgTypes.int4ArrayUnboxed;
+JsonValue arrayJson = arrayType.json().toJson(new int[]{1, 2, 3});  // JArray([...])
+
+// PostgreSQL JSON/JSONB columns
+PgType<Json> jsonType = PgTypes.json;
+PgType<Jsonb> jsonbType = PgTypes.jsonb;
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin">
-
-```kotlin
-// Create a JSON codec for your type
-val jsonType: PgType<MyData> = PgTypes.jsonb(
-    objectMapper,
-    object : TypeReference<MyData>() {}
-)
-
-// Use it like any other type
-buildFragment {
-    sql("INSERT INTO data (payload) VALUES (")
-    param(jsonType, myData)
-    sql(")")
-}
-```
-
-</TabItem>
-<TabItem value="scala" label="Scala">
-
-```scala
-// Create a JSON codec for your type
-val jsonType: PgType[MyData] = PgTypes.jsonb[MyData](objectMapper)
-
-// Use it like any other type
-buildFragment { b =>
-  b.sql("INSERT INTO data (payload) VALUES (")
-  b.param(jsonType, myData)
-  b.sql(")")
-}
-```
-
-</TabItem>
-</Tabs>
+The JSON codecs enable features like:
+- **MULTISET emulation** - Nested collections serialized as JSON across all databases
+- **Bulk operations** - Efficient batch processing with JSON intermediates
+- **Cross-database compatibility** - Consistent serialization regardless of database
 
 ### Streaming Inserts
 
@@ -388,56 +359,50 @@ The entire library is reflection-free. All type information is preserved at comp
 
 ### Native Types for Kotlin and Scala
 
-The library includes language-specific modules that provide idiomatic wrappers:
+The library includes language-specific modules (`foundations-jdbc-dsl-kotlin` and `foundations-jdbc-dsl-scala`) that provide idiomatic wrappers:
 
 <Tabs groupId="language">
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-// Nullable types map naturally
-val name: String? = row.get(PgTypes.text.nullable(), "name")
+// Nullable columns use Kotlin's nullable types
+val personParser: RowParser<Person> = RowParsers.of(
+    PgTypes.int4,
+    PgTypes.text.nullable(),  // String? in Kotlin
+    ::Person
+)
 
 // Extension functions for fluent API
-val users = connection.query(sql, userParser)
-
-// Kotlin-specific type aliases
-typealias KotlinPgType<T> = PgType<T?>  // nullable by default
+val users: List<User> = fragment.query(userParser).runUnchecked(connection)
 ```
 
 </TabItem>
 <TabItem value="scala" label="Scala">
 
 ```scala
-// Option types for nullable columns
-val name: Option[String] = row.get[String]("name")
+// Nullable columns use Option types
+val personParser: RowParser[Person] = RowParsers.of(
+  PgTypes.int4,
+  PgTypes.text.nullable,  // Option[String] in Scala
+  Person.apply
+)
 
 // Scala collections
-val users: List[User] = query.toList(connection)
-
-// Scala-specific type conversions
-val pgType: PgType[Option[String]] = PgTypes.text.nullable
+val users: List[User] = fragment.query(userParser).runUnchecked(connection).toList
 ```
 
 </TabItem>
 </Tabs>
 
-## Supported PostgreSQL Types
+## Supported Database Types
 
-Beyond the basics, we support all the exotic PostgreSQL types:
+Each database has comprehensive type support. See the detailed pages for complete type mappings:
 
-| Category | Types |
-|----------|-------|
-| **Arrays** | Any type can be an array, including nested arrays |
-| **Ranges** | `int4range`, `int8range`, `numrange`, `tsrange`, `tstzrange`, `daterange` |
-| **Geometric** | `point`, `line`, `lseg`, `box`, `path`, `polygon`, `circle` |
-| **Network** | `inet`, `cidr`, `macaddr`, `macaddr8` |
-| **Text Search** | `tsvector`, `tsquery` |
-| **JSON** | `json`, `jsonb` with full codec support |
-| **Binary** | `bytea`, `bit`, `varbit` |
-| **UUID** | Native `java.util.UUID` support |
-| **Money** | `money` with proper decimal handling |
-| **XML** | `xml` type support |
-| **Composite** | User-defined composite types |
+- **[PostgreSQL](./postgresql)** - Arrays, ranges, geometric types, network types, JSON, text search, and more
+- **[MariaDB/MySQL](./mariadb)** - Unsigned integers, spatial types, sets, JSON, and year types
+- **[DuckDB](./duckdb)** - Lists, structs, maps, unions, enums, and 128-bit integers
+- **[Oracle](./oracle)** - OBJECT types, nested tables, intervals, and LOB types
+- **[SQL Server](./sqlserver)** - Geography, geometry, hierarchyid, and Unicode types
 
 ## Getting Started
 
