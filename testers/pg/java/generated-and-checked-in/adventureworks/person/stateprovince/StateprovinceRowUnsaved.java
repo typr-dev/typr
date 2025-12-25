@@ -11,10 +11,10 @@ import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
 import adventureworks.sales.salesterritory.SalesterritoryId;
+import dev.typr.foundations.PgText;
+import dev.typr.foundations.PgTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import typr.runtime.PgText;
-import typr.runtime.PgTypes;
 
 /** This class corresponds to a row in table `person.stateprovince` which has not been persisted yet */
 public record StateprovinceRowUnsaved(

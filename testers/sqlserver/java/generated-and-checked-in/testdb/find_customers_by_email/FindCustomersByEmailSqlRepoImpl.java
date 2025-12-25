@@ -5,12 +5,12 @@
  */
 package testdb.find_customers_by_email;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.SqlServerTypes;
 import java.sql.Connection;
 import java.util.List;
-import typr.runtime.Fragment;
-import typr.runtime.SqlServerTypes;
 
 public class FindCustomersByEmailSqlRepoImpl implements FindCustomersByEmailSqlRepo {
   @Override

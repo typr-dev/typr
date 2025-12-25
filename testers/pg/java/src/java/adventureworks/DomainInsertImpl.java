@@ -1,8 +1,8 @@
 package adventureworks;
 
 import adventureworks.public_.*;
+import dev.typr.foundations.internal.RandomHelper;
 import java.util.Random;
-import typr.runtime.internal.RandomHelper;
 
 public class DomainInsertImpl implements TestDomainInsert {
   @Override

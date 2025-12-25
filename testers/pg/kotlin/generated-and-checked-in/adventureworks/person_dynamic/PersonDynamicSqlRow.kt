@@ -7,10 +7,10 @@ package adventureworks.person_dynamic
 
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 
 /** SQL file: person_dynamic.sql */
 data class PersonDynamicSqlRow(

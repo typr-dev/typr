@@ -6,14 +6,14 @@
 package testdb.customer_orders_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SqlServerTypeOps
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.orders.OrdersId
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SqlServerTypeOps
 
 /** SQL file: customer-orders-summary.sql */
 case class CustomerOrdersSummarySqlRow(

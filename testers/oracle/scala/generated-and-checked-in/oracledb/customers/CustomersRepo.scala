@@ -5,11 +5,11 @@
  */
 package oracledb.customers
 
+import dev.typr.foundations.dsl.DeleteBuilder
+import dev.typr.foundations.dsl.SelectBuilder
+import dev.typr.foundations.dsl.UpdateBuilder
 import java.sql.Connection
 import java.util.Optional
-import typr.dsl.DeleteBuilder
-import typr.dsl.SelectBuilder
-import typr.dsl.UpdateBuilder
 
 trait CustomersRepo {
   def delete: DeleteBuilder[CustomersFields, CustomersRow]

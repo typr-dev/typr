@@ -5,13 +5,13 @@
  */
 package testdb.order_items_bulk_insert
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
 import java.math.BigDecimal
 import java.sql.Connection
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.runtime.DuckDbTypes
 
 class OrderItemsBulkInsertSqlRepoImpl() : OrderItemsBulkInsertSqlRepo {
   override fun apply(

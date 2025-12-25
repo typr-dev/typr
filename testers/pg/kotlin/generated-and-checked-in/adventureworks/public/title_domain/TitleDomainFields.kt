@@ -5,13 +5,13 @@
  */
 package adventureworks.public.title_domain
 
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.IdField
 import kotlin.collections.List
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.IdField
-import typr.runtime.RowParser
 
 interface TitleDomainFields : FieldsExpr<TitleDomainRow> {
   abstract fun code(): IdField<TitleDomainId, TitleDomainRow>
@@ -31,6 +31,6 @@ interface TitleDomainFields : FieldsExpr<TitleDomainRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<TitleDomainFields, TitleDomainRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

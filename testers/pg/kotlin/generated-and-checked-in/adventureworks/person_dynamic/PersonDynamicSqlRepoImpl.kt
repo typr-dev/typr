@@ -5,11 +5,11 @@
  */
 package adventureworks.person_dynamic
 
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.nullable
-import typr.runtime.PgTypes
 
 class PersonDynamicSqlRepoImpl() : PersonDynamicSqlRepo {
   override fun apply(

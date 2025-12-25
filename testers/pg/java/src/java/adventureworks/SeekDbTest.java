@@ -3,6 +3,8 @@ package adventureworks;
 import static org.junit.Assert.*;
 
 import adventureworks.person.businessentity.*;
+import dev.typr.foundations.PgType;
+import dev.typr.foundations.dsl.SqlExpr;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,14 +12,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
-import typr.dsl.SqlExpr;
-import typr.runtime.PgType;
 
 /** Tests for seek-based pagination - equivalent to Scala SeekDbTest. */
 public class SeekDbTest {
   // Need to use timestamp type for seek comparisons, not text type
   private static final PgType<LocalDateTime> timestampPgType =
-      typr.runtime.PgTypes.timestamp.withTypename("timestamp");
+      dev.typr.foundations.PgTypes.timestamp.withTypename("timestamp");
 
   private void testUniformSeek(BusinessentityRepo businessentityRepo) {
     int limit = 3;
@@ -60,7 +60,7 @@ public class SeekDbTest {
                   .maybeSeek(
                       f -> f.rowguid().asc(),
                       Optional.empty(),
-                      v -> new SqlExpr.ConstReq<>(v, typr.runtime.PgTypes.uuid))
+                      v -> new SqlExpr.ConstReq<>(v, dev.typr.foundations.PgTypes.uuid))
                   .limit(limit)
                   .toList(c);
           assertEquals(group1, rows1);
@@ -81,7 +81,7 @@ public class SeekDbTest {
                   .maybeSeek(
                       f -> f.rowguid().asc(),
                       Optional.of(lastRow.rowguid()),
-                      v -> new SqlExpr.ConstReq<>(v, typr.runtime.PgTypes.uuid))
+                      v -> new SqlExpr.ConstReq<>(v, dev.typr.foundations.PgTypes.uuid))
                   .limit(limit)
                   .toList(c);
           assertEquals(group2, rows2);
@@ -145,7 +145,7 @@ public class SeekDbTest {
                   .maybeSeek(
                       f -> f.rowguid().asc(),
                       Optional.empty(),
-                      v -> new SqlExpr.ConstReq<>(v, typr.runtime.PgTypes.uuid))
+                      v -> new SqlExpr.ConstReq<>(v, dev.typr.foundations.PgTypes.uuid))
                   .limit(limit)
                   .toList(c);
           assertEquals(group1, rows1);
@@ -166,7 +166,7 @@ public class SeekDbTest {
                   .maybeSeek(
                       f -> f.rowguid().asc(),
                       Optional.of(lastRow.rowguid()),
-                      v -> new SqlExpr.ConstReq<>(v, typr.runtime.PgTypes.uuid))
+                      v -> new SqlExpr.ConstReq<>(v, dev.typr.foundations.PgTypes.uuid))
                   .limit(limit)
                   .toList(c);
           assertEquals(group2, rows2);

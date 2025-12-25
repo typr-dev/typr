@@ -7,8 +7,8 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":typr-dsl-kotlin"))
-    implementation(project(":typr-runtime-java"))
+    implementation(project(":foundations-jdbc-dsl-kotlin"))
+    implementation(project(":foundations-jdbc"))
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2")

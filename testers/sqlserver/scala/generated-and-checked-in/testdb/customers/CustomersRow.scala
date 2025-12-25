@@ -6,12 +6,12 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.SqlServerTypeOps
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.SqlServerTypeOps
 
 /** Table: customers
  * Primary key: customer_id

@@ -5,9 +5,9 @@
  */
 package adventureworks.person_row_join
 
+import dev.typr.foundations.Fragment
 import java.sql.Connection
-import typr.runtime.Fragment
-import typr.runtime.Fragment.interpolate
+import dev.typr.foundations.Fragment.interpolate
 
 class PersonRowJoinSqlRepoImpl extends PersonRowJoinSqlRepo {
   override def apply(using c: Connection): java.util.List[PersonRowJoinSqlRow] = {

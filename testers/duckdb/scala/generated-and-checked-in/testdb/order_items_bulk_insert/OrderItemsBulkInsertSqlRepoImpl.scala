@@ -5,12 +5,12 @@
  */
 package testdb.order_items_bulk_insert
 
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.sql.Connection
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class OrderItemsBulkInsertSqlRepoImpl extends OrderItemsBulkInsertSqlRepo {
   override def apply(

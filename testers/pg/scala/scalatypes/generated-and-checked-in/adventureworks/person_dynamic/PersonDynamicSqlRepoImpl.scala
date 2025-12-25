@@ -5,11 +5,11 @@
  */
 package adventureworks.person_dynamic
 
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.PgTypeOps
 import java.sql.Connection
-import typr.runtime.PgTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.PgTypeOps
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class PersonDynamicSqlRepoImpl extends PersonDynamicSqlRepo {
   override def apply(firstName: Option[String])(using c: Connection): List[PersonDynamicSqlRow] = {

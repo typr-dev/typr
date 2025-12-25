@@ -7,7 +7,7 @@ import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
 import org.junit.Assert.*
 import org.junit.Test
-import typr.runtime.OracleTypes
+import dev.typr.foundations.OracleTypes
 import java.math.BigDecimal
 
 class OracleDSLTest {

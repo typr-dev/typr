@@ -10,15 +10,15 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.data.Xml
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.data.Xml
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: person.person
   * Human beings involved with AdventureWorks: employees, customer contacts, and vendor contacts.

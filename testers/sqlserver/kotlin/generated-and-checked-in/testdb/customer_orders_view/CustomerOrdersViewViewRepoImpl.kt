@@ -5,11 +5,11 @@
  */
 package testdb.customer_orders_view
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class CustomerOrdersViewViewRepoImpl() : CustomerOrdersViewViewRepo {
   override fun select(): SelectBuilder<CustomerOrdersViewViewFields, CustomerOrdersViewViewRow> = SelectBuilder.of("[customer_orders_view]", CustomerOrdersViewViewFields.structure, CustomerOrdersViewViewRow._rowParser, Dialect.SQLSERVER)

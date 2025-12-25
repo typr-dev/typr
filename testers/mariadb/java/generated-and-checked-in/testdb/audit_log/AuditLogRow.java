@@ -6,13 +6,13 @@
 package testdb.audit_log;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.maria.Inet6;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typr.data.maria.Inet6;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: audit_log Primary key: log_id */
 public record AuditLogRow(

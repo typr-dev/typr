@@ -8,11 +8,11 @@ package adventureworks.person_detail
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 import java.util.Optional
 import java.util.UUID
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** SQL file: person_detail.sql */
 case class PersonDetailSqlRow(

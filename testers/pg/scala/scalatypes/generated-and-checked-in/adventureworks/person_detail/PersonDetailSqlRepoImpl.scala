@@ -6,11 +6,11 @@
 package adventureworks.person_detail
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.Fragment
 import java.sql.Connection
 import java.time.LocalDateTime
-import typr.runtime.PgTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
   override def apply(

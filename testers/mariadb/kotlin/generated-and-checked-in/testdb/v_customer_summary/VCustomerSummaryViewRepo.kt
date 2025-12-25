@@ -5,9 +5,9 @@
  */
 package testdb.v_customer_summary
 
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.SelectBuilder
 
 interface VCustomerSummaryViewRepo {
   abstract fun select(): SelectBuilder<VCustomerSummaryViewFields, VCustomerSummaryViewRow>

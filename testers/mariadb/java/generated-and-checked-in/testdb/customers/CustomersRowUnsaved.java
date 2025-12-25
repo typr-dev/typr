@@ -6,12 +6,12 @@
 package testdb.customers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.data.maria.MariaSet;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
-import typr.data.maria.MariaSet;
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 public record CustomersRowUnsaved(

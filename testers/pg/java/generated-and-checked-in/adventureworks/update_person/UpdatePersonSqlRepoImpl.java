@@ -5,12 +5,12 @@
  */
 package adventureworks.update_person;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.PgTypes;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import typr.runtime.Fragment;
-import typr.runtime.PgTypes;
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
 public class UpdatePersonSqlRepoImpl implements UpdatePersonSqlRepo {
   @Override

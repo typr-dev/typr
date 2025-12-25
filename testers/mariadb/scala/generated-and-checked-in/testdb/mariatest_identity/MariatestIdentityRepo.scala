@@ -5,10 +5,10 @@
  */
 package testdb.mariatest_identity
 
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
 
 trait MariatestIdentityRepo {
   def delete: DeleteBuilder[MariatestIdentityFields, MariatestIdentityRow]

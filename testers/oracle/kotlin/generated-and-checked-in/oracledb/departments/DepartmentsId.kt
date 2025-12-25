@@ -6,9 +6,9 @@
 package oracledb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.OracleTypes
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 
 /** Type for the composite primary key of table `DEPARTMENTS` */
 data class DepartmentsId(

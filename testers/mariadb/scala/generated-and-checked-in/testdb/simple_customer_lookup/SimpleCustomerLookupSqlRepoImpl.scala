@@ -5,10 +5,10 @@
  */
 package testdb.simple_customer_lookup
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.Fragment
 import java.sql.Connection
-import typr.runtime.MariaTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class SimpleCustomerLookupSqlRepoImpl extends SimpleCustomerLookupSqlRepo {
   override def apply(email: String)(using c: Connection): List[SimpleCustomerLookupSqlRow] = {

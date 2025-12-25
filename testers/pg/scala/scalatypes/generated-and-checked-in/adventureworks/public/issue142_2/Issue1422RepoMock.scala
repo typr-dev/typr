@@ -6,17 +6,17 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.DeleteBuilderMock
+import dev.typr.foundations.scala.DeleteParams
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.SelectBuilderMock
+import dev.typr.foundations.scala.SelectParams
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.scala.UpdateBuilderMock
+import dev.typr.foundations.scala.UpdateParams
 import java.lang.RuntimeException
 import java.sql.Connection
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.DeleteBuilderMock
-import typr.scaladsl.DeleteParams
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.SelectBuilderMock
-import typr.scaladsl.SelectParams
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.UpdateBuilderMock
-import typr.scaladsl.UpdateParams
 
 case class Issue1422RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue1422Row] = scala.collection.mutable.Map.empty[Issue142Id, Issue1422Row]) extends Issue1422Repo {
   override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilderMock(Issue1422Fields.structure, () => map.values.toList, DeleteParams.empty(), row => row.tabellkode, id => map.remove(id): @scala.annotation.nowarn)

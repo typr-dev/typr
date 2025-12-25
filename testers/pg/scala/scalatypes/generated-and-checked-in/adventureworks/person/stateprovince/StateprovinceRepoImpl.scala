@@ -9,17 +9,17 @@ import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaIteratorOps
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaIteratorOps
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class StateprovinceRepoImpl extends StateprovinceRepo {
   override def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, Dialect.POSTGRESQL)

@@ -6,12 +6,12 @@
 package testdb.cte_test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** SQL file: cte_test.sql */
 public record CteTestSqlRow(

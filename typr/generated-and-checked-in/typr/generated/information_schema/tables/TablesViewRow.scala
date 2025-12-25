@@ -27,7 +27,7 @@ case class TablesViewRow(
   tableSchema: Option[String],
   /** debug: {"name":"table_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_class","source_column":"relname","source_type":"name","source_primary_key":false} */
   tableName: Option[String],
-  /** debug: {"name":"table_type","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_class","source_column":"relkind","source_type":"char","source_primary_key":false} */
+  /** debug: {"name":"table_type","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_namespace","source_column":"oid","source_type":"oid","source_primary_key":false} */
   tableType: Option[String],
   /** debug: {"name":"self_referencing_column_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":false,"source_primary_key":false} */
   selfReferencingColumnName: Option[String],
@@ -39,7 +39,7 @@ case class TablesViewRow(
   userDefinedTypeSchema: Option[String],
   /** debug: {"name":"user_defined_type_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"typname","source_type":"name","source_primary_key":false} */
   userDefinedTypeName: Option[String],
-  /** debug: {"name":"is_insertable_into","inferred_type":"\"information_schema\".\"yes_or_no\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_class","source_column":"relkind","source_type":"char","source_primary_key":false} */
+  /** debug: {"name":"is_insertable_into","inferred_type":"\"information_schema\".\"yes_or_no\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_class","source_column":"oid","source_type":"oid","source_primary_key":false} */
   isInsertableInto: Option[/* max 3 chars */ String],
   /** debug: {"name":"is_typed","inferred_type":"\"information_schema\".\"yes_or_no\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"typname","source_type":"name","source_primary_key":false} */
   isTyped: Option[/* max 3 chars */ String],

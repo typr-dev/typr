@@ -5,6 +5,14 @@
  */
 package testdb.mariatest_spatial_null
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.IdField
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import kotlin.collections.List
 import org.mariadb.jdbc.type.Geometry
 import org.mariadb.jdbc.type.GeometryCollection
@@ -14,14 +22,6 @@ import org.mariadb.jdbc.type.MultiPoint
 import org.mariadb.jdbc.type.MultiPolygon
 import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.IdField
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.MariaTypes
-import typr.runtime.RowParser
 
 interface MariatestSpatialNullFields : FieldsExpr<MariatestSpatialNullRow> {
   abstract override fun columns(): List<FieldLike<*, MariatestSpatialNullRow>>
@@ -73,6 +73,6 @@ interface MariatestSpatialNullFields : FieldsExpr<MariatestSpatialNullRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<MariatestSpatialNullFields, MariatestSpatialNullRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

@@ -5,14 +5,14 @@
  */
 package testdb.product_search;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.MariaTypes;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
-import typr.runtime.Fragment;
-import typr.runtime.MariaTypes;
 
 public class ProductSearchSqlRepoImpl implements ProductSearchSqlRepo {
   @Override

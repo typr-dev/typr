@@ -6,11 +6,11 @@
 package testdb.price_tiers
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customtypes.Defaulted
-import typr.runtime.MariaTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: price_tiers
  * Primary key: tier_id

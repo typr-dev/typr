@@ -8,15 +8,15 @@ package adventureworks.public_.issue142_2;
 import adventureworks.public_.issue142.Issue142Fields;
 import adventureworks.public_.issue142.Issue142Id;
 import adventureworks.public_.issue142.Issue142Row;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.ForeignKey;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.IdField;
 import java.util.List;
 import java.util.Optional;
-import typr.dsl.FieldsExpr;
-import typr.dsl.ForeignKey;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.IdField;
-import typr.runtime.RowParser;
 
 public interface Issue1422Fields extends FieldsExpr<Issue1422Row> {
   record Impl(List<Path> _path) implements Issue1422Fields, RelationStructure<Issue1422Fields, Issue1422Row> {

@@ -6,15 +6,15 @@
 package testdb.order_summary_by_customer
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.time.LocalDate
 import testdb.Priority
 import testdb.customers.CustomersId
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 /** SQL file: order_summary_by_customer.sql */
 data class OrderSummaryByCustomerSqlRow(

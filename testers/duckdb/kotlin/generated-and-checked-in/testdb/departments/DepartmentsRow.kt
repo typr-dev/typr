@@ -6,11 +6,11 @@
 package testdb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 /** Table: departments
   * Composite primary key: dept_code, dept_region

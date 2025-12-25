@@ -39,9 +39,9 @@ object GeneratedMariaDb {
         val metadb = Await.result(MetaDb.fromDb(typoLogger, ds, selector, schemaMode = SchemaMode.SingleSchema("typr"), externalTools), Duration.Inf)
 
         val variants: Seq[(Lang, DbLibName, JsonLibName, String, String)] = List(
-          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "typr-tester-mariadb-java", ""),
-          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-mariadb-scala", ""),
-          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-mariadb-kotlin", "")
+          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "testers/mariadb/java", ""),
+          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "testers/mariadb/scala", ""),
+          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "testers/mariadb/kotlin", "")
         )
 
         def go(): Unit = {

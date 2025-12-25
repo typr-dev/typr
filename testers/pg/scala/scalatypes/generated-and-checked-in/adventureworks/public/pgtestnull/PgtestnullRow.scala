@@ -7,6 +7,19 @@ package adventureworks.public.pgtestnull
 
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.data.Inet
+import dev.typr.foundations.data.Int2Vector
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.data.Jsonb
+import dev.typr.foundations.data.Money
+import dev.typr.foundations.data.Vector
+import dev.typr.foundations.data.Xml
+import dev.typr.foundations.scala.PgTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -21,19 +34,6 @@ import org.postgresql.geometric.PGpath
 import org.postgresql.geometric.PGpoint
 import org.postgresql.geometric.PGpolygon
 import org.postgresql.util.PGInterval
-import typr.data.Inet
-import typr.data.Int2Vector
-import typr.data.Json
-import typr.data.Jsonb
-import typr.data.Money
-import typr.data.Vector
-import typr.data.Xml
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.scaladsl.PgTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: public.pgtestnull */
 case class PgtestnullRow(

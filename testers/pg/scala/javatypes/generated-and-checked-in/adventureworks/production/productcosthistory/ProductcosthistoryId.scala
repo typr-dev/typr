@@ -6,10 +6,10 @@
 package adventureworks.production.productcosthistory
 
 import adventureworks.production.product.ProductId
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 import java.time.LocalDateTime
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** Type for the composite primary key of table `production.productcosthistory` */
 case class ProductcosthistoryId(

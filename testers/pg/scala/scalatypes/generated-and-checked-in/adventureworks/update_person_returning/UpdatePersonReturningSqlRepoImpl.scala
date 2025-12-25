@@ -5,12 +5,12 @@
  */
 package adventureworks.update_person_returning
 
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.PgTypeOps
 import java.sql.Connection
 import java.time.LocalDateTime
-import typr.runtime.PgTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.PgTypeOps
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class UpdatePersonReturningSqlRepoImpl extends UpdatePersonReturningSqlRepo {
   override def apply(

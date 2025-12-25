@@ -6,12 +6,12 @@
 package oracledb.products;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import dev.typr.foundations.OracleType;
+import dev.typr.foundations.OracleTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.dsl.Bijection;
 import java.math.BigDecimal;
-import typr.dsl.Bijection;
-import typr.runtime.OracleType;
-import typr.runtime.OracleTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Type for the primary key of table `PRODUCTS` */
 public record ProductsId(@JsonValue BigDecimal value) {

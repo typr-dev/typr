@@ -12,13 +12,13 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.nullable
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** This class corresponds to a row in table `production.product` which has not been persisted yet */
 data class ProductRowUnsaved(

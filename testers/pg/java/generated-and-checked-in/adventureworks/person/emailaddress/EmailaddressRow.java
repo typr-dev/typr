@@ -7,13 +7,13 @@ package adventureworks.person.emailaddress;
 
 import adventureworks.customtypes.Defaulted;
 import adventureworks.person.businessentity.BusinessentityId;
+import dev.typr.foundations.PgText;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import typr.runtime.PgText;
-import typr.runtime.PgTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: person.emailaddress
   * Where to send a person email.

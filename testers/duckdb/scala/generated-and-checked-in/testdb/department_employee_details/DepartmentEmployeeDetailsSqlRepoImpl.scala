@@ -5,13 +5,13 @@
  */
 package testdb.department_employee_details
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.sql.Connection
 import java.time.LocalDate
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class DepartmentEmployeeDetailsSqlRepoImpl extends DepartmentEmployeeDetailsSqlRepo {
   override def apply(

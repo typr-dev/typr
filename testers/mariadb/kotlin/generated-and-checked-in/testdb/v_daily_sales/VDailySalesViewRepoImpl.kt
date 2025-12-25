@@ -5,11 +5,11 @@
  */
 package testdb.v_daily_sales
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class VDailySalesViewRepoImpl() : VDailySalesViewRepo {
   override fun select(): SelectBuilder<VDailySalesViewFields, VDailySalesViewRow> = SelectBuilder.of("`v_daily_sales`", VDailySalesViewFields.structure, VDailySalesViewRow._rowParser, Dialect.MARIADB)

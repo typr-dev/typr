@@ -21,26 +21,28 @@ import scala.util.Try
 
 /** View: information_schema.table_constraints */
 case class TableConstraintsViewRow(
-  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"is_deferrable","ordinal_position":8,"is_nullable":"YES","data_type":"character varying","character_maximum_length":3,"character_octet_length":12,"collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"yes_or_no","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"varchar","dtd_identifier":"8","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
-  isDeferrable: Option[/* max 3 chars */ String],
-  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"constraint_type","ordinal_position":7,"is_nullable":"YES","data_type":"character varying","character_octet_length":1073741824,"collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"character_data","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"varchar","dtd_identifier":"7","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
-  constraintType: Option[String],
-  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"enforced","ordinal_position":10,"is_nullable":"YES","data_type":"character varying","character_maximum_length":3,"character_octet_length":12,"collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"yes_or_no","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"varchar","dtd_identifier":"10","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
-  enforced: Option[/* max 3 chars */ String],
+  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"constraint_catalog","ordinal_position":1,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"1","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
+  constraintCatalog: Option[String],
+  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"constraint_schema","ordinal_position":2,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"2","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
+  constraintSchema: Option[String],
   /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"constraint_name","ordinal_position":3,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"3","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
   constraintName: Option[String],
   /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"table_catalog","ordinal_position":4,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"4","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
   tableCatalog: Option[String],
-  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"constraint_schema","ordinal_position":2,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"2","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
-  constraintSchema: Option[String],
+  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"table_schema","ordinal_position":5,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"5","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
+  tableSchema: Option[String],
   /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"table_name","ordinal_position":6,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"6","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
   tableName: Option[String],
+  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"constraint_type","ordinal_position":7,"is_nullable":"YES","data_type":"character varying","character_octet_length":1073741824,"collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"character_data","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"varchar","dtd_identifier":"7","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
+  constraintType: Option[String],
+  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"is_deferrable","ordinal_position":8,"is_nullable":"YES","data_type":"character varying","character_maximum_length":3,"character_octet_length":12,"collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"yes_or_no","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"varchar","dtd_identifier":"8","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
+  isDeferrable: Option[/* max 3 chars */ String],
   /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"initially_deferred","ordinal_position":9,"is_nullable":"YES","data_type":"character varying","character_maximum_length":3,"character_octet_length":12,"collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"yes_or_no","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"varchar","dtd_identifier":"9","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
   initiallyDeferred: Option[/* max 3 chars */ String],
-  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"constraint_catalog","ordinal_position":1,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"1","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
-  constraintCatalog: Option[String],
-  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"table_schema","ordinal_position":5,"is_nullable":"YES","data_type":"name","collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"sql_identifier","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"name","dtd_identifier":"5","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
-  tableSchema: Option[String]
+  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"enforced","ordinal_position":10,"is_nullable":"YES","data_type":"character varying","character_maximum_length":3,"character_octet_length":12,"collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"yes_or_no","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"varchar","dtd_identifier":"10","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
+  enforced: Option[/* max 3 chars */ String],
+  /** debug: {"table_catalog":"Adventureworks","table_schema":"information_schema","table_name":"table_constraints","column_name":"nulls_distinct","ordinal_position":11,"is_nullable":"YES","data_type":"character varying","character_maximum_length":3,"character_octet_length":12,"collation_catalog":"Adventureworks","collation_schema":"pg_catalog","collation_name":"C","domain_catalog":"Adventureworks","domain_schema":"information_schema","domain_name":"yes_or_no","udt_catalog":"Adventureworks","udt_schema":"pg_catalog","udt_name":"varchar","dtd_identifier":"11","is_self_referencing":"NO","is_identity":"NO","identity_cycle":"NO","is_generated":"NEVER","is_updatable":"NO"} */
+  nullsDistinct: Option[/* max 3 chars */ String]
 )
 
 object TableConstraintsViewRow {
@@ -48,16 +50,17 @@ object TableConstraintsViewRow {
     Reads[TableConstraintsViewRow](json => JsResult.fromTry(
         Try(
           TableConstraintsViewRow(
-            isDeferrable = json.\("is_deferrable").toOption.map(_.as(Reads.StringReads)),
-            constraintType = json.\("constraint_type").toOption.map(_.as(Reads.StringReads)),
-            enforced = json.\("enforced").toOption.map(_.as(Reads.StringReads)),
+            constraintCatalog = json.\("constraint_catalog").toOption.map(_.as(Reads.StringReads)),
+            constraintSchema = json.\("constraint_schema").toOption.map(_.as(Reads.StringReads)),
             constraintName = json.\("constraint_name").toOption.map(_.as(Reads.StringReads)),
             tableCatalog = json.\("table_catalog").toOption.map(_.as(Reads.StringReads)),
-            constraintSchema = json.\("constraint_schema").toOption.map(_.as(Reads.StringReads)),
+            tableSchema = json.\("table_schema").toOption.map(_.as(Reads.StringReads)),
             tableName = json.\("table_name").toOption.map(_.as(Reads.StringReads)),
+            constraintType = json.\("constraint_type").toOption.map(_.as(Reads.StringReads)),
+            isDeferrable = json.\("is_deferrable").toOption.map(_.as(Reads.StringReads)),
             initiallyDeferred = json.\("initially_deferred").toOption.map(_.as(Reads.StringReads)),
-            constraintCatalog = json.\("constraint_catalog").toOption.map(_.as(Reads.StringReads)),
-            tableSchema = json.\("table_schema").toOption.map(_.as(Reads.StringReads))
+            enforced = json.\("enforced").toOption.map(_.as(Reads.StringReads)),
+            nullsDistinct = json.\("nulls_distinct").toOption.map(_.as(Reads.StringReads))
           )
         )
       ),
@@ -68,16 +71,17 @@ object TableConstraintsViewRow {
     RowParser[TableConstraintsViewRow] { row =>
       Success(
         TableConstraintsViewRow(
-          isDeferrable = row(idx + 0)(Column.columnToOption(Column.columnToString)),
-          constraintType = row(idx + 1)(Column.columnToOption(Column.columnToString)),
-          enforced = row(idx + 2)(Column.columnToOption(Column.columnToString)),
-          constraintName = row(idx + 3)(Column.columnToOption(Column.columnToString)),
-          tableCatalog = row(idx + 4)(Column.columnToOption(Column.columnToString)),
-          constraintSchema = row(idx + 5)(Column.columnToOption(Column.columnToString)),
-          tableName = row(idx + 6)(Column.columnToOption(Column.columnToString)),
-          initiallyDeferred = row(idx + 7)(Column.columnToOption(Column.columnToString)),
-          constraintCatalog = row(idx + 8)(Column.columnToOption(Column.columnToString)),
-          tableSchema = row(idx + 9)(Column.columnToOption(Column.columnToString))
+          constraintCatalog = row(idx + 0)(Column.columnToOption(Column.columnToString)),
+          constraintSchema = row(idx + 1)(Column.columnToOption(Column.columnToString)),
+          constraintName = row(idx + 2)(Column.columnToOption(Column.columnToString)),
+          tableCatalog = row(idx + 3)(Column.columnToOption(Column.columnToString)),
+          tableSchema = row(idx + 4)(Column.columnToOption(Column.columnToString)),
+          tableName = row(idx + 5)(Column.columnToOption(Column.columnToString)),
+          constraintType = row(idx + 6)(Column.columnToOption(Column.columnToString)),
+          isDeferrable = row(idx + 7)(Column.columnToOption(Column.columnToString)),
+          initiallyDeferred = row(idx + 8)(Column.columnToOption(Column.columnToString)),
+          enforced = row(idx + 9)(Column.columnToOption(Column.columnToString)),
+          nullsDistinct = row(idx + 10)(Column.columnToOption(Column.columnToString))
         )
       )
     }
@@ -86,16 +90,17 @@ object TableConstraintsViewRow {
   implicit lazy val writes: OWrites[TableConstraintsViewRow] = {
     OWrites[TableConstraintsViewRow](o =>
       new JsObject(ListMap[String, JsValue](
-        "is_deferrable" -> Writes.OptionWrites(Writes.StringWrites).writes(o.isDeferrable),
-        "constraint_type" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintType),
-        "enforced" -> Writes.OptionWrites(Writes.StringWrites).writes(o.enforced),
+        "constraint_catalog" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintCatalog),
+        "constraint_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintSchema),
         "constraint_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintName),
         "table_catalog" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableCatalog),
-        "constraint_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintSchema),
+        "table_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableSchema),
         "table_name" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableName),
+        "constraint_type" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintType),
+        "is_deferrable" -> Writes.OptionWrites(Writes.StringWrites).writes(o.isDeferrable),
         "initially_deferred" -> Writes.OptionWrites(Writes.StringWrites).writes(o.initiallyDeferred),
-        "constraint_catalog" -> Writes.OptionWrites(Writes.StringWrites).writes(o.constraintCatalog),
-        "table_schema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.tableSchema)
+        "enforced" -> Writes.OptionWrites(Writes.StringWrites).writes(o.enforced),
+        "nulls_distinct" -> Writes.OptionWrites(Writes.StringWrites).writes(o.nullsDistinct)
       ))
     )
   }

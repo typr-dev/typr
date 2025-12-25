@@ -5,10 +5,10 @@
  */
 package testdb.update_customer_priority
 
+import dev.typr.foundations.kotlin.Fragment
 import java.sql.Connection
 import testdb.Priority
 import testdb.customers.CustomersId
-import typr.kotlindsl.Fragment
 
 class UpdateCustomerPrioritySqlRepoImpl() : UpdateCustomerPrioritySqlRepo {
   override fun apply(

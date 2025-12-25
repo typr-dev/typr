@@ -6,13 +6,13 @@
 package testdb.order_history;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.orders.OrdersId;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: order_history Primary key: history_id */
 public record OrderHistoryRow(

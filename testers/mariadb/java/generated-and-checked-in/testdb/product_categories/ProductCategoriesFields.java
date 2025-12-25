@@ -5,6 +5,18 @@
  */
 package testdb.product_categories;
 
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.ForeignKey;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr;
+import dev.typr.foundations.dsl.SqlExpr.CompositeIn;
+import dev.typr.foundations.dsl.SqlExpr.CompositeIn.Part;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.IdField;
 import java.util.List;
 import java.util.Optional;
 import testdb.categories.CategoriesFields;
@@ -13,18 +25,6 @@ import testdb.categories.CategoriesRow;
 import testdb.products.ProductsFields;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
-import typr.dsl.FieldsExpr;
-import typr.dsl.ForeignKey;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr;
-import typr.dsl.SqlExpr.CompositeIn;
-import typr.dsl.SqlExpr.CompositeIn.Part;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.IdField;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
 
 public interface ProductCategoriesFields extends FieldsExpr<ProductCategoriesRow> {
   record Impl(List<Path> _path)

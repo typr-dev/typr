@@ -6,6 +6,9 @@
 package testdb.mariatest_spatial
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 import org.mariadb.jdbc.`type`.Geometry
 import org.mariadb.jdbc.`type`.GeometryCollection
 import org.mariadb.jdbc.`type`.LineString
@@ -14,9 +17,6 @@ import org.mariadb.jdbc.`type`.MultiPoint
 import org.mariadb.jdbc.`type`.MultiPolygon
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
-import typr.runtime.MariaTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
 
 /** Table: mariatest_spatial
  * Primary key: id

@@ -6,12 +6,12 @@
 package oracledb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.OracleType
+import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.math.BigDecimal
-import typr.kotlindsl.Bijection
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.OracleType
 
 /** Type for the primary key of table `ALL_SCALAR_TYPES` */
 data class AllScalarTypesId(@JsonValue val value: BigDecimal) {

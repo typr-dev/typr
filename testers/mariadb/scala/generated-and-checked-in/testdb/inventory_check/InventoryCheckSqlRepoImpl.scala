@@ -5,13 +5,13 @@
  */
 package testdb.inventory_check
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.MariaTypeOps
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.math.BigInteger
 import java.sql.Connection
-import typr.runtime.MariaTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.MariaTypeOps
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class InventoryCheckSqlRepoImpl extends InventoryCheckSqlRepo {
   override def apply(

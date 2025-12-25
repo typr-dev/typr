@@ -5,20 +5,20 @@
  */
 package testdb.products;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.dsl.DeleteBuilder;
+import dev.typr.foundations.dsl.Dialect;
+import dev.typr.foundations.dsl.SelectBuilder;
+import dev.typr.foundations.dsl.UpdateBuilder;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import typr.dsl.DeleteBuilder;
-import typr.dsl.Dialect;
-import typr.dsl.SelectBuilder;
-import typr.dsl.UpdateBuilder;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.Fragment;
 
 public class ProductsRepoImpl implements ProductsRepo {
   @Override

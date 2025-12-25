@@ -5,9 +5,9 @@
  */
 package testdb.mariatest_unique;
 
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 
 /** Table: mariatest_unique Primary key: id */
 public record MariatestUniqueRow(

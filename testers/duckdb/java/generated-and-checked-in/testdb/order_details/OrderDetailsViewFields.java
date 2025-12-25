@@ -5,17 +5,17 @@
  */
 package testdb.order_details;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import typr.dsl.FieldsExpr;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
 
 public interface OrderDetailsViewFields extends FieldsExpr<OrderDetailsViewRow> {
   record Impl(List<Path> _path)

@@ -6,6 +6,10 @@
 package testdb.orders;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.maria.Inet6;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -13,10 +17,6 @@ import testdb.customer_addresses.CustomerAddressesId;
 import testdb.customers.CustomersId;
 import testdb.customtypes.Defaulted;
 import testdb.promotions.PromotionsId;
-import typr.data.maria.Inet6;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: orders Primary key: order_id */
 public record OrdersRow(

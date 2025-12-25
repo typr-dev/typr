@@ -7,10 +7,10 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 
 /** Type for the composite primary key of table `public.flaff` */
 data class FlaffId(

@@ -11,12 +11,12 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.data.Xml
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
-import typr.data.Xml
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** This class corresponds to a row in table `person.person` which has not been persisted yet */
 case class PersonRowUnsaved(

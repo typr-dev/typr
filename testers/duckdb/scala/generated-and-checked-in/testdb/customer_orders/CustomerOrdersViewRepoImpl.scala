@@ -5,10 +5,10 @@
  */
 package testdb.customer_orders
 
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.Dialect
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class CustomerOrdersViewRepoImpl extends CustomerOrdersViewRepo {
   override def select: SelectBuilder[CustomerOrdersViewFields, CustomerOrdersViewRow] = SelectBuilder.of(""""customer_orders"""", CustomerOrdersViewFields.structure, CustomerOrdersViewRow.`_rowParser`, Dialect.DUCKDB)

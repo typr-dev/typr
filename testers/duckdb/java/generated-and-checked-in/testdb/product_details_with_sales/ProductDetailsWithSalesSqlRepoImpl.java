@@ -5,14 +5,14 @@
  */
 package testdb.product_details_with_sales;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.Fragment;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.Fragment;
 
 public class ProductDetailsWithSalesSqlRepoImpl implements ProductDetailsWithSalesSqlRepo {
   @Override

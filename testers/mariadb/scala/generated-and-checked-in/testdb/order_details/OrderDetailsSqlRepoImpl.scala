@@ -5,10 +5,10 @@
  */
 package testdb.order_details
 
+import dev.typr.foundations.scala.Fragment
 import java.sql.Connection
 import testdb.orders.OrdersId
-import typr.scaladsl.Fragment
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class OrderDetailsSqlRepoImpl extends OrderDetailsSqlRepo {
   override def apply(orderId: /* user-picked */ OrdersId)(using c: Connection): List[OrderDetailsSqlRow] = {

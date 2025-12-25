@@ -6,11 +6,11 @@
 package adventureworks.public_.users;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import dev.typr.foundations.PgType;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.dsl.Bijection;
+import dev.typr.foundations.internal.arrayMap;
 import java.util.UUID;
-import typr.dsl.Bijection;
-import typr.runtime.PgType;
-import typr.runtime.PgTypes;
-import typr.runtime.internal.arrayMap;
 
 /** Type for the primary key of table `public.users` */
 public record UsersId(@JsonValue UUID value) {

@@ -6,11 +6,11 @@
 package testdb.shipping_carriers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: shipping_carriers Primary key: carrier_id */
 public record ShippingCarriersRow(

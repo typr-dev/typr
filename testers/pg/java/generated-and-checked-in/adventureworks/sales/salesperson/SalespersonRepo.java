@@ -6,14 +6,14 @@
 package adventureworks.sales.salesperson;
 
 import adventureworks.person.businessentity.BusinessentityId;
+import dev.typr.foundations.dsl.DeleteBuilder;
+import dev.typr.foundations.dsl.SelectBuilder;
+import dev.typr.foundations.dsl.UpdateBuilder;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import typr.dsl.DeleteBuilder;
-import typr.dsl.SelectBuilder;
-import typr.dsl.UpdateBuilder;
 
 public interface SalespersonRepo {
   DeleteBuilder<SalespersonFields, SalespersonRow> delete();

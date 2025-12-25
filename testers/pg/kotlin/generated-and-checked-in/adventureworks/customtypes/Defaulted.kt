@@ -9,7 +9,7 @@ import adventureworks.DefaultedDeserializer
 import adventureworks.DefaultedSerializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import typr.runtime.PgText
+import dev.typr.foundations.PgText
 
 @JsonSerialize(using = DefaultedSerializer::class)
 @JsonDeserialize(using = DefaultedDeserializer::class)

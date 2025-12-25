@@ -6,16 +6,16 @@
 package testdb.payments;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.maria.Inet6;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.orders.OrdersId;
 import testdb.payment_methods.PaymentMethodsId;
-import typr.data.maria.Inet6;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: payments Primary key: payment_id */
 public record PaymentsRow(

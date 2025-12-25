@@ -6,13 +6,13 @@
 package oracledb.contacts
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import oracledb.EmailTableT
 import oracledb.TagVarrayT
 import oracledb.customtypes.Defaulted
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.OracleTypes
 
 /** Table: CONTACTS
   * Primary key: CONTACT_ID

@@ -40,21 +40,21 @@ class DbLibTypo(
   def quotedRelNameStr(name: db.RelationName): String =
     name.schema.foldLeft(adapter.quoteIdent(name.name))((acc, s) => s"${adapter.quoteIdent(s)}.$acc")
 
-  val streamingInsert = jvm.Type.Qualified("typr.runtime.streamingInsert")
+  val streamingInsert = jvm.Type.Qualified("dev.typr.foundations.streamingInsert")
   val Fragment = lang.dsl.Fragment
   // SqlStringInterpolation uses Fragment companion object for all languages now
   val SqlStringInterpolation: jvm.Type.Qualified = Fragment
   // Kotlin nullable extension function
-  val KotlinNullableExtension = jvm.Type.Qualified("typr.kotlindsl.nullable")
+  val KotlinNullableExtension = jvm.Type.Qualified("dev.typr.foundations.kotlin.nullable")
   // Kotlin query extension function for Fragment
-  val KotlinQueryExtension = jvm.Type.Qualified("typr.kotlindsl.query")
+  val KotlinQueryExtension = jvm.Type.Qualified("dev.typr.foundations.kotlin.query")
   // Scala DbTypeOps implicit class for nullable extension method - use specific type for each database
   val ScalaDbTypeOps = adapter.dbType match {
-    case DbType.PostgreSQL => jvm.Type.Qualified("typr.scaladsl.PgTypeOps")
-    case DbType.MariaDB    => jvm.Type.Qualified("typr.scaladsl.MariaTypeOps")
-    case DbType.DuckDB     => jvm.Type.Qualified("typr.scaladsl.DuckDbTypeOps")
-    case DbType.Oracle     => jvm.Type.Qualified("typr.scaladsl.OracleTypeOps")
-    case DbType.SqlServer  => jvm.Type.Qualified("typr.scaladsl.SqlServerTypeOps")
+    case DbType.PostgreSQL => jvm.Type.Qualified("dev.typr.foundations.scala.PgTypeOps")
+    case DbType.MariaDB    => jvm.Type.Qualified("dev.typr.foundations.scala.MariaTypeOps")
+    case DbType.DuckDB     => jvm.Type.Qualified("dev.typr.foundations.scala.DuckDbTypeOps")
+    case DbType.Oracle     => jvm.Type.Qualified("dev.typr.foundations.scala.OracleTypeOps")
+    case DbType.SqlServer  => jvm.Type.Qualified("dev.typr.foundations.scala.SqlServerTypeOps")
   }
 
   def rowParserFor(rowType: jvm.Type) = code"$rowType.$rowParserName"
@@ -64,9 +64,9 @@ class DbLibTypo(
     code"${rowParserFor(rowType)}.$method()"
 
   // Extension class imports for Scala result conversions
-  val OperationListOps = jvm.Type.Qualified("typr.scaladsl.OperationListOps")
-  val OperationOptionalToOptionOps = jvm.Type.Qualified("typr.scaladsl.OperationOptionalToOptionOps")
-  val ScalaIteratorOps = jvm.Type.Qualified("typr.scaladsl.ScalaIteratorOps")
+  val OperationListOps = jvm.Type.Qualified("dev.typr.foundations.scala.OperationListOps")
+  val OperationOptionalToOptionOps = jvm.Type.Qualified("dev.typr.foundations.scala.OperationOptionalToOptionOps")
+  val ScalaIteratorOps = jvm.Type.Qualified("dev.typr.foundations.scala.ScalaIteratorOps")
   val ScalaCollectionConverters = jvm.Type.Qualified("scala.jdk.CollectionConverters")
 
   /** Generate the appropriate runUnchecked call for methods returning List - converts to Scala List for scalaDsl only */
@@ -1907,7 +1907,7 @@ class DbLibTypo(
                 isOverride = true,
                 isDefault = false
               )
-              val functionTypeName = jvm.Type.Qualified(s"typr.runtime.RowParsers.Function${cols.length}")
+              val functionTypeName = jvm.Type.Qualified(s"dev.typr.foundations.RowParsers.Function${cols.length}")
               val typeParams = cols.toList.map(_.tpe) :+ tpe
               val functionType = functionTypeName.of(typeParams*)
               jvm
@@ -1993,8 +1993,8 @@ class DbLibTypo(
     if (computed.attributes.isEmpty) {
       Nil
     } else {
-      val oracleType = jvm.Type.Qualified("typr.runtime.OracleType")
-      val oracleObject = jvm.Type.Qualified("typr.runtime.OracleObject")
+      val oracleType = jvm.Type.Qualified("dev.typr.foundations.OracleType")
+      val oracleObject = jvm.Type.Qualified("dev.typr.foundations.OracleObject")
 
       // Get the Oracle type name (e.g., "ADDRESS_T")
       val oracleTypeName = computed.underlying.name.name
@@ -2049,7 +2049,7 @@ class DbLibTypo(
   }
 
   override def collectionInstances(computed: ComputedOracleCollectionType): List[jvm.ClassMember] = {
-    val oracleType = jvm.Type.Qualified("typr.runtime.OracleType")
+    val oracleType = jvm.Type.Qualified("dev.typr.foundations.OracleType")
     val elementTypeInstance = lookupType((computed.underlying: @unchecked) match {
       case v: db.OracleType.VArray      => v.elementType
       case n: db.OracleType.NestedTable => n.elementType
@@ -2058,11 +2058,11 @@ class DbLibTypo(
     // Generate base factory call for List<ElementType>
     val baseFactoryCall = (computed.underlying: @unchecked) match {
       case v: db.OracleType.VArray =>
-        val oracleVArray = jvm.Type.Qualified("typr.runtime.OracleVArray")
+        val oracleVArray = jvm.Type.Qualified("dev.typr.foundations.OracleVArray")
         val typeName = jvm.StrLit(v.name.name)
         code"$oracleVArray.of($typeName, ${v.maxSize}, $elementTypeInstance)"
       case n: db.OracleType.NestedTable =>
-        val oracleNestedTable = jvm.Type.Qualified("typr.runtime.OracleNestedTable")
+        val oracleNestedTable = jvm.Type.Qualified("dev.typr.foundations.OracleNestedTable")
         val typeName = jvm.StrLit(n.name.name)
         code"$oracleNestedTable.of($typeName, $elementTypeInstance)"
     }

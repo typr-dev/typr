@@ -5,6 +5,14 @@
  */
 package testdb.product_prices
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
@@ -13,14 +21,6 @@ import kotlin.collections.Map
 import kotlin.collections.MutableMap
 import testdb.price_tiers.PriceTiersId
 import testdb.products.ProductsId
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.kotlindsl.nullable
-import typr.runtime.MariaTypes
 
 class ProductPricesRepoImpl() : ProductPricesRepo {
   override fun delete(): DeleteBuilder<ProductPricesFields, ProductPricesRow> = DeleteBuilder.of("`product_prices`", ProductPricesFields.structure, Dialect.MARIADB)

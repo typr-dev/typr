@@ -6,12 +6,12 @@
 package testdb.customer_orders_view
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SqlServerTypeOps
 import java.time.LocalDateTime
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SqlServerTypeOps
 
 /** View: customer_orders_view */
 case class CustomerOrdersViewViewRow(

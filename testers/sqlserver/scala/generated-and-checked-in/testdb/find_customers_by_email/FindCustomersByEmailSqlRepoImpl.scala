@@ -5,10 +5,10 @@
  */
 package testdb.find_customers_by_email
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.Fragment
 import java.sql.Connection
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class FindCustomersByEmailSqlRepoImpl extends FindCustomersByEmailSqlRepo {
   override def apply(emailPattern: String)(using c: Connection): List[FindCustomersByEmailSqlRow] = {

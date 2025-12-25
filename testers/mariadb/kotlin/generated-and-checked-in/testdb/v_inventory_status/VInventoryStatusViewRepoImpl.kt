@@ -5,11 +5,11 @@
  */
 package testdb.v_inventory_status
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class VInventoryStatusViewRepoImpl() : VInventoryStatusViewRepo {
   override fun select(): SelectBuilder<VInventoryStatusViewFields, VInventoryStatusViewRow> = SelectBuilder.of("`v_inventory_status`", VInventoryStatusViewFields.structure, VInventoryStatusViewRow._rowParser, Dialect.MARIADB)

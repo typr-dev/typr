@@ -5,20 +5,20 @@
  */
 package oracledb.all_scalar_types
 
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.kotlindsl.nullable
-import typr.runtime.OracleTypes
 
 class AllScalarTypesRepoImpl() : AllScalarTypesRepo {
   override fun delete(): DeleteBuilder<AllScalarTypesFields, AllScalarTypesRow> = DeleteBuilder.of("\"ALL_SCALAR_TYPES\"", AllScalarTypesFields.structure, Dialect.ORACLE)

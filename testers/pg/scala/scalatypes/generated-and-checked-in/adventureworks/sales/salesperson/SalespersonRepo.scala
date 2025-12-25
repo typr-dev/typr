@@ -6,10 +6,10 @@
 package adventureworks.sales.salesperson
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
 
 trait SalespersonRepo {
   def delete: DeleteBuilder[SalespersonFields, SalespersonRow]

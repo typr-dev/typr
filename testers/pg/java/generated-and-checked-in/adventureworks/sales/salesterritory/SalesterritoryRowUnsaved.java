@@ -9,11 +9,11 @@ import adventureworks.customtypes.Defaulted;
 import adventureworks.customtypes.Defaulted.UseDefault;
 import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.public_.Name;
+import dev.typr.foundations.PgText;
+import dev.typr.foundations.PgTypes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import typr.runtime.PgText;
-import typr.runtime.PgTypes;
 
 /** This class corresponds to a row in table `sales.salesterritory` which has not been persisted yet */
 public record SalesterritoryRowUnsaved(

@@ -5,9 +5,9 @@
  */
 package adventureworks.public.title_domain
 
-import typr.runtime.PgText
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
+import dev.typr.foundations.PgText
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 
 /** Table: public.title_domain
  * Primary key: code

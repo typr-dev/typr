@@ -2,6 +2,7 @@ package oracledb;
 
 import static org.junit.Assert.*;
 
+import dev.typr.foundations.dsl.Bijection;
 import java.math.BigDecimal;
 import java.util.Optional;
 import oracledb.customers.CustomersRepoImpl;
@@ -10,7 +11,6 @@ import oracledb.customtypes.Defaulted;
 import oracledb.products.ProductsRepoImpl;
 import oracledb.products.ProductsRowUnsaved;
 import org.junit.Test;
-import typr.dsl.Bijection;
 
 public class OracleDSLTest {
   private final CustomersRepoImpl customersRepo = new CustomersRepoImpl();

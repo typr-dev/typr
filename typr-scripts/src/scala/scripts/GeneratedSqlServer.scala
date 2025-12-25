@@ -39,9 +39,9 @@ object GeneratedSqlServer {
         val metadb = Await.result(MetaDb.fromDb(typoLogger, ds, selector, schemaMode = SchemaMode.SingleSchema("dbo"), externalTools), Duration.Inf)
 
         val variants: Seq[(Lang, DbLibName, JsonLibName, String, String)] = List(
-          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "typr-tester-sqlserver-java", ""),
-          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-sqlserver-scala", ""),
-          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-sqlserver-kotlin", "")
+          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "testers/sqlserver/java", ""),
+          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "testers/sqlserver/scala", ""),
+          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "testers/sqlserver/kotlin", "")
         )
 
         def go(): Unit = {

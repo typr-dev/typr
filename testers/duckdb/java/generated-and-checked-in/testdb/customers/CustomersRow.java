@@ -6,13 +6,13 @@
 package testdb.customers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.Priority;
 import testdb.customtypes.Defaulted;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: customers Primary key: customer_id */
 public record CustomersRow(

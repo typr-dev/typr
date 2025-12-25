@@ -6,10 +6,10 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customtypes.Defaulted
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: order_items
  * Composite primary key: order_id, product_id

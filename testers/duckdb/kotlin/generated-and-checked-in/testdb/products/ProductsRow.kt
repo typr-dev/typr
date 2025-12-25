@@ -6,12 +6,12 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
-import typr.data.Json
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 /** Table: products
   * Primary key: product_id

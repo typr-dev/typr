@@ -5,13 +5,13 @@
  */
 package adventureworks.public.title
 
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.RelationStructure
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.dsl.SqlExpr.IdField
 import java.util.Optional
-import typr.dsl.FieldsExpr0
-import typr.dsl.Path
-import typr.dsl.RelationStructure
-import typr.dsl.SqlExpr.FieldLike
-import typr.dsl.SqlExpr.IdField
-import typr.runtime.RowParser
 
 trait TitleFields extends FieldsExpr0[TitleRow] {
   def code: IdField[TitleId, TitleRow]

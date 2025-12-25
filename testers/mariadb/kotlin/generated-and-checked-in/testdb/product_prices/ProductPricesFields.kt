@@ -5,6 +5,17 @@
  */
 package testdb.product_prices
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.ForeignKey
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.IdField
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
@@ -14,17 +25,6 @@ import testdb.price_tiers.PriceTiersRow
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.ForeignKey
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.IdField
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.MariaTypes
-import typr.runtime.RowParser
 
 interface ProductPricesFields : FieldsExpr<ProductPricesRow> {
   abstract override fun columns(): List<FieldLike<*, ProductPricesRow>>
@@ -72,6 +72,6 @@ interface ProductPricesFields : FieldsExpr<ProductPricesRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<ProductPricesFields, ProductPricesRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

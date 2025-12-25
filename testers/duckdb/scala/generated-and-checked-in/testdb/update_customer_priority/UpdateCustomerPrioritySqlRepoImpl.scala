@@ -5,11 +5,11 @@
  */
 package testdb.update_customer_priority
 
+import dev.typr.foundations.scala.Fragment
 import java.sql.Connection
 import testdb.Priority
 import testdb.customers.CustomersId
-import typr.scaladsl.Fragment
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class UpdateCustomerPrioritySqlRepoImpl extends UpdateCustomerPrioritySqlRepo {
   override def apply(

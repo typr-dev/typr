@@ -5,12 +5,12 @@
  */
 package testdb.order_details;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
 import java.sql.Connection;
 import java.util.List;
 import testdb.orders.OrdersId;
-import typr.runtime.Fragment;
 
 public class OrderDetailsSqlRepoImpl implements OrderDetailsSqlRepo {
   @Override

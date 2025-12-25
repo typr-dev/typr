@@ -6,12 +6,12 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.math.BigDecimal
 import testdb.customtypes.Defaulted
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.DuckDbTypes
 
 /** Table: order_items
   * Composite primary key: order_id, product_id

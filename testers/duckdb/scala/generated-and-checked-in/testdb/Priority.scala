@@ -5,8 +5,8 @@
  */
 package testdb
 
-import typr.runtime.DuckDbType
-import typr.runtime.DuckDbTypes
+import dev.typr.foundations.DuckDbType
+import dev.typr.foundations.DuckDbTypes
 
 /** Enum `priority`
  *  - low

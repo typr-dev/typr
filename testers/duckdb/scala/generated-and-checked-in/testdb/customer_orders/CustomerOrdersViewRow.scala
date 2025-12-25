@@ -6,12 +6,12 @@
 package testdb.customer_orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDate
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** View: customer_orders */
 case class CustomerOrdersViewRow(

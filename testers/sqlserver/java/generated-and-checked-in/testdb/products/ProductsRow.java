@@ -6,11 +6,11 @@
 package testdb.products;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.SqlServerTypes;
 import java.math.BigDecimal;
 import java.util.Optional;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
-import typr.runtime.SqlServerTypes;
 
 /** Table: products Primary key: product_id */
 public record ProductsRow(

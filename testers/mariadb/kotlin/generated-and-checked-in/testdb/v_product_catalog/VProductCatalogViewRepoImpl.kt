@@ -5,11 +5,11 @@
  */
 package testdb.v_product_catalog
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class VProductCatalogViewRepoImpl() : VProductCatalogViewRepo {
   override fun select(): SelectBuilder<VProductCatalogViewFields, VProductCatalogViewRow> = SelectBuilder.of("`v_product_catalog`", VProductCatalogViewFields.structure, VProductCatalogViewRow._rowParser, Dialect.MARIADB)

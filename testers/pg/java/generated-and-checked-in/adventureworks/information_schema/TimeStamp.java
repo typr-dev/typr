@@ -6,11 +6,11 @@
 package adventureworks.information_schema;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import dev.typr.foundations.PgType;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.dsl.Bijection;
+import dev.typr.foundations.internal.arrayMap;
 import java.time.Instant;
-import typr.dsl.Bijection;
-import typr.runtime.PgType;
-import typr.runtime.PgTypes;
-import typr.runtime.internal.arrayMap;
 
 /** Domain `information_schema.time_stamp`
   * No constraint

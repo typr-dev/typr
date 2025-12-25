@@ -6,13 +6,13 @@
 package oracledb.customer_products
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.scala.OracleTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import oracledb.AddressT
 import oracledb.MoneyT
-import typr.runtime.OracleTypes
-import typr.scaladsl.OracleTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** View: CUSTOMER_PRODUCTS */
 case class CustomerProductsViewRow(

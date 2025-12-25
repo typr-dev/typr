@@ -5,11 +5,11 @@
  */
 package testdb.v_customer_summary
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class VCustomerSummaryViewRepoImpl() : VCustomerSummaryViewRepo {
   override fun select(): SelectBuilder<VCustomerSummaryViewFields, VCustomerSummaryViewRow> = SelectBuilder.of("`v_customer_summary`", VCustomerSummaryViewFields.structure, VCustomerSummaryViewRow._rowParser, Dialect.MARIADB)

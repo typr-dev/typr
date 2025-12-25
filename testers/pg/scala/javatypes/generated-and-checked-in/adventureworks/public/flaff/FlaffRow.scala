@@ -7,11 +7,11 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 import java.util.Optional
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** Table: public.flaff
  * Composite primary key: code, another_code, some_number, specifier

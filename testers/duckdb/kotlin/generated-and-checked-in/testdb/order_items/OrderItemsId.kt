@@ -6,9 +6,9 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 
 /** Type for the composite primary key of table `order_items` */
 data class OrderItemsId(

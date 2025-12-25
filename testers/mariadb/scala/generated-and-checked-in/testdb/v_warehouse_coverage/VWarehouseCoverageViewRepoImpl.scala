@@ -5,10 +5,10 @@
  */
 package testdb.v_warehouse_coverage
 
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.Dialect
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class VWarehouseCoverageViewRepoImpl extends VWarehouseCoverageViewRepo {
   override def select: SelectBuilder[VWarehouseCoverageViewFields, VWarehouseCoverageViewRow] = SelectBuilder.of("`v_warehouse_coverage`", VWarehouseCoverageViewFields.structure, VWarehouseCoverageViewRow.`_rowParser`, Dialect.MARIADB)

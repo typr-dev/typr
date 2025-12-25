@@ -10,15 +10,15 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.data.Xml
+import dev.typr.foundations.scala.PgTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.data.Xml
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.scaladsl.PgTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: person.person
  * Human beings involved with AdventureWorks: employees, customer contacts, and vendor contacts.

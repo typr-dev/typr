@@ -8,14 +8,14 @@ package adventureworks.sales.salesperson
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: sales.salesperson
   * Sales representative current information.

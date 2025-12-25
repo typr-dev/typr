@@ -6,9 +6,9 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the composite primary key of table `order_items` */
 case class OrderItemsId(

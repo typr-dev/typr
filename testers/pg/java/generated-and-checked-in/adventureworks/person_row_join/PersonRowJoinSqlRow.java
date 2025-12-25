@@ -6,11 +6,11 @@
 package adventureworks.person_row_join;
 
 import adventureworks.person.businessentity.BusinessentityId;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.Record;
 import java.util.Optional;
-import typr.data.Record;
-import typr.runtime.PgTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** SQL file: person_row_join.sql */
 public record PersonRowJoinSqlRow(

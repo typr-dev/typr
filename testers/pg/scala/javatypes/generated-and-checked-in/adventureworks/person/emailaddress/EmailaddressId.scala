@@ -6,9 +6,9 @@
 package adventureworks.person.emailaddress
 
 import adventureworks.person.businessentity.BusinessentityId
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 
 /** Type for the composite primary key of table `person.emailaddress` */
 case class EmailaddressId(

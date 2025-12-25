@@ -5,18 +5,18 @@
  */
 package adventureworks.public.users
 
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.data.Unknown
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.IdField
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.time.Instant
 import kotlin.collections.List
-import typr.data.Unknown
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.IdField
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
 
 interface UsersFields : FieldsExpr<UsersRow> {
   abstract override fun columns(): List<FieldLike<*, UsersRow>>
@@ -60,6 +60,6 @@ interface UsersFields : FieldsExpr<UsersRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<UsersFields, UsersRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

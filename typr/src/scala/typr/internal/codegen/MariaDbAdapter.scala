@@ -27,13 +27,13 @@ object MariaDbAdapter extends DbAdapter {
   // LAYER 2: Runtime Type System
   // ═══════════════════════════════════════════════════════════════════════════
 
-  val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.KotlinDbTypes")
-  val KotlinNullableExtension: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.nullable")
-  val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.ScalaDbTypes")
-  val ScalaDbTypeOps: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.MariaTypeOps")
-  val Types: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.MariaTypes")
-  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.MariaType")
-  val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.MariaText")
+  val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.KotlinDbTypes")
+  val KotlinNullableExtension: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.nullable")
+  val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.ScalaDbTypes")
+  val ScalaDbTypeOps: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.MariaTypeOps")
+  val Types: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.MariaTypes")
+  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.MariaType")
+  val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.MariaText")
   val typeFieldName: jvm.Ident = jvm.Ident("pgType") // Keep same name for compatibility
   val textFieldName: jvm.Ident = jvm.Ident("mariaText")
   def dialectRef(lang: Lang): Code = code"${lang.dsl.Dialect}.MARIADB"

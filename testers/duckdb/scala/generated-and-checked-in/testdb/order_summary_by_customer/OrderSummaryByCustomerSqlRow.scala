@@ -6,14 +6,14 @@
 package testdb.order_summary_by_customer
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDate
 import testdb.Priority
 import testdb.customers.CustomersId
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** SQL file: order_summary_by_customer.sql */
 case class OrderSummaryByCustomerSqlRow(

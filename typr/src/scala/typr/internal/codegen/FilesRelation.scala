@@ -427,19 +427,19 @@ case class FilesRelation(
     // Structure implementation - now a record that implements both Relation and Fields
     val ImplName = jvm.Ident("Impl")
     // For interface compliance, _path, copy and columns must use java.util.List (required by Java interface)
-    // Also must use typr.dsl types (Java types) not typr.scaladsl types (Scala wrappers)
+    // Also must use dev.typr.foundations.dsl types (Java types) not dev.typr.foundations.scala types (Scala wrappers)
     // For Kotlin, we use Kotlin's List which maps to java.util.List at runtime
     val javaPathList = lang match {
-      case _: LangKotlin => TypesKotlin.List.of(jvm.Type.Qualified("typr.dsl.Path"))
-      case _             => TypesJava.List.of(jvm.Type.Qualified("typr.dsl.Path"))
+      case _: LangKotlin => TypesKotlin.List.of(jvm.Type.Qualified("dev.typr.foundations.dsl.Path"))
+      case _             => TypesJava.List.of(jvm.Type.Qualified("dev.typr.foundations.dsl.Path"))
     }
     def emptyPathList: jvm.Code = lang match {
-      case _: LangKotlin => code"emptyList<typr.dsl.Path>()"
+      case _: LangKotlin => code"emptyList<dev.typr.foundations.dsl.Path>()"
       case _             => code"java.util.Collections.emptyList()"
     }
     // columns() must also return java.util.List with Java FieldLike type for FieldsExpr interface compliance
     // For Kotlin, use Kotlin's List type which maps to java.util.List at runtime
-    val javaFieldLike = jvm.Type.Qualified("typr.dsl.SqlExpr.FieldLike").of(jvm.Type.Wildcard, names.RowName)
+    val javaFieldLike = jvm.Type.Qualified("dev.typr.foundations.dsl.SqlExpr.FieldLike").of(jvm.Type.Wildcard, names.RowName)
     val javaColumnsList = lang match {
       case _: LangKotlin => TypesKotlin.List.of(javaFieldLike)
       case _             => TypesJava.List.of(javaFieldLike)
@@ -500,8 +500,8 @@ case class FilesRelation(
       val elements = cols.toList.map { c =>
         val accessor = jvm.ApplyNullary(code"this", c.name).code
         lang.dsl.dslPackage match {
-          case "typr.scaladsl" | "typr.kotlindsl" => code"$accessor.underlying"
-          case _                                  => accessor
+          case "dev.typr.foundations.scala" | "dev.typr.foundations.kotlin" => code"$accessor.underlying"
+          case _                                                            => accessor
         }
       }
       lang match {
@@ -619,14 +619,14 @@ case class FilesRelation(
 
     // Generate rowParser() method that returns RowParser<Row>
     // Uses the Row's existing _rowParser static field
-    // For Kotlin and Scala DSL: must use Java typr.runtime.RowParser type (not wrapper) since we implement Java FieldsExpr
+    // For Kotlin and Scala DSL: must use Java dev.typr.foundations.RowParser type (not wrapper) since we implement Java FieldsExpr
     // and access .underlying to get the Java parser from the wrapper
     val (rowParserType, rowParserBody) = lang match {
       case _: LangKotlin =>
-        val javaRowParser = jvm.Type.Qualified("typr.runtime.RowParser").of(names.RowName)
+        val javaRowParser = jvm.Type.Qualified("dev.typr.foundations.RowParser").of(names.RowName)
         (javaRowParser, code"${names.RowName}._rowParser.underlying")
       case scala: LangScala if scala.dsl == DslQualifiedNames.Scala =>
-        val javaRowParser = jvm.Type.Qualified("typr.runtime.RowParser").of(names.RowName)
+        val javaRowParser = jvm.Type.Qualified("dev.typr.foundations.RowParser").of(names.RowName)
         (javaRowParser, code"${names.RowName}._rowParser.underlying")
       case _ =>
         (lang.dsl.RowParser.of(names.RowName), code"${names.RowName}._rowParser")
@@ -651,8 +651,8 @@ case class FilesRelation(
     val fieldsExprType: jvm.Type = {
       val base = lang match {
         // FieldsExpr0 is an abstract class workaround for Scala 3 compiler bug
-        case _: LangScala => jvm.Type.Qualified(s"typr.dsl.FieldsExpr0")
-        case _            => jvm.Type.Qualified(s"typr.dsl.FieldsExpr")
+        case _: LangScala => jvm.Type.Qualified(s"dev.typr.foundations.dsl.FieldsExpr0")
+        case _            => jvm.Type.Qualified(s"dev.typr.foundations.dsl.FieldsExpr")
       }
       base.of(names.RowName)
     }

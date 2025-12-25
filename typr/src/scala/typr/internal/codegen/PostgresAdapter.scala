@@ -82,13 +82,13 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
   // LAYER 2: Runtime Type System
   // ═══════════════════════════════════════════════════════════════════════════
 
-  val KotlinDbTypes = jvm.Type.Qualified("typr.kotlindsl.KotlinDbTypes")
-  val KotlinNullableExtension = jvm.Type.Qualified("typr.kotlindsl.nullable")
-  val ScalaDbTypes = jvm.Type.Qualified("typr.scaladsl.ScalaDbTypes")
-  val ScalaDbTypeOps = jvm.Type.Qualified("typr.scaladsl.PgTypeOps")
-  val Types: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.PgTypes")
-  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.PgType")
-  val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.PgText")
+  val KotlinDbTypes = jvm.Type.Qualified("dev.typr.foundations.kotlin.KotlinDbTypes")
+  val KotlinNullableExtension = jvm.Type.Qualified("dev.typr.foundations.kotlin.nullable")
+  val ScalaDbTypes = jvm.Type.Qualified("dev.typr.foundations.scala.ScalaDbTypes")
+  val ScalaDbTypeOps = jvm.Type.Qualified("dev.typr.foundations.scala.PgTypeOps")
+  val Types: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.PgTypes")
+  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.PgType")
+  val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.PgText")
   val typeFieldName: jvm.Ident = jvm.Ident("pgType")
   val textFieldName: jvm.Ident = jvm.Ident("pgText")
 

@@ -4,7 +4,7 @@ import adventureworks.DbNow
 import adventureworks.WithConnection
 import adventureworks.customtypes.Defaulted
 import java.time.Instant
-import typr.data.Unknown
+import dev.typr.foundations.data.Unknown
 import java.util.UUID
 import adventureworks.public.users.*
 import org.junit.Assert.assertEquals

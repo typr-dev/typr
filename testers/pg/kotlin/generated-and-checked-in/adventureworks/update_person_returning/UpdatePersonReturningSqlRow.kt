@@ -6,10 +6,10 @@
 package adventureworks.update_person_returning
 
 import adventureworks.userdefined.FirstName
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.time.LocalDateTime
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgTypes
 
 /** SQL file: update_person_returning.sql */
 data class UpdatePersonReturningSqlRow(

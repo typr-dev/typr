@@ -6,7 +6,7 @@
 package testdb.subquery_test
 
 import java.sql.Connection
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class SubqueryTestSqlRepoImpl extends SubqueryTestSqlRepo {
   override def apply(using c: Connection): List[SubqueryTestSqlRow] = {

@@ -6,12 +6,12 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.data.Json
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Table: products
  * Primary key: product_id

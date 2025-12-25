@@ -6,10 +6,10 @@
 package testdb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.DuckDbTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the composite primary key of table `employees` */
 case class EmployeesId(

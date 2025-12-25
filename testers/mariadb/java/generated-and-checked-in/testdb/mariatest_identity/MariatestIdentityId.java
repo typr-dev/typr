@@ -6,9 +6,9 @@
 package testdb.mariatest_identity;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import typr.dsl.Bijection;
-import typr.runtime.MariaType;
-import typr.runtime.MariaTypes;
+import dev.typr.foundations.MariaType;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.dsl.Bijection;
 
 /** Type for the primary key of table `mariatest_identity` */
 public record MariatestIdentityId(@JsonValue Integer value) {

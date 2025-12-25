@@ -6,14 +6,14 @@
 package testdb.order_details;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import testdb.order_items.OrderItemsId;
 import testdb.orders.OrdersId;
 import testdb.products.ProductsId;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** SQL file: order_details.sql */
 public record OrderDetailsSqlRow(

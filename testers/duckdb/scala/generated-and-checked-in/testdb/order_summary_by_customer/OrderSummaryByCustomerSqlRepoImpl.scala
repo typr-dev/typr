@@ -5,11 +5,11 @@
  */
 package testdb.order_summary_by_customer
 
+import dev.typr.foundations.scala.DuckDbTypeOps
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.sql.Connection
-import typr.scaladsl.DuckDbTypeOps
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class OrderSummaryByCustomerSqlRepoImpl extends OrderSummaryByCustomerSqlRepo {
   override def apply(

@@ -6,14 +6,14 @@
 package oracledb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.scala.OracleTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import oracledb.AddressT
 import oracledb.MoneyT
 import oracledb.customtypes.Defaulted
-import typr.runtime.OracleTypes
-import typr.scaladsl.OracleTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
 
 /** Table: CUSTOMERS
  * Primary key: CUSTOMER_ID

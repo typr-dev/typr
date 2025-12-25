@@ -83,13 +83,14 @@ object GeneratedAdventureWorks {
           Duration.Inf
         )
         val variants: Seq[(Lang, DbLibName, JsonLibName, String, String)] = List(
-          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "testers/pg/scala/anorm", "-2.13"),
-          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "testers/pg/scala/anorm", "-3"),
-          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "testers/pg/scala/doobie", "-2.13"),
-          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "testers/pg/scala/doobie", "-3"),
-          (LangScala.javaDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "testers/pg/scala/zio-jdbc", "-2.13"),
-          (LangScala.javaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "testers/pg/scala/zio-jdbc", "-3"),
+          (LangScala.legacyDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "testers/pg/scala/anorm", "-2.13"),
+          (LangScala.legacyDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Anorm, JsonLibName.PlayJson, "testers/pg/scala/anorm", "-3"),
+          (LangScala.legacyDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "testers/pg/scala/doobie", "-2.13"),
+          (LangScala.legacyDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Doobie, JsonLibName.Circe, "testers/pg/scala/doobie", "-3"),
+          (LangScala.legacyDsl(Dialect.Scala2XSource3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "testers/pg/scala/zio-jdbc", "-2.13"),
+          (LangScala.legacyDsl(Dialect.Scala3, TypeSupportScala), DbLibName.ZioJdbc, JsonLibName.ZioJson, "testers/pg/scala/zio-jdbc", "-3"),
           (LangJava, DbLibName.Typo, JsonLibName.Jackson, "testers/pg/java", ""),
+          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "testers/pg/kotlin", ""),
           (LangScala.javaDsl(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, JsonLibName.Jackson, "testers/pg/scala/javatypes", ""),
           (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "testers/pg/scala/scalatypes", "")
         )

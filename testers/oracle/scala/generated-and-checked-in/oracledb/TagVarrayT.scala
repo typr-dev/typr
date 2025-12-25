@@ -5,9 +5,9 @@
  */
 package oracledb
 
-import typr.runtime.OracleType
-import typr.runtime.OracleTypes
-import typr.runtime.OracleVArray
+import dev.typr.foundations.OracleType
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.OracleVArray
 
 /** Oracle VARRAY Type: TAG_VARRAY_T (max size: 10) */
 case class TagVarrayT(value: Array[String])

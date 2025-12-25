@@ -5,18 +5,18 @@
  */
 package testdb.products
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 class ProductsRepoImpl() : ProductsRepo {
   override fun delete(): DeleteBuilder<ProductsFields, ProductsRow> = DeleteBuilder.of("\"products\"", ProductsFields.structure, Dialect.DUCKDB)

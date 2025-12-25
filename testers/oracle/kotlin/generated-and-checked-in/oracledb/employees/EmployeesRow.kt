@@ -6,16 +6,16 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import oracledb.MoneyT
 import oracledb.customtypes.Defaulted
 import oracledb.departments.DepartmentsId
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.OracleTypes
 
 /** Table: EMPLOYEES
   * Composite primary key: EMP_NUMBER, EMP_SUFFIX

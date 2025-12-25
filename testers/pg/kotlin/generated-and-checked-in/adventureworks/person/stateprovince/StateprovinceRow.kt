@@ -10,12 +10,12 @@ import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** Table: person.stateprovince
   * State and province lookup table.

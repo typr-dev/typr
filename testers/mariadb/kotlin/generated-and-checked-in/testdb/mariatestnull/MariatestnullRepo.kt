@@ -5,11 +5,11 @@
  */
 package testdb.mariatestnull
 
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
 
 interface MariatestnullRepo {
   abstract fun delete(): DeleteBuilder<MariatestnullFields, MariatestnullRow>

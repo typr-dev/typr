@@ -6,12 +6,12 @@
 package testdb.products;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.Json;
 import java.math.BigDecimal;
 import java.util.Optional;
-import typr.data.Json;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: products Primary key: product_id */
 public record ProductsRow(

@@ -5,6 +5,18 @@
  */
 package testdb.product_categories
 
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.ForeignKey
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.CompositeIn
+import dev.typr.foundations.kotlin.SqlExpr.CompositeIn.Part
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.IdField
 import kotlin.collections.List
 import testdb.categories.CategoriesFields
 import testdb.categories.CategoriesId
@@ -12,18 +24,6 @@ import testdb.categories.CategoriesRow
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.ForeignKey
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.CompositeIn
-import typr.kotlindsl.SqlExpr.CompositeIn.Part
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.IdField
-import typr.runtime.RowParser
 
 interface ProductCategoriesFields : FieldsExpr<ProductCategoriesRow> {
   abstract fun categoryId(): IdField<CategoriesId, ProductCategoriesRow>
@@ -63,6 +63,6 @@ interface ProductCategoriesFields : FieldsExpr<ProductCategoriesRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<ProductCategoriesFields, ProductCategoriesRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

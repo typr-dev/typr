@@ -5,17 +5,17 @@
  */
 package adventureworks.public.identity_test
 
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.ScalaIteratorOps
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
-import typr.runtime.streamingInsert
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.ScalaIteratorOps
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class IdentityTestRepoImpl extends IdentityTestRepo {
   override def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, Dialect.POSTGRESQL)

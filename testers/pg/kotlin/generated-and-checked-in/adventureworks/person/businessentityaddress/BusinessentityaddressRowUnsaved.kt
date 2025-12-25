@@ -10,10 +10,10 @@ import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.address.AddressId
 import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** This class corresponds to a row in table `person.businessentityaddress` which has not been persisted yet */
 data class BusinessentityaddressRowUnsaved(

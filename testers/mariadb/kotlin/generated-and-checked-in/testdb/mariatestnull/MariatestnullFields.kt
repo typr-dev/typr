@@ -5,6 +5,17 @@
  */
 package testdb.mariatestnull
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.data.maria.Inet4
+import dev.typr.foundations.data.maria.Inet6
+import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
@@ -12,17 +23,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.Year
 import kotlin.collections.List
-import typr.data.maria.Inet4
-import typr.data.maria.Inet6
-import typr.data.maria.MariaSet
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.MariaTypes
-import typr.runtime.RowParser
 
 interface MariatestnullFields : FieldsExpr<MariatestnullRow> {
   abstract fun bigintCol(): OptField<Long, MariatestnullRow>
@@ -206,6 +206,6 @@ interface MariatestnullFields : FieldsExpr<MariatestnullRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<MariatestnullFields, MariatestnullRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

@@ -5,9 +5,9 @@
  */
 package testdb.mariatest_unique
 
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.MariaTypes
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 
 /** Table: mariatest_unique
   * Primary key: id

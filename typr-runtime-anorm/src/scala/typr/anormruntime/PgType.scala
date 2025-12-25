@@ -1,6 +1,6 @@
 package typr.anormruntime
 
-import typr.runtime.*
+import dev.typr.foundations.*
 
 import java.util.Optional
 import java.util.function.Function

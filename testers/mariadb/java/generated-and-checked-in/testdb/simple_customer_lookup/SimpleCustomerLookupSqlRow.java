@@ -6,12 +6,12 @@
 package testdb.simple_customer_lookup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.time.LocalDateTime;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customers.CustomersId;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** SQL file: simple_customer_lookup.sql */
 public record SimpleCustomerLookupSqlRow(

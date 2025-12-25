@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import adventureworks.DbNow;
 import adventureworks.WithConnection;
 import adventureworks.customtypes.Defaulted;
+import dev.typr.foundations.data.Unknown;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.junit.Test;
-import typr.data.Unknown;
 
 /**
  * Tests for UsersRepo functionality with UUID and custom types. Equivalent to Scala UsersRepoTest.
@@ -104,10 +104,10 @@ public class UsersRepoTest {
         WithConnection.apply(
             c -> {
               var versionResult =
-                  typr.runtime.Fragment.lit("SELECT VERSION()")
+                  dev.typr.foundations.Fragment.lit("SELECT VERSION()")
                       .query(
-                          typr.runtime.RowParsers.of(
-                                  typr.runtime.PgTypes.text, s -> s, s -> new Object[] {s})
+                          dev.typr.foundations.RowParsers.of(
+                                  dev.typr.foundations.PgTypes.text, s -> s, s -> new Object[] {s})
                               .first())
                       .runUnchecked(c);
 

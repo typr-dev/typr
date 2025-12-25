@@ -5,9 +5,9 @@
  */
 package testdb.order_details
 
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.SelectBuilder
 
 interface OrderDetailsViewRepo {
   abstract fun select(): SelectBuilder<OrderDetailsViewFields, OrderDetailsViewRow>

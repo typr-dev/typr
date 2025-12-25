@@ -5,15 +5,15 @@
  */
 package testdb.insert_order_with_items;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.Fragment;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.Optional;
 import testdb.customers.CustomersId;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.Fragment;
 
 public class InsertOrderWithItemsSqlRepoImpl implements InsertOrderWithItemsSqlRepo {
   @Override

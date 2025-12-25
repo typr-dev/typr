@@ -6,9 +6,9 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.runtime.PgType
-import typr.runtime.PgTypes
-import typr.scaladsl.Bijection
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.Bijection
 
 /** Domain `information_schema.yes_or_no`
  * Constraint: CHECK (((VALUE)::text = ANY ((ARRAY['YES'::character varying, 'NO'::character varying])::text[])))

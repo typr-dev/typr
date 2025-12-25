@@ -6,11 +6,11 @@
 package testdb.departments;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import java.util.Optional;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: departments Composite primary key: dept_code, dept_region */
 public record DepartmentsRow(

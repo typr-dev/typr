@@ -6,9 +6,9 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.kotlindsl.Bijection
-import typr.kotlindsl.KotlinDbTypes
-import typr.runtime.SqlServerType
+import dev.typr.foundations.SqlServerType
+import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** Type for the primary key of table `order_items` */
 data class OrderItemsId(@JsonValue val value: Int) {

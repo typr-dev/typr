@@ -7,18 +7,18 @@ package adventureworks.sales.salesterritory
 
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
+import dev.typr.foundations.Fragment
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.dsl.DeleteBuilder
+import dev.typr.foundations.dsl.Dialect
+import dev.typr.foundations.dsl.SelectBuilder
+import dev.typr.foundations.dsl.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import typr.dsl.DeleteBuilder
-import typr.dsl.Dialect
-import typr.dsl.SelectBuilder
-import typr.dsl.UpdateBuilder
-import typr.runtime.Fragment
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
-import typr.runtime.Fragment.interpolate
+import dev.typr.foundations.Fragment.interpolate
 
 class SalesterritoryRepoImpl extends SalesterritoryRepo {
   override def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = DeleteBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, Dialect.POSTGRESQL)

@@ -8,6 +8,11 @@ package testdb.all_scalar_types
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.microsoft.sqlserver.jdbc.Geography
 import com.microsoft.sqlserver.jdbc.Geometry
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -15,11 +20,6 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.UUID
 import testdb.customtypes.Defaulted
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.SqlServerTypes
 
 /** Table: all_scalar_types
   * Primary key: id

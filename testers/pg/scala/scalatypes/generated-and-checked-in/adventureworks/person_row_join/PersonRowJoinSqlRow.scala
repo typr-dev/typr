@@ -6,11 +6,11 @@
 package adventureworks.person_row_join
 
 import adventureworks.person.businessentity.BusinessentityId
-import typr.data.Record
-import typr.runtime.PgTypes
-import typr.scaladsl.PgTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.data.Record
+import dev.typr.foundations.scala.PgTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 
 /** SQL file: person_row_join.sql */
 case class PersonRowJoinSqlRow(

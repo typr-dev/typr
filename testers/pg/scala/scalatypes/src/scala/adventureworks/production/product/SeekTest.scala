@@ -3,8 +3,8 @@ package adventureworks.production.product
 import adventureworks.SnapshotTest
 import adventureworks.public.Name
 import org.junit.Test
-import typr.dsl.SqlExpr.{ConstOpt, ConstReq}
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.dsl.SqlExpr.{ConstOpt, ConstReq}
+import dev.typr.foundations.scala.ScalaDbTypes
 
 import scala.jdk.OptionConverters.*
 

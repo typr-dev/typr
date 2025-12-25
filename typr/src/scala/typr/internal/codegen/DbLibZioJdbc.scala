@@ -40,7 +40,7 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
     *
     * A bit unfortunate maybe, but it's not the end of the world to provide it ourselves.
     */
-  private val PGType = jvm.Type.Qualified("typr.dsl.PGType")
+  private val PGType = jvm.Type.Qualified(s"${lang.dsl.dslPackage}.PGType")
 
   def ifDsl(g: jvm.Given): Option[jvm.Given] =
     if (dslEnabled) Some(g) else None

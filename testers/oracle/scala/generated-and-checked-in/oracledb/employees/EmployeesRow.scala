@@ -6,14 +6,14 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 import java.time.LocalDateTime
 import java.util.Optional
 import oracledb.MoneyT
 import oracledb.customtypes.Defaulted
 import oracledb.departments.DepartmentsId
-import typr.runtime.OracleTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** Table: EMPLOYEES
  * Composite primary key: EMP_NUMBER, EMP_SUFFIX

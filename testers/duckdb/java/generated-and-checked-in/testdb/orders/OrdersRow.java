@@ -6,13 +6,13 @@
 package testdb.orders;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: orders Primary key: order_id */
 public record OrdersRow(

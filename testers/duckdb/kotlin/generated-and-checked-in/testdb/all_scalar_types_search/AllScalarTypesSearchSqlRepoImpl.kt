@@ -5,6 +5,10 @@
  */
 package testdb.all_scalar_types_search
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.sql.Connection
 import java.time.LocalDate
@@ -12,10 +16,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
 import testdb.Mood
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 class AllScalarTypesSearchSqlRepoImpl() : AllScalarTypesSearchSqlRepo {
   override fun apply(

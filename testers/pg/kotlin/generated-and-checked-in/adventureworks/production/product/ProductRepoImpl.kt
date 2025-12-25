@@ -10,21 +10,21 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.kotlindsl.nullable
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
 
 class ProductRepoImpl() : ProductRepo {
   override fun delete(): DeleteBuilder<ProductFields, ProductRow> = DeleteBuilder.of("\"production\".\"product\"", ProductFields.structure, Dialect.POSTGRESQL)

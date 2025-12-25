@@ -6,10 +6,10 @@
 package testdb.product_categories;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import testdb.categories.CategoriesId;
 import testdb.products.ProductsId;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Type for the composite primary key of table `product_categories` */
 public record ProductCategoriesId(

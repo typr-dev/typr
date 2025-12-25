@@ -8,18 +8,18 @@ package adventureworks.person.address
 import adventureworks.person.stateprovince.StateprovinceFields
 import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRow
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.scala.ForeignKey
+import dev.typr.foundations.scala.RelationStructure
+import dev.typr.foundations.scala.SqlExpr.Field
+import dev.typr.foundations.scala.SqlExpr.IdField
+import dev.typr.foundations.scala.SqlExpr.OptField
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.dsl.FieldsExpr0
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.scaladsl.ForeignKey
-import typr.scaladsl.RelationStructure
-import typr.scaladsl.SqlExpr.Field
-import typr.scaladsl.SqlExpr.IdField
-import typr.scaladsl.SqlExpr.OptField
 
 trait AddressFields extends FieldsExpr0[AddressRow] {
   def addressid: IdField[AddressId, AddressRow]

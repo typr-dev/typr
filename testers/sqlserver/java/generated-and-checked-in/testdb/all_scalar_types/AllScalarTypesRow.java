@@ -8,6 +8,9 @@ package testdb.all_scalar_types;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.microsoft.sqlserver.jdbc.Geography;
 import com.microsoft.sqlserver.jdbc.Geometry;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.SqlServerTypes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,9 +19,6 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import testdb.customtypes.Defaulted;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
-import typr.runtime.SqlServerTypes;
 
 /** Table: all_scalar_types Primary key: id */
 public record AllScalarTypesRow(

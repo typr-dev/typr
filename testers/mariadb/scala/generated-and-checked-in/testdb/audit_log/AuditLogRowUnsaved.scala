@@ -6,10 +6,10 @@
 package testdb.audit_log
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.data.maria.Inet6
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
-import typr.data.maria.Inet6
 
 /** This class corresponds to a row in table `audit_log` which has not been persisted yet */
 case class AuditLogRowUnsaved(

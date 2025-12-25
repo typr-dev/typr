@@ -1,7 +1,7 @@
 package adventureworks
 
 import org.junit.Assert.*
-import typr.runtime.Fragment
+import dev.typr.foundations.Fragment
 
 import java.nio.file.{Files, Path}
 

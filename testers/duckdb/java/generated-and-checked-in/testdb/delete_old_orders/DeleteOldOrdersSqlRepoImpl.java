@@ -5,13 +5,13 @@
  */
 package testdb.delete_old_orders;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.Fragment;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.Optional;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.Fragment;
 
 public class DeleteOldOrdersSqlRepoImpl implements DeleteOldOrdersSqlRepo {
   @Override

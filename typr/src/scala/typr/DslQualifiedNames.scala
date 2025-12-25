@@ -35,27 +35,36 @@ sealed abstract class DslQualifiedNames(val dslPackage: String) {
 }
 
 object DslQualifiedNames {
-  case object Scala extends DslQualifiedNames("typr.scaladsl") {
+  case object Scala extends DslQualifiedNames("dev.typr.foundations.scala") {
     override val RowParser: jvm.Type.Qualified = jvm.Type.Qualified(s"$dslPackage.RowParser")
     override val RowParsers: jvm.Type.Qualified = jvm.Type.Qualified(s"$dslPackage.RowParsers")
     override val SqlExpr: jvm.Type.Qualified = jvm.Type.Qualified(s"$dslPackage.SqlExpr")
-    override val Fragment: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.Fragment")
+    override val Fragment: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.Fragment")
     override val interpolatorName: String = "sql"
   }
 
-  case object Java extends DslQualifiedNames("typr.dsl") {
-    override val RowParser: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.RowParser")
-    override val RowParsers: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.RowParsers")
+  case object Java extends DslQualifiedNames("dev.typr.foundations.dsl") {
+    override val RowParser: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.RowParser")
+    override val RowParsers: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.RowParsers")
     override val SqlExpr: jvm.Type.Qualified = jvm.Type.Qualified(s"$dslPackage.SqlExpr")
-    override val Fragment: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.Fragment")
+    override val Fragment: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.Fragment")
     override val interpolatorName: String = "interpolate"
   }
 
-  case object Kotlin extends DslQualifiedNames("typr.kotlindsl") {
-    override val SqlExpr: jvm.Type.Qualified = jvm.Type.Qualified("typr.dsl.SqlExpr")
-    override val RowParser: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.RowParser")
-    override val RowParsers: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.RowParsers")
-    override val Fragment: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.Fragment")
+  case object Kotlin extends DslQualifiedNames("dev.typr.foundations.kotlin") {
+    override val SqlExpr: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.dsl.SqlExpr")
+    override val RowParser: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.RowParser")
+    override val RowParsers: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.RowParsers")
+    override val Fragment: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.Fragment")
     override val interpolatorName: String = "interpolate"
+  }
+
+  /** Legacy DSL - preserves old typr.dsl package for Anorm/Doobie/ZioJdbc */
+  case object Legacy extends DslQualifiedNames("typr.dsl") {
+    override val RowParser: jvm.Type.Qualified = jvm.Type.Qualified("typr.anormruntime.RowParser")
+    override val RowParsers: jvm.Type.Qualified = jvm.Type.Qualified("typr.anormruntime.RowParser")
+    override val SqlExpr: jvm.Type.Qualified = jvm.Type.Qualified(s"$dslPackage.SqlExpr")
+    override val Fragment: jvm.Type.Qualified = jvm.Type.Qualified(s"$dslPackage.Fragment")
+    override val interpolatorName: String = "frag"
   }
 }

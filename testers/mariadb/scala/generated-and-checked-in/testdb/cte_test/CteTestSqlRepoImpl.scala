@@ -6,7 +6,7 @@
 package testdb.cte_test
 
 import java.sql.Connection
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class CteTestSqlRepoImpl extends CteTestSqlRepo {
   override def apply(using c: Connection): List[CteTestSqlRow] = {

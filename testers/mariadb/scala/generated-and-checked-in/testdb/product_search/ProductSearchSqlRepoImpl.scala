@@ -5,12 +5,12 @@
  */
 package testdb.product_search
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.MariaTypeOps
+import dev.typr.foundations.scala.ScalaDbTypes
 import java.sql.Connection
-import typr.runtime.MariaTypes
-import typr.scaladsl.Fragment
-import typr.scaladsl.MariaTypeOps
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class ProductSearchSqlRepoImpl extends ProductSearchSqlRepo {
   override def apply(

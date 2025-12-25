@@ -5,14 +5,14 @@
  */
 package testdb.customer_search
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import java.time.LocalDateTime
 import kotlin.collections.List
 import testdb.Priority
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 class CustomerSearchSqlRepoImpl() : CustomerSearchSqlRepo {
   override fun apply(

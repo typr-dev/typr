@@ -5,11 +5,11 @@
  */
 package testdb.mariatestnull;
 
+import dev.typr.foundations.dsl.DeleteBuilder;
+import dev.typr.foundations.dsl.SelectBuilder;
+import dev.typr.foundations.dsl.UpdateBuilder;
 import java.sql.Connection;
 import java.util.List;
-import typr.dsl.DeleteBuilder;
-import typr.dsl.SelectBuilder;
-import typr.dsl.UpdateBuilder;
 
 public interface MariatestnullRepo {
   DeleteBuilder<MariatestnullFields, MariatestnullRow> delete();

@@ -5,14 +5,14 @@
  */
 package testdb.customer_orders;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.MariaTypes;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import testdb.customers.CustomersId;
-import typr.runtime.Fragment;
-import typr.runtime.MariaTypes;
 
 public class CustomerOrdersSqlRepoImpl implements CustomerOrdersSqlRepo {
   @Override

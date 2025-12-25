@@ -111,6 +111,14 @@ import adventureworks.sales.salesterritory.SalesterritoryRepoImpl
 import adventureworks.sales.salesterritory.SalesterritoryRow
 import adventureworks.sales.salesterritory.SalesterritoryRowUnsaved
 import adventureworks.userdefined.FirstName
+import dev.typr.foundations.data.Inet
+import dev.typr.foundations.data.Int2Vector
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.data.Jsonb
+import dev.typr.foundations.data.Money
+import dev.typr.foundations.data.Unknown
+import dev.typr.foundations.data.Vector
+import dev.typr.foundations.data.Xml
 import java.sql.Connection
 import java.time.Instant
 import java.time.LocalDate
@@ -127,14 +135,6 @@ import org.postgresql.geometric.PGpoint
 import org.postgresql.geometric.PGpolygon
 import org.postgresql.util.PGInterval
 import scala.util.Random
-import typr.data.Inet
-import typr.data.Int2Vector
-import typr.data.Json
-import typr.data.Jsonb
-import typr.data.Money
-import typr.data.Unknown
-import typr.data.Vector
-import typr.data.Xml
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 case class TestInsert(

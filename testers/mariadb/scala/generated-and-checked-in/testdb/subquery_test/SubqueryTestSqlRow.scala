@@ -6,12 +6,12 @@
 package testdb.subquery_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.MariaTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customers.CustomersId
-import typr.runtime.MariaTypes
-import typr.scaladsl.MariaTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** SQL file: subquery_test.sql */
 case class SubqueryTestSqlRow(

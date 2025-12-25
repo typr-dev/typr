@@ -7,10 +7,10 @@ package adventureworks.public.identity_test
 
 import adventureworks.customtypes.Defaulted
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.PgText
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.PgText
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Table: public.identity-test
  * Primary key: name

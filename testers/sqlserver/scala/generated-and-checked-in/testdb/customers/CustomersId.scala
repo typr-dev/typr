@@ -6,9 +6,9 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.runtime.SqlServerType
-import typr.scaladsl.Bijection
-import typr.scaladsl.ScalaDbTypes
+import dev.typr.foundations.SqlServerType
+import dev.typr.foundations.scala.Bijection
+import dev.typr.foundations.scala.ScalaDbTypes
 
 /** Type for the primary key of table `customers` */
 case class CustomersId(@JsonValue value: Int) extends scala.AnyVal

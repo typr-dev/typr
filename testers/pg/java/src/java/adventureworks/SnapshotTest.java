@@ -2,11 +2,11 @@ package adventureworks;
 
 import static org.junit.Assert.*;
 
+import dev.typr.foundations.Fragment;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import typr.runtime.Fragment;
 
 /** Base class for snapshot testing SQL fragments. Port of Scala SnapshotTest trait. */
 public abstract class SnapshotTest {

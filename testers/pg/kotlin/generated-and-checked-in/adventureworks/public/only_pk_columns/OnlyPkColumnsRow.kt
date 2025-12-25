@@ -6,11 +6,11 @@
 package adventureworks.public.only_pk_columns
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.runtime.PgText
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
 
 /** Table: public.only_pk_columns
   * Composite primary key: key_column_1, key_column_2

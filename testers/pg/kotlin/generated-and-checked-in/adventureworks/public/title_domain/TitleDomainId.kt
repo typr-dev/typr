@@ -6,8 +6,8 @@
 package adventureworks.public.title_domain
 
 import adventureworks.public.ShortText
-import typr.runtime.PgType
-import typr.runtime.internal.arrayMap
+import dev.typr.foundations.PgType
+import dev.typr.foundations.internal.arrayMap
 
 sealed interface TitleDomainId {
     val value: ShortText

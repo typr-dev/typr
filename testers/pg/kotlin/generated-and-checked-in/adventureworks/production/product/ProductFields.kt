@@ -16,21 +16,21 @@ import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.production.unitmeasure.UnitmeasureRow
 import adventureworks.public.Flag
 import adventureworks.public.Name
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.ForeignKey
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.IdField
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.ForeignKey
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.IdField
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
 
 interface ProductFields : FieldsExpr<ProductRow> {
   abstract fun `class`(): OptField</* bpchar, max 2 chars */ String, ProductRow>
@@ -154,6 +154,6 @@ interface ProductFields : FieldsExpr<ProductRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<ProductFields, ProductRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

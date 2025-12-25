@@ -5,11 +5,11 @@
  */
 package oracledb.customer_products
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class CustomerProductsViewRepoImpl() : CustomerProductsViewRepo {
   override fun select(): SelectBuilder<CustomerProductsViewFields, CustomerProductsViewRow> = SelectBuilder.of("\"CUSTOMER_PRODUCTS\"", CustomerProductsViewFields.structure, CustomerProductsViewRow._rowParser, Dialect.ORACLE)

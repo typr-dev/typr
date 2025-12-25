@@ -8,7 +8,7 @@ import adventureworks.production.unitmeasure.*
 import adventureworks.public.{Flag, Name}
 import org.junit.Assert.*
 import org.junit.Test
-import typr.data.Xml
+import dev.typr.foundations.data.Xml
 
 import java.math.BigDecimal
 import java.util.{Optional, UUID}

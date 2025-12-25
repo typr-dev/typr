@@ -5,6 +5,9 @@
  */
 package testdb
 
+import dev.typr.foundations.data.maria.Inet4
+import dev.typr.foundations.data.maria.Inet6
+import dev.typr.foundations.data.maria.MariaSet
 import java.math.BigInteger
 import java.sql.Connection
 import java.time.LocalDate
@@ -119,9 +122,6 @@ import testdb.warehouses.WarehousesId
 import testdb.warehouses.WarehousesRepoImpl
 import testdb.warehouses.WarehousesRow
 import testdb.warehouses.WarehousesRowUnsaved
-import typr.data.maria.Inet4
-import typr.data.maria.Inet6
-import typr.data.maria.MariaSet
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 case class TestInsert(random: Random) {

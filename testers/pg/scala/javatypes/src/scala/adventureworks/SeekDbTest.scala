@@ -3,8 +3,8 @@ package adventureworks
 import adventureworks.person.businessentity.*
 import org.junit.Assert.*
 import org.junit.Test
-import typr.dsl.SqlExpr
-import typr.runtime.PgTypes
+import dev.typr.foundations.dsl.SqlExpr
+import dev.typr.foundations.PgTypes
 
 import java.sql.Connection
 import java.time.LocalDateTime

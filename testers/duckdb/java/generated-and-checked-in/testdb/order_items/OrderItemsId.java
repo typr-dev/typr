@@ -6,9 +6,9 @@
 package testdb.order_items;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 
 /** Type for the composite primary key of table `order_items` */
 public record OrderItemsId(

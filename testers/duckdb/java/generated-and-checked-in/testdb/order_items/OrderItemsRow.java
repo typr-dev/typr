@@ -6,11 +6,11 @@
 package testdb.order_items;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import testdb.customtypes.Defaulted;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: order_items Composite primary key: order_id, product_id */
 public record OrderItemsRow(

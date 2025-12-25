@@ -5,8 +5,8 @@
  */
 package testdb.v_order_details
 
+import dev.typr.foundations.scala.SelectBuilder
 import java.sql.Connection
-import typr.scaladsl.SelectBuilder
 
 trait VOrderDetailsViewRepo {
   def select: SelectBuilder[VOrderDetailsViewFields, VOrderDetailsViewRow]

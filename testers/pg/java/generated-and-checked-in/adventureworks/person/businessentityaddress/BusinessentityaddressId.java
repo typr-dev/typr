@@ -8,8 +8,8 @@ package adventureworks.person.businessentityaddress;
 import adventureworks.person.address.AddressId;
 import adventureworks.person.addresstype.AddresstypeId;
 import adventureworks.person.businessentity.BusinessentityId;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 
 /** Type for the composite primary key of table `person.businessentityaddress` */
 public record BusinessentityaddressId(

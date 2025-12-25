@@ -5,12 +5,12 @@
  */
 package testdb.employee_salary_update
 
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.sql.Connection
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 class EmployeeSalaryUpdateSqlRepoImpl() : EmployeeSalaryUpdateSqlRepo {
   override fun apply(

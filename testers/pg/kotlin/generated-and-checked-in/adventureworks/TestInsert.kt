@@ -13,20 +13,6 @@ import adventureworks.humanresources.department.DepartmentRowUnsaved
 import adventureworks.humanresources.employee.EmployeeRepoImpl
 import adventureworks.humanresources.employee.EmployeeRow
 import adventureworks.humanresources.employee.EmployeeRowUnsaved
-import adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRepoImpl
-import adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRow
-import adventureworks.humanresources.employeedepartmenthistory.EmployeedepartmenthistoryRowUnsaved
-import adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRepoImpl
-import adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRow
-import adventureworks.humanresources.employeepayhistory.EmployeepayhistoryRowUnsaved
-import adventureworks.humanresources.jobcandidate.JobcandidateId
-import adventureworks.humanresources.jobcandidate.JobcandidateRepoImpl
-import adventureworks.humanresources.jobcandidate.JobcandidateRow
-import adventureworks.humanresources.jobcandidate.JobcandidateRowUnsaved
-import adventureworks.humanresources.shift.ShiftId
-import adventureworks.humanresources.shift.ShiftRepoImpl
-import adventureworks.humanresources.shift.ShiftRow
-import adventureworks.humanresources.shift.ShiftRowUnsaved
 import adventureworks.person.address.AddressId
 import adventureworks.person.address.AddressRepoImpl
 import adventureworks.person.address.AddressRow
@@ -42,13 +28,6 @@ import adventureworks.person.businessentity.BusinessentityRowUnsaved
 import adventureworks.person.businessentityaddress.BusinessentityaddressRepoImpl
 import adventureworks.person.businessentityaddress.BusinessentityaddressRow
 import adventureworks.person.businessentityaddress.BusinessentityaddressRowUnsaved
-import adventureworks.person.businessentitycontact.BusinessentitycontactRepoImpl
-import adventureworks.person.businessentitycontact.BusinessentitycontactRow
-import adventureworks.person.businessentitycontact.BusinessentitycontactRowUnsaved
-import adventureworks.person.contacttype.ContacttypeId
-import adventureworks.person.contacttype.ContacttypeRepoImpl
-import adventureworks.person.contacttype.ContacttypeRow
-import adventureworks.person.contacttype.ContacttypeRowUnsaved
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.person.countryregion.CountryregionRepoImpl
 import adventureworks.person.countryregion.CountryregionRow
@@ -62,36 +41,10 @@ import adventureworks.person.password.PasswordRowUnsaved
 import adventureworks.person.person.PersonRepoImpl
 import adventureworks.person.person.PersonRow
 import adventureworks.person.person.PersonRowUnsaved
-import adventureworks.person.personphone.PersonphoneRepoImpl
-import adventureworks.person.personphone.PersonphoneRow
-import adventureworks.person.personphone.PersonphoneRowUnsaved
-import adventureworks.person.phonenumbertype.PhonenumbertypeId
-import adventureworks.person.phonenumbertype.PhonenumbertypeRepoImpl
-import adventureworks.person.phonenumbertype.PhonenumbertypeRow
-import adventureworks.person.phonenumbertype.PhonenumbertypeRowUnsaved
 import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRepoImpl
 import adventureworks.person.stateprovince.StateprovinceRow
 import adventureworks.person.stateprovince.StateprovinceRowUnsaved
-import adventureworks.production.billofmaterials.BillofmaterialsRepoImpl
-import adventureworks.production.billofmaterials.BillofmaterialsRow
-import adventureworks.production.billofmaterials.BillofmaterialsRowUnsaved
-import adventureworks.production.culture.CultureId
-import adventureworks.production.culture.CultureRepoImpl
-import adventureworks.production.culture.CultureRow
-import adventureworks.production.culture.CultureRowUnsaved
-import adventureworks.production.document.DocumentId
-import adventureworks.production.document.DocumentRepoImpl
-import adventureworks.production.document.DocumentRow
-import adventureworks.production.document.DocumentRowUnsaved
-import adventureworks.production.illustration.IllustrationId
-import adventureworks.production.illustration.IllustrationRepoImpl
-import adventureworks.production.illustration.IllustrationRow
-import adventureworks.production.illustration.IllustrationRowUnsaved
-import adventureworks.production.location.LocationId
-import adventureworks.production.location.LocationRepoImpl
-import adventureworks.production.location.LocationRow
-import adventureworks.production.location.LocationRowUnsaved
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRepoImpl
 import adventureworks.production.product.ProductRow
@@ -103,75 +56,23 @@ import adventureworks.production.productcategory.ProductcategoryRowUnsaved
 import adventureworks.production.productcosthistory.ProductcosthistoryRepoImpl
 import adventureworks.production.productcosthistory.ProductcosthistoryRow
 import adventureworks.production.productcosthistory.ProductcosthistoryRowUnsaved
-import adventureworks.production.productdescription.ProductdescriptionId
-import adventureworks.production.productdescription.ProductdescriptionRepoImpl
-import adventureworks.production.productdescription.ProductdescriptionRow
-import adventureworks.production.productdescription.ProductdescriptionRowUnsaved
-import adventureworks.production.productdocument.ProductdocumentRepoImpl
-import adventureworks.production.productdocument.ProductdocumentRow
-import adventureworks.production.productdocument.ProductdocumentRowUnsaved
-import adventureworks.production.productinventory.ProductinventoryRepoImpl
-import adventureworks.production.productinventory.ProductinventoryRow
-import adventureworks.production.productinventory.ProductinventoryRowUnsaved
-import adventureworks.production.productlistpricehistory.ProductlistpricehistoryRepoImpl
-import adventureworks.production.productlistpricehistory.ProductlistpricehistoryRow
-import adventureworks.production.productlistpricehistory.ProductlistpricehistoryRowUnsaved
 import adventureworks.production.productmodel.ProductmodelId
 import adventureworks.production.productmodel.ProductmodelRepoImpl
 import adventureworks.production.productmodel.ProductmodelRow
 import adventureworks.production.productmodel.ProductmodelRowUnsaved
-import adventureworks.production.productmodelillustration.ProductmodelillustrationRepoImpl
-import adventureworks.production.productmodelillustration.ProductmodelillustrationRow
-import adventureworks.production.productmodelillustration.ProductmodelillustrationRowUnsaved
-import adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRepoImpl
-import adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRow
-import adventureworks.production.productmodelproductdescriptionculture.ProductmodelproductdescriptioncultureRowUnsaved
-import adventureworks.production.productphoto.ProductphotoId
-import adventureworks.production.productphoto.ProductphotoRepoImpl
-import adventureworks.production.productphoto.ProductphotoRow
-import adventureworks.production.productphoto.ProductphotoRowUnsaved
-import adventureworks.production.productproductphoto.ProductproductphotoRepoImpl
-import adventureworks.production.productproductphoto.ProductproductphotoRow
-import adventureworks.production.productproductphoto.ProductproductphotoRowUnsaved
-import adventureworks.production.productreview.ProductreviewId
-import adventureworks.production.productreview.ProductreviewRepoImpl
-import adventureworks.production.productreview.ProductreviewRow
-import adventureworks.production.productreview.ProductreviewRowUnsaved
 import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.productsubcategory.ProductsubcategoryRepoImpl
 import adventureworks.production.productsubcategory.ProductsubcategoryRow
 import adventureworks.production.productsubcategory.ProductsubcategoryRowUnsaved
-import adventureworks.production.scrapreason.ScrapreasonId
-import adventureworks.production.scrapreason.ScrapreasonRepoImpl
-import adventureworks.production.scrapreason.ScrapreasonRow
-import adventureworks.production.scrapreason.ScrapreasonRowUnsaved
-import adventureworks.production.transactionhistory.TransactionhistoryId
-import adventureworks.production.transactionhistory.TransactionhistoryRepoImpl
-import adventureworks.production.transactionhistory.TransactionhistoryRow
-import adventureworks.production.transactionhistory.TransactionhistoryRowUnsaved
-import adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveId
-import adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRepoImpl
-import adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRow
-import adventureworks.production.transactionhistoryarchive.TransactionhistoryarchiveRowUnsaved
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.production.unitmeasure.UnitmeasureRepoImpl
 import adventureworks.production.unitmeasure.UnitmeasureRow
 import adventureworks.production.unitmeasure.UnitmeasureRowUnsaved
-import adventureworks.production.workorder.WorkorderId
-import adventureworks.production.workorder.WorkorderRepoImpl
-import adventureworks.production.workorder.WorkorderRow
-import adventureworks.production.workorder.WorkorderRowUnsaved
-import adventureworks.production.workorderrouting.WorkorderroutingRepoImpl
-import adventureworks.production.workorderrouting.WorkorderroutingRow
-import adventureworks.production.workorderrouting.WorkorderroutingRowUnsaved
-import adventureworks.public.AccountNumber
 import adventureworks.public.Flag
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
 import adventureworks.public.Name
 import adventureworks.public.NameStyle
-import adventureworks.public.OrderNumber
-import adventureworks.public.Phone
 import adventureworks.public.ShortText
 import adventureworks.public.flaff.FlaffRepoImpl
 import adventureworks.public.flaff.FlaffRow
@@ -190,18 +91,6 @@ import adventureworks.public.pgtest.PgtestRepoImpl
 import adventureworks.public.pgtest.PgtestRow
 import adventureworks.public.pgtestnull.PgtestnullRepoImpl
 import adventureworks.public.pgtestnull.PgtestnullRow
-import adventureworks.public.table_with_generated_columns.TableWithGeneratedColumnsId
-import adventureworks.public.table_with_generated_columns.TableWithGeneratedColumnsRepoImpl
-import adventureworks.public.table_with_generated_columns.TableWithGeneratedColumnsRow
-import adventureworks.public.table_with_generated_columns.TableWithGeneratedColumnsRowUnsaved
-import adventureworks.public.test_organisasjon.TestOrganisasjonId
-import adventureworks.public.test_organisasjon.TestOrganisasjonRepoImpl
-import adventureworks.public.test_organisasjon.TestOrganisasjonRow
-import adventureworks.public.test_sak_soknadsalternativ.TestSakSoknadsalternativRepoImpl
-import adventureworks.public.test_sak_soknadsalternativ.TestSakSoknadsalternativRow
-import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudId
-import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRepoImpl
-import adventureworks.public.test_utdanningstilbud.TestUtdanningstilbudRow
 import adventureworks.public.title.TitleId
 import adventureworks.public.title.TitleRepoImpl
 import adventureworks.public.title.TitleRow
@@ -214,89 +103,22 @@ import adventureworks.public.users.UsersId
 import adventureworks.public.users.UsersRepoImpl
 import adventureworks.public.users.UsersRow
 import adventureworks.public.users.UsersRowUnsaved
-import adventureworks.purchasing.productvendor.ProductvendorRepoImpl
-import adventureworks.purchasing.productvendor.ProductvendorRow
-import adventureworks.purchasing.productvendor.ProductvendorRowUnsaved
-import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderId
-import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRepoImpl
-import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRow
-import adventureworks.purchasing.purchaseorderheader.PurchaseorderheaderRowUnsaved
-import adventureworks.purchasing.shipmethod.ShipmethodId
-import adventureworks.purchasing.shipmethod.ShipmethodRepoImpl
-import adventureworks.purchasing.shipmethod.ShipmethodRow
-import adventureworks.purchasing.shipmethod.ShipmethodRowUnsaved
-import adventureworks.purchasing.vendor.VendorRepoImpl
-import adventureworks.purchasing.vendor.VendorRow
-import adventureworks.purchasing.vendor.VendorRowUnsaved
-import adventureworks.sales.countryregioncurrency.CountryregioncurrencyRepoImpl
-import adventureworks.sales.countryregioncurrency.CountryregioncurrencyRow
-import adventureworks.sales.countryregioncurrency.CountryregioncurrencyRowUnsaved
-import adventureworks.sales.creditcard.CreditcardRepoImpl
-import adventureworks.sales.creditcard.CreditcardRow
-import adventureworks.sales.creditcard.CreditcardRowUnsaved
-import adventureworks.sales.currency.CurrencyId
-import adventureworks.sales.currency.CurrencyRepoImpl
-import adventureworks.sales.currency.CurrencyRow
-import adventureworks.sales.currency.CurrencyRowUnsaved
-import adventureworks.sales.currencyrate.CurrencyrateId
-import adventureworks.sales.currencyrate.CurrencyrateRepoImpl
-import adventureworks.sales.currencyrate.CurrencyrateRow
-import adventureworks.sales.currencyrate.CurrencyrateRowUnsaved
-import adventureworks.sales.customer.CustomerId
-import adventureworks.sales.customer.CustomerRepoImpl
-import adventureworks.sales.customer.CustomerRow
-import adventureworks.sales.customer.CustomerRowUnsaved
-import adventureworks.sales.personcreditcard.PersoncreditcardRepoImpl
-import adventureworks.sales.personcreditcard.PersoncreditcardRow
-import adventureworks.sales.personcreditcard.PersoncreditcardRowUnsaved
-import adventureworks.sales.salesorderdetail.SalesorderdetailRepoImpl
-import adventureworks.sales.salesorderdetail.SalesorderdetailRow
-import adventureworks.sales.salesorderdetail.SalesorderdetailRowUnsaved
-import adventureworks.sales.salesorderheader.SalesorderheaderId
-import adventureworks.sales.salesorderheader.SalesorderheaderRepoImpl
-import adventureworks.sales.salesorderheader.SalesorderheaderRow
-import adventureworks.sales.salesorderheader.SalesorderheaderRowUnsaved
-import adventureworks.sales.salesorderheadersalesreason.SalesorderheadersalesreasonRepoImpl
-import adventureworks.sales.salesorderheadersalesreason.SalesorderheadersalesreasonRow
-import adventureworks.sales.salesorderheadersalesreason.SalesorderheadersalesreasonRowUnsaved
 import adventureworks.sales.salesperson.SalespersonRepoImpl
 import adventureworks.sales.salesperson.SalespersonRow
 import adventureworks.sales.salesperson.SalespersonRowUnsaved
-import adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRepoImpl
-import adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRow
-import adventureworks.sales.salespersonquotahistory.SalespersonquotahistoryRowUnsaved
-import adventureworks.sales.salesreason.SalesreasonId
-import adventureworks.sales.salesreason.SalesreasonRepoImpl
-import adventureworks.sales.salesreason.SalesreasonRow
-import adventureworks.sales.salesreason.SalesreasonRowUnsaved
-import adventureworks.sales.salestaxrate.SalestaxrateId
-import adventureworks.sales.salestaxrate.SalestaxrateRepoImpl
-import adventureworks.sales.salestaxrate.SalestaxrateRow
-import adventureworks.sales.salestaxrate.SalestaxrateRowUnsaved
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRepoImpl
 import adventureworks.sales.salesterritory.SalesterritoryRow
 import adventureworks.sales.salesterritory.SalesterritoryRowUnsaved
-import adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRepoImpl
-import adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRow
-import adventureworks.sales.salesterritoryhistory.SalesterritoryhistoryRowUnsaved
-import adventureworks.sales.shoppingcartitem.ShoppingcartitemId
-import adventureworks.sales.shoppingcartitem.ShoppingcartitemRepoImpl
-import adventureworks.sales.shoppingcartitem.ShoppingcartitemRow
-import adventureworks.sales.shoppingcartitem.ShoppingcartitemRowUnsaved
-import adventureworks.sales.specialoffer.SpecialofferId
-import adventureworks.sales.specialoffer.SpecialofferRepoImpl
-import adventureworks.sales.specialoffer.SpecialofferRow
-import adventureworks.sales.specialoffer.SpecialofferRowUnsaved
-import adventureworks.sales.specialofferproduct.SpecialofferproductId
-import adventureworks.sales.specialofferproduct.SpecialofferproductRepoImpl
-import adventureworks.sales.specialofferproduct.SpecialofferproductRow
-import adventureworks.sales.specialofferproduct.SpecialofferproductRowUnsaved
-import adventureworks.sales.store.StoreRepoImpl
-import adventureworks.sales.store.StoreRow
-import adventureworks.sales.store.StoreRowUnsaved
-import adventureworks.userdefined.CustomCreditcardId
 import adventureworks.userdefined.FirstName
+import dev.typr.foundations.data.Inet
+import dev.typr.foundations.data.Int2Vector
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.data.Jsonb
+import dev.typr.foundations.data.Money
+import dev.typr.foundations.data.Unknown
+import dev.typr.foundations.data.Vector
+import dev.typr.foundations.data.Xml
 import java.math.BigDecimal
 import java.sql.Connection
 import java.time.Instant
@@ -315,14 +137,6 @@ import org.postgresql.geometric.PGpath
 import org.postgresql.geometric.PGpoint
 import org.postgresql.geometric.PGpolygon
 import org.postgresql.util.PGInterval
-import typr.data.Inet
-import typr.data.Int2Vector
-import typr.data.Json
-import typr.data.Jsonb
-import typr.data.Money
-import typr.data.Unknown
-import typr.data.Vector
-import typr.data.Xml
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 data class TestInsert(
@@ -355,42 +169,6 @@ data class TestInsert(
     organizationnode: Defaulted<String?>,
     c: Connection
   ): EmployeeRow = (EmployeeRepoImpl()).insert(EmployeeRowUnsaved(businessentityid = businessentityid, nationalidnumber = nationalidnumber, loginid = loginid, jobtitle = jobtitle, birthdate = birthdate, maritalstatus = maritalstatus, gender = gender, hiredate = hiredate, salariedflag = salariedflag, vacationhours = vacationhours, sickleavehours = sickleavehours, currentflag = currentflag, rowguid = rowguid, modifieddate = modifieddate, organizationnode = organizationnode), c)
-
-  fun humanresourcesEmployeedepartmenthistory(
-    businessentityid: BusinessentityId,
-    departmentid: DepartmentId,
-    shiftid: ShiftId,
-    startdate: LocalDate,
-    enddate: LocalDate?,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): EmployeedepartmenthistoryRow = (EmployeedepartmenthistoryRepoImpl()).insert(EmployeedepartmenthistoryRowUnsaved(businessentityid = businessentityid, departmentid = departmentid, shiftid = shiftid, startdate = startdate, enddate = enddate, modifieddate = modifieddate), c)
-
-  fun humanresourcesEmployeepayhistory(
-    businessentityid: BusinessentityId,
-    ratechangedate: LocalDateTime,
-    rate: BigDecimal,
-    payfrequency: Short,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): EmployeepayhistoryRow = (EmployeepayhistoryRepoImpl()).insert(EmployeepayhistoryRowUnsaved(businessentityid = businessentityid, ratechangedate = ratechangedate, rate = rate, payfrequency = payfrequency, modifieddate = modifieddate), c)
-
-  fun humanresourcesJobcandidate(
-    businessentityid: BusinessentityId?,
-    resume: Xml?,
-    jobcandidateid: Defaulted<JobcandidateId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): JobcandidateRow = (JobcandidateRepoImpl()).insert(JobcandidateRowUnsaved(businessentityid = businessentityid, resume = resume, jobcandidateid = jobcandidateid, modifieddate = modifieddate), c)
-
-  fun humanresourcesShift(
-    starttime: LocalTime,
-    endtime: LocalTime,
-    name: Name,
-    shiftid: Defaulted<ShiftId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ShiftRow = (ShiftRepoImpl()).insert(ShiftRowUnsaved(name = name, starttime = starttime, endtime = endtime, shiftid = shiftid, modifieddate = modifieddate), c)
 
   fun personAddress(
     addressline1: String,
@@ -428,22 +206,6 @@ data class TestInsert(
     modifieddate: Defaulted<LocalDateTime>,
     c: Connection
   ): BusinessentityaddressRow = (BusinessentityaddressRepoImpl()).insert(BusinessentityaddressRowUnsaved(businessentityid = businessentityid, addressid = addressid, addresstypeid = addresstypeid, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun personBusinessentitycontact(
-    businessentityid: BusinessentityId,
-    personid: BusinessentityId,
-    contacttypeid: ContacttypeId,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): BusinessentitycontactRow = (BusinessentitycontactRepoImpl()).insert(BusinessentitycontactRowUnsaved(businessentityid = businessentityid, personid = personid, contacttypeid = contacttypeid, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun personContacttype(
-    name: Name,
-    contacttypeid: Defaulted<ContacttypeId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ContacttypeRow = (ContacttypeRepoImpl()).insert(ContacttypeRowUnsaved(name = name, contacttypeid = contacttypeid, modifieddate = modifieddate), c)
 
   fun personCountryregion(
     countryregioncode: CountryregionId,
@@ -487,21 +249,6 @@ data class TestInsert(
     c: Connection
   ): PersonRow = (PersonRepoImpl()).insert(PersonRowUnsaved(businessentityid = businessentityid, persontype = persontype, title = title, firstname = firstname, middlename = middlename, lastname = lastname, suffix = suffix, additionalcontactinfo = additionalcontactinfo, demographics = demographics, namestyle = namestyle, emailpromotion = emailpromotion, rowguid = rowguid, modifieddate = modifieddate), c)
 
-  fun personPersonphone(
-    businessentityid: BusinessentityId,
-    phonenumbertypeid: PhonenumbertypeId,
-    phonenumber: Phone,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): PersonphoneRow = (PersonphoneRepoImpl()).insert(PersonphoneRowUnsaved(businessentityid = businessentityid, phonenumber = phonenumber, phonenumbertypeid = phonenumbertypeid, modifieddate = modifieddate), c)
-
-  fun personPhonenumbertype(
-    name: Name,
-    phonenumbertypeid: Defaulted<PhonenumbertypeId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): PhonenumbertypeRow = (PhonenumbertypeRepoImpl()).insert(PhonenumbertypeRowUnsaved(name = name, phonenumbertypeid = phonenumbertypeid, modifieddate = modifieddate), c)
-
   fun personStateprovince(
     stateprovincecode: String,
     countryregioncode: CountryregionId,
@@ -513,59 +260,6 @@ data class TestInsert(
     modifieddate: Defaulted<LocalDateTime>,
     c: Connection
   ): StateprovinceRow = (StateprovinceRepoImpl()).insert(StateprovinceRowUnsaved(stateprovincecode = stateprovincecode, countryregioncode = countryregioncode, name = name, territoryid = territoryid, stateprovinceid = stateprovinceid, isonlystateprovinceflag = isonlystateprovinceflag, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun productionBillofmaterials(
-    componentid: ProductId,
-    unitmeasurecode: UnitmeasureId,
-    bomlevel: Short,
-    productassemblyid: ProductId?,
-    enddate: LocalDateTime?,
-    billofmaterialsid: Defaulted<Int>,
-    startdate: Defaulted<LocalDateTime>,
-    perassemblyqty: Defaulted<BigDecimal>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): BillofmaterialsRow = (BillofmaterialsRepoImpl()).insert(BillofmaterialsRowUnsaved(productassemblyid = productassemblyid, componentid = componentid, enddate = enddate, unitmeasurecode = unitmeasurecode, bomlevel = bomlevel, billofmaterialsid = billofmaterialsid, startdate = startdate, perassemblyqty = perassemblyqty, modifieddate = modifieddate), c)
-
-  fun productionCulture(
-    cultureid: CultureId,
-    name: Name,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): CultureRow = (CultureRepoImpl()).insert(CultureRowUnsaved(cultureid = cultureid, name = name, modifieddate = modifieddate), c)
-
-  fun productionDocument(
-    title: String,
-    owner: BusinessentityId,
-    filename: String,
-    revision: String,
-    status: Short,
-    fileextension: /* max 8 chars */ String?,
-    documentsummary: String?,
-    document: ByteArray?,
-    folderflag: Defaulted<Flag>,
-    changenumber: Defaulted<Int>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    documentnode: Defaulted<DocumentId>,
-    c: Connection
-  ): DocumentRow = (DocumentRepoImpl()).insert(DocumentRowUnsaved(title = title, owner = owner, filename = filename, fileextension = fileextension, revision = revision, status = status, documentsummary = documentsummary, document = document, folderflag = folderflag, changenumber = changenumber, rowguid = rowguid, modifieddate = modifieddate, documentnode = documentnode), c)
-
-  fun productionIllustration(
-    diagram: Xml?,
-    illustrationid: Defaulted<IllustrationId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): IllustrationRow = (IllustrationRepoImpl()).insert(IllustrationRowUnsaved(diagram = diagram, illustrationid = illustrationid, modifieddate = modifieddate), c)
-
-  fun productionLocation(
-    name: Name,
-    locationid: Defaulted<LocationId>,
-    costrate: Defaulted<BigDecimal>,
-    availability: Defaulted<BigDecimal>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): LocationRow = (LocationRepoImpl()).insert(LocationRowUnsaved(name = name, locationid = locationid, costrate = costrate, availability = availability, modifieddate = modifieddate), c)
 
   fun productionProduct(
     productnumber: String,
@@ -613,41 +307,6 @@ data class TestInsert(
     c: Connection
   ): ProductcosthistoryRow = (ProductcosthistoryRepoImpl()).insert(ProductcosthistoryRowUnsaved(productid = productid, startdate = startdate, enddate = enddate, standardcost = standardcost, modifieddate = modifieddate), c)
 
-  fun productionProductdescription(
-    description: String,
-    productdescriptionid: Defaulted<ProductdescriptionId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductdescriptionRow = (ProductdescriptionRepoImpl()).insert(ProductdescriptionRowUnsaved(description = description, productdescriptionid = productdescriptionid, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun productionProductdocument(
-    productid: ProductId,
-    modifieddate: Defaulted<LocalDateTime>,
-    documentnode: Defaulted<DocumentId>,
-    c: Connection
-  ): ProductdocumentRow = (ProductdocumentRepoImpl()).insert(ProductdocumentRowUnsaved(productid = productid, modifieddate = modifieddate, documentnode = documentnode), c)
-
-  fun productionProductinventory(
-    productid: ProductId,
-    locationid: LocationId,
-    shelf: String,
-    bin: Short,
-    quantity: Defaulted<Short>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductinventoryRow = (ProductinventoryRepoImpl()).insert(ProductinventoryRowUnsaved(productid = productid, locationid = locationid, shelf = shelf, bin = bin, quantity = quantity, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun productionProductlistpricehistory(
-    productid: ProductId,
-    startdate: LocalDateTime,
-    listprice: BigDecimal,
-    enddate: LocalDateTime?,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductlistpricehistoryRow = (ProductlistpricehistoryRepoImpl()).insert(ProductlistpricehistoryRowUnsaved(productid = productid, startdate = startdate, enddate = enddate, listprice = listprice, modifieddate = modifieddate), c)
-
   fun productionProductmodel(
     name: Name,
     catalogdescription: Xml?,
@@ -658,51 +317,6 @@ data class TestInsert(
     c: Connection
   ): ProductmodelRow = (ProductmodelRepoImpl()).insert(ProductmodelRowUnsaved(name = name, catalogdescription = catalogdescription, instructions = instructions, productmodelid = productmodelid, rowguid = rowguid, modifieddate = modifieddate), c)
 
-  fun productionProductmodelillustration(
-    productmodelid: ProductmodelId,
-    illustrationid: IllustrationId,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductmodelillustrationRow = (ProductmodelillustrationRepoImpl()).insert(ProductmodelillustrationRowUnsaved(productmodelid = productmodelid, illustrationid = illustrationid, modifieddate = modifieddate), c)
-
-  fun productionProductmodelproductdescriptionculture(
-    productmodelid: ProductmodelId,
-    productdescriptionid: ProductdescriptionId,
-    cultureid: CultureId,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductmodelproductdescriptioncultureRow = (ProductmodelproductdescriptioncultureRepoImpl()).insert(ProductmodelproductdescriptioncultureRowUnsaved(productmodelid = productmodelid, productdescriptionid = productdescriptionid, cultureid = cultureid, modifieddate = modifieddate), c)
-
-  fun productionProductphoto(
-    thumbnailphoto: ByteArray?,
-    thumbnailphotofilename: /* max 50 chars */ String?,
-    largephoto: ByteArray?,
-    largephotofilename: /* max 50 chars */ String?,
-    productphotoid: Defaulted<ProductphotoId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductphotoRow = (ProductphotoRepoImpl()).insert(ProductphotoRowUnsaved(thumbnailphoto = thumbnailphoto, thumbnailphotofilename = thumbnailphotofilename, largephoto = largephoto, largephotofilename = largephotofilename, productphotoid = productphotoid, modifieddate = modifieddate), c)
-
-  fun productionProductproductphoto(
-    productid: ProductId,
-    productphotoid: ProductphotoId,
-    primary: Defaulted<Flag>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductproductphotoRow = (ProductproductphotoRepoImpl()).insert(ProductproductphotoRowUnsaved(productid = productid, productphotoid = productphotoid, primary = primary, modifieddate = modifieddate), c)
-
-  fun productionProductreview(
-    productid: ProductId,
-    emailaddress: String,
-    rating: Int,
-    reviewername: Name,
-    comments: /* max 3850 chars */ String?,
-    productreviewid: Defaulted<ProductreviewId>,
-    reviewdate: Defaulted<LocalDateTime>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductreviewRow = (ProductreviewRepoImpl()).insert(ProductreviewRowUnsaved(productid = productid, reviewername = reviewername, emailaddress = emailaddress, rating = rating, comments = comments, productreviewid = productreviewid, reviewdate = reviewdate, modifieddate = modifieddate), c)
-
   fun productionProductsubcategory(
     productcategoryid: ProductcategoryId,
     name: Name,
@@ -712,74 +326,12 @@ data class TestInsert(
     c: Connection
   ): ProductsubcategoryRow = (ProductsubcategoryRepoImpl()).insert(ProductsubcategoryRowUnsaved(productcategoryid = productcategoryid, name = name, productsubcategoryid = productsubcategoryid, rowguid = rowguid, modifieddate = modifieddate), c)
 
-  fun productionScrapreason(
-    name: Name,
-    scrapreasonid: Defaulted<ScrapreasonId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ScrapreasonRow = (ScrapreasonRepoImpl()).insert(ScrapreasonRowUnsaved(name = name, scrapreasonid = scrapreasonid, modifieddate = modifieddate), c)
-
-  fun productionTransactionhistory(
-    productid: ProductId,
-    transactiontype: String,
-    referenceorderid: Int,
-    quantity: Int,
-    actualcost: BigDecimal,
-    transactionid: Defaulted<TransactionhistoryId>,
-    referenceorderlineid: Defaulted<Int>,
-    transactiondate: Defaulted<LocalDateTime>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): TransactionhistoryRow = (TransactionhistoryRepoImpl()).insert(TransactionhistoryRowUnsaved(productid = productid, referenceorderid = referenceorderid, transactiontype = transactiontype, quantity = quantity, actualcost = actualcost, transactionid = transactionid, referenceorderlineid = referenceorderlineid, transactiondate = transactiondate, modifieddate = modifieddate), c)
-
-  fun productionTransactionhistoryarchive(
-    transactiontype: String,
-    transactionid: TransactionhistoryarchiveId,
-    productid: Int,
-    referenceorderid: Int,
-    quantity: Int,
-    actualcost: BigDecimal,
-    referenceorderlineid: Defaulted<Int>,
-    transactiondate: Defaulted<LocalDateTime>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): TransactionhistoryarchiveRow = (TransactionhistoryarchiveRepoImpl()).insert(TransactionhistoryarchiveRowUnsaved(transactionid = transactionid, productid = productid, referenceorderid = referenceorderid, transactiontype = transactiontype, quantity = quantity, actualcost = actualcost, referenceorderlineid = referenceorderlineid, transactiondate = transactiondate, modifieddate = modifieddate), c)
-
   fun productionUnitmeasure(
     unitmeasurecode: UnitmeasureId,
     name: Name,
     modifieddate: Defaulted<LocalDateTime>,
     c: Connection
   ): UnitmeasureRow = (UnitmeasureRepoImpl()).insert(UnitmeasureRowUnsaved(unitmeasurecode = unitmeasurecode, name = name, modifieddate = modifieddate), c)
-
-  fun productionWorkorder(
-    productid: ProductId,
-    orderqty: Int,
-    scrappedqty: Short,
-    startdate: LocalDateTime,
-    duedate: LocalDateTime,
-    enddate: LocalDateTime?,
-    scrapreasonid: ScrapreasonId?,
-    workorderid: Defaulted<WorkorderId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): WorkorderRow = (WorkorderRepoImpl()).insert(WorkorderRowUnsaved(productid = productid, orderqty = orderqty, scrappedqty = scrappedqty, startdate = startdate, enddate = enddate, duedate = duedate, scrapreasonid = scrapreasonid, workorderid = workorderid, modifieddate = modifieddate), c)
-
-  fun productionWorkorderrouting(
-    workorderid: WorkorderId,
-    locationid: LocationId,
-    scheduledstartdate: LocalDateTime,
-    scheduledenddate: LocalDateTime,
-    plannedcost: BigDecimal,
-    productid: Int,
-    operationsequence: Short,
-    actualstartdate: LocalDateTime?,
-    actualenddate: LocalDateTime?,
-    actualresourcehrs: BigDecimal?,
-    actualcost: BigDecimal?,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): WorkorderroutingRow = (WorkorderroutingRepoImpl()).insert(WorkorderroutingRowUnsaved(workorderid = workorderid, productid = productid, operationsequence = operationsequence, locationid = locationid, scheduledstartdate = scheduledstartdate, scheduledenddate = scheduledenddate, actualstartdate = actualstartdate, actualenddate = actualenddate, actualresourcehrs = actualresourcehrs, plannedcost = plannedcost, actualcost = actualcost, modifieddate = modifieddate), c)
 
   fun publicFlaff(
     anotherCode: String,
@@ -960,28 +512,6 @@ data class TestInsert(
     c: Connection
   ): PgtestnullRow = (PgtestnullRepoImpl()).insert(PgtestnullRow(bool = bool, box = box, bpchar = bpchar, bytea = bytea, char = char, circle = circle, date = date, float4 = float4, float8 = float8, hstore = hstore, inet = inet, int2 = int2, int2vector = int2vector, int4 = int4, int8 = int8, interval = interval, json = json, jsonb = jsonb, line = line, lseg = lseg, money = money, mydomain = mydomain, myenum = myenum, name = name, numeric = numeric, path = path, point = point, polygon = polygon, text = text, time = time, timestamp = timestamp, timestampz = timestampz, timez = timez, uuid = uuid, varchar = varchar, vector = vector, xml = xml, boxes = boxes, bpchares = bpchares, chares = chares, circlees = circlees, datees = datees, float4es = float4es, float8es = float8es, inetes = inetes, int2es = int2es, int2vectores = int2vectores, int4es = int4es, int8es = int8es, intervales = intervales, jsones = jsones, jsonbes = jsonbes, linees = linees, lseges = lseges, moneyes = moneyes, mydomaines = mydomaines, myenumes = myenumes, namees = namees, numerices = numerices, pathes = pathes, pointes = pointes, polygones = polygones, textes = textes, timees = timees, timestampes = timestampes, timestampzes = timestampzes, timezes = timezes, uuides = uuides, varchares = varchares, xmles = xmles), c)
 
-  fun publicTableWithGeneratedColumns(
-    name: TableWithGeneratedColumnsId,
-    c: Connection
-  ): TableWithGeneratedColumnsRow = (TableWithGeneratedColumnsRepoImpl()).insert(TableWithGeneratedColumnsRowUnsaved(name = name), c)
-
-  fun publicTestOrganisasjon(
-    organisasjonskode: TestOrganisasjonId,
-    c: Connection
-  ): TestOrganisasjonRow = (TestOrganisasjonRepoImpl()).insert(TestOrganisasjonRow(organisasjonskode = organisasjonskode), c)
-
-  fun publicTestSakSoknadsalternativ(
-    TestUtdanningstilbudId: TestUtdanningstilbudId,
-    organisasjonskodeSaksbehandler: String,
-    c: Connection
-  ): TestSakSoknadsalternativRow = (TestSakSoknadsalternativRepoImpl()).insert(TestSakSoknadsalternativRow(organisasjonskodeSaksbehandler = organisasjonskodeSaksbehandler, utdanningsmulighetKode = TestUtdanningstilbudId.utdanningsmulighetKode, organisasjonskodeTilbyder = TestUtdanningstilbudId.organisasjonskode), c)
-
-  fun publicTestUtdanningstilbud(
-    organisasjonskode: TestOrganisasjonId,
-    utdanningsmulighetKode: String,
-    c: Connection
-  ): TestUtdanningstilbudRow = (TestUtdanningstilbudRepoImpl()).insert(TestUtdanningstilbudRow(organisasjonskode = organisasjonskode, utdanningsmulighetKode = utdanningsmulighetKode), c)
-
   fun publicTitle(
     code: TitleId,
     c: Connection
@@ -1010,160 +540,6 @@ data class TestInsert(
     c: Connection
   ): UsersRow = (UsersRepoImpl()).insert(UsersRowUnsaved(userId = userId, name = name, lastName = lastName, email = email, password = password, verifiedOn = verifiedOn, createdAt = createdAt), c)
 
-  fun purchasingProductvendor(
-    productid: ProductId,
-    businessentityid: BusinessentityId,
-    averageleadtime: Int,
-    standardprice: BigDecimal,
-    minorderqty: Int,
-    maxorderqty: Int,
-    unitmeasurecode: UnitmeasureId,
-    lastreceiptcost: BigDecimal?,
-    lastreceiptdate: LocalDateTime?,
-    onorderqty: Int?,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ProductvendorRow = (ProductvendorRepoImpl()).insert(ProductvendorRowUnsaved(productid = productid, businessentityid = businessentityid, averageleadtime = averageleadtime, standardprice = standardprice, lastreceiptcost = lastreceiptcost, lastreceiptdate = lastreceiptdate, minorderqty = minorderqty, maxorderqty = maxorderqty, onorderqty = onorderqty, unitmeasurecode = unitmeasurecode, modifieddate = modifieddate), c)
-
-  fun purchasingPurchaseorderheader(
-    employeeid: BusinessentityId,
-    vendorid: BusinessentityId,
-    shipmethodid: ShipmethodId,
-    shipdate: LocalDateTime?,
-    purchaseorderid: Defaulted<PurchaseorderheaderId>,
-    revisionnumber: Defaulted<Short>,
-    status: Defaulted<Short>,
-    orderdate: Defaulted<LocalDateTime>,
-    subtotal: Defaulted<BigDecimal>,
-    taxamt: Defaulted<BigDecimal>,
-    freight: Defaulted<BigDecimal>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): PurchaseorderheaderRow = (PurchaseorderheaderRepoImpl()).insert(PurchaseorderheaderRowUnsaved(employeeid = employeeid, vendorid = vendorid, shipmethodid = shipmethodid, shipdate = shipdate, purchaseorderid = purchaseorderid, revisionnumber = revisionnumber, status = status, orderdate = orderdate, subtotal = subtotal, taxamt = taxamt, freight = freight, modifieddate = modifieddate), c)
-
-  fun purchasingShipmethod(
-    name: Name,
-    shipmethodid: Defaulted<ShipmethodId>,
-    shipbase: Defaulted<BigDecimal>,
-    shiprate: Defaulted<BigDecimal>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ShipmethodRow = (ShipmethodRepoImpl()).insert(ShipmethodRowUnsaved(name = name, shipmethodid = shipmethodid, shipbase = shipbase, shiprate = shiprate, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun purchasingVendor(
-    businessentityid: BusinessentityId,
-    creditrating: Short,
-    accountnumber: AccountNumber,
-    name: Name,
-    purchasingwebserviceurl: /* max 1024 chars */ String?,
-    preferredvendorstatus: Defaulted<Flag>,
-    activeflag: Defaulted<Flag>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): VendorRow = (VendorRepoImpl()).insert(VendorRowUnsaved(businessentityid = businessentityid, accountnumber = accountnumber, name = name, creditrating = creditrating, purchasingwebserviceurl = purchasingwebserviceurl, preferredvendorstatus = preferredvendorstatus, activeflag = activeflag, modifieddate = modifieddate), c)
-
-  fun salesCountryregioncurrency(
-    countryregioncode: CountryregionId,
-    currencycode: CurrencyId,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): CountryregioncurrencyRow = (CountryregioncurrencyRepoImpl()).insert(CountryregioncurrencyRowUnsaved(countryregioncode = countryregioncode, currencycode = currencycode, modifieddate = modifieddate), c)
-
-  fun salesCreditcard(
-    cardtype: String,
-    cardnumber: String,
-    expmonth: Short,
-    expyear: Short,
-    creditcardid: Defaulted</* user-picked */ CustomCreditcardId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): CreditcardRow = (CreditcardRepoImpl()).insert(CreditcardRowUnsaved(cardtype = cardtype, cardnumber = cardnumber, expmonth = expmonth, expyear = expyear, creditcardid = creditcardid, modifieddate = modifieddate), c)
-
-  fun salesCurrency(
-    currencycode: CurrencyId,
-    name: Name,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): CurrencyRow = (CurrencyRepoImpl()).insert(CurrencyRowUnsaved(currencycode = currencycode, name = name, modifieddate = modifieddate), c)
-
-  fun salesCurrencyrate(
-    currencyratedate: LocalDateTime,
-    fromcurrencycode: CurrencyId,
-    tocurrencycode: CurrencyId,
-    averagerate: BigDecimal,
-    endofdayrate: BigDecimal,
-    currencyrateid: Defaulted<CurrencyrateId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): CurrencyrateRow = (CurrencyrateRepoImpl()).insert(CurrencyrateRowUnsaved(currencyratedate = currencyratedate, fromcurrencycode = fromcurrencycode, tocurrencycode = tocurrencycode, averagerate = averagerate, endofdayrate = endofdayrate, currencyrateid = currencyrateid, modifieddate = modifieddate), c)
-
-  fun salesCustomer(
-    personid: BusinessentityId?,
-    storeid: BusinessentityId?,
-    territoryid: SalesterritoryId?,
-    customerid: Defaulted<CustomerId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): CustomerRow = (CustomerRepoImpl()).insert(CustomerRowUnsaved(personid = personid, storeid = storeid, territoryid = territoryid, customerid = customerid, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesPersoncreditcard(
-    businessentityid: BusinessentityId,
-    creditcardid: /* user-picked */ CustomCreditcardId,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): PersoncreditcardRow = (PersoncreditcardRepoImpl()).insert(PersoncreditcardRowUnsaved(businessentityid = businessentityid, creditcardid = creditcardid, modifieddate = modifieddate), c)
-
-  fun salesSalesorderdetail(
-    SpecialofferproductId: SpecialofferproductId,
-    salesorderid: SalesorderheaderId,
-    orderqty: Short,
-    unitprice: BigDecimal,
-    carriertrackingnumber: /* max 25 chars */ String?,
-    salesorderdetailid: Defaulted<Int>,
-    unitpricediscount: Defaulted<BigDecimal>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SalesorderdetailRow = (SalesorderdetailRepoImpl()).insert(SalesorderdetailRowUnsaved(salesorderid = salesorderid, carriertrackingnumber = carriertrackingnumber, orderqty = orderqty, productid = SpecialofferproductId.productid, specialofferid = SpecialofferproductId.specialofferid, unitprice = unitprice, salesorderdetailid = salesorderdetailid, unitpricediscount = unitpricediscount, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesSalesorderheader(
-    duedate: LocalDateTime,
-    customerid: CustomerId,
-    billtoaddressid: AddressId,
-    shiptoaddressid: AddressId,
-    shipmethodid: ShipmethodId,
-    shipdate: LocalDateTime?,
-    purchaseordernumber: OrderNumber?,
-    accountnumber: AccountNumber?,
-    salespersonid: BusinessentityId?,
-    territoryid: SalesterritoryId?,
-    creditcardid: /* user-picked */ CustomCreditcardId?,
-    creditcardapprovalcode: /* max 15 chars */ String?,
-    currencyrateid: CurrencyrateId?,
-    totaldue: BigDecimal?,
-    comment: /* max 128 chars */ String?,
-    salesorderid: Defaulted<SalesorderheaderId>,
-    revisionnumber: Defaulted<Short>,
-    orderdate: Defaulted<LocalDateTime>,
-    status: Defaulted<Short>,
-    onlineorderflag: Defaulted<Flag>,
-    subtotal: Defaulted<BigDecimal>,
-    taxamt: Defaulted<BigDecimal>,
-    freight: Defaulted<BigDecimal>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SalesorderheaderRow = (SalesorderheaderRepoImpl()).insert(SalesorderheaderRowUnsaved(duedate = duedate, shipdate = shipdate, purchaseordernumber = purchaseordernumber, accountnumber = accountnumber, customerid = customerid, salespersonid = salespersonid, territoryid = territoryid, billtoaddressid = billtoaddressid, shiptoaddressid = shiptoaddressid, shipmethodid = shipmethodid, creditcardid = creditcardid, creditcardapprovalcode = creditcardapprovalcode, currencyrateid = currencyrateid, totaldue = totaldue, comment = comment, salesorderid = salesorderid, revisionnumber = revisionnumber, orderdate = orderdate, status = status, onlineorderflag = onlineorderflag, subtotal = subtotal, taxamt = taxamt, freight = freight, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesSalesorderheadersalesreason(
-    salesorderid: SalesorderheaderId,
-    salesreasonid: SalesreasonId,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SalesorderheadersalesreasonRow = (SalesorderheadersalesreasonRepoImpl()).insert(SalesorderheadersalesreasonRowUnsaved(salesorderid = salesorderid, salesreasonid = salesreasonid, modifieddate = modifieddate), c)
-
   fun salesSalesperson(
     businessentityid: BusinessentityId,
     territoryid: SalesterritoryId?,
@@ -1176,34 +552,6 @@ data class TestInsert(
     modifieddate: Defaulted<LocalDateTime>,
     c: Connection
   ): SalespersonRow = (SalespersonRepoImpl()).insert(SalespersonRowUnsaved(businessentityid = businessentityid, territoryid = territoryid, salesquota = salesquota, bonus = bonus, commissionpct = commissionpct, salesytd = salesytd, saleslastyear = saleslastyear, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesSalespersonquotahistory(
-    businessentityid: BusinessentityId,
-    quotadate: LocalDateTime,
-    salesquota: BigDecimal,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SalespersonquotahistoryRow = (SalespersonquotahistoryRepoImpl()).insert(SalespersonquotahistoryRowUnsaved(businessentityid = businessentityid, quotadate = quotadate, salesquota = salesquota, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesSalesreason(
-    name: Name,
-    reasontype: Name,
-    salesreasonid: Defaulted<SalesreasonId>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SalesreasonRow = (SalesreasonRepoImpl()).insert(SalesreasonRowUnsaved(name = name, reasontype = reasontype, salesreasonid = salesreasonid, modifieddate = modifieddate), c)
-
-  fun salesSalestaxrate(
-    stateprovinceid: StateprovinceId,
-    taxtype: Short,
-    name: Name,
-    salestaxrateid: Defaulted<SalestaxrateId>,
-    taxrate: Defaulted<BigDecimal>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SalestaxrateRow = (SalestaxrateRepoImpl()).insert(SalestaxrateRowUnsaved(stateprovinceid = stateprovinceid, taxtype = taxtype, name = name, salestaxrateid = salestaxrateid, taxrate = taxrate, rowguid = rowguid, modifieddate = modifieddate), c)
 
   fun salesSalesterritory(
     countryregioncode: CountryregionId,
@@ -1218,57 +566,4 @@ data class TestInsert(
     modifieddate: Defaulted<LocalDateTime>,
     c: Connection
   ): SalesterritoryRow = (SalesterritoryRepoImpl()).insert(SalesterritoryRowUnsaved(name = name, countryregioncode = countryregioncode, group = group, territoryid = territoryid, salesytd = salesytd, saleslastyear = saleslastyear, costytd = costytd, costlastyear = costlastyear, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesSalesterritoryhistory(
-    businessentityid: BusinessentityId,
-    territoryid: SalesterritoryId,
-    startdate: LocalDateTime,
-    enddate: LocalDateTime?,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SalesterritoryhistoryRow = (SalesterritoryhistoryRepoImpl()).insert(SalesterritoryhistoryRowUnsaved(businessentityid = businessentityid, territoryid = territoryid, startdate = startdate, enddate = enddate, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesShoppingcartitem(
-    shoppingcartid: String,
-    productid: ProductId,
-    shoppingcartitemid: Defaulted<ShoppingcartitemId>,
-    quantity: Defaulted<Int>,
-    datecreated: Defaulted<LocalDateTime>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): ShoppingcartitemRow = (ShoppingcartitemRepoImpl()).insert(ShoppingcartitemRowUnsaved(shoppingcartid = shoppingcartid, productid = productid, shoppingcartitemid = shoppingcartitemid, quantity = quantity, datecreated = datecreated, modifieddate = modifieddate), c)
-
-  fun salesSpecialoffer(
-    description: String,
-    type: String,
-    category: String,
-    startdate: LocalDateTime,
-    enddate: LocalDateTime,
-    maxqty: Int?,
-    specialofferid: Defaulted<SpecialofferId>,
-    discountpct: Defaulted<BigDecimal>,
-    minqty: Defaulted<Int>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SpecialofferRow = (SpecialofferRepoImpl()).insert(SpecialofferRowUnsaved(description = description, type = type, category = category, startdate = startdate, enddate = enddate, maxqty = maxqty, specialofferid = specialofferid, discountpct = discountpct, minqty = minqty, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesSpecialofferproduct(
-    specialofferid: SpecialofferId,
-    productid: ProductId,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): SpecialofferproductRow = (SpecialofferproductRepoImpl()).insert(SpecialofferproductRowUnsaved(specialofferid = specialofferid, productid = productid, rowguid = rowguid, modifieddate = modifieddate), c)
-
-  fun salesStore(
-    businessentityid: BusinessentityId,
-    name: Name,
-    salespersonid: BusinessentityId?,
-    demographics: Xml?,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    c: Connection
-  ): StoreRow = (StoreRepoImpl()).insert(StoreRowUnsaved(businessentityid = businessentityid, name = name, salespersonid = salespersonid, demographics = demographics, rowguid = rowguid, modifieddate = modifieddate), c)
 }

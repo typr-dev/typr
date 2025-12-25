@@ -5,10 +5,10 @@
  */
 package testdb.order_details
 
+import dev.typr.foundations.kotlin.Fragment
 import java.sql.Connection
 import kotlin.collections.List
 import testdb.orders.OrdersId
-import typr.kotlindsl.Fragment
 
 class OrderDetailsSqlRepoImpl() : OrderDetailsSqlRepo {
   override fun apply(

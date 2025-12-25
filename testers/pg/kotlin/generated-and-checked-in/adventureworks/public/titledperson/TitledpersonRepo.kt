@@ -5,12 +5,12 @@
  */
 package adventureworks.public.titledperson
 
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
 import java.sql.Connection
 import kotlin.collections.Iterator
 import kotlin.collections.List
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
 
 interface TitledpersonRepo {
   abstract fun delete(): DeleteBuilder<TitledpersonFields, TitledpersonRow>

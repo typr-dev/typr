@@ -9,19 +9,19 @@ import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
 
 class StateprovinceRepoImpl() : StateprovinceRepo {
   override fun delete(): DeleteBuilder<StateprovinceFields, StateprovinceRow> = DeleteBuilder.of("\"person\".\"stateprovince\"", StateprovinceFields.structure, Dialect.POSTGRESQL)

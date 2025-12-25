@@ -5,9 +5,9 @@
  */
 package testdb.customer_orders_view;
 
+import dev.typr.foundations.dsl.SelectBuilder;
 import java.sql.Connection;
 import java.util.List;
-import typr.dsl.SelectBuilder;
 
 public interface CustomerOrdersViewViewRepo {
   SelectBuilder<CustomerOrdersViewViewFields, CustomerOrdersViewViewRow> select();

@@ -6,12 +6,12 @@
 package adventureworks.person_detail;
 
 import adventureworks.person.businessentity.BusinessentityId;
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.PgTypes;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
-import typr.runtime.Fragment;
-import typr.runtime.PgTypes;
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
 public class PersonDetailSqlRepoImpl implements PersonDetailSqlRepo {
   @Override

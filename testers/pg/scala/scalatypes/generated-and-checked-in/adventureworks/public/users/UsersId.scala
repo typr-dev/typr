@@ -6,10 +6,10 @@
 package adventureworks.public.users
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.Bijection
 import java.util.UUID
-import typr.runtime.PgType
-import typr.runtime.PgTypes
-import typr.scaladsl.Bijection
 
 /** Type for the primary key of table `public.users` */
 case class UsersId(@JsonValue value: UUID) extends scala.AnyVal

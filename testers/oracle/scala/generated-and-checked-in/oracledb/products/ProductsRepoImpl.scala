@@ -5,19 +5,19 @@
  */
 package oracledb.products
 
+import dev.typr.foundations.Fragment
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.dsl.DeleteBuilder
+import dev.typr.foundations.dsl.Dialect
+import dev.typr.foundations.dsl.SelectBuilder
+import dev.typr.foundations.dsl.UpdateBuilder
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import oracledb.MoneyT
 import oracledb.TagVarrayT
-import typr.dsl.DeleteBuilder
-import typr.dsl.Dialect
-import typr.dsl.SelectBuilder
-import typr.dsl.UpdateBuilder
-import typr.runtime.Fragment
-import typr.runtime.OracleTypes
-import typr.runtime.Fragment.interpolate
+import dev.typr.foundations.Fragment.interpolate
 
 class ProductsRepoImpl extends ProductsRepo {
   override def delete: DeleteBuilder[ProductsFields, ProductsRow] = DeleteBuilder.of(""""PRODUCTS"""", ProductsFields.structure, Dialect.ORACLE)

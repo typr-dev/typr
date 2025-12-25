@@ -7,10 +7,10 @@ package adventureworks.person_dynamic
 
 import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
-import typr.runtime.PgTypes
-import typr.scaladsl.PgTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.PgTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 
 /** SQL file: person_dynamic.sql */
 case class PersonDynamicSqlRow(

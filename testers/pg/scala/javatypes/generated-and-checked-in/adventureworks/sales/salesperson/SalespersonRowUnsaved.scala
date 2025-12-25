@@ -9,11 +9,11 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
-import typr.runtime.PgText
-import typr.runtime.PgTypes
 
 /** This class corresponds to a row in table `sales.salesperson` which has not been persisted yet */
 case class SalespersonRowUnsaved(

@@ -7,14 +7,14 @@ package adventureworks.production.productmodel
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
+import dev.typr.foundations.data.Xml
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
-import typr.data.Xml
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** Table: production.productmodel
  * Product model classification.

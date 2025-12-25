@@ -7,9 +7,9 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 
 /** Type for the composite primary key of table `public.flaff` */
 case class FlaffId(

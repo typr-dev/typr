@@ -6,8 +6,8 @@
 package adventureworks.public_.title_domain;
 
 import adventureworks.public_.ShortText;
-import typr.runtime.PgType;
-import typr.runtime.internal.arrayMap;
+import dev.typr.foundations.PgType;
+import dev.typr.foundations.internal.arrayMap;
 
 public sealed interface TitleDomainId permits TitleDomainId.Unknown, TitleDomainId.Known {
     ShortText value();

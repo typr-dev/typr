@@ -6,15 +6,15 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaIteratorOps
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
-import typr.runtime.streamingInsert
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaIteratorOps
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class Issue1422RepoImpl extends Issue1422Repo {
   override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Dialect.POSTGRESQL)

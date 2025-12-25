@@ -5,11 +5,11 @@
  */
 package testdb.update_customer_email;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.Fragment;
+import dev.typr.foundations.SqlServerTypes;
 import java.sql.Connection;
-import typr.runtime.Fragment;
-import typr.runtime.SqlServerTypes;
 
 public class UpdateCustomerEmailSqlRepoImpl implements UpdateCustomerEmailSqlRepo {
   @Override

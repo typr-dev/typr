@@ -5,18 +5,18 @@
  */
 package testdb.v_warehouse_coverage;
 
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.dsl.FieldsExpr;
+import dev.typr.foundations.dsl.Path;
+import dev.typr.foundations.dsl.RelationStructure;
+import dev.typr.foundations.dsl.SqlExpr.Field;
+import dev.typr.foundations.dsl.SqlExpr.FieldLike;
+import dev.typr.foundations.dsl.SqlExpr.OptField;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import testdb.warehouses.WarehousesId;
-import typr.dsl.FieldsExpr;
-import typr.dsl.Path;
-import typr.dsl.RelationStructure;
-import typr.dsl.SqlExpr.Field;
-import typr.dsl.SqlExpr.FieldLike;
-import typr.dsl.SqlExpr.OptField;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
 
 public interface VWarehouseCoverageViewFields extends FieldsExpr<VWarehouseCoverageViewRow> {
   record Impl(List<Path> _path)

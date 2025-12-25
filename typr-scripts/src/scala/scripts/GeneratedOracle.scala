@@ -55,10 +55,10 @@ object GeneratedOracle {
 
         // Generate for multiple languages to test all code paths
         val variants: Seq[(Lang, DbLibName, JsonLibName, String, String)] = List(
-          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "typr-tester-oracle-java", ""),
-          (LangScala.javaDsl(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-oracle-scala", ""),
-          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-oracle-scala-new", ""),
-          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "typr-tester-oracle-kotlin", "")
+          (LangJava, DbLibName.Typo, JsonLibName.Jackson, "testers/oracle/java", ""),
+          (LangScala.javaDsl(Dialect.Scala3, TypeSupportJava), DbLibName.Typo, JsonLibName.Jackson, "testers/oracle/scala", ""),
+          (LangScala.scalaDsl(Dialect.Scala3, TypeSupportScala), DbLibName.Typo, JsonLibName.Jackson, "testers/oracle/scala-new", ""),
+          (LangKotlin(TypeSupportKotlin), DbLibName.Typo, JsonLibName.Jackson, "testers/oracle/kotlin", "")
         )
 
         def go(): Unit = {

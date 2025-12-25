@@ -9,19 +9,19 @@ import adventureworks.person.countryregion.CountryregionFields
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.person.countryregion.CountryregionRow
 import adventureworks.public.Name
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.ForeignKey
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.IdField
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.ForeignKey
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.IdField
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
 
 interface SalesterritoryFields : FieldsExpr<SalesterritoryRow> {
   abstract override fun columns(): List<FieldLike<*, SalesterritoryRow>>
@@ -79,6 +79,6 @@ interface SalesterritoryFields : FieldsExpr<SalesterritoryRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<SalesterritoryFields, SalesterritoryRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

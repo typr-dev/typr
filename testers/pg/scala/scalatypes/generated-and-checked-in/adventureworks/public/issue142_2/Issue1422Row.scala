@@ -6,9 +6,9 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
-import typr.runtime.PgText
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
+import dev.typr.foundations.PgText
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
 
 /** Table: public.issue142_2
  * Primary key: tabellkode

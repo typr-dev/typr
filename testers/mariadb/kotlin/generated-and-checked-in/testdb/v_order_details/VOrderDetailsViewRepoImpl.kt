@@ -5,11 +5,11 @@
  */
 package testdb.v_order_details
 
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
 
 class VOrderDetailsViewRepoImpl() : VOrderDetailsViewRepo {
   override fun select(): SelectBuilder<VOrderDetailsViewFields, VOrderDetailsViewRow> = SelectBuilder.of("`v_order_details`", VOrderDetailsViewFields.structure, VOrderDetailsViewRow._rowParser, Dialect.MARIADB)

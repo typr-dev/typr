@@ -8,14 +8,14 @@ package adventureworks.public.issue142_2
 import adventureworks.public.issue142.Issue142Fields
 import adventureworks.public.issue142.Issue142Id
 import adventureworks.public.issue142.Issue142Row
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr0
+import dev.typr.foundations.dsl.ForeignKey
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.RelationStructure
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.dsl.SqlExpr.IdField
 import java.util.Optional
-import typr.dsl.FieldsExpr0
-import typr.dsl.ForeignKey
-import typr.dsl.Path
-import typr.dsl.RelationStructure
-import typr.dsl.SqlExpr.FieldLike
-import typr.dsl.SqlExpr.IdField
-import typr.runtime.RowParser
 
 trait Issue1422Fields extends FieldsExpr0[Issue1422Row] {
   def tabellkode: IdField[Issue142Id, Issue1422Row]

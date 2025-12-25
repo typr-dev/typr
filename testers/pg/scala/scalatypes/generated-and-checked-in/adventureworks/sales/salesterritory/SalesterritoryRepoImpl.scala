@@ -7,18 +7,18 @@ package adventureworks.sales.salesterritory
 
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.ScalaIteratorOps
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.ScalaIteratorOps
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class SalesterritoryRepoImpl extends SalesterritoryRepo {
   override def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = DeleteBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, Dialect.POSTGRESQL)

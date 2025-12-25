@@ -6,11 +6,11 @@
 package adventureworks.person_detail
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.kotlin.Fragment
 import java.sql.Connection
 import java.time.LocalDateTime
 import kotlin.collections.List
-import typr.kotlindsl.Fragment
-import typr.runtime.PgTypes
 
 class PersonDetailSqlRepoImpl() : PersonDetailSqlRepo {
   override fun apply(

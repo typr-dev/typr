@@ -2,7 +2,7 @@ package adventureworks
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
-import typr.runtime.Fragment
+import dev.typr.foundations.Fragment
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists

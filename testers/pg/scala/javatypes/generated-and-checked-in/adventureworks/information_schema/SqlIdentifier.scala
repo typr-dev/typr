@@ -6,9 +6,9 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import typr.dsl.Bijection
-import typr.runtime.PgType
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgType
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.dsl.Bijection
 
 /** Domain `information_schema.sql_identifier`
  * No constraint

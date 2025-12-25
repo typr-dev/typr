@@ -6,14 +6,14 @@
 package testdb.customers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
+import dev.typr.foundations.data.maria.MariaSet;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customtypes.Defaulted;
-import typr.data.maria.MariaSet;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: customers Primary key: customer_id */
 public record CustomersRow(

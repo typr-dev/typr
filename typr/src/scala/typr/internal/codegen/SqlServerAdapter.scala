@@ -27,13 +27,13 @@ object SqlServerAdapter extends DbAdapter {
   // LAYER 2: Runtime Type System
   // ═══════════════════════════════════════════════════════════════════════════
 
-  val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.KotlinDbTypes")
-  val KotlinNullableExtension: jvm.Type.Qualified = jvm.Type.Qualified("typr.kotlindsl.nullable")
-  val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.ScalaDbTypes")
-  val ScalaDbTypeOps: jvm.Type.Qualified = jvm.Type.Qualified("typr.scaladsl.SqlServerTypeOps")
-  val Types: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.SqlServerTypes")
-  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.SqlServerType")
-  val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("typr.runtime.SqlServerText")
+  val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.KotlinDbTypes")
+  val KotlinNullableExtension: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.nullable")
+  val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.ScalaDbTypes")
+  val ScalaDbTypeOps: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.SqlServerTypeOps")
+  val Types: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.SqlServerTypes")
+  val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.SqlServerType")
+  val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.SqlServerText")
   val typeFieldName: jvm.Ident = jvm.Ident("sqlServerType")
   val textFieldName: jvm.Ident = jvm.Ident("sqlServerText")
   def dialectRef(lang: Lang): Code = code"${lang.dsl.Dialect}.SQLSERVER"

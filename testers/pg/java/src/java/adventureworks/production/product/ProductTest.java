@@ -12,14 +12,14 @@ import adventureworks.production.productsubcategory.*;
 import adventureworks.production.unitmeasure.*;
 import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
+import dev.typr.foundations.PgTypes;
+import dev.typr.foundations.data.Xml;
+import dev.typr.foundations.dsl.Bijection;
+import dev.typr.foundations.dsl.SqlExpr;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
-import typr.data.Xml;
-import typr.dsl.Bijection;
-import typr.dsl.SqlExpr;
-import typr.runtime.PgTypes;
 
 /** Tests for Product repository - equivalent to Scala ProductTest. */
 public class ProductTest extends SnapshotTest {

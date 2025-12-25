@@ -5,20 +5,20 @@
  */
 package testdb.v_customer_summary
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.MariaTypes
-import typr.runtime.RowParser
 
 interface VCustomerSummaryViewFields : FieldsExpr<VCustomerSummaryViewRow> {
   abstract override fun columns(): List<FieldLike<*, VCustomerSummaryViewRow>>
@@ -74,6 +74,6 @@ interface VCustomerSummaryViewFields : FieldsExpr<VCustomerSummaryViewRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<VCustomerSummaryViewFields, VCustomerSummaryViewRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

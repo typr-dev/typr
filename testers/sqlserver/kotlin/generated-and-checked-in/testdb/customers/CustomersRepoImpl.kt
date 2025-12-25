@@ -5,19 +5,19 @@
  */
 package testdb.customers
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
+import dev.typr.foundations.kotlin.nullable
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.kotlindsl.nullable
-import typr.runtime.SqlServerTypes
 
 class CustomersRepoImpl() : CustomersRepo {
   override fun delete(): DeleteBuilder<CustomersFields, CustomersRow> = DeleteBuilder.of("[customers]", CustomersFields.structure, Dialect.SQLSERVER)

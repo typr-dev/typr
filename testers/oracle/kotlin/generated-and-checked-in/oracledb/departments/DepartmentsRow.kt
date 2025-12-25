@@ -6,11 +6,11 @@
 package oracledb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import oracledb.MoneyT
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.OracleTypes
 
 /** Table: DEPARTMENTS
   * Composite primary key: DEPT_CODE, DEPT_REGION

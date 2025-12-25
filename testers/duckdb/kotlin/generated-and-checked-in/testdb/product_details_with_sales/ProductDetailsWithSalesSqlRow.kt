@@ -6,14 +6,14 @@
 package testdb.product_details_with_sales
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.DuckDbTypes
+import dev.typr.foundations.data.Json
+import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import testdb.products.ProductsId
-import typr.data.Json
-import typr.kotlindsl.KotlinDbTypes
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.DuckDbTypes
 
 /** SQL file: product_details_with_sales.sql */
 data class ProductDetailsWithSalesSqlRow(
@@ -31,7 +31,7 @@ data class ProductDetailsWithSalesSqlRow(
   @JsonProperty("times_ordered") val timesOrdered: Long?,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
   @JsonProperty("total_quantity_sold") val totalQuantitySold: Long?,
-  /** Points to [testdb.order_items.OrderItemsRow.quantity] */
+  /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
   @JsonProperty("total_revenue") val totalRevenue: Double?,
   /** Points to [testdb.order_items.OrderItemsRow.orderId] */
   val popularity: String?

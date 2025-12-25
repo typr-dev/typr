@@ -6,11 +6,11 @@
 package adventureworks.person_row_join
 
 import adventureworks.person.businessentity.BusinessentityId
-import typr.data.Record
-import typr.kotlindsl.RowParser
-import typr.kotlindsl.RowParsers
-import typr.kotlindsl.nullable
-import typr.runtime.PgTypes
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.data.Record
+import dev.typr.foundations.kotlin.RowParser
+import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundations.kotlin.nullable
 
 /** SQL file: person_row_join.sql */
 data class PersonRowJoinSqlRow(

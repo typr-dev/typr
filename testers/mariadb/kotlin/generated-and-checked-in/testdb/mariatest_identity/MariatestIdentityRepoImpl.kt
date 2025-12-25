@@ -5,18 +5,18 @@
  */
 package testdb.mariatest_identity
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.DeleteBuilder
+import dev.typr.foundations.kotlin.Dialect
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.SelectBuilder
+import dev.typr.foundations.kotlin.UpdateBuilder
 import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import typr.kotlindsl.DeleteBuilder
-import typr.kotlindsl.Dialect
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.SelectBuilder
-import typr.kotlindsl.UpdateBuilder
-import typr.runtime.MariaTypes
 
 class MariatestIdentityRepoImpl() : MariatestIdentityRepo {
   override fun delete(): DeleteBuilder<MariatestIdentityFields, MariatestIdentityRow> = DeleteBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, Dialect.MARIADB)

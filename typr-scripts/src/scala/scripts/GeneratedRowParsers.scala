@@ -8,7 +8,7 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
   override def run(started: Started, commands: Commands, targets: List[GeneratedRowParsers.Target], args: List[String]): Unit = {
     targets.foreach { target =>
       target.project.value match {
-        case "typr-runtime-java" =>
+        case "foundations-jdbc" =>
           // Generate Java version
           val functions = 1
             .until(N)
@@ -35,7 +35,7 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
             }
 
           val javaContents =
-            s"""|package typr.runtime;
+            s"""|package dev.typr.foundations;
                 |
                 |import static java.util.Arrays.asList;
                 |import static java.util.Collections.unmodifiableList;
@@ -45,9 +45,9 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
                 |${functions.mkString("\n\n")}
                 |}""".stripMargin
 
-          FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("typr/runtime/RowParsers.java"), javaContents)
+          FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/RowParsers.java"), javaContents)
 
-        case "typr-dsl-kotlin" =>
+        case "foundations-jdbc-dsl-kotlin" =>
           // Generate Kotlin version
           val kotlinConstructorMethods = 1
             .until(N)
@@ -67,10 +67,10 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
             }
 
           val kotlinContents =
-            s"""|package typr.kotlindsl
+            s"""|package dev.typr.foundations.kotlin
                 |
-                |import typr.runtime.DbType
-                |import typr.runtime.RowParser as JavaRowParser
+                |import dev.typr.foundations.DbType
+                |import dev.typr.foundations.RowParser as JavaRowParser
                 |
                 |/**
                 | * Kotlin-friendly factory methods for creating RowParsers.
@@ -80,9 +80,9 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
                 |${kotlinConstructorMethods.mkString("\n\n")}
                 |}""".stripMargin
 
-          FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("typr/kotlindsl/RowParsers.kt"), kotlinContents)
+          FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/kotlin/RowParsers.kt"), kotlinContents)
 
-        case "typr-dsl-scala" =>
+        case "foundations-jdbc-dsl-scala" =>
           // Generate Scala version with curried parameters
           val scalaConstructorMethods = 1
             .until(N)
@@ -94,16 +94,16 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
               val arrayIndices = range.map(nn => s"a($nn).asInstanceOf[T$nn]").mkString(", ")
               val typeList = range.map(nn => s"t$nn").mkString(", ")
 
-              s"""|  inline def of[$tparamsDecl, Row]($params)(decode: ($decodeParams) => Row)(encode: Row => Array[Any]): typr.scaladsl.RowParser[Row] = {
-                  |    val javaParser = new typr.runtime.RowParser(java.util.List.of($typeList), a => decode($arrayIndices), r => encode(r))
-                  |    new typr.scaladsl.RowParser(javaParser)
+              s"""|  inline def of[$tparamsDecl, Row]($params)(decode: ($decodeParams) => Row)(encode: Row => Array[Any]): dev.typr.foundations.scala.RowParser[Row] = {
+                  |    val javaParser = new dev.typr.foundations.RowParser(java.util.List.of($typeList), a => decode($arrayIndices), r => encode(r))
+                  |    new dev.typr.foundations.scala.RowParser(javaParser)
                   |  }""".stripMargin
             }
 
           val scalaContents =
-            s"""|package typr.scaladsl
+            s"""|package dev.typr.foundations.scala
                 |
-                |import typr.runtime.DbType
+                |import dev.typr.foundations.DbType
                 |
                 |/** Scala-friendly factory methods for creating RowParsers.
                 |  *
@@ -113,7 +113,7 @@ object GeneratedRowParsers extends bleep.BleepCodegenScript("GeneratedRowParsers
                 |${scalaConstructorMethods.mkString("\n\n")}
                 |}""".stripMargin
 
-          FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("typr/scaladsl/RowParsers.scala"), scalaContents)
+          FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/scala/RowParsers.scala"), scalaContents)
 
         case other =>
           started.logger.error(s"Unknown target project: $other")

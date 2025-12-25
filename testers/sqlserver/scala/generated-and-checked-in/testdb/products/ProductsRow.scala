@@ -6,11 +6,11 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SqlServerTypeOps
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SqlServerTypeOps
 
 /** Table: products
  * Primary key: product_id

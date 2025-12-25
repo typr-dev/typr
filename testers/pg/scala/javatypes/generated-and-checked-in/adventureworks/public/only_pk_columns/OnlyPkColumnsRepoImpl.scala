@@ -5,17 +5,17 @@
  */
 package adventureworks.public.only_pk_columns
 
+import dev.typr.foundations.Fragment
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.dsl.DeleteBuilder
+import dev.typr.foundations.dsl.Dialect
+import dev.typr.foundations.dsl.SelectBuilder
+import dev.typr.foundations.dsl.UpdateBuilder
+import dev.typr.foundations.streamingInsert
 import java.sql.Connection
 import java.util.HashMap
 import java.util.Optional
-import typr.dsl.DeleteBuilder
-import typr.dsl.Dialect
-import typr.dsl.SelectBuilder
-import typr.dsl.UpdateBuilder
-import typr.runtime.Fragment
-import typr.runtime.PgTypes
-import typr.runtime.streamingInsert
-import typr.runtime.Fragment.interpolate
+import dev.typr.foundations.Fragment.interpolate
 
 class OnlyPkColumnsRepoImpl extends OnlyPkColumnsRepo {
   override def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow] = DeleteBuilder.of(""""public"."only_pk_columns"""", OnlyPkColumnsFields.structure, Dialect.POSTGRESQL)

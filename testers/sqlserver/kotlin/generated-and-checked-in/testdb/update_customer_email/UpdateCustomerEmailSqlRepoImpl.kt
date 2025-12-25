@@ -5,10 +5,10 @@
  */
 package testdb.update_customer_email
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.kotlin.Fragment
+import dev.typr.foundations.kotlin.KotlinDbTypes
 import java.sql.Connection
-import typr.kotlindsl.Fragment
-import typr.kotlindsl.KotlinDbTypes
-import typr.runtime.SqlServerTypes
 
 class UpdateCustomerEmailSqlRepoImpl() : UpdateCustomerEmailSqlRepo {
   override fun apply(

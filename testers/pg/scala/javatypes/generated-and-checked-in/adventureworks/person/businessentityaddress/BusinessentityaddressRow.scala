@@ -9,12 +9,12 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.person.address.AddressId
 import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.foundations.PgText
+import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowParsers
 import java.time.LocalDateTime
 import java.util.UUID
-import typr.runtime.PgText
-import typr.runtime.PgTypes
-import typr.runtime.RowParser
-import typr.runtime.RowParsers
 
 /** Table: person.businessentityaddress
  * Cross-reference table mapping customers, vendors, and employees to their addresses.

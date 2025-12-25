@@ -5,20 +5,20 @@
  */
 package testdb.shipments
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.MariaTypeOps
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
 import testdb.orders.OrdersId
 import testdb.shipping_carriers.ShippingCarriersId
 import testdb.warehouses.WarehousesId
-import typr.runtime.MariaTypes
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.MariaTypeOps
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class ShipmentsRepoImpl extends ShipmentsRepo {
   override def delete: DeleteBuilder[ShipmentsFields, ShipmentsRow] = DeleteBuilder.of("`shipments`", ShipmentsFields.structure, Dialect.MARIADB)

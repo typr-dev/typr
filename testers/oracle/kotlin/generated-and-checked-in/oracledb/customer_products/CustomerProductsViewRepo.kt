@@ -5,9 +5,9 @@
  */
 package oracledb.customer_products
 
+import dev.typr.foundations.kotlin.SelectBuilder
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.SelectBuilder
 
 interface CustomerProductsViewRepo {
   abstract fun select(): SelectBuilder<CustomerProductsViewFields, CustomerProductsViewRow>

@@ -6,15 +6,15 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.scala.MariaTypeOps
+import dev.typr.foundations.scala.RowParser
+import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
-import typr.runtime.MariaTypes
-import typr.scaladsl.MariaTypeOps
-import typr.scaladsl.RowParser
-import typr.scaladsl.RowParsers
-import typr.scaladsl.ScalaDbTypes
 
 /** Table: order_items
  * Primary key: item_id

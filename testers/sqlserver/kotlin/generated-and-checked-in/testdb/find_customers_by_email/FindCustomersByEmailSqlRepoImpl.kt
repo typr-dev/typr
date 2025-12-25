@@ -5,10 +5,10 @@
  */
 package testdb.find_customers_by_email
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.kotlin.Fragment
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Fragment
-import typr.runtime.SqlServerTypes
 
 class FindCustomersByEmailSqlRepoImpl() : FindCustomersByEmailSqlRepo {
   override fun apply(

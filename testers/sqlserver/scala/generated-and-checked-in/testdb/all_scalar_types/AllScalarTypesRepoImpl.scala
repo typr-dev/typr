@@ -5,17 +5,17 @@
  */
 package testdb.all_scalar_types
 
+import dev.typr.foundations.SqlServerTypes
+import dev.typr.foundations.scala.DeleteBuilder
+import dev.typr.foundations.scala.Dialect
+import dev.typr.foundations.scala.Fragment
+import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.scala.SelectBuilder
+import dev.typr.foundations.scala.SqlServerTypeOps
+import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
-import typr.runtime.SqlServerTypes
-import typr.scaladsl.DeleteBuilder
-import typr.scaladsl.Dialect
-import typr.scaladsl.Fragment
-import typr.scaladsl.ScalaDbTypes
-import typr.scaladsl.SelectBuilder
-import typr.scaladsl.SqlServerTypeOps
-import typr.scaladsl.UpdateBuilder
-import typr.scaladsl.Fragment.sql
+import dev.typr.foundations.scala.Fragment.sql
 
 class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
   override def delete: DeleteBuilder[AllScalarTypesFields, AllScalarTypesRow] = DeleteBuilder.of("[all_scalar_types]", AllScalarTypesFields.structure, Dialect.SQLSERVER)

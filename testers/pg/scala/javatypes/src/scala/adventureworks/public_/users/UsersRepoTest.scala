@@ -5,7 +5,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.public.users.*
 import org.junit.Assert.*
 import org.junit.Test
-import typr.data.Unknown
+import dev.typr.foundations.data.Unknown
 
 import java.sql.Connection
 import java.util.{Optional, UUID}
@@ -90,12 +90,12 @@ class UsersRepoTest {
   @Test
   def testInsertUnsavedStreamingPg(): Unit = {
     val shouldRun = WithConnection {
-      val versionResult = typr.runtime.Fragment
+      val versionResult = dev.typr.foundations.Fragment
         .lit("SELECT VERSION()")
         .query(
-          typr.runtime.RowParsers
+          dev.typr.foundations.RowParsers
             .of(
-              typr.runtime.PgTypes.text,
+              dev.typr.foundations.PgTypes.text,
               (s: String) => s,
               (s: String) => Array[Object](s)
             )

@@ -5,8 +5,10 @@
  */
 package testdb.all_scalar_types_search;
 
-import static typr.runtime.Fragment.interpolate;
+import static dev.typr.foundations.Fragment.interpolate;
 
+import dev.typr.foundations.DuckDbTypes;
+import dev.typr.foundations.Fragment;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDate;
@@ -15,8 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import testdb.Mood;
-import typr.runtime.DuckDbTypes;
-import typr.runtime.Fragment;
 
 public class AllScalarTypesSearchSqlRepoImpl implements AllScalarTypesSearchSqlRepo {
   @Override

@@ -6,15 +6,15 @@
 package testdb.product_prices;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.MariaTypes;
+import dev.typr.foundations.RowParser;
+import dev.typr.foundations.RowParsers;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.price_tiers.PriceTiersId;
 import testdb.products.ProductsId;
-import typr.runtime.MariaTypes;
-import typr.runtime.RowParser;
-import typr.runtime.RowParsers;
 
 /** Table: product_prices Primary key: price_id */
 public record ProductPricesRow(

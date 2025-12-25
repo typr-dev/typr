@@ -5,9 +5,9 @@
  */
 package adventureworks.person_row_join
 
+import dev.typr.foundations.kotlin.Fragment
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Fragment
 
 class PersonRowJoinSqlRepoImpl() : PersonRowJoinSqlRepo {
   override fun apply(c: Connection): List<PersonRowJoinSqlRow> = Fragment.interpolate(Fragment.lit("SELECT s.businessentityid,\n       (select array_agg(ROW(a.emailaddress, a.rowguid)) from person.emailaddress a where a.businessentityid = s.businessentityid) as email,\n       (select ARRAY[ROW(a.emailaddress, a.rowguid)] from person.emailaddress a where a.businessentityid = s.businessentityid) as emails\nFROM sales.salesperson s\n")).query(PersonRowJoinSqlRow._rowParser.all()).runUnchecked(c)

@@ -5,10 +5,10 @@
  */
 package testdb.simple_customer_lookup
 
+import dev.typr.foundations.MariaTypes
+import dev.typr.foundations.kotlin.Fragment
 import java.sql.Connection
 import kotlin.collections.List
-import typr.kotlindsl.Fragment
-import typr.runtime.MariaTypes
 
 class SimpleCustomerLookupSqlRepoImpl() : SimpleCustomerLookupSqlRepo {
   override fun apply(

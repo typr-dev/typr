@@ -5,18 +5,18 @@
  */
 package oracledb.contacts
 
+import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.RowParser
+import dev.typr.foundations.dsl.FieldsExpr
+import dev.typr.foundations.dsl.Path
+import dev.typr.foundations.dsl.SqlExpr.FieldLike
+import dev.typr.foundations.kotlin.RelationStructure
+import dev.typr.foundations.kotlin.SqlExpr.Field
+import dev.typr.foundations.kotlin.SqlExpr.IdField
+import dev.typr.foundations.kotlin.SqlExpr.OptField
 import kotlin.collections.List
 import oracledb.EmailTableT
 import oracledb.TagVarrayT
-import typr.dsl.FieldsExpr
-import typr.dsl.Path
-import typr.dsl.SqlExpr.FieldLike
-import typr.kotlindsl.RelationStructure
-import typr.kotlindsl.SqlExpr.Field
-import typr.kotlindsl.SqlExpr.IdField
-import typr.kotlindsl.SqlExpr.OptField
-import typr.runtime.OracleTypes
-import typr.runtime.RowParser
 
 interface ContactsFields : FieldsExpr<ContactsRow> {
   abstract override fun columns(): List<FieldLike<*, ContactsRow>>
@@ -48,6 +48,6 @@ interface ContactsFields : FieldsExpr<ContactsRow> {
       override fun withPaths(_path: List<Path>): RelationStructure<ContactsFields, ContactsRow> = Impl(_path)
     }
 
-    val structure: Impl = Impl(emptyList<typr.dsl.Path>())
+    val structure: Impl = Impl(emptyList<dev.typr.foundations.dsl.Path>())
   }
 }

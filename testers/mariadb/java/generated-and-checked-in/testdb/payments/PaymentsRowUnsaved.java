@@ -6,6 +6,7 @@
 package testdb.payments;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.typr.foundations.data.maria.Inet6;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -13,7 +14,6 @@ import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.orders.OrdersId;
 import testdb.payment_methods.PaymentMethodsId;
-import typr.data.maria.Inet6;
 
 /** This class corresponds to a row in table `payments` which has not been persisted yet */
 public record PaymentsRowUnsaved(

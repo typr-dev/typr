@@ -705,7 +705,7 @@ case object LangJava extends Lang {
 
   // Java: arrayMap.map(array, mapper, targetClass)
   override def arrayMap(array: jvm.Code, mapper: jvm.Code, targetClass: jvm.Code): jvm.Code = {
-    val arrayMapHelper = jvm.Type.Qualified("typr.runtime.internal.arrayMap")
+    val arrayMapHelper = jvm.Type.Qualified("dev.typr.foundations.internal.arrayMap")
     code"$arrayMapHelper.map($array, $mapper, $targetClass)"
   }
 

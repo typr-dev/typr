@@ -12,12 +12,12 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId;
 import adventureworks.production.unitmeasure.UnitmeasureId;
 import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
+import dev.typr.foundations.PgText;
+import dev.typr.foundations.PgTypes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import typr.runtime.PgText;
-import typr.runtime.PgTypes;
 
 /** This class corresponds to a row in table `production.product` which has not been persisted yet */
 public record ProductRowUnsaved(

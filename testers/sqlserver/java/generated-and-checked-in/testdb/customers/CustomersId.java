@@ -6,9 +6,9 @@
 package testdb.customers;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import typr.dsl.Bijection;
-import typr.runtime.SqlServerType;
-import typr.runtime.SqlServerTypes;
+import dev.typr.foundations.SqlServerType;
+import dev.typr.foundations.SqlServerTypes;
+import dev.typr.foundations.dsl.Bijection;
 
 /** Type for the primary key of table `customers` */
 public record CustomersId(@JsonValue Integer value) {
