@@ -50,13 +50,13 @@ bleep generate-docs              # Generate documentation with mdoc
 Kotlin modules have Gradle build files for IDE support and alternative building:
 ```bash
 ./gradlew :testers:pg:kotlin:build
-./gradlew :typr-dsl-kotlin:build
+./gradlew :foundations-jdbc-dsl-kotlin:build
 ```
 
 The Gradle project includes:
-- `typr-runtime-java` - Java runtime module
-- `typr-dsl-java` - Java DSL module
-- `typr-dsl-kotlin` - Kotlin DSL module
+- `foundations-jdbc` - Java runtime module
+- `foundations-jdbc-dsl` - Java DSL module
+- `foundations-jdbc-dsl-kotlin` - Kotlin DSL module
 - All Kotlin testers (`testers:pg:kotlin`, `testers:mariadb:kotlin`, etc.)
 - OpenAPI Kotlin testers (`testers:openapi:kotlin:jaxrs`, `spring`, `quarkus`)
 
@@ -242,13 +242,13 @@ GROUP BY c.customer_id, c.name
 ## DSL Architecture
 
 ### Core DSL (Modern)
-The DSL is implemented in **Java** (`typr-dsl-java`) and wrapped for other languages:
+The DSL is implemented in **Java** (`foundations-jdbc-dsl`) and wrapped for other languages:
 
 ```
-typr-dsl-java     <-- Core implementation (Java)
+foundations-jdbc-dsl        <-- Core implementation (Java)
        |
-       +-- typr-dsl-kotlin   (Kotlin wrapper)
-       +-- typr-dsl-scala    (Scala wrapper)
+       +-- foundations-jdbc-dsl-kotlin   (Kotlin wrapper)
+       +-- foundations-jdbc-dsl-scala    (Scala wrapper)
 ```
 
 **Important**: When making changes to the DSL, you must update all three implementations to keep them in sync. The Java implementation is the source of truth.
@@ -307,10 +307,10 @@ testers/                           # Integration test projects
     ├── kotlin/                    # JAX-RS, Spring, Quarkus
     └── scala/                     # HTTP4s, Spring
 
-typr-runtime-java/                 # Java runtime (base for all languages)
-typr-dsl-java/                     # Java SQL DSL (core implementation)
-typr-dsl-kotlin/                   # Kotlin SQL DSL (wraps Java DSL)
-typr-dsl-scala/                    # Scala SQL DSL (wraps Java DSL)
+foundations-jdbc/                  # Java runtime (base for all languages)
+foundations-jdbc-dsl/              # Java SQL DSL (core implementation)
+foundations-jdbc-dsl-kotlin/       # Kotlin SQL DSL (wraps Java DSL)
+foundations-jdbc-dsl-scala/        # Scala SQL DSL (wraps Java DSL)
 typr-dsl-anorm/                    # [LEGACY] Anorm-specific DSL (Scala, PostgreSQL only)
 typr-dsl-doobie/                   # [LEGACY] Doobie-specific DSL (Scala, PostgreSQL only)
 typr-dsl-zio-jdbc/                 # [LEGACY] ZIO-JDBC-specific DSL (Scala, PostgreSQL only)
