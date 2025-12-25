@@ -310,6 +310,47 @@ PgType<Json> jsonType = PgTypes.json;
 PgType<Jsonb> jsonbType = PgTypes.jsonb;
 ```
 
+#### Parsing Nested Results from JSON
+
+A powerful use case is fetching nested data as JSON and parsing it with a RowParser. This enables MULTISET-like queries across all databases:
+
+```java
+// Define a row parser for the nested data
+RowParser<Email> emailParser = RowParsers.of(
+    PgTypes.int4,   // id
+    PgTypes.text,   // email
+    Email::new
+);
+
+// Query that returns child rows as JSON array
+// PostgreSQL: json_agg(jsonb_build_object('id', e.id, 'email', e.email))
+// MariaDB: JSON_ARRAYAGG(JSON_OBJECT('id', e.id, 'email', e.email))
+String sql = """
+    SELECT p.id, p.name,
+           (SELECT COALESCE(json_agg(jsonb_build_object('id', e.id, 'email', e.email)), '[]')
+            FROM emails e WHERE e.person_id = p.id) as emails_json
+    FROM persons p WHERE p.id = ?
+    """;
+
+// Execute and parse the JSON column
+try (PreparedStatement ps = conn.prepareStatement(sql)) {
+    ps.setInt(1, personId);
+    try (ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) {
+            int id = rs.getInt(1);
+            String name = rs.getString(2);
+            String emailsJson = rs.getString(3);
+
+            // Parse the JSON array into typed Email objects
+            List<Email> emails = emailParser.parseJsonArray(
+                emailsJson,
+                List.of("id", "email")  // column names in the JSON
+            );
+        }
+    }
+}
+```
+
 The JSON codecs enable features like:
 - **MULTISET emulation** - Nested collections serialized as JSON across all databases
 - **Bulk operations** - Efficient batch processing with JSON intermediates
