@@ -4,7 +4,7 @@ package codegen
 
 import typr.internal.analysis.MaybeReturnsRows
 
-class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolean, default: ComputedDefault, enableStreamingInserts: Boolean, override val lang: LangScala) extends DbLibLegacy {
+class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolean, default: ComputedDefault, enableStreamingInserts: Boolean, override val lang: LangScala) extends DbLib {
   val dialect = lang.dialect
   private val sqlCast = new SqlCast(needsTimestampCasts = true)
   private val ZConnection = jvm.Type.Qualified("zio.jdbc.ZConnection")

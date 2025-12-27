@@ -281,32 +281,6 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         val dbLibInstances: List[jvm.ClassMember] =
           options.dbLib.toList.flatMap(_.rowInstances(id.tpe, cols, DbLib.RowType.Readable))
 
-        // For DbLibTypo (Java DSL), implement TupleN interface if column count <= 100
-        val colsList = cols.toList
-        val (tupleImplements, tupleMethods): (List[jvm.Type], List[jvm.Method]) = options.dbLib match {
-          case Some(_: DbLibTypo) if colsList.size <= 100 =>
-            val n = colsList.size
-            val colTypes = colsList.map(_.tpe)
-            val tupleType = jvm.Type.Qualified(s"dev.typr.foundations.dsl.Tuples.Tuple$n").of(colTypes*)
-            val methods = colsList.zipWithIndex.map { case (col, idx) =>
-              jvm.Method(
-                annotations = Nil,
-                comments = jvm.Comments.Empty,
-                tparams = Nil,
-                name = jvm.Ident(s"_${idx + 1}"),
-                params = Nil,
-                implicitParams = Nil,
-                tpe = col.tpe,
-                throws = Nil,
-                body = jvm.Body.Expr(col.name.code),
-                isOverride = true,
-                isDefault = false
-              )
-            }
-            (List(tupleType), methods)
-          case _ => (Nil, Nil)
-        }
-
         Some(
           jvm.File(
             id.tpe,
@@ -323,8 +297,8 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
               }.toList,
               implicitParams = Nil,
               `extends` = None,
-              implements = tupleImplements,
-              members = instanceMethods ++ tupleMethods,
+              implements = Nil,
+              members = instanceMethods,
               staticMembers = instances ++ dbLibInstances ++ constructorMethod.toList
             ),
             secondaryTypes = Nil,

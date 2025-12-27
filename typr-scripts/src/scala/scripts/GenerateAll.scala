@@ -10,6 +10,11 @@ object GenerateAll {
 
     val tasks = List(
       Future {
+        println("Starting GeneratedSources...")
+        GeneratedSources.main(Array.empty)
+        println("GeneratedSources completed")
+      },
+      Future {
         println("Starting GeneratedAdventureWorks...")
         GeneratedAdventureWorks.main(Array.empty)
         println("GeneratedAdventureWorks completed")
@@ -18,21 +23,6 @@ object GenerateAll {
         println("Starting GeneratedMariaDb...")
         GeneratedMariaDb.main(Array.empty)
         println("GeneratedMariaDb completed")
-      },
-      Future {
-        println("Starting GeneratedOracle...")
-        GeneratedOracle.main(Array.empty)
-        println("GeneratedOracle completed")
-      },
-      Future {
-        println("Starting GeneratedDuckDb...")
-        GeneratedDuckDb.main(Array.empty)
-        println("GeneratedDuckDb completed")
-      },
-      Future {
-        println("Starting GeneratedSqlServer...")
-        GeneratedSqlServer.main(Array.empty)
-        println("GeneratedSqlServer completed")
       }
     )
 

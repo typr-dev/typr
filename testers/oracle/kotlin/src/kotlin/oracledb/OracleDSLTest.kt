@@ -49,7 +49,7 @@ class OracleDSLTest {
 
             val query = productsRepo.select()
                 .where { p ->
-                    p.sku().among(arrayOf("ORDER-1", "ORDER-2", "ORDER-3"), OracleTypes.varchar2)
+                    p.sku().`in`(arrayOf("ORDER-1", "ORDER-2", "ORDER-3"), OracleTypes.varchar2)
                 }
                 .orderBy { p -> p.sku().asc() }
 
