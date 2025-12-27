@@ -52,11 +52,11 @@ data class OrderHistoryRow(
   fun id(): OrderHistoryId = historyId
 
   fun toUnsavedRow(
-    previousStatus: Defaulted<String?>,
-    changedBy: Defaulted<String?>,
-    changeReason: Defaulted<String?>,
-    metadata: Defaulted<String?>,
-    createdAt: Defaulted<LocalDateTime>
+    previousStatus: Defaulted<String?> = Defaulted.Provided(this.previousStatus),
+    changedBy: Defaulted<String?> = Defaulted.Provided(this.changedBy),
+    changeReason: Defaulted<String?> = Defaulted.Provided(this.changeReason),
+    metadata: Defaulted<String?> = Defaulted.Provided(this.metadata),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt)
   ): OrderHistoryRowUnsaved = OrderHistoryRowUnsaved(orderId, newStatus, previousStatus, changedBy, changeReason, metadata, createdAt)
 
   companion object {

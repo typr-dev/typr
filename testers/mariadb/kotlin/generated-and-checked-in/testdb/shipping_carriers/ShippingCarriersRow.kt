@@ -41,9 +41,9 @@ data class ShippingCarriersRow(
   fun id(): ShippingCarriersId = carrierId
 
   fun toUnsavedRow(
-    trackingUrlTemplate: Defaulted<String?>,
-    apiConfig: Defaulted<String?>,
-    isActive: Defaulted<Boolean>
+    trackingUrlTemplate: Defaulted<String?> = Defaulted.Provided(this.trackingUrlTemplate),
+    apiConfig: Defaulted<String?> = Defaulted.Provided(this.apiConfig),
+    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive)
   ): ShippingCarriersRowUnsaved = ShippingCarriersRowUnsaved(code, name, trackingUrlTemplate, apiConfig, isActive)
 
   companion object {

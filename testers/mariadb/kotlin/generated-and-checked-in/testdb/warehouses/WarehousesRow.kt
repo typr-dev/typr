@@ -55,11 +55,11 @@ data class WarehousesRow(
   fun id(): WarehousesId = warehouseId
 
   fun toUnsavedRow(
-    serviceArea: Defaulted<Polygon?>,
-    timezone: Defaulted<String>,
-    isActive: Defaulted<Boolean>,
-    contactEmail: Defaulted<String?>,
-    contactPhone: Defaulted<String?>
+    serviceArea: Defaulted<Polygon?> = Defaulted.Provided(this.serviceArea),
+    timezone: Defaulted<String> = Defaulted.Provided(this.timezone),
+    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive),
+    contactEmail: Defaulted<String?> = Defaulted.Provided(this.contactEmail),
+    contactPhone: Defaulted<String?> = Defaulted.Provided(this.contactPhone)
   ): WarehousesRowUnsaved = WarehousesRowUnsaved(code, name, address, location, serviceArea, timezone, isActive, contactEmail, contactPhone)
 
   companion object {

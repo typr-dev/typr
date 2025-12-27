@@ -5,9 +5,12 @@
  */
 package oracledb
 
+import dev.typr.foundations.data.Json
 import dev.typr.foundations.internal.RandomHelper
 import java.sql.Connection
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.Optional
 import java.util.Random
 import oracledb.all_scalar_types.AllScalarTypesId
@@ -30,14 +33,17 @@ import oracledb.employees.EmployeesRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639RepoImpl
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639Row
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639RowUnsaved
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 case class TestInsert(random: Random) {
   def AllScalarTypes(
     colVarchar2: Optional[String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
     colNumber: Optional[java.math.BigDecimal] = if (random.nextBoolean()) Optional.empty() else Optional.of(java.math.BigDecimal.valueOf(random.nextDouble())),
-    colDate: Optional[LocalDateTime] = Optional.empty(),
-    colTimestamp: Optional[LocalDateTime] = Optional.empty(),
+    colDate: Optional[LocalDateTime] = if (random.nextBoolean()) Optional.empty() else Optional.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    colTimestamp: Optional[LocalDateTime] = if (random.nextBoolean()) Optional.empty() else Optional.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
     colClob: Optional[String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
     colNotNull: String = RandomHelper.alphanumeric(random, 20),
     id: Defaulted[AllScalarTypesId] = Defaulted.UseDefault()
@@ -131,4 +137,9 @@ case class TestInsert(random: Random) {
       productId = productId
     ))(using c)
   }
+
+  def TestGenkeys1766794419639(
+    v: Optional[Json] = if (random.nextBoolean()) Optional.empty() else Optional.of(Json("{}")),
+    id: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault()
+  )(using c: Connection): TestGenkeys1766794419639Row = (new TestGenkeys1766794419639RepoImpl()).insert(new TestGenkeys1766794419639RowUnsaved(v = v, id = id))(using c)
 }

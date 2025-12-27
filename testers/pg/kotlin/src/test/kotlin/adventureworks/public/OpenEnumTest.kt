@@ -1,13 +1,17 @@
 package adventureworks.public
 
+import adventureworks.DomainInsert
+import adventureworks.TestInsert
 import adventureworks.WithConnection
 import adventureworks.public.title.*
 import adventureworks.public.title_domain.*
 import adventureworks.public.titledperson.*
 import org.junit.Assert.*
 import org.junit.Test
+import java.util.Random
 
 class OpenEnumTest {
+    private val testInsert = TestInsert(Random(0), DomainInsert)
     private val titleRepo = TitleRepoImpl()
     private val titleDomainRepo = TitleDomainRepoImpl()
     private val titledPersonRepo = TitledpersonRepoImpl()
@@ -15,13 +19,11 @@ class OpenEnumTest {
     @Test
     fun testOpenEnumPatternMatching() {
         WithConnection.run { c ->
-            val john = titledPersonRepo.insert(
-                TitledpersonRow(
-                    titleShort = TitleDomainId.Known.dr,
-                    title = TitleId.Known.dr,
-                    name = "John"
-                ),
-                c
+            val john = testInsert.publicTitledperson(
+                titleShort = TitleDomainId.Known.dr,
+                title = TitleId.Known.dr,
+                name = "John",
+                c = c
             )
 
             // Verify pattern matching works with open enums

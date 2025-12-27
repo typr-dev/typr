@@ -45,10 +45,10 @@ data class BrandsRow(
   fun id(): BrandsId = brandId
 
   fun toUnsavedRow(
-    logoBlob: Defaulted<ByteArray?>,
-    websiteUrl: Defaulted<String?>,
-    countryOfOrigin: Defaulted<String?>,
-    isActive: Defaulted<Boolean>
+    logoBlob: Defaulted<ByteArray?> = Defaulted.Provided(this.logoBlob),
+    websiteUrl: Defaulted<String?> = Defaulted.Provided(this.websiteUrl),
+    countryOfOrigin: Defaulted<String?> = Defaulted.Provided(this.countryOfOrigin),
+    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive)
   ): BrandsRowUnsaved = BrandsRowUnsaved(name, slug, logoBlob, websiteUrl, countryOfOrigin, isActive)
 
   companion object {

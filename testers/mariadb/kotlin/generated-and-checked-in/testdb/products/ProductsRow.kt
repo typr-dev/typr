@@ -92,20 +92,20 @@ data class ProductsRow(
   fun id(): ProductsId = productId
 
   fun toUnsavedRow(
-    brandId: Defaulted<BrandsId?>,
-    shortDescription: Defaulted<String?>,
-    fullDescription: Defaulted<String?>,
-    costPrice: Defaulted<BigDecimal?>,
-    weightKg: Defaulted<BigDecimal?>,
-    dimensionsJson: Defaulted<String?>,
-    status: Defaulted<String>,
-    taxClass: Defaulted<String>,
-    tags: Defaulted<MariaSet?>,
-    attributes: Defaulted<String?>,
-    seoMetadata: Defaulted<String?>,
-    createdAt: Defaulted<LocalDateTime>,
-    updatedAt: Defaulted<LocalDateTime>,
-    publishedAt: Defaulted<LocalDateTime?>
+    brandId: Defaulted<BrandsId?> = Defaulted.Provided(this.brandId),
+    shortDescription: Defaulted<String?> = Defaulted.Provided(this.shortDescription),
+    fullDescription: Defaulted<String?> = Defaulted.Provided(this.fullDescription),
+    costPrice: Defaulted<BigDecimal?> = Defaulted.Provided(this.costPrice),
+    weightKg: Defaulted<BigDecimal?> = Defaulted.Provided(this.weightKg),
+    dimensionsJson: Defaulted<String?> = Defaulted.Provided(this.dimensionsJson),
+    status: Defaulted<String> = Defaulted.Provided(this.status),
+    taxClass: Defaulted<String> = Defaulted.Provided(this.taxClass),
+    tags: Defaulted<MariaSet?> = Defaulted.Provided(this.tags),
+    attributes: Defaulted<String?> = Defaulted.Provided(this.attributes),
+    seoMetadata: Defaulted<String?> = Defaulted.Provided(this.seoMetadata),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt),
+    updatedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.updatedAt),
+    publishedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.publishedAt)
   ): ProductsRowUnsaved = ProductsRowUnsaved(sku, name, basePrice, brandId, shortDescription, fullDescription, costPrice, weightKg, dimensionsJson, status, taxClass, tags, attributes, seoMetadata, createdAt, updatedAt, publishedAt)
 
   companion object {

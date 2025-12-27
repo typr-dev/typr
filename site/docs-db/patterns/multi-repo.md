@@ -117,6 +117,13 @@ class PersonWithAddressesRepo(
 Here is example usage:
 
 Note that we can easily create a deep dependency graph with random data due to [testInsert](../other-features/testing-with-random-values.md).
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="scala" label="Scala" default>
+
 ```scala
 import adventureworks.{TestInsert, TestDomainInsert, withConnection}
 import adventureworks.userdefined.FirstName
@@ -155,6 +162,55 @@ addresstypeRepo = new AddresstypeRepoImpl,
 addressRepo = new AddressRepoImpl
 )
 ```
+
+</TabItem>
+<TabItem value="java" label="Java">
+
+```java
+import adventureworks.TestInsert;
+import adventureworks.DomainInsertImpl;
+import adventureworks.userdefined.FirstName;
+import adventureworks.public_.Name;
+import adventureworks.person.countryregion.CountryregionId;
+import java.util.Random;
+
+// set a fixed seed to get consistent values
+var testInsert = new TestInsert(new Random(1), new DomainInsertImpl());
+
+// Java uses the Inserter pattern: method().with(customizer).insert(c)
+var businessentityRow = testInsert.personBusinessentity().insert(c);
+var personRow = testInsert.personPerson(businessentityRow.businessentityid(), "SC", new FirstName("name"))
+    .with(row -> row.withLastname(new Name("lastname")))
+    .insert(c);
+var countryregionRow = testInsert.personCountryregion()
+    .with(row -> row.withCountryregioncode(new CountryregionId("NOR")).withName(new Name("Norway")))
+    .insert(c);
+var salesterritoryRow = testInsert.salesSalesterritory(countryregionRow.countryregioncode())
+    .with(row -> row.withName(new Name("Territory")).withGroup("Europe"))
+    .insert(c);
+var stateprovinceRow = testInsert.personStateprovince(countryregionRow.countryregioncode(), salesterritoryRow.territoryid())
+    .with(row -> row.withStateprovincecode("OSL").withName(new Name("Oslo")))
+    .insert(c);
+var addressRow1 = testInsert.personAddress(stateprovinceRow.stateprovinceid())
+    .with(row -> row.withAddressline1("Street 1").withCity("Oslo").withPostalcode("0001"))
+    .insert(c);
+var addressRow2 = testInsert.personAddress(stateprovinceRow.stateprovinceid())
+    .with(row -> row.withAddressline1("Street 2").withCity("Oslo").withPostalcode("0002"))
+    .insert(c);
+var addressRow3 = testInsert.personAddress(stateprovinceRow.stateprovinceid())
+    .with(row -> row.withAddressline1("Street 3").withCity("Oslo").withPostalcode("0003"))
+    .insert(c);
+
+var repo = new PersonWithAddressesRepo(
+    new PersonRepoImpl(),
+    new BusinessentityaddressRepoImpl(),
+    new AddresstypeRepoImpl(),
+    new AddressRepoImpl()
+);
+```
+
+</TabItem>
+</Tabs>
 
 ```scala
 repo.syncAddresses(PersonWithAddresses(personRow, Map(Name("HOME") -> addressRow1, Name("OFFICE") -> addressRow2)))

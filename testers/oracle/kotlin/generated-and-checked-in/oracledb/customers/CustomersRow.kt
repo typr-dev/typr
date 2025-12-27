@@ -31,7 +31,7 @@ data class CustomersRow(
 
   fun toUnsavedRow(
     customerId: Defaulted<CustomersId>,
-    createdAt: Defaulted<LocalDateTime>
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt)
   ): CustomersRowUnsaved = CustomersRowUnsaved(name, billingAddress, creditLimit, customerId, createdAt)
 
   companion object {

@@ -3,7 +3,6 @@ package adventureworks.person
 import adventureworks.DomainInsert
 import adventureworks.TestInsert
 import adventureworks.WithConnection
-import adventureworks.customtypes.Defaulted
 import adventureworks.person.address.*
 import adventureworks.person.addresstype.*
 import adventureworks.person.businessentityaddress.*
@@ -14,7 +13,7 @@ import adventureworks.userdefined.FirstName
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.sql.Connection
-import kotlin.random.Random
+import java.util.Random
 
 data class PersonWithAddresses(val person: PersonRow, val addresses: Map<Name, AddressRow>)
 
@@ -84,87 +83,52 @@ class PersonWithAddressesRepo(
 }
 
 class PersonWithAddressesTest {
+    private val testInsert = TestInsert(Random(0), DomainInsert)
+
     @Test
     fun works() {
         WithConnection.run { c ->
-            // insert randomly generated rows (with a fixed seed) we base the test on
-            val testInsert = TestInsert(java.util.Random(1), DomainInsert)
-            val businessentityRow = testInsert.personBusinessentity(businessentityid = Defaulted.UseDefault(), rowguid = Defaulted.UseDefault(), modifieddate = Defaulted.UseDefault(), c = c)
+            val businessentityRow = testInsert.personBusinessentity(c = c)
             val personRow = testInsert.personPerson(
                 businessentityid = businessentityRow.businessentityid,
                 persontype = "SC",
                 firstname = FirstName("name"),
-                title = null,
-                middlename = null,
-                lastname = testInsert.domainInsert.publicName(testInsert.random),
-                suffix = null,
-                additionalcontactinfo = null,
-                demographics = null,
-                namestyle = Defaulted.UseDefault(),
-                emailpromotion = Defaulted.UseDefault(),
-                rowguid = Defaulted.UseDefault(),
-                modifieddate = Defaulted.UseDefault(),
                 c = c
             )
-            val countryregionRow = testInsert.personCountryregion(countryregioncode = CountryregionId("NOR"), name = testInsert.domainInsert.publicName(testInsert.random), modifieddate = Defaulted.UseDefault(), c = c)
+            val countryregionRow = testInsert.personCountryregion(
+                countryregioncode = CountryregionId("NOR"),
+                c = c
+            )
             val salesterritoryRow = testInsert.salesSalesterritory(
-                territoryid = Defaulted.UseDefault(),
-                name = testInsert.domainInsert.publicName(testInsert.random),
                 countryregioncode = countryregionRow.countryregioncode,
-                group = "group",
-                salesytd = Defaulted.UseDefault(),
-                saleslastyear = Defaulted.UseDefault(),
-                costytd = Defaulted.UseDefault(),
-                costlastyear = Defaulted.UseDefault(),
-                rowguid = Defaulted.UseDefault(),
-                modifieddate = Defaulted.UseDefault(),
+                group = "Europe",
                 c = c
             )
             val stateprovinceRow = testInsert.personStateprovince(
                 stateprovincecode = "SC",
                 countryregioncode = countryregionRow.countryregioncode,
-                name = testInsert.domainInsert.publicName(testInsert.random),
                 territoryid = salesterritoryRow.territoryid,
-                isonlystateprovinceflag = Defaulted.UseDefault(),
-                rowguid = Defaulted.UseDefault(),
-                modifieddate = Defaulted.UseDefault(),
-                stateprovinceid = Defaulted.UseDefault(),
                 c = c
             )
             val addressRow1 = testInsert.personAddress(
                 addressline1 = "line1",
                 city = "city",
-                stateprovinceid = stateprovinceRow.stateprovinceid,
                 postalcode = "12345",
-                addressline2 = null,
-                spatiallocation = null,
-                addressid = Defaulted.UseDefault(),
-                rowguid = Defaulted.UseDefault(),
-                modifieddate = Defaulted.UseDefault(),
+                stateprovinceid = stateprovinceRow.stateprovinceid,
                 c = c
             )
             val addressRow2 = testInsert.personAddress(
                 addressline1 = "line2",
                 city = "city",
-                stateprovinceid = stateprovinceRow.stateprovinceid,
                 postalcode = "12345",
-                addressline2 = null,
-                spatiallocation = null,
-                addressid = Defaulted.UseDefault(),
-                rowguid = Defaulted.UseDefault(),
-                modifieddate = Defaulted.UseDefault(),
+                stateprovinceid = stateprovinceRow.stateprovinceid,
                 c = c
             )
             val addressRow3 = testInsert.personAddress(
                 addressline1 = "line3",
                 city = "city",
-                stateprovinceid = stateprovinceRow.stateprovinceid,
                 postalcode = "12345",
-                addressline2 = null,
-                spatiallocation = null,
-                addressid = Defaulted.UseDefault(),
-                rowguid = Defaulted.UseDefault(),
-                modifieddate = Defaulted.UseDefault(),
+                stateprovinceid = stateprovinceRow.stateprovinceid,
                 c = c
             )
 

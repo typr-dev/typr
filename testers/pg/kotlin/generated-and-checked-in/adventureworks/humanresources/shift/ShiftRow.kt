@@ -36,7 +36,7 @@ data class ShiftRow(
 
   fun toUnsavedRow(
     shiftid: Defaulted<ShiftId>,
-    modifieddate: Defaulted<LocalDateTime>
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): ShiftRowUnsaved = ShiftRowUnsaved(name, starttime, endtime, shiftid, modifieddate)
 
   companion object {

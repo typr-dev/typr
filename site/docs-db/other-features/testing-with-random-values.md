@@ -42,6 +42,11 @@ object DomainInsert extends adventureworks.TestDomainInsert {
 
 ### Usage example
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="scala" label="Scala/Kotlin" default>
 
 ```scala
 import adventureworks.customtypes.{Defaulted, TypoShort, TypoLocalDateTime, TypoXml}
@@ -131,6 +136,61 @@ testInsert.productionProduct(
 // )
 ```
 
+</TabItem>
+<TabItem value="java" label="Java">
+
+Java doesn't have default parameters, so TestInsert uses the **Inserter pattern** - a fluent builder that lets you customize rows before inserting:
+
+```java
+import adventureworks.TestInsert;
+import adventureworks.DomainInsertImpl;
+import adventureworks.production.unitmeasure.UnitmeasureId;
+import adventureworks.public_.Name;
+import java.util.Random;
+
+var testInsert = new TestInsert(new Random(0), new DomainInsertImpl());
+
+// Simple insert - just call insert(connection)
+var productCategory = testInsert.productionProductcategory().insert(c);
+
+// Insert with required parameters
+var unitmeasure = testInsert.productionUnitmeasure(new UnitmeasureId("kgg")).insert(c);
+
+// Customize with .with() before inserting
+var productModel = testInsert.productionProductmodel()
+    .with(row -> row
+        .withCatalogdescription(Optional.of(new Xml("<xml/>")))
+        .withInstructions(Optional.of(new Xml("<instructions/>"))))
+    .insert(c);
+
+// Complex example with foreign keys
+var productSubcategory = testInsert
+    .productionProductsubcategory(productCategory.productcategoryid())
+    .insert(c);
+
+var product = testInsert.productionProduct(
+        (short) 1,           // safetystocklevel
+        (short) 1,           // reorderpoint
+        BigDecimal.ONE,      // standardcost
+        BigDecimal.ONE,      // listprice
+        10,                  // daystomanufacture
+        LocalDateTime.now()) // sellstartdate
+    .with(row -> row
+        .withSizeunitmeasurecode(Optional.of(unitmeasure.unitmeasurecode()))
+        .withWeightunitmeasurecode(Optional.of(unitmeasure.unitmeasurecode()))
+        .withClass(Optional.of("H "))
+        .withStyle(Optional.of("W "))
+        .withProductsubcategoryid(Optional.of(productSubcategory.productsubcategoryid()))
+        .withProductmodelid(Optional.of(productModel.productmodelid())))
+    .insert(c);
+```
+
+The `Inserter<U, R>` interface provides:
+- `insert(Connection c)` - Execute the insert and return the saved row
+- `with(UnaryOperator<U> transformer)` - Customize the unsaved row before inserting
+
+</TabItem>
+</Tabs>
 
 ### Comparison with scalacheck
 

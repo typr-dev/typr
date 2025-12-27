@@ -117,10 +117,10 @@ data class ProductRow(
 
   fun toUnsavedRow(
     productid: Defaulted<ProductId>,
-    makeflag: Defaulted<Flag>,
-    finishedgoodsflag: Defaulted<Flag>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    makeflag: Defaulted<Flag> = Defaulted.Provided(this.makeflag),
+    finishedgoodsflag: Defaulted<Flag> = Defaulted.Provided(this.finishedgoodsflag),
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): ProductRowUnsaved = ProductRowUnsaved(name, productnumber, color, safetystocklevel, reorderpoint, standardcost, listprice, size, sizeunitmeasurecode, weightunitmeasurecode, weight, daystomanufacture, productline, `class`, style, productsubcategoryid, productmodelid, sellstartdate, sellenddate, discontinueddate, productid, makeflag, finishedgoodsflag, rowguid, modifieddate)
 
   companion object {

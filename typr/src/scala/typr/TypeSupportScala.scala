@@ -51,12 +51,18 @@ object TypeSupportScala extends TypeSupport {
     def nextBytes(random: jvm.Code, bytes: jvm.Code): jvm.Code = code"$random.nextBytes($bytes)"
     def alphanumeric(random: jvm.Code, length: jvm.Code): jvm.Code = code"$random.alphanumeric.take($length).mkString"
     def nextPrintableChar(random: jvm.Code): jvm.Code = code"$random.nextPrintableChar()"
+    // Scala uses scala.util.Random, so we use block expression directly (works with Scala Random)
+    def randomUUID(random: jvm.Code): jvm.Code = code"${TypesJava.UUID}.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); $random.nextBytes(bs); bs}"
   }
 
   override object ListType extends ListSupport {
     val tpe: jvm.Type = TypesScala.List
 
     def create(values: List[jvm.Code]): jvm.Code = code"${TypesScala.List}(${values.map(_.code).mkCode(", ")})"
+
+    def index(list: jvm.Code, idx: jvm.Code): jvm.Code = code"$list($idx)"
+
+    def size(list: jvm.Code): jvm.Code = code"$list.length"
 
     def findFirst(collection: jvm.Code, predicate: jvm.Code): jvm.Code =
       code"$collection.find($predicate)"

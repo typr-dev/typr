@@ -6,6 +6,7 @@
 package adventureworks
 
 import adventureworks.customtypes.Defaulted
+import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.department.DepartmentRepoImpl
 import adventureworks.humanresources.department.DepartmentRow
@@ -132,6 +133,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetTime
+import java.time.ZoneOffset
 import java.util.UUID
 import org.postgresql.geometric.PGbox
 import org.postgresql.geometric.PGcircle
@@ -151,8 +153,8 @@ case class TestInsert(
   def humanresourcesDepartment(
     name: Name = domainInsert.publicName(random),
     groupname: Name = domainInsert.publicName(random),
-    departmentid: Defaulted[DepartmentId] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    departmentid: Defaulted[DepartmentId] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): DepartmentRow = {
     (new DepartmentRepoImpl()).insert(new DepartmentRowUnsaved(
       name = name,
@@ -171,13 +173,13 @@ case class TestInsert(
     nationalidnumber: String = random.alphanumeric.take(15).mkString,
     loginid: String = random.alphanumeric.take(20).mkString,
     jobtitle: String = random.alphanumeric.take(20).mkString,
-    salariedflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    vacationhours: Defaulted[Short] = Defaulted.UseDefault(),
-    sickleavehours: Defaulted[Short] = Defaulted.UseDefault(),
-    currentflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault(),
-    organizationnode: Defaulted[Option[String]] = Defaulted.UseDefault()
+    salariedflag: Defaulted[Flag] = new UseDefault(),
+    vacationhours: Defaulted[Short] = new UseDefault(),
+    sickleavehours: Defaulted[Short] = new UseDefault(),
+    currentflag: Defaulted[Flag] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault(),
+    organizationnode: Defaulted[Option[String]] = new UseDefault()
   )(using c: Connection): EmployeeRow = {
     (new EmployeeRepoImpl()).insert(new EmployeeRowUnsaved(
       businessentityid = businessentityid,
@@ -204,7 +206,7 @@ case class TestInsert(
     shiftid: ShiftId,
     startdate: LocalDate,
     enddate: Option[LocalDate] = None,
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): EmployeedepartmenthistoryRow = {
     (new EmployeedepartmenthistoryRepoImpl()).insert(new EmployeedepartmenthistoryRowUnsaved(
       businessentityid = businessentityid,
@@ -217,11 +219,11 @@ case class TestInsert(
   }
 
   def humanresourcesShift(
-    starttime: LocalTime,
-    endtime: LocalTime,
     name: Name = domainInsert.publicName(random),
-    shiftid: Defaulted[ShiftId] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    starttime: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    endtime: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    shiftid: Defaulted[ShiftId] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ShiftRow = {
     (new ShiftRepoImpl()).insert(new ShiftRowUnsaved(
       name = name,
@@ -235,13 +237,13 @@ case class TestInsert(
   def personAddress(
     stateprovinceid: StateprovinceId,
     addressline1: String = random.alphanumeric.take(20).mkString,
-    addressline2: Option[/* max 60 chars */ String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
+    addressline2: Option[/* max 60 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
     city: String = random.alphanumeric.take(20).mkString,
     postalcode: String = random.alphanumeric.take(15).mkString,
     spatiallocation: Option[Array[Byte]] = None,
-    addressid: Defaulted[AddressId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    addressid: Defaulted[AddressId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): AddressRow = {
     (new AddressRepoImpl()).insert(new AddressRowUnsaved(
       addressline1 = addressline1,
@@ -258,9 +260,9 @@ case class TestInsert(
 
   def personAddresstype(
     name: Name = domainInsert.publicName(random),
-    addresstypeid: Defaulted[AddresstypeId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    addresstypeid: Defaulted[AddresstypeId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): AddresstypeRow = {
     (new AddresstypeRepoImpl()).insert(new AddresstypeRowUnsaved(
       name = name,
@@ -271,17 +273,17 @@ case class TestInsert(
   }
 
   def personBusinessentity(
-    businessentityid: Defaulted[BusinessentityId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    businessentityid: Defaulted[BusinessentityId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): BusinessentityRow = (new BusinessentityRepoImpl()).insert(new BusinessentityRowUnsaved(businessentityid = businessentityid, rowguid = rowguid, modifieddate = modifieddate))(using c)
 
   def personBusinessentityaddress(
     businessentityid: BusinessentityId,
     addressid: AddressId,
     addresstypeid: AddresstypeId,
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): BusinessentityaddressRow = {
     (new BusinessentityaddressRepoImpl()).insert(new BusinessentityaddressRowUnsaved(
       businessentityid = businessentityid,
@@ -293,17 +295,17 @@ case class TestInsert(
   }
 
   def personCountryregion(
-    countryregioncode: CountryregionId = CountryregionId(random.alphanumeric.take(3).mkString),
+    countryregioncode: CountryregionId = new CountryregionId(random.alphanumeric.take(3).mkString),
     name: Name = domainInsert.publicName(random),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): CountryregionRow = (new CountryregionRepoImpl()).insert(new CountryregionRowUnsaved(countryregioncode = countryregioncode, name = name, modifieddate = modifieddate))(using c)
 
   def personEmailaddress(
     businessentityid: BusinessentityId,
-    emailaddress: Option[/* max 50 chars */ String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
-    emailaddressid: Defaulted[Int] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    emailaddress: Option[/* max 50 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    emailaddressid: Defaulted[Int] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): EmailaddressRow = {
     (new EmailaddressRepoImpl()).insert(new EmailaddressRowUnsaved(
       businessentityid = businessentityid,
@@ -318,8 +320,8 @@ case class TestInsert(
     businessentityid: BusinessentityId,
     passwordhash: String = random.alphanumeric.take(20).mkString,
     passwordsalt: String = random.alphanumeric.take(10).mkString,
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): PasswordRow = {
     (new PasswordRepoImpl()).insert(new PasswordRowUnsaved(
       businessentityid = businessentityid,
@@ -334,16 +336,16 @@ case class TestInsert(
     businessentityid: BusinessentityId,
     persontype: String,
     firstname: /* user-picked */ FirstName,
-    title: Option[/* max 8 chars */ String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(8).mkString),
-    middlename: Option[Name] = if (random.nextBoolean()) None else Some(domainInsert.publicName(random)),
+    title: Option[/* max 8 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(8).mkString)),
+    middlename: Option[Name] = (if (random.nextBoolean()) None else Some(domainInsert.publicName(random))),
     lastname: Name = domainInsert.publicName(random),
-    suffix: Option[/* max 10 chars */ String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(10).mkString),
-    additionalcontactinfo: Option[Xml] = None,
-    demographics: Option[Xml] = None,
-    namestyle: Defaulted[NameStyle] = Defaulted.UseDefault(),
-    emailpromotion: Defaulted[Int] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    suffix: Option[/* max 10 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(10).mkString)),
+    additionalcontactinfo: Option[Xml] = (if (random.nextBoolean()) None else Some(new Xml("<root/>"))),
+    demographics: Option[Xml] = (if (random.nextBoolean()) None else Some(new Xml("<root/>"))),
+    namestyle: Defaulted[NameStyle] = new UseDefault(),
+    emailpromotion: Defaulted[Int] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): PersonRow = {
     (new PersonRepoImpl()).insert(new PersonRowUnsaved(
       businessentityid = businessentityid,
@@ -367,10 +369,10 @@ case class TestInsert(
     territoryid: SalesterritoryId,
     stateprovincecode: String = random.alphanumeric.take(3).mkString,
     name: Name = domainInsert.publicName(random),
-    stateprovinceid: Defaulted[StateprovinceId] = Defaulted.UseDefault(),
-    isonlystateprovinceflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    stateprovinceid: Defaulted[StateprovinceId] = new UseDefault(),
+    isonlystateprovinceflag: Defaulted[Flag] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): StateprovinceRow = {
     (new StateprovinceRepoImpl()).insert(new StateprovinceRowUnsaved(
       stateprovincecode = stateprovincecode,
@@ -393,8 +395,8 @@ case class TestInsert(
     sellstartdate: LocalDateTime,
     name: Name = domainInsert.publicName(random),
     productnumber: String = random.alphanumeric.take(20).mkString,
-    color: Option[/* max 15 chars */ String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(15).mkString),
-    size: Option[/* max 5 chars */ String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(5).mkString),
+    color: Option[/* max 15 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(15).mkString)),
+    size: Option[/* max 5 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(5).mkString)),
     sizeunitmeasurecode: Option[UnitmeasureId] = None,
     weightunitmeasurecode: Option[UnitmeasureId] = None,
     weight: Option[BigDecimal] = None,
@@ -404,12 +406,12 @@ case class TestInsert(
     productsubcategoryid: Option[ProductsubcategoryId] = None,
     productmodelid: Option[ProductmodelId] = None,
     sellenddate: Option[LocalDateTime] = None,
-    discontinueddate: Option[LocalDateTime] = None,
-    productid: Defaulted[ProductId] = Defaulted.UseDefault(),
-    makeflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    finishedgoodsflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    discontinueddate: Option[LocalDateTime] = (if (random.nextBoolean()) None else Some(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    productid: Defaulted[ProductId] = new UseDefault(),
+    makeflag: Defaulted[Flag] = new UseDefault(),
+    finishedgoodsflag: Defaulted[Flag] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductRow = {
     (new ProductRepoImpl()).insert(new ProductRowUnsaved(
       name = name,
@@ -442,9 +444,9 @@ case class TestInsert(
 
   def productionProductcategory(
     name: Name = domainInsert.publicName(random),
-    productcategoryid: Defaulted[ProductcategoryId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    productcategoryid: Defaulted[ProductcategoryId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductcategoryRow = {
     (new ProductcategoryRepoImpl()).insert(new ProductcategoryRowUnsaved(
       name = name,
@@ -459,7 +461,7 @@ case class TestInsert(
     startdate: LocalDateTime,
     standardcost: BigDecimal,
     enddate: Option[LocalDateTime] = None,
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductcosthistoryRow = {
     (new ProductcosthistoryRepoImpl()).insert(new ProductcosthistoryRowUnsaved(
       productid = productid,
@@ -472,11 +474,11 @@ case class TestInsert(
 
   def productionProductmodel(
     name: Name = domainInsert.publicName(random),
-    catalogdescription: Option[Xml] = None,
-    instructions: Option[Xml] = None,
-    productmodelid: Defaulted[ProductmodelId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    catalogdescription: Option[Xml] = (if (random.nextBoolean()) None else Some(new Xml("<root/>"))),
+    instructions: Option[Xml] = (if (random.nextBoolean()) None else Some(new Xml("<root/>"))),
+    productmodelid: Defaulted[ProductmodelId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductmodelRow = {
     (new ProductmodelRepoImpl()).insert(new ProductmodelRowUnsaved(
       name = name,
@@ -491,9 +493,9 @@ case class TestInsert(
   def productionProductsubcategory(
     productcategoryid: ProductcategoryId,
     name: Name = domainInsert.publicName(random),
-    productsubcategoryid: Defaulted[ProductsubcategoryId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    productsubcategoryid: Defaulted[ProductsubcategoryId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductsubcategoryRow = {
     (new ProductsubcategoryRepoImpl()).insert(new ProductsubcategoryRowUnsaved(
       productcategoryid = productcategoryid,
@@ -505,9 +507,9 @@ case class TestInsert(
   }
 
   def productionUnitmeasure(
-    unitmeasurecode: UnitmeasureId = UnitmeasureId(random.alphanumeric.take(3).mkString),
+    unitmeasurecode: UnitmeasureId = new UnitmeasureId(random.alphanumeric.take(3).mkString),
     name: Name = domainInsert.publicName(random),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): UnitmeasureRow = (new UnitmeasureRepoImpl()).insert(new UnitmeasureRowUnsaved(unitmeasurecode = unitmeasurecode, name = name, modifieddate = modifieddate))(using c)
 
   def publicFlaff(
@@ -527,11 +529,11 @@ case class TestInsert(
   }
 
   def publicIdentityTest(
-    name: IdentityTestId = IdentityTestId(random.alphanumeric.take(20).mkString),
-    defaultGenerated: Defaulted[Int] = Defaulted.UseDefault()
+    name: IdentityTestId = new IdentityTestId(random.alphanumeric.take(20).mkString),
+    defaultGenerated: Defaulted[Int] = new UseDefault()
   )(using c: Connection): IdentityTestRow = (new IdentityTestRepoImpl()).insert(new IdentityTestRowUnsaved(name = name, defaultGenerated = defaultGenerated))(using c)
 
-  def publicIssue142(tabellkode: Issue142Id = Issue142Id(random.alphanumeric.take(20).mkString))(using c: Connection): Issue142Row = (new Issue142RepoImpl()).insert(new Issue142Row(tabellkode = tabellkode))(using c)
+  def publicIssue142(tabellkode: Issue142Id = Issue142Id.apply(random.alphanumeric.take(20).mkString))(using c: Connection): Issue142Row = (new Issue142RepoImpl()).insert(new Issue142Row(tabellkode = tabellkode))(using c)
 
   def publicIssue1422(tabellkode: Issue142Id = Issue142Id.All(random.nextInt(2)))(using c: Connection): Issue1422Row = (new Issue1422RepoImpl()).insert(new Issue1422Row(tabellkode = tabellkode))(using c)
 
@@ -541,76 +543,110 @@ case class TestInsert(
   )(using c: Connection): OnlyPkColumnsRow = (new OnlyPkColumnsRepoImpl()).insert(new OnlyPkColumnsRow(keyColumn1 = keyColumn1, keyColumn2 = keyColumn2))(using c)
 
   def publicPgtest(
-    box: PGbox,
     bytea: Array[Byte],
-    circle: PGcircle,
-    date: LocalDate,
     hstore: Map[String, String],
-    inet: Inet,
-    int2vector: Int2Vector,
-    interval: PGInterval,
-    json: Json,
-    jsonb: Jsonb,
-    line: PGline,
-    lseg: PGlseg,
-    money: Money,
-    path: PGpath,
-    point: PGpoint,
-    polygon: PGpolygon,
-    time: LocalTime,
-    timestamp: LocalDateTime,
-    timestampz: Instant,
-    timez: OffsetTime,
-    vector: Vector,
-    xml: Xml,
-    boxes: Array[PGbox],
-    circlees: Array[PGcircle],
-    datees: Array[LocalDate],
-    inetes: Array[Inet],
-    int2vectores: Array[Int2Vector],
-    intervales: Array[PGInterval],
-    jsones: Array[Json],
-    jsonbes: Array[Jsonb],
-    linees: Array[PGline],
-    lseges: Array[PGlseg],
-    moneyes: Array[Money],
-    pathes: Array[PGpath],
-    pointes: Array[PGpoint],
-    polygones: Array[PGpolygon],
-    timees: Array[LocalTime],
-    timestampes: Array[LocalDateTime],
-    timestampzes: Array[Instant],
-    timezes: Array[OffsetTime],
-    xmles: Array[Xml],
     bool: Boolean = random.nextBoolean(),
+    box: PGbox = new PGbox(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  ),
     bpchar: String = random.alphanumeric.take(3).mkString,
     char: String = random.alphanumeric.take(1).mkString,
+    circle: PGcircle = new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    date: LocalDate = LocalDate.ofEpochDay(random.nextInt(30000).toLong),
     float4: Float = random.nextFloat(),
     float8: Double = random.nextDouble(),
+    inet: Inet = new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}"),
     int2: Short = random.nextInt(Short.MaxValue).toShort,
+    int2vector: Int2Vector = new Int2Vector("1 2 3"),
     int4: Int = random.nextInt(),
     int8: Long = random.nextLong(),
+    interval: PGInterval = new PGInterval(
+    random.nextInt(10),
+    random.nextInt(12),
+    random.nextInt(28),
+    random.nextInt(24),
+    random.nextInt(60),
+    random.nextDouble() * 60
+  ),
+    json: Json = new Json("{}"),
+    jsonb: Jsonb = new Jsonb("{}"),
+    line: PGline = new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    lseg: PGlseg = new PGlseg(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  ),
+    money: Money = new Money(random.nextDouble()),
     mydomain: Mydomain = domainInsert.publicMydomain(random),
     myenum: Myenum = Myenum.All(random.nextInt(Myenum.All.length)),
     name: String = random.alphanumeric.take(20).mkString,
     numeric: BigDecimal = BigDecimal.decimal(random.nextDouble()),
+    path: PGpath = new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false),
+    point: PGpoint = new PGpoint(random.nextDouble(), random.nextDouble()),
+    polygon: PGpolygon = new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0))),
     text: String = random.alphanumeric.take(20).mkString,
+    time: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    timestamp: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    timestampz: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timez: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
     uuid: UUID = UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs},
     varchar: String = random.alphanumeric.take(20).mkString,
+    vector: Vector = new Vector("[1.0,2.0,3.0]"),
+    xml: Xml = new Xml("<root/>"),
+    boxes: Array[PGbox] = Array.fill(random.nextInt(3))(new PGbox(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  )),
     bpchares: Array[/* bpchar */ String] = Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString),
     chares: Array[/* bpchar */ String] = Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString),
+    circlees: Array[PGcircle] = Array.fill(random.nextInt(3))(new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble())),
+    datees: Array[LocalDate] = Array.fill(random.nextInt(3))(LocalDate.ofEpochDay(random.nextInt(30000).toLong)),
     float4es: Array[Float] = Array.fill(random.nextInt(3))(random.nextFloat()),
     float8es: Array[Double] = Array.fill(random.nextInt(3))(random.nextDouble()),
+    inetes: Array[Inet] = Array.fill(random.nextInt(3))(new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}")),
     int2es: Array[Short] = Array.fill(random.nextInt(3))(random.nextInt(Short.MaxValue).toShort),
+    int2vectores: Array[Int2Vector] = Array.fill(random.nextInt(3))(new Int2Vector("1 2 3")),
     int4es: Array[Int] = Array.fill(random.nextInt(3))(random.nextInt()),
     int8es: Array[Long] = Array.fill(random.nextInt(3))(random.nextLong()),
+    intervales: Array[PGInterval] = Array.fill(random.nextInt(3))(new PGInterval(
+    random.nextInt(10),
+    random.nextInt(12),
+    random.nextInt(28),
+    random.nextInt(24),
+    random.nextInt(60),
+    random.nextDouble() * 60
+  )),
+    jsones: Array[Json] = Array.fill(random.nextInt(3))(new Json("{}")),
+    jsonbes: Array[Jsonb] = Array.fill(random.nextInt(3))(new Jsonb("{}")),
+    linees: Array[PGline] = Array.fill(random.nextInt(3))(new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble())),
+    lseges: Array[PGlseg] = Array.fill(random.nextInt(3))(new PGlseg(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  )),
+    moneyes: Array[Money] = Array.fill(random.nextInt(3))(new Money(random.nextDouble())),
     mydomaines: Array[Mydomain] = Array.fill(random.nextInt(3))(domainInsert.publicMydomain(random)),
     myenumes: Array[Myenum] = Array.fill(random.nextInt(3))(Myenum.All(random.nextInt(Myenum.All.length))),
     namees: Array[String] = Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString),
     numerices: Array[BigDecimal] = Array.fill(random.nextInt(3))(BigDecimal.decimal(random.nextDouble())),
+    pathes: Array[PGpath] = Array.fill(random.nextInt(3))(new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false)),
+    pointes: Array[PGpoint] = Array.fill(random.nextInt(3))(new PGpoint(random.nextDouble(), random.nextDouble())),
+    polygones: Array[PGpolygon] = Array.fill(random.nextInt(3))(new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0)))),
     textes: Array[String] = Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString),
+    timees: Array[LocalTime] = Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    timestampes: Array[LocalDateTime] = Array.fill(random.nextInt(3))(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    timestampzes: Array[Instant] = Array.fill(random.nextInt(3))(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))),
+    timezes: Array[OffsetTime] = Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))),
     uuides: Array[UUID] = Array.fill(random.nextInt(3))(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}),
-    varchares: Array[String] = Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString)
+    varchares: Array[String] = Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString),
+    xmles: Array[Xml] = Array.fill(random.nextInt(3))(new Xml("<root/>"))
   )(using c: Connection): PgtestRow = {
     (new PgtestRepoImpl()).insert(new PgtestRow(
       bool = bool,
@@ -687,76 +723,110 @@ case class TestInsert(
   }
 
   def publicPgtestnull(
-    bool: Option[Boolean] = if (random.nextBoolean()) None else Some(random.nextBoolean()),
-    box: Option[PGbox] = None,
-    bpchar: Option[/* bpchar, max 3 chars */ String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(3).mkString),
+    bool: Option[Boolean] = (if (random.nextBoolean()) None else Some(random.nextBoolean())),
+    box: Option[PGbox] = (if (random.nextBoolean()) None else Some(new PGbox(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  ))),
+    bpchar: Option[/* bpchar, max 3 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(3).mkString)),
     bytea: Option[Array[Byte]] = None,
-    char: Option[/* bpchar, max 1 chars */ String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(1).mkString),
-    circle: Option[PGcircle] = None,
-    date: Option[LocalDate] = None,
-    float4: Option[Float] = if (random.nextBoolean()) None else Some(random.nextFloat()),
-    float8: Option[Double] = if (random.nextBoolean()) None else Some(random.nextDouble()),
+    char: Option[/* bpchar, max 1 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(1).mkString)),
+    circle: Option[PGcircle] = (if (random.nextBoolean()) None else Some(new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble()))),
+    date: Option[LocalDate] = (if (random.nextBoolean()) None else Some(LocalDate.ofEpochDay(random.nextInt(30000).toLong))),
+    float4: Option[Float] = (if (random.nextBoolean()) None else Some(random.nextFloat())),
+    float8: Option[Double] = (if (random.nextBoolean()) None else Some(random.nextDouble())),
     hstore: Option[Map[String, String]] = None,
-    inet: Option[Inet] = None,
-    int2: Option[Short] = if (random.nextBoolean()) None else Some(random.nextInt(Short.MaxValue).toShort),
-    int2vector: Option[Int2Vector] = None,
-    int4: Option[Int] = if (random.nextBoolean()) None else Some(random.nextInt()),
-    int8: Option[Long] = if (random.nextBoolean()) None else Some(random.nextLong()),
-    interval: Option[PGInterval] = None,
-    json: Option[Json] = None,
-    jsonb: Option[Jsonb] = None,
-    line: Option[PGline] = None,
-    lseg: Option[PGlseg] = None,
-    money: Option[Money] = None,
-    mydomain: Option[Mydomain] = if (random.nextBoolean()) None else Some(domainInsert.publicMydomain(random)),
-    myenum: Option[Myenum] = if (random.nextBoolean()) None else Some(Myenum.All(random.nextInt(Myenum.All.length))),
-    name: Option[String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
-    numeric: Option[BigDecimal] = if (random.nextBoolean()) None else Some(BigDecimal.decimal(random.nextDouble())),
-    path: Option[PGpath] = None,
-    point: Option[PGpoint] = None,
-    polygon: Option[PGpolygon] = None,
-    text: Option[String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
-    time: Option[LocalTime] = None,
-    timestamp: Option[LocalDateTime] = None,
-    timestampz: Option[Instant] = None,
-    timez: Option[OffsetTime] = None,
-    uuid: Option[UUID] = if (random.nextBoolean()) None else Some(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}),
-    varchar: Option[String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
-    vector: Option[Vector] = None,
-    xml: Option[Xml] = None,
-    boxes: Option[Array[PGbox]] = None,
-    bpchares: Option[Array[/* bpchar */ String]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString)),
-    chares: Option[Array[/* bpchar */ String]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString)),
-    circlees: Option[Array[PGcircle]] = None,
-    datees: Option[Array[LocalDate]] = None,
-    float4es: Option[Array[Float]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextFloat())),
-    float8es: Option[Array[Double]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextDouble())),
-    inetes: Option[Array[Inet]] = None,
-    int2es: Option[Array[Short]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextInt(Short.MaxValue).toShort)),
-    int2vectores: Option[Array[Int2Vector]] = None,
-    int4es: Option[Array[Int]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextInt())),
-    int8es: Option[Array[Long]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextLong())),
-    intervales: Option[Array[PGInterval]] = None,
-    jsones: Option[Array[Json]] = None,
-    jsonbes: Option[Array[Jsonb]] = None,
-    linees: Option[Array[PGline]] = None,
-    lseges: Option[Array[PGlseg]] = None,
-    moneyes: Option[Array[Money]] = None,
-    mydomaines: Option[Array[Mydomain]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(domainInsert.publicMydomain(random))),
-    myenumes: Option[Array[Myenum]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(Myenum.All(random.nextInt(Myenum.All.length)))),
-    namees: Option[Array[String]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString)),
-    numerices: Option[Array[BigDecimal]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(BigDecimal.decimal(random.nextDouble()))),
-    pathes: Option[Array[PGpath]] = None,
-    pointes: Option[Array[PGpoint]] = None,
-    polygones: Option[Array[PGpolygon]] = None,
-    textes: Option[Array[String]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString)),
-    timees: Option[Array[LocalTime]] = None,
-    timestampes: Option[Array[LocalDateTime]] = None,
-    timestampzes: Option[Array[Instant]] = None,
-    timezes: Option[Array[OffsetTime]] = None,
-    uuides: Option[Array[UUID]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs})),
-    varchares: Option[Array[String]] = if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString)),
-    xmles: Option[Array[Xml]] = None
+    inet: Option[Inet] = (if (random.nextBoolean()) None else Some(new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}"))),
+    int2: Option[Short] = (if (random.nextBoolean()) None else Some(random.nextInt(Short.MaxValue).toShort)),
+    int2vector: Option[Int2Vector] = (if (random.nextBoolean()) None else Some(new Int2Vector("1 2 3"))),
+    int4: Option[Int] = (if (random.nextBoolean()) None else Some(random.nextInt())),
+    int8: Option[Long] = (if (random.nextBoolean()) None else Some(random.nextLong())),
+    interval: Option[PGInterval] = (if (random.nextBoolean()) None else Some(new PGInterval(
+    random.nextInt(10),
+    random.nextInt(12),
+    random.nextInt(28),
+    random.nextInt(24),
+    random.nextInt(60),
+    random.nextDouble() * 60
+  ))),
+    json: Option[Json] = (if (random.nextBoolean()) None else Some(new Json("{}"))),
+    jsonb: Option[Jsonb] = (if (random.nextBoolean()) None else Some(new Jsonb("{}"))),
+    line: Option[PGline] = (if (random.nextBoolean()) None else Some(new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble()))),
+    lseg: Option[PGlseg] = (if (random.nextBoolean()) None else Some(new PGlseg(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  ))),
+    money: Option[Money] = (if (random.nextBoolean()) None else Some(new Money(random.nextDouble()))),
+    mydomain: Option[Mydomain] = (if (random.nextBoolean()) None else Some(domainInsert.publicMydomain(random))),
+    myenum: Option[Myenum] = (if (random.nextBoolean()) None else Some(Myenum.All(random.nextInt(Myenum.All.length)))),
+    name: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    numeric: Option[BigDecimal] = (if (random.nextBoolean()) None else Some(BigDecimal.decimal(random.nextDouble()))),
+    path: Option[PGpath] = (if (random.nextBoolean()) None else Some(new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false))),
+    point: Option[PGpoint] = (if (random.nextBoolean()) None else Some(new PGpoint(random.nextDouble(), random.nextDouble()))),
+    polygon: Option[PGpolygon] = (if (random.nextBoolean()) None else Some(new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0))))),
+    text: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    time: Option[LocalTime] = (if (random.nextBoolean()) None else Some(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    timestamp: Option[LocalDateTime] = (if (random.nextBoolean()) None else Some(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    timestampz: Option[Instant] = (if (random.nextBoolean()) None else Some(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+    timez: Option[OffsetTime] = (if (random.nextBoolean()) None else Some(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+    uuid: Option[UUID] = (if (random.nextBoolean()) None else Some(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs})),
+    varchar: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    vector: Option[Vector] = (if (random.nextBoolean()) None else Some(new Vector("[1.0,2.0,3.0]"))),
+    xml: Option[Xml] = (if (random.nextBoolean()) None else Some(new Xml("<root/>"))),
+    boxes: Option[Array[PGbox]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new PGbox(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  )))),
+    bpchares: Option[Array[/* bpchar */ String]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString))),
+    chares: Option[Array[/* bpchar */ String]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString))),
+    circlees: Option[Array[PGcircle]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble())))),
+    datees: Option[Array[LocalDate]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(LocalDate.ofEpochDay(random.nextInt(30000).toLong)))),
+    float4es: Option[Array[Float]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextFloat()))),
+    float8es: Option[Array[Double]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextDouble()))),
+    inetes: Option[Array[Inet]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}")))),
+    int2es: Option[Array[Short]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextInt(Short.MaxValue).toShort))),
+    int2vectores: Option[Array[Int2Vector]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new Int2Vector("1 2 3")))),
+    int4es: Option[Array[Int]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextInt()))),
+    int8es: Option[Array[Long]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.nextLong()))),
+    intervales: Option[Array[PGInterval]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new PGInterval(
+    random.nextInt(10),
+    random.nextInt(12),
+    random.nextInt(28),
+    random.nextInt(24),
+    random.nextInt(60),
+    random.nextDouble() * 60
+  )))),
+    jsones: Option[Array[Json]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new Json("{}")))),
+    jsonbes: Option[Array[Jsonb]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new Jsonb("{}")))),
+    linees: Option[Array[PGline]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble())))),
+    lseges: Option[Array[PGlseg]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new PGlseg(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  )))),
+    moneyes: Option[Array[Money]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new Money(random.nextDouble())))),
+    mydomaines: Option[Array[Mydomain]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(domainInsert.publicMydomain(random)))),
+    myenumes: Option[Array[Myenum]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(Myenum.All(random.nextInt(Myenum.All.length))))),
+    namees: Option[Array[String]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString))),
+    numerices: Option[Array[BigDecimal]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(BigDecimal.decimal(random.nextDouble())))),
+    pathes: Option[Array[PGpath]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false)))),
+    pointes: Option[Array[PGpoint]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new PGpoint(random.nextDouble(), random.nextDouble())))),
+    polygones: Option[Array[PGpolygon]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0)))))),
+    textes: Option[Array[String]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString))),
+    timees: Option[Array[LocalTime]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    timestampes: Option[Array[LocalDateTime]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    timestampzes: Option[Array[Instant]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))))),
+    timezes: Option[Array[OffsetTime]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))))),
+    uuides: Option[Array[UUID]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}))),
+    varchares: Option[Array[String]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString))),
+    xmles: Option[Array[Xml]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(new Xml("<root/>"))))
   )(using c: Connection): PgtestnullRow = {
     (new PgtestnullRepoImpl()).insert(new PgtestnullRow(
       bool = bool,
@@ -832,9 +902,9 @@ case class TestInsert(
     ))(using c)
   }
 
-  def publicTitle(code: TitleId = TitleId(random.alphanumeric.take(20).mkString))(using c: Connection): TitleRow = (new TitleRepoImpl()).insert(new TitleRow(code = code))(using c)
+  def publicTitle(code: TitleId = TitleId.apply(random.alphanumeric.take(20).mkString))(using c: Connection): TitleRow = (new TitleRepoImpl()).insert(new TitleRow(code = code))(using c)
 
-  def publicTitleDomain(code: TitleDomainId = TitleDomainId(domainInsert.publicShortText(random)))(using c: Connection): TitleDomainRow = (new TitleDomainRepoImpl()).insert(new TitleDomainRow(code = code))(using c)
+  def publicTitleDomain(code: TitleDomainId = TitleDomainId.apply(domainInsert.publicShortText(random)))(using c: Connection): TitleDomainRow = (new TitleDomainRepoImpl()).insert(new TitleDomainRow(code = code))(using c)
 
   def publicTitledperson(
     titleShort: TitleDomainId = TitleDomainId.All(random.nextInt(4)),
@@ -844,12 +914,12 @@ case class TestInsert(
 
   def publicUsers(
     email: Unknown,
-    userId: UsersId = UsersId(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}),
+    userId: UsersId = new UsersId(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}),
     name: String = random.alphanumeric.take(20).mkString,
-    lastName: Option[String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
+    lastName: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
     password: String = random.alphanumeric.take(20).mkString,
-    verifiedOn: Option[Instant] = None,
-    createdAt: Defaulted[Instant] = Defaulted.UseDefault()
+    verifiedOn: Option[Instant] = (if (random.nextBoolean()) None else Some(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+    createdAt: Defaulted[Instant] = new UseDefault()
   )(using c: Connection): UsersRow = {
     (new UsersRepoImpl()).insert(new UsersRowUnsaved(
       userId = userId,
@@ -866,12 +936,12 @@ case class TestInsert(
     businessentityid: BusinessentityId,
     territoryid: Option[SalesterritoryId] = None,
     salesquota: Option[BigDecimal] = None,
-    bonus: Defaulted[BigDecimal] = Defaulted.UseDefault(),
-    commissionpct: Defaulted[BigDecimal] = Defaulted.UseDefault(),
-    salesytd: Defaulted[BigDecimal] = Defaulted.UseDefault(),
-    saleslastyear: Defaulted[BigDecimal] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    bonus: Defaulted[BigDecimal] = new UseDefault(),
+    commissionpct: Defaulted[BigDecimal] = new UseDefault(),
+    salesytd: Defaulted[BigDecimal] = new UseDefault(),
+    saleslastyear: Defaulted[BigDecimal] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): SalespersonRow = {
     (new SalespersonRepoImpl()).insert(new SalespersonRowUnsaved(
       businessentityid = businessentityid,
@@ -890,13 +960,13 @@ case class TestInsert(
     countryregioncode: CountryregionId,
     name: Name = domainInsert.publicName(random),
     group: String = random.alphanumeric.take(20).mkString,
-    territoryid: Defaulted[SalesterritoryId] = Defaulted.UseDefault(),
-    salesytd: Defaulted[BigDecimal] = Defaulted.UseDefault(),
-    saleslastyear: Defaulted[BigDecimal] = Defaulted.UseDefault(),
-    costytd: Defaulted[BigDecimal] = Defaulted.UseDefault(),
-    costlastyear: Defaulted[BigDecimal] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    territoryid: Defaulted[SalesterritoryId] = new UseDefault(),
+    salesytd: Defaulted[BigDecimal] = new UseDefault(),
+    saleslastyear: Defaulted[BigDecimal] = new UseDefault(),
+    costytd: Defaulted[BigDecimal] = new UseDefault(),
+    costlastyear: Defaulted[BigDecimal] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): SalesterritoryRow = {
     (new SalesterritoryRepoImpl()).insert(new SalesterritoryRowUnsaved(
       name = name,

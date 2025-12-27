@@ -1,7 +1,5 @@
 package adventureworks
 
-import java.time.LocalDate
-import adventureworks.customtypes.Defaulted
 import adventureworks.humanresources.employee.EmployeeRepoImpl
 import adventureworks.person.businessentity.BusinessentityRepoImpl
 import adventureworks.person.emailaddress.EmailaddressRepoImpl
@@ -10,9 +8,11 @@ import adventureworks.sales.salesperson.SalespersonRepoImpl
 import adventureworks.userdefined.FirstName
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDate
 import java.util.Random
 
 class DSLTest {
+    private val testInsert = TestInsert(Random(0), DomainInsert)
     private val businessentityRepoImpl = BusinessentityRepoImpl()
     private val personRepoImpl = PersonRepoImpl()
     private val employeeRepoImpl = EmployeeRepoImpl()
@@ -22,44 +22,33 @@ class DSLTest {
     @Test
     fun works() {
         WithConnection.run { c ->
-            val testInsert = TestInsert(Random(0), DomainInsert)
-            val businessentityRow = testInsert.personBusinessentity(businessentityid = Defaulted.UseDefault(), rowguid = Defaulted.UseDefault(), modifieddate = Defaulted.UseDefault(), c = c)
+            val businessentityRow = testInsert.personBusinessentity(c = c)
             val personRow = testInsert.personPerson(
                 businessentityid = businessentityRow.businessentityid,
                 persontype = "EM",
                 firstname = FirstName("a"),
-                title = null,
-                middlename = null,
-                lastname = testInsert.domainInsert.publicName(testInsert.random),
-                suffix = null,
-                additionalcontactinfo = null,
-                demographics = null,
-                namestyle = Defaulted.UseDefault(),
-                emailpromotion = Defaulted.UseDefault(),
-                rowguid = Defaulted.UseDefault(),
-                modifieddate = Defaulted.UseDefault(),
                 c = c
             )
-            testInsert.personEmailaddress(businessentityid = personRow.businessentityid, emailaddress = "a@b.c", emailaddressid = Defaulted.UseDefault(), rowguid = Defaulted.UseDefault(), modifieddate = Defaulted.UseDefault(), c = c)
+            testInsert.personEmailaddress(
+                businessentityid = personRow.businessentityid,
+                emailaddress = "a@b.c",
+                c = c
+            )
             val employeeRow = testInsert.humanresourcesEmployee(
                 businessentityid = personRow.businessentityid,
-                nationalidnumber = testInsert.random.nextInt(999999999).toString(),
-                loginid = "adventure-works\\test" + testInsert.random.nextInt(9999),
-                jobtitle = "Test Job Title",
+                nationalidnumber = "123456789",
+                loginid = "adventure-works\\test",
+                jobtitle = "Test Job",
+                birthdate = LocalDate.of(1990, 1, 1),
+                maritalstatus = "S",
                 gender = "M",
-                maritalstatus = "M",
-                birthdate = LocalDate.parse("1998-01-01"),
-                hiredate = LocalDate.parse("1997-01-01"),
-                salariedflag = Defaulted.UseDefault(),
-                vacationhours = Defaulted.UseDefault(),
-                sickleavehours = Defaulted.UseDefault(),
-                currentflag = Defaulted.UseDefault(),
-                rowguid = Defaulted.UseDefault(),
-                modifieddate = Defaulted.UseDefault(),
-                organizationnode = Defaulted.UseDefault(),
+                hiredate = LocalDate.of(2020, 1, 1),
                 c = c
             )
-            val salespersonRow = testInsert.salesSalesperson(businessentityid = employeeRow.businessentityid, territoryid = null, salesquota = null, bonus = Defaulted.UseDefault(), commissionpct = Defaulted.UseDefault(), salesytd = Defaulted.UseDefault(), saleslastyear = Defaulted.UseDefault(), rowguid = Defaulted.UseDefault(), modifieddate = Defaulted.UseDefault(), c = c)
+            val salespersonRow = testInsert.salesSalesperson(
+                businessentityid = employeeRow.businessentityid,
+                c = c
+            )
 
             val q = salespersonRepoImpl.select()
                 .where { it.rowguid().isEqual(salespersonRow.rowguid) }

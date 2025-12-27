@@ -52,11 +52,11 @@ data class ProductImagesRow(
   fun id(): ProductImagesId = imageId
 
   fun toUnsavedRow(
-    thumbnailUrl: Defaulted<String?>,
-    altText: Defaulted<String?>,
-    sortOrder: Defaulted<Short>,
-    isPrimary: Defaulted<Boolean>,
-    imageData: Defaulted<ByteArray?>
+    thumbnailUrl: Defaulted<String?> = Defaulted.Provided(this.thumbnailUrl),
+    altText: Defaulted<String?> = Defaulted.Provided(this.altText),
+    sortOrder: Defaulted<Short> = Defaulted.Provided(this.sortOrder),
+    isPrimary: Defaulted<Boolean> = Defaulted.Provided(this.isPrimary),
+    imageData: Defaulted<ByteArray?> = Defaulted.Provided(this.imageData)
   ): ProductImagesRowUnsaved = ProductImagesRowUnsaved(productId, imageUrl, thumbnailUrl, altText, sortOrder, isPrimary, imageData)
 
   companion object {

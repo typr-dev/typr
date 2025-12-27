@@ -5,6 +5,7 @@
  */
 package oracledb;
 
+import dev.typr.foundations.data.Json;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
@@ -30,6 +31,9 @@ import oracledb.employees.EmployeesRowUnsaved;
 import oracledb.products.ProductsId;
 import oracledb.products.ProductsRepoImpl;
 import oracledb.products.ProductsRowUnsaved;
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639RepoImpl;
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639Row;
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639RowUnsaved;
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 public record TestInsert(Random random) {
@@ -117,6 +121,13 @@ public record TestInsert(Random random) {
       Connection c) {
     return (new ProductsRepoImpl())
         .insert(new ProductsRowUnsaved(sku, name, price, tags, productId), c);
+  }
+  ;
+
+  public TestGenkeys1766794419639Row TestGenkeys1766794419639(
+      Optional<Json> v, Defaulted<BigDecimal> id, Connection c) {
+    return (new TestGenkeys1766794419639RepoImpl())
+        .insert(new TestGenkeys1766794419639RowUnsaved(v, id), c);
   }
   ;
 }

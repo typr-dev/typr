@@ -40,8 +40,8 @@ data class ProductmodelRow(
 
   fun toUnsavedRow(
     productmodelid: Defaulted<ProductmodelId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): ProductmodelRowUnsaved = ProductmodelRowUnsaved(name, catalogdescription, instructions, productmodelid, rowguid, modifieddate)
 
   companion object {

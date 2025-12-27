@@ -1,20 +1,23 @@
 package adventureworks.production.product
 
-import adventureworks.DbNow
+import adventureworks.DomainInsert
+import adventureworks.TestInsert
 import adventureworks.WithConnection
 import adventureworks.public.Name
 import org.junit.Assert.*
 import org.junit.Test
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.Random
 
 class ProductTest {
+    private val testInsert = TestInsert(Random(0), DomainInsert)
     private val productRepo = ProductRepoImpl()
 
     @Test
     fun basicCrud() {
         WithConnection.run { c ->
-            val unsaved = ProductRowUnsaved(
+            val inserted = testInsert.productionProduct(
                 name = Name("Test Product"),
                 productnumber = "TEST-001",
                 safetystocklevel = 10,
@@ -22,10 +25,10 @@ class ProductTest {
                 standardcost = BigDecimal("100.00"),
                 listprice = BigDecimal("150.00"),
                 daystomanufacture = 5,
-                sellstartdate = DbNow.localDateTime()
+                sellstartdate = LocalDateTime.now(),
+                c = c
             )
 
-            val inserted = productRepo.insert(unsaved, c)
             assertNotNull(inserted)
             assertEquals(Name("Test Product"), inserted.name)
 
@@ -47,7 +50,7 @@ class ProductTest {
     @Test
     fun testDslQueries() {
         WithConnection.run { c ->
-            val unsaved1 = ProductRowUnsaved(
+            val product1 = testInsert.productionProduct(
                 name = Name("Product A"),
                 productnumber = "PROD-A",
                 safetystocklevel = 10,
@@ -55,9 +58,10 @@ class ProductTest {
                 standardcost = BigDecimal("100.00"),
                 listprice = BigDecimal("150.00"),
                 daystomanufacture = 5,
-                sellstartdate = DbNow.localDateTime()
+                sellstartdate = LocalDateTime.now(),
+                c = c
             )
-            val unsaved2 = ProductRowUnsaved(
+            val product2 = testInsert.productionProduct(
                 name = Name("Product B"),
                 productnumber = "PROD-B",
                 safetystocklevel = 20,
@@ -65,11 +69,9 @@ class ProductTest {
                 standardcost = BigDecimal("200.00"),
                 listprice = BigDecimal("250.00"),
                 daystomanufacture = 10,
-                sellstartdate = DbNow.localDateTime()
+                sellstartdate = LocalDateTime.now(),
+                c = c
             )
-
-            val product1 = productRepo.insert(unsaved1, c)
-            val product2 = productRepo.insert(unsaved2, c)
 
             // Test where clause
             val found = productRepo.select()
@@ -82,7 +84,7 @@ class ProductTest {
             // Test orderBy
             val ordered = productRepo.select()
                 .where { f -> f.productid().`in`(arrayOf(product1.productid, product2.productid), ProductId.pgType) }
-                .orderBy { f -> dev.typr.foundations.dsl.SortOrder.desc(f.listprice().underlying) }
+                .orderBy { f -> f.listprice().desc() }
                 .toList(c)
 
             assertEquals(2, ordered.size)

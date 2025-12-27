@@ -92,18 +92,18 @@ data class ShipmentsRow(
   fun id(): ShipmentsId = shipmentId
 
   fun toUnsavedRow(
-    trackingNumber: Defaulted<String?>,
-    weightKg: Defaulted<BigDecimal?>,
-    dimensionsJson: Defaulted<String?>,
-    labelData: Defaulted<ByteArray?>,
-    status: Defaulted<String>,
-    estimatedDeliveryDate: Defaulted<LocalDate?>,
-    actualDeliveryAt: Defaulted<LocalDateTime?>,
-    insuranceAmount: Defaulted<BigDecimal?>,
-    originWarehouseId: Defaulted<WarehousesId?>,
-    shippedAt: Defaulted<LocalDateTime?>,
-    createdAt: Defaulted<LocalDateTime>,
-    updatedAt: Defaulted<LocalDateTime>
+    trackingNumber: Defaulted<String?> = Defaulted.Provided(this.trackingNumber),
+    weightKg: Defaulted<BigDecimal?> = Defaulted.Provided(this.weightKg),
+    dimensionsJson: Defaulted<String?> = Defaulted.Provided(this.dimensionsJson),
+    labelData: Defaulted<ByteArray?> = Defaulted.Provided(this.labelData),
+    status: Defaulted<String> = Defaulted.Provided(this.status),
+    estimatedDeliveryDate: Defaulted<LocalDate?> = Defaulted.Provided(this.estimatedDeliveryDate),
+    actualDeliveryAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.actualDeliveryAt),
+    insuranceAmount: Defaulted<BigDecimal?> = Defaulted.Provided(this.insuranceAmount),
+    originWarehouseId: Defaulted<WarehousesId?> = Defaulted.Provided(this.originWarehouseId),
+    shippedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.shippedAt),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt),
+    updatedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.updatedAt)
   ): ShipmentsRowUnsaved = ShipmentsRowUnsaved(orderId, carrierId, shippingMethod, shippingCost, trackingNumber, weightKg, dimensionsJson, labelData, status, estimatedDeliveryDate, actualDeliveryAt, insuranceAmount, originWarehouseId, shippedAt, createdAt, updatedAt)
 
   companion object {

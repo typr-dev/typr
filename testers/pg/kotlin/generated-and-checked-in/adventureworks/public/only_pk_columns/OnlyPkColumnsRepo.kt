@@ -33,7 +33,7 @@ interface OnlyPkColumnsRepo {
 
   abstract fun insertStreaming(
     unsaved: Iterator<OnlyPkColumnsRow>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Long
 
@@ -71,7 +71,7 @@ interface OnlyPkColumnsRepo {
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
     unsaved: Iterator<OnlyPkColumnsRow>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Int
 }

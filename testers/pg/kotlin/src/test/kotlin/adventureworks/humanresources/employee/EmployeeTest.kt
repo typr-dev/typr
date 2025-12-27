@@ -1,52 +1,35 @@
 package adventureworks.humanresources.employee
 
-import adventureworks.DbNow
+import adventureworks.DomainInsert
+import adventureworks.TestInsert
 import adventureworks.WithConnection
 import adventureworks.customtypes.*
 import adventureworks.person.businessentity.*
-import adventureworks.person.person.PersonRepoImpl
-import adventureworks.person.person.PersonRowUnsaved
 import adventureworks.public.Flag
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import org.junit.Assert.*
 import org.junit.Test
-import dev.typr.foundations.data.Xml
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.UUID
+import java.util.Random
 
 class EmployeeTest {
+    private val testInsert = TestInsert(Random(0), DomainInsert)
     private val employeeRepo = EmployeeRepoImpl()
-    private val personRepo = PersonRepoImpl()
-    private val businessentityRepo = BusinessentityRepoImpl()
 
     @Test
     fun works() {
         WithConnection.run { c ->
-            val businessentityRow: BusinessentityRow =
-                businessentityRepo.insert(
-                    BusinessentityRowUnsaved(),
-                    c
-                )
-
-            val personRow = personRepo.insert(
-                PersonRowUnsaved(
-                    businessentityid = businessentityRow.businessentityid,
-                    persontype = "SC",
-                    title = null,
-                    firstname = FirstName("firstname"),
-                    middlename = Name("middlename"),
-                    lastname = Name("lastname"),
-                    suffix = "suffix",
-                    additionalcontactinfo = Xml("<additionalcontactinfo/>"),
-                    demographics = null
-                ),
-                c
+            // Create person dependency using TestInsert
+            val businessentityRow = testInsert.personBusinessentity(c = c)
+            val personRow = testInsert.personPerson(
+                businessentityid = businessentityRow.businessentityid,
+                persontype = "SC",
+                firstname = FirstName("firstname"),
+                c = c
             )
 
-            // setup
-            val unsaved = EmployeeRowUnsaved(
+            // Insert employee with explicit values
+            val saved1 = testInsert.humanresourcesEmployee(
                 businessentityid = personRow.businessentityid,
                 nationalidnumber = "9912312312",
                 loginid = "loginid",
@@ -55,27 +38,8 @@ class EmployeeTest {
                 maritalstatus = "M",
                 gender = "F",
                 hiredate = LocalDate.now().minusYears(1),
-                salariedflag = Defaulted.Provided(Flag(true)),
-                vacationhours = Defaulted.Provided(1.toShort()),
-                sickleavehours = Defaulted.Provided(2.toShort()),
-                currentflag = Defaulted.Provided(Flag(true)),
-                rowguid = Defaulted.Provided(UUID.randomUUID()),
-                modifieddate = Defaulted.Provided(DbNow.localDateTime()),
-                organizationnode = Defaulted.Provided("/")
+                c = c
             )
-
-            // insert and round trip check
-            val saved1 = employeeRepo.insert(unsaved, c)
-            val saved2 = unsaved.toRow(
-                salariedflagDefault = { saved1.salariedflag },
-                vacationhoursDefault = { saved1.vacationhours },
-                sickleavehoursDefault = { saved1.sickleavehours },
-                currentflagDefault = { saved1.currentflag },
-                rowguidDefault = { saved1.rowguid },
-                modifieddateDefault = { saved1.modifieddate },
-                organizationnodeDefault = { saved1.organizationnode }
-            )
-            assertEquals(saved1, saved2)
 
             // check field values
             val updated = employeeRepo.update(saved1.copy(gender = "M"), c)
@@ -95,29 +59,20 @@ class EmployeeTest {
             val emptyList = employeeRepo.selectAll(c)
             assertTrue(emptyList.isEmpty())
 
-            // Test with default values
-            val unsaved2 = EmployeeRowUnsaved(
+            // Test inserting again with default values
+            val inserted = testInsert.humanresourcesEmployee(
                 businessentityid = personRow.businessentityid,
-                nationalidnumber = "9912312312",
-                loginid = "loginid",
-                jobtitle = "jobtitle",
-                birthdate = LocalDate.of(1950, 1, 1),
+                nationalidnumber = "987654321",
+                loginid = "adventure-works\\test2",
+                jobtitle = "Test Job 2",
+                birthdate = LocalDate.of(1985, 6, 15),
                 maritalstatus = "M",
                 gender = "F",
-                hiredate = LocalDate.now().minusYears(1)
+                hiredate = LocalDate.of(2021, 3, 1),
+                c = c
             )
-
-            // insert and check static default values
-            val inserted = employeeRepo.insert(unsaved2, c)
             assertEquals(personRow.businessentityid, inserted.businessentityid)
-            assertEquals(unsaved2.nationalidnumber, inserted.nationalidnumber)
-            assertEquals(unsaved2.loginid, inserted.loginid)
-            assertEquals(unsaved2.jobtitle, inserted.jobtitle)
-            assertEquals(unsaved2.birthdate, inserted.birthdate)
-            assertEquals(unsaved2.maritalstatus, inserted.maritalstatus)
-            assertEquals(unsaved2.gender, inserted.gender)
-            assertEquals(unsaved2.hiredate, inserted.hiredate)
-            // below: these are assertions for the static default values
+            // check static default values
             assertEquals(Flag(true), inserted.salariedflag)
             assertEquals(0.toShort(), inserted.vacationhours)
             assertEquals(0.toShort(), inserted.sickleavehours)

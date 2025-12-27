@@ -50,9 +50,9 @@ data class ProductPricesRow(
   fun id(): ProductPricesId = priceId
 
   fun toUnsavedRow(
-    tierId: Defaulted<PriceTiersId?>,
-    currencyCode: Defaulted<String>,
-    validTo: Defaulted<LocalDate?>
+    tierId: Defaulted<PriceTiersId?> = Defaulted.Provided(this.tierId),
+    currencyCode: Defaulted<String> = Defaulted.Provided(this.currencyCode),
+    validTo: Defaulted<LocalDate?> = Defaulted.Provided(this.validTo)
   ): ProductPricesRowUnsaved = ProductPricesRowUnsaved(productId, price, validFrom, tierId, currencyCode, validTo)
 
   companion object {

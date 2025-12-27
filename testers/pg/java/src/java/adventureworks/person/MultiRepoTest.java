@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import adventureworks.DomainInsertImpl;
 import adventureworks.TestInsert;
 import adventureworks.WithConnection;
-import adventureworks.customtypes.Defaulted;
 import adventureworks.person.address.*;
 import adventureworks.person.addresstype.*;
 import adventureworks.person.businessentityaddress.*;
@@ -127,91 +126,52 @@ public class MultiRepoTest {
           var testInsert = new TestInsert(new Random(1), new DomainInsertImpl());
 
           // Create test data
-          var businessentityRow =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var businessentityRow = testInsert.personBusinessentity().insert(c);
           var personRow =
-              testInsert.personPerson(
-                  businessentityRow.businessentityid(),
-                  "SC",
-                  new FirstName("name"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("lastname"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(businessentityRow.businessentityid(), "SC", new FirstName("name"))
+                  .with(row -> row.withLastname(new Name("lastname")))
+                  .insert(c);
           var countryregionRow =
-              testInsert.personCountryregion(
-                  new CountryregionId("NOR"), new Name("Norway"), new Defaulted.UseDefault<>(), c);
+              testInsert
+                  .personCountryregion()
+                  .with(
+                      row ->
+                          row.withCountryregioncode(new CountryregionId("NOR"))
+                              .withName(new Name("Norway")))
+                  .insert(c);
           var salesterritoryRow =
-              testInsert.salesSalesterritory(
-                  countryregionRow.countryregioncode(),
-                  new Name("Territory"),
-                  "Europe",
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .salesSalesterritory(countryregionRow.countryregioncode())
+                  .with(row -> row.withName(new Name("Territory")).withGroup("Europe"))
+                  .insert(c);
           var stateprovinceRow =
-              testInsert.personStateprovince(
-                  countryregionRow.countryregioncode(),
-                  salesterritoryRow.territoryid(),
-                  "OSL",
-                  new Name("Oslo"),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personStateprovince(
+                      countryregionRow.countryregioncode(), salesterritoryRow.territoryid())
+                  .with(row -> row.withStateprovincecode("OSL").withName(new Name("Oslo")))
+                  .insert(c);
           var addressRow1 =
-              testInsert.personAddress(
-                  stateprovinceRow.stateprovinceid(),
-                  "Street 1",
-                  Optional.empty(),
-                  "Oslo",
-                  "0001",
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personAddress(stateprovinceRow.stateprovinceid())
+                  .with(
+                      row ->
+                          row.withAddressline1("Street 1").withCity("Oslo").withPostalcode("0001"))
+                  .insert(c);
           var addressRow2 =
-              testInsert.personAddress(
-                  stateprovinceRow.stateprovinceid(),
-                  "Street 2",
-                  Optional.empty(),
-                  "Oslo",
-                  "0002",
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personAddress(stateprovinceRow.stateprovinceid())
+                  .with(
+                      row ->
+                          row.withAddressline1("Street 2").withCity("Oslo").withPostalcode("0002"))
+                  .insert(c);
           var addressRow3 =
-              testInsert.personAddress(
-                  stateprovinceRow.stateprovinceid(),
-                  "Street 3",
-                  Optional.empty(),
-                  "Oslo",
-                  "0003",
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personAddress(stateprovinceRow.stateprovinceid())
+                  .with(
+                      row ->
+                          row.withAddressline1("Street 3").withCity("Oslo").withPostalcode("0003"))
+                  .insert(c);
 
           var businessentityaddressRepo = new BusinessentityaddressRepoImpl();
           var repo =

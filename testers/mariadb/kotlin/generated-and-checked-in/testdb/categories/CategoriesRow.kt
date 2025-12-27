@@ -54,12 +54,12 @@ data class CategoriesRow(
   fun id(): CategoriesId = categoryId
 
   fun toUnsavedRow(
-    parentId: Defaulted<CategoriesId?>,
-    description: Defaulted<String?>,
-    imageUrl: Defaulted<String?>,
-    sortOrder: Defaulted<Short>,
-    isVisible: Defaulted<Boolean>,
-    metadata: Defaulted<String?>
+    parentId: Defaulted<CategoriesId?> = Defaulted.Provided(this.parentId),
+    description: Defaulted<String?> = Defaulted.Provided(this.description),
+    imageUrl: Defaulted<String?> = Defaulted.Provided(this.imageUrl),
+    sortOrder: Defaulted<Short> = Defaulted.Provided(this.sortOrder),
+    isVisible: Defaulted<Boolean> = Defaulted.Provided(this.isVisible),
+    metadata: Defaulted<String?> = Defaulted.Provided(this.metadata)
   ): CategoriesRowUnsaved = CategoriesRowUnsaved(name, slug, parentId, description, imageUrl, sortOrder, isVisible, metadata)
 
   companion object {

@@ -33,7 +33,7 @@ interface TitleRepo {
 
   abstract fun insertStreaming(
     unsaved: Iterator<TitleRow>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Long
 
@@ -71,7 +71,7 @@ interface TitleRepo {
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
     unsaved: Iterator<TitleRow>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Int
 }

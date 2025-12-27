@@ -68,11 +68,11 @@ data class OrderItemsRow(
   fun id(): OrderItemsId = itemId
 
   fun toUnsavedRow(
-    discountAmount: Defaulted<BigDecimal>,
-    taxAmount: Defaulted<BigDecimal>,
-    fulfillmentStatus: Defaulted<String>,
-    warehouseId: Defaulted<WarehousesId?>,
-    notes: Defaulted<String?>
+    discountAmount: Defaulted<BigDecimal> = Defaulted.Provided(this.discountAmount),
+    taxAmount: Defaulted<BigDecimal> = Defaulted.Provided(this.taxAmount),
+    fulfillmentStatus: Defaulted<String> = Defaulted.Provided(this.fulfillmentStatus),
+    warehouseId: Defaulted<WarehousesId?> = Defaulted.Provided(this.warehouseId),
+    notes: Defaulted<String?> = Defaulted.Provided(this.notes)
   ): OrderItemsRowUnsaved = OrderItemsRowUnsaved(orderId, productId, sku, productName, quantity, unitPrice, lineTotal, discountAmount, taxAmount, fulfillmentStatus, warehouseId, notes)
 
   companion object {

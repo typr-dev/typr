@@ -38,14 +38,14 @@ interface CountryregionRepo {
 
   abstract fun insertStreaming(
     unsaved: Iterator<CountryregionRow>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<CountryregionRowUnsaved>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Long
 
@@ -88,7 +88,7 @@ interface CountryregionRepo {
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
     unsaved: Iterator<CountryregionRow>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Int
 }

@@ -6,6 +6,7 @@
 package adventureworks
 
 import adventureworks.customtypes.Defaulted
+import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.department.DepartmentRepoImpl
 import adventureworks.humanresources.department.DepartmentRow
@@ -133,6 +134,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetTime
+import java.time.ZoneOffset
 import java.util.Optional
 import java.util.Random
 import java.util.UUID
@@ -153,8 +155,8 @@ case class TestInsert(
   def humanresourcesDepartment(
     name: Name = domainInsert.publicName(random),
     groupname: Name = domainInsert.publicName(random),
-    departmentid: Defaulted[DepartmentId] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    departmentid: Defaulted[DepartmentId] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): DepartmentRow = {
     (new DepartmentRepoImpl()).insert(new DepartmentRowUnsaved(
       name = name,
@@ -173,13 +175,13 @@ case class TestInsert(
     nationalidnumber: String = RandomHelper.alphanumeric(random, 15),
     loginid: String = RandomHelper.alphanumeric(random, 20),
     jobtitle: String = RandomHelper.alphanumeric(random, 20),
-    salariedflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    vacationhours: Defaulted[java.lang.Short] = Defaulted.UseDefault(),
-    sickleavehours: Defaulted[java.lang.Short] = Defaulted.UseDefault(),
-    currentflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault(),
-    organizationnode: Defaulted[Optional[String]] = Defaulted.UseDefault()
+    salariedflag: Defaulted[Flag] = new UseDefault(),
+    vacationhours: Defaulted[java.lang.Short] = new UseDefault(),
+    sickleavehours: Defaulted[java.lang.Short] = new UseDefault(),
+    currentflag: Defaulted[Flag] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault(),
+    organizationnode: Defaulted[Optional[String]] = new UseDefault()
   )(using c: Connection): EmployeeRow = {
     (new EmployeeRepoImpl()).insert(new EmployeeRowUnsaved(
       businessentityid = businessentityid,
@@ -206,7 +208,7 @@ case class TestInsert(
     shiftid: ShiftId,
     startdate: LocalDate,
     enddate: Optional[LocalDate] = Optional.empty(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): EmployeedepartmenthistoryRow = {
     (new EmployeedepartmenthistoryRepoImpl()).insert(new EmployeedepartmenthistoryRowUnsaved(
       businessentityid = businessentityid,
@@ -219,11 +221,11 @@ case class TestInsert(
   }
 
   def humanresourcesShift(
-    starttime: LocalTime,
-    endtime: LocalTime,
     name: Name = domainInsert.publicName(random),
-    shiftid: Defaulted[ShiftId] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    starttime: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    endtime: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    shiftid: Defaulted[ShiftId] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ShiftRow = {
     (new ShiftRepoImpl()).insert(new ShiftRowUnsaved(
       name = name,
@@ -237,13 +239,13 @@ case class TestInsert(
   def personAddress(
     stateprovinceid: StateprovinceId,
     addressline1: String = RandomHelper.alphanumeric(random, 20),
-    addressline2: Optional[/* max 60 chars */ String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
+    addressline2: Optional[/* max 60 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20))),
     city: String = RandomHelper.alphanumeric(random, 20),
     postalcode: String = RandomHelper.alphanumeric(random, 15),
     spatiallocation: Optional[Array[scala.Byte]] = Optional.empty(),
-    addressid: Defaulted[AddressId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    addressid: Defaulted[AddressId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): AddressRow = {
     (new AddressRepoImpl()).insert(new AddressRowUnsaved(
       addressline1 = addressline1,
@@ -260,9 +262,9 @@ case class TestInsert(
 
   def personAddresstype(
     name: Name = domainInsert.publicName(random),
-    addresstypeid: Defaulted[AddresstypeId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    addresstypeid: Defaulted[AddresstypeId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): AddresstypeRow = {
     (new AddresstypeRepoImpl()).insert(new AddresstypeRowUnsaved(
       name = name,
@@ -273,17 +275,17 @@ case class TestInsert(
   }
 
   def personBusinessentity(
-    businessentityid: Defaulted[BusinessentityId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    businessentityid: Defaulted[BusinessentityId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): BusinessentityRow = (new BusinessentityRepoImpl()).insert(new BusinessentityRowUnsaved(businessentityid = businessentityid, rowguid = rowguid, modifieddate = modifieddate))(using c)
 
   def personBusinessentityaddress(
     businessentityid: BusinessentityId,
     addressid: AddressId,
     addresstypeid: AddresstypeId,
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): BusinessentityaddressRow = {
     (new BusinessentityaddressRepoImpl()).insert(new BusinessentityaddressRowUnsaved(
       businessentityid = businessentityid,
@@ -295,17 +297,17 @@ case class TestInsert(
   }
 
   def personCountryregion(
-    countryregioncode: CountryregionId = CountryregionId(RandomHelper.alphanumeric(random, 3)),
+    countryregioncode: CountryregionId = new CountryregionId(RandomHelper.alphanumeric(random, 3)),
     name: Name = domainInsert.publicName(random),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): CountryregionRow = (new CountryregionRepoImpl()).insert(new CountryregionRowUnsaved(countryregioncode = countryregioncode, name = name, modifieddate = modifieddate))(using c)
 
   def personEmailaddress(
     businessentityid: BusinessentityId,
-    emailaddress: Optional[/* max 50 chars */ String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
-    emailaddressid: Defaulted[Integer] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    emailaddress: Optional[/* max 50 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20))),
+    emailaddressid: Defaulted[Integer] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): EmailaddressRow = {
     (new EmailaddressRepoImpl()).insert(new EmailaddressRowUnsaved(
       businessentityid = businessentityid,
@@ -320,8 +322,8 @@ case class TestInsert(
     businessentityid: BusinessentityId,
     passwordhash: String = RandomHelper.alphanumeric(random, 20),
     passwordsalt: String = RandomHelper.alphanumeric(random, 10),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): PasswordRow = {
     (new PasswordRepoImpl()).insert(new PasswordRowUnsaved(
       businessentityid = businessentityid,
@@ -336,16 +338,16 @@ case class TestInsert(
     businessentityid: BusinessentityId,
     persontype: String,
     firstname: /* user-picked */ FirstName,
-    title: Optional[/* max 8 chars */ String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 8)),
-    middlename: Optional[Name] = if (random.nextBoolean()) Optional.empty() else Optional.of(domainInsert.publicName(random)),
+    title: Optional[/* max 8 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 8))),
+    middlename: Optional[Name] = (if (random.nextBoolean()) Optional.empty() else Optional.of(domainInsert.publicName(random))),
     lastname: Name = domainInsert.publicName(random),
-    suffix: Optional[/* max 10 chars */ String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 10)),
-    additionalcontactinfo: Optional[Xml] = Optional.empty(),
-    demographics: Optional[Xml] = Optional.empty(),
-    namestyle: Defaulted[NameStyle] = Defaulted.UseDefault(),
-    emailpromotion: Defaulted[Integer] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    suffix: Optional[/* max 10 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 10))),
+    additionalcontactinfo: Optional[Xml] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Xml("<root/>"))),
+    demographics: Optional[Xml] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Xml("<root/>"))),
+    namestyle: Defaulted[NameStyle] = new UseDefault(),
+    emailpromotion: Defaulted[Integer] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): PersonRow = {
     (new PersonRepoImpl()).insert(new PersonRowUnsaved(
       businessentityid = businessentityid,
@@ -369,10 +371,10 @@ case class TestInsert(
     territoryid: SalesterritoryId,
     stateprovincecode: String = RandomHelper.alphanumeric(random, 3),
     name: Name = domainInsert.publicName(random),
-    stateprovinceid: Defaulted[StateprovinceId] = Defaulted.UseDefault(),
-    isonlystateprovinceflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    stateprovinceid: Defaulted[StateprovinceId] = new UseDefault(),
+    isonlystateprovinceflag: Defaulted[Flag] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): StateprovinceRow = {
     (new StateprovinceRepoImpl()).insert(new StateprovinceRowUnsaved(
       stateprovincecode = stateprovincecode,
@@ -395,8 +397,8 @@ case class TestInsert(
     sellstartdate: LocalDateTime,
     name: Name = domainInsert.publicName(random),
     productnumber: String = RandomHelper.alphanumeric(random, 20),
-    color: Optional[/* max 15 chars */ String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 15)),
-    size: Optional[/* max 5 chars */ String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 5)),
+    color: Optional[/* max 15 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 15))),
+    size: Optional[/* max 5 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 5))),
     sizeunitmeasurecode: Optional[UnitmeasureId] = Optional.empty(),
     weightunitmeasurecode: Optional[UnitmeasureId] = Optional.empty(),
     weight: Optional[java.math.BigDecimal] = Optional.empty(),
@@ -406,12 +408,12 @@ case class TestInsert(
     productsubcategoryid: Optional[ProductsubcategoryId] = Optional.empty(),
     productmodelid: Optional[ProductmodelId] = Optional.empty(),
     sellenddate: Optional[LocalDateTime] = Optional.empty(),
-    discontinueddate: Optional[LocalDateTime] = Optional.empty(),
-    productid: Defaulted[ProductId] = Defaulted.UseDefault(),
-    makeflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    finishedgoodsflag: Defaulted[Flag] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    discontinueddate: Optional[LocalDateTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    productid: Defaulted[ProductId] = new UseDefault(),
+    makeflag: Defaulted[Flag] = new UseDefault(),
+    finishedgoodsflag: Defaulted[Flag] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductRow = {
     (new ProductRepoImpl()).insert(new ProductRowUnsaved(
       name = name,
@@ -444,9 +446,9 @@ case class TestInsert(
 
   def productionProductcategory(
     name: Name = domainInsert.publicName(random),
-    productcategoryid: Defaulted[ProductcategoryId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    productcategoryid: Defaulted[ProductcategoryId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductcategoryRow = {
     (new ProductcategoryRepoImpl()).insert(new ProductcategoryRowUnsaved(
       name = name,
@@ -461,7 +463,7 @@ case class TestInsert(
     startdate: LocalDateTime,
     standardcost: java.math.BigDecimal,
     enddate: Optional[LocalDateTime] = Optional.empty(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductcosthistoryRow = {
     (new ProductcosthistoryRepoImpl()).insert(new ProductcosthistoryRowUnsaved(
       productid = productid,
@@ -474,11 +476,11 @@ case class TestInsert(
 
   def productionProductmodel(
     name: Name = domainInsert.publicName(random),
-    catalogdescription: Optional[Xml] = Optional.empty(),
-    instructions: Optional[Xml] = Optional.empty(),
-    productmodelid: Defaulted[ProductmodelId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    catalogdescription: Optional[Xml] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Xml("<root/>"))),
+    instructions: Optional[Xml] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Xml("<root/>"))),
+    productmodelid: Defaulted[ProductmodelId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductmodelRow = {
     (new ProductmodelRepoImpl()).insert(new ProductmodelRowUnsaved(
       name = name,
@@ -493,9 +495,9 @@ case class TestInsert(
   def productionProductsubcategory(
     productcategoryid: ProductcategoryId,
     name: Name = domainInsert.publicName(random),
-    productsubcategoryid: Defaulted[ProductsubcategoryId] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    productsubcategoryid: Defaulted[ProductsubcategoryId] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): ProductsubcategoryRow = {
     (new ProductsubcategoryRepoImpl()).insert(new ProductsubcategoryRowUnsaved(
       productcategoryid = productcategoryid,
@@ -507,9 +509,9 @@ case class TestInsert(
   }
 
   def productionUnitmeasure(
-    unitmeasurecode: UnitmeasureId = UnitmeasureId(RandomHelper.alphanumeric(random, 3)),
+    unitmeasurecode: UnitmeasureId = new UnitmeasureId(RandomHelper.alphanumeric(random, 3)),
     name: Name = domainInsert.publicName(random),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): UnitmeasureRow = (new UnitmeasureRepoImpl()).insert(new UnitmeasureRowUnsaved(unitmeasurecode = unitmeasurecode, name = name, modifieddate = modifieddate))(using c)
 
   def publicFlaff(
@@ -529,11 +531,11 @@ case class TestInsert(
   }
 
   def publicIdentityTest(
-    name: IdentityTestId = IdentityTestId(RandomHelper.alphanumeric(random, 20)),
-    defaultGenerated: Defaulted[Integer] = Defaulted.UseDefault()
+    name: IdentityTestId = new IdentityTestId(RandomHelper.alphanumeric(random, 20)),
+    defaultGenerated: Defaulted[Integer] = new UseDefault()
   )(using c: Connection): IdentityTestRow = (new IdentityTestRepoImpl()).insert(new IdentityTestRowUnsaved(name = name, defaultGenerated = defaultGenerated))(using c)
 
-  def publicIssue142(tabellkode: Issue142Id = Issue142Id(RandomHelper.alphanumeric(random, 20)))(using c: Connection): Issue142Row = (new Issue142RepoImpl()).insert(new Issue142Row(tabellkode = tabellkode))(using c)
+  def publicIssue142(tabellkode: Issue142Id = Issue142Id.apply(RandomHelper.alphanumeric(random, 20)))(using c: Connection): Issue142Row = (new Issue142RepoImpl()).insert(new Issue142Row(tabellkode = tabellkode))(using c)
 
   def publicIssue1422(tabellkode: Issue142Id = Issue142Id.All(random.nextInt(2)))(using c: Connection): Issue1422Row = (new Issue1422RepoImpl()).insert(new Issue1422Row(tabellkode = tabellkode))(using c)
 
@@ -543,76 +545,110 @@ case class TestInsert(
   )(using c: Connection): OnlyPkColumnsRow = (new OnlyPkColumnsRepoImpl()).insert(new OnlyPkColumnsRow(keyColumn1 = keyColumn1, keyColumn2 = keyColumn2))(using c)
 
   def publicPgtest(
-    box: PGbox,
     bytea: Array[scala.Byte],
-    circle: PGcircle,
-    date: LocalDate,
-    hstore: java.util.Map[String, String],
-    inet: Inet,
-    int2vector: Int2Vector,
-    interval: PGInterval,
-    json: Json,
-    jsonb: Jsonb,
-    line: PGline,
-    lseg: PGlseg,
-    money: Money,
-    path: PGpath,
-    point: PGpoint,
-    polygon: PGpolygon,
-    time: LocalTime,
-    timestamp: LocalDateTime,
-    timestampz: Instant,
-    timez: OffsetTime,
-    vector: Vector,
-    xml: Xml,
-    boxes: Array[PGbox],
-    circlees: Array[PGcircle],
-    datees: Array[LocalDate],
-    inetes: Array[Inet],
-    int2vectores: Array[Int2Vector],
-    intervales: Array[PGInterval],
-    jsones: Array[Json],
-    jsonbes: Array[Jsonb],
-    linees: Array[PGline],
-    lseges: Array[PGlseg],
-    moneyes: Array[Money],
-    pathes: Array[PGpath],
-    pointes: Array[PGpoint],
-    polygones: Array[PGpolygon],
-    timees: Array[LocalTime],
-    timestampes: Array[LocalDateTime],
-    timestampzes: Array[Instant],
-    timezes: Array[OffsetTime],
-    xmles: Array[Xml],
     bool: java.lang.Boolean = random.nextBoolean(),
+    box: PGbox = new PGbox(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  ),
     bpchar: String = RandomHelper.alphanumeric(random, 3),
     char: String = RandomHelper.alphanumeric(random, 1),
+    circle: PGcircle = new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    date: LocalDate = LocalDate.ofEpochDay(random.nextInt(30000).toLong),
     float4: java.lang.Float = random.nextFloat(),
     float8: java.lang.Double = random.nextDouble(),
+    hstore: java.util.Map[String, String] = java.util.Map.of(),
+    inet: Inet = new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}"),
     int2: java.lang.Short = random.nextInt(java.lang.Short.MAX_VALUE).toShort,
+    int2vector: Int2Vector = new Int2Vector("1 2 3"),
     int4: Integer = random.nextInt(),
     int8: java.lang.Long = random.nextLong(),
+    interval: PGInterval = new PGInterval(
+    random.nextInt(10),
+    random.nextInt(12),
+    random.nextInt(28),
+    random.nextInt(24),
+    random.nextInt(60),
+    random.nextDouble() * 60
+  ),
+    json: Json = new Json("{}"),
+    jsonb: Jsonb = new Jsonb("{}"),
+    line: PGline = new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    lseg: PGlseg = new PGlseg(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  ),
+    money: Money = new Money(random.nextDouble()),
     mydomain: Mydomain = domainInsert.publicMydomain(random),
     myenum: Myenum = Myenum.All(random.nextInt(Myenum.All.length)),
     name: String = RandomHelper.alphanumeric(random, 20),
     numeric: java.math.BigDecimal = java.math.BigDecimal.valueOf(random.nextDouble()),
+    path: PGpath = new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false),
+    point: PGpoint = new PGpoint(random.nextDouble(), random.nextDouble()),
+    polygon: PGpolygon = new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0))),
     text: String = RandomHelper.alphanumeric(random, 20),
-    uuid: UUID = UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs},
+    time: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    timestamp: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    timestampz: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timez: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    uuid: UUID = RandomHelper.randomUUID(random),
     varchar: String = RandomHelper.alphanumeric(random, 20),
+    vector: Vector = new Vector("[1.0,2.0,3.0]"),
+    xml: Xml = new Xml("<root/>"),
+    boxes: Array[PGbox] = Array.fill(random.nextInt(3))(new PGbox(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  )),
     bpchares: Array[/* bpchar */ String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
     chares: Array[/* bpchar */ String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
+    circlees: Array[PGcircle] = Array.fill(random.nextInt(3))(new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble())),
+    datees: Array[LocalDate] = Array.fill(random.nextInt(3))(LocalDate.ofEpochDay(random.nextInt(30000).toLong)),
     float4es: Array[java.lang.Float] = Array.fill(random.nextInt(3))(random.nextFloat()),
     float8es: Array[java.lang.Double] = Array.fill(random.nextInt(3))(random.nextDouble()),
+    inetes: Array[Inet] = Array.fill(random.nextInt(3))(new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}")),
     int2es: Array[java.lang.Short] = Array.fill(random.nextInt(3))(random.nextInt(java.lang.Short.MAX_VALUE).toShort),
+    int2vectores: Array[Int2Vector] = Array.fill(random.nextInt(3))(new Int2Vector("1 2 3")),
     int4es: Array[Integer] = Array.fill(random.nextInt(3))(random.nextInt()),
     int8es: Array[java.lang.Long] = Array.fill(random.nextInt(3))(random.nextLong()),
+    intervales: Array[PGInterval] = Array.fill(random.nextInt(3))(new PGInterval(
+    random.nextInt(10),
+    random.nextInt(12),
+    random.nextInt(28),
+    random.nextInt(24),
+    random.nextInt(60),
+    random.nextDouble() * 60
+  )),
+    jsones: Array[Json] = Array.fill(random.nextInt(3))(new Json("{}")),
+    jsonbes: Array[Jsonb] = Array.fill(random.nextInt(3))(new Jsonb("{}")),
+    linees: Array[PGline] = Array.fill(random.nextInt(3))(new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble())),
+    lseges: Array[PGlseg] = Array.fill(random.nextInt(3))(new PGlseg(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  )),
+    moneyes: Array[Money] = Array.fill(random.nextInt(3))(new Money(random.nextDouble())),
     mydomaines: Array[Mydomain] = Array.fill(random.nextInt(3))(domainInsert.publicMydomain(random)),
     myenumes: Array[Myenum] = Array.fill(random.nextInt(3))(Myenum.All(random.nextInt(Myenum.All.length))),
     namees: Array[String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
     numerices: Array[java.math.BigDecimal] = Array.fill(random.nextInt(3))(java.math.BigDecimal.valueOf(random.nextDouble())),
+    pathes: Array[PGpath] = Array.fill(random.nextInt(3))(new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false)),
+    pointes: Array[PGpoint] = Array.fill(random.nextInt(3))(new PGpoint(random.nextDouble(), random.nextDouble())),
+    polygones: Array[PGpolygon] = Array.fill(random.nextInt(3))(new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0)))),
     textes: Array[String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
-    uuides: Array[UUID] = Array.fill(random.nextInt(3))(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}),
-    varchares: Array[String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20))
+    timees: Array[LocalTime] = Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    timestampes: Array[LocalDateTime] = Array.fill(random.nextInt(3))(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    timestampzes: Array[Instant] = Array.fill(random.nextInt(3))(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))),
+    timezes: Array[OffsetTime] = Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    uuides: Array[UUID] = Array.fill(random.nextInt(3))(RandomHelper.randomUUID(random)),
+    varchares: Array[String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
+    xmles: Array[Xml] = Array.fill(random.nextInt(3))(new Xml("<root/>"))
   )(using c: Connection): PgtestRow = {
     (new PgtestRepoImpl()).insert(new PgtestRow(
       bool = bool,
@@ -689,76 +725,110 @@ case class TestInsert(
   }
 
   def publicPgtestnull(
-    bool: Optional[java.lang.Boolean] = if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextBoolean()),
-    box: Optional[PGbox] = Optional.empty(),
-    bpchar: Optional[/* bpchar, max 3 chars */ String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 3)),
+    bool: Optional[java.lang.Boolean] = (if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextBoolean())),
+    box: Optional[PGbox] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new PGbox(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  ))),
+    bpchar: Optional[/* bpchar, max 3 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 3))),
     bytea: Optional[Array[scala.Byte]] = Optional.empty(),
-    char: Optional[/* bpchar, max 1 chars */ String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 1)),
-    circle: Optional[PGcircle] = Optional.empty(),
-    date: Optional[LocalDate] = Optional.empty(),
-    float4: Optional[java.lang.Float] = if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextFloat()),
-    float8: Optional[java.lang.Double] = if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextDouble()),
-    hstore: Optional[java.util.Map[String, String]] = Optional.empty(),
-    inet: Optional[Inet] = Optional.empty(),
-    int2: Optional[java.lang.Short] = if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextInt(java.lang.Short.MAX_VALUE).toShort),
-    int2vector: Optional[Int2Vector] = Optional.empty(),
-    int4: Optional[Integer] = if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextInt()),
-    int8: Optional[java.lang.Long] = if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextLong()),
-    interval: Optional[PGInterval] = Optional.empty(),
-    json: Optional[Json] = Optional.empty(),
-    jsonb: Optional[Jsonb] = Optional.empty(),
-    line: Optional[PGline] = Optional.empty(),
-    lseg: Optional[PGlseg] = Optional.empty(),
-    money: Optional[Money] = Optional.empty(),
-    mydomain: Optional[Mydomain] = if (random.nextBoolean()) Optional.empty() else Optional.of(domainInsert.publicMydomain(random)),
-    myenum: Optional[Myenum] = if (random.nextBoolean()) Optional.empty() else Optional.of(Myenum.All(random.nextInt(Myenum.All.length))),
-    name: Optional[String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
-    numeric: Optional[java.math.BigDecimal] = if (random.nextBoolean()) Optional.empty() else Optional.of(java.math.BigDecimal.valueOf(random.nextDouble())),
-    path: Optional[PGpath] = Optional.empty(),
-    point: Optional[PGpoint] = Optional.empty(),
-    polygon: Optional[PGpolygon] = Optional.empty(),
-    text: Optional[String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
-    time: Optional[LocalTime] = Optional.empty(),
-    timestamp: Optional[LocalDateTime] = Optional.empty(),
-    timestampz: Optional[Instant] = Optional.empty(),
-    timez: Optional[OffsetTime] = Optional.empty(),
-    uuid: Optional[UUID] = if (random.nextBoolean()) Optional.empty() else Optional.of(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}),
-    varchar: Optional[String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
-    vector: Optional[Vector] = Optional.empty(),
-    xml: Optional[Xml] = Optional.empty(),
-    boxes: Optional[Array[PGbox]] = Optional.empty(),
-    bpchares: Optional[Array[/* bpchar */ String]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20))),
-    chares: Optional[Array[/* bpchar */ String]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20))),
-    circlees: Optional[Array[PGcircle]] = Optional.empty(),
-    datees: Optional[Array[LocalDate]] = Optional.empty(),
-    float4es: Optional[Array[java.lang.Float]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextFloat())),
-    float8es: Optional[Array[java.lang.Double]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextDouble())),
-    inetes: Optional[Array[Inet]] = Optional.empty(),
-    int2es: Optional[Array[java.lang.Short]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextInt(java.lang.Short.MAX_VALUE).toShort)),
-    int2vectores: Optional[Array[Int2Vector]] = Optional.empty(),
-    int4es: Optional[Array[Integer]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextInt())),
-    int8es: Optional[Array[java.lang.Long]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextLong())),
-    intervales: Optional[Array[PGInterval]] = Optional.empty(),
-    jsones: Optional[Array[Json]] = Optional.empty(),
-    jsonbes: Optional[Array[Jsonb]] = Optional.empty(),
-    linees: Optional[Array[PGline]] = Optional.empty(),
-    lseges: Optional[Array[PGlseg]] = Optional.empty(),
-    moneyes: Optional[Array[Money]] = Optional.empty(),
-    mydomaines: Optional[Array[Mydomain]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(domainInsert.publicMydomain(random))),
-    myenumes: Optional[Array[Myenum]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(Myenum.All(random.nextInt(Myenum.All.length)))),
-    namees: Optional[Array[String]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20))),
-    numerices: Optional[Array[java.math.BigDecimal]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(java.math.BigDecimal.valueOf(random.nextDouble()))),
-    pathes: Optional[Array[PGpath]] = Optional.empty(),
-    pointes: Optional[Array[PGpoint]] = Optional.empty(),
-    polygones: Optional[Array[PGpolygon]] = Optional.empty(),
-    textes: Optional[Array[String]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20))),
-    timees: Optional[Array[LocalTime]] = Optional.empty(),
-    timestampes: Optional[Array[LocalDateTime]] = Optional.empty(),
-    timestampzes: Optional[Array[Instant]] = Optional.empty(),
-    timezes: Optional[Array[OffsetTime]] = Optional.empty(),
-    uuides: Optional[Array[UUID]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs})),
-    varchares: Optional[Array[String]] = if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20))),
-    xmles: Optional[Array[Xml]] = Optional.empty()
+    char: Optional[/* bpchar, max 1 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 1))),
+    circle: Optional[PGcircle] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble()))),
+    date: Optional[LocalDate] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong))),
+    float4: Optional[java.lang.Float] = (if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextFloat())),
+    float8: Optional[java.lang.Double] = (if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextDouble())),
+    hstore: Optional[java.util.Map[String, String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(java.util.Map.of())),
+    inet: Optional[Inet] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}"))),
+    int2: Optional[java.lang.Short] = (if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextInt(java.lang.Short.MAX_VALUE).toShort)),
+    int2vector: Optional[Int2Vector] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Int2Vector("1 2 3"))),
+    int4: Optional[Integer] = (if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextInt())),
+    int8: Optional[java.lang.Long] = (if (random.nextBoolean()) Optional.empty() else Optional.of(random.nextLong())),
+    interval: Optional[PGInterval] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new PGInterval(
+    random.nextInt(10),
+    random.nextInt(12),
+    random.nextInt(28),
+    random.nextInt(24),
+    random.nextInt(60),
+    random.nextDouble() * 60
+  ))),
+    json: Optional[Json] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Json("{}"))),
+    jsonb: Optional[Jsonb] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Jsonb("{}"))),
+    line: Optional[PGline] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble()))),
+    lseg: Optional[PGlseg] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new PGlseg(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  ))),
+    money: Optional[Money] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Money(random.nextDouble()))),
+    mydomain: Optional[Mydomain] = (if (random.nextBoolean()) Optional.empty() else Optional.of(domainInsert.publicMydomain(random))),
+    myenum: Optional[Myenum] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Myenum.All(random.nextInt(Myenum.All.length)))),
+    name: Optional[String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20))),
+    numeric: Optional[java.math.BigDecimal] = (if (random.nextBoolean()) Optional.empty() else Optional.of(java.math.BigDecimal.valueOf(random.nextDouble()))),
+    path: Optional[PGpath] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false))),
+    point: Optional[PGpoint] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new PGpoint(random.nextDouble(), random.nextDouble()))),
+    polygon: Optional[PGpolygon] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0))))),
+    text: Optional[String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20))),
+    time: Optional[LocalTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    timestamp: Optional[LocalDateTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    timestampz: Optional[Instant] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+    timez: Optional[OffsetTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+    uuid: Optional[UUID] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.randomUUID(random))),
+    varchar: Optional[String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20))),
+    vector: Optional[Vector] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Vector("[1.0,2.0,3.0]"))),
+    xml: Optional[Xml] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Xml("<root/>"))),
+    boxes: Optional[Array[PGbox]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGbox(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  )))),
+    bpchares: Optional[Array[/* bpchar */ String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
+    chares: Optional[Array[/* bpchar */ String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
+    circlees: Optional[Array[PGcircle]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble())))),
+    datees: Optional[Array[LocalDate]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(LocalDate.ofEpochDay(random.nextInt(30000).toLong)))),
+    float4es: Optional[Array[java.lang.Float]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextFloat()))),
+    float8es: Optional[Array[java.lang.Double]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextDouble()))),
+    inetes: Optional[Array[Inet]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}")))),
+    int2es: Optional[Array[java.lang.Short]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextInt(java.lang.Short.MAX_VALUE).toShort))),
+    int2vectores: Optional[Array[Int2Vector]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Int2Vector("1 2 3")))),
+    int4es: Optional[Array[Integer]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextInt()))),
+    int8es: Optional[Array[java.lang.Long]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextLong()))),
+    intervales: Optional[Array[PGInterval]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGInterval(
+    random.nextInt(10),
+    random.nextInt(12),
+    random.nextInt(28),
+    random.nextInt(24),
+    random.nextInt(60),
+    random.nextDouble() * 60
+  )))),
+    jsones: Optional[Array[Json]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Json("{}")))),
+    jsonbes: Optional[Array[Jsonb]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Jsonb("{}")))),
+    linees: Optional[Array[PGline]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble())))),
+    lseges: Optional[Array[PGlseg]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGlseg(
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble(),
+    random.nextDouble()
+  )))),
+    moneyes: Optional[Array[Money]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Money(random.nextDouble())))),
+    mydomaines: Optional[Array[Mydomain]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(domainInsert.publicMydomain(random)))),
+    myenumes: Optional[Array[Myenum]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(Myenum.All(random.nextInt(Myenum.All.length))))),
+    namees: Optional[Array[String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
+    numerices: Optional[Array[java.math.BigDecimal]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(java.math.BigDecimal.valueOf(random.nextDouble())))),
+    pathes: Optional[Array[PGpath]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false)))),
+    pointes: Optional[Array[PGpoint]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGpoint(random.nextDouble(), random.nextDouble())))),
+    polygones: Optional[Array[PGpolygon]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0)))))),
+    textes: Optional[Array[String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
+    timees: Optional[Array[LocalTime]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    timestampes: Optional[Array[LocalDateTime]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    timestampzes: Optional[Array[Instant]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))))),
+    timezes: Optional[Array[OffsetTime]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))))),
+    uuides: Optional[Array[UUID]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.randomUUID(random)))),
+    varchares: Optional[Array[String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
+    xmles: Optional[Array[Xml]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Xml("<root/>"))))
   )(using c: Connection): PgtestnullRow = {
     (new PgtestnullRepoImpl()).insert(new PgtestnullRow(
       bool = bool,
@@ -834,9 +904,9 @@ case class TestInsert(
     ))(using c)
   }
 
-  def publicTitle(code: TitleId = TitleId(RandomHelper.alphanumeric(random, 20)))(using c: Connection): TitleRow = (new TitleRepoImpl()).insert(new TitleRow(code = code))(using c)
+  def publicTitle(code: TitleId = TitleId.apply(RandomHelper.alphanumeric(random, 20)))(using c: Connection): TitleRow = (new TitleRepoImpl()).insert(new TitleRow(code = code))(using c)
 
-  def publicTitleDomain(code: TitleDomainId = TitleDomainId(domainInsert.publicShortText(random)))(using c: Connection): TitleDomainRow = (new TitleDomainRepoImpl()).insert(new TitleDomainRow(code = code))(using c)
+  def publicTitleDomain(code: TitleDomainId = TitleDomainId.apply(domainInsert.publicShortText(random)))(using c: Connection): TitleDomainRow = (new TitleDomainRepoImpl()).insert(new TitleDomainRow(code = code))(using c)
 
   def publicTitledperson(
     titleShort: TitleDomainId = TitleDomainId.All(random.nextInt(4)),
@@ -846,12 +916,12 @@ case class TestInsert(
 
   def publicUsers(
     email: Unknown,
-    userId: UsersId = UsersId(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}),
+    userId: UsersId = new UsersId(RandomHelper.randomUUID(random)),
     name: String = RandomHelper.alphanumeric(random, 20),
-    lastName: Optional[String] = if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20)),
+    lastName: Optional[String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20))),
     password: String = RandomHelper.alphanumeric(random, 20),
-    verifiedOn: Optional[Instant] = Optional.empty(),
-    createdAt: Defaulted[Instant] = Defaulted.UseDefault()
+    verifiedOn: Optional[Instant] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+    createdAt: Defaulted[Instant] = new UseDefault()
   )(using c: Connection): UsersRow = {
     (new UsersRepoImpl()).insert(new UsersRowUnsaved(
       userId = userId,
@@ -868,12 +938,12 @@ case class TestInsert(
     businessentityid: BusinessentityId,
     territoryid: Optional[SalesterritoryId] = Optional.empty(),
     salesquota: Optional[java.math.BigDecimal] = Optional.empty(),
-    bonus: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault(),
-    commissionpct: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault(),
-    salesytd: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault(),
-    saleslastyear: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    bonus: Defaulted[java.math.BigDecimal] = new UseDefault(),
+    commissionpct: Defaulted[java.math.BigDecimal] = new UseDefault(),
+    salesytd: Defaulted[java.math.BigDecimal] = new UseDefault(),
+    saleslastyear: Defaulted[java.math.BigDecimal] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): SalespersonRow = {
     (new SalespersonRepoImpl()).insert(new SalespersonRowUnsaved(
       businessentityid = businessentityid,
@@ -892,13 +962,13 @@ case class TestInsert(
     countryregioncode: CountryregionId,
     name: Name = domainInsert.publicName(random),
     group: String = RandomHelper.alphanumeric(random, 20),
-    territoryid: Defaulted[SalesterritoryId] = Defaulted.UseDefault(),
-    salesytd: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault(),
-    saleslastyear: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault(),
-    costytd: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault(),
-    costlastyear: Defaulted[java.math.BigDecimal] = Defaulted.UseDefault(),
-    rowguid: Defaulted[UUID] = Defaulted.UseDefault(),
-    modifieddate: Defaulted[LocalDateTime] = Defaulted.UseDefault()
+    territoryid: Defaulted[SalesterritoryId] = new UseDefault(),
+    salesytd: Defaulted[java.math.BigDecimal] = new UseDefault(),
+    saleslastyear: Defaulted[java.math.BigDecimal] = new UseDefault(),
+    costytd: Defaulted[java.math.BigDecimal] = new UseDefault(),
+    costlastyear: Defaulted[java.math.BigDecimal] = new UseDefault(),
+    rowguid: Defaulted[UUID] = new UseDefault(),
+    modifieddate: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): SalesterritoryRow = {
     (new SalesterritoryRepoImpl()).insert(new SalesterritoryRowUnsaved(
       name = name,

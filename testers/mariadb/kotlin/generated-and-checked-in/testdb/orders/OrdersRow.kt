@@ -112,23 +112,23 @@ data class OrdersRow(
   fun id(): OrdersId = orderId
 
   fun toUnsavedRow(
-    orderStatus: Defaulted<String>,
-    paymentStatus: Defaulted<String>,
-    shippingAddressId: Defaulted<CustomerAddressesId?>,
-    billingAddressId: Defaulted<CustomerAddressesId?>,
-    shippingCost: Defaulted<BigDecimal>,
-    taxAmount: Defaulted<BigDecimal>,
-    discountAmount: Defaulted<BigDecimal>,
-    currencyCode: Defaulted<String>,
-    promotionId: Defaulted<PromotionsId?>,
-    notes: Defaulted<String?>,
-    internalNotes: Defaulted<String?>,
-    ipAddress: Defaulted<Inet6?>,
-    userAgent: Defaulted<String?>,
-    orderedAt: Defaulted<LocalDateTime>,
-    confirmedAt: Defaulted<LocalDateTime?>,
-    shippedAt: Defaulted<LocalDateTime?>,
-    deliveredAt: Defaulted<LocalDateTime?>
+    orderStatus: Defaulted<String> = Defaulted.Provided(this.orderStatus),
+    paymentStatus: Defaulted<String> = Defaulted.Provided(this.paymentStatus),
+    shippingAddressId: Defaulted<CustomerAddressesId?> = Defaulted.Provided(this.shippingAddressId),
+    billingAddressId: Defaulted<CustomerAddressesId?> = Defaulted.Provided(this.billingAddressId),
+    shippingCost: Defaulted<BigDecimal> = Defaulted.Provided(this.shippingCost),
+    taxAmount: Defaulted<BigDecimal> = Defaulted.Provided(this.taxAmount),
+    discountAmount: Defaulted<BigDecimal> = Defaulted.Provided(this.discountAmount),
+    currencyCode: Defaulted<String> = Defaulted.Provided(this.currencyCode),
+    promotionId: Defaulted<PromotionsId?> = Defaulted.Provided(this.promotionId),
+    notes: Defaulted<String?> = Defaulted.Provided(this.notes),
+    internalNotes: Defaulted<String?> = Defaulted.Provided(this.internalNotes),
+    ipAddress: Defaulted<Inet6?> = Defaulted.Provided(this.ipAddress),
+    userAgent: Defaulted<String?> = Defaulted.Provided(this.userAgent),
+    orderedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.orderedAt),
+    confirmedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.confirmedAt),
+    shippedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.shippedAt),
+    deliveredAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.deliveredAt)
   ): OrdersRowUnsaved = OrdersRowUnsaved(orderNumber, customerId, subtotal, totalAmount, orderStatus, paymentStatus, shippingAddressId, billingAddressId, shippingCost, taxAmount, discountAmount, currencyCode, promotionId, notes, internalNotes, ipAddress, userAgent, orderedAt, confirmedAt, shippedAt, deliveredAt)
 
   companion object {

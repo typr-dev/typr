@@ -48,6 +48,10 @@ object TypeSupportKotlin extends TypeSupport {
     val tpe: jvm.Type = TypesKotlin.List
     def create(values: List[jvm.Code]): jvm.Code = code"listOf(${values.mkCode(", ")})"
 
+    def index(list: jvm.Code, idx: jvm.Code): jvm.Code = code"$list[$idx]"
+
+    def size(list: jvm.Code): jvm.Code = code"$list.size"
+
     def arrayFlatMapOptional(array: jvm.Code, getter: jvm.Code): jvm.Code =
       code"$array.mapNotNull($getter)"
 
@@ -96,6 +100,7 @@ object TypeSupportKotlin extends TypeSupport {
     def nextBytes(random: jvm.Code, bytes: jvm.Code): jvm.Code = code"$random.nextBytes($bytes)"
     def alphanumeric(random: jvm.Code, length: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.alphanumeric($random, $length)"
     def nextPrintableChar(random: jvm.Code): jvm.Code = code"(33 + $random.nextInt(94)).toChar()"
+    def randomUUID(random: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.randomUUID($random)"
   }
 
   override object MapOps extends MapSupport {

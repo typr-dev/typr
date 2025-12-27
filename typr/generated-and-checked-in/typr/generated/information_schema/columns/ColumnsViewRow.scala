@@ -31,25 +31,25 @@ case class ColumnsViewRow(
   columnName: Option[String],
   /** debug: {"name":"ordinal_position","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"attnum","source_type":"int2","source_primary_key":false} */
   ordinalPosition: Option[Int],
-  /** debug: {"name":"column_default","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"attgenerated","source_type":"char","source_primary_key":false} */
+  /** debug: {"name":"column_default","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attrdef","source_column":"adbin","source_type":"pg_node_tree","source_primary_key":false} */
   columnDefault: Option[String],
   /** debug: {"name":"is_nullable","inferred_type":"\"information_schema\".\"yes_or_no\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"attnotnull","source_type":"bool","source_primary_key":false} */
   isNullable: Option[/* max 3 chars */ String],
-  /** debug: {"name":"data_type","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"atttypid","source_type":"oid","source_primary_key":false} */
+  /** debug: {"name":"data_type","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"typelem","source_type":"oid","source_primary_key":false} */
   dataType: Option[String],
-  /** debug: {"name":"character_maximum_length","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"*","source_primary_key":false} */
+  /** debug: {"name":"character_maximum_length","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"*","source_primary_key":false} */
   characterMaximumLength: Option[Int],
-  /** debug: {"name":"character_octet_length","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"*","source_primary_key":false} */
+  /** debug: {"name":"character_octet_length","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"*","source_primary_key":false} */
   characterOctetLength: Option[Int],
-  /** debug: {"name":"numeric_precision","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"*","source_primary_key":false} */
+  /** debug: {"name":"numeric_precision","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"*","source_primary_key":false} */
   numericPrecision: Option[Int],
-  /** debug: {"name":"numeric_precision_radix","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"*","source_primary_key":false} */
+  /** debug: {"name":"numeric_precision_radix","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"*","source_primary_key":false} */
   numericPrecisionRadix: Option[Int],
-  /** debug: {"name":"numeric_scale","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"*","source_primary_key":false} */
+  /** debug: {"name":"numeric_scale","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"*","source_primary_key":false} */
   numericScale: Option[Int],
-  /** debug: {"name":"datetime_precision","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"*","source_primary_key":false} */
+  /** debug: {"name":"datetime_precision","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"*","source_primary_key":false} */
   datetimePrecision: Option[Int],
-  /** debug: {"name":"interval_type","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"*","source_primary_key":false} */
+  /** debug: {"name":"interval_type","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"*","source_primary_key":false} */
   intervalType: Option[String],
   /** debug: {"name":"interval_precision","inferred_type":"\"information_schema\".\"cardinal_number\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":false,"source_primary_key":false} */
   intervalPrecision: Option[Int],
@@ -67,9 +67,9 @@ case class ColumnsViewRow(
   collationName: Option[String],
   /** debug: {"name":"domain_catalog","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"typtype","source_type":"char","source_primary_key":false} */
   domainCatalog: Option[String],
-  /** debug: {"name":"domain_schema","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"typtype","source_type":"char","source_primary_key":false} */
+  /** debug: {"name":"domain_schema","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_namespace","source_column":"nspname","source_type":"name","source_primary_key":false} */
   domainSchema: Option[String],
-  /** debug: {"name":"domain_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"typtype","source_type":"char","source_primary_key":false} */
+  /** debug: {"name":"domain_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_type","source_column":"typname","source_type":"name","source_primary_key":false} */
   domainName: Option[String],
   /** debug: {"name":"udt_catalog","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":false,"source_primary_key":false} */
   udtCatalog: Option[String],
@@ -105,7 +105,7 @@ case class ColumnsViewRow(
   identityCycle: Option[/* max 3 chars */ String],
   /** debug: {"name":"is_generated","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"attgenerated","source_type":"char","source_primary_key":false} */
   isGenerated: Option[String],
-  /** debug: {"name":"generation_expression","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attribute","source_column":"attgenerated","source_type":"char","source_primary_key":false} */
+  /** debug: {"name":"generation_expression","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":true,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_attrdef","source_column":"adbin","source_type":"pg_node_tree","source_primary_key":false} */
   generationExpression: Option[String],
   /** debug: {"name":"is_updatable","inferred_type":"\"information_schema\".\"yes_or_no\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_class","source_column":"relkind","source_type":"char","source_primary_key":false} */
   isUpdatable: Option[/* max 3 chars */ String]

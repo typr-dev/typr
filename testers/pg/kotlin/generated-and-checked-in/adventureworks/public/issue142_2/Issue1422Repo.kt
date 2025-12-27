@@ -34,7 +34,7 @@ interface Issue1422Repo {
 
   abstract fun insertStreaming(
     unsaved: Iterator<Issue1422Row>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Long
 
@@ -72,7 +72,7 @@ interface Issue1422Repo {
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   abstract fun upsertStreaming(
     unsaved: Iterator<Issue1422Row>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Int
 }

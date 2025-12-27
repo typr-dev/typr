@@ -56,12 +56,12 @@ data class AuditLogRow(
   fun id(): AuditLogId = logId
 
   fun toUnsavedRow(
-    oldValues: Defaulted<String?>,
-    newValues: Defaulted<String?>,
-    changedBy: Defaulted<String?>,
-    changedAt: Defaulted<LocalDateTime>,
-    clientIp: Defaulted<Inet6?>,
-    sessionId: Defaulted<ByteArray?>
+    oldValues: Defaulted<String?> = Defaulted.Provided(this.oldValues),
+    newValues: Defaulted<String?> = Defaulted.Provided(this.newValues),
+    changedBy: Defaulted<String?> = Defaulted.Provided(this.changedBy),
+    changedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.changedAt),
+    clientIp: Defaulted<Inet6?> = Defaulted.Provided(this.clientIp),
+    sessionId: Defaulted<ByteArray?> = Defaulted.Provided(this.sessionId)
   ): AuditLogRowUnsaved = AuditLogRowUnsaved(tableName, recordId, action, oldValues, newValues, changedBy, changedAt, clientIp, sessionId)
 
   companion object {

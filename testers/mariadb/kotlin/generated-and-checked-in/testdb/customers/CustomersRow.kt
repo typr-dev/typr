@@ -72,15 +72,15 @@ data class CustomersRow(
   fun id(): CustomersId = customerId
 
   fun toUnsavedRow(
-    phone: Defaulted<String?>,
-    status: Defaulted<CustomerStatusId>,
-    tier: Defaulted<String>,
-    preferences: Defaulted<String?>,
-    marketingFlags: Defaulted<MariaSet?>,
-    notes: Defaulted<String?>,
-    createdAt: Defaulted<LocalDateTime>,
-    updatedAt: Defaulted<LocalDateTime>,
-    lastLoginAt: Defaulted<LocalDateTime?>
+    phone: Defaulted<String?> = Defaulted.Provided(this.phone),
+    status: Defaulted<CustomerStatusId> = Defaulted.Provided(this.status),
+    tier: Defaulted<String> = Defaulted.Provided(this.tier),
+    preferences: Defaulted<String?> = Defaulted.Provided(this.preferences),
+    marketingFlags: Defaulted<MariaSet?> = Defaulted.Provided(this.marketingFlags),
+    notes: Defaulted<String?> = Defaulted.Provided(this.notes),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt),
+    updatedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.updatedAt),
+    lastLoginAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.lastLoginAt)
   ): CustomersRowUnsaved = CustomersRowUnsaved(email, passwordHash, firstName, lastName, phone, status, tier, preferences, marketingFlags, notes, createdAt, updatedAt, lastLoginAt)
 
   companion object {

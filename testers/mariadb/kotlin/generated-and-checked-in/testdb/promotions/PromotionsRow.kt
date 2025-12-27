@@ -76,15 +76,15 @@ data class PromotionsRow(
   fun id(): PromotionsId = promotionId
 
   fun toUnsavedRow(
-    description: Defaulted<String?>,
-    minOrderAmount: Defaulted<BigDecimal?>,
-    maxUses: Defaulted<Long?>,
-    usesCount: Defaulted<Long>,
-    maxUsesPerCustomer: Defaulted<Short?>,
-    applicableTo: Defaulted<MariaSet?>,
-    rulesJson: Defaulted<String?>,
-    isActive: Defaulted<Boolean>,
-    createdAt: Defaulted<LocalDateTime>
+    description: Defaulted<String?> = Defaulted.Provided(this.description),
+    minOrderAmount: Defaulted<BigDecimal?> = Defaulted.Provided(this.minOrderAmount),
+    maxUses: Defaulted<Long?> = Defaulted.Provided(this.maxUses),
+    usesCount: Defaulted<Long> = Defaulted.Provided(this.usesCount),
+    maxUsesPerCustomer: Defaulted<Short?> = Defaulted.Provided(this.maxUsesPerCustomer),
+    applicableTo: Defaulted<MariaSet?> = Defaulted.Provided(this.applicableTo),
+    rulesJson: Defaulted<String?> = Defaulted.Provided(this.rulesJson),
+    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt)
   ): PromotionsRowUnsaved = PromotionsRowUnsaved(code, name, discountType, discountValue, validFrom, validTo, description, minOrderAmount, maxUses, usesCount, maxUsesPerCustomer, applicableTo, rulesJson, isActive, createdAt)
 
   companion object {

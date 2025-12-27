@@ -43,8 +43,8 @@ data class BusinessentityaddressRow(
   fun id(): BusinessentityaddressId = this.compositeId()
 
   fun toUnsavedRow(
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): BusinessentityaddressRowUnsaved = BusinessentityaddressRowUnsaved(businessentityid, addressid, addresstypeid, rowguid, modifieddate)
 
   companion object {

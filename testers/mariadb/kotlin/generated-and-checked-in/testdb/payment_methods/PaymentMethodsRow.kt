@@ -43,9 +43,9 @@ data class PaymentMethodsRow(
   fun id(): PaymentMethodsId = methodId
 
   fun toUnsavedRow(
-    processorConfig: Defaulted<String?>,
-    isActive: Defaulted<Boolean>,
-    sortOrder: Defaulted<Byte>
+    processorConfig: Defaulted<String?> = Defaulted.Provided(this.processorConfig),
+    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive),
+    sortOrder: Defaulted<Byte> = Defaulted.Provided(this.sortOrder)
   ): PaymentMethodsRowUnsaved = PaymentMethodsRowUnsaved(code, name, methodType, processorConfig, isActive, sortOrder)
 
   companion object {

@@ -62,12 +62,12 @@ data class SalesterritoryRow(
 
   fun toUnsavedRow(
     territoryid: Defaulted<SalesterritoryId>,
-    salesytd: Defaulted<BigDecimal>,
-    saleslastyear: Defaulted<BigDecimal>,
-    costytd: Defaulted<BigDecimal>,
-    costlastyear: Defaulted<BigDecimal>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    salesytd: Defaulted<BigDecimal> = Defaulted.Provided(this.salesytd),
+    saleslastyear: Defaulted<BigDecimal> = Defaulted.Provided(this.saleslastyear),
+    costytd: Defaulted<BigDecimal> = Defaulted.Provided(this.costytd),
+    costlastyear: Defaulted<BigDecimal> = Defaulted.Provided(this.costlastyear),
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): SalesterritoryRowUnsaved = SalesterritoryRowUnsaved(name, countryregioncode, group, territoryid, salesytd, saleslastyear, costytd, costlastyear, rowguid, modifieddate)
 
   companion object {

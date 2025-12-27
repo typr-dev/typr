@@ -40,8 +40,8 @@ object ComputedTestInserts {
 
     def defaultFor(table: ComputedTable, tpe: jvm.Type, dbType: db.Type) = {
       val r = random.code
-      def defaultLocalDate = code"${TypesJava.LocalDate}.ofEpochDay(${lang.Random.nextIntBounded(r, code"30000")}.toLong)"
-      def defaultLocalTime = code"${TypesJava.LocalTime}.ofSecondOfDay(${lang.Random.nextIntBounded(r, code"24 * 60 * 60")}.toLong)"
+      def defaultLocalDate = code"${TypesJava.LocalDate}.ofEpochDay(${lang.toLong(lang.Random.nextIntBounded(r, code"30000"))})"
+      def defaultLocalTime = code"${TypesJava.LocalTime}.ofSecondOfDay(${lang.toLong(lang.Random.nextIntBounded(r, code"24 * 60 * 60"))})"
       def defaultLocalDateTime = code"${TypesJava.LocalDateTime}.of($defaultLocalDate, $defaultLocalTime)"
       def defaultZoneOffset = code"${TypesJava.ZoneOffset}.ofHours(${lang.Random.nextIntBounded(r, code"24")} - 12)"
 
@@ -49,15 +49,32 @@ object ComputedTestInserts {
         tpe match {
           case tpe if tableUnaryId.exists(_.tpe == tpe) =>
             tableUnaryId.get match {
-              case x: IdComputed.UnaryNormal        => go(x.underlying, x.col.dbCol.tpe, None).map(default => code"${x.tpe}($default)")
-              case x: IdComputed.UnaryInherited     => go(x.underlying, x.col.dbCol.tpe, None)
-              case x: IdComputed.UnaryNoIdType      => go(x.underlying, x.col.dbCol.tpe, None)
-              case x: IdComputed.UnaryOpenEnum      => go(x.underlying, x.col.dbCol.tpe, None).map(default => code"${x.tpe}($default)")
+              case x: IdComputed.UnaryNormal =>
+                go(x.underlying, x.col.dbCol.tpe, None).map(default => jvm.New(x.tpe, List(jvm.Arg.Pos(default))).code)
+              case x: IdComputed.UnaryInherited => go(x.underlying, x.col.dbCol.tpe, None)
+              case x: IdComputed.UnaryNoIdType  => go(x.underlying, x.col.dbCol.tpe, None)
+              case x: IdComputed.UnaryOpenEnum =>
+                go(x.underlying, x.col.dbCol.tpe, None).map(default => code"${x.tpe}.apply($default)")
               case _: IdComputed.UnaryUserSpecified => None
             }
           case tpe if openEnumsByType.contains(tpe) =>
             val openEnum = openEnumsByType(tpe)
-            Some(code"${tpe}.All(${lang.Random.nextIntBounded(r, code"${openEnum.values.length}")})")
+            val numValues = openEnum.values.length
+            val idx = lang.Random.nextIntBounded(r, code"$numValues")
+            // Use language-native list access syntax
+            lang match {
+              case _: LangScala =>
+                // Scala: All is a Scala List, use list(idx) syntax
+                Some(code"$tpe.All($idx)")
+              case LangJava =>
+                // Java: Arrays.asList().get(idx)
+                Some(code"${TypesJava.Arrays}.asList($tpe.Known.values()).get($idx)")
+              case _: LangKotlin =>
+                // Kotlin: entries[idx]
+                Some(code"$tpe.Known.entries[$idx]")
+              case other =>
+                sys.error(s"Unexpected language: $other")
+            }
           case TypesJava.String =>
             val max: Int =
               Option(dbType)
@@ -70,8 +87,8 @@ object ComputedTestInserts {
             Some(lang.Random.alphanumeric(r, code"$max"))
           case lang.Boolean    => Some(lang.Random.nextBoolean(r))
           case TypesScala.Char => Some(lang.Random.nextPrintableChar(r))
-          case lang.Byte       => Some(code"${lang.Random.nextIntBounded(r, lang.maxValue(lang.Byte))}.toByte")
-          case lang.Short      => Some(code"${lang.Random.nextIntBounded(r, lang.maxValue(lang.Short))}.toShort")
+          case lang.Byte       => Some(lang.toByte(lang.Random.nextIntBounded(r, lang.maxValue(lang.Byte))))
+          case lang.Short      => Some(lang.toShort(lang.Random.nextIntBounded(r, lang.maxValue(lang.Short))))
           case lang.Int =>
             dbType match {
               case db.PgType.Int2 => Some(lang.Random.nextIntBounded(r, lang.maxValue(lang.Short)))
@@ -81,11 +98,105 @@ object ComputedTestInserts {
           case lang.Float      => Some(lang.Random.nextFloat(r))
           case lang.Double     => Some(lang.Random.nextDouble(r))
           case lang.BigDecimal => Some(lang.bigDecimalFromDouble(lang.Random.nextDouble(r)))
-          case TypesJava.UUID  => Some(code"${TypesJava.UUID}.nameUUIDFromBytes{val bs = ${lang.newByteArray(code"16")}; ${lang.Random.nextBytes(r, code"bs")}; bs}")
+          case TypesJava.UUID  => Some(lang.Random.randomUUID(r))
+          // Raw Java date/time types (used by DbLib.Typo)
+          case TypesJava.LocalDate     => Some(defaultLocalDate)
+          case TypesJava.LocalTime     => Some(defaultLocalTime)
+          case TypesJava.LocalDateTime => Some(defaultLocalDateTime)
+          case TypesJava.OffsetTime    => Some(code"$defaultLocalTime.atOffset($defaultZoneOffset)")
+          case TypesJava.OffsetDateTime =>
+            Some(code"${TypesJava.OffsetDateTime}.of($defaultLocalDateTime, $defaultZoneOffset)")
+          case TypesJava.Instant =>
+            Some(code"${TypesJava.Instant}.ofEpochMilli(1000000000000L + ${lang.Random.nextLongBounded(r, code"1000000000000L")})")
+          // foundations-jdbc runtime types
+          case TypesJava.runtime.Inet =>
+            // Use string interpolation to build IP address
+            val ipStr = lang.s(code"$${${lang.Random.nextIntBounded(r, code"256")}}.$${${lang.Random.nextIntBounded(r, code"256")}}.$${${lang.Random
+                .nextIntBounded(r, code"256")}}.$${${lang.Random.nextIntBounded(r, code"256")}}")
+            Some(jvm.New(TypesJava.runtime.Inet, List(jvm.Arg.Pos(ipStr))).code)
+          case TypesJava.runtime.Json =>
+            Some(jvm.New(TypesJava.runtime.Json, List(jvm.Arg.Pos(lang.stringLiteral("{}")))).code)
+          case TypesJava.runtime.Jsonb =>
+            Some(jvm.New(TypesJava.runtime.Jsonb, List(jvm.Arg.Pos(lang.stringLiteral("{}")))).code)
+          case TypesJava.runtime.Money =>
+            Some(jvm.New(TypesJava.runtime.Money, List(jvm.Arg.Pos(lang.Random.nextDouble(r)))).code)
+          case TypesJava.runtime.Xml =>
+            Some(jvm.New(TypesJava.runtime.Xml, List(jvm.Arg.Pos(lang.stringLiteral("<root/>")))).code)
+          case TypesJava.runtime.Int2Vector =>
+            // Use string constructor for simplicity: "1 2 3"
+            Some(jvm.New(TypesJava.runtime.Int2Vector, List(jvm.Arg.Pos(lang.stringLiteral("1 2 3")))).code)
+          case TypesJava.runtime.Vector =>
+            // Use string constructor for simplicity: "[1.0,2.0,3.0]"
+            Some(jvm.New(TypesJava.runtime.Vector, List(jvm.Arg.Pos(lang.stringLiteral("[1.0,2.0,3.0]")))).code)
+          // PostgreSQL geometric types
+          case TypesJava.PGpoint =>
+            Some(jvm.New(TypesJava.PGpoint, List(jvm.Arg.Pos(lang.Random.nextDouble(r)), jvm.Arg.Pos(lang.Random.nextDouble(r)))).code)
+          case TypesJava.PGbox =>
+            Some(
+              jvm
+                .New(
+                  TypesJava.PGbox,
+                  List(
+                    jvm.Arg.Pos(lang.Random.nextDouble(r)),
+                    jvm.Arg.Pos(lang.Random.nextDouble(r)),
+                    jvm.Arg.Pos(lang.Random.nextDouble(r)),
+                    jvm.Arg.Pos(lang.Random.nextDouble(r))
+                  )
+                )
+                .code
+            )
+          case TypesJava.PGcircle =>
+            Some(jvm.New(TypesJava.PGcircle, List(jvm.Arg.Pos(lang.Random.nextDouble(r)), jvm.Arg.Pos(lang.Random.nextDouble(r)), jvm.Arg.Pos(lang.Random.nextDouble(r)))).code)
+          case TypesJava.PGline =>
+            Some(jvm.New(TypesJava.PGline, List(jvm.Arg.Pos(lang.Random.nextDouble(r)), jvm.Arg.Pos(lang.Random.nextDouble(r)), jvm.Arg.Pos(lang.Random.nextDouble(r)))).code)
+          case TypesJava.PGlseg =>
+            Some(
+              jvm
+                .New(
+                  TypesJava.PGlseg,
+                  List(
+                    jvm.Arg.Pos(lang.Random.nextDouble(r)),
+                    jvm.Arg.Pos(lang.Random.nextDouble(r)),
+                    jvm.Arg.Pos(lang.Random.nextDouble(r)),
+                    jvm.Arg.Pos(lang.Random.nextDouble(r))
+                  )
+                )
+                .code
+            )
+          case TypesJava.PGpath =>
+            val pointArg = jvm.New(TypesJava.PGpoint, List(jvm.Arg.Pos(lang.Random.nextDouble(r)), jvm.Arg.Pos(lang.Random.nextDouble(r)))).code
+            Some(jvm.New(TypesJava.PGpath, List(jvm.Arg.Pos(lang.typedArrayOf(TypesJava.PGpoint, List(pointArg))), jvm.Arg.Pos(code"false"))).code)
+          case TypesJava.PGpolygon =>
+            val points = List(
+              jvm.New(TypesJava.PGpoint, List(jvm.Arg.Pos(code"0.0"), jvm.Arg.Pos(code"0.0"))).code,
+              jvm.New(TypesJava.PGpoint, List(jvm.Arg.Pos(code"1.0"), jvm.Arg.Pos(code"0.0"))).code,
+              jvm.New(TypesJava.PGpoint, List(jvm.Arg.Pos(code"1.0"), jvm.Arg.Pos(code"1.0"))).code,
+              jvm.New(TypesJava.PGpoint, List(jvm.Arg.Pos(code"0.0"), jvm.Arg.Pos(code"1.0"))).code
+            )
+            Some(jvm.New(TypesJava.PGpolygon, List(jvm.Arg.Pos(lang.typedArrayOf(TypesJava.PGpoint, points)))).code)
+          case TypesJava.PGInterval =>
+            Some(
+              jvm
+                .New(
+                  TypesJava.PGInterval,
+                  List(
+                    jvm.Arg.Pos(lang.Random.nextIntBounded(r, code"10")),
+                    jvm.Arg.Pos(lang.Random.nextIntBounded(r, code"12")),
+                    jvm.Arg.Pos(lang.Random.nextIntBounded(r, code"28")),
+                    jvm.Arg.Pos(lang.Random.nextIntBounded(r, code"24")),
+                    jvm.Arg.Pos(lang.Random.nextIntBounded(r, code"60")),
+                    jvm.Arg.Pos(code"${lang.Random.nextDouble(r)} * 60")
+                  )
+                )
+                .code
+            )
+          // Map (for hstore)
+          case jvm.Type.TApply(TypesJava.Map, List(TypesJava.String, TypesJava.String)) =>
+            Some(code"${TypesJava.Map}.of()")
           case lang.Optional(underlying) =>
             go(underlying, dbType, tableUnaryId) match {
               case None          => Some(lang.Optional.none)
-              case Some(default) => Some(code"if (${lang.Random.nextBoolean(r)}) ${lang.Optional.none} else ${lang.Optional.some(default)}")
+              case Some(default) => Some(lang.ternary(lang.Random.nextBoolean(r), lang.Optional.none, lang.Optional.some(default)))
             }
           case jvm.Type.ArrayOf(underlying) =>
             dbType match {
@@ -97,7 +208,7 @@ object ComputedTestInserts {
             }
 
           case customTypes.TypoShort.typoType =>
-            Some(code"${customTypes.TypoShort.typoType}(${lang.Random.nextIntBounded(r, lang.maxValue(lang.Short))}.toShort)")
+            Some(code"${customTypes.TypoShort.typoType}(${lang.toShort(lang.Random.nextIntBounded(r, lang.maxValue(lang.Short)))})")
           case customTypes.TypoLocalDate.typoType =>
             Some(code"${customTypes.TypoLocalDate.typoType}($defaultLocalDate)")
           case customTypes.TypoLocalTime.typoType =>
@@ -112,12 +223,28 @@ object ComputedTestInserts {
             // 2001-09-09T01:46:40Z -> 2033-05-18T03:33:20Z
             Some(code"${customTypes.TypoInstant.typoType}(${TypesJava.Instant}.ofEpochMilli(1000000000000L + ${lang.Random.nextLongBounded(r, code"1000000000000L")}))")
           case jvm.Type.TApply(table.default.Defaulted, _) =>
-            Some(code"${table.default.Defaulted}.${table.default.UseDefault}()")
+            val UseDefaultQualified = jvm.Type.Qualified(table.default.Defaulted.value / table.default.UseDefault)
+            Some(jvm.New(UseDefaultQualified, Nil).code)
           case tpe if maybeDomainMethods.exists(_.domainMethodByType.contains(tpe)) =>
             val method = maybeDomainMethods.get.domainMethodByType(tpe)
             Some(code"$domainInsert.${method.name}($random)")
           case tpe if enumsByName.contains(tpe) =>
-            Some(code"$tpe.All(${lang.Random.nextIntBounded(r, code"$tpe.All.length")})")
+            val all = lang.enumAll(tpe)
+            // For Scala, enums use Scala List which needs Scala syntax (apply, length)
+            // For Java/Kotlin, the list from enumAll is their native list type
+            lang match {
+              case _: LangScala =>
+                // Scala: list(idx), list.length
+                Some(code"$all(${lang.Random.nextIntBounded(r, code"$all.length")})")
+              case LangJava =>
+                // Java: list.get(idx), list.size()
+                Some(code"$all.get(${lang.Random.nextIntBounded(r, code"$all.size()")})")
+              case _: LangKotlin =>
+                // Kotlin: list[idx], list.size
+                Some(code"$all[${lang.Random.nextIntBounded(r, code"$all.size")}]")
+              case other =>
+                sys.error(s"Unexpected language: $other")
+            }
           case _ =>
             None
         }

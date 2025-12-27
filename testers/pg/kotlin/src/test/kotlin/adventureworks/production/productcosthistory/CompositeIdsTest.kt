@@ -1,102 +1,75 @@
 package adventureworks.production.productcosthistory
 
 import adventureworks.DbNow
+import adventureworks.DomainInsert
+import adventureworks.TestInsert
 import adventureworks.WithConnection
-import adventureworks.production.product.*
-import adventureworks.production.productcategory.*
-import adventureworks.production.productmodel.*
-import adventureworks.production.productsubcategory.*
-import adventureworks.production.unitmeasure.*
-import adventureworks.public.Name
+import adventureworks.production.product.ProductId
+import adventureworks.production.unitmeasure.UnitmeasureId
 import org.junit.Assert.*
 import org.junit.Test
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.Random
 
 class CompositeIdsTest {
+    private val testInsert = TestInsert(Random(0), DomainInsert)
 
     @Test
     fun testCompositeIdOperations() {
         WithConnection.run { c ->
             val repo = ProductcosthistoryRepoImpl()
-            val unitmeasureRepo = UnitmeasureRepoImpl()
-            val productcategoryRepo = ProductcategoryRepoImpl()
-            val productsubcategoryRepo = ProductsubcategoryRepoImpl()
-            val productmodelRepo = ProductmodelRepoImpl()
-            val productRepo = ProductRepoImpl()
 
-            // Setup unitmeasure
-            val unitmeasure = unitmeasureRepo.insert(
-                UnitmeasureRowUnsaved(UnitmeasureId("kgg"), Name("Kilograms")),
-                c
+            // Setup product with all dependencies using TestInsert
+            val unitmeasure = testInsert.productionUnitmeasure(
+                unitmeasurecode = UnitmeasureId("CM"),
+                c = c
             )
-
-            // Setup product category
-            val productCategory = productcategoryRepo.insert(
-                ProductcategoryRowUnsaved(Name("Test Category")),
-                c
+            val productCategory = testInsert.productionProductcategory(c = c)
+            val productSubcategory = testInsert.productionProductsubcategory(
+                productcategoryid = productCategory.productcategoryid,
+                c = c
             )
+            val productModel = testInsert.productionProductmodel(c = c)
 
-            // Setup product subcategory
-            val productSubcategory = productsubcategoryRepo.insert(
-                ProductsubcategoryRowUnsaved(productCategory.productcategoryid, Name("Test Subcategory")),
-                c
-            )
-
-            // Setup product model
-            val productModel = productmodelRepo.insert(
-                ProductmodelRowUnsaved(Name("Test Model")),
-                c
+            val product = testInsert.productionProduct(
+                productnumber = "TEST-001",
+                safetystocklevel = 1,
+                reorderpoint = 1,
+                standardcost = BigDecimal.ONE,
+                listprice = BigDecimal.ONE,
+                daystomanufacture = 10,
+                sellstartdate = LocalDateTime.now(),
+                sizeunitmeasurecode = unitmeasure.unitmeasurecode,
+                weightunitmeasurecode = unitmeasure.unitmeasurecode,
+                productsubcategoryid = productSubcategory.productsubcategoryid,
+                productmodelid = productModel.productmodelid,
+                c = c
             )
 
             val now = DbNow.localDateTime()
 
-            // Setup product
-            val product = productRepo.insert(
-                ProductRowUnsaved(
-                    name = Name("Test Product"),
-                    productnumber = "TEST-001",
-                    safetystocklevel = 1,
-                    reorderpoint = 1,
-                    standardcost = BigDecimal.ONE,
-                    listprice = BigDecimal.ONE,
-                    daystomanufacture = 10,
-                    sellstartdate = now,
-                    sizeunitmeasurecode = unitmeasure.unitmeasurecode,
-                    weightunitmeasurecode = unitmeasure.unitmeasurecode,
-                    productsubcategoryid = productSubcategory.productsubcategoryid,
-                    productmodelid = productModel.productmodelid
-                ),
-                c
-            )
-
             // Create product cost history records
-            val ph1 = repo.insert(
-                ProductcosthistoryRowUnsaved(
-                    productid = product.productid,
-                    startdate = now,
-                    enddate = now.plusDays(1),
-                    standardcost = BigDecimal.ONE
-                ),
-                c
+            val ph1 = testInsert.productionProductcosthistory(
+                productid = product.productid,
+                startdate = now,
+                enddate = now.plusDays(1),
+                standardcost = BigDecimal.ONE,
+                c = c
             )
-            val ph2 = repo.insert(
-                ProductcosthistoryRowUnsaved(
-                    productid = product.productid,
-                    startdate = now.plusDays(1),
-                    enddate = now.plusDays(2),
-                    standardcost = BigDecimal.ONE
-                ),
-                c
+            val ph2 = testInsert.productionProductcosthistory(
+                productid = product.productid,
+                startdate = now.plusDays(1),
+                enddate = now.plusDays(2),
+                standardcost = BigDecimal.ONE,
+                c = c
             )
-            val ph3 = repo.insert(
-                ProductcosthistoryRowUnsaved(
-                    productid = product.productid,
-                    startdate = now.plusDays(2),
-                    enddate = now.plusDays(3),
-                    standardcost = BigDecimal.ONE
-                ),
-                c
+            val ph3 = testInsert.productionProductcosthistory(
+                productid = product.productid,
+                startdate = now.plusDays(2),
+                enddate = now.plusDays(3),
+                standardcost = BigDecimal.ONE,
+                c = c
             )
 
             // Test composite ID

@@ -51,9 +51,9 @@ data class StateprovinceRow(
 
   fun toUnsavedRow(
     stateprovinceid: Defaulted<StateprovinceId>,
-    isonlystateprovinceflag: Defaulted<Flag>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    isonlystateprovinceflag: Defaulted<Flag> = Defaulted.Provided(this.isonlystateprovinceflag),
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): StateprovinceRowUnsaved = StateprovinceRowUnsaved(stateprovincecode, countryregioncode, name, territoryid, stateprovinceid, isonlystateprovinceflag, rowguid, modifieddate)
 
   companion object {

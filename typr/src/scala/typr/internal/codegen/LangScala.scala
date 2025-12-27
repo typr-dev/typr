@@ -734,6 +734,14 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"($left != $right)"
 
+  override def toShort(expr: jvm.Code): jvm.Code = code"$expr.toShort"
+
+  override def toByte(expr: jvm.Code): jvm.Code = code"$expr.toByte"
+
+  override def toLong(expr: jvm.Code): jvm.Code = code"$expr.toLong"
+
+  override def enumAll(enumType: jvm.Type): jvm.Code = code"$enumType.All"
+
   override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
     code"$expr.asInstanceOf[$targetType]"
 

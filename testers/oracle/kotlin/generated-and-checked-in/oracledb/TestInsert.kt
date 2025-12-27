@@ -5,9 +5,12 @@
  */
 package oracledb
 
+import dev.typr.foundations.data.Json
 import java.math.BigDecimal
 import java.sql.Connection
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.Random
 import oracledb.all_scalar_types.AllScalarTypesId
 import oracledb.all_scalar_types.AllScalarTypesRepoImpl
@@ -29,34 +32,37 @@ import oracledb.employees.EmployeesRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639RepoImpl
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639Row
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639RowUnsaved
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 data class TestInsert(val random: Random) {
   fun AllScalarTypes(
     colNotNull: String,
-    colVarchar2: String?,
-    colNumber: BigDecimal?,
-    colDate: LocalDateTime?,
-    colTimestamp: LocalDateTime?,
-    colClob: String?,
-    id: Defaulted<AllScalarTypesId>,
+    colVarchar2: String? = null,
+    colNumber: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
+    colDate: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    colTimestamp: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    colClob: String? = null,
+    id: Defaulted<AllScalarTypesId> = Defaulted.UseDefault(),
     c: Connection
   ): AllScalarTypesRow = (AllScalarTypesRepoImpl()).insert(AllScalarTypesRowUnsaved(colVarchar2 = colVarchar2, colNumber = colNumber, colDate = colDate, colTimestamp = colTimestamp, colClob = colClob, colNotNull = colNotNull, id = id), c)
 
   fun Contacts(
     name: String,
-    emails: EmailTableT?,
-    tags: TagVarrayT?,
-    contactId: Defaulted<ContactsId>,
+    emails: EmailTableT? = null,
+    tags: TagVarrayT? = null,
+    contactId: Defaulted<ContactsId> = Defaulted.UseDefault(),
     c: Connection
   ): ContactsId = (ContactsRepoImpl()).insert(ContactsRowUnsaved(name = name, emails = emails, tags = tags, contactId = contactId), c)
 
   fun Customers(
     name: String,
     billingAddress: AddressT,
-    creditLimit: MoneyT?,
-    customerId: Defaulted<CustomersId>,
-    createdAt: Defaulted<LocalDateTime>,
+    creditLimit: MoneyT? = null,
+    customerId: Defaulted<CustomersId> = Defaulted.UseDefault(),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.UseDefault(),
     c: Connection
   ): CustomersId = (CustomersRepoImpl()).insert(CustomersRowUnsaved(name = name, billingAddress = billingAddress, creditLimit = creditLimit, customerId = customerId, createdAt = createdAt), c)
 
@@ -64,7 +70,7 @@ data class TestInsert(val random: Random) {
     deptCode: String,
     deptRegion: String,
     deptName: String,
-    budget: MoneyT?,
+    budget: MoneyT? = null,
     c: Connection
   ): DepartmentsId = (DepartmentsRepoImpl()).insert(DepartmentsRow(deptCode = deptCode, deptRegion = deptRegion, deptName = deptName, budget = budget), c)
 
@@ -72,9 +78,9 @@ data class TestInsert(val random: Random) {
     DepartmentsId: DepartmentsId,
     empSuffix: String,
     empName: String,
-    empNumber: BigDecimal,
-    salary: MoneyT?,
-    hireDate: Defaulted<LocalDateTime>,
+    empNumber: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
+    salary: MoneyT? = null,
+    hireDate: Defaulted<LocalDateTime> = Defaulted.UseDefault(),
     c: Connection
   ): EmployeesId = (EmployeesRepoImpl()).insert(EmployeesRowUnsaved(empNumber = empNumber, empSuffix = empSuffix, deptCode = DepartmentsId.deptCode, deptRegion = DepartmentsId.deptRegion, empName = empName, salary = salary, hireDate = hireDate), c)
 
@@ -82,8 +88,14 @@ data class TestInsert(val random: Random) {
     sku: String,
     name: String,
     price: MoneyT,
-    tags: TagVarrayT?,
-    productId: Defaulted<ProductsId>,
+    tags: TagVarrayT? = null,
+    productId: Defaulted<ProductsId> = Defaulted.UseDefault(),
     c: Connection
   ): ProductsId = (ProductsRepoImpl()).insert(ProductsRowUnsaved(sku = sku, name = name, price = price, tags = tags, productId = productId), c)
+
+  fun TestGenkeys1766794419639(
+    v: Json? = if (random.nextBoolean()) null else Json("{}"),
+    id: Defaulted<BigDecimal> = Defaulted.UseDefault(),
+    c: Connection
+  ): TestGenkeys1766794419639Row = (TestGenkeys1766794419639RepoImpl()).insert(TestGenkeys1766794419639RowUnsaved(v = v, id = id), c)
 }

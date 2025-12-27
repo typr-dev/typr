@@ -93,6 +93,12 @@ trait Lang {
   /** Array fill: Kotlin: `Array(size) { factory }`, Scala: `Array.fill(size)(factory)`, Java: requires stream API */
   def arrayFill(size: jvm.Code, factory: jvm.Code, elementType: jvm.Type): jvm.Code
 
+  /** Primitive ShortArray fill - Java/Scala use boxed array, Kotlin uses ShortArray */
+  def shortArrayFill(size: jvm.Code, factory: jvm.Code): jvm.Code = arrayFill(size, factory, Short)
+
+  /** Primitive FloatArray fill - Java/Scala use boxed array, Kotlin uses FloatArray */
+  def floatArrayFill(size: jvm.Code, factory: jvm.Code): jvm.Code = arrayFill(size, factory, Float)
+
   /** Class reference for annotations */
   def annotationClassRef(tpe: jvm.Type): jvm.Code
 
@@ -111,11 +117,26 @@ trait Lang {
   /** Typed array literal with specific element type: Java: `new String[]{"a", "b"}`, Kotlin: `arrayOf<String>("a", "b")`, Scala: `Array[String]("a", "b")` */
   def typedArrayOf(elementType: jvm.Type, elements: List[jvm.Code]): jvm.Code
 
+  /** Create a string literal with proper escaping: "hello" */
+  def stringLiteral(value: String): jvm.Code = jvm.StrLit(value).code
+
   /** Structural equality check */
   def equals(left: jvm.Code, right: jvm.Code): jvm.Code
 
   /** Structural inequality check */
   def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code
+
+  /** Convert Int to Short. Scala: `.toShort`, Kotlin: `.toShort()`, Java: `(short)` */
+  def toShort(expr: jvm.Code): jvm.Code
+
+  /** Convert Int to Byte. Scala: `.toByte`, Kotlin: `.toByte()`, Java: `(byte)` */
+  def toByte(expr: jvm.Code): jvm.Code
+
+  /** Convert Int to Long. Scala: `.toLong`, Kotlin: `.toLong()`, Java: `(long)` */
+  def toLong(expr: jvm.Code): jvm.Code
+
+  /** Get all enum values as a list. Scala: `Type.All`, Kotlin: `Type.entries`, Java: `Arrays.asList(Type.values())` */
+  def enumAll(enumType: jvm.Type): jvm.Code
 
   /** Cast from Object to a specific type. Java: (Type) expr, Scala: expr.asInstanceOf[Type] */
   def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code
@@ -128,6 +149,12 @@ trait Lang {
 trait ListSupport {
   val tpe: jvm.Type
   def create(values: List[jvm.Code]): jvm.Code
+
+  /** Get element at index. Scala: `list(idx)`, Kotlin: `list[idx]`, Java: `list.get(idx)` */
+  def index(list: jvm.Code, idx: jvm.Code): jvm.Code
+
+  /** Get list size. Scala: `list.length`, Kotlin: `list.size`, Java: `list.size()` */
+  def size(list: jvm.Code): jvm.Code
 
   /** Find first element in collection matching predicate */
   def findFirst(collection: jvm.Code, predicate: jvm.Code): jvm.Code
@@ -215,6 +242,7 @@ trait RandomSupport {
   def nextBytes(random: jvm.Code, bytes: jvm.Code): jvm.Code
   def alphanumeric(random: jvm.Code, length: jvm.Code): jvm.Code
   def nextPrintableChar(random: jvm.Code): jvm.Code
+  def randomUUID(random: jvm.Code): jvm.Code
 }
 
 trait MapSupport {

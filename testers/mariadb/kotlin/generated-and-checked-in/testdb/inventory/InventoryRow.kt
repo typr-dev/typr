@@ -68,14 +68,14 @@ data class InventoryRow(
   fun id(): InventoryId = inventoryId
 
   fun toUnsavedRow(
-    quantityOnHand: Defaulted<Int>,
-    quantityReserved: Defaulted<Int>,
-    quantityOnOrder: Defaulted<Int>,
-    reorderPoint: Defaulted<Int>,
-    reorderQuantity: Defaulted<Int>,
-    binLocation: Defaulted<String?>,
-    lastCountedAt: Defaulted<LocalDateTime?>,
-    updatedAt: Defaulted<LocalDateTime>
+    quantityOnHand: Defaulted<Int> = Defaulted.Provided(this.quantityOnHand),
+    quantityReserved: Defaulted<Int> = Defaulted.Provided(this.quantityReserved),
+    quantityOnOrder: Defaulted<Int> = Defaulted.Provided(this.quantityOnOrder),
+    reorderPoint: Defaulted<Int> = Defaulted.Provided(this.reorderPoint),
+    reorderQuantity: Defaulted<Int> = Defaulted.Provided(this.reorderQuantity),
+    binLocation: Defaulted<String?> = Defaulted.Provided(this.binLocation),
+    lastCountedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.lastCountedAt),
+    updatedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.updatedAt)
   ): InventoryRowUnsaved = InventoryRowUnsaved(productId, warehouseId, quantityOnHand, quantityReserved, quantityOnOrder, reorderPoint, reorderQuantity, binLocation, lastCountedAt, updatedAt)
 
   companion object {

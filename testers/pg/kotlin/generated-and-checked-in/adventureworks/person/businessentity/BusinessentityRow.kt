@@ -31,8 +31,8 @@ data class BusinessentityRow(
 
   fun toUnsavedRow(
     businessentityid: Defaulted<BusinessentityId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): BusinessentityRowUnsaved = BusinessentityRowUnsaved(businessentityid, rowguid, modifieddate)
 
   companion object {

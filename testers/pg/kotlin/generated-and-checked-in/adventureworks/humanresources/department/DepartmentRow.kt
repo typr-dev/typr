@@ -33,7 +33,7 @@ data class DepartmentRow(
 
   fun toUnsavedRow(
     departmentid: Defaulted<DepartmentId>,
-    modifieddate: Defaulted<LocalDateTime>
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): DepartmentRowUnsaved = DepartmentRowUnsaved(name, groupname, departmentid, modifieddate)
 
   companion object {

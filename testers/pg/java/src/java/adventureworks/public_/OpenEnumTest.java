@@ -26,7 +26,14 @@ public class OpenEnumTest {
         c -> {
           var testInsert = new TestInsert(new Random(0), new DomainInsertImpl());
           var john =
-              testInsert.publicTitledperson(TitleDomainId.Known.dr, TitleId.Known.dr, "John", c);
+              testInsert
+                  .publicTitledperson()
+                  .with(
+                      row ->
+                          row.withTitleShort(TitleDomainId.Known.dr)
+                              .withTitle(TitleId.Known.dr)
+                              .withName("John"))
+                  .insert(c);
 
           // DSL query with joinFk chain
           var found =

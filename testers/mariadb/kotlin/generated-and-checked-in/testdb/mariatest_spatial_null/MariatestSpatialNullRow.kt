@@ -62,14 +62,14 @@ data class MariatestSpatialNullRow(
   @JsonProperty("geometrycollection_col") val geometrycollectionCol: GeometryCollection?
 ) {
   fun toUnsavedRow(
-    geometryCol: Defaulted<Geometry?>,
-    pointCol: Defaulted<Point?>,
-    linestringCol: Defaulted<LineString?>,
-    polygonCol: Defaulted<Polygon?>,
-    multipointCol: Defaulted<MultiPoint?>,
-    multilinestringCol: Defaulted<MultiLineString?>,
-    multipolygonCol: Defaulted<MultiPolygon?>,
-    geometrycollectionCol: Defaulted<GeometryCollection?>
+    geometryCol: Defaulted<Geometry?> = Defaulted.Provided(this.geometryCol),
+    pointCol: Defaulted<Point?> = Defaulted.Provided(this.pointCol),
+    linestringCol: Defaulted<LineString?> = Defaulted.Provided(this.linestringCol),
+    polygonCol: Defaulted<Polygon?> = Defaulted.Provided(this.polygonCol),
+    multipointCol: Defaulted<MultiPoint?> = Defaulted.Provided(this.multipointCol),
+    multilinestringCol: Defaulted<MultiLineString?> = Defaulted.Provided(this.multilinestringCol),
+    multipolygonCol: Defaulted<MultiPolygon?> = Defaulted.Provided(this.multipolygonCol),
+    geometrycollectionCol: Defaulted<GeometryCollection?> = Defaulted.Provided(this.geometrycollectionCol)
   ): MariatestSpatialNullRowUnsaved = MariatestSpatialNullRowUnsaved(geometryCol, pointCol, linestringCol, polygonCol, multipointCol, multilinestringCol, multipolygonCol, geometrycollectionCol)
 
   companion object {

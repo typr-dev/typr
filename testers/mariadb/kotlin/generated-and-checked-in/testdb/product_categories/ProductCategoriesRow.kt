@@ -39,8 +39,8 @@ data class ProductCategoriesRow(
   fun id(): ProductCategoriesId = this.compositeId()
 
   fun toUnsavedRow(
-    isPrimary: Defaulted<Boolean>,
-    sortOrder: Defaulted<Short>
+    isPrimary: Defaulted<Boolean> = Defaulted.Provided(this.isPrimary),
+    sortOrder: Defaulted<Short> = Defaulted.Provided(this.sortOrder)
   ): ProductCategoriesRowUnsaved = ProductCategoriesRowUnsaved(productId, categoryId, isPrimary, sortOrder)
 
   companion object {

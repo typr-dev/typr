@@ -38,7 +38,7 @@ data class EmployeesRow(
 
   fun id(): EmployeesId = this.compositeId()
 
-  fun toUnsavedRow(hireDate: Defaulted<LocalDateTime>): EmployeesRowUnsaved = EmployeesRowUnsaved(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate)
+  fun toUnsavedRow(hireDate: Defaulted<LocalDateTime> = Defaulted.Provided(this.hireDate)): EmployeesRowUnsaved = EmployeesRowUnsaved(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate)
 
   companion object {
     val _rowParser: RowParser<EmployeesRow> = RowParsers.of(KotlinDbTypes.OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.nullable(), OracleTypes.date, { t0, t1, t2, t3, t4, t5, t6 -> EmployeesRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate) })

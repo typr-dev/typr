@@ -39,8 +39,8 @@ data class ProductsubcategoryRow(
 
   fun toUnsavedRow(
     productsubcategoryid: Defaulted<ProductsubcategoryId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): ProductsubcategoryRowUnsaved = ProductsubcategoryRowUnsaved(productcategoryid, name, productsubcategoryid, rowguid, modifieddate)
 
   companion object {

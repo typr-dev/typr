@@ -42,8 +42,8 @@ data class EmailaddressRow(
 
   fun toUnsavedRow(
     emailaddressid: Defaulted<Int>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): EmailaddressRowUnsaved = EmailaddressRowUnsaved(businessentityid, emailaddress, emailaddressid, rowguid, modifieddate)
 
   companion object {

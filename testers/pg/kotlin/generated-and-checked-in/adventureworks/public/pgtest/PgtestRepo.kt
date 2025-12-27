@@ -22,7 +22,7 @@ interface PgtestRepo {
 
   abstract fun insertStreaming(
     unsaved: Iterator<PgtestRow>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Long
 

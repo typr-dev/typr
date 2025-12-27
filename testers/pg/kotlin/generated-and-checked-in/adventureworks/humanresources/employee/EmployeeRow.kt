@@ -79,13 +79,13 @@ data class EmployeeRow(
   fun id(): BusinessentityId = businessentityid
 
   fun toUnsavedRow(
-    salariedflag: Defaulted<Flag>,
-    vacationhours: Defaulted<Short>,
-    sickleavehours: Defaulted<Short>,
-    currentflag: Defaulted<Flag>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    organizationnode: Defaulted<String?>
+    salariedflag: Defaulted<Flag> = Defaulted.Provided(this.salariedflag),
+    vacationhours: Defaulted<Short> = Defaulted.Provided(this.vacationhours),
+    sickleavehours: Defaulted<Short> = Defaulted.Provided(this.sickleavehours),
+    currentflag: Defaulted<Flag> = Defaulted.Provided(this.currentflag),
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate),
+    organizationnode: Defaulted<String?> = Defaulted.Provided(this.organizationnode)
   ): EmployeeRowUnsaved = EmployeeRowUnsaved(businessentityid, nationalidnumber, loginid, jobtitle, birthdate, maritalstatus, gender, hiredate, salariedflag, vacationhours, sickleavehours, currentflag, rowguid, modifieddate, organizationnode)
 
   companion object {

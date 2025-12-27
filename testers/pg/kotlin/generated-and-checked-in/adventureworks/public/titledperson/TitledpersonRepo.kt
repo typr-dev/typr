@@ -22,7 +22,7 @@ interface TitledpersonRepo {
 
   abstract fun insertStreaming(
     unsaved: Iterator<TitledpersonRow>,
-    batchSize: Int,
+    batchSize: Int = 10000,
     c: Connection
   ): Long
 

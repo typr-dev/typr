@@ -6,6 +6,7 @@
 package adventureworks
 
 import adventureworks.customtypes.Defaulted
+import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.department.DepartmentRepoImpl
 import adventureworks.humanresources.department.DepartmentRow
@@ -126,6 +127,7 @@ import dev.typr.foundations.data.Money
 import dev.typr.foundations.data.Unknown
 import dev.typr.foundations.data.Vector
 import dev.typr.foundations.data.Xml
+import dev.typr.foundations.internal.RandomHelper
 import java.math.BigDecimal
 import java.sql.Connection
 import java.time.Instant
@@ -133,6 +135,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetTime
+import java.time.ZoneOffset
 import java.util.Random
 import java.util.UUID
 import kotlin.collections.Map
@@ -151,10 +154,10 @@ data class TestInsert(
   val domainInsert: TestDomainInsert
 ) {
   fun humanresourcesDepartment(
-    name: Name,
-    groupname: Name,
-    departmentid: Defaulted<DepartmentId>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    groupname: Name = domainInsert.publicName(random),
+    departmentid: Defaulted<DepartmentId> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): DepartmentRow = (DepartmentRepoImpl()).insert(DepartmentRowUnsaved(name = name, groupname = groupname, departmentid = departmentid, modifieddate = modifieddate), c)
 
@@ -167,13 +170,13 @@ data class TestInsert(
     maritalstatus: String,
     gender: String,
     hiredate: LocalDate,
-    salariedflag: Defaulted<Flag>,
-    vacationhours: Defaulted<Short>,
-    sickleavehours: Defaulted<Short>,
-    currentflag: Defaulted<Flag>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
-    organizationnode: Defaulted<String?>,
+    salariedflag: Defaulted<Flag> = UseDefault(),
+    vacationhours: Defaulted<Short> = UseDefault(),
+    sickleavehours: Defaulted<Short> = UseDefault(),
+    currentflag: Defaulted<Flag> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
+    organizationnode: Defaulted<String?> = UseDefault(),
     c: Connection
   ): EmployeeRow = (EmployeeRepoImpl()).insert(EmployeeRowUnsaved(businessentityid = businessentityid, nationalidnumber = nationalidnumber, loginid = loginid, jobtitle = jobtitle, birthdate = birthdate, maritalstatus = maritalstatus, gender = gender, hiredate = hiredate, salariedflag = salariedflag, vacationhours = vacationhours, sickleavehours = sickleavehours, currentflag = currentflag, rowguid = rowguid, modifieddate = modifieddate, organizationnode = organizationnode), c)
 
@@ -182,17 +185,17 @@ data class TestInsert(
     departmentid: DepartmentId,
     shiftid: ShiftId,
     startdate: LocalDate,
-    enddate: LocalDate?,
-    modifieddate: Defaulted<LocalDateTime>,
+    enddate: LocalDate? = null,
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): EmployeedepartmenthistoryRow = (EmployeedepartmenthistoryRepoImpl()).insert(EmployeedepartmenthistoryRowUnsaved(businessentityid = businessentityid, departmentid = departmentid, shiftid = shiftid, startdate = startdate, enddate = enddate, modifieddate = modifieddate), c)
 
   fun humanresourcesShift(
-    starttime: LocalTime,
-    endtime: LocalTime,
-    name: Name,
-    shiftid: Defaulted<ShiftId>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    starttime: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    endtime: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    shiftid: Defaulted<ShiftId> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): ShiftRow = (ShiftRepoImpl()).insert(ShiftRowUnsaved(name = name, starttime = starttime, endtime = endtime, shiftid = shiftid, modifieddate = modifieddate), c)
 
@@ -201,26 +204,26 @@ data class TestInsert(
     city: String,
     stateprovinceid: StateprovinceId,
     postalcode: String,
-    addressline2: /* max 60 chars */ String?,
-    spatiallocation: ByteArray?,
-    addressid: Defaulted<AddressId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    addressline2: /* max 60 chars */ String? = null,
+    spatiallocation: ByteArray? = null,
+    addressid: Defaulted<AddressId> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): AddressRow = (AddressRepoImpl()).insert(AddressRowUnsaved(addressline1 = addressline1, addressline2 = addressline2, city = city, stateprovinceid = stateprovinceid, postalcode = postalcode, spatiallocation = spatiallocation, addressid = addressid, rowguid = rowguid, modifieddate = modifieddate), c)
 
   fun personAddresstype(
-    name: Name,
-    addresstypeid: Defaulted<AddresstypeId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    addresstypeid: Defaulted<AddresstypeId> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): AddresstypeRow = (AddresstypeRepoImpl()).insert(AddresstypeRowUnsaved(name = name, addresstypeid = addresstypeid, rowguid = rowguid, modifieddate = modifieddate), c)
 
   fun personBusinessentity(
-    businessentityid: Defaulted<BusinessentityId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    businessentityid: Defaulted<BusinessentityId> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): BusinessentityRow = (BusinessentityRepoImpl()).insert(BusinessentityRowUnsaved(businessentityid = businessentityid, rowguid = rowguid, modifieddate = modifieddate), c)
 
@@ -228,24 +231,24 @@ data class TestInsert(
     businessentityid: BusinessentityId,
     addressid: AddressId,
     addresstypeid: AddresstypeId,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): BusinessentityaddressRow = (BusinessentityaddressRepoImpl()).insert(BusinessentityaddressRowUnsaved(businessentityid = businessentityid, addressid = addressid, addresstypeid = addresstypeid, rowguid = rowguid, modifieddate = modifieddate), c)
 
   fun personCountryregion(
     countryregioncode: CountryregionId,
-    name: Name,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): CountryregionRow = (CountryregionRepoImpl()).insert(CountryregionRowUnsaved(countryregioncode = countryregioncode, name = name, modifieddate = modifieddate), c)
 
   fun personEmailaddress(
     businessentityid: BusinessentityId,
-    emailaddress: /* max 50 chars */ String?,
-    emailaddressid: Defaulted<Int>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    emailaddress: /* max 50 chars */ String? = null,
+    emailaddressid: Defaulted<Int> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): EmailaddressRow = (EmailaddressRepoImpl()).insert(EmailaddressRowUnsaved(businessentityid = businessentityid, emailaddress = emailaddress, emailaddressid = emailaddressid, rowguid = rowguid, modifieddate = modifieddate), c)
 
@@ -253,8 +256,8 @@ data class TestInsert(
     businessentityid: BusinessentityId,
     passwordhash: String,
     passwordsalt: String,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): PasswordRow = (PasswordRepoImpl()).insert(PasswordRowUnsaved(businessentityid = businessentityid, passwordhash = passwordhash, passwordsalt = passwordsalt, rowguid = rowguid, modifieddate = modifieddate), c)
 
@@ -262,16 +265,16 @@ data class TestInsert(
     businessentityid: BusinessentityId,
     persontype: String,
     firstname: /* user-picked */ FirstName,
-    title: /* max 8 chars */ String?,
-    middlename: Name?,
-    lastname: Name,
-    suffix: /* max 10 chars */ String?,
-    additionalcontactinfo: Xml?,
-    demographics: Xml?,
-    namestyle: Defaulted<NameStyle>,
-    emailpromotion: Defaulted<Int>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    title: /* max 8 chars */ String? = null,
+    middlename: Name? = if (random.nextBoolean()) null else domainInsert.publicName(random),
+    lastname: Name = domainInsert.publicName(random),
+    suffix: /* max 10 chars */ String? = null,
+    additionalcontactinfo: Xml? = if (random.nextBoolean()) null else Xml("<root/>"),
+    demographics: Xml? = if (random.nextBoolean()) null else Xml("<root/>"),
+    namestyle: Defaulted<NameStyle> = UseDefault(),
+    emailpromotion: Defaulted<Int> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): PersonRow = (PersonRepoImpl()).insert(PersonRowUnsaved(businessentityid = businessentityid, persontype = persontype, title = title, firstname = firstname, middlename = middlename, lastname = lastname, suffix = suffix, additionalcontactinfo = additionalcontactinfo, demographics = demographics, namestyle = namestyle, emailpromotion = emailpromotion, rowguid = rowguid, modifieddate = modifieddate), c)
 
@@ -279,11 +282,11 @@ data class TestInsert(
     stateprovincecode: String,
     countryregioncode: CountryregionId,
     territoryid: SalesterritoryId,
-    name: Name,
-    stateprovinceid: Defaulted<StateprovinceId>,
-    isonlystateprovinceflag: Defaulted<Flag>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    stateprovinceid: Defaulted<StateprovinceId> = UseDefault(),
+    isonlystateprovinceflag: Defaulted<Flag> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): StateprovinceRow = (StateprovinceRepoImpl()).insert(StateprovinceRowUnsaved(stateprovincecode = stateprovincecode, countryregioncode = countryregioncode, name = name, territoryid = territoryid, stateprovinceid = stateprovinceid, isonlystateprovinceflag = isonlystateprovinceflag, rowguid = rowguid, modifieddate = modifieddate), c)
 
@@ -295,32 +298,32 @@ data class TestInsert(
     listprice: BigDecimal,
     daystomanufacture: Int,
     sellstartdate: LocalDateTime,
-    name: Name,
-    color: /* max 15 chars */ String?,
-    size: /* max 5 chars */ String?,
-    sizeunitmeasurecode: UnitmeasureId?,
-    weightunitmeasurecode: UnitmeasureId?,
-    weight: BigDecimal?,
-    productline: /* bpchar, max 2 chars */ String?,
-    `class`: /* bpchar, max 2 chars */ String?,
-    style: /* bpchar, max 2 chars */ String?,
-    productsubcategoryid: ProductsubcategoryId?,
-    productmodelid: ProductmodelId?,
-    sellenddate: LocalDateTime?,
-    discontinueddate: LocalDateTime?,
-    productid: Defaulted<ProductId>,
-    makeflag: Defaulted<Flag>,
-    finishedgoodsflag: Defaulted<Flag>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    color: /* max 15 chars */ String? = null,
+    size: /* max 5 chars */ String? = null,
+    sizeunitmeasurecode: UnitmeasureId? = null,
+    weightunitmeasurecode: UnitmeasureId? = null,
+    weight: BigDecimal? = null,
+    productline: /* bpchar, max 2 chars */ String? = null,
+    `class`: /* bpchar, max 2 chars */ String? = null,
+    style: /* bpchar, max 2 chars */ String? = null,
+    productsubcategoryid: ProductsubcategoryId? = null,
+    productmodelid: ProductmodelId? = null,
+    sellenddate: LocalDateTime? = null,
+    discontinueddate: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    productid: Defaulted<ProductId> = UseDefault(),
+    makeflag: Defaulted<Flag> = UseDefault(),
+    finishedgoodsflag: Defaulted<Flag> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): ProductRow = (ProductRepoImpl()).insert(ProductRowUnsaved(name = name, productnumber = productnumber, color = color, safetystocklevel = safetystocklevel, reorderpoint = reorderpoint, standardcost = standardcost, listprice = listprice, size = size, sizeunitmeasurecode = sizeunitmeasurecode, weightunitmeasurecode = weightunitmeasurecode, weight = weight, daystomanufacture = daystomanufacture, productline = productline, `class` = `class`, style = style, productsubcategoryid = productsubcategoryid, productmodelid = productmodelid, sellstartdate = sellstartdate, sellenddate = sellenddate, discontinueddate = discontinueddate, productid = productid, makeflag = makeflag, finishedgoodsflag = finishedgoodsflag, rowguid = rowguid, modifieddate = modifieddate), c)
 
   fun productionProductcategory(
-    name: Name,
-    productcategoryid: Defaulted<ProductcategoryId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    productcategoryid: Defaulted<ProductcategoryId> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): ProductcategoryRow = (ProductcategoryRepoImpl()).insert(ProductcategoryRowUnsaved(name = name, productcategoryid = productcategoryid, rowguid = rowguid, modifieddate = modifieddate), c)
 
@@ -328,49 +331,49 @@ data class TestInsert(
     productid: ProductId,
     startdate: LocalDateTime,
     standardcost: BigDecimal,
-    enddate: LocalDateTime?,
-    modifieddate: Defaulted<LocalDateTime>,
+    enddate: LocalDateTime? = null,
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): ProductcosthistoryRow = (ProductcosthistoryRepoImpl()).insert(ProductcosthistoryRowUnsaved(productid = productid, startdate = startdate, enddate = enddate, standardcost = standardcost, modifieddate = modifieddate), c)
 
   fun productionProductmodel(
-    name: Name,
-    catalogdescription: Xml?,
-    instructions: Xml?,
-    productmodelid: Defaulted<ProductmodelId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    catalogdescription: Xml? = if (random.nextBoolean()) null else Xml("<root/>"),
+    instructions: Xml? = if (random.nextBoolean()) null else Xml("<root/>"),
+    productmodelid: Defaulted<ProductmodelId> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): ProductmodelRow = (ProductmodelRepoImpl()).insert(ProductmodelRowUnsaved(name = name, catalogdescription = catalogdescription, instructions = instructions, productmodelid = productmodelid, rowguid = rowguid, modifieddate = modifieddate), c)
 
   fun productionProductsubcategory(
     productcategoryid: ProductcategoryId,
-    name: Name,
-    productsubcategoryid: Defaulted<ProductsubcategoryId>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    productsubcategoryid: Defaulted<ProductsubcategoryId> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): ProductsubcategoryRow = (ProductsubcategoryRepoImpl()).insert(ProductsubcategoryRowUnsaved(productcategoryid = productcategoryid, name = name, productsubcategoryid = productsubcategoryid, rowguid = rowguid, modifieddate = modifieddate), c)
 
   fun productionUnitmeasure(
     unitmeasurecode: UnitmeasureId,
-    name: Name,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): UnitmeasureRow = (UnitmeasureRepoImpl()).insert(UnitmeasureRowUnsaved(unitmeasurecode = unitmeasurecode, name = name, modifieddate = modifieddate), c)
 
   fun publicFlaff(
     anotherCode: String,
-    code: ShortText,
-    someNumber: Int,
-    specifier: ShortText,
-    parentspecifier: ShortText?,
+    code: ShortText = domainInsert.publicShortText(random),
+    someNumber: Int = random.nextInt(),
+    specifier: ShortText = domainInsert.publicShortText(random),
+    parentspecifier: ShortText? = null,
     c: Connection
   ): FlaffRow = (FlaffRepoImpl()).insert(FlaffRow(code = code, anotherCode = anotherCode, someNumber = someNumber, specifier = specifier, parentspecifier = parentspecifier), c)
 
   fun publicIdentityTest(
     name: IdentityTestId,
-    defaultGenerated: Defaulted<Int>,
+    defaultGenerated: Defaulted<Int> = UseDefault(),
     c: Connection
   ): IdentityTestRow = (IdentityTestRepoImpl()).insert(IdentityTestRowUnsaved(name = name, defaultGenerated = defaultGenerated), c)
 
@@ -380,161 +383,161 @@ data class TestInsert(
   ): Issue142Row = (Issue142RepoImpl()).insert(Issue142Row(tabellkode = tabellkode), c)
 
   fun publicIssue1422(
-    tabellkode: Issue142Id,
+    tabellkode: Issue142Id = Issue142Id.Known.entries[random.nextInt(2)],
     c: Connection
   ): Issue1422Row = (Issue1422RepoImpl()).insert(Issue1422Row(tabellkode = tabellkode), c)
 
   fun publicOnlyPkColumns(
     keyColumn1: String,
-    keyColumn2: Int,
+    keyColumn2: Int = random.nextInt(),
     c: Connection
   ): OnlyPkColumnsRow = (OnlyPkColumnsRepoImpl()).insert(OnlyPkColumnsRow(keyColumn1 = keyColumn1, keyColumn2 = keyColumn2), c)
 
   fun publicPgtest(
-    box: PGbox,
     bpchar: String,
     bytea: ByteArray,
     char: String,
-    circle: PGcircle,
-    date: LocalDate,
     hstore: Map<String, String>,
-    inet: Inet,
-    int2vector: Int2Vector,
-    interval: PGInterval,
-    json: Json,
-    jsonb: Jsonb,
-    line: PGline,
-    lseg: PGlseg,
-    money: Money,
     name: String,
-    path: PGpath,
-    point: PGpoint,
-    polygon: PGpolygon,
     text: String,
-    time: LocalTime,
-    timestamp: LocalDateTime,
-    timestampz: Instant,
-    timez: OffsetTime,
     varchar: String,
-    vector: Vector,
-    xml: Xml,
-    boxes: Array<PGbox>,
     bpchares: Array</* bpchar */ String>,
     chares: Array</* bpchar */ String>,
-    circlees: Array<PGcircle>,
-    datees: Array<LocalDate>,
-    inetes: Array<Inet>,
-    int2vectores: Array<Int2Vector>,
-    intervales: Array<PGInterval>,
-    jsones: Array<Json>,
-    jsonbes: Array<Jsonb>,
-    linees: Array<PGline>,
-    lseges: Array<PGlseg>,
-    moneyes: Array<Money>,
     namees: Array<String>,
-    pathes: Array<PGpath>,
-    pointes: Array<PGpoint>,
-    polygones: Array<PGpolygon>,
     textes: Array<String>,
-    timees: Array<LocalTime>,
-    timestampes: Array<LocalDateTime>,
-    timestampzes: Array<Instant>,
-    timezes: Array<OffsetTime>,
     varchares: Array<String>,
-    xmles: Array<Xml>,
-    bool: Boolean,
-    float4: Float,
-    float8: Double,
-    int2: Short,
-    int4: Int,
-    int8: Long,
-    mydomain: Mydomain,
-    myenum: Myenum,
-    numeric: BigDecimal,
-    uuid: UUID,
-    float4es: Array<Float>,
-    float8es: Array<Double>,
-    int2es: Array<Short>,
-    int4es: Array<Int>,
-    int8es: Array<Long>,
-    mydomaines: Array<Mydomain>,
-    myenumes: Array<Myenum>,
-    numerices: Array<BigDecimal>,
-    uuides: Array<UUID>,
+    bool: Boolean = random.nextBoolean(),
+    box: PGbox = PGbox(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    circle: PGcircle = PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    date: LocalDate = LocalDate.ofEpochDay(random.nextInt(30000).toLong()),
+    float4: Float = random.nextFloat(),
+    float8: Double = random.nextDouble(),
+    inet: Inet = Inet("${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}"),
+    int2: Short = random.nextInt(Short.MAX_VALUE.toInt()).toShort(),
+    int2vector: Int2Vector = Int2Vector("1 2 3"),
+    int4: Int = random.nextInt(),
+    int8: Long = random.nextLong(),
+    interval: PGInterval = PGInterval(random.nextInt(10), random.nextInt(12), random.nextInt(28), random.nextInt(24), random.nextInt(60), random.nextDouble() * 60),
+    json: Json = Json("{}"),
+    jsonb: Jsonb = Jsonb("{}"),
+    line: PGline = PGline(random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    lseg: PGlseg = PGlseg(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    money: Money = Money(random.nextDouble()),
+    mydomain: Mydomain = domainInsert.publicMydomain(random),
+    myenum: Myenum = Myenum.entries[random.nextInt(Myenum.entries.size)],
+    numeric: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
+    path: PGpath = PGpath(arrayOf<PGpoint>(PGpoint(random.nextDouble(), random.nextDouble())), false),
+    point: PGpoint = PGpoint(random.nextDouble(), random.nextDouble()),
+    polygon: PGpolygon = PGpolygon(arrayOf<PGpoint>(PGpoint(0.0, 0.0), PGpoint(1.0, 0.0), PGpoint(1.0, 1.0), PGpoint(0.0, 1.0))),
+    time: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    timestamp: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    timestampz: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timez: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    uuid: UUID = RandomHelper.randomUUID(random),
+    vector: Vector = Vector("[1.0,2.0,3.0]"),
+    xml: Xml = Xml("<root/>"),
+    boxes: Array<PGbox> = Array(random.nextInt(3)) { PGbox(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble()) },
+    circlees: Array<PGcircle> = Array(random.nextInt(3)) { PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble()) },
+    datees: Array<LocalDate> = Array(random.nextInt(3)) { LocalDate.ofEpochDay(random.nextInt(30000).toLong()) },
+    float4es: Array<Float> = Array(random.nextInt(3)) { random.nextFloat() },
+    float8es: Array<Double> = Array(random.nextInt(3)) { random.nextDouble() },
+    inetes: Array<Inet> = Array(random.nextInt(3)) { Inet("${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}") },
+    int2es: Array<Short> = Array(random.nextInt(3)) { random.nextInt(Short.MAX_VALUE.toInt()).toShort() },
+    int2vectores: Array<Int2Vector> = Array(random.nextInt(3)) { Int2Vector("1 2 3") },
+    int4es: Array<Int> = Array(random.nextInt(3)) { random.nextInt() },
+    int8es: Array<Long> = Array(random.nextInt(3)) { random.nextLong() },
+    intervales: Array<PGInterval> = Array(random.nextInt(3)) { PGInterval(random.nextInt(10), random.nextInt(12), random.nextInt(28), random.nextInt(24), random.nextInt(60), random.nextDouble() * 60) },
+    jsones: Array<Json> = Array(random.nextInt(3)) { Json("{}") },
+    jsonbes: Array<Jsonb> = Array(random.nextInt(3)) { Jsonb("{}") },
+    linees: Array<PGline> = Array(random.nextInt(3)) { PGline(random.nextDouble(), random.nextDouble(), random.nextDouble()) },
+    lseges: Array<PGlseg> = Array(random.nextInt(3)) { PGlseg(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble()) },
+    moneyes: Array<Money> = Array(random.nextInt(3)) { Money(random.nextDouble()) },
+    mydomaines: Array<Mydomain> = Array(random.nextInt(3)) { domainInsert.publicMydomain(random) },
+    myenumes: Array<Myenum> = Array(random.nextInt(3)) { Myenum.entries[random.nextInt(Myenum.entries.size)] },
+    numerices: Array<BigDecimal> = Array(random.nextInt(3)) { BigDecimal.valueOf(random.nextDouble()) },
+    pathes: Array<PGpath> = Array(random.nextInt(3)) { PGpath(arrayOf<PGpoint>(PGpoint(random.nextDouble(), random.nextDouble())), false) },
+    pointes: Array<PGpoint> = Array(random.nextInt(3)) { PGpoint(random.nextDouble(), random.nextDouble()) },
+    polygones: Array<PGpolygon> = Array(random.nextInt(3)) { PGpolygon(arrayOf<PGpoint>(PGpoint(0.0, 0.0), PGpoint(1.0, 0.0), PGpoint(1.0, 1.0), PGpoint(0.0, 1.0))) },
+    timees: Array<LocalTime> = Array(random.nextInt(3)) { LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()) },
+    timestampes: Array<LocalDateTime> = Array(random.nextInt(3)) { LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())) },
+    timestampzes: Array<Instant> = Array(random.nextInt(3)) { Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)) },
+    timezes: Array<OffsetTime> = Array(random.nextInt(3)) { LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)) },
+    uuides: Array<UUID> = Array(random.nextInt(3)) { RandomHelper.randomUUID(random) },
+    xmles: Array<Xml> = Array(random.nextInt(3)) { Xml("<root/>") },
     c: Connection
   ): PgtestRow = (PgtestRepoImpl()).insert(PgtestRow(bool = bool, box = box, bpchar = bpchar, bytea = bytea, char = char, circle = circle, date = date, float4 = float4, float8 = float8, hstore = hstore, inet = inet, int2 = int2, int2vector = int2vector, int4 = int4, int8 = int8, interval = interval, json = json, jsonb = jsonb, line = line, lseg = lseg, money = money, mydomain = mydomain, myenum = myenum, name = name, numeric = numeric, path = path, point = point, polygon = polygon, text = text, time = time, timestamp = timestamp, timestampz = timestampz, timez = timez, uuid = uuid, varchar = varchar, vector = vector, xml = xml, boxes = boxes, bpchares = bpchares, chares = chares, circlees = circlees, datees = datees, float4es = float4es, float8es = float8es, inetes = inetes, int2es = int2es, int2vectores = int2vectores, int4es = int4es, int8es = int8es, intervales = intervales, jsones = jsones, jsonbes = jsonbes, linees = linees, lseges = lseges, moneyes = moneyes, mydomaines = mydomaines, myenumes = myenumes, namees = namees, numerices = numerices, pathes = pathes, pointes = pointes, polygones = polygones, textes = textes, timees = timees, timestampes = timestampes, timestampzes = timestampzes, timezes = timezes, uuides = uuides, varchares = varchares, xmles = xmles), c)
 
   fun publicPgtestnull(
-    bool: Boolean?,
-    box: PGbox?,
-    bpchar: /* bpchar, max 3 chars */ String?,
-    bytea: ByteArray?,
-    char: /* bpchar, max 1 chars */ String?,
-    circle: PGcircle?,
-    date: LocalDate?,
-    float4: Float?,
-    float8: Double?,
-    hstore: Map<String, String>?,
-    inet: Inet?,
-    int2: Short?,
-    int2vector: Int2Vector?,
-    int4: Int?,
-    int8: Long?,
-    interval: PGInterval?,
-    json: Json?,
-    jsonb: Jsonb?,
-    line: PGline?,
-    lseg: PGlseg?,
-    money: Money?,
-    mydomain: Mydomain?,
-    myenum: Myenum?,
-    name: String?,
-    numeric: BigDecimal?,
-    path: PGpath?,
-    point: PGpoint?,
-    polygon: PGpolygon?,
-    text: String?,
-    time: LocalTime?,
-    timestamp: LocalDateTime?,
-    timestampz: Instant?,
-    timez: OffsetTime?,
-    uuid: UUID?,
-    varchar: String?,
-    vector: Vector?,
-    xml: Xml?,
-    boxes: Array<PGbox>?,
-    bpchares: Array</* bpchar */ String>?,
-    chares: Array</* bpchar */ String>?,
-    circlees: Array<PGcircle>?,
-    datees: Array<LocalDate>?,
-    float4es: Array<Float>?,
-    float8es: Array<Double>?,
-    inetes: Array<Inet>?,
-    int2es: Array<Short>?,
-    int2vectores: Array<Int2Vector>?,
-    int4es: Array<Int>?,
-    int8es: Array<Long>?,
-    intervales: Array<PGInterval>?,
-    jsones: Array<Json>?,
-    jsonbes: Array<Jsonb>?,
-    linees: Array<PGline>?,
-    lseges: Array<PGlseg>?,
-    moneyes: Array<Money>?,
-    mydomaines: Array<Mydomain>?,
-    myenumes: Array<Myenum>?,
-    namees: Array<String>?,
-    numerices: Array<BigDecimal>?,
-    pathes: Array<PGpath>?,
-    pointes: Array<PGpoint>?,
-    polygones: Array<PGpolygon>?,
-    textes: Array<String>?,
-    timees: Array<LocalTime>?,
-    timestampes: Array<LocalDateTime>?,
-    timestampzes: Array<Instant>?,
-    timezes: Array<OffsetTime>?,
-    uuides: Array<UUID>?,
-    varchares: Array<String>?,
-    xmles: Array<Xml>?,
+    bool: Boolean? = if (random.nextBoolean()) null else random.nextBoolean(),
+    box: PGbox? = if (random.nextBoolean()) null else PGbox(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    bpchar: /* bpchar, max 3 chars */ String? = null,
+    bytea: ByteArray? = null,
+    char: /* bpchar, max 1 chars */ String? = null,
+    circle: PGcircle? = if (random.nextBoolean()) null else PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    date: LocalDate? = if (random.nextBoolean()) null else LocalDate.ofEpochDay(random.nextInt(30000).toLong()),
+    float4: Float? = if (random.nextBoolean()) null else random.nextFloat(),
+    float8: Double? = if (random.nextBoolean()) null else random.nextDouble(),
+    hstore: Map<String, String>? = null,
+    inet: Inet? = if (random.nextBoolean()) null else Inet("${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}"),
+    int2: Short? = if (random.nextBoolean()) null else random.nextInt(Short.MAX_VALUE.toInt()).toShort(),
+    int2vector: Int2Vector? = if (random.nextBoolean()) null else Int2Vector("1 2 3"),
+    int4: Int? = if (random.nextBoolean()) null else random.nextInt(),
+    int8: Long? = if (random.nextBoolean()) null else random.nextLong(),
+    interval: PGInterval? = if (random.nextBoolean()) null else PGInterval(random.nextInt(10), random.nextInt(12), random.nextInt(28), random.nextInt(24), random.nextInt(60), random.nextDouble() * 60),
+    json: Json? = if (random.nextBoolean()) null else Json("{}"),
+    jsonb: Jsonb? = if (random.nextBoolean()) null else Jsonb("{}"),
+    line: PGline? = if (random.nextBoolean()) null else PGline(random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    lseg: PGlseg? = if (random.nextBoolean()) null else PGlseg(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble()),
+    money: Money? = if (random.nextBoolean()) null else Money(random.nextDouble()),
+    mydomain: Mydomain? = if (random.nextBoolean()) null else domainInsert.publicMydomain(random),
+    myenum: Myenum? = if (random.nextBoolean()) null else Myenum.entries[random.nextInt(Myenum.entries.size)],
+    name: String? = null,
+    numeric: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
+    path: PGpath? = if (random.nextBoolean()) null else PGpath(arrayOf<PGpoint>(PGpoint(random.nextDouble(), random.nextDouble())), false),
+    point: PGpoint? = if (random.nextBoolean()) null else PGpoint(random.nextDouble(), random.nextDouble()),
+    polygon: PGpolygon? = if (random.nextBoolean()) null else PGpolygon(arrayOf<PGpoint>(PGpoint(0.0, 0.0), PGpoint(1.0, 0.0), PGpoint(1.0, 1.0), PGpoint(0.0, 1.0))),
+    text: String? = null,
+    time: LocalTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    timestamp: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    timestampz: Instant? = if (random.nextBoolean()) null else Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timez: OffsetTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    uuid: UUID? = if (random.nextBoolean()) null else RandomHelper.randomUUID(random),
+    varchar: String? = null,
+    vector: Vector? = if (random.nextBoolean()) null else Vector("[1.0,2.0,3.0]"),
+    xml: Xml? = if (random.nextBoolean()) null else Xml("<root/>"),
+    boxes: Array<PGbox>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { PGbox(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble()) },
+    bpchares: Array</* bpchar */ String>? = null,
+    chares: Array</* bpchar */ String>? = null,
+    circlees: Array<PGcircle>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble()) },
+    datees: Array<LocalDate>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { LocalDate.ofEpochDay(random.nextInt(30000).toLong()) },
+    float4es: Array<Float>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { random.nextFloat() },
+    float8es: Array<Double>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { random.nextDouble() },
+    inetes: Array<Inet>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Inet("${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}") },
+    int2es: Array<Short>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { random.nextInt(Short.MAX_VALUE.toInt()).toShort() },
+    int2vectores: Array<Int2Vector>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Int2Vector("1 2 3") },
+    int4es: Array<Int>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { random.nextInt() },
+    int8es: Array<Long>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { random.nextLong() },
+    intervales: Array<PGInterval>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { PGInterval(random.nextInt(10), random.nextInt(12), random.nextInt(28), random.nextInt(24), random.nextInt(60), random.nextDouble() * 60) },
+    jsones: Array<Json>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Json("{}") },
+    jsonbes: Array<Jsonb>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Jsonb("{}") },
+    linees: Array<PGline>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { PGline(random.nextDouble(), random.nextDouble(), random.nextDouble()) },
+    lseges: Array<PGlseg>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { PGlseg(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble()) },
+    moneyes: Array<Money>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Money(random.nextDouble()) },
+    mydomaines: Array<Mydomain>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { domainInsert.publicMydomain(random) },
+    myenumes: Array<Myenum>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Myenum.entries[random.nextInt(Myenum.entries.size)] },
+    namees: Array<String>? = null,
+    numerices: Array<BigDecimal>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { BigDecimal.valueOf(random.nextDouble()) },
+    pathes: Array<PGpath>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { PGpath(arrayOf<PGpoint>(PGpoint(random.nextDouble(), random.nextDouble())), false) },
+    pointes: Array<PGpoint>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { PGpoint(random.nextDouble(), random.nextDouble()) },
+    polygones: Array<PGpolygon>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { PGpolygon(arrayOf<PGpoint>(PGpoint(0.0, 0.0), PGpoint(1.0, 0.0), PGpoint(1.0, 1.0), PGpoint(0.0, 1.0))) },
+    textes: Array<String>? = null,
+    timees: Array<LocalTime>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()) },
+    timestampes: Array<LocalDateTime>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())) },
+    timestampzes: Array<Instant>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)) },
+    timezes: Array<OffsetTime>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)) },
+    uuides: Array<UUID>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { RandomHelper.randomUUID(random) },
+    varchares: Array<String>? = null,
+    xmles: Array<Xml>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Xml("<root/>") },
     c: Connection
   ): PgtestnullRow = (PgtestnullRepoImpl()).insert(PgtestnullRow(bool = bool, box = box, bpchar = bpchar, bytea = bytea, char = char, circle = circle, date = date, float4 = float4, float8 = float8, hstore = hstore, inet = inet, int2 = int2, int2vector = int2vector, int4 = int4, int8 = int8, interval = interval, json = json, jsonb = jsonb, line = line, lseg = lseg, money = money, mydomain = mydomain, myenum = myenum, name = name, numeric = numeric, path = path, point = point, polygon = polygon, text = text, time = time, timestamp = timestamp, timestampz = timestampz, timez = timez, uuid = uuid, varchar = varchar, vector = vector, xml = xml, boxes = boxes, bpchares = bpchares, chares = chares, circlees = circlees, datees = datees, float4es = float4es, float8es = float8es, inetes = inetes, int2es = int2es, int2vectores = int2vectores, int4es = int4es, int8es = int8es, intervales = intervales, jsones = jsones, jsonbes = jsonbes, linees = linees, lseges = lseges, moneyes = moneyes, mydomaines = mydomaines, myenumes = myenumes, namees = namees, numerices = numerices, pathes = pathes, pointes = pointes, polygones = polygones, textes = textes, timees = timees, timestampes = timestampes, timestampzes = timestampzes, timezes = timezes, uuides = uuides, varchares = varchares, xmles = xmles), c)
 
@@ -544,14 +547,14 @@ data class TestInsert(
   ): TitleRow = (TitleRepoImpl()).insert(TitleRow(code = code), c)
 
   fun publicTitleDomain(
-    code: TitleDomainId,
+    code: TitleDomainId = TitleDomainId.apply(domainInsert.publicShortText(random)),
     c: Connection
   ): TitleDomainRow = (TitleDomainRepoImpl()).insert(TitleDomainRow(code = code), c)
 
   fun publicTitledperson(
     name: String,
-    titleShort: TitleDomainId,
-    title: TitleId,
+    titleShort: TitleDomainId = TitleDomainId.Known.entries[random.nextInt(4)],
+    title: TitleId = TitleId.Known.entries[random.nextInt(4)],
     c: Connection
   ): TitledpersonRow = (TitledpersonRepoImpl()).insert(TitledpersonRow(titleShort = titleShort, title = title, name = name), c)
 
@@ -559,37 +562,37 @@ data class TestInsert(
     name: String,
     email: Unknown,
     password: String,
-    userId: UsersId,
-    lastName: String?,
-    verifiedOn: Instant?,
-    createdAt: Defaulted<Instant>,
+    userId: UsersId = UsersId(RandomHelper.randomUUID(random)),
+    lastName: String? = null,
+    verifiedOn: Instant? = if (random.nextBoolean()) null else Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    createdAt: Defaulted<Instant> = UseDefault(),
     c: Connection
   ): UsersRow = (UsersRepoImpl()).insert(UsersRowUnsaved(userId = userId, name = name, lastName = lastName, email = email, password = password, verifiedOn = verifiedOn, createdAt = createdAt), c)
 
   fun salesSalesperson(
     businessentityid: BusinessentityId,
-    territoryid: SalesterritoryId?,
-    salesquota: BigDecimal?,
-    bonus: Defaulted<BigDecimal>,
-    commissionpct: Defaulted<BigDecimal>,
-    salesytd: Defaulted<BigDecimal>,
-    saleslastyear: Defaulted<BigDecimal>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    territoryid: SalesterritoryId? = null,
+    salesquota: BigDecimal? = null,
+    bonus: Defaulted<BigDecimal> = UseDefault(),
+    commissionpct: Defaulted<BigDecimal> = UseDefault(),
+    salesytd: Defaulted<BigDecimal> = UseDefault(),
+    saleslastyear: Defaulted<BigDecimal> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): SalespersonRow = (SalespersonRepoImpl()).insert(SalespersonRowUnsaved(businessentityid = businessentityid, territoryid = territoryid, salesquota = salesquota, bonus = bonus, commissionpct = commissionpct, salesytd = salesytd, saleslastyear = saleslastyear, rowguid = rowguid, modifieddate = modifieddate), c)
 
   fun salesSalesterritory(
     countryregioncode: CountryregionId,
     group: String,
-    name: Name,
-    territoryid: Defaulted<SalesterritoryId>,
-    salesytd: Defaulted<BigDecimal>,
-    saleslastyear: Defaulted<BigDecimal>,
-    costytd: Defaulted<BigDecimal>,
-    costlastyear: Defaulted<BigDecimal>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>,
+    name: Name = domainInsert.publicName(random),
+    territoryid: Defaulted<SalesterritoryId> = UseDefault(),
+    salesytd: Defaulted<BigDecimal> = UseDefault(),
+    saleslastyear: Defaulted<BigDecimal> = UseDefault(),
+    costytd: Defaulted<BigDecimal> = UseDefault(),
+    costlastyear: Defaulted<BigDecimal> = UseDefault(),
+    rowguid: Defaulted<UUID> = UseDefault(),
+    modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): SalesterritoryRow = (SalesterritoryRepoImpl()).insert(SalesterritoryRowUnsaved(name = name, countryregioncode = countryregioncode, group = group, territoryid = territoryid, salesytd = salesytd, saleslastyear = saleslastyear, costytd = costytd, costlastyear = costlastyear, rowguid = rowguid, modifieddate = modifieddate), c)
 }

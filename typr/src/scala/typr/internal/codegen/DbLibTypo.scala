@@ -1772,9 +1772,6 @@ class DbLibTypo(
   }
 
   override def testInsertMethod(x: ComputedTestInserts.InsertMethod): jvm.Method = {
-    val newRepo = jvm.New(x.table.names.RepoImplName, Nil)
-    val newRow = jvm.New(x.cls, x.values.map { case (p, expr) => jvm.Arg.Named(p, expr) })
-
     // Determine return type based on insert method's returning strategy
     // Oracle tables with STRUCT/ARRAY columns return ID only, others return full row
     val returnType: jvm.Type = x.table.repoMethods
@@ -1783,6 +1780,17 @@ class DbLibTypo(
         case RepoMethod.Insert(_, _, _, _, _, returningStrategy)           => returningStrategy.returnType
       })
       .getOrElse(x.table.names.RowName)
+
+    lang match {
+      case LangJava => testInsertMethodJava(x, returnType)
+      case _        => testInsertMethodDefault(x, returnType)
+    }
+  }
+
+  /** For Kotlin and Scala: use default parameters and return the row/id directly */
+  private def testInsertMethodDefault(x: ComputedTestInserts.InsertMethod, returnType: jvm.Type): jvm.Method = {
+    val newRepo = jvm.New(x.table.names.RepoImplName, Nil)
+    val newRow = jvm.New(x.cls, x.values.map { case (p, expr) => jvm.Arg.Named(p, expr) })
 
     jvm.Method(
       Nil,
@@ -1794,6 +1802,49 @@ class DbLibTypo(
       tpe = returnType,
       throws = Nil,
       body = jvm.Body.Expr(jvm.Call.withImplicits(code"($newRepo).insert", List(jvm.Arg.Pos(newRow)), List(jvm.Arg.Pos(c.name)))),
+      isOverride = false,
+      isDefault = false
+    )
+  }
+
+  /** For Java: use Inserter pattern since Java doesn't have default parameters */
+  private def testInsertMethodJava(x: ComputedTestInserts.InsertMethod, returnType: jvm.Type): jvm.Method = {
+    val Inserter = jvm.Type.Qualified("dev.typr.foundations.Inserter")
+    val inserterType = Inserter.of(x.cls, returnType)
+
+    // Split params into required and optional
+    val requiredParams = x.params.filter(_.default.isEmpty)
+
+    // Build the unsaved row with defaults for optional params
+    val rowArgs = x.values.map { case (p, expr) =>
+      val paramOpt = x.params.find(_.name == p)
+      val argExpr = paramOpt.flatMap(_.default) match {
+        case Some(defaultExpr) => defaultExpr // Use the default expression
+        case None              => expr // Use the param directly
+      }
+      jvm.Arg.Named(p, argExpr)
+    }
+    val newRow = jvm.New(x.cls, rowArgs)
+
+    // Create the insert function lambda: (row, c) -> new RepoImpl().insert(row, c)
+    val row = jvm.Ident("row")
+    val conn = jvm.Ident("c")
+    val newRepo = jvm.New(x.table.names.RepoImplName, Nil)
+    val insertLambda = jvm.Lambda(List(jvm.LambdaParam(row, Some(x.cls)), jvm.LambdaParam(conn, Some(TypesJava.Connection))), jvm.Body.Expr(code"($newRepo).insert($row, $conn)"))
+
+    // Inserter.of(row, insertFn)
+    val body = code"$Inserter.of($newRow, $insertLambda)"
+
+    jvm.Method(
+      Nil,
+      comments = jvm.Comments.Empty,
+      tparams = Nil,
+      name = x.name,
+      params = requiredParams,
+      implicitParams = Nil,
+      tpe = inserterType,
+      throws = Nil,
+      body = jvm.Body.Expr(body),
       isOverride = false,
       isDefault = false
     )

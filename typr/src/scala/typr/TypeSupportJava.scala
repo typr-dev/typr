@@ -50,12 +50,17 @@ object TypeSupportJava extends TypeSupport {
     def nextBytes(random: jvm.Code, bytes: jvm.Code): jvm.Code = code"$random.nextBytes($bytes)"
     def alphanumeric(random: jvm.Code, length: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.alphanumeric($random, $length)"
     def nextPrintableChar(random: jvm.Code): jvm.Code = code"(char)(33 + $random.nextInt(94))"
+    def randomUUID(random: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.randomUUID($random)"
   }
 
   override object ListType extends ListSupport {
     val tpe: jvm.Type = TypesJava.List
 
     def create(values: List[jvm.Code]): jvm.Code = code"${TypesJava.List}.of(${values.mkCode(", ")})"
+
+    def index(list: jvm.Code, idx: jvm.Code): jvm.Code = code"$list.get($idx)"
+
+    def size(list: jvm.Code): jvm.Code = code"$list.size()"
 
     def findFirst(collection: jvm.Code, predicate: jvm.Code): jvm.Code =
       code"$collection.stream().filter($predicate).findFirst()"

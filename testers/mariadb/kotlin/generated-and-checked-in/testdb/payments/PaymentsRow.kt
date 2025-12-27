@@ -72,14 +72,14 @@ data class PaymentsRow(
   fun id(): PaymentsId = paymentId
 
   fun toUnsavedRow(
-    transactionId: Defaulted<String?>,
-    currencyCode: Defaulted<String>,
-    status: Defaulted<String>,
-    processorResponse: Defaulted<String?>,
-    errorMessage: Defaulted<String?>,
-    ipAddress: Defaulted<Inet6?>,
-    createdAt: Defaulted<LocalDateTime>,
-    processedAt: Defaulted<LocalDateTime?>
+    transactionId: Defaulted<String?> = Defaulted.Provided(this.transactionId),
+    currencyCode: Defaulted<String> = Defaulted.Provided(this.currencyCode),
+    status: Defaulted<String> = Defaulted.Provided(this.status),
+    processorResponse: Defaulted<String?> = Defaulted.Provided(this.processorResponse),
+    errorMessage: Defaulted<String?> = Defaulted.Provided(this.errorMessage),
+    ipAddress: Defaulted<Inet6?> = Defaulted.Provided(this.ipAddress),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt),
+    processedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.processedAt)
   ): PaymentsRowUnsaved = PaymentsRowUnsaved(orderId, methodId, amount, transactionId, currencyCode, status, processorResponse, errorMessage, ipAddress, createdAt, processedAt)
 
   companion object {

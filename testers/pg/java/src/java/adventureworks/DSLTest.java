@@ -2,7 +2,6 @@ package adventureworks;
 
 import static org.junit.Assert.*;
 
-import adventureworks.customtypes.Defaulted;
 import adventureworks.humanresources.employee.EmployeeRepoImpl;
 import adventureworks.person.businessentity.BusinessentityRepoImpl;
 import adventureworks.person.emailaddress.EmailaddressRepoImpl;
@@ -34,73 +33,34 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity
-          var businessentityRow =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var businessentityRow = testInsert.personBusinessentity().insert(c);
 
           // Create person
           var personRow =
-              testInsert.personPerson(
-                  businessentityRow.businessentityid(),
-                  "EM", // persontype
-                  new FirstName("a"),
-                  Optional.empty(), // title
-                  Optional.empty(), // middlename
-                  new Name("lastname"),
-                  Optional.empty(), // suffix
-                  Optional.empty(), // additionalcontactinfo
-                  Optional.empty(), // demographics
-                  new Defaulted.UseDefault<>(), // namestyle
-                  new Defaulted.UseDefault<>(), // emailpromotion
-                  new Defaulted.UseDefault<>(), // rowguid
-                  new Defaulted.UseDefault<>(), // modifieddate
-                  c);
+              testInsert
+                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("a"))
+                  .insert(c);
 
           // Create emailaddress
-          testInsert.personEmailaddress(
-              personRow.businessentityid(),
-              Optional.of("a@b.c"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+          testInsert
+              .personEmailaddress(personRow.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("a@b.c")))
+              .insert(c);
 
           // Create employee
           var employeeRow =
-              testInsert.humanresourcesEmployee(
-                  personRow.businessentityid(),
-                  LocalDate.of(1998, 1, 1),
-                  "M", // maritalstatus
-                  "M", // gender
-                  LocalDate.of(1997, 1, 1),
-                  "12345", // nationalidnumber
-                  "adventure-works\\a", // loginid
-                  "Test Job", // jobtitle
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .humanresourcesEmployee(
+                      personRow.businessentityid(),
+                      LocalDate.of(1998, 1, 1),
+                      "M",
+                      "M",
+                      LocalDate.of(1997, 1, 1))
+                  .insert(c);
 
           // Create salesperson
           var salespersonRow =
-              testInsert.salesSalesperson(
-                  employeeRow.businessentityid(),
-                  Optional.empty(), // territoryid
-                  Optional.empty(), // salesquota
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert.salesSalesperson(employeeRow.businessentityid()).insert(c);
 
           // Test join chain: salesperson -> employee -> person -> businessentity, then join with
           // email
@@ -150,30 +110,14 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity
-          var businessentityRow =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var businessentityRow = testInsert.personBusinessentity().insert(c);
 
           // Create person
           var personRow =
-              testInsert.personPerson(
-                  businessentityRow.businessentityid(),
-                  "EM",
-                  new FirstName("John"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Doe"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("John"))
+                  .with(row -> row.withLastname(new Name("Doe")))
+                  .insert(c);
 
           // Test map operation - project only firstname and lastname
           var projected =
@@ -201,39 +145,20 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity
-          var businessentityRow =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var businessentityRow = testInsert.personBusinessentity().insert(c);
 
           // Create person
           var personRow =
-              testInsert.personPerson(
-                  businessentityRow.businessentityid(),
-                  "EM",
-                  new FirstName("Jane"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Smith"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("Jane"))
+                  .with(row -> row.withLastname(new Name("Smith")))
+                  .insert(c);
 
           // Create emailaddress
-          testInsert.personEmailaddress(
-              personRow.businessentityid(),
-              Optional.of("jane@example.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+          testInsert
+              .personEmailaddress(personRow.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("jane@example.com")))
+              .insert(c);
 
           // Join person with email, then project
           var projected =
@@ -281,46 +206,24 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity
-          var businessentityRow =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var businessentityRow = testInsert.personBusinessentity().insert(c);
 
           // Create person
           var personRow =
-              testInsert.personPerson(
-                  businessentityRow.businessentityid(),
-                  "EM",
-                  new FirstName("Bob"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Wilson"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("Bob"))
+                  .with(row -> row.withLastname(new Name("Wilson")))
+                  .insert(c);
 
           // Create multiple email addresses for the same person
-          testInsert.personEmailaddress(
-              personRow.businessentityid(),
-              Optional.of("bob@work.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
-          testInsert.personEmailaddress(
-              personRow.businessentityid(),
-              Optional.of("bob@home.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+          testInsert
+              .personEmailaddress(personRow.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("bob@work.com")))
+              .insert(c);
+          testInsert
+              .personEmailaddress(personRow.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("bob@home.com")))
+              .insert(c);
 
           // Test multisetOn - person with their emails as JSON array
           var multiset =
@@ -362,30 +265,14 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity
-          var businessentityRow =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var businessentityRow = testInsert.personBusinessentity().insert(c);
 
           // Create person with NO email addresses
           var personRow =
-              testInsert.personPerson(
-                  businessentityRow.businessentityid(),
-                  "EM",
-                  new FirstName("NoEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(
+                      businessentityRow.businessentityid(), "EM", new FirstName("NoEmail"))
+                  .insert(c);
 
           // Test multisetOn with no children
           var multiset =
@@ -422,46 +309,24 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity
-          var businessentityRow =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var businessentityRow = testInsert.personBusinessentity().insert(c);
 
           // Create person
           var personRow =
-              testInsert.personPerson(
-                  businessentityRow.businessentityid(),
-                  "EM",
-                  new FirstName("Alice"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Johnson"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("Alice"))
+                  .with(row -> row.withLastname(new Name("Johnson")))
+                  .insert(c);
 
           // Create multiple email addresses
-          testInsert.personEmailaddress(
-              personRow.businessentityid(),
-              Optional.of("alice@work.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
-          testInsert.personEmailaddress(
-              personRow.businessentityid(),
-              Optional.of("alice@home.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+          testInsert
+              .personEmailaddress(personRow.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("alice@work.com")))
+              .insert(c);
+          testInsert
+              .personEmailaddress(personRow.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("alice@home.com")))
+              .insert(c);
 
           // Project person to nested tuple first, then do multisetOn
           // Parent projection: Tuple2<Tuple2<FirstName, Name>, BusinessentityId>
@@ -515,59 +380,22 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity and person WITH email
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("HasEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
-          testInsert.personEmailaddress(
-              person1.businessentityid(),
-              Optional.of("has@email.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("HasEmail"))
+                  .insert(c);
+          testInsert
+              .personEmailaddress(person1.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("has@email.com")))
+              .insert(c);
 
           // Create businessentity and person WITHOUT email
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("NoEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoEmail"))
+                  .insert(c);
 
           // Find persons whose businessentityid is IN the email table
           var subquery = emailaddressRepoImpl.select().map(e -> e.businessentityid());
@@ -602,59 +430,22 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity and person WITH email
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("HasEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
-          testInsert.personEmailaddress(
-              person1.businessentityid(),
-              Optional.of("exists@email.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("HasEmail"))
+                  .insert(c);
+          testInsert
+              .personEmailaddress(person1.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("exists@email.com")))
+              .insert(c);
 
           // Create businessentity and person WITHOUT email
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("NoEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoEmail"))
+                  .insert(c);
 
           // Find persons where EXISTS (select from email where email.businessentityid =
           // person.businessentityid)
@@ -695,59 +486,22 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create businessentity and person WITH email
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("HasEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
-          testInsert.personEmailaddress(
-              person1.businessentityid(),
-              Optional.of("notexists@email.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("HasEmail"))
+                  .insert(c);
+          testInsert
+              .personEmailaddress(person1.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("notexists@email.com")))
+              .insert(c);
 
           // Create businessentity and person WITHOUT email
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("NoEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoEmail"))
+                  .insert(c);
 
           // Find persons who DON'T have email
           var subqueryForPerson2 =
@@ -779,66 +533,26 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create person with work email
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("WorkEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("User"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
-          testInsert.personEmailaddress(
-              person1.businessentityid(),
-              Optional.of("work@company.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("WorkEmail"))
+                  .insert(c);
+          testInsert
+              .personEmailaddress(person1.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("work@company.com")))
+              .insert(c);
 
           // Create person with personal email
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("PersonalEmail"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("User"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
-          testInsert.personEmailaddress(
-              person2.businessentityid(),
-              Optional.of("me@gmail.com"),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM", new FirstName("PersonalEmail"))
+                  .insert(c);
+          testInsert
+              .personEmailaddress(person2.businessentityid())
+              .with(row -> row.withEmailaddress(Optional.of("me@gmail.com")))
+              .insert(c);
 
           // Find person1 who has a work email (containing "company")
           // Uses a filtered subquery to demonstrate EXISTS with WHERE
@@ -869,69 +583,27 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create person who IS an employee
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var employee =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("Employee"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Worker"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
-          testInsert.humanresourcesEmployee(
-              employee.businessentityid(),
-              java.time.LocalDate.of(1990, 1, 1),
-              "S",
-              "M",
-              java.time.LocalDate.of(2020, 1, 1),
-              "111111",
-              "adventure-works\\emp1",
-              "Developer",
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("Employee"))
+                  .insert(c);
+          testInsert
+              .humanresourcesEmployee(
+                  employee.businessentityid(),
+                  java.time.LocalDate.of(1990, 1, 1),
+                  "S",
+                  "M",
+                  java.time.LocalDate.of(2020, 1, 1))
+              .with(row -> row.withJobtitle("Developer"))
+              .insert(c);
 
           // Create person who is NOT an employee
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var nonEmployee =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "SC",
-                  new FirstName("Customer"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Only"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "SC", new FirstName("Customer"))
+                  .insert(c);
 
           // Left join person with employee - should return both persons
           var query =
@@ -973,74 +645,21 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create multiple persons
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("Alice"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Anderson"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("Alice"))
+                  .insert(c);
 
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("Bob"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Brown"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert.personPerson(be2.businessentityid(), "EM", new FirstName("Bob")).insert(c);
 
-          var be3 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be3 = testInsert.personBusinessentity().insert(c);
           var person3 =
-              testInsert.personPerson(
-                  be3.businessentityid(),
-                  "EM",
-                  new FirstName("Charlie"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Clark"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be3.businessentityid(), "EM", new FirstName("Charlie"))
+                  .insert(c);
 
           // Test greaterThan - find persons with id > person1's id
           var gtQuery =
@@ -1092,74 +711,23 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create multiple persons
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("InTest1"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("InTest1"))
+                  .insert(c);
 
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("InTest2"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM", new FirstName("InTest2"))
+                  .insert(c);
 
-          var be3 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be3 = testInsert.personBusinessentity().insert(c);
           var person3 =
-              testInsert.personPerson(
-                  be3.businessentityid(),
-                  "EM",
-                  new FirstName("InTest3"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be3.businessentityid(), "EM", new FirstName("InTest3"))
+                  .insert(c);
 
           // Use IN to find person1 and person3 (not person2)
           var query =
@@ -1188,52 +756,20 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create person with middle name
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var personWithMiddle =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("WithMiddle"),
-                  Optional.empty(),
-                  Optional.of(new Name("MiddleName")),
-                  new Name("Last"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("WithMiddle"))
+                  .with(row -> row.withMiddlename(Optional.of(new Name("MiddleName"))))
+                  .insert(c);
 
           // Create person without middle name
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var personWithoutMiddle =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("NoMiddle"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Last"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoMiddle"))
+                  .with(row -> row.withMiddlename(Optional.empty()))
+                  .insert(c);
 
           // Query and verify persons were created correctly
           var query =
@@ -1270,52 +806,20 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create person with title
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var personWithTitle =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("HasTitle"),
-                  Optional.of("Mr."),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("HasTitle"))
+                  .with(row -> row.withTitle(Optional.of("Mr.")))
+                  .insert(c);
 
           // Create person without title
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var personWithoutTitle =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("NoTitle"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoTitle"))
+                  .with(row -> row.withTitle(Optional.empty()))
+                  .insert(c);
 
           // Find persons with NULL title
           var nullQuery =
@@ -1365,51 +869,16 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create test data
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("Alice"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Anderson"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("Alice"))
+                  .with(row -> row.withLastname(new Name("Anderson")))
+                  .insert(c);
 
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "SC",
-                  new FirstName("Bob"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Brown"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert.personPerson(be2.businessentityid(), "SC", new FirstName("Bob")).insert(c);
 
           // Test SqlExpr.all() - all conditions must be true
           var allQuery =
@@ -1461,74 +930,26 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create test data with same last name but different first names
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("Zoe"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Smith"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("Zoe"))
+                  .with(row -> row.withLastname(new Name("Smith")))
+                  .insert(c);
 
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "EM",
-                  new FirstName("Alice"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Smith"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM", new FirstName("Alice"))
+                  .with(row -> row.withLastname(new Name("Smith")))
+                  .insert(c);
 
-          var be3 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be3 = testInsert.personBusinessentity().insert(c);
           var person3 =
-              testInsert.personPerson(
-                  be3.businessentityid(),
-                  "EM",
-                  new FirstName("Bob"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Jones"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be3.businessentityid(), "EM", new FirstName("Bob"))
+                  .with(row -> row.withLastname(new Name("Jones")))
+                  .insert(c);
 
           // Order by lastname ASC, then firstname DESC
           var query =
@@ -1575,28 +996,12 @@ public class DSLTest extends SnapshotTest {
           // Create 5 persons
           var persons = new java.util.ArrayList<adventureworks.person.person.PersonRow>();
           for (int i = 0; i < 5; i++) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
+            var be = testInsert.personBusinessentity().insert(c);
             var person =
-                testInsert.personPerson(
-                    be.businessentityid(),
-                    "EM",
-                    new FirstName("Person" + i),
-                    Optional.empty(),
-                    Optional.empty(),
-                    new Name("Test"),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
+                testInsert
+                    .personPerson(be.businessentityid(), "EM", new FirstName("Person" + i))
+                    .with(row -> row.withLastname(new Name("Test")))
+                    .insert(c);
             persons.add(person);
           }
 
@@ -1651,31 +1056,13 @@ public class DSLTest extends SnapshotTest {
         c -> {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
-          // Create some test persons with unique persontype for isolation
-          var uniqueType = "C" + System.currentTimeMillis() % 1000; // Unique type for this test
-
+          // Create some test persons with unique lastname for isolation
           for (int i = 0; i < 3; i++) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
-            testInsert.personPerson(
-                be.businessentityid(),
-                "EM",
-                new FirstName("Count" + i),
-                Optional.empty(),
-                Optional.empty(),
-                new Name("TestCount"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                c);
+            var be = testInsert.personBusinessentity().insert(c);
+            testInsert
+                .personPerson(be.businessentityid(), "EM", new FirstName("Count" + i))
+                .with(row -> row.withLastname(new Name("TestCount")))
+                .insert(c);
           }
 
           // Count persons with specific lastname
@@ -1705,52 +1092,19 @@ public class DSLTest extends SnapshotTest {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
           // Create employee (person with EM type)
-          var be1 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be1 = testInsert.personBusinessentity().insert(c);
           var employee =
-              testInsert.personPerson(
-                  be1.businessentityid(),
-                  "EM",
-                  new FirstName("Employee"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Worker"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be1.businessentityid(), "EM", new FirstName("Employee"))
+                  .with(row -> row.withLastname(new Name("Worker")))
+                  .insert(c);
 
           // Create non-employee (person with SC type)
-          var be2 =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be2 = testInsert.personBusinessentity().insert(c);
           var customer =
-              testInsert.personPerson(
-                  be2.businessentityid(),
-                  "SC",
-                  new FirstName("Customer"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Only"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "SC", new FirstName("Customer"))
+                  .insert(c);
 
           // Query with includeIf - only include lastname for employees
           var query =
@@ -1794,28 +1148,12 @@ public class DSLTest extends SnapshotTest {
         c -> {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
-          var be =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be = testInsert.personBusinessentity().insert(c);
           var person =
-              testInsert.personPerson(
-                  be.businessentityid(),
-                  "EM",
-                  new FirstName("Test"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be.businessentityid(), "EM", new FirstName("Test"))
+                  .with(row -> row.withLastname(new Name("Person")))
+                  .insert(c);
 
           // includeIf with constant true - should always include
           var query =
@@ -1844,28 +1182,12 @@ public class DSLTest extends SnapshotTest {
         c -> {
           var testInsert = new TestInsert(new java.util.Random(0), new DomainInsertImpl());
 
-          var be =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+          var be = testInsert.personBusinessentity().insert(c);
           var person =
-              testInsert.personPerson(
-                  be.businessentityid(),
-                  "EM",
-                  new FirstName("Test"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Name("Person"),
-                  Optional.empty(),
-                  Optional.empty(),
-                  Optional.empty(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .personPerson(be.businessentityid(), "EM", new FirstName("Test"))
+                  .with(row -> row.withLastname(new Name("Person")))
+                  .insert(c);
 
           // includeIf with constant false - should never include
           var query =
@@ -1896,50 +1218,18 @@ public class DSLTest extends SnapshotTest {
 
           // Create multiple persons with different types
           for (int i = 0; i < 3; i++) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
-            testInsert.personPerson(
-                be.businessentityid(),
-                "EM",
-                new FirstName("Employee" + i),
-                Optional.empty(),
-                Optional.empty(),
-                new Name("GroupTest"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                c);
+            var be = testInsert.personBusinessentity().insert(c);
+            testInsert
+                .personPerson(be.businessentityid(), "EM", new FirstName("Employee" + i))
+                .with(row -> row.withLastname(new Name("GroupTest")))
+                .insert(c);
           }
           for (int i = 0; i < 2; i++) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
-            testInsert.personPerson(
-                be.businessentityid(),
-                "SC",
-                new FirstName("Customer" + i),
-                Optional.empty(),
-                Optional.empty(),
-                new Name("GroupTest"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                c);
+            var be = testInsert.personBusinessentity().insert(c);
+            testInsert
+                .personPerson(be.businessentityid(), "SC", new FirstName("Customer" + i))
+                .with(row -> row.withLastname(new Name("GroupTest")))
+                .insert(c);
           }
 
           // Group by persontype and count
@@ -1977,49 +1267,17 @@ public class DSLTest extends SnapshotTest {
 
           // Create persons - 3 EM, 1 SC, so only EM should pass HAVING count > 1
           for (int i = 0; i < 3; i++) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
-            testInsert.personPerson(
-                be.businessentityid(),
-                "EM",
-                new FirstName("Employee" + i),
-                Optional.empty(),
-                Optional.empty(),
-                new Name("HavingTest"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                c);
+            var be = testInsert.personBusinessentity().insert(c);
+            testInsert
+                .personPerson(be.businessentityid(), "EM", new FirstName("Employee" + i))
+                .with(row -> row.withLastname(new Name("HavingTest")))
+                .insert(c);
           }
-          var be =
-              testInsert.personBusinessentity(
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
-          testInsert.personPerson(
-              be.businessentityid(),
-              "SC",
-              new FirstName("Customer"),
-              Optional.empty(),
-              Optional.empty(),
-              new Name("HavingTest"),
-              Optional.empty(),
-              Optional.empty(),
-              Optional.empty(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              new Defaulted.UseDefault<>(),
-              c);
+          var be = testInsert.personBusinessentity().insert(c);
+          testInsert
+              .personPerson(be.businessentityid(), "SC", new FirstName("Customer"))
+              .with(row -> row.withLastname(new Name("HavingTest")))
+              .insert(c);
 
           // Group by persontype with HAVING count > 1
           var query =
@@ -2142,52 +1400,20 @@ public class DSLTest extends SnapshotTest {
           // Create persons with different first names per type
           String[] emNames = {"Alice", "Bob", "Charlie"}; // min=Alice, max=Charlie
           for (String name : emNames) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
-            testInsert.personPerson(
-                be.businessentityid(),
-                "EM",
-                new FirstName(name),
-                Optional.empty(),
-                Optional.empty(),
-                new Name("MinMaxTest"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                c);
+            var be = testInsert.personBusinessentity().insert(c);
+            testInsert
+                .personPerson(be.businessentityid(), "EM", new FirstName(name))
+                .with(row -> row.withLastname(new Name("MinMaxTest")))
+                .insert(c);
           }
 
           String[] scNames = {"Xavier", "Yolanda"}; // min=Xavier, max=Yolanda
           for (String name : scNames) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
-            testInsert.personPerson(
-                be.businessentityid(),
-                "SC",
-                new FirstName(name),
-                Optional.empty(),
-                Optional.empty(),
-                new Name("MinMaxTest"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                c);
+            var be = testInsert.personBusinessentity().insert(c);
+            testInsert
+                .personPerson(be.businessentityid(), "SC", new FirstName(name))
+                .with(row -> row.withLastname(new Name("MinMaxTest")))
+                .insert(c);
           }
 
           // Group by persontype, get min and max firstname
@@ -2234,66 +1460,36 @@ public class DSLTest extends SnapshotTest {
 
           // Create departments for testing
           var dept1 =
-              testInsert.humanresourcesDepartment(
-                  new Name("Engineering"),
-                  new Name("Research and Development"),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .humanresourcesDepartment()
+                  .with(
+                      row ->
+                          row.withName(new Name("Engineering"))
+                              .withGroupname(new Name("Research and Development")))
+                  .insert(c);
           var dept2 =
-              testInsert.humanresourcesDepartment(
-                  new Name("Sales"),
-                  new Name("Sales and Marketing"),
-                  new Defaulted.UseDefault<>(),
-                  new Defaulted.UseDefault<>(),
-                  c);
+              testInsert
+                  .humanresourcesDepartment()
+                  .with(
+                      row ->
+                          row.withName(new Name("Sales"))
+                              .withGroupname(new Name("Sales and Marketing")))
+                  .insert(c);
 
           // Create employees with different person types for grouping
           for (int i = 0; i < 3; i++) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
-            testInsert.personPerson(
-                be.businessentityid(),
-                "EM",
-                new FirstName("Emp" + i),
-                Optional.empty(),
-                Optional.empty(),
-                new Name("JoinTest"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                c);
+            var be = testInsert.personBusinessentity().insert(c);
+            testInsert
+                .personPerson(be.businessentityid(), "EM", new FirstName("Emp" + i))
+                .with(row -> row.withLastname(new Name("JoinTest")))
+                .insert(c);
           }
           for (int i = 0; i < 2; i++) {
-            var be =
-                testInsert.personBusinessentity(
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    new Defaulted.UseDefault<>(),
-                    c);
-            testInsert.personPerson(
-                be.businessentityid(),
-                "SC",
-                new FirstName("Cust" + i),
-                Optional.empty(),
-                Optional.empty(),
-                new Name("JoinTest"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                new Defaulted.UseDefault<>(),
-                c);
+            var be = testInsert.personBusinessentity().insert(c);
+            testInsert
+                .personPerson(be.businessentityid(), "SC", new FirstName("Cust" + i))
+                .with(row -> row.withLastname(new Name("JoinTest")))
+                .insert(c);
           }
 
           // Create a grouped query that counts persons by type

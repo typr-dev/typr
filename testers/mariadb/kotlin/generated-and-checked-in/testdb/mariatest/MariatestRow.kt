@@ -117,8 +117,8 @@ data class MariatestRow(
   fun id(): MariatestId = intCol
 
   fun toUnsavedRow(
-    timestampCol: Defaulted<LocalDateTime>,
-    timestampFspCol: Defaulted<LocalDateTime>
+    timestampCol: Defaulted<LocalDateTime> = Defaulted.Provided(this.timestampCol),
+    timestampFspCol: Defaulted<LocalDateTime> = Defaulted.Provided(this.timestampFspCol)
   ): MariatestRowUnsaved = MariatestRowUnsaved(tinyintCol, smallintCol, mediumintCol, intCol, bigintCol, tinyintUCol, smallintUCol, mediumintUCol, intUCol, bigintUCol, decimalCol, numericCol, floatCol, doubleCol, boolCol, bitCol, bit1Col, charCol, varcharCol, tinytextCol, textCol, mediumtextCol, longtextCol, binaryCol, varbinaryCol, tinyblobCol, blobCol, mediumblobCol, longblobCol, dateCol, timeCol, timeFspCol, datetimeCol, datetimeFspCol, yearCol, enumCol, setCol, jsonCol, inet4Col, inet6Col, timestampCol, timestampFspCol)
 
   companion object {

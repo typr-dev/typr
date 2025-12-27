@@ -96,20 +96,20 @@ data class ReviewsRow(
   fun id(): ReviewsId = reviewId
 
   fun toUnsavedRow(
-    orderItemId: Defaulted<OrderItemsId?>,
-    title: Defaulted<String?>,
-    content: Defaulted<String?>,
-    pros: Defaulted<String?>,
-    cons: Defaulted<String?>,
-    images: Defaulted<String?>,
-    isVerifiedPurchase: Defaulted<Boolean>,
-    isApproved: Defaulted<Boolean>,
-    helpfulVotes: Defaulted<Long>,
-    unhelpfulVotes: Defaulted<Long>,
-    adminResponse: Defaulted<String?>,
-    respondedAt: Defaulted<LocalDateTime?>,
-    createdAt: Defaulted<LocalDateTime>,
-    updatedAt: Defaulted<LocalDateTime>
+    orderItemId: Defaulted<OrderItemsId?> = Defaulted.Provided(this.orderItemId),
+    title: Defaulted<String?> = Defaulted.Provided(this.title),
+    content: Defaulted<String?> = Defaulted.Provided(this.content),
+    pros: Defaulted<String?> = Defaulted.Provided(this.pros),
+    cons: Defaulted<String?> = Defaulted.Provided(this.cons),
+    images: Defaulted<String?> = Defaulted.Provided(this.images),
+    isVerifiedPurchase: Defaulted<Boolean> = Defaulted.Provided(this.isVerifiedPurchase),
+    isApproved: Defaulted<Boolean> = Defaulted.Provided(this.isApproved),
+    helpfulVotes: Defaulted<Long> = Defaulted.Provided(this.helpfulVotes),
+    unhelpfulVotes: Defaulted<Long> = Defaulted.Provided(this.unhelpfulVotes),
+    adminResponse: Defaulted<String?> = Defaulted.Provided(this.adminResponse),
+    respondedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.respondedAt),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt),
+    updatedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.updatedAt)
   ): ReviewsRowUnsaved = ReviewsRowUnsaved(productId, customerId, rating, orderItemId, title, content, pros, cons, images, isVerifiedPurchase, isApproved, helpfulVotes, unhelpfulVotes, adminResponse, respondedAt, createdAt, updatedAt)
 
   companion object {

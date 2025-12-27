@@ -64,10 +64,10 @@ data class PersonRow(
   fun id(): BusinessentityId = businessentityid
 
   fun toUnsavedRow(
-    namestyle: Defaulted<NameStyle>,
-    emailpromotion: Defaulted<Int>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    namestyle: Defaulted<NameStyle> = Defaulted.Provided(this.namestyle),
+    emailpromotion: Defaulted<Int> = Defaulted.Provided(this.emailpromotion),
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): PersonRowUnsaved = PersonRowUnsaved(businessentityid, persontype, title, firstname, middlename, lastname, suffix, additionalcontactinfo, demographics, namestyle, emailpromotion, rowguid, modifieddate)
 
   companion object {

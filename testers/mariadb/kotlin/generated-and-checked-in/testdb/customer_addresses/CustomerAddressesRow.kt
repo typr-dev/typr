@@ -68,12 +68,12 @@ data class CustomerAddressesRow(
   fun id(): CustomerAddressesId = addressId
 
   fun toUnsavedRow(
-    isDefault: Defaulted<Boolean>,
-    streetLine2: Defaulted<String?>,
-    stateProvince: Defaulted<String?>,
-    location: Defaulted<Point?>,
-    deliveryNotes: Defaulted<String?>,
-    createdAt: Defaulted<LocalDateTime>
+    isDefault: Defaulted<Boolean> = Defaulted.Provided(this.isDefault),
+    streetLine2: Defaulted<String?> = Defaulted.Provided(this.streetLine2),
+    stateProvince: Defaulted<String?> = Defaulted.Provided(this.stateProvince),
+    location: Defaulted<Point?> = Defaulted.Provided(this.location),
+    deliveryNotes: Defaulted<String?> = Defaulted.Provided(this.deliveryNotes),
+    createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt)
   ): CustomerAddressesRowUnsaved = CustomerAddressesRowUnsaved(customerId, addressType, recipientName, streetLine1, city, postalCode, countryCode, isDefault, streetLine2, stateProvince, location, deliveryNotes, createdAt)
 
   companion object {

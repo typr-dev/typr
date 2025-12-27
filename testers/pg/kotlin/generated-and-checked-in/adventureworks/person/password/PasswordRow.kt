@@ -33,8 +33,8 @@ data class PasswordRow(
   fun id(): BusinessentityId = businessentityid
 
   fun toUnsavedRow(
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): PasswordRowUnsaved = PasswordRowUnsaved(businessentityid, passwordhash, passwordsalt, rowguid, modifieddate)
 
   companion object {

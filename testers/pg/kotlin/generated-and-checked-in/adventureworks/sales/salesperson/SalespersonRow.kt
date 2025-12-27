@@ -62,12 +62,12 @@ data class SalespersonRow(
   fun id(): BusinessentityId = businessentityid
 
   fun toUnsavedRow(
-    bonus: Defaulted<BigDecimal>,
-    commissionpct: Defaulted<BigDecimal>,
-    salesytd: Defaulted<BigDecimal>,
-    saleslastyear: Defaulted<BigDecimal>,
-    rowguid: Defaulted<UUID>,
-    modifieddate: Defaulted<LocalDateTime>
+    bonus: Defaulted<BigDecimal> = Defaulted.Provided(this.bonus),
+    commissionpct: Defaulted<BigDecimal> = Defaulted.Provided(this.commissionpct),
+    salesytd: Defaulted<BigDecimal> = Defaulted.Provided(this.salesytd),
+    saleslastyear: Defaulted<BigDecimal> = Defaulted.Provided(this.saleslastyear),
+    rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
+    modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)
   ): SalespersonRowUnsaved = SalespersonRowUnsaved(businessentityid, territoryid, salesquota, bonus, commissionpct, salesytd, saleslastyear, rowguid, modifieddate)
 
   companion object {

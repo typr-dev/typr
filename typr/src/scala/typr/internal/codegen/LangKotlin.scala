@@ -94,11 +94,22 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
   override val ByteArrayType: jvm.Type = TypesKotlin.ByteArray
 
   // Kotlin uses MAX_VALUE for max value constants
-  override def maxValue(tpe: jvm.Type): jvm.Code = code"$tpe.MAX_VALUE"
+  // Byte/Short need .toInt() for use with nextInt(Int) bounds
+  override def maxValue(tpe: jvm.Type): jvm.Code = tpe match {
+    case TypesKotlin.Byte | TypesKotlin.Short => code"$tpe.MAX_VALUE.toInt()"
+    case _                                    => code"$tpe.MAX_VALUE"
+  }
 
   // Kotlin: Array(size) { factory }
   override def arrayFill(size: jvm.Code, factory: jvm.Code, elementType: jvm.Type): jvm.Code =
     code"Array($size) { $factory }"
+
+  // Kotlin uses primitive arrays like ShortArray, FloatArray for performance
+  override def shortArrayFill(size: jvm.Code, factory: jvm.Code): jvm.Code =
+    code"ShortArray($size) { $factory }"
+
+  override def floatArrayFill(size: jvm.Code, factory: jvm.Code): jvm.Code =
+    code"FloatArray($size) { $factory }"
 
   // Kotlin annotations use KClass (::class), not Class (::class.java)
   override def annotationClassRef(tpe: jvm.Type): jvm.Code = {
@@ -129,6 +140,14 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
 
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"($left != $right)"
+
+  override def toShort(expr: jvm.Code): jvm.Code = code"$expr.toShort()"
+
+  override def toByte(expr: jvm.Code): jvm.Code = code"$expr.toByte()"
+
+  override def toLong(expr: jvm.Code): jvm.Code = code"$expr.toLong()"
+
+  override def enumAll(enumType: jvm.Type): jvm.Code = code"$enumType.entries"
 
   override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
     code"($expr as $targetType)"
@@ -255,8 +274,10 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
         // Kotlin cast: expr as Type
         code"($expr as $targetType)"
       case jvm.FieldGetterRef(rowType, field) => code"$rowType::$field"
-      case jvm.Param(_, cs, name, tpe, _)     => code"${renderComments(cs).getOrElse(jvm.Code.Empty)}$name: $tpe"
-      case jvm.QIdent(value)                  => value.map(i => renderTree(i, ctx)).mkCode(".")
+      case jvm.Param(_, cs, name, tpe, default) =>
+        val defaultCode = default.map(d => code" = $d").getOrElse(jvm.Code.Empty)
+        code"${renderComments(cs).getOrElse(jvm.Code.Empty)}$name: $tpe$defaultCode"
+      case jvm.QIdent(value) => value.map(i => renderTree(i, ctx)).mkCode(".")
       case jvm.StrLit(str) =>
         val escaped = str
           .replace("\\", "\\\\")
@@ -371,7 +392,9 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
         val throwsCode = throws.map(th => code"@Throws($th::class)\n").mkCode("")
         val commentCode = renderComments(comments).getOrElse(jvm.Code.Empty)
         val allParams = params ++ implicitParams
-        val paramsCode = renderParams(allParams, ctx)
+        // Kotlin override methods can't specify default values - they inherit from the interface
+        val effectiveParams = if (isOverride) allParams.map(_.copy(default = None)) else allParams
+        val paramsCode = renderParams(effectiveParams, ctx)
         val returnType = if (tpe == jvm.Type.Void) jvm.Code.Empty else code": $tpe"
         val signature = commentCode ++ annotationsCode ++ throwsCode ++ code"${abstractMod}${overrideMod}fun ${renderTparams(tparams)}$name" ++ paramsCode ++ returnType
 

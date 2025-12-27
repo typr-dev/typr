@@ -766,6 +766,14 @@ case object LangJava extends Lang {
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"!$left.equals($right)"
 
+  override def toShort(expr: jvm.Code): jvm.Code = code"(short) ($expr)"
+
+  override def toByte(expr: jvm.Code): jvm.Code = code"(byte) ($expr)"
+
+  override def toLong(expr: jvm.Code): jvm.Code = code"(long) ($expr)"
+
+  override def enumAll(enumType: jvm.Type): jvm.Code = code"${TypesJava.Arrays}.asList($enumType.values())"
+
   override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
     code"($targetType) $expr"
 

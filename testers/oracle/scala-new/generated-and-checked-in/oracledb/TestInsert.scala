@@ -5,8 +5,11 @@
  */
 package oracledb
 
+import dev.typr.foundations.data.Json
 import java.sql.Connection
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import oracledb.all_scalar_types.AllScalarTypesId
 import oracledb.all_scalar_types.AllScalarTypesRepoImpl
 import oracledb.all_scalar_types.AllScalarTypesRow
@@ -27,6 +30,9 @@ import oracledb.employees.EmployeesRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639RepoImpl
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639Row
+import oracledb.test_genkeys_1766794419639.TestGenkeys1766794419639RowUnsaved
 import scala.util.Random
 
 /** Methods to generate random data for `Ident(TestInsert)` */
@@ -34,8 +40,8 @@ case class TestInsert(random: Random) {
   def AllScalarTypes(
     colVarchar2: Option[String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
     colNumber: Option[BigDecimal] = if (random.nextBoolean()) None else Some(BigDecimal.decimal(random.nextDouble())),
-    colDate: Option[LocalDateTime] = None,
-    colTimestamp: Option[LocalDateTime] = None,
+    colDate: Option[LocalDateTime] = if (random.nextBoolean()) None else Some(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    colTimestamp: Option[LocalDateTime] = if (random.nextBoolean()) None else Some(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
     colClob: Option[String] = if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString),
     colNotNull: String = random.alphanumeric.take(20).mkString,
     id: Defaulted[AllScalarTypesId] = Defaulted.UseDefault()
@@ -129,4 +135,9 @@ case class TestInsert(random: Random) {
       productId = productId
     ))(using c)
   }
+
+  def TestGenkeys1766794419639(
+    v: Option[Json] = if (random.nextBoolean()) None else Some(Json("{}")),
+    id: Defaulted[BigDecimal] = Defaulted.UseDefault()
+  )(using c: Connection): TestGenkeys1766794419639Row = (new TestGenkeys1766794419639RepoImpl()).insert(new TestGenkeys1766794419639RowUnsaved(v = v, id = id))(using c)
 }
