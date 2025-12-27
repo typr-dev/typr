@@ -310,17 +310,17 @@ public interface PgJson<A> extends DbJson<A> {
 
   PgJson<OffsetTime> timetz =
       new PgJson<>() {
-        // PostgreSQL may return offsets like "+01" instead of "+01:00", need custom formatter
+        // Support various offset formats: Z, +01, +01:00, and up to nanosecond precision
         private static final DateTimeFormatter FORMATTER =
             new DateTimeFormatterBuilder()
                 .appendPattern("HH:mm:ss")
-                .appendFraction(java.time.temporal.ChronoField.MICRO_OF_SECOND, 0, 6, true)
-                .appendOffset("+HH:mm", "+00:00")
+                .appendFraction(java.time.temporal.ChronoField.NANO_OF_SECOND, 0, 9, true)
+                .appendOffset("+HH:mm", "Z")
                 .toFormatter();
         private static final DateTimeFormatter FORMATTER_SHORT_OFFSET =
             new DateTimeFormatterBuilder()
                 .appendPattern("HH:mm:ss")
-                .appendFraction(java.time.temporal.ChronoField.MICRO_OF_SECOND, 0, 6, true)
+                .appendFraction(java.time.temporal.ChronoField.NANO_OF_SECOND, 0, 9, true)
                 .appendOffset("+HH", "+00")
                 .toFormatter();
 
