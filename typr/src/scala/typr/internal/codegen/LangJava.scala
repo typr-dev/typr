@@ -537,7 +537,7 @@ case object LangJava extends Lang {
               // In Java, interfaces use 'extends' to inherit from other interfaces,
               // while classes use 'implements' for interfaces
               val keyword = if (cls.classType == jvm.ClassType.Interface) "extends" else "implements"
-              Some(nonEmpty.map(x => code" $keyword $x").mkCode(","))
+              Some(code" $keyword ${nonEmpty.map(x => code"$x").mkCode(", ")}")
           },
           Some {
             val allBody = fieldsCode ++ constructorCode ++ body

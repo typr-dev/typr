@@ -4,7 +4,7 @@ package codegen
 
 import typr.internal.analysis.MaybeReturnsRows
 
-class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDefault, enableStreamingInserts: Boolean, override val lang: LangScala) extends DbLib {
+class DbLibAnorm(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDefault, enableStreamingInserts: Boolean, override val lang: LangScala) extends DbLibLegacy {
   val dialect = lang.dialect
   private val sqlCast = new SqlCast(needsTimestampCasts = true)
 

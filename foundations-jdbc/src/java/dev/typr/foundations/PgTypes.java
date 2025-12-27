@@ -130,9 +130,6 @@ public interface PgTypes {
   PgType<Long> int8 =
       PgType.of("int8", PgRead.readLong, PgWrite.writeLong, PgText.textLong, PgJson.int8);
   PgType<Long[]> int8Array = int8.array(PgRead.readLongArray, Long[]::new);
-  PgType<Long> oid =
-      PgType.of("oid", PgRead.readLong, PgWrite.writeLong, PgText.textLong, PgJson.int8);
-  PgType<Long[]> oidArray = oid.array(PgRead.readLongArray, Long[]::new);
 
   @SuppressWarnings("unchecked")
   PgType<long[]> int8ArrayUnboxed =
@@ -259,10 +256,6 @@ public interface PgTypes {
   PgType<short[]> smallintArrayUnboxed = int2ArrayUnboxed.renamed("smallint");
   PgType<String> bpchar =
       PgType.of("bpchar", PgRead.readString, PgWrite.writeString, PgText.textString, PgJson.text);
-  // PostgreSQL internal single-character type used in system catalogs (e.g., pg_class.relkind)
-  PgType<String> pgchar =
-      PgType.of("char", PgRead.readString, PgWrite.writeString, PgText.textString, PgJson.text);
-  PgType<String[]> pgcharArray = pgchar.array(PgRead.readStringArray, String[]::new);
   PgType<String> text =
       PgType.of("text", PgRead.readString, PgWrite.writeString, PgText.textString, PgJson.text);
   PgType<String[]> bpcharArray = bpchar.array(PgRead.readStringArray, String[]::new);

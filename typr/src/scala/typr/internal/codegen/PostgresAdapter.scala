@@ -207,13 +207,13 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
       // Non-primitive types use base Types
       case db.PgType.Bytea         => code"$Types.bytea"
       case db.PgType.Bpchar(_)     => code"$Types.bpchar"
-      case db.PgType.Char          => code"$Types.pgchar"
+      case db.PgType.Char          => code"$Types.char"
       case db.PgType.Date          => code"$Types.date"
       case db.PgType.Inet          => code"$Types.inet"
       case db.PgType.Json          => code"$Types.json"
       case db.PgType.Jsonb         => code"$Types.jsonb"
       case db.PgType.Name          => code"$Types.name"
-      case db.PgType.Oid           => primitiveType("oid")
+      case db.PgType.Oid           => code"$Types.oid"
       case db.PgType.PGInterval    => code"$Types.interval"
       case db.PgType.PGbox         => code"$Types.box"
       case db.PgType.PGcircle      => code"$Types.circle"

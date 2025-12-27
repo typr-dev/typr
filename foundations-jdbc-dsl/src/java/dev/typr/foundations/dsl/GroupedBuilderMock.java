@@ -199,7 +199,7 @@ public class GroupedBuilderMock<Fields, Row> implements GroupedBuilder<Fields, R
 
     @Override
     public <NewFields2 extends Tuples.TupleExpr<NewRow2>, NewRow2 extends Tuples.Tuple>
-        SelectBuilder<NewFields2, NewRow2> mapExpr(Function<NewFields, NewFields2> projection) {
+        SelectBuilder<NewFields2, NewRow2> map(Function<NewFields, NewFields2> projection) {
       // Allow mapping on grouped results
       Supplier<List<NewRow>> rowSupplier = () -> this.toList(null);
       SelectBuilderMock.ProjectedMockStructure<NewFields, NewRow> projectedStructure =
@@ -208,7 +208,7 @@ public class GroupedBuilderMock<Fields, Row> implements GroupedBuilder<Fields, R
 
       SelectBuilderMock<NewFields, NewRow> mockBuilder =
           new SelectBuilderMock<>(projectedStructure, rowSupplier, SelectParams.empty());
-      return mockBuilder.mapExpr(projection);
+      return mockBuilder.map(projection);
     }
 
     /** Evaluate the group key for a row. */

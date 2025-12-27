@@ -21,11 +21,15 @@ public record RenderCtx(
     Map<String, String> aliasToCteMap,
     // Map from projected SqlExpr (by identity) to column reference (e.g., "projected.proj_0")
     // Used when rendering correlation predicates that reference projected columns
-    IdentityHashMap<SqlExpr<?>, String> projectedExprMap) {
+    IdentityHashMap<SqlExpr<?>, String> projectedExprMap,
+    // When rendering RHS of a tuple IN, contains the LHS tuple expressions
+    // Used by Rows/Subquery to render EXISTS pattern for SQL Server/DuckDB
+    List<SqlExpr<?>> tupleInLhs) {
 
   /** Create a copy of this context with join context flag set. */
   public RenderCtx withJoinContext(boolean joinContext) {
-    return new RenderCtx(aliasMap, dialect, joinContext, aliasToCteMap, projectedExprMap);
+    return new RenderCtx(
+        aliasMap, dialect, joinContext, aliasToCteMap, projectedExprMap, tupleInLhs);
   }
 
   /**
@@ -33,7 +37,8 @@ public record RenderCtx(
    * to the CTE name that actually contains those columns.
    */
   public RenderCtx withAliasToCteMap(Map<String, String> aliasToCteMap) {
-    return new RenderCtx(aliasMap, dialect, inJoinContext, aliasToCteMap, projectedExprMap);
+    return new RenderCtx(
+        aliasMap, dialect, inJoinContext, aliasToCteMap, projectedExprMap, tupleInLhs);
   }
 
   /**
@@ -41,7 +46,22 @@ public record RenderCtx(
    * predicates that reference projected columns.
    */
   public RenderCtx withProjectedExprMap(IdentityHashMap<SqlExpr<?>, String> projectedExprMap) {
-    return new RenderCtx(aliasMap, dialect, inJoinContext, aliasToCteMap, projectedExprMap);
+    return new RenderCtx(
+        aliasMap, dialect, inJoinContext, aliasToCteMap, projectedExprMap, tupleInLhs);
+  }
+
+  /**
+   * Create a copy of this context indicating we're rendering the RHS of a tuple IN expression. The
+   * LHS expressions are needed for SQL Server/DuckDB EXISTS pattern rendering.
+   */
+  public RenderCtx withTupleInLhs(List<SqlExpr<?>> lhsExprs) {
+    return new RenderCtx(
+        aliasMap, dialect, inJoinContext, aliasToCteMap, projectedExprMap, lhsExprs);
+  }
+
+  /** Check if we're rendering inside a tuple IN expression. */
+  public boolean inTupleIn() {
+    return tupleInLhs != null && !tupleInLhs.isEmpty();
   }
 
   /**
@@ -65,13 +85,13 @@ public record RenderCtx(
 
   /** Create a simple RenderCtx with just a dialect (no alias map). */
   public static RenderCtx of(Dialect dialect) {
-    return new RenderCtx(Map.of(), dialect, false, Map.of(), null);
+    return new RenderCtx(Map.of(), dialect, false, Map.of(), null, null);
   }
 
   /** Create context from a SelectBuilder. */
   public static RenderCtx from(SelectBuilder<?, ?> builder, Dialect dialect) {
     if (!(builder instanceof SelectBuilderSql<?, ?> sqlBuilder)) {
-      return new RenderCtx(Map.of(), dialect, false, Map.of(), null);
+      return new RenderCtx(Map.of(), dialect, false, Map.of(), null, null);
     }
     return fromSql(sqlBuilder, dialect);
   }
@@ -102,7 +122,7 @@ public record RenderCtx(
       }
     }
 
-    return new RenderCtx(aliasMap, dialect, false, Map.of(), null);
+    return new RenderCtx(aliasMap, dialect, false, Map.of(), null, null);
   }
 
   private static List<PathAndName> findPathsAndTableNames(SelectBuilderSql<?, ?> builder) {
@@ -196,7 +216,7 @@ public record RenderCtx(
     Map<List<Path>, String> aliasMap = new HashMap<>();
     aliasMap.put(parentPath, parentAlias);
     aliasMap.put(childPath, childAlias);
-    return new RenderCtx(aliasMap, dialect, true, Map.of(), null);
+    return new RenderCtx(aliasMap, dialect, true, Map.of(), null, null);
   }
 
   /**
@@ -210,7 +230,7 @@ public record RenderCtx(
       Dialect dialect) {
     Map<List<Path>, String> aliasMap = new HashMap<>();
     aliasMap.put(childPath, childAlias);
-    return new RenderCtx(aliasMap, dialect, true, Map.of(), projectedExprMap);
+    return new RenderCtx(aliasMap, dialect, true, Map.of(), projectedExprMap, null);
   }
 
   // Internal record to hold path and table name pairs

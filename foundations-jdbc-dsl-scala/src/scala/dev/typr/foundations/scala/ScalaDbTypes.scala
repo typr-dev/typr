@@ -65,7 +65,6 @@ object ScalaDbTypes {
     val smallint: PgType[Short] = dev.typr.foundations.PgTypes.smallint.bimap(s => s, s => s)
     val int4: PgType[Int] = dev.typr.foundations.PgTypes.int4.bimap(i => i, i => i)
     val int8: PgType[Long] = dev.typr.foundations.PgTypes.int8.bimap(l => l, l => l)
-    val oid: PgType[Long] = dev.typr.foundations.PgTypes.oid.bimap(l => l, l => l)
     val float4: PgType[Float] = dev.typr.foundations.PgTypes.float4.bimap(f => f, f => f)
     val float8: PgType[Double] = dev.typr.foundations.PgTypes.float8.bimap(d => d, d => d)
 

@@ -27,18 +27,12 @@ public interface SqlExprVisitor<T, Row, Result> {
   Result visitCoalesce(SqlExpr.Coalesce<T> coalesce);
 
   // Boolean-returning expressions - these always return Boolean regardless of T
-  Result visitInExpr(SqlExpr.In<?> in);
+  Result visitInExpr(SqlExpr.In<?, ?> in);
 
   Result visitIsNullExpr(SqlExpr.IsNull<?> isNull);
 
-  <Tuple> Result visitCompositeInExpr(SqlExpr.CompositeIn<Tuple, ?> compositeIn);
-
   <F extends Tuples.TupleExpr<R>, R extends Tuples.Tuple> Result visitInSubqueryExpr(
       SqlExpr.InSubquery<?, F, R> inSubquery);
-
-  Result visitTupleInExpr(SqlExpr.TupleIn tupleIn);
-
-  <F, R> Result visitTupleInSubqueryExpr(SqlExpr.TupleInSubquery<F, R> tupleInSubquery);
 
   <F, R> Result visitExistsExpr(SqlExpr.Exists<F, R> exists);
 
@@ -126,18 +120,14 @@ public interface SqlExprVisitor<T, Row, Result> {
         SqlExpr.Coalesce<T> typed = (SqlExpr.Coalesce<T>) coalesce;
         yield visitCoalesce(typed);
       }
-      case SqlExpr.In<?> in -> visitInExpr(in);
+      case SqlExpr.In<?, ?> in -> visitInExpr(in);
       case SqlExpr.IsNull<?> isNull -> visitIsNullExpr(isNull);
       case SqlExpr.Not<?> not -> {
         SqlExpr.Not<T> typed = (SqlExpr.Not<T>) not;
         yield visitNot(typed);
       }
       case SqlExpr.RowExpr rowExpr -> visitRowExpr(rowExpr);
-      case SqlExpr.CompositeIn<?, ?> compositeIn -> visitCompositeInExpr(compositeIn);
       case SqlExpr.InSubquery<?, ?, ?> inSubquery -> visitInSubqueryExpr(inSubquery);
-      case SqlExpr.TupleIn tupleIn -> visitTupleInExpr(tupleIn);
-      case SqlExpr.TupleInSubquery<?, ?> tupleInSubquery ->
-          visitTupleInSubqueryExpr(tupleInSubquery);
       case SqlExpr.Exists<?, ?> exists -> visitExistsExpr(exists);
       case SqlExpr.IncludeIf<?> includeIf -> visitIncludeIf(includeIf);
       // Aggregate functions
@@ -155,6 +145,12 @@ public interface SqlExprVisitor<T, Row, Result> {
       case SqlExpr.BoolOr boolOr -> visitBoolOr(boolOr);
       case Tuples.TupleExpr<?> tupleExpr -> visitTupleExpr(tupleExpr);
       case FieldsExpr<?> fieldsExpr -> visitFieldsExpr(fieldsExpr);
+      // Internal types - should not be evaluated directly
+      case SqlExpr.Rows<?> rows ->
+          throw new UnsupportedOperationException("Rows cannot be evaluated directly");
+      case SqlExpr.ConstTuple<?> constTuple ->
+          throw new UnsupportedOperationException("ConstTuple cannot be evaluated directly");
+      case SqlExpr.Between<?> between -> visitDefault((SqlExpr<T>) between);
     };
   }
 }

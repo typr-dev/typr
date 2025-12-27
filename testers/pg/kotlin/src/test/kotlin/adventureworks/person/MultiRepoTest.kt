@@ -43,7 +43,7 @@ class PersonWithAddressesRepo(
         // In order for foreign keys to align, we need to translate from names to ids, and create rows as necessary
         val oldStoredAddressTypes: Map<Name, AddresstypeId> =
             addresstypeRepo.select()
-                .where { r -> r.name().`in`(pa.addresses.keys.toTypedArray(), Name.pgType) }
+                .where { r -> r.name().among(pa.addresses.keys.toTypedArray(), Name.pgType) }
                 .toList(c)
                 .associate { x -> x.name to x.addresstypeid }
 
@@ -179,7 +179,7 @@ class PersonWithAddressesTest {
             repo.syncAddresses(PersonWithAddresses(personRow, mapOf(Name("HOME") to addressRow1, Name("OFFICE") to addressRow2)), c)
 
             fun fetchBAs() = businessentityaddressRepo.select()
-                .where { p -> p.addressid().`in`(arrayOf(addressRow1.addressid, addressRow2.addressid, addressRow3.addressid), AddressId.pgType) }
+                .where { p -> p.addressid().among(arrayOf(addressRow1.addressid, addressRow2.addressid, addressRow3.addressid), AddressId.pgType) }
                 .orderBy { it.addressid().asc() }
                 .toList(c)
 

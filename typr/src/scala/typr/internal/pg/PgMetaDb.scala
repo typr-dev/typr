@@ -17,7 +17,6 @@ import typr.internal.analysis.*
 import typr.internal.external.ExternalTools
 import typr.internal.sqlglot.*
 
-import java.sql.Connection
 import scala.collection.immutable.SortedSet
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -86,32 +85,6 @@ object PgMetaDb {
   )
 
   object Input {
-    /**
-     * Phase 1: Fetch relation names (tables and views) and filter with Selector.
-     * This allows subsequent queries to only fetch data for selected relations.
-     */
-    def fetchFilteredRelationNames(tableSelector: Selector, viewSelector: Selector)(using c: Connection): Set[db.RelationName] = {
-      // Fetch table names using DSL - filter and convert to RelationName
-      val tableNames: List[db.RelationName] = (new TablesViewRepoImpl).select
-        .where(t => t.tableType.isEqual("BASE TABLE"))
-        .toList
-        .collect { case row if row.tableName.isDefined =>
-          db.RelationName(row.tableSchema, row.tableName.get)
-        }
-        .filter(tableSelector.include)
-
-      // Fetch view names using DSL
-      val viewNames: List[db.RelationName] = (new TablesViewRepoImpl).select
-        .where(t => t.tableType.isEqual("VIEW"))
-        .toList
-        .collect { case row if row.tableName.isDefined =>
-          db.RelationName(row.tableSchema, row.tableName.get)
-        }
-        .filter(viewSelector.include)
-
-      (tableNames ++ viewNames).toSet
-    }
-
     def fromDb(logger: TypoLogger, ds: TypoDataSource, viewSelector: Selector, schemaMode: SchemaMode, externalTools: ExternalTools)(implicit ev: ExecutionContext): Future[Input] = {
       val tableConstraints = logger.timed("fetching tableConstraints")(ds.run(implicit c => (new TableConstraintsViewRepoImpl).selectAll))
       val keyColumnUsage = logger.timed("fetching keyColumnUsage")(ds.run(implicit c => (new KeyColumnUsageViewRepoImpl).selectAll))

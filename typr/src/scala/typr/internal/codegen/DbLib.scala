@@ -18,6 +18,31 @@ trait DbLib {
   def rowInstances(tpe: jvm.Type, cols: NonEmptyList[ComputedColumn], rowType: DbLib.RowType): List[jvm.ClassMember]
   def customTypeInstances(ct: CustomType): List[jvm.ClassMember]
   def additionalFiles: List[jvm.File]
+
+  /** Whether this DbLib needs constAs expressions for generateCompositeIn. Legacy DSLs need them, DbLibTypo does not.
+    */
+  def needsConstAsForCompositeIn: Boolean
+
+  /** Generate a composite IN expression for checking if a tuple of fields is in a list of IDs. For new DSLs: uses In with Rows and Tuples For legacy DSLs: uses CompositeIn with TuplePart
+    *
+    * @param idsExpr
+    *   the expression for the list of IDs (e.g., "compositeIds")
+    * @param idType
+    *   the type of the composite ID
+    * @param fieldExprs
+    *   the field expressions for this table's columns (e.g., List(deptCode(), deptRegion()))
+    * @param fieldNames
+    *   the field names in the ID type (for extracting values, e.g., List(deptCode, deptRegion))
+    * @param constAsExprs
+    *   const expressions for legacy DSL (one per field) - only used when needsConstAsForCompositeIn is true
+    */
+  def generateCompositeIn(
+      idsExpr: jvm.Code,
+      idType: jvm.Type,
+      fieldExprs: List[jvm.Code],
+      fieldNames: List[jvm.Ident],
+      constAsExprs: List[jvm.Code]
+  ): jvm.Code
 }
 
 object DbLib {

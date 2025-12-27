@@ -37,8 +37,8 @@ class OpenEnumTest {
 
             // Test DSL query with joinFk chain
             val found = titledPersonRepo.select()
-                .joinFk({ tp -> tp.fkTitle() }, titleRepo.select().where { t -> t.code().`in`(arrayOf(TitleId.Known.dr), TitleId.pgType) })
-                .joinFk({ tp_t -> tp_t._1().fkTitleDomain() }, titleDomainRepo.select().where { td -> td.code().`in`(arrayOf(TitleDomainId.Known.dr), TitleDomainId.pgType) })
+                .joinFk({ tp -> tp.fkTitle() }, titleRepo.select().where { t -> t.code().among(arrayOf(TitleId.Known.dr), TitleId.pgType) })
+                .joinFk({ tp_t -> tp_t._1().fkTitleDomain() }, titleDomainRepo.select().where { td -> td.code().among(arrayOf(TitleDomainId.Known.dr), TitleDomainId.pgType) })
                 .where { tp_t_td -> tp_t_td._1()._1().name().isEqual("John") }
                 .toList(c)
                 .firstOrNull()

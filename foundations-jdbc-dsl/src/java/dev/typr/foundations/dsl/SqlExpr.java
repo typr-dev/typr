@@ -29,8 +29,6 @@ public sealed interface SqlExpr<T>
         SqlExpr.InSubquery,
         SqlExpr.Exists,
         SqlExpr.CompositeIn,
-        SqlExpr.TupleIn,
-        SqlExpr.TupleInSubquery,
         SqlExpr.IncludeIf,
         // Aggregate functions
         SqlExpr.CountStar,
@@ -767,115 +765,6 @@ public sealed interface SqlExpr<T>
     private static <T, Tuple, Row> Fragment renderPartValue(Part<T, Tuple, Row> part, Tuple tuple) {
       T value = part.extract().apply(tuple);
       return Fragment.value(value, part.pgType());
-    }
-  }
-
-  /**
-   * Check if a tuple of expressions is in a list of in-memory tuple values. Renders as: (expr1,
-   * expr2, ...) IN ((v1, v2, ...), (v3, v4, ...), ...)
-   *
-   * <p>This is a generalization of CompositeIn that works with TupleExpr and Tuple types directly.
-   *
-   * <p>Example:
-   *
-   * <pre>{@code
-   * // Check if (schema, name) is in a list of relation identifiers
-   * Tuples.of(t.tableSchema(), t.tableName())
-   *     .in(List.of(
-   *         new Tuple2<>("public", "users"),
-   *         new Tuple2<>("public", "orders")
-   *     ))
-   * }</pre>
-   */
-  record TupleIn(Tuples.TupleExpr<?> tuple, List<? extends Tuples.Tuple> values)
-      implements SqlExpr<Boolean> {
-
-    @Override
-    public DbType<Boolean> dbType() {
-      return PgTypes.bool;
-    }
-
-    @Override
-    public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-      if (values().isEmpty()) {
-        return Fragment.lit("FALSE");
-      }
-
-      // Render the tuple expression as (expr1, expr2, ...)
-      List<Fragment> exprFragments = new ArrayList<>();
-      for (SqlExpr<?> expr : tuple().exprs()) {
-        exprFragments.add(expr.render(ctx, counter));
-      }
-      Fragment tupleExpr =
-          Fragment.lit("(").append(Fragment.comma(exprFragments)).append(Fragment.lit(")"));
-
-      // Get DbTypes from the tuple expressions for value rendering
-      List<DbType<?>> dbTypes = tuple().flattenedDbTypes();
-
-      // Render value tuples
-      List<Fragment> tupleFragments = new ArrayList<>();
-      for (Tuples.Tuple value : values()) {
-        Object[] arr = value.asArray();
-        List<Fragment> valueFragments = new ArrayList<>();
-        for (int i = 0; i < arr.length && i < dbTypes.size(); i++) {
-          @SuppressWarnings("unchecked")
-          DbType<Object> dbType = (DbType<Object>) dbTypes.get(i);
-          valueFragments.add(Fragment.value(arr[i], dbType));
-        }
-        tupleFragments.add(
-            Fragment.lit("(").append(Fragment.comma(valueFragments)).append(Fragment.lit(")")));
-      }
-
-      return tupleExpr
-          .append(Fragment.lit(" IN ("))
-          .append(Fragment.comma(tupleFragments))
-          .append(Fragment.lit(")"));
-    }
-  }
-
-  /**
-   * Check if a tuple of expressions is in a subquery result set. Renders as: (expr1, expr2, ...) IN
-   * (SELECT ...)
-   *
-   * <p>The subquery should return the same number of columns as the tuple has expressions.
-   *
-   * <p>Example:
-   *
-   * <pre>{@code
-   * // Check if (schema, name) is in a filtered relation list
-   * Tuples.of(t.tableSchema(), t.tableName())
-   *     .in(filteredRelations.select().map(r -> Tuples.of(r.schema(), r.name())))
-   * }</pre>
-   */
-  record TupleInSubquery<F, R>(Tuples.TupleExpr<?> tuple, SelectBuilder<F, R> subquery)
-      implements SqlExpr<Boolean> {
-
-    @Override
-    public DbType<Boolean> dbType() {
-      return PgTypes.bool;
-    }
-
-    @Override
-    public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-      // Render the tuple expression as (expr1, expr2, ...)
-      List<Fragment> exprFragments = new ArrayList<>();
-      for (SqlExpr<?> expr : tuple().exprs()) {
-        exprFragments.add(expr.render(ctx, counter));
-      }
-      Fragment tupleExpr =
-          Fragment.lit("(").append(Fragment.comma(exprFragments)).append(Fragment.lit(")"));
-
-      // Get the SQL from the subquery
-      Optional<Fragment> subquerySql = subquery().sql();
-      if (subquerySql.isEmpty()) {
-        throw new UnsupportedOperationException(
-            "Tuple IN subquery requires a SQL-backed SelectBuilder");
-      }
-
-      return tupleExpr
-          .append(Fragment.lit(" IN ("))
-          .append(subquerySql.get())
-          .append(Fragment.lit(")"));
     }
   }
 

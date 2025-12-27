@@ -2,9 +2,9 @@ package typr
 
 sealed abstract class DslQualifiedNames(val dslPackage: String) {
   val Bijection = jvm.Type.Qualified(s"$dslPackage.Bijection")
-  val CompositeIn = jvm.Type.Qualified(s"$dslPackage.SqlExpr.CompositeIn")
-  val CompositeInPart = jvm.Type.Qualified(s"$dslPackage.SqlExpr.CompositeIn.Part") // Java
-  val CompositeTuplePart = jvm.Type.Qualified(s"$dslPackage.SqlExpr.CompositeIn.TuplePart") // Scala
+  val In = jvm.Type.Qualified(s"$dslPackage.SqlExpr.In")
+  val Rows = jvm.Type.Qualified(s"$dslPackage.SqlExpr.Rows")
+  val Tuples = jvm.Type.Qualified(s"$dslPackage.Tuples")
   val ConstAs = jvm.Type.Qualified(s"$dslPackage.SqlExpr.Const.As")
   val ConstAsAs = ConstAs / jvm.Ident("as")
   val ConstAsAsOpt = ConstAs / jvm.Ident("asOpt")

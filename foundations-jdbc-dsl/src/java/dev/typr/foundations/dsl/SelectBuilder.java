@@ -11,6 +11,17 @@ import java.util.function.Function;
 /** Builder for SQL SELECT queries with type-safe operations. */
 public interface SelectBuilder<Fields, Row> extends SelectBuilderMap<Fields, Row> {
 
+  /**
+   * Convert this SelectBuilder to a Subquery expression for use in IN clauses.
+   *
+   * <pre>{@code
+   * d.code().and(d.region()).in(repo.select().map(...).subquery())
+   * }</pre>
+   */
+  default SqlExpr.Subquery<Fields, Row> subquery() {
+    return new SqlExpr.Subquery<>(this);
+  }
+
   /** Create a SelectBuilder for a table. */
   static <Fields, Row> SelectBuilder<Fields, Row> of(
       String name,

@@ -24,10 +24,10 @@ public interface RelationStructure<Fields, Row> extends Structure<Fields, Row> {
   @Override
   @SuppressWarnings("unchecked")
   default List<SqlExpr.FieldLike<?, ?>> allFields() {
-    // Generated Fields implement both RelationStructure and FieldsExpr.
-    // FieldsExpr.columns() returns the list of fields, so we delegate to it.
-    FieldsExpr<Row> fieldsExpr = (FieldsExpr<Row>) this;
-    return new ArrayList<>(fieldsExpr.columns());
+    // Generated Fields implement both RelationStructure and FieldsBase.
+    // FieldsBase.columns() returns the list of fields, so we delegate to it.
+    FieldsBase<Row> fieldsBase = (FieldsBase<Row>) this;
+    return new ArrayList<>(fieldsBase.columns());
   }
 
   @Override
