@@ -4,7 +4,8 @@ package codegen
 
 import typr.internal.analysis.MaybeReturnsRows
 
-class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDefault, enableStreamingInserts: Boolean, fixVerySlowImplicit: Boolean, override val lang: LangScala) extends DbLib {
+class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDefault, enableStreamingInserts: Boolean, fixVerySlowImplicit: Boolean, override val lang: LangScala)
+    extends DbLibLegacy {
   val dialect = lang.dialect
   private val sqlCast = new SqlCast(needsTimestampCasts = true)
 

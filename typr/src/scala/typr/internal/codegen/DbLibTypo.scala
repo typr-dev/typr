@@ -208,28 +208,68 @@ class DbLibTypo(
   def booleanAndChain(exprs: NonEmptyList[jvm.Code]): jvm.Code =
     code"${lang.dsl.SqlExpr}.all(${exprs.toList.mkCode(", ")})"
 
-  /** Create CompositeInPart expression with explicit type arguments: Part<T, Tuple, Row> */
-  def compositeInPart(fieldType: jvm.Type, compositeIdType: jvm.Type, rowType: jvm.Type, fieldExpr: jvm.Code, getterField: jvm.Ident, pgType: jvm.Code): jvm.Code = {
-    val getterRef = jvm.FieldGetterRef(compositeIdType, getterField)
+  /** DbLibTypo does not need constAs expressions for generateCompositeIn */
+  override def needsConstAsForCompositeIn: Boolean = false
+
+  /** Generate a composite IN expression using In/Rows/Tuples pattern. Renders as: (col1, col2) IN ((val1, val2), (val3, val4), ...) The ID type implements Tuples.TupleN, so we can pass the ID list
+    * directly to Rows.ofTuples.
+    */
+  override def generateCompositeIn(
+      idsExpr: jvm.Code,
+      idType: jvm.Type,
+      fieldExprs: List[jvm.Code],
+      fieldNames: List[jvm.Ident],
+      constAsExprs: List[jvm.Code]
+  ): jvm.Code = {
+    // Create tuple expression from field expressions (for the LHS and as template for Rows)
+    val tupleExpr = code"${lang.dsl.Tuples}.of(${fieldExprs.mkCode(", ")})"
+
+    // The ID type implements TupleN, so we can pass it directly to Rows.ofTuples
+    // which will create ConstTuple instances using the ID values
+    val rows = code"${lang.dsl.Rows}.ofTuples($tupleExpr, $idsExpr)"
     lang match {
       case _: LangScala =>
-        // For Scala, use factory method: CompositeIn.Part[T, Tuple, Row](field, extract, pgType)
-        code"${lang.dsl.CompositeIn}.Part[$fieldType, $compositeIdType, $rowType]($fieldExpr, $getterRef, $pgType)"
+        // Use companion object apply method (not new) for Scala
+        code"${lang.dsl.In}($tupleExpr, $rows)"
       case _ =>
-        // For Java/Kotlin, use constructor: new Part<T, Tuple, Row>(field, extract, pgType)
-        val partType = lang.dsl.CompositeInPart.of(fieldType, compositeIdType, rowType)
-        jvm.New(partType, List(jvm.Arg.Pos(fieldExpr), jvm.Arg.Pos(getterRef), jvm.Arg.Pos(pgType)))
+        code"new ${lang.dsl.In}<>($tupleExpr, $rows)"
     }
   }
 
-  /** Create CompositeIn expression - uses factory method for Scala, constructor for Java/Kotlin */
-  def compositeInConstruct(parts: jvm.Code, tuples: jvm.Code): jvm.Code = lang match {
-    case _: LangScala =>
-      // For Scala, use factory method: CompositeIn(parts, tuples)
-      code"${lang.dsl.CompositeIn}($parts, $tuples)"
-    case _ =>
-      // For Java/Kotlin, use constructor: new CompositeIn(parts, tuples)
-      lang.dsl.CompositeIn.construct(parts, tuples)
+  // CompositeIn types for the new DSL pattern
+  private val CompositeIn = lang.dsl.SqlExpr / jvm.Ident("CompositeIn")
+  private val CompositeInPart = CompositeIn / jvm.Ident("Part")
+
+  /** Generate a single CompositeIn.Part expression for one field. */
+  override def compositeInPart(fieldType: jvm.Type, idType: jvm.Type, rowType: jvm.Type, fieldExpr: jvm.Code, fieldName: jvm.Ident, pgType: jvm.Code): jvm.Code = {
+    val partType = CompositeInPart.of(fieldType, idType, rowType)
+    val getter = jvm.FieldGetterRef(idType, fieldName)
+    lang match {
+      case _: LangScala =>
+        // Scala: CompositeIn.Part[FieldType, IdType, RowType](fieldExpr, _.fieldName, pgType)
+        code"$partType($fieldExpr, $getter, $pgType)"
+      case _: LangKotlin =>
+        // Kotlin: Part<FieldType, IdType, RowType>(fieldExpr(), IdType::fieldName, pgType)
+        code"${jvm.Import(CompositeInPart)}$partType($fieldExpr, $getter, $pgType)"
+      case _ =>
+        // Java: new Part<>(fieldExpr(), IdType::getFieldName, pgType)
+        code"${jvm.Import(CompositeInPart)}new ${CompositeInPart}<>($fieldExpr, $getter, $pgType)"
+    }
+  }
+
+  /** Generate a complete CompositeIn expression from parts and IDs. */
+  override def compositeInConstruct(partsExpr: jvm.Code, idsExpr: jvm.Code): jvm.Code = {
+    lang match {
+      case _: LangScala =>
+        // Scala: CompositeIn(parts, ids)
+        code"${jvm.Import(CompositeIn)}$CompositeIn($partsExpr, $idsExpr)"
+      case _: LangKotlin =>
+        // Kotlin: CompositeIn(parts, ids) - using companion object invoke
+        code"${jvm.Import(CompositeIn)}$CompositeIn($partsExpr, $idsExpr)"
+      case _ =>
+        // Java: new CompositeIn(parts, ids)
+        code"${jvm.Import(CompositeIn)}new $CompositeIn($partsExpr, $idsExpr)"
+    }
   }
 
   val c: jvm.Param[jvm.Type] = jvm.Param(jvm.Ident("c"), TypesJava.Connection)
