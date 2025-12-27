@@ -286,10 +286,10 @@ public class PgTypeTest {
           // Record("(1,2)")}),
 
           // ==================== Reg* Types ====================
-          new PgTypeAndExample<>(PgTypes.regconfig, new Regconfig("basque")),
+          new PgTypeAndExample<>(PgTypes.regconfig, new Regconfig("danish")),
           new PgTypeAndExample<>(
               PgTypes.regconfig, new Regconfig("english")), // Edge case: common config
-          new PgTypeAndExample<>(PgTypes.regconfigArray, new Regconfig[] {new Regconfig("basque")}),
+          new PgTypeAndExample<>(PgTypes.regconfigArray, new Regconfig[] {new Regconfig("danish")}),
           new PgTypeAndExample<>(PgTypes.regdictionary, new Regdictionary("english_stem")),
           new PgTypeAndExample<>(
               PgTypes.regdictionaryArray, new Regdictionary[] {new Regdictionary("english_stem")}),
@@ -304,9 +304,9 @@ public class PgTypeTest {
           new PgTypeAndExample<>(PgTypes.regprocedure, new Regprocedure("sum(integer)")),
           new PgTypeAndExample<>(
               PgTypes.regprocedureArray, new Regprocedure[] {new Regprocedure("sum(integer)")}),
-          new PgTypeAndExample<>(PgTypes.regrole, new Regrole("pg_database_owner")),
+          new PgTypeAndExample<>(PgTypes.regrole, new Regrole("pg_monitor")),
           new PgTypeAndExample<>(
-              PgTypes.regroleArray, new Regrole[] {new Regrole("pg_database_owner")}),
+              PgTypes.regroleArray, new Regrole[] {new Regrole("pg_monitor")}),
           new PgTypeAndExample<>(PgTypes.regtype, new Regtype("integer")),
           new PgTypeAndExample<>(PgTypes.regtype, new Regtype("text")), // Edge case: different type
           new PgTypeAndExample<>(PgTypes.regtypeArray, new Regtype[] {new Regtype("integer")}),
