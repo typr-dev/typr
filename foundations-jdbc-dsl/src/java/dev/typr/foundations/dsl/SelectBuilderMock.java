@@ -194,7 +194,7 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
 
   @Override
   public <NewFields extends Tuples.TupleExpr<NewRow>, NewRow extends Tuples.Tuple>
-      SelectBuilder<NewFields, NewRow> map(Function<Fields, NewFields> projection) {
+      SelectBuilder<NewFields, NewRow> mapExpr(Function<Fields, NewFields> projection) {
     NewFields tupleExpr = projection.apply(structure.fields());
     List<SqlExpr<?>> projectedExprs = tupleExpr.exprs();
 
@@ -203,13 +203,10 @@ public class SelectBuilderMock<Fields, Row> implements SelectBuilder<Fields, Row
         new ProjectedMockStructure<>(tupleExpr, projectedExprs);
 
     // Create supplier that evaluates the projection for each row
-    // Important: Apply params (filters, etc.) before projection to properly handle subqueries
     Supplier<List<NewRow>> projectedRowsSupplier =
         () -> {
           List<NewRow> result = new ArrayList<>();
-          // Apply params to filter/sort/limit before projection
-          List<Row> filteredRows = applyParams(structure, allRowsSupplier.get(), params);
-          for (Row row : filteredRows) {
+          for (Row row : allRowsSupplier.get()) {
             // Evaluate each expression against the row
             Object[] values = new Object[projectedExprs.size()];
             for (int i = 0; i < projectedExprs.size(); i++) {

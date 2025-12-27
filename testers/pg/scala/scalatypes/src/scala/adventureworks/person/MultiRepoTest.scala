@@ -29,9 +29,9 @@ class PersonWithAddressesRepo(
     val _ = personRepo.update(pa.person)
     pa.addresses.foreach { case (_, address) => val _ = addressRepo.update(address) }
 
-    val addressTypeNames: Array[Name] = pa.addresses.keys.toArray
+    val addressTypeNames = pa.addresses.keys.toArray.asInstanceOf[Array[Object]]
     val oldStoredAddressTypes = addresstypeRepo.select
-      .where(r => r.name.in(addressTypeNames*))
+      .where(r => r.name.in(addressTypeNames, Name.pgType))
       .toList
       .map(at => at.name -> at.addresstypeid)
       .toMap
@@ -181,10 +181,10 @@ class MultiRepoTest {
         )
       )
 
-      val allAddressIds = Array(addressRow1.addressid, addressRow2.addressid, addressRow3.addressid)
+      val allAddressIds = Array(addressRow1.addressid, addressRow2.addressid, addressRow3.addressid).asInstanceOf[Array[Object]]
       def fetchBAs(): List[BusinessentityaddressRow] = {
         businessentityaddressRepo.select
-          .where(p => p.addressid.in(allAddressIds*))
+          .where(p => p.addressid.in(allAddressIds, AddressId.pgType))
           .orderBy(ba => ba.addressid.asc)
           .toList
       }

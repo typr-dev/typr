@@ -60,14 +60,12 @@ public interface Dialect {
     return result.toString();
   }
 
-  /** Check if an identifier is already quoted with double quotes, backticks, or square brackets. */
+  /** Check if an identifier is already quoted with double quotes or backticks. */
   private static boolean isAlreadyQuoted(String identifier) {
     if (identifier.length() < 2) return false;
     char first = identifier.charAt(0);
     char last = identifier.charAt(identifier.length() - 1);
-    return (first == '"' && last == '"')
-        || (first == '`' && last == '`')
-        || (first == '[' && last == ']');
+    return (first == '"' && last == '"') || (first == '`' && last == '`');
   }
 
   /**

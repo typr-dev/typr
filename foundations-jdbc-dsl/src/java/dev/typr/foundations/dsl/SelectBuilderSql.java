@@ -469,7 +469,7 @@ public abstract class SelectBuilderSql<Fields, Row> implements SelectBuilder<Fie
   @Override
   @SuppressWarnings("unchecked")
   public <NewFields extends Tuples.TupleExpr<NewRow>, NewRow extends Tuples.Tuple>
-      SelectBuilder<NewFields, NewRow> map(Function<Fields, NewFields> projection) {
+      SelectBuilder<NewFields, NewRow> mapExpr(Function<Fields, NewFields> projection) {
     // Apply the projection to get the TupleExpr
     NewFields tupleExpr = projection.apply(structure().fields());
 

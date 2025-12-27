@@ -142,11 +142,6 @@ class Fragment(val underlying: JavaFragment) {
         fun <T> `in`(column: String, values: Array<T>, dbType: DbType<T>): Fragment =
             Fragment(JavaFragment.`in`(column, values, dbType))
 
-        /** Kotlin-friendly alias for `in` since 'in' is a reserved keyword */
-        @JvmStatic
-        fun <T> among(column: String, values: Array<T>, dbType: DbType<T>): Fragment =
-            `in`(column, values, dbType)
-
         @JvmStatic
         fun compositeIn(columns: Array<String>, tuples: List<Array<Any?>>, types: Array<DbType<*>>): Fragment =
             Fragment(JavaFragment.compositeIn(columns, tuples, types))

@@ -3,7 +3,6 @@ package dev.typr.foundations.dsl;
 import dev.typr.foundations.DbType;
 import dev.typr.foundations.Either;
 import dev.typr.foundations.Fragment;
-import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.data.Json;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,14 +24,11 @@ public sealed interface SqlExpr<T>
         SqlExpr.Coalesce,
         SqlExpr.Underlying,
         SqlExpr.In,
-        SqlExpr.Rows,
-        SqlExpr.Subquery,
-        SqlExpr.ConstTuple,
-        SqlExpr.Between,
         SqlExpr.ArrayIndex,
         SqlExpr.RowExpr,
         SqlExpr.InSubquery,
         SqlExpr.Exists,
+        SqlExpr.CompositeIn,
         SqlExpr.IncludeIf,
         // Aggregate functions
         SqlExpr.CountStar,
@@ -58,7 +54,7 @@ public sealed interface SqlExpr<T>
 
   /**
    * Returns the number of columns this expression produces. Most expressions produce 1 column, but
-   * TupleExpr produces multiple.
+   * TupleExpr and FieldsExpr produce multiple.
    */
   default int columnCount() {
     return 1;
@@ -66,8 +62,8 @@ public sealed interface SqlExpr<T>
 
   /**
    * Returns a flattened list of DbTypes for all columns this expression produces. Most expressions
-   * return a single-element list, but TupleExpr returns one DbType per column, recursively
-   * flattening nested multi-column expressions.
+   * return a single-element list, but TupleExpr and FieldsExpr return one DbType per column,
+   * recursively flattening nested multi-column expressions.
    */
   default List<DbType<?>> flattenedDbTypes() {
     return List.of(dbType());
@@ -77,11 +73,12 @@ public sealed interface SqlExpr<T>
   @SafeVarargs
   static SqlExpr<Boolean> all(SqlExpr<Boolean>... exprs) {
     if (exprs.length == 0) {
-      return new ConstReq<>(true, PgTypes.bool);
+      return new ConstReq<>(true, GenericDbTypes.bool);
     }
     SqlExpr<Boolean> result = exprs[0];
     for (int i = 1; i < exprs.length; i++) {
-      result = new Binary<>(result, SqlOperator.and(Bijection.asBool(), PgTypes.bool), exprs[i]);
+      result =
+          new Binary<>(result, SqlOperator.and(Bijection.asBool(), GenericDbTypes.bool), exprs[i]);
     }
     return result;
   }
@@ -90,11 +87,12 @@ public sealed interface SqlExpr<T>
   @SafeVarargs
   static SqlExpr<Boolean> any(SqlExpr<Boolean>... exprs) {
     if (exprs.length == 0) {
-      return new ConstReq<>(false, PgTypes.bool);
+      return new ConstReq<>(false, GenericDbTypes.bool);
     }
     SqlExpr<Boolean> result = exprs[0];
     for (int i = 1; i < exprs.length; i++) {
-      result = new Binary<>(result, SqlOperator.or(Bijection.asBool(), PgTypes.bool), exprs[i]);
+      result =
+          new Binary<>(result, SqlOperator.or(Bijection.asBool(), GenericDbTypes.bool), exprs[i]);
     }
     return result;
   }
@@ -171,7 +169,8 @@ public sealed interface SqlExpr<T>
 
   // String operations
   default SqlExpr<Boolean> like(String pattern, Bijection<T, String> bijection) {
-    return new Binary<>(this, SqlOperator.like(bijection), new ConstReq<>(pattern, PgTypes.text));
+    return new Binary<>(
+        this, SqlOperator.like(bijection), new ConstReq<>(pattern, GenericDbTypes.text));
   }
 
   default SqlExpr<T> stringAppend(SqlExpr<T> other, Bijection<T, String> bijection) {
@@ -208,10 +207,6 @@ public sealed interface SqlExpr<T>
     return new IsNull<>(this);
   }
 
-  default SqlExpr<Boolean> isNotNull() {
-    return new Not<>(new IsNull<>(this), Bijection.asBool());
-  }
-
   default SqlExpr<T> coalesce(SqlExpr<T> defaultValue) {
     return new Coalesce<>(this, defaultValue);
   }
@@ -220,128 +215,9 @@ public sealed interface SqlExpr<T>
     return new Underlying<>(this, bijection, this.dbType().to(bijection));
   }
 
-  // Range operations
-  default SqlExpr<Boolean> between(SqlExpr<T> low, SqlExpr<T> high) {
-    return new Between<>(this, low, high, false);
-  }
-
-  default SqlExpr<Boolean> notBetween(SqlExpr<T> low, SqlExpr<T> high) {
-    return new Between<>(this, low, high, true);
-  }
-
   // Array operations
   default SqlExpr<Boolean> in(T[] values, DbType<T> pgType) {
-    return new In<>(this, Rows.of(this, java.util.Arrays.asList(values)));
-  }
-
-  default SqlExpr<Boolean> notIn(T[] values, DbType<T> pgType) {
-    return new Not<>(
-        new In<>(this, Rows.of(this, java.util.Arrays.asList(values))), Bijection.asBool());
-  }
-
-  /**
-   * Check if this expression's value is in the given collection of values. This is the unified IN
-   * method that takes any SqlExpr returning a list.
-   */
-  default SqlExpr<Boolean> in(SqlExpr<List<T>> rhs) {
-    return new In<>(this, rhs);
-  }
-
-  /**
-   * Check if this expression's value is among the given collection of values. Kotlin-friendly alias
-   * for {@link #in(SqlExpr)} since 'in' is a reserved keyword.
-   */
-  default SqlExpr<Boolean> among(SqlExpr<List<T>> rhs) {
-    return in(rhs);
-  }
-
-  // ==================== Tuple creation with tupleWith() ====================
-
-  /**
-   * Combine this expression with another to create a tuple expression. Use for multi-column IN
-   * queries or composite key matching.
-   *
-   * <pre>{@code
-   * d.code().tupleWith(d.region()).in(idList)
-   * }</pre>
-   */
-  default <T1> Tuples.TupleExpr2<T, T1> tupleWith(SqlExpr<T1> e1) {
-    return Tuples.of(this, e1);
-  }
-
-  /** Combine this expression with 2 others to create a 3-tuple. */
-  default <T1, T2> Tuples.TupleExpr3<T, T1, T2> tupleWith(SqlExpr<T1> e1, SqlExpr<T2> e2) {
-    return Tuples.of(this, e1, e2);
-  }
-
-  /** Combine this expression with 3 others to create a 4-tuple. */
-  default <T1, T2, T3> Tuples.TupleExpr4<T, T1, T2, T3> tupleWith(
-      SqlExpr<T1> e1, SqlExpr<T2> e2, SqlExpr<T3> e3) {
-    return Tuples.of(this, e1, e2, e3);
-  }
-
-  /** Combine this expression with 4 others to create a 5-tuple. */
-  default <T1, T2, T3, T4> Tuples.TupleExpr5<T, T1, T2, T3, T4> tupleWith(
-      SqlExpr<T1> e1, SqlExpr<T2> e2, SqlExpr<T3> e3, SqlExpr<T4> e4) {
-    return Tuples.of(this, e1, e2, e3, e4);
-  }
-
-  /** Combine this expression with 5 others to create a 6-tuple. */
-  default <T1, T2, T3, T4, T5> Tuples.TupleExpr6<T, T1, T2, T3, T4, T5> tupleWith(
-      SqlExpr<T1> e1, SqlExpr<T2> e2, SqlExpr<T3> e3, SqlExpr<T4> e4, SqlExpr<T5> e5) {
-    return Tuples.of(this, e1, e2, e3, e4, e5);
-  }
-
-  /** Combine this expression with 6 others to create a 7-tuple. */
-  default <T1, T2, T3, T4, T5, T6> Tuples.TupleExpr7<T, T1, T2, T3, T4, T5, T6> tupleWith(
-      SqlExpr<T1> e1,
-      SqlExpr<T2> e2,
-      SqlExpr<T3> e3,
-      SqlExpr<T4> e4,
-      SqlExpr<T5> e5,
-      SqlExpr<T6> e6) {
-    return Tuples.of(this, e1, e2, e3, e4, e5, e6);
-  }
-
-  /** Combine this expression with 7 others to create a 8-tuple. */
-  default <T1, T2, T3, T4, T5, T6, T7> Tuples.TupleExpr8<T, T1, T2, T3, T4, T5, T6, T7> tupleWith(
-      SqlExpr<T1> e1,
-      SqlExpr<T2> e2,
-      SqlExpr<T3> e3,
-      SqlExpr<T4> e4,
-      SqlExpr<T5> e5,
-      SqlExpr<T6> e6,
-      SqlExpr<T7> e7) {
-    return Tuples.of(this, e1, e2, e3, e4, e5, e6, e7);
-  }
-
-  /** Combine this expression with 8 others to create a 9-tuple. */
-  default <T1, T2, T3, T4, T5, T6, T7, T8>
-      Tuples.TupleExpr9<T, T1, T2, T3, T4, T5, T6, T7, T8> tupleWith(
-          SqlExpr<T1> e1,
-          SqlExpr<T2> e2,
-          SqlExpr<T3> e3,
-          SqlExpr<T4> e4,
-          SqlExpr<T5> e5,
-          SqlExpr<T6> e6,
-          SqlExpr<T7> e7,
-          SqlExpr<T8> e8) {
-    return Tuples.of(this, e1, e2, e3, e4, e5, e6, e7, e8);
-  }
-
-  /** Combine this expression with 9 others to create a 10-tuple. */
-  default <T1, T2, T3, T4, T5, T6, T7, T8, T9>
-      Tuples.TupleExpr10<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> tupleWith(
-          SqlExpr<T1> e1,
-          SqlExpr<T2> e2,
-          SqlExpr<T3> e3,
-          SqlExpr<T4> e4,
-          SqlExpr<T5> e5,
-          SqlExpr<T6> e6,
-          SqlExpr<T7> e7,
-          SqlExpr<T8> e8,
-          SqlExpr<T9> e9) {
-    return Tuples.of(this, e1, e2, e3, e4, e5, e6, e7, e8, e9);
+    return new In<>(this, values, pgType);
   }
 
   /**
@@ -416,7 +292,7 @@ public sealed interface SqlExpr<T>
   // Custom operators
   default <T2> SqlExpr<Boolean> customBinaryOp(
       String op, SqlExpr<T2> right, BiFunction<T, T2, Boolean> eval) {
-    return new Binary<>(this, new SqlOperator<>(op, eval, PgTypes.bool), right);
+    return new Binary<>(this, new SqlOperator<>(op, eval, GenericDbTypes.bool), right);
   }
 
   // Rendering
@@ -510,25 +386,6 @@ public sealed interface SqlExpr<T>
     @SuppressWarnings("unchecked")
     default SqlExpr<Boolean> in(T... values) {
       return in(values, pgType());
-    }
-
-    /** Kotlin-friendly alias for {@link #in(Object...)} since 'in' is a reserved keyword. */
-    @SuppressWarnings("unchecked")
-    default SqlExpr<Boolean> among(T... values) {
-      return in(values);
-    }
-
-    @SuppressWarnings("unchecked")
-    default SqlExpr<Boolean> notIn(T... values) {
-      return notIn(values, pgType());
-    }
-
-    default SqlExpr<Boolean> between(T low, T high) {
-      return between(new ConstReq<>(low, pgType()), new ConstReq<>(high, pgType()));
-    }
-
-    default SqlExpr<Boolean> notBetween(T low, T high) {
-      return notBetween(new ConstReq<>(low, pgType()), new ConstReq<>(high, pgType()));
     }
 
     default SqlExpr<T> coalesce(T defaultValue) {
@@ -749,7 +606,7 @@ public sealed interface SqlExpr<T>
   record IsNull<T>(SqlExpr<T> expr) implements SqlExpr<Boolean> {
     @Override
     public DbType<Boolean> dbType() {
-      return PgTypes.bool;
+      return GenericDbTypes.bool;
     }
 
     @Override
@@ -790,292 +647,28 @@ public sealed interface SqlExpr<T>
     }
   }
 
-  /**
-   * Unified IN expression: {@code lhs IN rhs} where rhs is any source of values.
-   *
-   * <p>The rhs can be:
-   *
-   * <ul>
-   *   <li>{@link Rows} - inline constant values
-   *   <li>{@link SelectBuilder} - a subquery (SelectBuilder extends SqlExpr)
-   * </ul>
-   *
-   * <p>For scalar: {@code expr IN (v1, v2, ...)} or {@code expr IN (SELECT ...)}
-   *
-   * <p>For tuples: {@code (e1, e2) IN ((v1, v2), ...)} or {@code (e1, e2) IN (SELECT ...)}
-   */
-  /**
-   * IN expression: lhs IN rhs. The type parameters are flexible to allow tuple expressions with ID
-   * types that extend the tuple type.
-   */
-  record In<T, V extends T>(SqlExpr<T> lhs, SqlExpr<List<V>> rhs) implements SqlExpr<Boolean> {
-
+  record In<T>(SqlExpr<T> expr, T[] values, DbType<T> pgType) implements SqlExpr<Boolean> {
     @Override
     public DbType<Boolean> dbType() {
-      return PgTypes.bool;
-    }
-
-    @Override
-    public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-      // Check for empty Rows first
-      if (rhs() instanceof Rows<?> rows && rows.isEmpty()) {
-        // SQL Server doesn't support FALSE literal, use 1=0 instead
-        if (ctx.dialect() == Dialect.SQLSERVER) {
-          return Fragment.lit("1=0");
-        }
-        return Fragment.lit("FALSE");
-      }
-
-      // Render lhs - wrap in parens if tuple
-      Fragment lhsFrag;
-      RenderCtx rhsCtx = ctx;
-      boolean isTupleIn = false;
-      if (lhs() instanceof Tuples.TupleExpr<?> tupleExpr) {
-        List<Fragment> exprFragments = new ArrayList<>();
-        for (SqlExpr<?> e : tupleExpr.exprs()) {
-          exprFragments.add(e.render(ctx, counter));
-        }
-        lhsFrag = Fragment.lit("(").append(Fragment.comma(exprFragments)).append(Fragment.lit(")"));
-        // Pass tuple context to RHS so it can render EXISTS pattern if needed
-        rhsCtx = ctx.withTupleInLhs(tupleExpr.exprs());
-        isTupleIn = true;
-      } else {
-        lhsFrag = lhs().render(ctx, counter);
-      }
-
-      // Render rhs - it will check context and render EXISTS if needed for SQL Server/DuckDB
-      Fragment rhsFrag = rhs().render(rhsCtx, counter);
-
-      // If RHS used EXISTS pattern (for SQL Server/DuckDB tuple IN), return just the EXISTS
-      if (isTupleIn
-          && rhsCtx.inTupleIn()
-          && (ctx.dialect() == Dialect.SQLSERVER || ctx.dialect() == Dialect.DUCKDB)
-          && (rhs() instanceof Rows<?> || rhs() instanceof Subquery<?, ?>)) {
-        return rhsFrag;
-      }
-
-      return lhsFrag.append(Fragment.lit(" IN (")).append(rhsFrag).append(Fragment.lit(")"));
-    }
-  }
-
-  /**
-   * A collection of row expressions - represents inline constant values for IN clauses.
-   *
-   * <p>Renders as: {@code (row1), (row2), ...} for tuples or {@code v1, v2, ...} for scalars.
-   *
-   * @param <T> the row type (can be scalar or Tuple)
-   */
-  record Rows<T>(List<SqlExpr<T>> rows) implements SqlExpr<List<T>> {
-
-    /** Create Rows from a list of values, using the template expression for type info. */
-    public static <T> Rows<T> of(SqlExpr<T> template, List<T> values) {
-      DbType<T> dbType = template.dbType();
-      List<SqlExpr<T>> exprs = new ArrayList<>();
-      for (T value : values) {
-        exprs.add(new ConstReq<>(value, dbType));
-      }
-      return new Rows<>(exprs);
-    }
-
-    /**
-     * Create Rows from tuple values, using the template TupleExpr for type info. The values can be
-     * any type V that extends the tuple type T (e.g., ID types that implement TupleN).
-     */
-    public static <T extends Tuples.Tuple, V extends T> Rows<V> ofTuples(
-        Tuples.TupleExpr<T> template, List<V> values) {
-      // Extract dbTypes from template
-      List<DbType<?>> dbTypes = new ArrayList<>();
-      for (SqlExpr<?> expr : template.exprs()) {
-        dbTypes.add(expr.dbType());
-      }
-      // Create a ConstTuple for each value
-      List<SqlExpr<V>> exprs = new ArrayList<>();
-      for (V value : values) {
-        exprs.add(new ConstTuple<>(value, dbTypes));
-      }
-      return new Rows<>(exprs);
-    }
-
-    public boolean isEmpty() {
-      return rows.isEmpty();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public DbType<List<T>> dbType() {
-      // This is a collection type - not typically used for parsing
-      throw new UnsupportedOperationException("Rows.dbType() - use individual row dbTypes");
-    }
-
-    @Override
-    public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-      if (rows.isEmpty()) {
-        return Fragment.lit("");
-      }
-
-      // SQL Server and DuckDB don't support tuple IN syntax - use EXISTS with VALUES instead
-      if ((ctx.dialect() == Dialect.SQLSERVER || ctx.dialect() == Dialect.DUCKDB)
-          && ctx.inTupleIn()) {
-        return renderExistsValues(ctx, counter);
-      }
-
-      List<Fragment> fragments = new ArrayList<>();
-      for (SqlExpr<T> row : rows) {
-        fragments.add(row.render(ctx, counter));
-      }
-      return Fragment.comma(fragments);
-    }
-
-    /**
-     * Render using EXISTS with VALUES for SQL Server tuple IN. Returns just the EXISTS expression
-     * (caller wraps in parens if needed).
-     */
-    private Fragment renderExistsValues(RenderCtx ctx, AtomicInteger counter) {
-      List<SqlExpr<?>> lhsExprs = ctx.tupleInLhs();
-      int numCols = lhsExprs.size();
-
-      // Build VALUES clause: VALUES (?, ?), (?, ?), ...
-      List<Fragment> valueRows = new ArrayList<>();
-      for (SqlExpr<T> row : rows) {
-        valueRows.add(row.render(ctx, counter));
-      }
-      Fragment valuesClause = Fragment.lit("VALUES ").append(Fragment.comma(valueRows));
-
-      // Build column aliases: c1, c2, ...
-      StringBuilder colAliases = new StringBuilder();
-      for (int i = 0; i < numCols; i++) {
-        if (i > 0) colAliases.append(", ");
-        colAliases.append("c").append(i + 1);
-      }
-
-      // Build WHERE clause: col1 = v.c1 AND col2 = v.c2 ...
-      List<Fragment> conditions = new ArrayList<>();
-      for (int i = 0; i < numCols; i++) {
-        Fragment colFrag = lhsExprs.get(i).render(ctx, counter);
-        conditions.add(colFrag.append(Fragment.lit(" = v.c" + (i + 1))));
-      }
-      Fragment whereClause = Fragment.and(conditions);
-
-      // Return full EXISTS expression - caller won't wrap in IN ( )
-      return Fragment.lit("EXISTS (SELECT 1 FROM (")
-          .append(valuesClause)
-          .append(Fragment.lit(") AS v(" + colAliases + ") WHERE "))
-          .append(whereClause)
-          .append(Fragment.lit(")"));
-    }
-  }
-
-  /**
-   * A subquery that produces a list of rows - for use with IN expressions. Renders as just the
-   * subquery SQL when used inside IN.
-   *
-   * @param <F> the Fields type of the subquery
-   * @param <R> the Row type (result type) of the subquery
-   */
-  record Subquery<F, R>(SelectBuilder<F, R> selectBuilder) implements SqlExpr<List<R>> {
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public DbType<List<R>> dbType() {
-      throw new UnsupportedOperationException("Subquery.dbType() - subqueries are used inside IN");
-    }
-
-    @Override
-    public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-      Optional<Fragment> sql = selectBuilder.sql();
-      if (sql.isEmpty()) {
-        throw new UnsupportedOperationException("Subquery requires a SQL-backed SelectBuilder");
-      }
-
-      // SQL Server and DuckDB don't support tuple IN subquery - use EXISTS pattern
-      if ((ctx.dialect() == Dialect.SQLSERVER || ctx.dialect() == Dialect.DUCKDB)
-          && ctx.inTupleIn()) {
-        return renderExistsSubquery(ctx, counter, sql.get());
-      }
-
-      return sql.get();
-    }
-
-    /**
-     * Render using EXISTS pattern for SQL Server/DuckDB tuple IN subquery. Returns just the EXISTS
-     * expression (caller wraps in parens if needed).
-     */
-    private Fragment renderExistsSubquery(
-        RenderCtx ctx, AtomicInteger counter, Fragment subquerySql) {
-      List<SqlExpr<?>> lhsExprs = ctx.tupleInLhs();
-      int numCols = lhsExprs.size();
-
-      // Build column aliases: c1, c2, ...
-      StringBuilder colAliases = new StringBuilder();
-      for (int i = 0; i < numCols; i++) {
-        if (i > 0) colAliases.append(", ");
-        colAliases.append("c").append(i + 1);
-      }
-
-      // Build WHERE clause: col1 = sq.c1 AND col2 = sq.c2 ...
-      List<Fragment> conditions = new ArrayList<>();
-      for (int i = 0; i < numCols; i++) {
-        Fragment colFrag = lhsExprs.get(i).render(ctx, counter);
-        conditions.add(colFrag.append(Fragment.lit(" = sq.c" + (i + 1))));
-      }
-      Fragment whereClause = Fragment.and(conditions);
-
-      // Return full EXISTS expression - caller won't wrap in IN ( )
-      return Fragment.lit("EXISTS (SELECT 1 FROM (")
-          .append(subquerySql)
-          .append(Fragment.lit(") AS sq(" + colAliases + ") WHERE "))
-          .append(whereClause)
-          .append(Fragment.lit(")"));
-    }
-  }
-
-  /**
-   * A constant tuple value - renders as {@code (v1, v2, ...)}.
-   *
-   * @param <T> the Tuple type
-   */
-  record ConstTuple<T extends Tuples.Tuple>(T value, List<DbType<?>> dbTypes)
-      implements SqlExpr<T> {
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public DbType<T> dbType() {
-      throw new UnsupportedOperationException("ConstTuple.dbType() - use dbTypes list");
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Fragment render(RenderCtx ctx, AtomicInteger counter) {
-      Object[] arr = value.asArray();
-      List<Fragment> parts = new ArrayList<>();
-      for (int i = 0; i < arr.length; i++) {
-        DbType<Object> dbType = (DbType<Object>) dbTypes.get(i);
-        parts.add(Fragment.value(arr[i], dbType));
-      }
-      return Fragment.lit("(").append(Fragment.comma(parts)).append(Fragment.lit(")"));
-    }
-  }
-
-  record Between<T>(SqlExpr<T> expr, SqlExpr<T> low, SqlExpr<T> high, boolean negated)
-      implements SqlExpr<Boolean> {
-    @Override
-    public DbType<Boolean> dbType() {
-      return PgTypes.bool;
+      return GenericDbTypes.bool;
     }
 
     @Override
     public Fragment render(RenderCtx ctx, AtomicInteger counter) {
       Fragment exprFrag = expr().render(ctx, counter);
-      Fragment lowFrag = low().render(ctx, counter);
-      Fragment highFrag = high().render(ctx, counter);
-      String op = negated() ? " NOT BETWEEN " : " BETWEEN ";
-      return Fragment.lit("(")
-          .append(exprFrag)
-          .append(Fragment.lit(op))
-          .append(lowFrag)
-          .append(Fragment.lit(" AND "))
-          .append(highFrag)
-          .append(Fragment.lit(")"));
+      if (values().length == 0) {
+        return Fragment.lit("FALSE");
+      }
+
+      Fragment result = Fragment.lit("(").append(exprFrag).append(Fragment.lit(" IN ("));
+
+      List<Fragment> valueFragments = new ArrayList<>();
+      for (T value : values()) {
+        valueFragments.add(Fragment.value(value, pgType));
+      }
+
+      result = result.append(Fragment.comma(valueFragments));
+      return result.append(Fragment.lit("))"));
     }
   }
 
@@ -1104,7 +697,7 @@ public sealed interface SqlExpr<T>
     public DbType<List<Optional<?>>> dbType() {
       // ROW expressions return a composite type - we use a placeholder
       // This isn't commonly used in projections
-      return (DbType<List<Optional<?>>>) (DbType<?>) PgTypes.text;
+      return (DbType<List<Optional<?>>>) (DbType<?>) GenericDbTypes.text;
     }
 
     @Override
@@ -1122,22 +715,70 @@ public sealed interface SqlExpr<T>
     }
   }
 
+  record CompositeIn<Tuple, Row>(List<Part<?, Tuple, Row>> parts, List<Tuple> tuples)
+      implements SqlExpr<Boolean> {
+
+    public record Part<T, Tuple, Row>(
+        SqlExpr.FieldLike<T, Row> field, Function<Tuple, T> extract, DbType<T> pgType) {}
+
+    @Override
+    public DbType<Boolean> dbType() {
+      return GenericDbTypes.bool;
+    }
+
+    @Override
+    public Fragment render(RenderCtx ctx, AtomicInteger counter) {
+      if (tuples().isEmpty()) {
+        return Fragment.lit("FALSE");
+      }
+
+      // Render field list
+      List<Fragment> fieldFragments = new ArrayList<>();
+      for (var part : parts()) {
+        fieldFragments.add(part.field().render(ctx, counter));
+      }
+
+      Fragment fields =
+          Fragment.lit("(").append(Fragment.comma(fieldFragments)).append(Fragment.lit(")"));
+
+      // Render values
+      List<Fragment> tupleFragments = new ArrayList<>();
+      for (Tuple tuple : tuples()) {
+        Fragment tupleFragment = renderTuple(parts(), tuple);
+        tupleFragments.add(tupleFragment);
+      }
+
+      return fields
+          .append(Fragment.lit(" IN ("))
+          .append(Fragment.comma(tupleFragments))
+          .append(Fragment.lit(")"));
+    }
+
+    private static <Tuple, Row> Fragment renderTuple(List<Part<?, Tuple, Row>> parts, Tuple tuple) {
+      List<Fragment> valueFragments = new ArrayList<>();
+      for (var part : parts) {
+        valueFragments.add(renderPartValue(part, tuple));
+      }
+      return Fragment.lit("(").append(Fragment.comma(valueFragments)).append(Fragment.lit(")"));
+    }
+
+    private static <T, Tuple, Row> Fragment renderPartValue(Part<T, Tuple, Row> part, Tuple tuple) {
+      T value = part.extract().apply(tuple);
+      return Fragment.value(value, part.pgType());
+    }
+  }
+
   /** Check if a value is in the result set of a subquery. Renders as: expr IN (SELECT ...) */
   record InSubquery<T, F extends Tuples.TupleExpr<R>, R extends Tuples.Tuple>(
       SqlExpr<T> expr, SelectBuilder<F, R> subquery) implements SqlExpr<Boolean> {
     @Override
     public DbType<Boolean> dbType() {
-      return PgTypes.bool;
+      return GenericDbTypes.bool;
     }
 
     @Override
     public Fragment render(RenderCtx ctx, AtomicInteger counter) {
       Fragment exprFrag = expr().render(ctx, counter);
-
-      // Wrap tuple expressions in parentheses for correct SQL syntax: (a, b) IN (SELECT...)
-      if (expr() instanceof Tuples.TupleExpr<?>) {
-        exprFrag = Fragment.lit("(").append(exprFrag).append(Fragment.lit(")"));
-      }
 
       // Get the SQL from the subquery
       Optional<Fragment> subquerySql = subquery().sql();
@@ -1157,7 +798,7 @@ public sealed interface SqlExpr<T>
   record Exists<F, R>(SelectBuilder<F, R> subquery) implements SqlExpr<Boolean> {
     @Override
     public DbType<Boolean> dbType() {
-      return PgTypes.bool;
+      return GenericDbTypes.bool;
     }
 
     @Override
@@ -1202,7 +843,7 @@ public sealed interface SqlExpr<T>
   record CountStar() implements SqlExpr<Long> {
     @Override
     public DbType<Long> dbType() {
-      return PgTypes.int8;
+      return GenericDbTypes.int8;
     }
 
     @Override
@@ -1215,7 +856,7 @@ public sealed interface SqlExpr<T>
   record Count<T>(SqlExpr<T> expr) implements SqlExpr<Long> {
     @Override
     public DbType<Long> dbType() {
-      return PgTypes.int8;
+      return GenericDbTypes.int8;
     }
 
     @Override
@@ -1228,7 +869,7 @@ public sealed interface SqlExpr<T>
   record CountDistinct<T>(SqlExpr<T> expr) implements SqlExpr<Long> {
     @Override
     public DbType<Long> dbType() {
-      return PgTypes.int8;
+      return GenericDbTypes.int8;
     }
 
     @Override
@@ -1259,7 +900,7 @@ public sealed interface SqlExpr<T>
   record Avg<T>(SqlExpr<T> expr) implements SqlExpr<Double> {
     @Override
     public DbType<Double> dbType() {
-      return PgTypes.float8;
+      return GenericDbTypes.float8;
     }
 
     @Override
@@ -1301,7 +942,7 @@ public sealed interface SqlExpr<T>
   record StringAgg(SqlExpr<String> expr, String delimiter) implements SqlExpr<String> {
     @Override
     public DbType<String> dbType() {
-      return PgTypes.text;
+      return GenericDbTypes.text;
     }
 
     @Override
@@ -1310,13 +951,13 @@ public sealed interface SqlExpr<T>
         return Fragment.lit("GROUP_CONCAT(")
             .append(expr.render(ctx, counter))
             .append(Fragment.lit(" SEPARATOR "))
-            .append(Fragment.value(delimiter, PgTypes.text))
+            .append(Fragment.value(delimiter, GenericDbTypes.text))
             .append(Fragment.lit(")"));
       } else {
         return Fragment.lit("STRING_AGG(")
             .append(expr.render(ctx, counter))
             .append(Fragment.lit(", "))
-            .append(Fragment.value(delimiter, PgTypes.text))
+            .append(Fragment.value(delimiter, GenericDbTypes.text))
             .append(Fragment.lit(")"));
       }
     }
@@ -1355,7 +996,7 @@ public sealed interface SqlExpr<T>
   record BoolAnd(SqlExpr<Boolean> expr) implements SqlExpr<Boolean> {
     @Override
     public DbType<Boolean> dbType() {
-      return PgTypes.bool;
+      return GenericDbTypes.bool;
     }
 
     @Override
@@ -1368,7 +1009,7 @@ public sealed interface SqlExpr<T>
   record BoolOr(SqlExpr<Boolean> expr) implements SqlExpr<Boolean> {
     @Override
     public DbType<Boolean> dbType() {
-      return PgTypes.bool;
+      return GenericDbTypes.bool;
     }
 
     @Override
@@ -1396,27 +1037,27 @@ public sealed interface SqlExpr<T>
 
   /** SUM(expr) for Integer - returns Long. */
   static SqlExpr<Long> sum(SqlExpr<Integer> expr) {
-    return new Sum<>(expr, PgTypes.int8);
+    return new Sum<>(expr, GenericDbTypes.int8);
   }
 
   /** SUM(expr) for Long - returns Long. */
   static SqlExpr<Long> sumLong(SqlExpr<Long> expr) {
-    return new Sum<>(expr, PgTypes.int8);
+    return new Sum<>(expr, GenericDbTypes.int8);
   }
 
   /** SUM(expr) for BigDecimal - returns BigDecimal. */
   static SqlExpr<BigDecimal> sumBigDecimal(SqlExpr<BigDecimal> expr) {
-    return new Sum<>(expr, PgTypes.numeric);
+    return new Sum<>(expr, GenericDbTypes.numeric);
   }
 
   /** SUM(expr) for Double - returns Double. */
   static SqlExpr<Double> sumDouble(SqlExpr<Double> expr) {
-    return new Sum<>(expr, PgTypes.float8);
+    return new Sum<>(expr, GenericDbTypes.float8);
   }
 
   /** SUM(expr) for Short - returns Long. */
   static SqlExpr<Long> sumShort(SqlExpr<Short> expr) {
-    return new Sum<>(expr, PgTypes.int8);
+    return new Sum<>(expr, GenericDbTypes.int8);
   }
 
   /** AVG(expr) - average of numeric values, returns Double. */
@@ -1452,7 +1093,7 @@ public sealed interface SqlExpr<T>
    * for MariaDB.
    */
   static <T> SqlExpr<Json> jsonAgg(SqlExpr<T> expr) {
-    return new JsonAgg<>(expr, PgTypes.json);
+    return new JsonAgg<>(expr, GenericDbTypes.json);
   }
 
   /** BOOL_AND(expr) - true if all values are true. */
