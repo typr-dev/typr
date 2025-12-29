@@ -20,6 +20,12 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 case class DuckDbNamedStruct(name: String, structType: db.DuckDbType.StructType)
 
+/** PostgreSQL composite type (CREATE TYPE name AS (...))
+  *
+  * Unlike DuckDB structs which are anonymous, PostgreSQL composite types are named at definition time. We store the type info directly since it already has a qualified name.
+  */
+case class PgCompositeType(compositeType: db.PgType.CompositeType)
+
 case class MetaDb(
     dbType: DbType,
     relations: Map[db.RelationName, Lazy[db.Relation]],
@@ -27,10 +33,11 @@ case class MetaDb(
     domains: List[db.Domain],
     oracleObjectTypes: Map[String, db.OracleType.ObjectType] = Map.empty,
     oracleCollectionTypes: Map[String, db.OracleType] = Map.empty,
-    duckDbStructTypes: List[DuckDbNamedStruct] = Nil
+    duckDbStructTypes: List[DuckDbNamedStruct] = Nil,
+    pgCompositeTypes: List[PgCompositeType] = Nil
 ) {
   val typeMapperDb: TypeMapperDb = dbType match {
-    case DbType.PostgreSQL => PgTypeMapperDb(enums, domains)
+    case DbType.PostgreSQL => PgTypeMapperDb(enums, domains, pgCompositeTypes)
     case DbType.MariaDB    => MariaTypeMapperDb()
     case DbType.DuckDB     => DuckDbTypeMapperDb()
     case DbType.Oracle     => OracleTypeMapperDb(oracleObjectTypes, oracleCollectionTypes)

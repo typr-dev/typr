@@ -17,9 +17,11 @@ private object TypeWithPrecision {
 }
 
 /** PostgreSQL type mapper from database metadata to db.PgType */
-case class PgTypeMapperDb(enums: List[db.StringEnum], domains: List[db.Domain]) extends TypeMapperDb {
+case class PgTypeMapperDb(enums: List[db.StringEnum], domains: List[db.Domain], compositeTypes: List[PgCompositeType] = Nil) extends TypeMapperDb {
   val domainsByName: Map[String, db.Domain] = domains.flatMap(e => List((e.name.name, e), (e.name.value, e))).toMap
   val enumsByName = enums.flatMap(e => List((e.name.name, e), (e.name.value, e))).toMap
+  val compositesByName: Map[String, db.PgType.CompositeType] =
+    compositeTypes.flatMap(c => List((c.compositeType.name.name, c.compositeType), (c.compositeType.name.value, c.compositeType))).toMap
 
   def col(c: ColumnsViewRow)(logWarning: () => Unit): db.PgType = {
     val fromDomain: Option[db.PgType.DomainRef] =
@@ -97,6 +99,7 @@ case class PgTypeMapperDb(enums: List[db.StringEnum], domains: List[db.Domain]) 
           .get(typeName)
           .map(db.PgType.EnumRef.apply)
           .orElse(domainsByName.get(typeName).map(domain => db.PgType.DomainRef(domain.name, domain.originalType, domain.tpe)))
+          .orElse(compositesByName.get(typeName))
           .getOrElse {
             logWarning()
             db.Unknown(udtName)

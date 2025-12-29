@@ -15,9 +15,9 @@ case class TypeMapperJvmNew(
     tpe match {
       case x: db.PgType =>
         x match {
-          case db.PgType.Array(_) => sys.error("no idea what to do with nested array types")
-          case db.PgType.Boolean  => lang.Boolean
-          case db.PgType.Bytea    => lang.ByteArray
+          case db.PgType.Array(elementType) => jvm.Type.ArrayOf(baseType(elementType))
+          case db.PgType.Boolean            => lang.Boolean
+          case db.PgType.Bytea              => lang.ByteArray
           case db.PgType.Bpchar(maybeN) =>
             maybeN match {
               case Some(n) if n != 2147483647 => lang.String.withComment(s"bpchar, max $n chars")
@@ -81,8 +81,9 @@ case class TypeMapperJvmNew(
               case Some(n) if n != 2147483647 => lang.String.withComment(s"max $n chars")
               case _                          => lang.String
             }
-          case db.PgType.Vector => TypesJava.runtime.Vector
-          case db.Unknown(_)    => TypesJava.runtime.Unknown
+          case db.PgType.Vector                 => TypesJava.runtime.Vector
+          case db.PgType.CompositeType(name, _) => jvm.Type.Qualified(naming.compositeTypeName(name))
+          case db.Unknown(_)                    => TypesJava.runtime.Unknown
         }
       case x: db.MariaType =>
         x match {

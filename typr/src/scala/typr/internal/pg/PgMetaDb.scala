@@ -3,6 +3,7 @@ package internal
 package pg
 
 import typr.generated.custom.comments.{CommentsSqlRepoImpl, CommentsSqlRow}
+import typr.generated.custom.composite_types.{CompositeTypesSqlRepoImpl, CompositeTypesSqlRow}
 import typr.generated.custom.constraints.{ConstraintsSqlRepoImpl, ConstraintsSqlRow}
 import typr.generated.custom.domains.{DomainsSqlRepoImpl, DomainsSqlRow}
 import typr.generated.custom.enums.{EnumsSqlRepoImpl, EnumsSqlRow}
@@ -33,7 +34,8 @@ object PgMetaDb {
       domains: List[DomainsSqlRow],
       columnComments: List[CommentsSqlRow],
       constraints: List[ConstraintsSqlRow],
-      tableComments: List[TableCommentsSqlRow]
+      tableComments: List[TableCommentsSqlRow],
+      compositeTypes: List[CompositeTypesSqlRow]
   ) {
     def filter(schemaMode: SchemaMode): Input = {
       schemaMode match {
@@ -71,7 +73,8 @@ object PgMetaDb {
             domains = domains.collect { case x if keep(x.schema) => x.copy(schema = None) },
             columnComments = columnComments.collect { case c if keep(c.tableSchema) => c.copy(tableSchema = None) },
             constraints = constraints.collect { case c if keep(c.tableSchema) => c.copy(tableSchema = None) },
-            tableComments = tableComments.collect { case c if keep(c.schema) => c.copy(schema = None) }
+            tableComments = tableComments.collect { case c if keep(c.schema) => c.copy(schema = None) },
+            compositeTypes = compositeTypes.collect { case c if keep(c.typeSchema) => c.copy(typeSchema = None) }
           )
       }
     }
@@ -96,6 +99,7 @@ object PgMetaDb {
       val columnComments = logger.timed("fetching columnComments")(ds.run(implicit c => (new CommentsSqlRepoImpl).apply))
       val constraints = logger.timed("fetching constraints")(ds.run(implicit c => (new ConstraintsSqlRepoImpl).apply))
       val tableComments = logger.timed("fetching tableComments")(ds.run(implicit c => (new TableCommentsSqlRepoImpl).apply))
+      val compositeTypes = logger.timed("fetching compositeTypes")(ds.run(implicit c => (new CompositeTypesSqlRepoImpl).apply))
 
       // Fetch view rows - we'll analyze them with sqlglot after getting the schema
       val viewRows = logger.timed("fetching view rows")(ds.run(implicit c => (new ViewFindAllSqlRepoImpl).apply))
@@ -112,6 +116,7 @@ object PgMetaDb {
         columnComments <- columnComments
         constraints <- constraints
         tableComments <- tableComments
+        compositeTypes <- compositeTypes
       } yield {
         // Build schema for sqlglot from columns
         val schema = buildSchemaForSqlglot(columns)
@@ -130,7 +135,8 @@ object PgMetaDb {
           domains,
           columnComments,
           constraints,
-          tableComments
+          tableComments,
+          compositeTypes
         )
         // todo: do this at SQL level instead for performance
         input.filter(schemaMode)
@@ -247,6 +253,39 @@ object PgMetaDb {
         hasDefault = d.default.isDefined,
         constraintDefinition = d.constraintDefinition
       )
+    }
+
+    // Build composite types from their attribute rows (grouped by type name)
+    // Two-phase approach: first collect all names, then resolve fields (so nested composites work)
+    val compositeTypes: List[PgCompositeType] = {
+      // Group rows by (schema, typeName) - each row is one field of a composite type
+      val grouped = input.compositeTypes.groupBy(row => (row.typeSchema, row.typeName))
+
+      // Phase 1: Create placeholder CompositeType entries with just names (empty fields)
+      // This allows PgTypeMapperDb to resolve nested composite type references
+      val placeholders: List[PgCompositeType] = grouped.map { case ((schema, typeName), _) =>
+        val name = db.RelationName(schema, typeName)
+        PgCompositeType(db.PgType.CompositeType(name, Nil))
+      }.toList
+
+      // Create type mapper with placeholder composites so nested references resolve
+      val typeMapperWithComposites = PgTypeMapperDb(enums, domains, placeholders)
+
+      // Phase 2: Now resolve all field types (nested composite refs will work)
+      grouped.map { case ((schema, typeName), fieldRows) =>
+        val name = db.RelationName(schema, typeName)
+        val fields = fieldRows.sortBy(_.attrNum.value).map { row =>
+          val fieldTpe = typeMapperWithComposites.dbTypeFrom(row.attrType, characterMaximumLength = None) { () =>
+            logger.warn(s"Couldn't translate field type ${row.attrType} for composite type ${name.value}.${row.attrName}")
+          }
+          db.PgType.CompositeField(
+            name = row.attrName,
+            tpe = fieldTpe,
+            nullable = !row.attrNotNull
+          )
+        }
+        PgCompositeType(db.PgType.CompositeType(name, fields))
+      }.toList
     }
 
     val constraints: Map[(db.RelationName, db.ColName), List[db.Constraint]] =
@@ -546,6 +585,6 @@ object PgMetaDb {
         }
       }.toMap
 
-    MetaDb(DbType.PostgreSQL, tables ++ views, enums, domains)
+    MetaDb(DbType.PostgreSQL, tables ++ views, enums, domains, pgCompositeTypes = compositeTypes)
   }
 }

@@ -10,9 +10,9 @@ case class TypeMapperJvmOld(lang: Lang, typeOverride: TypeOverride, nullabilityO
     tpe match {
       case x: db.PgType =>
         x match {
-          case db.PgType.Array(_) => sys.error("no idea what to do with nested array types")
-          case db.PgType.Boolean  => lang.Boolean
-          case db.PgType.Bytea    => customTypes.TypoBytea.typoType
+          case db.PgType.Array(elementType) => jvm.Type.ArrayOf(baseType(elementType))
+          case db.PgType.Boolean            => lang.Boolean
+          case db.PgType.Bytea              => customTypes.TypoBytea.typoType
           case db.PgType.Bpchar(maybeN) =>
             maybeN match {
               case Some(n) if n > 0 && n != 2147483647 => lang.String.withComment(s"bpchar, max $n chars")
@@ -76,8 +76,9 @@ case class TypeMapperJvmOld(lang: Lang, typeOverride: TypeOverride, nullabilityO
               case Some(n) if n > 0 && n != 2147483647 => lang.String.withComment(s"max $n chars")
               case _                                   => lang.String
             }
-          case db.PgType.Vector    => customTypes.TypoVector.typoType
-          case db.Unknown(sqlType) => customTypes.TypoUnknown(sqlType).typoType
+          case db.PgType.Vector                 => customTypes.TypoVector.typoType
+          case db.PgType.CompositeType(name, _) => jvm.Type.Qualified(naming.compositeTypeName(name))
+          case db.Unknown(sqlType)              => customTypes.TypoUnknown(sqlType).typoType
         }
 
       case _ => sys.error("The library you chose can just be used with postgres")

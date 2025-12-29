@@ -64,6 +64,9 @@ class Naming(val pkg: jvm.QIdent, lang: Lang) {
   def domainName(name: db.RelationName): jvm.QIdent =
     tpe(name, "")
 
+  def compositeTypeName(name: db.RelationName): jvm.QIdent =
+    tpe(name, "")
+
   def objectTypeName(name: db.RelationName): jvm.QIdent =
     tpe(name, "")
 

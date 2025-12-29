@@ -90,6 +90,9 @@ object generate {
       .flatMap(ComputedOracleCollectionType(naming, scalaTypeMapper))
     val duckDbStructTypes = metaDb.duckDbStructTypes
       .map(ComputedDuckDbStruct(naming, scalaTypeMapper))
+    val pgCompositeTypes = metaDb.pgCompositeTypes
+      .map(ComputedPgCompositeType(naming, scalaTypeMapper))
+    val pgCompositeLookup = pgCompositeTypes.map(c => c.underlying.compositeType.name -> c).toMap
     val projectsWithFiles: ProjectGraph[Files, List[jvm.File]] =
       graph.valueFromProject { project =>
         val isRoot = graph == project
@@ -140,6 +143,7 @@ object generate {
         val oracleCollectionTypeFiles = oracleCollectionTypes.map(FileOracleCollectionType(_, options))
         val adapter = metaDb.dbType.adapter(needsTimestampCasts = false)
         val duckDbStructTypeFiles = duckDbStructTypes.map(FileDuckDbStruct(_, options, adapter, duckDbStructLookup, naming))
+        val pgCompositeTypeFiles = pgCompositeTypes.map(FilePgCompositeType(_, options, adapter, pgCompositeLookup, naming))
         val defaultFile = FileDefault(default, options.jsonLibs, options.dbLib, language)
         val mostFiles: List[jvm.File] =
           List(
@@ -150,6 +154,7 @@ object generate {
             oracleObjectTypeFiles,
             oracleCollectionTypeFiles,
             duckDbStructTypeFiles,
+            pgCompositeTypeFiles,
             customTypes.All.values.map(FileCustomType(options, language)),
             relationFilesByName.map { case (_, f) => f },
             sqlFileFiles
@@ -160,7 +165,16 @@ object generate {
             if (options.keepDependencies) relationFilesByName.map { case (_, f) => f }
             else relationFilesByName.collect { case (name, f) if selector.include(name) => f }
 
-          minimize(mostFiles, entryPoints = sqlFileFiles ++ keptRelations ++ domainFiles ++ oracleObjectTypeFiles ++ oracleCollectionTypeFiles ++ duckDbStructTypeFiles)
+          // pgCompositeTypeFiles are entry points only for DbLibTypo (which has PgStruct support)
+          // For other dbLibs (like Anorm used by generate-sources), they're not included
+          val compositeEntryPoints = options.dbLib match {
+            case Some(_: DbLibTypo) => pgCompositeTypeFiles
+            case _                  => Nil
+          }
+          minimize(
+            mostFiles,
+            entryPoints = sqlFileFiles ++ keptRelations ++ domainFiles ++ oracleObjectTypeFiles ++ oracleCollectionTypeFiles ++ duckDbStructTypeFiles ++ compositeEntryPoints
+          )
         }
 
         // package objects have weird scoping, so don't attempt to automatically write imports for them.

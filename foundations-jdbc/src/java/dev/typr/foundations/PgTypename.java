@@ -141,4 +141,45 @@ public sealed interface PgTypename<A> extends DbTypename<A> {
   static <T> PgTypename<T> of(String sqlType, int precision) {
     return new WithPrec<>(new Base<>(sqlType), precision);
   }
+
+  /**
+   * A composite type (record) typename with field information.
+   *
+   * @param <A> the Java type representing this composite
+   */
+  record CompositeOf<A>(String name, java.util.List<CompositeField> fields)
+      implements PgTypename<A> {
+    public record CompositeField(String name, PgTypename<?> type) {}
+
+    @Override
+    public String sqlType() {
+      return name;
+    }
+
+    @Override
+    public String sqlTypeNoPrecision() {
+      return name;
+    }
+
+    @Override
+    public PgTypename<A[]> array() {
+      return new ArrayOf<>(this);
+    }
+
+    @Override
+    public CompositeOf<A> renamed(String value) {
+      return new CompositeOf<>(value, fields);
+    }
+
+    @Override
+    public CompositeOf<A> renamedDropPrecision(String value) {
+      return new CompositeOf<>(value, fields);
+    }
+
+    /** Convert to generic PgTypename for use in PgType. */
+    @SuppressWarnings("unchecked")
+    public PgTypename<A> asGeneric() {
+      return (PgTypename<A>) this;
+    }
+  }
 }

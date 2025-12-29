@@ -72,6 +72,9 @@ object db {
     case object Xml extends PgType
     case class VarChar(maxLength: Option[Int]) extends PgType
     case object Vector extends PgType
+    // Composite type (CREATE TYPE name AS (field1 type1, field2 type2, ...))
+    case class CompositeType(name: RelationName, fields: List[CompositeField]) extends PgType
+    case class CompositeField(name: String, tpe: Type, nullable: Boolean)
   }
 
   // MariaDB-specific types

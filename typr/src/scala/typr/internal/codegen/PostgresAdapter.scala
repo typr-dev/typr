@@ -258,6 +258,8 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
         code"${jvm.Type.Qualified(naming.domainName(name))}.$typeFieldName"
       case db.PgType.EnumRef(enm) =>
         code"${jvm.Type.Qualified(naming.enumName(enm.name))}.$typeFieldName"
+      case db.PgType.CompositeType(name, _) =>
+        code"${jvm.Type.Qualified(naming.compositeTypeName(name))}.$typeFieldName"
       case db.PgType.Array(inner) =>
         // For Scala, use unboxed primitive arrays for better performance
         // For Java/Kotlin, use boxed arrays

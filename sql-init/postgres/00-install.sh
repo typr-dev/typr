@@ -10,3 +10,4 @@ SHELL
 psql -d Adventureworks < /docker-entrypoint-initdb.d/install.sql
 psql -d Adventureworks < /docker-entrypoint-initdb.d/test-tables.sql
 psql -d Adventureworks < /docker-entrypoint-initdb.d/issue148.sql
+psql -d Adventureworks < /docker-entrypoint-initdb.d/composite-types.sql

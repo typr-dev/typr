@@ -38,17 +38,25 @@ public class PgTypeTest {
   record TestPair<A>(A t0, Optional<A> t1) {}
 
   record PgTypeAndExample<A>(
-      PgType<A> type, A example, boolean hasIdentity, boolean streamingWorks) {
+      PgType<A> type,
+      A example,
+      boolean hasIdentity,
+      boolean streamingWorks,
+      boolean compositeTextWorks) {
     public PgTypeAndExample(PgType<A> type, A example) {
-      this(type, example, true, true);
+      this(type, example, true, true, true);
     }
 
     public PgTypeAndExample<A> noStreaming() {
-      return new PgTypeAndExample<>(type, example, hasIdentity, false);
+      return new PgTypeAndExample<>(type, example, hasIdentity, false, compositeTextWorks);
     }
 
     public PgTypeAndExample<A> noIdentity() {
-      return new PgTypeAndExample<>(type, example, false, streamingWorks);
+      return new PgTypeAndExample<>(type, example, false, streamingWorks, compositeTextWorks);
+    }
+
+    public PgTypeAndExample<A> noCompositeText() {
+      return new PgTypeAndExample<>(type, example, hasIdentity, streamingWorks, false);
     }
   }
 
@@ -510,8 +518,260 @@ public class PgTypeTest {
             testJsonDbRoundtrip(conn, t);
           }
 
+          // Composite type DB roundtrip tests
+          // Only test each unique SQL type once to avoid creating too many composite types
+          System.out.println("\n=== Composite Type DB Roundtrip Tests ===");
+          Set<String> testedSqlTypes = new HashSet<>();
+          for (PgTypeAndExample<?> t : All) {
+            String sqlType = t.type.typename().sqlType();
+            if (!testedSqlTypes.contains(sqlType)) {
+              testedSqlTypes.add(sqlType);
+              testCompositeDbRoundtrip(conn, t);
+            }
+          }
+
+          // Test comprehensive composite with all supported types
+          System.out.println("\n=== Comprehensive Composite Type Test ===");
+          testComprehensiveComposite(conn);
+
           return null;
         });
+  }
+
+  // Test type wrapped in a composite, roundtripped through the database
+  static <A> void testCompositeDbRoundtrip(Connection conn, PgTypeAndExample<A> t)
+      throws SQLException {
+    // Skip types that don't support composite text encoding
+    if (!t.compositeTextWorks) {
+      System.out.println(
+          "SKIP Composite DB roundtrip "
+              + t.type.typename().sqlType()
+              + ": marked as not supported");
+      return;
+    }
+
+    // Check if the type's PgCompositeText implementation works
+    try {
+      t.type.pgCompositeText().encode(t.example);
+    } catch (UnsupportedOperationException e) {
+      System.out.println(
+          "SKIP Composite DB roundtrip " + t.type.typename().sqlType() + ": " + e.getMessage());
+      return;
+    }
+
+    String sqlType = t.type.typename().sqlType();
+
+    String compositeTypeName =
+        "test_wrapper_"
+            + sqlType
+                .replace("(", "_")
+                .replace(")", "_")
+                .replace(",", "_")
+                .replace(" ", "_")
+                .replace("[", "_")
+                .replace("]", "_");
+
+    // Create composite type with single field
+    try {
+      conn.createStatement().execute("DROP TYPE IF EXISTS " + compositeTypeName + " CASCADE");
+      conn.createStatement()
+          .execute("CREATE TYPE " + compositeTypeName + " AS (wrapped_value " + sqlType + ")");
+
+      // Build PgStruct for this wrapper
+      PgStruct<SingleFieldWrapper<A>> wrapperStruct =
+          PgStruct.<SingleFieldWrapper<A>>builder(compositeTypeName)
+              .field("wrapped_value", t.type, SingleFieldWrapper::value)
+              .build(values -> new SingleFieldWrapper<>((A) values[0]));
+
+      PgType<SingleFieldWrapper<A>> wrapperType = wrapperStruct.asType();
+
+      // Create temp table
+      conn.createStatement()
+          .execute("CREATE TEMP TABLE test_composite_rt (v " + compositeTypeName + ")");
+
+      try {
+        // Insert value
+        SingleFieldWrapper<A> original = new SingleFieldWrapper<>(t.example);
+        var insert = conn.prepareStatement("INSERT INTO test_composite_rt (v) VALUES (?)");
+        wrapperType.write().set(insert, 1, original);
+        insert.execute();
+        insert.close();
+
+        // Select back
+        var select = conn.prepareStatement("SELECT v FROM test_composite_rt");
+        select.execute();
+        var rs = select.getResultSet();
+
+        if (!rs.next()) {
+          throw new RuntimeException("No rows returned");
+        }
+
+        SingleFieldWrapper<A> decoded = wrapperType.read().read(rs, 1);
+        select.close();
+
+        System.out.println(
+            "Composite DB roundtrip "
+                + sqlType
+                + ": "
+                + format(t.example)
+                + " -> DB -> "
+                + format(decoded.value));
+
+        if (t.hasIdentity && !areEqual(decoded.value, t.example)) {
+          throw new RuntimeException(
+              "Composite DB roundtrip failed for "
+                  + sqlType
+                  + ": expected '"
+                  + format(t.example)
+                  + "' but got '"
+                  + format(decoded.value)
+                  + "'");
+        }
+      } finally {
+        conn.createStatement().execute("DROP TABLE IF EXISTS test_composite_rt");
+      }
+    } finally {
+      conn.createStatement().execute("DROP TYPE IF EXISTS " + compositeTypeName + " CASCADE");
+    }
+  }
+
+  record SingleFieldWrapper<A>(A value) {}
+
+  // Test a comprehensive composite type with all commonly-used field types
+  record ComprehensiveComposite(
+      String textField,
+      Integer int4Field,
+      Long int8Field,
+      Short int2Field,
+      Double float8Field,
+      Float float4Field,
+      Boolean boolField,
+      BigDecimal numericField,
+      UUID uuidField,
+      LocalDate dateField,
+      LocalTime timeField,
+      LocalDateTime timestampField) {}
+
+  static void testComprehensiveComposite(Connection conn) throws SQLException {
+    String typeName = "test_comprehensive_composite";
+
+    conn.createStatement().execute("DROP TYPE IF EXISTS " + typeName + " CASCADE");
+    conn.createStatement()
+        .execute(
+            "CREATE TYPE "
+                + typeName
+                + " AS ("
+                + "text_field TEXT, "
+                + "int4_field INT4, "
+                + "int8_field INT8, "
+                + "int2_field INT2, "
+                + "float8_field FLOAT8, "
+                + "float4_field FLOAT4, "
+                + "bool_field BOOL, "
+                + "numeric_field NUMERIC, "
+                + "uuid_field UUID, "
+                + "date_field DATE, "
+                + "time_field TIME, "
+                + "timestamp_field TIMESTAMP"
+                + ")");
+
+    try {
+      PgStruct<ComprehensiveComposite> struct =
+          PgStruct.<ComprehensiveComposite>builder(typeName)
+              .field("text_field", PgTypes.text, ComprehensiveComposite::textField)
+              .field("int4_field", PgTypes.int4, ComprehensiveComposite::int4Field)
+              .field("int8_field", PgTypes.int8, ComprehensiveComposite::int8Field)
+              .field("int2_field", PgTypes.int2, ComprehensiveComposite::int2Field)
+              .field("float8_field", PgTypes.float8, ComprehensiveComposite::float8Field)
+              .field("float4_field", PgTypes.float4, ComprehensiveComposite::float4Field)
+              .field("bool_field", PgTypes.bool, ComprehensiveComposite::boolField)
+              .field("numeric_field", PgTypes.numeric, ComprehensiveComposite::numericField)
+              .field("uuid_field", PgTypes.uuid, ComprehensiveComposite::uuidField)
+              .field("date_field", PgTypes.date, ComprehensiveComposite::dateField)
+              .field("time_field", PgTypes.time, ComprehensiveComposite::timeField)
+              .field("timestamp_field", PgTypes.timestamp, ComprehensiveComposite::timestampField)
+              .build(
+                  values ->
+                      new ComprehensiveComposite(
+                          (String) values[0],
+                          (Integer) values[1],
+                          (Long) values[2],
+                          (Short) values[3],
+                          (Double) values[4],
+                          (Float) values[5],
+                          (Boolean) values[6],
+                          (BigDecimal) values[7],
+                          (UUID) values[8],
+                          (LocalDate) values[9],
+                          (LocalTime) values[10],
+                          (LocalDateTime) values[11]));
+
+      PgType<ComprehensiveComposite> compositeType = struct.asType();
+
+      conn.createStatement().execute("CREATE TEMP TABLE test_comp (v " + typeName + ")");
+
+      try {
+        // Create test value with special characters
+        ComprehensiveComposite original =
+            new ComprehensiveComposite(
+                "Hello, \"World\"! (with special chars: \n\t\\)",
+                Integer.MAX_VALUE,
+                Long.MIN_VALUE,
+                (short) 42,
+                3.14159265359,
+                2.71828f,
+                true,
+                new BigDecimal("12345.67890"),
+                UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
+                LocalDate.of(2024, 12, 25),
+                LocalTime.of(14, 30, 45).truncatedTo(ChronoUnit.MICROS),
+                LocalDateTime.of(2024, 12, 25, 14, 30, 45).truncatedTo(ChronoUnit.MICROS));
+
+        // Test in-memory PgCompositeText roundtrip
+        PgCompositeText<ComprehensiveComposite> compositeText = compositeType.pgCompositeText();
+        String encoded = compositeText.encode(original).orElseThrow();
+        ComprehensiveComposite decodedInMemory = compositeText.decode(encoded);
+
+        System.out.println("Comprehensive composite in-memory roundtrip:");
+        System.out.println("  Original: " + original);
+        System.out.println("  Encoded: " + encoded);
+        System.out.println("  Decoded: " + decodedInMemory);
+
+        if (!original.equals(decodedInMemory)) {
+          throw new RuntimeException(
+              "In-memory roundtrip failed: expected " + original + " but got " + decodedInMemory);
+        }
+
+        // Insert into database
+        var insert = conn.prepareStatement("INSERT INTO test_comp (v) VALUES (?)");
+        compositeType.write().set(insert, 1, original);
+        insert.execute();
+        insert.close();
+
+        // Read back
+        var select = conn.prepareStatement("SELECT v FROM test_comp");
+        select.execute();
+        var rs = select.getResultSet();
+        rs.next();
+        ComprehensiveComposite decoded = compositeType.read().read(rs, 1);
+        select.close();
+
+        System.out.println("Comprehensive composite DB roundtrip:");
+        System.out.println("  Original: " + original);
+        System.out.println("  Decoded:  " + decoded);
+
+        if (!original.equals(decoded)) {
+          throw new RuntimeException(
+              "DB roundtrip failed: expected " + original + " but got " + decoded);
+        }
+
+        System.out.println("Comprehensive composite tests PASSED!");
+      } finally {
+        conn.createStatement().execute("DROP TABLE IF EXISTS test_comp");
+      }
+    } finally {
+      conn.createStatement().execute("DROP TYPE IF EXISTS " + typeName + " CASCADE");
+    }
   }
 
   static <A> void testJsonRoundtrip(PgTypeAndExample<A> t) {
