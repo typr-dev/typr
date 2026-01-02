@@ -21,18 +21,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class VDailySalesViewFields
-    implements TupleExpr10<
-            LocalDate,
-            Long,
-            Long,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal>,
-        RelationStructure<VDailySalesViewFields, VDailySalesViewRow>,
+    extends TupleExpr10<
+        LocalDate,
+        Long,
+        Long,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal>
+    implements RelationStructure<VDailySalesViewFields, VDailySalesViewRow>,
         FieldsBase<VDailySalesViewRow> {
   List<Path> _path;
 

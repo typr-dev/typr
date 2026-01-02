@@ -21,10 +21,8 @@ import java.util.Optional;
 import oracledb.EmailTableT;
 import oracledb.TagVarrayT;
 
-public class ContactsFields
-    implements TupleExpr4<ContactsId, String, EmailTableT, TagVarrayT>,
-        RelationStructure<ContactsFields, ContactsRow>,
-        FieldsBase<ContactsRow> {
+public class ContactsFields extends TupleExpr4<ContactsId, String, EmailTableT, TagVarrayT>
+    implements RelationStructure<ContactsFields, ContactsRow>, FieldsBase<ContactsRow> {
   List<Path> _path;
 
   public ContactsFields(List<Path> _path) {

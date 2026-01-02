@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class CustomerOrdersViewViewFields
-    implements TupleExpr6<Integer, String, String, Integer, LocalDateTime, BigDecimal>,
-        RelationStructure<CustomerOrdersViewViewFields, CustomerOrdersViewViewRow>,
+    extends TupleExpr6<Integer, String, String, Integer, LocalDateTime, BigDecimal>
+    implements RelationStructure<CustomerOrdersViewViewFields, CustomerOrdersViewViewRow>,
         FieldsBase<CustomerOrdersViewViewRow> {
   List<Path> _path;
 

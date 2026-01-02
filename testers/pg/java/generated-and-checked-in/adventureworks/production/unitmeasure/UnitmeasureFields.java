@@ -20,10 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class UnitmeasureFields
-    implements TupleExpr3<UnitmeasureId, Name, LocalDateTime>,
-        RelationStructure<UnitmeasureFields, UnitmeasureRow>,
-        FieldsBase<UnitmeasureRow> {
+public class UnitmeasureFields extends TupleExpr3<UnitmeasureId, Name, LocalDateTime>
+    implements RelationStructure<UnitmeasureFields, UnitmeasureRow>, FieldsBase<UnitmeasureRow> {
   List<Path> _path;
 
   public UnitmeasureFields(List<Path> _path) {

@@ -21,10 +21,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr5;
 import java.util.List;
 import java.util.Optional;
 
-public class FlaffFields
-    implements TupleExpr5<ShortText, String, Integer, ShortText, ShortText>,
-        RelationStructure<FlaffFields, FlaffRow>,
-        FieldsBase<FlaffRow> {
+public class FlaffFields extends TupleExpr5<ShortText, String, Integer, ShortText, ShortText>
+    implements RelationStructure<FlaffFields, FlaffRow>, FieldsBase<FlaffRow> {
   List<Path> _path;
 
   public FlaffFields(List<Path> _path) {

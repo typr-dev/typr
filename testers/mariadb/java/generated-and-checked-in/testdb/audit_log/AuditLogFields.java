@@ -23,10 +23,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class AuditLogFields
-    implements TupleExpr10<
-            AuditLogId, String, String, String, Json, Json, String, LocalDateTime, Inet6, byte[]>,
-        RelationStructure<AuditLogFields, AuditLogRow>,
-        FieldsBase<AuditLogRow> {
+    extends TupleExpr10<
+        AuditLogId, String, String, String, Json, Json, String, LocalDateTime, Inet6, byte[]>
+    implements RelationStructure<AuditLogFields, AuditLogRow>, FieldsBase<AuditLogRow> {
   List<Path> _path;
 
   public AuditLogFields(List<Path> _path) {

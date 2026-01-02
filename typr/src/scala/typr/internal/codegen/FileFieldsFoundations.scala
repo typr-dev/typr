@@ -36,6 +36,8 @@ class FileFieldsFoundations(
         List(columnsMethod(cols), rowParserMethod(), withPathsMethod(fieldsName)) ++
         tupleAccessorMethods(colsList)
 
+    val (extendsType, implementsList) = extendsAndImplements(fieldsName, colsList)
+
     val fieldsClass = jvm.Class(
       annotations = Nil,
       comments = jvm.Comments.Empty,
@@ -44,8 +46,8 @@ class FileFieldsFoundations(
       tparams = Nil,
       params = List(jvm.Param(jvm.Ident("_path"), pathListType)),
       implicitParams = Nil,
-      `extends` = None,
-      implements = implementsTypes(fieldsName, colsList),
+      `extends` = extendsType,
+      implements = implementsList,
       members = allMembers,
       staticMembers = List(structureMember(fieldsName))
     )
@@ -286,10 +288,12 @@ class FileFieldsFoundations(
       }
     } else Nil
 
-  private def implementsTypes(fieldsName: jvm.Type.Qualified, colsList: List[ComputedColumn]): List[jvm.Type] = {
+  private def extendsAndImplements(fieldsName: jvm.Type.Qualified, colsList: List[ComputedColumn]): (Option[jvm.Type], List[jvm.Type]) = {
+    val n = colsList.size
+    val useTupleExprN = n <= 100
+
     val fieldsExprType =
-      if (colsList.size <= 100) {
-        val n = colsList.size
+      if (useTupleExprN) {
         val colTypes = colsList.map { col =>
           col.tpe match {
             case lang.Optional(underlying) => underlying
@@ -302,12 +306,21 @@ class FileFieldsFoundations(
       }
 
     val fieldsBaseType: Option[jvm.Type] =
-      if (colsList.size <= 100)
+      if (useTupleExprN)
         Some(dsl.FieldsBase.of(names.RowName))
       else
         None
 
-    List(fieldsExprType, dsl.StructureRelation.of(fieldsName, names.RowName)) ++ fieldsBaseType.toList
+    val otherTypes = List(dsl.StructureRelation.of(fieldsName, names.RowName)) ++ fieldsBaseType.toList
+
+    // For Java, TupleExprN is now an abstract class (to work around Scala 3 sealed bug),
+    // so it must be in extends, not implements
+    lang match {
+      case LangJava if useTupleExprN =>
+        (Some(fieldsExprType), otherTypes)
+      case _ =>
+        (None, List(fieldsExprType) ++ otherTypes)
+    }
   }
 
   private def structureMember(fieldsName: jvm.Type.Qualified): jvm.ClassMember =

@@ -28,24 +28,23 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class EmployeeFields
-    implements TupleExpr15<
-            BusinessentityId,
-            String,
-            String,
-            String,
-            LocalDate,
-            String,
-            String,
-            LocalDate,
-            Flag,
-            Short,
-            Short,
-            Flag,
-            UUID,
-            LocalDateTime,
-            String>,
-        RelationStructure<EmployeeFields, EmployeeRow>,
-        FieldsBase<EmployeeRow> {
+    extends TupleExpr15<
+        BusinessentityId,
+        String,
+        String,
+        String,
+        LocalDate,
+        String,
+        String,
+        LocalDate,
+        Flag,
+        Short,
+        Short,
+        Flag,
+        UUID,
+        LocalDateTime,
+        String>
+    implements RelationStructure<EmployeeFields, EmployeeRow>, FieldsBase<EmployeeRow> {
   List<Path> _path;
 
   public EmployeeFields(List<Path> _path) {

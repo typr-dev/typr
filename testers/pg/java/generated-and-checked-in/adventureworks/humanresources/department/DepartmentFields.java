@@ -20,10 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class DepartmentFields
-    implements TupleExpr4<DepartmentId, Name, Name, LocalDateTime>,
-        RelationStructure<DepartmentFields, DepartmentRow>,
-        FieldsBase<DepartmentRow> {
+public class DepartmentFields extends TupleExpr4<DepartmentId, Name, Name, LocalDateTime>
+    implements RelationStructure<DepartmentFields, DepartmentRow>, FieldsBase<DepartmentRow> {
   List<Path> _path;
 
   public DepartmentFields(List<Path> _path) {

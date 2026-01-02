@@ -21,8 +21,8 @@ import testdb.EmailAddress;
 import testdb.MoneyAmount;
 
 public class DistinctTypeTestFields
-    implements TupleExpr3<DistinctTypeTestId, EmailAddress, MoneyAmount>,
-        RelationStructure<DistinctTypeTestFields, DistinctTypeTestRow>,
+    extends TupleExpr3<DistinctTypeTestId, EmailAddress, MoneyAmount>
+    implements RelationStructure<DistinctTypeTestFields, DistinctTypeTestRow>,
         FieldsBase<DistinctTypeTestRow> {
   List<Path> _path;
 

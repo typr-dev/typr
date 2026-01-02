@@ -20,10 +20,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public class ProductsFields
-    implements TupleExpr4<ProductsId, String, BigDecimal, String>,
-        RelationStructure<ProductsFields, ProductsRow>,
-        FieldsBase<ProductsRow> {
+public class ProductsFields extends TupleExpr4<ProductsId, String, BigDecimal, String>
+    implements RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
   List<Path> _path;
 
   public ProductsFields(List<Path> _path) {

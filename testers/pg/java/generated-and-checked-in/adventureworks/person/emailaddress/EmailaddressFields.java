@@ -27,10 +27,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class EmailaddressFields
-    implements TupleExpr5<
-            BusinessentityId, Integer, /* max 50 chars */ String, UUID, LocalDateTime>,
-        RelationStructure<EmailaddressFields, EmailaddressRow>,
-        FieldsBase<EmailaddressRow> {
+    extends TupleExpr5<BusinessentityId, Integer, /* max 50 chars */ String, UUID, LocalDateTime>
+    implements RelationStructure<EmailaddressFields, EmailaddressRow>, FieldsBase<EmailaddressRow> {
   List<Path> _path;
 
   public EmailaddressFields(List<Path> _path) {

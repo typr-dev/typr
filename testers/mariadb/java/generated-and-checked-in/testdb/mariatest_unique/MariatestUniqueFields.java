@@ -18,9 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr4;
 import java.util.List;
 import java.util.Optional;
 
-public class MariatestUniqueFields
-    implements TupleExpr4<MariatestUniqueId, String, String, String>,
-        RelationStructure<MariatestUniqueFields, MariatestUniqueRow>,
+public class MariatestUniqueFields extends TupleExpr4<MariatestUniqueId, String, String, String>
+    implements RelationStructure<MariatestUniqueFields, MariatestUniqueRow>,
         FieldsBase<MariatestUniqueRow> {
   List<Path> _path;
 

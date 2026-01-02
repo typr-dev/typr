@@ -18,9 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr2;
 import java.util.List;
 import java.util.Optional;
 
-public class Db2testIdentityDefaultFields
-    implements TupleExpr2<Db2testIdentityDefaultId, String>,
-        RelationStructure<Db2testIdentityDefaultFields, Db2testIdentityDefaultRow>,
+public class Db2testIdentityDefaultFields extends TupleExpr2<Db2testIdentityDefaultId, String>
+    implements RelationStructure<Db2testIdentityDefaultFields, Db2testIdentityDefaultRow>,
         FieldsBase<Db2testIdentityDefaultRow> {
   List<Path> _path;
 

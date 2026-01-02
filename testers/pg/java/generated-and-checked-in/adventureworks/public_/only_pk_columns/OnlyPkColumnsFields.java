@@ -18,9 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr2;
 import java.util.List;
 import java.util.Optional;
 
-public class OnlyPkColumnsFields
-    implements TupleExpr2<String, Integer>,
-        RelationStructure<OnlyPkColumnsFields, OnlyPkColumnsRow>,
+public class OnlyPkColumnsFields extends TupleExpr2<String, Integer>
+    implements RelationStructure<OnlyPkColumnsFields, OnlyPkColumnsRow>,
         FieldsBase<OnlyPkColumnsRow> {
   List<Path> _path;
 

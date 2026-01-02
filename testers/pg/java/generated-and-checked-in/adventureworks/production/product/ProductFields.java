@@ -35,34 +35,33 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ProductFields
-    implements TupleExpr25<
-            ProductId,
-            Name,
-            String,
-            Flag,
-            Flag, /* max 15 chars */
-            String,
-            Short,
-            Short,
-            BigDecimal,
-            BigDecimal, /* max 5 chars */
-            String,
-            UnitmeasureId,
-            UnitmeasureId,
-            BigDecimal,
-            Integer, /* bpchar, max 2 chars */
-            String, /* bpchar, max 2 chars */
-            String, /* bpchar, max 2 chars */
-            String,
-            ProductsubcategoryId,
-            ProductmodelId,
-            LocalDateTime,
-            LocalDateTime,
-            LocalDateTime,
-            UUID,
-            LocalDateTime>,
-        RelationStructure<ProductFields, ProductRow>,
-        FieldsBase<ProductRow> {
+    extends TupleExpr25<
+        ProductId,
+        Name,
+        String,
+        Flag,
+        Flag, /* max 15 chars */
+        String,
+        Short,
+        Short,
+        BigDecimal,
+        BigDecimal, /* max 5 chars */
+        String,
+        UnitmeasureId,
+        UnitmeasureId,
+        BigDecimal,
+        Integer, /* bpchar, max 2 chars */
+        String, /* bpchar, max 2 chars */
+        String, /* bpchar, max 2 chars */
+        String,
+        ProductsubcategoryId,
+        ProductmodelId,
+        LocalDateTime,
+        LocalDateTime,
+        LocalDateTime,
+        UUID,
+        LocalDateTime>
+    implements RelationStructure<ProductFields, ProductRow>, FieldsBase<ProductRow> {
   List<Path> _path;
 
   public ProductFields(List<Path> _path) {

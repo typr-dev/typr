@@ -22,10 +22,9 @@ import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
 
 public class WarehousesFields
-    implements TupleExpr10<
-            WarehousesId, String, String, String, Point, Polygon, String, Boolean, String, String>,
-        RelationStructure<WarehousesFields, WarehousesRow>,
-        FieldsBase<WarehousesRow> {
+    extends TupleExpr10<
+        WarehousesId, String, String, String, Point, Polygon, String, Boolean, String, String>
+    implements RelationStructure<WarehousesFields, WarehousesRow>, FieldsBase<WarehousesRow> {
   List<Path> _path;
 
   public WarehousesFields(List<Path> _path) {

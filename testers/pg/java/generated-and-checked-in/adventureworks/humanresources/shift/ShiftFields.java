@@ -21,10 +21,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-public class ShiftFields
-    implements TupleExpr5<ShiftId, Name, LocalTime, LocalTime, LocalDateTime>,
-        RelationStructure<ShiftFields, ShiftRow>,
-        FieldsBase<ShiftRow> {
+public class ShiftFields extends TupleExpr5<ShiftId, Name, LocalTime, LocalTime, LocalDateTime>
+    implements RelationStructure<ShiftFields, ShiftRow>, FieldsBase<ShiftRow> {
   List<Path> _path;
 
   public ShiftFields(List<Path> _path) {

@@ -23,18 +23,18 @@ import testdb.customer_status.CustomerStatusId;
 import testdb.customers.CustomersId;
 
 public class VCustomerSummaryViewFields
-    implements TupleExpr10<
-            CustomersId,
-            String,
-            String,
-            String,
-            CustomerStatusId,
-            LocalDateTime,
-            LocalDateTime,
-            Long,
-            BigDecimal,
-            LocalDateTime>,
-        RelationStructure<VCustomerSummaryViewFields, VCustomerSummaryViewRow>,
+    extends TupleExpr10<
+        CustomersId,
+        String,
+        String,
+        String,
+        CustomerStatusId,
+        LocalDateTime,
+        LocalDateTime,
+        Long,
+        BigDecimal,
+        LocalDateTime>
+    implements RelationStructure<VCustomerSummaryViewFields, VCustomerSummaryViewRow>,
         FieldsBase<VCustomerSummaryViewRow> {
   List<Path> _path;
 

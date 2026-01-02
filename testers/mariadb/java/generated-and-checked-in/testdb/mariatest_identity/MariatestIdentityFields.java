@@ -18,9 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr2;
 import java.util.List;
 import java.util.Optional;
 
-public class MariatestIdentityFields
-    implements TupleExpr2<MariatestIdentityId, String>,
-        RelationStructure<MariatestIdentityFields, MariatestIdentityRow>,
+public class MariatestIdentityFields extends TupleExpr2<MariatestIdentityId, String>
+    implements RelationStructure<MariatestIdentityFields, MariatestIdentityRow>,
         FieldsBase<MariatestIdentityRow> {
   List<Path> _path;
 

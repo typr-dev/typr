@@ -24,33 +24,32 @@ import java.util.List;
 import java.util.Optional;
 
 public class Db2testFields
-    implements TupleExpr24<
-            Short,
-            Db2testId,
-            Long,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            Float,
-            Double,
-            Boolean,
-            String,
-            String,
-            String,
-            String,
-            String,
-            byte[],
-            byte[],
-            byte[],
-            LocalDate,
-            LocalTime,
-            LocalDateTime,
-            LocalDateTime,
-            LocalDateTime,
-            Xml>,
-        RelationStructure<Db2testFields, Db2testRow>,
-        FieldsBase<Db2testRow> {
+    extends TupleExpr24<
+        Short,
+        Db2testId,
+        Long,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        Float,
+        Double,
+        Boolean,
+        String,
+        String,
+        String,
+        String,
+        String,
+        byte[],
+        byte[],
+        byte[],
+        LocalDate,
+        LocalTime,
+        LocalDateTime,
+        LocalDateTime,
+        LocalDateTime,
+        Xml>
+    implements RelationStructure<Db2testFields, Db2testRow>, FieldsBase<Db2testRow> {
   List<Path> _path;
 
   public Db2testFields(List<Path> _path) {

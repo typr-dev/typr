@@ -16,10 +16,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr1;
 import java.util.List;
 import java.util.Optional;
 
-public class TitleDomainFields
-    implements TupleExpr1<TitleDomainId>,
-        RelationStructure<TitleDomainFields, TitleDomainRow>,
-        FieldsBase<TitleDomainRow> {
+public class TitleDomainFields extends TupleExpr1<TitleDomainId>
+    implements RelationStructure<TitleDomainFields, TitleDomainRow>, FieldsBase<TitleDomainRow> {
   List<Path> _path;
 
   public TitleDomainFields(List<Path> _path) {

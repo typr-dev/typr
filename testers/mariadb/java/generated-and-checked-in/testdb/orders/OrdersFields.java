@@ -33,31 +33,30 @@ import testdb.promotions.PromotionsId;
 import testdb.promotions.PromotionsRow;
 
 public class OrdersFields
-    implements TupleExpr22<
-            OrdersId,
-            String,
-            CustomersId,
-            String,
-            String,
-            CustomerAddressesId,
-            CustomerAddressesId,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            String,
-            PromotionsId,
-            String,
-            String,
-            Inet6,
-            String,
-            LocalDateTime,
-            LocalDateTime,
-            LocalDateTime,
-            LocalDateTime>,
-        RelationStructure<OrdersFields, OrdersRow>,
-        FieldsBase<OrdersRow> {
+    extends TupleExpr22<
+        OrdersId,
+        String,
+        CustomersId,
+        String,
+        String,
+        CustomerAddressesId,
+        CustomerAddressesId,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        String,
+        PromotionsId,
+        String,
+        String,
+        Inet6,
+        String,
+        LocalDateTime,
+        LocalDateTime,
+        LocalDateTime,
+        LocalDateTime>
+    implements RelationStructure<OrdersFields, OrdersRow>, FieldsBase<OrdersRow> {
   List<Path> _path;
 
   public OrdersFields(List<Path> _path) {

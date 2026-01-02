@@ -23,9 +23,8 @@ import oracledb.AddressT;
 import oracledb.MoneyT;
 
 public class CustomersFields
-    implements TupleExpr5<CustomersId, String, AddressT, MoneyT, LocalDateTime>,
-        RelationStructure<CustomersFields, CustomersRow>,
-        FieldsBase<CustomersRow> {
+    extends TupleExpr5<CustomersId, String, AddressT, MoneyT, LocalDateTime>
+    implements RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   List<Path> _path;
 
   public CustomersFields(List<Path> _path) {

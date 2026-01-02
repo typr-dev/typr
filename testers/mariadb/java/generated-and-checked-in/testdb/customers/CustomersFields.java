@@ -27,23 +27,22 @@ import testdb.customer_status.CustomerStatusId;
 import testdb.customer_status.CustomerStatusRow;
 
 public class CustomersFields
-    implements TupleExpr14<
-            CustomersId,
-            String,
-            byte[],
-            String,
-            String,
-            String,
-            CustomerStatusId,
-            String,
-            Json,
-            MariaSet,
-            String,
-            LocalDateTime,
-            LocalDateTime,
-            LocalDateTime>,
-        RelationStructure<CustomersFields, CustomersRow>,
-        FieldsBase<CustomersRow> {
+    extends TupleExpr14<
+        CustomersId,
+        String,
+        byte[],
+        String,
+        String,
+        String,
+        CustomerStatusId,
+        String,
+        Json,
+        MariaSet,
+        String,
+        LocalDateTime,
+        LocalDateTime,
+        LocalDateTime>
+    implements RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   List<Path> _path;
 
   public CustomersFields(List<Path> _path) {

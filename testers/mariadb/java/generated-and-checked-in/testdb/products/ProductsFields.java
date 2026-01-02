@@ -28,27 +28,26 @@ import testdb.brands.BrandsId;
 import testdb.brands.BrandsRow;
 
 public class ProductsFields
-    implements TupleExpr18<
-            ProductsId,
-            String,
-            BrandsId,
-            String,
-            String,
-            String,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            Json,
-            String,
-            String,
-            MariaSet,
-            Json,
-            Json,
-            LocalDateTime,
-            LocalDateTime,
-            LocalDateTime>,
-        RelationStructure<ProductsFields, ProductsRow>,
-        FieldsBase<ProductsRow> {
+    extends TupleExpr18<
+        ProductsId,
+        String,
+        BrandsId,
+        String,
+        String,
+        String,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        Json,
+        String,
+        String,
+        MariaSet,
+        Json,
+        Json,
+        LocalDateTime,
+        LocalDateTime,
+        LocalDateTime>
+    implements RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
   List<Path> _path;
 
   public ProductsFields(List<Path> _path) {

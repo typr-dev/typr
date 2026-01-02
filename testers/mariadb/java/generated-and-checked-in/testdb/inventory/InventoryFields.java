@@ -28,20 +28,19 @@ import testdb.warehouses.WarehousesId;
 import testdb.warehouses.WarehousesRow;
 
 public class InventoryFields
-    implements TupleExpr11<
-            InventoryId,
-            ProductsId,
-            WarehousesId,
-            Integer,
-            Integer,
-            Integer,
-            Integer,
-            Integer,
-            String,
-            LocalDateTime,
-            LocalDateTime>,
-        RelationStructure<InventoryFields, InventoryRow>,
-        FieldsBase<InventoryRow> {
+    extends TupleExpr11<
+        InventoryId,
+        ProductsId,
+        WarehousesId,
+        Integer,
+        Integer,
+        Integer,
+        Integer,
+        Integer,
+        String,
+        LocalDateTime,
+        LocalDateTime>
+    implements RelationStructure<InventoryFields, InventoryRow>, FieldsBase<InventoryRow> {
   List<Path> _path;
 
   public InventoryFields(List<Path> _path) {

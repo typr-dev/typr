@@ -18,9 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr3;
 import java.util.List;
 import java.util.Optional;
 
-public class CustomerStatusFields
-    implements TupleExpr3<CustomerStatusId, String, Boolean>,
-        RelationStructure<CustomerStatusFields, CustomerStatusRow>,
+public class CustomerStatusFields extends TupleExpr3<CustomerStatusId, String, Boolean>
+    implements RelationStructure<CustomerStatusFields, CustomerStatusRow>,
         FieldsBase<CustomerStatusRow> {
   List<Path> _path;
 

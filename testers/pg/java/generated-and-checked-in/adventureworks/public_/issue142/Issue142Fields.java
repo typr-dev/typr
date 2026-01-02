@@ -16,10 +16,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr1;
 import java.util.List;
 import java.util.Optional;
 
-public class Issue142Fields
-    implements TupleExpr1<Issue142Id>,
-        RelationStructure<Issue142Fields, Issue142Row>,
-        FieldsBase<Issue142Row> {
+public class Issue142Fields extends TupleExpr1<Issue142Id>
+    implements RelationStructure<Issue142Fields, Issue142Row>, FieldsBase<Issue142Row> {
   List<Path> _path;
 
   public Issue142Fields(List<Path> _path) {

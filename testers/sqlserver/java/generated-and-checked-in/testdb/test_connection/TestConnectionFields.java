@@ -20,9 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class TestConnectionFields
-    implements TupleExpr3<TestConnectionId, String, LocalDateTime>,
-        RelationStructure<TestConnectionFields, TestConnectionRow>,
+public class TestConnectionFields extends TupleExpr3<TestConnectionId, String, LocalDateTime>
+    implements RelationStructure<TestConnectionFields, TestConnectionRow>,
         FieldsBase<TestConnectionRow> {
   List<Path> _path;
 

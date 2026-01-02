@@ -22,19 +22,19 @@ import java.util.Optional;
 import testdb.products.ProductsId;
 
 public class VProductCatalogViewFields
-    implements TupleExpr11<
-            ProductsId,
-            String,
-            String,
-            String,
-            BigDecimal,
-            String,
-            MariaSet,
-            String,
-            BigDecimal,
-            BigDecimal,
-            Long>,
-        RelationStructure<VProductCatalogViewFields, VProductCatalogViewRow>,
+    extends TupleExpr11<
+        ProductsId,
+        String,
+        String,
+        String,
+        BigDecimal,
+        String,
+        MariaSet,
+        String,
+        BigDecimal,
+        BigDecimal,
+        Long>
+    implements RelationStructure<VProductCatalogViewFields, VProductCatalogViewRow>,
         FieldsBase<VProductCatalogViewRow> {
   List<Path> _path;
 

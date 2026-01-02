@@ -22,10 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class CategoriesFields
-    implements TupleExpr9<
-            CategoriesId, CategoriesId, String, String, String, String, Short, Boolean, Json>,
-        RelationStructure<CategoriesFields, CategoriesRow>,
-        FieldsBase<CategoriesRow> {
+    extends TupleExpr9<
+        CategoriesId, CategoriesId, String, String, String, String, Short, Boolean, Json>
+    implements RelationStructure<CategoriesFields, CategoriesRow>, FieldsBase<CategoriesRow> {
   List<Path> _path;
 
   public CategoriesFields(List<Path> _path) {

@@ -24,10 +24,8 @@ import testdb.orders.OrdersFields;
 import testdb.orders.OrdersId;
 import testdb.orders.OrdersRow;
 
-public class OrderItemsFields
-    implements TupleExpr5<OrdersId, Integer, String, Integer, BigDecimal>,
-        RelationStructure<OrderItemsFields, OrderItemsRow>,
-        FieldsBase<OrderItemsRow> {
+public class OrderItemsFields extends TupleExpr5<OrdersId, Integer, String, Integer, BigDecimal>
+    implements RelationStructure<OrderItemsFields, OrderItemsRow>, FieldsBase<OrderItemsRow> {
   List<Path> _path;
 
   public OrderItemsFields(List<Path> _path) {

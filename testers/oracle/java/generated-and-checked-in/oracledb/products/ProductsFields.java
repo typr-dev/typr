@@ -21,10 +21,8 @@ import java.util.Optional;
 import oracledb.MoneyT;
 import oracledb.TagVarrayT;
 
-public class ProductsFields
-    implements TupleExpr5<ProductsId, String, String, MoneyT, TagVarrayT>,
-        RelationStructure<ProductsFields, ProductsRow>,
-        FieldsBase<ProductsRow> {
+public class ProductsFields extends TupleExpr5<ProductsId, String, String, MoneyT, TagVarrayT>
+    implements RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
   List<Path> _path;
 
   public ProductsFields(List<Path> _path) {

@@ -26,18 +26,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class AddressFields
-    implements TupleExpr9<
-            AddressId,
-            String, /* max 60 chars */
-            String,
-            String,
-            StateprovinceId,
-            String,
-            byte[],
-            UUID,
-            LocalDateTime>,
-        RelationStructure<AddressFields, AddressRow>,
-        FieldsBase<AddressRow> {
+    extends TupleExpr9<
+        AddressId,
+        String, /* max 60 chars */
+        String,
+        String,
+        StateprovinceId,
+        String,
+        byte[],
+        UUID,
+        LocalDateTime>
+    implements RelationStructure<AddressFields, AddressRow>, FieldsBase<AddressRow> {
   List<Path> _path;
 
   public AddressFields(List<Path> _path) {

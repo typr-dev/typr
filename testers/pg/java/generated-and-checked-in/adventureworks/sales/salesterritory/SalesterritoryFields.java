@@ -27,18 +27,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class SalesterritoryFields
-    implements TupleExpr10<
-            SalesterritoryId,
-            Name,
-            CountryregionId,
-            String,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            UUID,
-            LocalDateTime>,
-        RelationStructure<SalesterritoryFields, SalesterritoryRow>,
+    extends TupleExpr10<
+        SalesterritoryId,
+        Name,
+        CountryregionId,
+        String,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        UUID,
+        LocalDateTime>
+    implements RelationStructure<SalesterritoryFields, SalesterritoryRow>,
         FieldsBase<SalesterritoryRow> {
   List<Path> _path;
 

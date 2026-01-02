@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class EmployeesFields
-    implements TupleExpr7<Integer, String, String, String, String, BigDecimal, LocalDate>,
-        RelationStructure<EmployeesFields, EmployeesRow>,
-        FieldsBase<EmployeesRow> {
+    extends TupleExpr7<Integer, String, String, String, String, BigDecimal, LocalDate>
+    implements RelationStructure<EmployeesFields, EmployeesRow>, FieldsBase<EmployeesRow> {
   List<Path> _path;
 
   public EmployeesFields(List<Path> _path) {

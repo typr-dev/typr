@@ -20,9 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class CountryregionFields
-    implements TupleExpr3<CountryregionId, Name, LocalDateTime>,
-        RelationStructure<CountryregionFields, CountryregionRow>,
+public class CountryregionFields extends TupleExpr3<CountryregionId, Name, LocalDateTime>
+    implements RelationStructure<CountryregionFields, CountryregionRow>,
         FieldsBase<CountryregionRow> {
   List<Path> _path;
 

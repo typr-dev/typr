@@ -95,27 +95,37 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
       val toListBody = range.map(nn => s"_${nn + 1}()").mkString(", ")
       val implFields = range.map(nn => s"SqlExpr<T$nn> _${nn + 1}").mkString(", ")
 
+      val abstractMethodsForClass = range.map(nn => s"        public abstract SqlExpr<T$nn> _${nn + 1}();").mkString("\n")
+
       s"""    /**
          |     * Tuple expression with $n element${if (n > 1) "s" else ""}.
          |     * Use {@link TupleExpr#of} factory methods to create instances,
-         |     * or have your Fields classes implement this interface directly.
+         |     * or extend this abstract class directly for Fields classes.
+         |     * Abstract class is used instead of interface to work around Scala 3 compiler bugs
+         |     * with Java sealed interface hierarchies.
          |     */
-         |    interface TupleExpr$n<$tparamsDecl> extends TupleExpr<Tuple.Tuple$n<$tparamsDecl>> {
-         |$abstractMethods
+         |    public static abstract class TupleExpr$n<$tparamsDecl> implements TupleExpr<Tuple.Tuple$n<$tparamsDecl>> {
+         |$abstractMethodsForClass
          |
          |        @Override
-         |        default java.util.List<SqlExpr<?>> children() {
+         |        public java.util.List<SqlExpr<?>> children() {
          |            return java.util.List.of($toListBody);
          |        }
          |
          |        @Override
          |        @SuppressWarnings("unchecked")
-         |        default dev.typr.foundations.DbType<Tuple.Tuple$n<$tparamsDecl>> dbType() {
+         |        public dev.typr.foundations.DbType<Tuple.Tuple$n<$tparamsDecl>> dbType() {
          |            throw new UnsupportedOperationException("TupleExpr$n.dbType() - use children() to get individual column types");
          |        }
          |
-         |        /** Default implementation record for TupleExpr$n. */
-         |        record Impl<$tparamsDecl>($implFields) implements TupleExpr$n<$tparamsDecl> {}
+         |        /** Default implementation for TupleExpr$n. */
+         |        public static class Impl<$tparamsDecl> extends TupleExpr$n<$tparamsDecl> {
+         |${range.map(nn => s"            private final SqlExpr<T$nn> _${nn + 1};").mkString("\n")}
+         |            public Impl($implFields) {
+         |${range.map(nn => s"                this._${nn + 1} = _${nn + 1};").mkString("\n")}
+         |            }
+         |${range.map(nn => s"            @Override public SqlExpr<T$nn> _${nn + 1}() { return _${nn + 1}; }").mkString("\n")}
+         |        }
          |    }""".stripMargin
     }
 

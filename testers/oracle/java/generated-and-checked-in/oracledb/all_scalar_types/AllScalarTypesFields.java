@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class AllScalarTypesFields
-    implements TupleExpr7<
-            AllScalarTypesId, String, BigDecimal, LocalDateTime, LocalDateTime, String, String>,
-        RelationStructure<AllScalarTypesFields, AllScalarTypesRow>,
+    extends TupleExpr7<
+        AllScalarTypesId, String, BigDecimal, LocalDateTime, LocalDateTime, String, String>
+    implements RelationStructure<AllScalarTypesFields, AllScalarTypesRow>,
         FieldsBase<AllScalarTypesRow> {
   List<Path> _path;
 

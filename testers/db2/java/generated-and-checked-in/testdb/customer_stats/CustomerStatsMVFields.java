@@ -18,9 +18,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public class CustomerStatsMVFields
-    implements TupleExpr4<Integer, String, Integer, BigDecimal>,
-        RelationStructure<CustomerStatsMVFields, CustomerStatsMVRow>,
+public class CustomerStatsMVFields extends TupleExpr4<Integer, String, Integer, BigDecimal>
+    implements RelationStructure<CustomerStatsMVFields, CustomerStatsMVRow>,
         FieldsBase<CustomerStatsMVRow> {
   List<Path> _path;
 

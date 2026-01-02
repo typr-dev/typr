@@ -18,9 +18,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public class CustomerOrderSummaryViewFields
-    implements TupleExpr4<Integer, String, Integer, BigDecimal>,
-        RelationStructure<CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow>,
+public class CustomerOrderSummaryViewFields extends TupleExpr4<Integer, String, Integer, BigDecimal>
+    implements RelationStructure<CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow>,
         FieldsBase<CustomerOrderSummaryViewRow> {
   List<Path> _path;
 

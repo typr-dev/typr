@@ -21,18 +21,9 @@ import java.util.Optional;
 import testdb.warehouses.WarehousesId;
 
 public class VWarehouseCoverageViewFields
-    implements TupleExpr10<
-            WarehousesId,
-            String,
-            String,
-            String,
-            String,
-            String,
-            String,
-            Boolean,
-            Long,
-            BigDecimal>,
-        RelationStructure<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow>,
+    extends TupleExpr10<
+        WarehousesId, String, String, String, String, String, String, Boolean, Long, BigDecimal>
+    implements RelationStructure<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow>,
         FieldsBase<VWarehouseCoverageViewRow> {
   List<Path> _path;
 

@@ -30,18 +30,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class SalespersonFields
-    implements TupleExpr9<
-            BusinessentityId,
-            SalesterritoryId,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            UUID,
-            LocalDateTime>,
-        RelationStructure<SalespersonFields, SalespersonRow>,
-        FieldsBase<SalespersonRow> {
+    extends TupleExpr9<
+        BusinessentityId,
+        SalesterritoryId,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        UUID,
+        LocalDateTime>
+    implements RelationStructure<SalespersonFields, SalespersonRow>, FieldsBase<SalespersonRow> {
   List<Path> _path;
 
   public SalespersonFields(List<Path> _path) {

@@ -22,22 +22,22 @@ import java.util.Optional;
 import testdb.orders.OrdersId;
 
 public class VOrderDetailsViewFields
-    implements TupleExpr14<
-            OrdersId,
-            String,
-            String,
-            String,
-            BigDecimal,
-            String,
-            LocalDateTime,
-            String,
-            String,
-            Long,
-            BigDecimal,
-            String,
-            String,
-            String>,
-        RelationStructure<VOrderDetailsViewFields, VOrderDetailsViewRow>,
+    extends TupleExpr14<
+        OrdersId,
+        String,
+        String,
+        String,
+        BigDecimal,
+        String,
+        LocalDateTime,
+        String,
+        String,
+        Long,
+        BigDecimal,
+        String,
+        String,
+        String>
+    implements RelationStructure<VOrderDetailsViewFields, VOrderDetailsViewRow>,
         FieldsBase<VOrderDetailsViewRow> {
   List<Path> _path;
 

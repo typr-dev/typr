@@ -23,26 +23,26 @@ import java.util.List;
 import java.util.Optional;
 
 public class VemployeeViewFields
-    implements TupleExpr18<
-            BusinessentityId,
-            String, /* user-picked */
-            FirstName,
-            Name,
-            Name,
-            String,
-            String,
-            Phone,
-            Name,
-            String,
-            Integer,
-            String,
-            String,
-            String,
-            Name,
-            String,
-            Name,
-            Xml>,
-        RelationStructure<VemployeeViewFields, VemployeeViewRow>,
+    extends TupleExpr18<
+        BusinessentityId,
+        String, /* user-picked */
+        FirstName,
+        Name,
+        Name,
+        String,
+        String,
+        Phone,
+        Name,
+        String,
+        Integer,
+        String,
+        String,
+        String,
+        Name,
+        String,
+        Name,
+        Xml>
+    implements RelationStructure<VemployeeViewFields, VemployeeViewRow>,
         FieldsBase<VemployeeViewRow> {
   List<Path> _path;
 

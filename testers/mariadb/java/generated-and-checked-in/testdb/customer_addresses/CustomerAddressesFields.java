@@ -26,22 +26,22 @@ import testdb.customers.CustomersId;
 import testdb.customers.CustomersRow;
 
 public class CustomerAddressesFields
-    implements TupleExpr14<
-            CustomerAddressesId,
-            CustomersId,
-            String,
-            Boolean,
-            String,
-            String,
-            String,
-            String,
-            String,
-            String,
-            String,
-            Point,
-            String,
-            LocalDateTime>,
-        RelationStructure<CustomerAddressesFields, CustomerAddressesRow>,
+    extends TupleExpr14<
+        CustomerAddressesId,
+        CustomersId,
+        String,
+        Boolean,
+        String,
+        String,
+        String,
+        String,
+        String,
+        String,
+        String,
+        Point,
+        String,
+        LocalDateTime>
+    implements RelationStructure<CustomerAddressesFields, CustomerAddressesRow>,
         FieldsBase<CustomerAddressesRow> {
   List<Path> _path;
 

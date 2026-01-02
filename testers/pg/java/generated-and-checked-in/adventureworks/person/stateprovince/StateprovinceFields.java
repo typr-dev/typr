@@ -30,16 +30,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class StateprovinceFields
-    implements TupleExpr8<
-            StateprovinceId,
-            String,
-            CountryregionId,
-            Flag,
-            Name,
-            SalesterritoryId,
-            UUID,
-            LocalDateTime>,
-        RelationStructure<StateprovinceFields, StateprovinceRow>,
+    extends TupleExpr8<
+        StateprovinceId, String, CountryregionId, Flag, Name, SalesterritoryId, UUID, LocalDateTime>
+    implements RelationStructure<StateprovinceFields, StateprovinceRow>,
         FieldsBase<StateprovinceRow> {
   List<Path> _path;
 

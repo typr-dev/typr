@@ -18,10 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr3;
 import java.util.List;
 import java.util.Optional;
 
-public class IdentityTestFields
-    implements TupleExpr3<Integer, Integer, IdentityTestId>,
-        RelationStructure<IdentityTestFields, IdentityTestRow>,
-        FieldsBase<IdentityTestRow> {
+public class IdentityTestFields extends TupleExpr3<Integer, Integer, IdentityTestId>
+    implements RelationStructure<IdentityTestFields, IdentityTestRow>, FieldsBase<IdentityTestRow> {
   List<Path> _path;
 
   public IdentityTestFields(List<Path> _path) {

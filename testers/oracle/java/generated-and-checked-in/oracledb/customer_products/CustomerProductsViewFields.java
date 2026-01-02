@@ -22,8 +22,8 @@ import oracledb.AddressT;
 import oracledb.MoneyT;
 
 public class CustomerProductsViewFields
-    implements TupleExpr6<BigDecimal, String, AddressT, BigDecimal, String, MoneyT>,
-        RelationStructure<CustomerProductsViewFields, CustomerProductsViewRow>,
+    extends TupleExpr6<BigDecimal, String, AddressT, BigDecimal, String, MoneyT>
+    implements RelationStructure<CustomerProductsViewFields, CustomerProductsViewRow>,
         FieldsBase<CustomerProductsViewRow> {
   List<Path> _path;
 

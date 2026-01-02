@@ -21,10 +21,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public class DepartmentsFields
-    implements TupleExpr4<String, String, String, BigDecimal>,
-        RelationStructure<DepartmentsFields, DepartmentsRow>,
-        FieldsBase<DepartmentsRow> {
+public class DepartmentsFields extends TupleExpr4<String, String, String, BigDecimal>
+    implements RelationStructure<DepartmentsFields, DepartmentsRow>, FieldsBase<DepartmentsRow> {
   List<Path> _path;
 
   public DepartmentsFields(List<Path> _path) {

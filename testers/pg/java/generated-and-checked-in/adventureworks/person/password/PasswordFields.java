@@ -25,9 +25,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class PasswordFields
-    implements TupleExpr5<BusinessentityId, String, String, UUID, LocalDateTime>,
-        RelationStructure<PasswordFields, PasswordRow>,
-        FieldsBase<PasswordRow> {
+    extends TupleExpr5<BusinessentityId, String, String, UUID, LocalDateTime>
+    implements RelationStructure<PasswordFields, PasswordRow>, FieldsBase<PasswordRow> {
   List<Path> _path;
 
   public PasswordFields(List<Path> _path) {

@@ -32,22 +32,21 @@ import testdb.warehouses.WarehousesId;
 import testdb.warehouses.WarehousesRow;
 
 public class OrderItemsFields
-    implements TupleExpr13<
-            OrderItemsId,
-            OrdersId,
-            ProductsId,
-            String,
-            String,
-            Uint2,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            BigDecimal,
-            String,
-            WarehousesId,
-            String>,
-        RelationStructure<OrderItemsFields, OrderItemsRow>,
-        FieldsBase<OrderItemsRow> {
+    extends TupleExpr13<
+        OrderItemsId,
+        OrdersId,
+        ProductsId,
+        String,
+        String,
+        Uint2,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        BigDecimal,
+        String,
+        WarehousesId,
+        String>
+    implements RelationStructure<OrderItemsFields, OrderItemsRow>, FieldsBase<OrderItemsRow> {
   List<Path> _path;
 
   public OrderItemsFields(List<Path> _path) {

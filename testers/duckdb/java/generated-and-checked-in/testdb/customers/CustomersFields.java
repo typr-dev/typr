@@ -22,9 +22,8 @@ import java.util.Optional;
 import testdb.Priority;
 
 public class CustomersFields
-    implements TupleExpr5<CustomersId, String, String, LocalDateTime, Priority>,
-        RelationStructure<CustomersFields, CustomersRow>,
-        FieldsBase<CustomersRow> {
+    extends TupleExpr5<CustomersId, String, String, LocalDateTime, Priority>
+    implements RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   List<Path> _path;
 
   public CustomersFields(List<Path> _path) {

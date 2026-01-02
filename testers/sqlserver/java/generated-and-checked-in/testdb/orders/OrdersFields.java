@@ -25,10 +25,8 @@ import testdb.customers.CustomersFields;
 import testdb.customers.CustomersId;
 import testdb.customers.CustomersRow;
 
-public class OrdersFields
-    implements TupleExpr4<OrdersId, CustomersId, LocalDateTime, BigDecimal>,
-        RelationStructure<OrdersFields, OrdersRow>,
-        FieldsBase<OrdersRow> {
+public class OrdersFields extends TupleExpr4<OrdersId, CustomersId, LocalDateTime, BigDecimal>
+    implements RelationStructure<OrdersFields, OrdersRow>, FieldsBase<OrdersRow> {
   List<Path> _path;
 
   public OrdersFields(List<Path> _path) {

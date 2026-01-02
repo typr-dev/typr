@@ -20,10 +20,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public class PriceTiersFields
-    implements TupleExpr5<PriceTiersId, String, Uint4, String, BigDecimal>,
-        RelationStructure<PriceTiersFields, PriceTiersRow>,
-        FieldsBase<PriceTiersRow> {
+public class PriceTiersFields extends TupleExpr5<PriceTiersId, String, Uint4, String, BigDecimal>
+    implements RelationStructure<PriceTiersFields, PriceTiersRow>, FieldsBase<PriceTiersRow> {
   List<Path> _path;
 
   public PriceTiersFields(List<Path> _path) {

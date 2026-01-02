@@ -24,10 +24,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr3;
 import java.util.List;
 import java.util.Optional;
 
-public class TitledpersonFields
-    implements TupleExpr3<TitleDomainId, TitleId, String>,
-        RelationStructure<TitledpersonFields, TitledpersonRow>,
-        FieldsBase<TitledpersonRow> {
+public class TitledpersonFields extends TupleExpr3<TitleDomainId, TitleId, String>
+    implements RelationStructure<TitledpersonFields, TitledpersonRow>, FieldsBase<TitledpersonRow> {
   List<Path> _path;
 
   public TitledpersonFields(List<Path> _path) {

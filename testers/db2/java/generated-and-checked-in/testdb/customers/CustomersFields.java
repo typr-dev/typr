@@ -20,10 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class CustomersFields
-    implements TupleExpr4<CustomersId, String, String, LocalDateTime>,
-        RelationStructure<CustomersFields, CustomersRow>,
-        FieldsBase<CustomersRow> {
+public class CustomersFields extends TupleExpr4<CustomersId, String, String, LocalDateTime>
+    implements RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   List<Path> _path;
 
   public CustomersFields(List<Path> _path) {

@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class ShippingCarriersFields
-    implements TupleExpr6<ShippingCarriersId, String, String, String, Json, Boolean>,
-        RelationStructure<ShippingCarriersFields, ShippingCarriersRow>,
+    extends TupleExpr6<ShippingCarriersId, String, String, String, Json, Boolean>
+    implements RelationStructure<ShippingCarriersFields, ShippingCarriersRow>,
         FieldsBase<ShippingCarriersRow> {
   List<Path> _path;
 

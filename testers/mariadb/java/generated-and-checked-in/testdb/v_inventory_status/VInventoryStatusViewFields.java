@@ -22,22 +22,22 @@ import testdb.products.ProductsId;
 import testdb.warehouses.WarehousesId;
 
 public class VInventoryStatusViewFields
-    implements TupleExpr14<
-            ProductsId,
-            String,
-            String,
-            WarehousesId,
-            String,
-            String,
-            Integer,
-            Integer,
-            Integer,
-            Long,
-            Integer,
-            String,
-            String,
-            LocalDateTime>,
-        RelationStructure<VInventoryStatusViewFields, VInventoryStatusViewRow>,
+    extends TupleExpr14<
+        ProductsId,
+        String,
+        String,
+        WarehousesId,
+        String,
+        String,
+        Integer,
+        Integer,
+        Integer,
+        Long,
+        Integer,
+        String,
+        String,
+        LocalDateTime>
+    implements RelationStructure<VInventoryStatusViewFields, VInventoryStatusViewRow>,
         FieldsBase<VInventoryStatusViewRow> {
   List<Path> _path;
 

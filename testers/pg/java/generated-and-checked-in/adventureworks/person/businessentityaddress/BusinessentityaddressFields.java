@@ -32,8 +32,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BusinessentityaddressFields
-    implements TupleExpr5<BusinessentityId, AddressId, AddresstypeId, UUID, LocalDateTime>,
-        RelationStructure<BusinessentityaddressFields, BusinessentityaddressRow>,
+    extends TupleExpr5<BusinessentityId, AddressId, AddresstypeId, UUID, LocalDateTime>
+    implements RelationStructure<BusinessentityaddressFields, BusinessentityaddressRow>,
         FieldsBase<BusinessentityaddressRow> {
   List<Path> _path;
 

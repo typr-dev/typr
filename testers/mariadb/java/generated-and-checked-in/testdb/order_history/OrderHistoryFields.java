@@ -26,10 +26,9 @@ import testdb.orders.OrdersId;
 import testdb.orders.OrdersRow;
 
 public class OrderHistoryFields
-    implements TupleExpr8<
-            OrderHistoryId, OrdersId, String, String, String, String, Json, LocalDateTime>,
-        RelationStructure<OrderHistoryFields, OrderHistoryRow>,
-        FieldsBase<OrderHistoryRow> {
+    extends TupleExpr8<
+        OrderHistoryId, OrdersId, String, String, String, String, Json, LocalDateTime>
+    implements RelationStructure<OrderHistoryFields, OrderHistoryRow>, FieldsBase<OrderHistoryRow> {
   List<Path> _path;
 
   public OrderHistoryFields(List<Path> _path) {

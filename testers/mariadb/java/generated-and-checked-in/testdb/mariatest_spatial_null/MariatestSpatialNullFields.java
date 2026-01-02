@@ -27,17 +27,17 @@ import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
 
 public class MariatestSpatialNullFields
-    implements TupleExpr9<
-            MariatestSpatialNullId,
-            Geometry,
-            Point,
-            LineString,
-            Polygon,
-            MultiPoint,
-            MultiLineString,
-            MultiPolygon,
-            GeometryCollection>,
-        RelationStructure<MariatestSpatialNullFields, MariatestSpatialNullRow>,
+    extends TupleExpr9<
+        MariatestSpatialNullId,
+        Geometry,
+        Point,
+        LineString,
+        Polygon,
+        MultiPoint,
+        MultiLineString,
+        MultiPolygon,
+        GeometryCollection>
+    implements RelationStructure<MariatestSpatialNullFields, MariatestSpatialNullRow>,
         FieldsBase<MariatestSpatialNullRow> {
   List<Path> _path;
 

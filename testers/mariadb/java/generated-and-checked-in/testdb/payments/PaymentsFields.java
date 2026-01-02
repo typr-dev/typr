@@ -31,21 +31,20 @@ import testdb.payment_methods.PaymentMethodsId;
 import testdb.payment_methods.PaymentMethodsRow;
 
 public class PaymentsFields
-    implements TupleExpr12<
-            PaymentsId,
-            OrdersId,
-            PaymentMethodsId,
-            String,
-            BigDecimal,
-            String,
-            String,
-            Json,
-            String,
-            Inet6,
-            LocalDateTime,
-            LocalDateTime>,
-        RelationStructure<PaymentsFields, PaymentsRow>,
-        FieldsBase<PaymentsRow> {
+    extends TupleExpr12<
+        PaymentsId,
+        OrdersId,
+        PaymentMethodsId,
+        String,
+        BigDecimal,
+        String,
+        String,
+        Json,
+        String,
+        Inet6,
+        LocalDateTime,
+        LocalDateTime>
+    implements RelationStructure<PaymentsFields, PaymentsRow>, FieldsBase<PaymentsRow> {
   List<Path> _path;
 
   public PaymentsFields(List<Path> _path) {

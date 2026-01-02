@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class CheckConstraintTestFields
-    implements TupleExpr4<CheckConstraintTestId, Integer, String, BigDecimal>,
-        RelationStructure<CheckConstraintTestFields, CheckConstraintTestRow>,
+    extends TupleExpr4<CheckConstraintTestId, Integer, String, BigDecimal>
+    implements RelationStructure<CheckConstraintTestFields, CheckConstraintTestRow>,
         FieldsBase<CheckConstraintTestRow> {
   List<Path> _path;
 

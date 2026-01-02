@@ -25,9 +25,8 @@ import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
 
 public class ProductImagesFields
-    implements TupleExpr8<
-            ProductImagesId, ProductsId, String, String, String, Uint1, Boolean, byte[]>,
-        RelationStructure<ProductImagesFields, ProductImagesRow>,
+    extends TupleExpr8<ProductImagesId, ProductsId, String, String, String, Uint1, Boolean, byte[]>
+    implements RelationStructure<ProductImagesFields, ProductImagesRow>,
         FieldsBase<ProductImagesRow> {
   List<Path> _path;
 

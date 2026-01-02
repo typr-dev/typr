@@ -33,9 +33,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class EmployeedepartmenthistoryFields
-    implements TupleExpr6<
-            BusinessentityId, DepartmentId, ShiftId, LocalDate, LocalDate, LocalDateTime>,
-        RelationStructure<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow>,
+    extends TupleExpr6<BusinessentityId, DepartmentId, ShiftId, LocalDate, LocalDate, LocalDateTime>
+    implements RelationStructure<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow>,
         FieldsBase<EmployeedepartmenthistoryRow> {
   List<Path> _path;
 

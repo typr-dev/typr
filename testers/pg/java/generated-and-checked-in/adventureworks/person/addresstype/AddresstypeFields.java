@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class AddresstypeFields
-    implements TupleExpr4<AddresstypeId, Name, UUID, LocalDateTime>,
-        RelationStructure<AddresstypeFields, AddresstypeRow>,
-        FieldsBase<AddresstypeRow> {
+public class AddresstypeFields extends TupleExpr4<AddresstypeId, Name, UUID, LocalDateTime>
+    implements RelationStructure<AddresstypeFields, AddresstypeRow>, FieldsBase<AddresstypeRow> {
   List<Path> _path;
 
   public AddresstypeFields(List<Path> _path) {

@@ -22,9 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class UsersFields
-    implements TupleExpr7<UsersId, String, String, Unknown, String, Instant, Instant>,
-        RelationStructure<UsersFields, UsersRow>,
-        FieldsBase<UsersRow> {
+    extends TupleExpr7<UsersId, String, String, Unknown, String, Instant, Instant>
+    implements RelationStructure<UsersFields, UsersRow>, FieldsBase<UsersRow> {
   List<Path> _path;
 
   public UsersFields(List<Path> _path) {

@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class CustomerOrdersViewFields
-    implements TupleExpr7<Integer, String, String, Integer, LocalDate, BigDecimal, String>,
-        RelationStructure<CustomerOrdersViewFields, CustomerOrdersViewRow>,
+    extends TupleExpr7<Integer, String, String, Integer, LocalDate, BigDecimal, String>
+    implements RelationStructure<CustomerOrdersViewFields, CustomerOrdersViewRow>,
         FieldsBase<CustomerOrdersViewRow> {
   List<Path> _path;
 

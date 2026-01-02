@@ -29,9 +29,9 @@ import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
 
 public class ProductPricesFields
-    implements TupleExpr7<
-            ProductPricesId, ProductsId, PriceTiersId, BigDecimal, String, LocalDate, LocalDate>,
-        RelationStructure<ProductPricesFields, ProductPricesRow>,
+    extends TupleExpr7<
+        ProductPricesId, ProductsId, PriceTiersId, BigDecimal, String, LocalDate, LocalDate>
+    implements RelationStructure<ProductPricesFields, ProductPricesRow>,
         FieldsBase<ProductPricesRow> {
   List<Path> _path;
 

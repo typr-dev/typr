@@ -18,9 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr4;
 import java.util.List;
 import java.util.Optional;
 
-public class NullabilityTestFields
-    implements TupleExpr4<Integer, String, String, String>,
-        RelationStructure<NullabilityTestFields, NullabilityTestRow>,
+public class NullabilityTestFields extends TupleExpr4<Integer, String, String, String>
+    implements RelationStructure<NullabilityTestFields, NullabilityTestRow>,
         FieldsBase<NullabilityTestRow> {
   List<Path> _path;
 

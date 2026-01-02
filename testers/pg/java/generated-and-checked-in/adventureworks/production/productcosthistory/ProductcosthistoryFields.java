@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class ProductcosthistoryFields
-    implements TupleExpr5<ProductId, LocalDateTime, LocalDateTime, BigDecimal, LocalDateTime>,
-        RelationStructure<ProductcosthistoryFields, ProductcosthistoryRow>,
+    extends TupleExpr5<ProductId, LocalDateTime, LocalDateTime, BigDecimal, LocalDateTime>
+    implements RelationStructure<ProductcosthistoryFields, ProductcosthistoryRow>,
         FieldsBase<ProductcosthistoryRow> {
   List<Path> _path;
 

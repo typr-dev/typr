@@ -34,26 +34,25 @@ import testdb.warehouses.WarehousesId;
 import testdb.warehouses.WarehousesRow;
 
 public class ShipmentsFields
-    implements TupleExpr17<
-            ShipmentsId,
-            OrdersId,
-            ShippingCarriersId,
-            String,
-            String,
-            BigDecimal,
-            Json,
-            byte[],
-            String,
-            LocalDate,
-            LocalDateTime,
-            BigDecimal,
-            BigDecimal,
-            WarehousesId,
-            LocalDateTime,
-            LocalDateTime,
-            LocalDateTime>,
-        RelationStructure<ShipmentsFields, ShipmentsRow>,
-        FieldsBase<ShipmentsRow> {
+    extends TupleExpr17<
+        ShipmentsId,
+        OrdersId,
+        ShippingCarriersId,
+        String,
+        String,
+        BigDecimal,
+        Json,
+        byte[],
+        String,
+        LocalDate,
+        LocalDateTime,
+        BigDecimal,
+        BigDecimal,
+        WarehousesId,
+        LocalDateTime,
+        LocalDateTime,
+        LocalDateTime>
+    implements RelationStructure<ShipmentsFields, ShipmentsRow>, FieldsBase<ShipmentsRow> {
   List<Path> _path;
 
   public ShipmentsFields(List<Path> _path) {

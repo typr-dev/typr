@@ -24,9 +24,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ProductmodelFields
-    implements TupleExpr6<ProductmodelId, Name, Xml, Xml, UUID, LocalDateTime>,
-        RelationStructure<ProductmodelFields, ProductmodelRow>,
-        FieldsBase<ProductmodelRow> {
+    extends TupleExpr6<ProductmodelId, Name, Xml, Xml, UUID, LocalDateTime>
+    implements RelationStructure<ProductmodelFields, ProductmodelRow>, FieldsBase<ProductmodelRow> {
   List<Path> _path;
 
   public ProductmodelFields(List<Path> _path) {

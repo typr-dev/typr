@@ -20,9 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BusinessentityFields
-    implements TupleExpr3<BusinessentityId, UUID, LocalDateTime>,
-        RelationStructure<BusinessentityFields, BusinessentityRow>,
+public class BusinessentityFields extends TupleExpr3<BusinessentityId, UUID, LocalDateTime>
+    implements RelationStructure<BusinessentityFields, BusinessentityRow>,
         FieldsBase<BusinessentityRow> {
   List<Path> _path;
 

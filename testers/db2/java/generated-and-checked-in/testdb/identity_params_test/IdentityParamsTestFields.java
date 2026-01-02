@@ -18,9 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr2;
 import java.util.List;
 import java.util.Optional;
 
-public class IdentityParamsTestFields
-    implements TupleExpr2<IdentityParamsTestId, String>,
-        RelationStructure<IdentityParamsTestFields, IdentityParamsTestRow>,
+public class IdentityParamsTestFields extends TupleExpr2<IdentityParamsTestId, String>
+    implements RelationStructure<IdentityParamsTestFields, IdentityParamsTestRow>,
         FieldsBase<IdentityParamsTestRow> {
   List<Path> _path;
 

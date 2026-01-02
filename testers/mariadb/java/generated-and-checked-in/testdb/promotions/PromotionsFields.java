@@ -26,25 +26,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class PromotionsFields
-    implements TupleExpr16<
-            PromotionsId,
-            String,
-            String,
-            String,
-            String,
-            BigDecimal,
-            BigDecimal,
-            Uint4,
-            Uint4,
-            Uint1,
-            MariaSet,
-            Json,
-            LocalDateTime,
-            LocalDateTime,
-            Boolean,
-            LocalDateTime>,
-        RelationStructure<PromotionsFields, PromotionsRow>,
-        FieldsBase<PromotionsRow> {
+    extends TupleExpr16<
+        PromotionsId,
+        String,
+        String,
+        String,
+        String,
+        BigDecimal,
+        BigDecimal,
+        Uint4,
+        Uint4,
+        Uint1,
+        MariaSet,
+        Json,
+        LocalDateTime,
+        LocalDateTime,
+        Boolean,
+        LocalDateTime>
+    implements RelationStructure<PromotionsFields, PromotionsRow>, FieldsBase<PromotionsRow> {
   List<Path> _path;
 
   public PromotionsFields(List<Path> _path) {

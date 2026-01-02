@@ -30,22 +30,21 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class PersonFields
-    implements TupleExpr13<
-            BusinessentityId,
-            String,
-            NameStyle, /* max 8 chars */
-            String, /* user-picked */
-            FirstName,
-            Name,
-            Name, /* max 10 chars */
-            String,
-            Integer,
-            Xml,
-            Xml,
-            UUID,
-            LocalDateTime>,
-        RelationStructure<PersonFields, PersonRow>,
-        FieldsBase<PersonRow> {
+    extends TupleExpr13<
+        BusinessentityId,
+        String,
+        NameStyle, /* max 8 chars */
+        String, /* user-picked */
+        FirstName,
+        Name,
+        Name, /* max 10 chars */
+        String,
+        Integer,
+        Xml,
+        Xml,
+        UUID,
+        LocalDateTime>
+    implements RelationStructure<PersonFields, PersonRow>, FieldsBase<PersonRow> {
   List<Path> _path;
 
   public PersonFields(List<Path> _path) {

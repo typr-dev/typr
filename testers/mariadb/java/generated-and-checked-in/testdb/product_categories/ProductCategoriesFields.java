@@ -26,9 +26,8 @@ import testdb.products.ProductsFields;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
 
-public class ProductCategoriesFields
-    implements TupleExpr4<ProductsId, CategoriesId, Boolean, Short>,
-        RelationStructure<ProductCategoriesFields, ProductCategoriesRow>,
+public class ProductCategoriesFields extends TupleExpr4<ProductsId, CategoriesId, Boolean, Short>
+    implements RelationStructure<ProductCategoriesFields, ProductCategoriesRow>,
         FieldsBase<ProductCategoriesRow> {
   List<Path> _path;
 

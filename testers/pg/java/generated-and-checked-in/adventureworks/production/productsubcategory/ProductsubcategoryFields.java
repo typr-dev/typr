@@ -26,8 +26,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ProductsubcategoryFields
-    implements TupleExpr5<ProductsubcategoryId, ProductcategoryId, Name, UUID, LocalDateTime>,
-        RelationStructure<ProductsubcategoryFields, ProductsubcategoryRow>,
+    extends TupleExpr5<ProductsubcategoryId, ProductcategoryId, Name, UUID, LocalDateTime>
+    implements RelationStructure<ProductsubcategoryFields, ProductsubcategoryRow>,
         FieldsBase<ProductsubcategoryRow> {
   List<Path> _path;
 

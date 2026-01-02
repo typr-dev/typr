@@ -34,27 +34,26 @@ import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
 
 public class ReviewsFields
-    implements TupleExpr18<
-            ReviewsId,
-            ProductsId,
-            CustomersId,
-            OrderItemsId,
-            Uint1,
-            String,
-            String,
-            Json,
-            Json,
-            Json,
-            Boolean,
-            Boolean,
-            Uint4,
-            Uint4,
-            String,
-            LocalDateTime,
-            LocalDateTime,
-            LocalDateTime>,
-        RelationStructure<ReviewsFields, ReviewsRow>,
-        FieldsBase<ReviewsRow> {
+    extends TupleExpr18<
+        ReviewsId,
+        ProductsId,
+        CustomersId,
+        OrderItemsId,
+        Uint1,
+        String,
+        String,
+        Json,
+        Json,
+        Json,
+        Boolean,
+        Boolean,
+        Uint4,
+        Uint4,
+        String,
+        LocalDateTime,
+        LocalDateTime,
+        LocalDateTime>
+    implements RelationStructure<ReviewsFields, ReviewsRow>, FieldsBase<ReviewsRow> {
   List<Path> _path;
 
   public ReviewsFields(List<Path> _path) {

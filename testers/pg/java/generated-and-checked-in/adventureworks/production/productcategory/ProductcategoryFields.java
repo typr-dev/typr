@@ -21,9 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ProductcategoryFields
-    implements TupleExpr4<ProductcategoryId, Name, UUID, LocalDateTime>,
-        RelationStructure<ProductcategoryFields, ProductcategoryRow>,
+public class ProductcategoryFields extends TupleExpr4<ProductcategoryId, Name, UUID, LocalDateTime>
+    implements RelationStructure<ProductcategoryFields, ProductcategoryRow>,
         FieldsBase<ProductcategoryRow> {
   List<Path> _path;
 

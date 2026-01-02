@@ -20,9 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class BrandsFields
-    implements TupleExpr7<BrandsId, String, String, byte[], String, String, Boolean>,
-        RelationStructure<BrandsFields, BrandsRow>,
-        FieldsBase<BrandsRow> {
+    extends TupleExpr7<BrandsId, String, String, byte[], String, String, Boolean>
+    implements RelationStructure<BrandsFields, BrandsRow>, FieldsBase<BrandsRow> {
   List<Path> _path;
 
   public BrandsFields(List<Path> _path) {

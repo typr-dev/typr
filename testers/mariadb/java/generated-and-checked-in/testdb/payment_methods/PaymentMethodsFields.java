@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class PaymentMethodsFields
-    implements TupleExpr7<PaymentMethodsId, String, String, String, Json, Boolean, Byte>,
-        RelationStructure<PaymentMethodsFields, PaymentMethodsRow>,
+    extends TupleExpr7<PaymentMethodsId, String, String, String, Json, Boolean, Byte>
+    implements RelationStructure<PaymentMethodsFields, PaymentMethodsRow>,
         FieldsBase<PaymentMethodsRow> {
   List<Path> _path;
 

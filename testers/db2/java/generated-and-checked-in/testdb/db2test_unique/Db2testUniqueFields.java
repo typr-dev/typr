@@ -18,9 +18,8 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr4;
 import java.util.List;
 import java.util.Optional;
 
-public class Db2testUniqueFields
-    implements TupleExpr4<Db2testUniqueId, String, String, String>,
-        RelationStructure<Db2testUniqueFields, Db2testUniqueRow>,
+public class Db2testUniqueFields extends TupleExpr4<Db2testUniqueId, String, String, String>
+    implements RelationStructure<Db2testUniqueFields, Db2testUniqueRow>,
         FieldsBase<Db2testUniqueRow> {
   List<Path> _path;
 

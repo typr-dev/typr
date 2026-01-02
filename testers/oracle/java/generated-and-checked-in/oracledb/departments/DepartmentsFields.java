@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import oracledb.MoneyT;
 
-public class DepartmentsFields
-    implements TupleExpr4<String, String, String, MoneyT>,
-        RelationStructure<DepartmentsFields, DepartmentsRow>,
-        FieldsBase<DepartmentsRow> {
+public class DepartmentsFields extends TupleExpr4<String, String, String, MoneyT>
+    implements RelationStructure<DepartmentsFields, DepartmentsRow>, FieldsBase<DepartmentsRow> {
   List<Path> _path;
 
   public DepartmentsFields(List<Path> _path) {

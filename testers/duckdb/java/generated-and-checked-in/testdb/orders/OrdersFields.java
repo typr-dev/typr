@@ -21,10 +21,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class OrdersFields
-    implements TupleExpr5<OrdersId, Integer, LocalDate, BigDecimal, String>,
-        RelationStructure<OrdersFields, OrdersRow>,
-        FieldsBase<OrdersRow> {
+public class OrdersFields extends TupleExpr5<OrdersId, Integer, LocalDate, BigDecimal, String>
+    implements RelationStructure<OrdersFields, OrdersRow>, FieldsBase<OrdersRow> {
   List<Path> _path;
 
   public OrdersFields(List<Path> _path) {

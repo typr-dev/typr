@@ -28,9 +28,8 @@ import oracledb.departments.DepartmentsId;
 import oracledb.departments.DepartmentsRow;
 
 public class EmployeesFields
-    implements TupleExpr7<BigDecimal, String, String, String, String, MoneyT, LocalDateTime>,
-        RelationStructure<EmployeesFields, EmployeesRow>,
-        FieldsBase<EmployeesRow> {
+    extends TupleExpr7<BigDecimal, String, String, String, String, MoneyT, LocalDateTime>
+    implements RelationStructure<EmployeesFields, EmployeesRow>, FieldsBase<EmployeesRow> {
   List<Path> _path;
 
   public EmployeesFields(List<Path> _path) {
