@@ -95,7 +95,7 @@ services:
         reservations:
           memory: 2g
     healthcheck:
-      test: ["CMD-SHELL", "su - db2inst1 -c 'db2 -x \"CONNECT TO typr; SELECT 1 FROM CUSTOMERS FETCH FIRST 1 ROWS ONLY\"'"]
+      test: ["CMD-SHELL", "su - db2inst1 -c 'db2 -t +c \"CONNECT TO typr; SELECT 1 FROM CUSTOMERS FETCH FIRST 1 ROWS ONLY;\"'"]
       interval: 30s
       timeout: 10s
       retries: 20
