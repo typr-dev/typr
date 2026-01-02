@@ -348,7 +348,14 @@ jobs:
 
       - name: Initialize DB2 schema
         run: |
-          docker exec $(docker compose ps -q db2) su - db2inst1 -c "db2 -tvf /var/custom/01-test-tables.sql"
+          for i in {1..10}; do
+            if docker exec $(docker compose ps -q db2) su - db2inst1 -c "db2 connect to typr && db2 -tvf /var/custom/01-test-tables.sql"; then
+              echo "DB2 schema initialized successfully"
+              break
+            fi
+            echo "Attempt $i failed, waiting 30s..."
+            sleep 30
+          done
 
       - name: Run DB2 Scala tests
         env:
