@@ -346,6 +346,10 @@ jobs:
           echo "Waiting for DB2 to be healthy (this may take several minutes)..."
           docker compose up -d --wait db2
 
+      - name: Initialize DB2 schema
+        run: |
+          docker exec $(docker compose ps -q db2) su - db2inst1 -c "db2 -tvf /docker-entrypoint-initdb.d/01-test-tables.sql"
+
       - name: Run DB2 Scala tests
         env:
           CI: true
