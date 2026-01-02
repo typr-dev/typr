@@ -95,7 +95,7 @@ services:
         reservations:
           memory: 2g
     healthcheck:
-      test: ["CMD-SHELL", "su - db2inst1 -c 'echo \"CONNECT TO typr; SELECT 1 FROM SYSIBM.SYSDUMMY1;\" | db2 -t'"]
+      test: ["CMD", "/var/custom/healthcheck.sh"]
       interval: 30s
       timeout: 10s
       retries: 20
