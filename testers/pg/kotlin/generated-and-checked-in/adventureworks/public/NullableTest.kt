@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import java.util.Optional
 
 /** PostgreSQL composite type: public.nullable_test */
 data class NullableTest(
@@ -17,9 +19,12 @@ data class NullableTest(
 ) {
   companion object {
     val pgStruct: PgStruct<NullableTest> =
-      PgStruct.builder<NullableTest>("public.nullable_test").nullableField("alwaysPresent", PgTypes.text, { v: NullableTest -> v.alwaysPresent }).nullableField("oftenNull", PgTypes.text, { v: NullableTest -> v.oftenNull }).nullableField("emptyVsNull", PgTypes.text, { v: NullableTest -> v.emptyVsNull }).build({ arr -> NullableTest(arr[0] as? String, arr[1] as? String, arr[2] as? String) })
+      PgStruct.builder<NullableTest>("public.nullable_test").optField("alwaysPresent", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.alwaysPresent) }).optField("oftenNull", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.oftenNull) }).optField("emptyVsNull", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.emptyVsNull) }).build({ arr -> NullableTest(arr[0] as? String, arr[1] as? String, arr[2] as? String) })
 
     val pgType: PgType<NullableTest> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<NullableTest>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<NullableTest>(n) }), { n -> arrayOfNulls<NullableTest>(n) })
   }
 }

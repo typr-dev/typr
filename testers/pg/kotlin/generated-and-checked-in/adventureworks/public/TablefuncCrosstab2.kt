@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import java.util.Optional
 
 /** PostgreSQL composite type: public.tablefunc_crosstab_2 */
 data class TablefuncCrosstab2(
@@ -17,9 +19,12 @@ data class TablefuncCrosstab2(
 ) {
   companion object {
     val pgStruct: PgStruct<TablefuncCrosstab2> =
-      PgStruct.builder<TablefuncCrosstab2>("public.tablefunc_crosstab_2").nullableField("rowName", PgTypes.text, { v: TablefuncCrosstab2 -> v.rowName }).nullableField("category1", PgTypes.text, { v: TablefuncCrosstab2 -> v.category1 }).nullableField("category2", PgTypes.text, { v: TablefuncCrosstab2 -> v.category2 }).build({ arr -> TablefuncCrosstab2(arr[0] as? String, arr[1] as? String, arr[2] as? String) })
+      PgStruct.builder<TablefuncCrosstab2>("public.tablefunc_crosstab_2").optField("rowName", PgTypes.text, { v: TablefuncCrosstab2 -> Optional.ofNullable(v.rowName) }).optField("category1", PgTypes.text, { v: TablefuncCrosstab2 -> Optional.ofNullable(v.category1) }).optField("category2", PgTypes.text, { v: TablefuncCrosstab2 -> Optional.ofNullable(v.category2) }).build({ arr -> TablefuncCrosstab2(arr[0] as? String, arr[1] as? String, arr[2] as? String) })
 
     val pgType: PgType<TablefuncCrosstab2> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<TablefuncCrosstab2>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TablefuncCrosstab2>(n) }), { n -> arrayOfNulls<TablefuncCrosstab2>(n) })
   }
 }

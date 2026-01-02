@@ -5,11 +5,13 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDate
+import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.employee_record */
 case class EmployeeRecord(
@@ -21,7 +23,9 @@ case class EmployeeRecord(
 )
 
 object EmployeeRecord {
-  given pgStruct: PgStruct[EmployeeRecord] = PgStruct.builder[EmployeeRecord]("public.employee_record").nullableField("name", PersonName.pgType, (v: EmployeeRecord) => v.name).nullableField("contact", ContactInfo.pgType, (v: EmployeeRecord) => v.contact).nullableField("employeeId", ScalaDbTypes.PgTypes.int4, (v: EmployeeRecord) => v.employeeId).nullableField("salary", ScalaDbTypes.PgTypes.numeric, (v: EmployeeRecord) => v.salary).nullableField("hireDate", PgTypes.date, (v: EmployeeRecord) => v.hireDate).build(arr => EmployeeRecord(name = Option(arr(0)).map(_.asInstanceOf[PersonName]), contact = Option(arr(1)).map(_.asInstanceOf[ContactInfo]), employeeId = Option(arr(2)).map(_.asInstanceOf[Int]), salary = Option(arr(3)).map(_.asInstanceOf[BigDecimal]), hireDate = Option(arr(4)).map(_.asInstanceOf[LocalDate])))
+  given pgStruct: PgStruct[EmployeeRecord] = PgStruct.builder[EmployeeRecord]("public.employee_record").optField("name", PersonName.pgType, (v: EmployeeRecord) => v.name.asJava).optField("contact", ContactInfo.pgType, (v: EmployeeRecord) => v.contact.asJava).optField("employeeId", ScalaDbTypes.PgTypes.int4, (v: EmployeeRecord) => v.employeeId.asJava).optField("salary", ScalaDbTypes.PgTypes.numeric, (v: EmployeeRecord) => v.salary.asJava).optField("hireDate", PgTypes.date, (v: EmployeeRecord) => v.hireDate.asJava).build(arr => EmployeeRecord(name = Option(arr(0).asInstanceOf[PersonName]), contact = Option(arr(1).asInstanceOf[ContactInfo]), employeeId = Option(arr(2).asInstanceOf[Int]), salary = Option(arr(3).asInstanceOf[BigDecimal]), hireDate = Option(arr(4).asInstanceOf[LocalDate])))
 
   given pgType: PgType[EmployeeRecord] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[EmployeeRecord]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[EmployeeRecord](n)), n => new Array[EmployeeRecord](n))
 }

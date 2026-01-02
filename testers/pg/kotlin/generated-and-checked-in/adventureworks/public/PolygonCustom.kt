@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import java.util.Optional
 
 /** PostgreSQL composite type: public.polygon_custom */
 data class PolygonCustom(
@@ -16,9 +18,12 @@ data class PolygonCustom(
 ) {
   companion object {
     val pgStruct: PgStruct<PolygonCustom> =
-      PgStruct.builder<PolygonCustom>("public.polygon_custom").nullableField("name", PgTypes.text, { v: PolygonCustom -> v.name }).nullableField("vertices", Point2d.pgTypeArray, { v: PolygonCustom -> v.vertices }).build({ arr -> PolygonCustom(arr[0] as? String, arr[1] as? Array<Point2d>) })
+      PgStruct.builder<PolygonCustom>("public.polygon_custom").optField("name", PgTypes.text, { v: PolygonCustom -> Optional.ofNullable(v.name) }).optField("vertices", Point2d.pgTypeArray, { v: PolygonCustom -> Optional.ofNullable(v.vertices) }).build({ arr -> PolygonCustom(arr[0] as? String, arr[1] as? Array<Point2d>) })
 
     val pgType: PgType<PolygonCustom> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<PolygonCustom>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<PolygonCustom>(n) }), { n -> arrayOfNulls<PolygonCustom>(n) })
   }
 }

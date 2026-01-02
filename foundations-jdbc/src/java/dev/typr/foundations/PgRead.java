@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import org.postgresql.jdbc.PgArray;
 import org.postgresql.util.PGobject;
 
@@ -195,6 +196,30 @@ public sealed interface PgRead<A> extends DbRead<A>
           for (int i = 0; i < objects.length; i++) {
             PGobject object = (PGobject) objects[i];
             array[i] = fromString.apply(object.getValue());
+          }
+          return array;
+        });
+  }
+
+  /**
+   * Create a reader for arrays of composite types. PostgreSQL returns composite arrays as a string
+   * in array format, e.g., {"(field1,field2)","(field3,field4)"}. We parse this using
+   * PgRecordParser.parseArray and decode each element with the composite's text decoder.
+   *
+   * @param decoder the composite text decoder for the element type
+   * @param arrayFactory factory to create arrays of the element type
+   * @return a PgRead for arrays of the composite type
+   */
+  static <T> PgRead<T[]> readCompositeArray(
+      PgCompositeText<T> decoder, IntFunction<T[]> arrayFactory) {
+    return readString.map(
+        arrayText -> {
+          if (arrayText == null) return null;
+          java.util.List<String> elements = PgRecordParser.parseArray(arrayText);
+          T[] array = arrayFactory.apply(elements.size());
+          for (int i = 0; i < elements.size(); i++) {
+            String elementText = elements.get(i);
+            array[i] = elementText == null ? null : decoder.decode(elementText);
           }
           return array;
         });

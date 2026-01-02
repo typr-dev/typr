@@ -25,6 +25,7 @@ object TypeSupportJava extends TypeSupport {
     val none: jvm.Code = code"${TypesJava.Optional}.empty()"
 
     def some(value: jvm.Code): jvm.Code = code"${TypesJava.Optional}.of($value)"
+    def ofNullable(value: jvm.Code): jvm.Code = code"${TypesJava.Optional}.ofNullable($value)"
     def map(opt: jvm.Code, f: jvm.Code): jvm.Code = code"$opt.map($f)"
     def filter(opt: jvm.Code, predicate: jvm.Code): jvm.Code = code"$opt.filter($predicate)"
     def get(opt: jvm.Code): jvm.Code = code"$opt.get()"

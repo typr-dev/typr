@@ -5,10 +5,10 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.ScalaDbTypes
 import java.util.Optional
 
 /** PostgreSQL composite type: public.tree_node */
@@ -19,7 +19,9 @@ case class TreeNode(
 )
 
 object TreeNode {
-  given pgStruct: PgStruct[TreeNode] = PgStruct.builder[TreeNode]("public.tree_node").nullableField("id", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.id).nullableField("label", PgTypes.text, (v: TreeNode) => v.label).nullableField("parentId", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.parentId).build(arr => TreeNode(id = Option(arr(0)).map(_.asInstanceOf[Integer]), label = Option(arr(1)).map(_.asInstanceOf[String]), parentId = Option(arr(2)).map(_.asInstanceOf[Integer])))
+  given pgStruct: PgStruct[TreeNode] = PgStruct.builder[TreeNode]("public.tree_node").optField("id", PgTypes.int4, (v: TreeNode) => v.id).optField("label", PgTypes.text, (v: TreeNode) => v.label).optField("parentId", PgTypes.int4, (v: TreeNode) => v.parentId).build(arr => TreeNode(id = Optional.ofNullable(arr(0).asInstanceOf[Integer]), label = Optional.ofNullable(arr(1).asInstanceOf[String]), parentId = Optional.ofNullable(arr(2).asInstanceOf[Integer])))
 
   given pgType: PgType[TreeNode] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[TreeNode]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TreeNode](n)), n => new Array[TreeNode](n))
 }

@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import java.util.Optional
 
 /** PostgreSQL composite type: public.tablefunc_crosstab_4 */
 data class TablefuncCrosstab4(
@@ -19,9 +21,12 @@ data class TablefuncCrosstab4(
 ) {
   companion object {
     val pgStruct: PgStruct<TablefuncCrosstab4> =
-      PgStruct.builder<TablefuncCrosstab4>("public.tablefunc_crosstab_4").nullableField("rowName", PgTypes.text, { v: TablefuncCrosstab4 -> v.rowName }).nullableField("category1", PgTypes.text, { v: TablefuncCrosstab4 -> v.category1 }).nullableField("category2", PgTypes.text, { v: TablefuncCrosstab4 -> v.category2 }).nullableField("category3", PgTypes.text, { v: TablefuncCrosstab4 -> v.category3 }).nullableField("category4", PgTypes.text, { v: TablefuncCrosstab4 -> v.category4 }).build({ arr -> TablefuncCrosstab4(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String, arr[4] as? String) })
+      PgStruct.builder<TablefuncCrosstab4>("public.tablefunc_crosstab_4").optField("rowName", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.rowName) }).optField("category1", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.category1) }).optField("category2", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.category2) }).optField("category3", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.category3) }).optField("category4", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.category4) }).build({ arr -> TablefuncCrosstab4(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String, arr[4] as? String) })
 
     val pgType: PgType<TablefuncCrosstab4> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<TablefuncCrosstab4>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TablefuncCrosstab4>(n) }), { n -> arrayOfNulls<TablefuncCrosstab4>(n) })
   }
 }

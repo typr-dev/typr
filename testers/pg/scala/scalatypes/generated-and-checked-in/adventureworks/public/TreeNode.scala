@@ -5,10 +5,12 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.scala.ScalaDbTypes
+import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.tree_node */
 case class TreeNode(
@@ -18,7 +20,9 @@ case class TreeNode(
 )
 
 object TreeNode {
-  given pgStruct: PgStruct[TreeNode] = PgStruct.builder[TreeNode]("public.tree_node").nullableField("id", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.id).nullableField("label", PgTypes.text, (v: TreeNode) => v.label).nullableField("parentId", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.parentId).build(arr => TreeNode(id = Option(arr(0)).map(_.asInstanceOf[Int]), label = Option(arr(1)).map(_.asInstanceOf[String]), parentId = Option(arr(2)).map(_.asInstanceOf[Int])))
+  given pgStruct: PgStruct[TreeNode] = PgStruct.builder[TreeNode]("public.tree_node").optField("id", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.id.asJava).optField("label", PgTypes.text, (v: TreeNode) => v.label.asJava).optField("parentId", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.parentId.asJava).build(arr => TreeNode(id = Option(arr(0).asInstanceOf[Int]), label = Option(arr(1).asInstanceOf[String]), parentId = Option(arr(2).asInstanceOf[Int])))
 
   given pgType: PgType[TreeNode] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[TreeNode]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TreeNode](n)), n => new Array[TreeNode](n))
 }

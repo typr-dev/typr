@@ -5,10 +5,10 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDate
 import java.util.Optional
 
@@ -22,7 +22,9 @@ case class EmployeeRecord(
 )
 
 object EmployeeRecord {
-  given pgStruct: PgStruct[EmployeeRecord] = PgStruct.builder[EmployeeRecord]("public.employee_record").nullableField("name", PersonName.pgType, (v: EmployeeRecord) => v.name).nullableField("contact", ContactInfo.pgType, (v: EmployeeRecord) => v.contact).nullableField("employeeId", ScalaDbTypes.PgTypes.int4, (v: EmployeeRecord) => v.employeeId).nullableField("salary", ScalaDbTypes.PgTypes.numeric, (v: EmployeeRecord) => v.salary).nullableField("hireDate", PgTypes.date, (v: EmployeeRecord) => v.hireDate).build(arr => EmployeeRecord(name = Option(arr(0)).map(_.asInstanceOf[PersonName]), contact = Option(arr(1)).map(_.asInstanceOf[ContactInfo]), employeeId = Option(arr(2)).map(_.asInstanceOf[Integer]), salary = Option(arr(3)).map(_.asInstanceOf[java.math.BigDecimal]), hireDate = Option(arr(4)).map(_.asInstanceOf[LocalDate])))
+  given pgStruct: PgStruct[EmployeeRecord] = PgStruct.builder[EmployeeRecord]("public.employee_record").optField("name", PersonName.pgType, (v: EmployeeRecord) => v.name).optField("contact", ContactInfo.pgType, (v: EmployeeRecord) => v.contact).optField("employeeId", PgTypes.int4, (v: EmployeeRecord) => v.employeeId).optField("salary", PgTypes.numeric, (v: EmployeeRecord) => v.salary).optField("hireDate", PgTypes.date, (v: EmployeeRecord) => v.hireDate).build(arr => EmployeeRecord(name = Optional.ofNullable(arr(0).asInstanceOf[PersonName]), contact = Optional.ofNullable(arr(1).asInstanceOf[ContactInfo]), employeeId = Optional.ofNullable(arr(2).asInstanceOf[Integer]), salary = Optional.ofNullable(arr(3).asInstanceOf[java.math.BigDecimal]), hireDate = Optional.ofNullable(arr(4).asInstanceOf[LocalDate])))
 
   given pgType: PgType[EmployeeRecord] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[EmployeeRecord]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[EmployeeRecord](n)), n => new Array[EmployeeRecord](n))
 }

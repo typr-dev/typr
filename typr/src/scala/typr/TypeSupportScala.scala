@@ -26,6 +26,7 @@ object TypeSupportScala extends TypeSupport {
     val none: jvm.Code = TypesScala.None.code
 
     def some(value: jvm.Code): jvm.Code = code"${TypesScala.Some}($value)"
+    def ofNullable(value: jvm.Code): jvm.Code = code"${TypesScala.Option}($value)"
     def map(opt: jvm.Code, f: jvm.Code): jvm.Code = code"$opt.map($f)"
     def filter(opt: jvm.Code, predicate: jvm.Code): jvm.Code = code"$opt.filter($predicate)"
     def get(opt: jvm.Code): jvm.Code = code"$opt.get"

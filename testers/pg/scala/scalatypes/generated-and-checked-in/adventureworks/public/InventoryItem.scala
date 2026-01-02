@@ -5,10 +5,12 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.scala.ScalaDbTypes
+import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.inventory_item */
 case class InventoryItem(
@@ -19,7 +21,9 @@ case class InventoryItem(
 )
 
 object InventoryItem {
-  given pgStruct: PgStruct[InventoryItem] = PgStruct.builder[InventoryItem]("public.inventory_item").nullableField("name", PgTypes.text, (v: InventoryItem) => v.name).nullableField("tags", PgTypes.textArray, (v: InventoryItem) => v.tags).nullableField("prices", ScalaDbTypes.PgTypes.numericArray, (v: InventoryItem) => v.prices).nullableField("available", ScalaDbTypes.PgTypes.bool, (v: InventoryItem) => v.available).build(arr => InventoryItem(name = Option(arr(0)).map(_.asInstanceOf[String]), tags = Option(arr(1)).map(_.asInstanceOf[Array[String]]), prices = Option(arr(2)).map(_.asInstanceOf[Array[BigDecimal]]), available = Option(arr(3)).map(_.asInstanceOf[Boolean])))
+  given pgStruct: PgStruct[InventoryItem] = PgStruct.builder[InventoryItem]("public.inventory_item").optField("name", PgTypes.text, (v: InventoryItem) => v.name.asJava).optField("tags", PgTypes.textArray, (v: InventoryItem) => v.tags.asJava).optField("prices", ScalaDbTypes.PgTypes.numericArray, (v: InventoryItem) => v.prices.asJava).optField("available", ScalaDbTypes.PgTypes.bool, (v: InventoryItem) => v.available.asJava).build(arr => InventoryItem(name = Option(arr(0).asInstanceOf[String]), tags = Option(arr(1).asInstanceOf[Array[String]]), prices = Option(arr(2).asInstanceOf[Array[BigDecimal]]), available = Option(arr(3).asInstanceOf[Boolean])))
 
   given pgType: PgType[InventoryItem] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[InventoryItem]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[InventoryItem](n)), n => new Array[InventoryItem](n))
 }

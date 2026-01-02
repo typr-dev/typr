@@ -5,11 +5,13 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Jsonb
 import java.time.Instant
+import java.util.Optional
 
 /** PostgreSQL composite type: public.metadata_record */
 data class MetadataRecord(
@@ -19,9 +21,12 @@ data class MetadataRecord(
 ) {
   companion object {
     val pgStruct: PgStruct<MetadataRecord> =
-      PgStruct.builder<MetadataRecord>("public.metadata_record").nullableField("key", PgTypes.text, { v: MetadataRecord -> v.key }).nullableField("value", PgTypes.jsonb, { v: MetadataRecord -> v.value }).nullableField("createdAt", PgTypes.timestamptz, { v: MetadataRecord -> v.createdAt }).build({ arr -> MetadataRecord(arr[0] as? String, arr[1] as? Jsonb, arr[2] as? Instant) })
+      PgStruct.builder<MetadataRecord>("public.metadata_record").optField("key", PgTypes.text, { v: MetadataRecord -> Optional.ofNullable(v.key) }).optField("value", PgTypes.jsonb, { v: MetadataRecord -> Optional.ofNullable(v.value) }).optField("createdAt", PgTypes.timestamptz, { v: MetadataRecord -> Optional.ofNullable(v.createdAt) }).build({ arr -> MetadataRecord(arr[0] as? String, arr[1] as? Jsonb, arr[2] as? Instant) })
 
     val pgType: PgType<MetadataRecord> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<MetadataRecord>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<MetadataRecord>(n) }), { n -> arrayOfNulls<MetadataRecord>(n) })
   }
 }

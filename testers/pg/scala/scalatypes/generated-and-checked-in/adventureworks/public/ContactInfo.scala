@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.contact_info */
 case class ContactInfo(
@@ -17,7 +19,9 @@ case class ContactInfo(
 )
 
 object ContactInfo {
-  given pgStruct: PgStruct[ContactInfo] = PgStruct.builder[ContactInfo]("public.contact_info").nullableField("email", PgTypes.text, (v: ContactInfo) => v.email).nullableField("phone", PgTypes.text, (v: ContactInfo) => v.phone).nullableField("address", Address.pgType, (v: ContactInfo) => v.address).build(arr => ContactInfo(email = Option(arr(0)).map(_.asInstanceOf[String]), phone = Option(arr(1)).map(_.asInstanceOf[String]), address = Option(arr(2)).map(_.asInstanceOf[Address])))
+  given pgStruct: PgStruct[ContactInfo] = PgStruct.builder[ContactInfo]("public.contact_info").optField("email", PgTypes.text, (v: ContactInfo) => v.email.asJava).optField("phone", PgTypes.text, (v: ContactInfo) => v.phone.asJava).optField("address", Address.pgType, (v: ContactInfo) => v.address.asJava).build(arr => ContactInfo(email = Option(arr(0).asInstanceOf[String]), phone = Option(arr(1).asInstanceOf[String]), address = Option(arr(2).asInstanceOf[Address])))
 
   given pgType: PgType[ContactInfo] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[ContactInfo]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[ContactInfo](n)), n => new Array[ContactInfo](n))
 }

@@ -5,12 +5,14 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.kotlin.KotlinDbTypes
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.Optional
 
 /** PostgreSQL composite type: public.employee_record */
 data class EmployeeRecord(
@@ -22,9 +24,12 @@ data class EmployeeRecord(
 ) {
   companion object {
     val pgStruct: PgStruct<EmployeeRecord> =
-      PgStruct.builder<EmployeeRecord>("public.employee_record").nullableField("name", PersonName.pgType, { v: EmployeeRecord -> v.name }).nullableField("contact", ContactInfo.pgType, { v: EmployeeRecord -> v.contact }).nullableField("employeeId", KotlinDbTypes.PgTypes.int4, { v: EmployeeRecord -> v.employeeId }).nullableField("salary", PgTypes.numeric, { v: EmployeeRecord -> v.salary }).nullableField("hireDate", PgTypes.date, { v: EmployeeRecord -> v.hireDate }).build({ arr -> EmployeeRecord(arr[0] as? PersonName, arr[1] as? ContactInfo, arr[2] as? Int, arr[3] as? BigDecimal, arr[4] as? LocalDate) })
+      PgStruct.builder<EmployeeRecord>("public.employee_record").optField("name", PersonName.pgType, { v: EmployeeRecord -> Optional.ofNullable(v.name) }).optField("contact", ContactInfo.pgType, { v: EmployeeRecord -> Optional.ofNullable(v.contact) }).optField("employeeId", KotlinDbTypes.PgTypes.int4, { v: EmployeeRecord -> Optional.ofNullable(v.employeeId) }).optField("salary", PgTypes.numeric, { v: EmployeeRecord -> Optional.ofNullable(v.salary) }).optField("hireDate", PgTypes.date, { v: EmployeeRecord -> Optional.ofNullable(v.hireDate) }).build({ arr -> EmployeeRecord(arr[0] as? PersonName, arr[1] as? ContactInfo, arr[2] as? Int, arr[3] as? BigDecimal, arr[4] as? LocalDate) })
 
     val pgType: PgType<EmployeeRecord> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<EmployeeRecord>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<EmployeeRecord>(n) }), { n -> arrayOfNulls<EmployeeRecord>(n) })
   }
 }

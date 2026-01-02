@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import java.util.Optional
 
 /** PostgreSQL composite type: public.contact_info */
 data class ContactInfo(
@@ -17,9 +19,12 @@ data class ContactInfo(
 ) {
   companion object {
     val pgStruct: PgStruct<ContactInfo> =
-      PgStruct.builder<ContactInfo>("public.contact_info").nullableField("email", PgTypes.text, { v: ContactInfo -> v.email }).nullableField("phone", PgTypes.text, { v: ContactInfo -> v.phone }).nullableField("address", Address.pgType, { v: ContactInfo -> v.address }).build({ arr -> ContactInfo(arr[0] as? String, arr[1] as? String, arr[2] as? Address) })
+      PgStruct.builder<ContactInfo>("public.contact_info").optField("email", PgTypes.text, { v: ContactInfo -> Optional.ofNullable(v.email) }).optField("phone", PgTypes.text, { v: ContactInfo -> Optional.ofNullable(v.phone) }).optField("address", Address.pgType, { v: ContactInfo -> Optional.ofNullable(v.address) }).build({ arr -> ContactInfo(arr[0] as? String, arr[1] as? String, arr[2] as? Address) })
 
     val pgType: PgType<ContactInfo> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<ContactInfo>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<ContactInfo>(n) }), { n -> arrayOfNulls<ContactInfo>(n) })
   }
 }

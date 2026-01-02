@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.address */
 case class Address(
@@ -18,7 +20,9 @@ case class Address(
 )
 
 object Address {
-  given pgStruct: PgStruct[Address] = PgStruct.builder[Address]("public.address").nullableField("street", PgTypes.text, (v: Address) => v.street).nullableField("city", PgTypes.text, (v: Address) => v.city).nullableField("zip", PgTypes.text, (v: Address) => v.zip).nullableField("country", PgTypes.text, (v: Address) => v.country).build(arr => Address(street = Option(arr(0)).map(_.asInstanceOf[String]), city = Option(arr(1)).map(_.asInstanceOf[String]), zip = Option(arr(2)).map(_.asInstanceOf[String]), country = Option(arr(3)).map(_.asInstanceOf[String])))
+  given pgStruct: PgStruct[Address] = PgStruct.builder[Address]("public.address").optField("street", PgTypes.text, (v: Address) => v.street.asJava).optField("city", PgTypes.text, (v: Address) => v.city.asJava).optField("zip", PgTypes.text, (v: Address) => v.zip.asJava).optField("country", PgTypes.text, (v: Address) => v.country.asJava).build(arr => Address(street = Option(arr(0).asInstanceOf[String]), city = Option(arr(1).asInstanceOf[String]), zip = Option(arr(2).asInstanceOf[String]), country = Option(arr(3).asInstanceOf[String])))
 
   given pgType: PgType[Address] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[Address]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Address](n)), n => new Array[Address](n))
 }

@@ -5,11 +5,13 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.kotlin.KotlinDbTypes
 import java.math.BigDecimal
+import java.util.Optional
 
 /** PostgreSQL composite type: public.inventory_item */
 data class InventoryItem(
@@ -20,9 +22,12 @@ data class InventoryItem(
 ) {
   companion object {
     val pgStruct: PgStruct<InventoryItem> =
-      PgStruct.builder<InventoryItem>("public.inventory_item").nullableField("name", PgTypes.text, { v: InventoryItem -> v.name }).nullableField("tags", PgTypes.textArray, { v: InventoryItem -> v.tags }).nullableField("prices", PgTypes.numericArray, { v: InventoryItem -> v.prices }).nullableField("available", KotlinDbTypes.PgTypes.bool, { v: InventoryItem -> v.available }).build({ arr -> InventoryItem(arr[0] as? String, arr[1] as? Array<String>, arr[2] as? Array<BigDecimal>, arr[3] as? Boolean) })
+      PgStruct.builder<InventoryItem>("public.inventory_item").optField("name", PgTypes.text, { v: InventoryItem -> Optional.ofNullable(v.name) }).optField("tags", PgTypes.textArray, { v: InventoryItem -> Optional.ofNullable(v.tags) }).optField("prices", PgTypes.numericArray, { v: InventoryItem -> Optional.ofNullable(v.prices) }).optField("available", KotlinDbTypes.PgTypes.bool, { v: InventoryItem -> Optional.ofNullable(v.available) }).build({ arr -> InventoryItem(arr[0] as? String, arr[1] as? Array<String>, arr[2] as? Array<BigDecimal>, arr[3] as? Boolean) })
 
     val pgType: PgType<InventoryItem> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<InventoryItem>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<InventoryItem>(n) }), { n -> arrayOfNulls<InventoryItem>(n) })
   }
 }

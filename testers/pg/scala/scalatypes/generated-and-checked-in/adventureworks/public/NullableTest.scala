@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.nullable_test */
 case class NullableTest(
@@ -17,7 +19,9 @@ case class NullableTest(
 )
 
 object NullableTest {
-  given pgStruct: PgStruct[NullableTest] = PgStruct.builder[NullableTest]("public.nullable_test").nullableField("alwaysPresent", PgTypes.text, (v: NullableTest) => v.alwaysPresent).nullableField("oftenNull", PgTypes.text, (v: NullableTest) => v.oftenNull).nullableField("emptyVsNull", PgTypes.text, (v: NullableTest) => v.emptyVsNull).build(arr => NullableTest(alwaysPresent = Option(arr(0)).map(_.asInstanceOf[String]), oftenNull = Option(arr(1)).map(_.asInstanceOf[String]), emptyVsNull = Option(arr(2)).map(_.asInstanceOf[String])))
+  given pgStruct: PgStruct[NullableTest] = PgStruct.builder[NullableTest]("public.nullable_test").optField("alwaysPresent", PgTypes.text, (v: NullableTest) => v.alwaysPresent.asJava).optField("oftenNull", PgTypes.text, (v: NullableTest) => v.oftenNull.asJava).optField("emptyVsNull", PgTypes.text, (v: NullableTest) => v.emptyVsNull.asJava).build(arr => NullableTest(alwaysPresent = Option(arr(0).asInstanceOf[String]), oftenNull = Option(arr(1).asInstanceOf[String]), emptyVsNull = Option(arr(2).asInstanceOf[String])))
 
   given pgType: PgType[NullableTest] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[NullableTest]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[NullableTest](n)), n => new Array[NullableTest](n))
 }

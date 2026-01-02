@@ -311,6 +311,25 @@ public record PgStruct<A>(
     }
 
     /**
+     * Add an optional field where the getter returns Optional&lt;F&gt;.
+     *
+     * <p>This is the preferred way to handle nullable fields. The Optional is unwrapped internally,
+     * so the PgType should be for the inner type F, not Optional&lt;F&gt;.
+     *
+     * <p>For Scala Option types, convert to Java Optional using scala.jdk.OptionConverters.
+     *
+     * @param name the field name in SQL
+     * @param type the PgType for the inner type F (not Optional&lt;F&gt;)
+     * @param getter function to extract Optional&lt;F&gt; value from struct
+     */
+    public <F> Builder<A> optField(String name, PgType<F> type, Function<A, Optional<F>> getter) {
+      // Unwrap Optional to nullable F for internal storage
+      Function<A, F> unwrappingGetter = a -> getter.apply(a).orElse(null);
+      fields.add(new Field<>(name, type, unwrappingGetter));
+      return this;
+    }
+
+    /**
      * Build the PgStruct with auto-derived writer and JSON codec.
      *
      * @param reader function to construct struct from field values array

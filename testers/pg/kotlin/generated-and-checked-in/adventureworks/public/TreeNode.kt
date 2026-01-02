@@ -5,10 +5,12 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.kotlin.KotlinDbTypes
+import java.util.Optional
 
 /** PostgreSQL composite type: public.tree_node */
 data class TreeNode(
@@ -18,9 +20,12 @@ data class TreeNode(
 ) {
   companion object {
     val pgStruct: PgStruct<TreeNode> =
-      PgStruct.builder<TreeNode>("public.tree_node").nullableField("id", KotlinDbTypes.PgTypes.int4, { v: TreeNode -> v.id }).nullableField("label", PgTypes.text, { v: TreeNode -> v.label }).nullableField("parentId", KotlinDbTypes.PgTypes.int4, { v: TreeNode -> v.parentId }).build({ arr -> TreeNode(arr[0] as? Int, arr[1] as? String, arr[2] as? Int) })
+      PgStruct.builder<TreeNode>("public.tree_node").optField("id", KotlinDbTypes.PgTypes.int4, { v: TreeNode -> Optional.ofNullable(v.id) }).optField("label", PgTypes.text, { v: TreeNode -> Optional.ofNullable(v.label) }).optField("parentId", KotlinDbTypes.PgTypes.int4, { v: TreeNode -> Optional.ofNullable(v.parentId) }).build({ arr -> TreeNode(arr[0] as? Int, arr[1] as? String, arr[2] as? Int) })
 
     val pgType: PgType<TreeNode> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<TreeNode>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TreeNode>(n) }), { n -> arrayOfNulls<TreeNode>(n) })
   }
 }

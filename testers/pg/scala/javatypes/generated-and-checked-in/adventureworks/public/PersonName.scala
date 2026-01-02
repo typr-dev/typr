@@ -5,6 +5,7 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
@@ -19,7 +20,9 @@ case class PersonName(
 )
 
 object PersonName {
-  given pgStruct: PgStruct[PersonName] = PgStruct.builder[PersonName]("public.person_name").nullableField("firstName", PgTypes.text, (v: PersonName) => v.firstName).nullableField("middleName", PgTypes.text, (v: PersonName) => v.middleName).nullableField("lastName", PgTypes.text, (v: PersonName) => v.lastName).nullableField("suffix", PgTypes.text, (v: PersonName) => v.suffix).build(arr => PersonName(firstName = Option(arr(0)).map(_.asInstanceOf[String]), middleName = Option(arr(1)).map(_.asInstanceOf[String]), lastName = Option(arr(2)).map(_.asInstanceOf[String]), suffix = Option(arr(3)).map(_.asInstanceOf[String])))
+  given pgStruct: PgStruct[PersonName] = PgStruct.builder[PersonName]("public.person_name").optField("firstName", PgTypes.text, (v: PersonName) => v.firstName).optField("middleName", PgTypes.text, (v: PersonName) => v.middleName).optField("lastName", PgTypes.text, (v: PersonName) => v.lastName).optField("suffix", PgTypes.text, (v: PersonName) => v.suffix).build(arr => PersonName(firstName = Optional.ofNullable(arr(0).asInstanceOf[String]), middleName = Optional.ofNullable(arr(1).asInstanceOf[String]), lastName = Optional.ofNullable(arr(2).asInstanceOf[String]), suffix = Optional.ofNullable(arr(3).asInstanceOf[String])))
 
   given pgType: PgType[PersonName] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[PersonName]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[PersonName](n)), n => new Array[PersonName](n))
 }

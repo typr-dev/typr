@@ -31,6 +31,9 @@ object TypeSupportKotlin extends TypeSupport {
     // For Kotlin, some(value) is just the value (no wrapping)
     def some(value: jvm.Code): jvm.Code = value
 
+    // For Kotlin, ofNullable is just the value (nullable types are T?)
+    def ofNullable(value: jvm.Code): jvm.Code = value
+
     // Kotlin nullable operations using elvis operator and safe calls
     def map(opt: jvm.Code, f: jvm.Code): jvm.Code = code"$opt?.let($f)"
     def filter(opt: jvm.Code, predicate: jvm.Code): jvm.Code = code"$opt?.takeIf($predicate)"

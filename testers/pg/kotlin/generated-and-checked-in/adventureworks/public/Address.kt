@@ -5,9 +5,11 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import java.util.Optional
 
 /** PostgreSQL composite type: public.address */
 data class Address(
@@ -18,9 +20,12 @@ data class Address(
 ) {
   companion object {
     val pgStruct: PgStruct<Address> =
-      PgStruct.builder<Address>("public.address").nullableField("street", PgTypes.text, { v: Address -> v.street }).nullableField("city", PgTypes.text, { v: Address -> v.city }).nullableField("zip", PgTypes.text, { v: Address -> v.zip }).nullableField("country", PgTypes.text, { v: Address -> v.country }).build({ arr -> Address(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String) })
+      PgStruct.builder<Address>("public.address").optField("street", PgTypes.text, { v: Address -> Optional.ofNullable(v.street) }).optField("city", PgTypes.text, { v: Address -> Optional.ofNullable(v.city) }).optField("zip", PgTypes.text, { v: Address -> Optional.ofNullable(v.zip) }).optField("country", PgTypes.text, { v: Address -> Optional.ofNullable(v.country) }).build({ arr -> Address(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String) })
 
     val pgType: PgType<Address> =
       pgStruct.asType()
+
+    val pgTypeArray: PgType<Array<Address>> =
+      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<Address>(n) }), { n -> arrayOfNulls<Address>(n) })
   }
 }

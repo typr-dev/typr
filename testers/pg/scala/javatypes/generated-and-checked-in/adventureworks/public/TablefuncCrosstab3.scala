@@ -5,6 +5,7 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
@@ -19,7 +20,9 @@ case class TablefuncCrosstab3(
 )
 
 object TablefuncCrosstab3 {
-  given pgStruct: PgStruct[TablefuncCrosstab3] = PgStruct.builder[TablefuncCrosstab3]("public.tablefunc_crosstab_3").nullableField("rowName", PgTypes.text, (v: TablefuncCrosstab3) => v.rowName).nullableField("category1", PgTypes.text, (v: TablefuncCrosstab3) => v.category1).nullableField("category2", PgTypes.text, (v: TablefuncCrosstab3) => v.category2).nullableField("category3", PgTypes.text, (v: TablefuncCrosstab3) => v.category3).build(arr => TablefuncCrosstab3(rowName = Option(arr(0)).map(_.asInstanceOf[String]), category1 = Option(arr(1)).map(_.asInstanceOf[String]), category2 = Option(arr(2)).map(_.asInstanceOf[String]), category3 = Option(arr(3)).map(_.asInstanceOf[String])))
+  given pgStruct: PgStruct[TablefuncCrosstab3] = PgStruct.builder[TablefuncCrosstab3]("public.tablefunc_crosstab_3").optField("rowName", PgTypes.text, (v: TablefuncCrosstab3) => v.rowName).optField("category1", PgTypes.text, (v: TablefuncCrosstab3) => v.category1).optField("category2", PgTypes.text, (v: TablefuncCrosstab3) => v.category2).optField("category3", PgTypes.text, (v: TablefuncCrosstab3) => v.category3).build(arr => TablefuncCrosstab3(rowName = Optional.ofNullable(arr(0).asInstanceOf[String]), category1 = Optional.ofNullable(arr(1).asInstanceOf[String]), category2 = Optional.ofNullable(arr(2).asInstanceOf[String]), category3 = Optional.ofNullable(arr(3).asInstanceOf[String])))
 
   given pgType: PgType[TablefuncCrosstab3] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[TablefuncCrosstab3]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TablefuncCrosstab3](n)), n => new Array[TablefuncCrosstab3](n))
 }

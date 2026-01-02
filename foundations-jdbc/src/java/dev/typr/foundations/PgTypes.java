@@ -200,6 +200,7 @@ public interface PgTypes {
           PgRead.readLong.map(Oid::new),
           PgWrite.writeLong.contramap(Oid::value),
           PgText.instance((o, sb) -> sb.append(o.value())),
+          PgCompositeText.int8.bimap(Oid::new, Oid::value),
           PgJson.int8.bimap(Oid::new, Oid::value));
   PgType<Oid[]> oidArray =
       oid.array(

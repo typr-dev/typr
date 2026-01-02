@@ -5,9 +5,10 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundations.PgTypes
 import java.util.Optional
 
 /** PostgreSQL composite type: public.complex */
@@ -17,7 +18,9 @@ case class Complex(
 )
 
 object Complex {
-  given pgStruct: PgStruct[Complex] = PgStruct.builder[Complex]("public.complex").nullableField("r", ScalaDbTypes.PgTypes.float8, (v: Complex) => v.r).nullableField("i", ScalaDbTypes.PgTypes.float8, (v: Complex) => v.i).build(arr => Complex(r = Option(arr(0)).map(_.asInstanceOf[java.lang.Double]), i = Option(arr(1)).map(_.asInstanceOf[java.lang.Double])))
+  given pgStruct: PgStruct[Complex] = PgStruct.builder[Complex]("public.complex").optField("r", PgTypes.float8, (v: Complex) => v.r).optField("i", PgTypes.float8, (v: Complex) => v.i).build(arr => Complex(r = Optional.ofNullable(arr(0).asInstanceOf[java.lang.Double]), i = Optional.ofNullable(arr(1).asInstanceOf[java.lang.Double])))
 
   given pgType: PgType[Complex] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[Complex]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Complex](n)), n => new Array[Complex](n))
 }

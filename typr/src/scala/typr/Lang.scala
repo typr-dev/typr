@@ -189,6 +189,10 @@ trait OptionalSupport {
   val none: jvm.Code
 
   def some(value: jvm.Code): jvm.Code
+
+  /** Wrap a potentially-null value in the language's optional type. Java: Optional.ofNullable(x), Scala: Option(x), Kotlin: x (nullable type)
+    */
+  def ofNullable(value: jvm.Code): jvm.Code
   def map(opt: jvm.Code, f: jvm.Code): jvm.Code
   def filter(opt: jvm.Code, predicate: jvm.Code): jvm.Code
   def get(opt: jvm.Code): jvm.Code

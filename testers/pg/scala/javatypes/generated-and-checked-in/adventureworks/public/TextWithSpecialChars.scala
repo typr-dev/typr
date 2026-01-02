@@ -5,6 +5,7 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.PgRead
 import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
@@ -21,7 +22,9 @@ case class TextWithSpecialChars(
 )
 
 object TextWithSpecialChars {
-  given pgStruct: PgStruct[TextWithSpecialChars] = PgStruct.builder[TextWithSpecialChars]("public.text_with_special_chars").nullableField("withComma", PgTypes.text, (v: TextWithSpecialChars) => v.withComma).nullableField("withQuotes", PgTypes.text, (v: TextWithSpecialChars) => v.withQuotes).nullableField("withParens", PgTypes.text, (v: TextWithSpecialChars) => v.withParens).nullableField("withBackslash", PgTypes.text, (v: TextWithSpecialChars) => v.withBackslash).nullableField("withNewline", PgTypes.text, (v: TextWithSpecialChars) => v.withNewline).nullableField("withAll", PgTypes.text, (v: TextWithSpecialChars) => v.withAll).build(arr => TextWithSpecialChars(withComma = Option(arr(0)).map(_.asInstanceOf[String]), withQuotes = Option(arr(1)).map(_.asInstanceOf[String]), withParens = Option(arr(2)).map(_.asInstanceOf[String]), withBackslash = Option(arr(3)).map(_.asInstanceOf[String]), withNewline = Option(arr(4)).map(_.asInstanceOf[String]), withAll = Option(arr(5)).map(_.asInstanceOf[String])))
+  given pgStruct: PgStruct[TextWithSpecialChars] = PgStruct.builder[TextWithSpecialChars]("public.text_with_special_chars").optField("withComma", PgTypes.text, (v: TextWithSpecialChars) => v.withComma).optField("withQuotes", PgTypes.text, (v: TextWithSpecialChars) => v.withQuotes).optField("withParens", PgTypes.text, (v: TextWithSpecialChars) => v.withParens).optField("withBackslash", PgTypes.text, (v: TextWithSpecialChars) => v.withBackslash).optField("withNewline", PgTypes.text, (v: TextWithSpecialChars) => v.withNewline).optField("withAll", PgTypes.text, (v: TextWithSpecialChars) => v.withAll).build(arr => TextWithSpecialChars(withComma = Optional.ofNullable(arr(0).asInstanceOf[String]), withQuotes = Optional.ofNullable(arr(1).asInstanceOf[String]), withParens = Optional.ofNullable(arr(2).asInstanceOf[String]), withBackslash = Optional.ofNullable(arr(3).asInstanceOf[String]), withNewline = Optional.ofNullable(arr(4).asInstanceOf[String]), withAll = Optional.ofNullable(arr(5).asInstanceOf[String])))
 
   given pgType: PgType[TextWithSpecialChars] = pgStruct.asType()
+
+  given pgTypeArray: PgType[Array[TextWithSpecialChars]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TextWithSpecialChars](n)), n => new Array[TextWithSpecialChars](n))
 }

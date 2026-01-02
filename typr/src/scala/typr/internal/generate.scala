@@ -165,11 +165,11 @@ object generate {
             if (options.keepDependencies) relationFilesByName.map { case (_, f) => f }
             else relationFilesByName.collect { case (name, f) if selector.include(name) => f }
 
-          // pgCompositeTypeFiles are entry points only for DbLibTypo (which has PgStruct support)
+          // pgCompositeTypeFiles are entry points only for DbLibFoundations (which has PgStruct support)
           // For other dbLibs (like Anorm used by generate-sources), they're not included
           val compositeEntryPoints = options.dbLib match {
-            case Some(_: DbLibTypo) => pgCompositeTypeFiles
-            case _                  => Nil
+            case Some(_: DbLibFoundations) => pgCompositeTypeFiles
+            case _                         => Nil
           }
           minimize(
             mostFiles,
