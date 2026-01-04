@@ -87,6 +87,11 @@ projects:
       options: -proc:none
     platform:
       name: jvm
+  test-utils:
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
   testers/db2/java:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
@@ -346,7 +351,9 @@ projects:
     - com.typesafe.play::play-json:2.10.6
     - org.postgresql:postgresql:42.7.3
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typr-dsl-anorm
+    dependsOn:
+    - typr-dsl-anorm
+    - test-utils
     extends: template-cross
     isTestProject: true
   testers/pg/scala/doobie:
@@ -359,7 +366,9 @@ projects:
     - io.circe::circe-core:0.14.7
     - org.postgresql:postgresql:42.7.3
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typr-dsl-doobie
+    dependsOn:
+    - typr-dsl-doobie
+    - test-utils
     extends: template-cross
     isTestProject: true
     sources: ./generated-and-checked-in
@@ -373,7 +382,9 @@ projects:
     - junit:junit:4.13.2
     - org.postgresql:postgresql:42.7.3
     - org.scalatest::scalatest:3.2.18
-    dependsOn: foundations-jdbc-dsl
+    dependsOn:
+    - foundations-jdbc-dsl
+    - test-utils
     extends: template-scala-3
     isTestProject: true
     sources: ./generated-and-checked-in
@@ -387,7 +398,9 @@ projects:
     - junit:junit:4.13.2
     - org.postgresql:postgresql:42.7.3
     - org.scalatest::scalatest:3.2.18
-    dependsOn: foundations-jdbc-dsl-scala
+    dependsOn:
+    - foundations-jdbc-dsl-scala
+    - test-utils
     extends: template-scala-3
     isTestProject: true
     sources: ./generated-and-checked-in
@@ -401,7 +414,9 @@ projects:
     - dev.zio::zio-json:0.7.0
     - org.postgresql:postgresql:42.7.3
     - org.scalatest::scalatest:3.2.18
-    dependsOn: typr-dsl-zio-jdbc
+    dependsOn:
+    - typr-dsl-zio-jdbc
+    - test-utils
     extends: template-cross
     isTestProject: true
   testers/sqlserver/java:

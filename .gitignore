@@ -24,3 +24,4 @@ __pycache__/
 db/duckdb/test.db
 db/duckdb/test.db.wal
 duckdb-test/
+.snapshot-test.lock
