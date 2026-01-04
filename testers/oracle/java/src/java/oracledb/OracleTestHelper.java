@@ -9,7 +9,9 @@ import java.util.function.Function;
 
 public class OracleTestHelper {
   private static final OracleConfig CONFIG =
-      OracleConfig.builder("localhost", 1521, "FREEPDB1", "typr", "typr_password").build();
+      OracleConfig.builder("localhost", 1521, "FREEPDB1", "typr", "typr_password")
+          .serviceName("FREEPDB1")
+          .build();
 
   private static final Transactor TRANSACTOR = new Transactor(CONFIG, Transactor.testStrategy());
 

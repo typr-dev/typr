@@ -7,7 +7,9 @@ import java.sql.Connection
 
 object OracleTestHelper {
     private val CONFIG: OracleConfig =
-        OracleConfig.builder("localhost", 1521, "FREEPDB1", "typr", "typr_password").build()
+        OracleConfig.builder("localhost", 1521, "FREEPDB1", "typr", "typr_password")
+            .serviceName("FREEPDB1")
+            .build()
 
     private val TRANSACTOR: Transactor = Transactor(CONFIG, Transactor.testStrategy())
 
