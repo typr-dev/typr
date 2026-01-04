@@ -1,16 +1,17 @@
 package testdb;
 
+import dev.typr.foundations.Transactor;
+import dev.typr.foundations.connect.duckdb.DuckDbConfig;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class DuckDbTestHelper {
-  private static final String JDBC_URL = "jdbc:duckdb:";
+  private static final DuckDbConfig CONFIG = DuckDbConfig.inMemory().build();
   private static String schemaSQL = null;
 
   private static synchronized String getSchemaSQL() {
@@ -26,32 +27,25 @@ public class DuckDbTestHelper {
   }
 
   private static Connection createConnection() throws SQLException {
-    Connection conn = DriverManager.getConnection(JDBC_URL);
+    Connection conn = CONFIG.connect();
     conn.createStatement().execute(getSchemaSQL());
     return conn;
   }
 
+  private static final Transactor TRANSACTOR =
+      new Transactor(DuckDbTestHelper::createConnection, Transactor.testStrategy());
+
   public static <T> T apply(Function<Connection, T> f) {
-    try (Connection conn = createConnection()) {
-      conn.setAutoCommit(false);
-      try {
-        return f.apply(conn);
-      } finally {
-        conn.rollback();
-      }
+    try {
+      return TRANSACTOR.execute(conn -> f.apply(conn));
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }
 
   public static void run(Consumer<Connection> f) {
-    try (Connection conn = createConnection()) {
-      conn.setAutoCommit(false);
-      try {
-        f.accept(conn);
-      } finally {
-        conn.rollback();
-      }
+    try {
+      TRANSACTOR.executeVoid(conn -> f.accept(conn));
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }

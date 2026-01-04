@@ -1,32 +1,24 @@
 package testdb
 
+import dev.typr.foundations.SqlFunction
+import dev.typr.foundations.Transactor
+import dev.typr.foundations.connect.sqlserver.SqlServerConfig
+import dev.typr.foundations.connect.sqlserver.SqlServerEncrypt
 import java.sql.Connection
-import java.sql.DriverManager
 
 object SqlServerTestHelper {
-    private const val JDBC_URL = "jdbc:sqlserver://localhost:1433;databaseName=typr;encrypt=false"
-    private const val USERNAME = "sa"
-    private const val PASSWORD = "YourStrong@Passw0rd"
+    private val CONFIG: SqlServerConfig =
+        SqlServerConfig.builder("localhost", 1433, "typr", "sa", "YourStrong@Passw0rd")
+            .encrypt(SqlServerEncrypt.FALSE)
+            .build()
+
+    private val TRANSACTOR: Transactor = Transactor(CONFIG, Transactor.testStrategy())
 
     fun <T> apply(f: (Connection) -> T): T {
-        val conn = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)
-        conn.autoCommit = false
-        return try {
-            f(conn)
-        } finally {
-            conn.rollback()
-            conn.close()
-        }
+        return TRANSACTOR.execute(SqlFunction { conn -> f(conn) })
     }
 
     fun run(f: (Connection) -> Unit) {
-        val conn = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)
-        conn.autoCommit = false
-        try {
-            f(conn)
-        } finally {
-            conn.rollback()
-            conn.close()
-        }
+        TRANSACTOR.executeVoid { conn -> f(conn) }
     }
 }

@@ -1,41 +1,30 @@
 package testdb;
 
+import dev.typr.foundations.Transactor;
+import dev.typr.foundations.connect.db2.Db2Config;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Db2TestHelper {
-  private static final String JDBC_URL = "jdbc:db2://localhost:50000/typr";
-  private static final String USER = "db2inst1";
-  private static final String PASSWORD = "password";
+  private static final Db2Config CONFIG =
+      Db2Config.builder("localhost", 50000, "typr", "db2inst1", "password").build();
+
+  private static final Transactor TRANSACTOR = new Transactor(CONFIG, Transactor.testStrategy());
 
   public static <T> T apply(Function<Connection, T> f) {
     try {
-      Connection conn = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
-      conn.setAutoCommit(false);
-      try {
-        return f.apply(conn);
-      } finally {
-        conn.rollback();
-        conn.close();
-      }
-    } catch (Exception e) {
+      return TRANSACTOR.execute(conn -> f.apply(conn));
+    } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }
 
   public static void run(Consumer<Connection> f) {
     try {
-      Connection conn = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
-      conn.setAutoCommit(false);
-      try {
-        f.accept(conn);
-      } finally {
-        conn.rollback();
-        conn.close();
-      }
-    } catch (Exception e) {
+      TRANSACTOR.executeVoid(conn -> f.accept(conn));
+    } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }

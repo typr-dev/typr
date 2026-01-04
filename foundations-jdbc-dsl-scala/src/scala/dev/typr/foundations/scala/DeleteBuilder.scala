@@ -11,7 +11,7 @@ import scala.util.Using
 class DeleteBuilder[Fields, Row](private val javaBuilder: dsl.DeleteBuilder[Fields, Row]) {
 
   def where(predicate: Fields => SqlExpr[Boolean]): DeleteBuilder[Fields, Row] = {
-    new DeleteBuilder(javaBuilder.where((fields: Fields) => predicate(fields).underlying.underlying(Bijections.scalaBooleanToJavaBoolean)))
+    new DeleteBuilder(javaBuilder.where((fields: Fields) => SqlExpr.toJavaBool(predicate(fields))))
   }
 
   def execute(using connection: Connection): Int = {

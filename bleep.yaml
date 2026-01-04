@@ -36,6 +36,14 @@ projects:
     sourcegen:
       main: scripts.GeneratedTuples
       project: typr-scripts-sourcegen
+  foundations-jdbc-hikari:
+    dependencies:
+    - com.zaxxer:HikariCP:6.2.1
+    dependsOn: foundations-jdbc
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
   # cannot build this, its just here for codegen
   foundations-jdbc-dsl-kotlin:
     dependsOn:
@@ -439,7 +447,6 @@ projects:
     - com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11
     - com.oracle.database.jdbc:ojdbc11:23.6.0.24.10
     - com.typesafe.play::play-json:2.10.6
-    - com.zaxxer:HikariCP:4.0.3
     - for3Use213: true
       module: io.get-coursier::coursier:2.1.24
     - io.swagger.parser.v3:swagger-parser:2.1.24
@@ -448,7 +455,9 @@ projects:
     - org.playframework.anorm::anorm:2.7.0
     - org.postgresql:postgresql:42.7.3
     - org.slf4j:slf4j-nop:2.0.13
-    dependsOn: foundations-jdbc-dsl-scala
+    dependsOn:
+    - foundations-jdbc-dsl-scala
+    - foundations-jdbc-hikari
     extends: template-scala-3
     platform:
       mainClass: com.foo.App

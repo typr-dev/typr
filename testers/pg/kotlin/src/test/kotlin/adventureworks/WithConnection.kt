@@ -1,30 +1,21 @@
 package adventureworks
 
+import dev.typr.foundations.SqlFunction
+import dev.typr.foundations.Transactor
+import dev.typr.foundations.connect.postgres.PostgresConfig
 import java.sql.Connection
-import java.sql.DriverManager
 
 object WithConnection {
-    private const val JDBC_URL = "jdbc:postgresql://localhost:6432/Adventureworks?user=postgres&password=password"
+    private val CONFIG: PostgresConfig =
+        PostgresConfig.builder("localhost", 6432, "Adventureworks", "postgres", "password").build()
+
+    private val TRANSACTOR: Transactor = Transactor(CONFIG, Transactor.testStrategy())
 
     fun <T> apply(f: (Connection) -> T): T {
-        DriverManager.getConnection(JDBC_URL).use { conn ->
-            conn.autoCommit = false
-            try {
-                return f(conn)
-            } finally {
-                conn.rollback()
-            }
-        }
+        return TRANSACTOR.execute(SqlFunction { conn -> f(conn) })
     }
 
     fun run(f: (Connection) -> Unit) {
-        DriverManager.getConnection(JDBC_URL).use { conn ->
-            conn.autoCommit = false
-            try {
-                f(conn)
-            } finally {
-                conn.rollback()
-            }
-        }
+        TRANSACTOR.executeVoid { conn -> f(conn) }
     }
 }

@@ -1,32 +1,21 @@
 package testdb
 
+import dev.typr.foundations.SqlFunction
+import dev.typr.foundations.Transactor
+import dev.typr.foundations.connect.db2.Db2Config
 import java.sql.Connection
-import java.sql.DriverManager
 
 object Db2TestHelper {
-    private const val JDBC_URL = "jdbc:db2://localhost:50000/typr"
-    private const val USER = "db2inst1"
-    private const val PASSWORD = "password"
+    private val CONFIG: Db2Config =
+        Db2Config.builder("localhost", 50000, "typr", "db2inst1", "password").build()
+
+    private val TRANSACTOR: Transactor = Transactor(CONFIG, Transactor.testStrategy())
 
     fun <T> apply(f: (Connection) -> T): T {
-        val conn = DriverManager.getConnection(JDBC_URL, USER, PASSWORD)
-        conn.autoCommit = false
-        return try {
-            f(conn)
-        } finally {
-            conn.rollback()
-            conn.close()
-        }
+        return TRANSACTOR.execute(SqlFunction { conn -> f(conn) })
     }
 
     fun run(f: (Connection) -> Unit) {
-        val conn = DriverManager.getConnection(JDBC_URL, USER, PASSWORD)
-        conn.autoCommit = false
-        try {
-            f(conn)
-        } finally {
-            conn.rollback()
-            conn.close()
-        }
+        TRANSACTOR.executeVoid { conn -> f(conn) }
     }
 }

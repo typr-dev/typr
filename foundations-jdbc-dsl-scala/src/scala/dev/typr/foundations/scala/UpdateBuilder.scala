@@ -41,8 +41,8 @@ class UpdateBuilder[Fields, Row] private[scala] (
     )
   }
 
-  def where(predicate: Fields => dsl.SqlExpr[Boolean]): UpdateBuilder[Fields, Row] = {
-    copy(javaBuilder.where((fields: Fields) => predicate(fields).underlying(Bijections.scalaBooleanToJavaBoolean)))
+  def where(predicate: Fields => SqlExpr[Boolean]): UpdateBuilder[Fields, Row] = {
+    copy(javaBuilder.where((fields: Fields) => SqlExpr.toJavaBool(predicate(fields))))
   }
 
   def execute(using connection: Connection): Int = {

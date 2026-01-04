@@ -1,30 +1,21 @@
 package testdb
 
+import dev.typr.foundations.SqlFunction
+import dev.typr.foundations.Transactor
+import dev.typr.foundations.connect.mariadb.MariaDbConfig
 import java.sql.Connection
-import java.sql.DriverManager
 
 object MariaDbTestHelper {
-    private const val JDBC_URL = "jdbc:mariadb://localhost:3307/typr?user=typr&password=password"
+    private val CONFIG: MariaDbConfig =
+        MariaDbConfig.builder("localhost", 3307, "typr", "typr", "password").build()
+
+    private val TRANSACTOR: Transactor = Transactor(CONFIG, Transactor.testStrategy())
 
     fun <T> apply(f: (Connection) -> T): T {
-        val conn = DriverManager.getConnection(JDBC_URL)
-        conn.autoCommit = false
-        return try {
-            f(conn)
-        } finally {
-            conn.rollback()
-            conn.close()
-        }
+        return TRANSACTOR.execute(SqlFunction { conn -> f(conn) })
     }
 
     fun run(f: (Connection) -> Unit) {
-        val conn = DriverManager.getConnection(JDBC_URL)
-        conn.autoCommit = false
-        try {
-            f(conn)
-        } finally {
-            conn.rollback()
-            conn.close()
-        }
+        TRANSACTOR.executeVoid { conn -> f(conn) }
     }
 }

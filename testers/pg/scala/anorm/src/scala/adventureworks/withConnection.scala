@@ -1,8 +1,12 @@
 package adventureworks
 
+import dev.typr.foundations.connect.postgres.PostgresConfig
+
 object withConnection {
+  private val config = PostgresConfig.builder("localhost", 6432, "Adventureworks", "postgres", "password").build()
+
   def apply[T](f: java.sql.Connection => T): T = {
-    val conn = java.sql.DriverManager.getConnection("jdbc:postgresql://localhost:6432/Adventureworks?user=postgres&password=password")
+    val conn = config.connect()
     conn.setAutoCommit(false)
     try {
       f(conn)

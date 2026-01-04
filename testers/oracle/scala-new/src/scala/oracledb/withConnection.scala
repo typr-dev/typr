@@ -1,12 +1,12 @@
 package oracledb
 
+import dev.typr.foundations.connect.oracle.OracleConfig
+
 object withConnection {
+  private val config = OracleConfig.builder("localhost", 1521, "FREEPDB1", "typr", "typr_password").build()
+
   def apply[T](f: java.sql.Connection => T): T = {
-    val conn = java.sql.DriverManager.getConnection(
-      "jdbc:oracle:thin:@localhost:1521/FREEPDB1",
-      "typr",
-      "typr_password"
-    )
+    val conn = config.connect()
     conn.setAutoCommit(false)
     try {
       f(conn)
