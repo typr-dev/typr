@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     env:
-      PG_MAJOR: 14
+      PG_MAJOR: 16
     steps:
       - uses: actions/checkout@v4
       - uses: bleep-build/bleep-setup-action@0.0.1
