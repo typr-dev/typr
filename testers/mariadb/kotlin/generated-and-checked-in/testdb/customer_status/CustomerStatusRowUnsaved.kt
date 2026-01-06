@@ -8,6 +8,7 @@ package testdb.customer_status
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.IsActive
 
 /** This class corresponds to a row in table `customer_status` which has not been persisted yet */
 data class CustomerStatusRowUnsaved(
@@ -18,7 +19,7 @@ data class CustomerStatusRowUnsaved(
   /** Default: 1
 
     */
-  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
+  @field:JsonProperty("is_active") val isActive: Defaulted</* user-picked */ IsActive> = UseDefault()
 ) {
-  fun toRow(isActiveDefault: () -> Boolean): CustomerStatusRow = CustomerStatusRow(statusCode = statusCode, description = description, isActive = isActive.getOrElse(isActiveDefault))
+  fun toRow(isActiveDefault: () -> /* user-picked */ IsActive): CustomerStatusRow = CustomerStatusRow(statusCode = statusCode, description = description, isActive = isActive.getOrElse(isActiveDefault))
 }

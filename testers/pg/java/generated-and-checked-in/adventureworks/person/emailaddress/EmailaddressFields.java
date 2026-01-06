@@ -46,7 +46,7 @@ public class EmailaddressFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public IdField<Integer, EmailaddressRow> emailaddressid() {

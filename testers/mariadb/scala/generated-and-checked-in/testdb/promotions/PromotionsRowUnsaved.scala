@@ -13,6 +13,7 @@ import java.time.LocalDateTime
 import testdb.AllBrandsCategoriesCSet
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.IsActive
 
 /** This class corresponds to a row in table `promotions` which has not been persisted yet */
 case class PromotionsRowUnsaved(
@@ -59,7 +60,7 @@ case class PromotionsRowUnsaved(
   /** Default: 1
 
    */
-  @JsonProperty("is_active") isActive: Defaulted[Boolean] = new UseDefault(),
+  @JsonProperty("is_active") isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault(),
   /** Default: current_timestamp()
 
    */
@@ -73,7 +74,7 @@ case class PromotionsRowUnsaved(
     maxUsesPerCustomerDefault: => Option[Uint1],
     applicableToDefault: => Option[AllBrandsCategoriesCSet],
     rulesJsonDefault: => Option[Json],
-    isActiveDefault: => Boolean,
+    isActiveDefault: => /* user-picked */ IsActive,
     createdAtDefault: => LocalDateTime,
     promotionIdDefault: => PromotionsId
   ): PromotionsRow = {

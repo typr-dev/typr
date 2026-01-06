@@ -55,6 +55,10 @@ object GeneratedSqlServer {
               lang = lang,
               dbLib = Some(dbLib),
               jsonLibs = List(jsonLib),
+              typeDefinitions = TypeDefinitions(
+                // Shared type for email columns
+                TypeEntry.db("Email", DbMatch.column("email", "*_email"))
+              ),
               generateMockRepos = Selector.All,
               enablePrimaryKeyType = Selector.All,
               enableTestInserts = Selector.All,
@@ -64,7 +68,7 @@ object GeneratedSqlServer {
             val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in$suffix")
 
             val newFiles: Generated =
-              generate(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), Map.empty).head
+              generate.orThrow(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), Map.empty).head
 
             newFiles
               .overwriteFolder(softWrite = FileSync.SoftWrite.Yes(Set.empty))

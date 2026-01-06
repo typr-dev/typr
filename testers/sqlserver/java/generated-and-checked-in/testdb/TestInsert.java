@@ -66,6 +66,7 @@ import testdb.products.ProductsRowUnsaved;
 import testdb.test_connection.TestConnectionRepoImpl;
 import testdb.test_connection.TestConnectionRow;
 import testdb.test_connection.TestConnectionRowUnsaved;
+import testdb.userdefined.Email;
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 public record TestInsert(Random random) {
@@ -176,7 +177,7 @@ public record TestInsert(Random random) {
     return Inserter.of(
         new CustomersRowUnsaved(
             RandomHelper.alphanumeric(random, 20),
-            RandomHelper.alphanumeric(random, 20),
+            new Email(RandomHelper.alphanumeric(random, 20)),
             new UseDefault()),
         (CustomersRowUnsaved row, Connection c) -> (new CustomersRepoImpl()).insert(row, c));
   }

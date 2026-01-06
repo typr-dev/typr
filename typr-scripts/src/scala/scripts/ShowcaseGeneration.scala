@@ -77,7 +77,7 @@ object ShowcaseGeneration {
       val targetSources = buildDir.resolve(s"showcase-generated/$dbName/$langName")
 
       val newFiles: Generated =
-        typr.internal.generate(options, metadb, ProjectGraph(name = "", targetSources, None, selector, sqlScripts, Nil), Map.empty).head
+        typr.internal.generate.orThrow(options, metadb, ProjectGraph(name = "", targetSources, None, selector, sqlScripts, Nil), Map.empty).head
 
       val changedFiles = newFiles
         .overwriteFolder(softWrite = FileSync.SoftWrite.Yes(Set.empty))

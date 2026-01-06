@@ -5,6 +5,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import testdb.customers.*
 import testdb.products.*
+import testdb.userdefined.Email
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
@@ -47,7 +48,7 @@ class MockRepoTest {
         val customer = CustomersRow(
             CustomersId(1),
             "Mock User",
-            "mock@test.com",
+            Email("mock@test.com"),
             LocalDateTime.now()
         )
 
@@ -66,7 +67,7 @@ class MockRepoTest {
         val customer = CustomersRow(
             CustomersId(2),
             "Original Name",
-            "original@test.com",
+            Email("original@test.com"),
             LocalDateTime.now()
         )
 
@@ -85,7 +86,7 @@ class MockRepoTest {
         val customer = CustomersRow(
             CustomersId(3),
             "To Delete",
-            "delete@test.com",
+            Email("delete@test.com"),
             LocalDateTime.now()
         )
 
@@ -119,9 +120,9 @@ class MockRepoTest {
     fun testMockDSLQuery() {
         val (mock, _) = createCustomersMock()
 
-        mock.insert(CustomersRow(CustomersId(100), "Alice", "alice@test.com", LocalDateTime.now()), MockConnection.instance)
-        mock.insert(CustomersRow(CustomersId(101), "Bob", "bob@test.com", LocalDateTime.now()), MockConnection.instance)
-        mock.insert(CustomersRow(CustomersId(102), "Charlie", "charlie@test.com", LocalDateTime.now()), MockConnection.instance)
+        mock.insert(CustomersRow(CustomersId(100), "Alice", Email("alice@test.com"), LocalDateTime.now()), MockConnection.instance)
+        mock.insert(CustomersRow(CustomersId(101), "Bob", Email("bob@test.com"), LocalDateTime.now()), MockConnection.instance)
+        mock.insert(CustomersRow(CustomersId(102), "Charlie", Email("charlie@test.com"), LocalDateTime.now()), MockConnection.instance)
 
         val results = mock.select()
             .where { customer -> customer.customerId().greaterThan(CustomersId(100)) }
@@ -137,9 +138,9 @@ class MockRepoTest {
     fun testMockDSLCount() {
         val (mock, _) = createCustomersMock()
 
-        mock.insert(CustomersRow(CustomersId(200), "Count1", "count1@test.com", LocalDateTime.now()), MockConnection.instance)
-        mock.insert(CustomersRow(CustomersId(201), "Count2", "count2@test.com", LocalDateTime.now()), MockConnection.instance)
-        mock.insert(CustomersRow(CustomersId(202), "Other", "other@test.com", LocalDateTime.now()), MockConnection.instance)
+        mock.insert(CustomersRow(CustomersId(200), "Count1", Email("count1@test.com"), LocalDateTime.now()), MockConnection.instance)
+        mock.insert(CustomersRow(CustomersId(201), "Count2", Email("count2@test.com"), LocalDateTime.now()), MockConnection.instance)
+        mock.insert(CustomersRow(CustomersId(202), "Other", Email("other@test.com"), LocalDateTime.now()), MockConnection.instance)
 
         val count = mock.select()
             .where { customer -> customer.name().like("Count%") }
@@ -154,7 +155,7 @@ class MockRepoTest {
         val (mock2, _) = createCustomersMock()
 
         mock1.insert(
-            CustomersRow(CustomersId(400), "Mock1 Only", "mock1@test.com", LocalDateTime.now()),
+            CustomersRow(CustomersId(400), "Mock1 Only", Email("mock1@test.com"), LocalDateTime.now()),
             MockConnection.instance
         )
 

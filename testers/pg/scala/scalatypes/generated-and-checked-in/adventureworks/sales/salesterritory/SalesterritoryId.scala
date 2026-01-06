@@ -17,7 +17,7 @@ case class SalesterritoryId(@JsonValue value: Int) extends scala.AnyVal
 object SalesterritoryId {
   given bijection: Bijection[SalesterritoryId, Int] = Bijection.apply[SalesterritoryId, Int](_.value)(SalesterritoryId.apply)
 
-  given dbType: PgType[SalesterritoryId] = ScalaDbTypes.PgTypes.int4.bimap(SalesterritoryId.apply, _.value)
+  given pgType: PgType[SalesterritoryId] = ScalaDbTypes.PgTypes.int4.bimap(SalesterritoryId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[SalesterritoryId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(SalesterritoryId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[SalesterritoryId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(SalesterritoryId.apply), xs => xs.map(_.value))
 }

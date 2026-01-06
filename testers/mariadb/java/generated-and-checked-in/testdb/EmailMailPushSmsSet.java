@@ -20,11 +20,6 @@ public record EmailMailPushSmsSet(Set<EmailMailPushSmsSetMember> members) {
   }
   ;
 
-  public static MariaType<EmailMailPushSmsSet> dbType =
-      MariaTypes.set.bimap(
-          (MariaSet ms) -> EmailMailPushSmsSet.fromString(ms.toCommaSeparated()),
-          (EmailMailPushSmsSet s) -> MariaSet.fromString(s.toCommaSeparated()));
-
   public static EmailMailPushSmsSet empty() {
     return new EmailMailPushSmsSet(EnumSet.noneOf(EmailMailPushSmsSetMember.class));
   }
@@ -46,6 +41,11 @@ public record EmailMailPushSmsSet(Set<EmailMailPushSmsSetMember> members) {
     return new EmailMailPushSmsSet(set);
   }
   ;
+
+  public static MariaType<EmailMailPushSmsSet> mariaType =
+      MariaTypes.set.bimap(
+          (MariaSet ms) -> EmailMailPushSmsSet.fromString(ms.toCommaSeparated()),
+          (EmailMailPushSmsSet s) -> MariaSet.fromString(s.toCommaSeparated()));
 
   public static EmailMailPushSmsSet of(List<EmailMailPushSmsSetMember> members) {
     if (members.isEmpty()) {

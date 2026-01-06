@@ -22,19 +22,19 @@ import dev.typr.foundations.Fragment.interpolate
 class ShiftRepoImpl extends ShiftRepo {
   override def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(shiftid: ShiftId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "humanresources"."shift" where "shiftid" = """), Fragment.encode(ShiftId.dbType, shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(shiftid: ShiftId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "humanresources"."shift" where "shiftid" = """), Fragment.encode(ShiftId.pgType, shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "humanresources"."shift"
-    where "shiftid" = ANY("""), Fragment.encode(ShiftId.dbTypeArray, shiftids), Fragment.lit(")"))
+    where "shiftid" = ANY("""), Fragment.encode(ShiftId.pgTypeArray, shiftids), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
-    values ("""), Fragment.encode(ShiftId.dbType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     RETURNING "shiftid", "name", "starttime", "endtime", "modifieddate"
     """))
     .updateReturning(ShiftRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -44,14 +44,14 @@ class ShiftRepoImpl extends ShiftRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""starttime"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""endtime"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time"))): @scala.annotation.nowarn
     unsaved.shiftid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(ShiftId.dbType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(ShiftId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
@@ -88,13 +88,13 @@ class ShiftRepoImpl extends ShiftRepo {
   override def selectById(shiftid: ShiftId)(using c: Connection): Optional[ShiftRow] = {
     interpolate(Fragment.lit("""select "shiftid", "name", "starttime", "endtime", "modifieddate"
     from "humanresources"."shift"
-    where "shiftid" = """), Fragment.encode(ShiftId.dbType, shiftid), Fragment.lit("")).query(ShiftRow.`_rowParser`.first()).runUnchecked(c)
+    where "shiftid" = """), Fragment.encode(ShiftId.pgType, shiftid), Fragment.lit("")).query(ShiftRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(shiftids: Array[ShiftId])(using c: Connection): java.util.List[ShiftRow] = {
     interpolate(Fragment.lit("""select "shiftid", "name", "starttime", "endtime", "modifieddate"
     from "humanresources"."shift"
-    where "shiftid" = ANY("""), Fragment.encode(ShiftId.dbTypeArray, shiftids), Fragment.lit(")")).query(ShiftRow.`_rowParser`.all()).runUnchecked(c)
+    where "shiftid" = ANY("""), Fragment.encode(ShiftId.pgTypeArray, shiftids), Fragment.lit(")")).query(ShiftRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): java.util.Map[ShiftId, ShiftRow] = {
@@ -108,16 +108,16 @@ class ShiftRepoImpl extends ShiftRepo {
   override def update(row: ShiftRow)(using c: Connection): java.lang.Boolean = {
     val shiftid: ShiftId = row.shiftid
     return interpolate(Fragment.lit("""update "humanresources"."shift"
-    set "name" = """), Fragment.encode(Name.dbType, row.name), Fragment.lit("""::varchar,
+    set "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.lit("""::varchar,
     "starttime" = """), Fragment.encode(PgTypes.time, row.starttime), Fragment.lit("""::time,
     "endtime" = """), Fragment.encode(PgTypes.time, row.endtime), Fragment.lit("""::time,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "shiftid" = """), Fragment.encode(ShiftId.dbType, shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "shiftid" = """), Fragment.encode(ShiftId.pgType, shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
-    values ("""), Fragment.encode(ShiftId.dbType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     on conflict ("shiftid")
     do update set
       "name" = EXCLUDED."name",

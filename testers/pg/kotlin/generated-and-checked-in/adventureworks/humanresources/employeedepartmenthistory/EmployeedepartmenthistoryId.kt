@@ -30,6 +30,6 @@ data class EmployeedepartmenthistoryId(
   override fun _4(): ShiftId = shiftid
 
   companion object {
-    val _rowParser: RowParser<EmployeedepartmenthistoryId> = RowParsers.of(BusinessentityId.dbType, PgTypes.date, DepartmentId.dbType, ShiftId.dbType, { t0, t1, t2, t3 -> EmployeedepartmenthistoryId(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.businessentityid, row.startdate, row.departmentid, row.shiftid) })
+    val _rowParser: RowParser<EmployeedepartmenthistoryId> = RowParsers.of(BusinessentityId.pgType, PgTypes.date, DepartmentId.pgType, ShiftId.pgType, { t0, t1, t2, t3 -> EmployeedepartmenthistoryId(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.businessentityid, row.startdate, row.departmentid, row.shiftid) })
   }
 }

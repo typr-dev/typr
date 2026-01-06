@@ -51,7 +51,7 @@ data class SalespersonFields(val _path: List<Path>) : TupleExpr9<BusinessentityI
 
   fun bonus(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "bonus", SalespersonRow::bonus, null, "numeric", { row, value -> row.copy(bonus = value) }, PgTypes.numeric)
 
-  fun businessentityid(): IdField<BusinessentityId, SalespersonRow> = IdField<BusinessentityId, SalespersonRow>(_path, "businessentityid", SalespersonRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.dbType)
+  fun businessentityid(): IdField<BusinessentityId, SalespersonRow> = IdField<BusinessentityId, SalespersonRow>(_path, "businessentityid", SalespersonRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
   override fun columns(): List<FieldLike<*, SalespersonRow>> = listOf(this.businessentityid().underlying, this.territoryid().underlying, this.salesquota().underlying, this.bonus().underlying, this.commissionpct().underlying, this.salesytd().underlying, this.saleslastyear().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
@@ -73,7 +73,7 @@ data class SalespersonFields(val _path: List<Path>) : TupleExpr9<BusinessentityI
 
   fun salesytd(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "salesytd", SalespersonRow::salesytd, null, "numeric", { row, value -> row.copy(salesytd = value) }, PgTypes.numeric)
 
-  fun territoryid(): OptField<SalesterritoryId, SalespersonRow> = OptField<SalesterritoryId, SalespersonRow>(_path, "territoryid", SalespersonRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.dbType)
+  fun territoryid(): OptField<SalesterritoryId, SalespersonRow> = OptField<SalesterritoryId, SalespersonRow>(_path, "territoryid", SalespersonRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<SalespersonFields, SalespersonRow> = SalespersonFields(_path)
 

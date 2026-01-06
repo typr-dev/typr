@@ -38,7 +38,7 @@ object Decimal18_4 {
 
   given duckDbType: DuckDbType[Decimal18_4] = ScalaDbTypes.DuckDbTypes.numeric.bimap(Decimal18_4.apply, _.value)
 
-  def of(value: BigDecimal): Option[Decimal18_4] = { val scaled = value.setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 18) Some(new Decimal18_4(scaled)) else None }
+  def of(value: BigDecimal): Option[Decimal18_4] = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 18) Some(new Decimal18_4(scaled)) else None }
 
   def of(value: Int): Decimal18_4 = new Decimal18_4(BigDecimal(value))
 
@@ -46,5 +46,5 @@ object Decimal18_4 {
 
   def of(value: Double): Option[Decimal18_4] = Decimal18_4.of(BigDecimal(value))
 
-  def unsafeForce(value: BigDecimal): Decimal18_4 = { val scaled = value.setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP); if (scaled.precision > 18) throw new IllegalArgumentException("Value exceeds precision(18, 4)"); new Decimal18_4(scaled) }
+  def unsafeForce(value: BigDecimal): Decimal18_4 = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision > 18) throw new IllegalArgumentException("Value exceeds precision(18, 4)"); new Decimal18_4(scaled) }
 }

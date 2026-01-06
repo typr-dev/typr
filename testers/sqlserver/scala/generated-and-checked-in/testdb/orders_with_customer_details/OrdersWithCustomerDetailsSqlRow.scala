@@ -15,6 +15,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.orders.OrdersId
+import testdb.userdefined.Email
 
 /** SQL file: orders-with-customer-details.sql */
 case class OrdersWithCustomerDetailsSqlRow(
@@ -29,8 +30,8 @@ case class OrdersWithCustomerDetailsSqlRow(
   /** Points to [[testdb.customers.CustomersRow.name]] */
   @JsonProperty("customer_name") customerName: String,
   /** Points to [[testdb.customers.CustomersRow.email]] */
-  @JsonProperty("customer_email") customerEmail: String
-) extends Tuple6[OrdersId, Option[LocalDateTime], BigDecimal, CustomersId, String, String] {
+  @JsonProperty("customer_email") customerEmail: /* user-picked */ Email
+) extends Tuple6[OrdersId, Option[LocalDateTime], BigDecimal, CustomersId, String, /* user-picked */ Email] {
   override def `_1`: OrdersId = orderId
 
   override def `_2`: Option[LocalDateTime] = orderDate
@@ -41,9 +42,9 @@ case class OrdersWithCustomerDetailsSqlRow(
 
   override def `_5`: String = customerName
 
-  override def `_6`: String = customerEmail
+  override def `_6`: /* user-picked */ Email = customerEmail
 }
 
 object OrdersWithCustomerDetailsSqlRow {
-  val `_rowParser`: RowParser[OrdersWithCustomerDetailsSqlRow] = RowParsers.of(OrdersId.sqlServerType, SqlServerTypes.datetime2.nullable, ScalaDbTypes.SqlServerTypes.money, CustomersId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar)(OrdersWithCustomerDetailsSqlRow.apply)(row => Array[Any](row.orderId, row.orderDate, row.totalAmount, row.customerId, row.customerName, row.customerEmail))
+  val `_rowParser`: RowParser[OrdersWithCustomerDetailsSqlRow] = RowParsers.of(OrdersId.sqlServerType, SqlServerTypes.datetime2.nullable, ScalaDbTypes.SqlServerTypes.money, CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType)(OrdersWithCustomerDetailsSqlRow.apply)(row => Array[Any](row.orderId, row.orderDate, row.totalAmount, row.customerId, row.customerName, row.customerEmail))
 }

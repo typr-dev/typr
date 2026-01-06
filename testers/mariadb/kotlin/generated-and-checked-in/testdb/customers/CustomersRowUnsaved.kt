@@ -12,17 +12,20 @@ import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 data class CustomersRowUnsaved(
   /**  */
-  val email: String,
+  val email: /* user-picked */ Email,
   /**  */
   @field:JsonProperty("password_hash") val passwordHash: ByteArray,
   /**  */
-  @field:JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("first_name") val firstName: /* user-picked */ FirstName,
   /**  */
-  @field:JsonProperty("last_name") val lastName: String,
+  @field:JsonProperty("last_name") val lastName: /* user-picked */ LastName,
   /** Default: NULL
 
     */

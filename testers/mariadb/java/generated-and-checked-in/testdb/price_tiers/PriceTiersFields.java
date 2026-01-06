@@ -39,7 +39,7 @@ public class PriceTiersFields extends TupleExpr5<PriceTiersId, String, Uint4, St
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTierId(value),
-        PriceTiersId.dbType);
+        PriceTiersId.mariaType);
   }
 
   public Field<String, PriceTiersRow> name() {

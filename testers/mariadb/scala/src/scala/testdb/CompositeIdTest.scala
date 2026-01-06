@@ -6,6 +6,7 @@ import testdb.categories.*
 import testdb.customtypes.Defaulted.Provided
 import testdb.product_categories.*
 import testdb.products.*
+import testdb.userdefined.IsPrimary
 
 /** Tests for composite primary keys using the product_categories table. */
 class CompositeIdTest extends AnyFunSuite {
@@ -55,7 +56,7 @@ class CompositeIdTest extends AnyFunSuite {
         ProductCategoriesRowUnsaved(
           productId = product.productId,
           categoryId = category.categoryId,
-          isPrimary = Provided(true),
+          isPrimary = Provided(IsPrimary(true)),
           sortOrder = Provided(1.toShort)
         )
       )
@@ -66,7 +67,7 @@ class CompositeIdTest extends AnyFunSuite {
       val _ = assert(selected.isDefined)
       val _ = assert(selected.get.productId == product.productId)
       val _ = assert(selected.get.categoryId == category.categoryId)
-      val _ = assert(selected.get.isPrimary)
+      val _ = assert(selected.get.isPrimary.value)
       assert(selected.get.sortOrder == 1.toShort)
     }
   }
@@ -106,7 +107,7 @@ class CompositeIdTest extends AnyFunSuite {
         ProductCategoriesRowUnsaved(
           productId = product.productId,
           categoryId = category1.categoryId,
-          isPrimary = Provided(true),
+          isPrimary = Provided(IsPrimary(true)),
           sortOrder = Provided(1.toShort)
         )
       )
@@ -114,7 +115,7 @@ class CompositeIdTest extends AnyFunSuite {
         ProductCategoriesRowUnsaved(
           productId = product.productId,
           categoryId = category2.categoryId,
-          isPrimary = Provided(false),
+          isPrimary = Provided(IsPrimary(false)),
           sortOrder = Provided(2.toShort)
         )
       )
@@ -126,8 +127,8 @@ class CompositeIdTest extends AnyFunSuite {
       val tracked = productCategoriesRepo.selectByIdsTracked(ids)
 
       val _ = assert(tracked.size == 2)
-      val _ = assert(tracked(id1).isPrimary)
-      assert(!tracked(id2).isPrimary)
+      val _ = assert(tracked(id1).isPrimary.value)
+      assert(!tracked(id2).isPrimary.value)
     }
   }
 
@@ -142,18 +143,18 @@ class CompositeIdTest extends AnyFunSuite {
         ProductCategoriesRowUnsaved(
           productId = product.productId,
           categoryId = category.categoryId,
-          isPrimary = Provided(false),
+          isPrimary = Provided(IsPrimary(false)),
           sortOrder = Provided(10.toShort)
         )
       )
 
-      val updated = inserted.copy(isPrimary = true, sortOrder = 5.toShort)
+      val updated = inserted.copy(isPrimary = IsPrimary(true), sortOrder = 5.toShort)
       val success = productCategoriesRepo.update(updated)
       val _ = assert(success)
 
       val selected = productCategoriesRepo.selectById(inserted.compositeId)
       val _ = assert(selected.isDefined)
-      val _ = assert(selected.get.isPrimary)
+      val _ = assert(selected.get.isPrimary.value)
       assert(selected.get.sortOrder == 5.toShort)
     }
   }
@@ -214,16 +215,16 @@ class CompositeIdTest extends AnyFunSuite {
       val row = ProductCategoriesRow(
         productId = product.productId,
         categoryId = category.categoryId,
-        isPrimary = false,
+        isPrimary = IsPrimary(false),
         sortOrder = 1.toShort
       )
       val inserted = productCategoriesRepo.upsert(row)
-      val _ = assert(!inserted.isPrimary)
+      val _ = assert(!inserted.isPrimary.value)
       val _ = assert(inserted.sortOrder == 1.toShort)
 
-      val updatedRow = row.copy(isPrimary = true, sortOrder = 99.toShort)
+      val updatedRow = row.copy(isPrimary = IsPrimary(true), sortOrder = 99.toShort)
       val updated = productCategoriesRepo.upsert(updatedRow)
-      val _ = assert(updated.isPrimary)
+      val _ = assert(updated.isPrimary.value)
       val _ = assert(updated.sortOrder == 99.toShort)
 
       val all = productCategoriesRepo.selectAll
@@ -243,7 +244,7 @@ class CompositeIdTest extends AnyFunSuite {
         ProductCategoriesRowUnsaved(
           productId = product1.productId,
           categoryId = category.categoryId,
-          isPrimary = Provided(true),
+          isPrimary = Provided(IsPrimary(true)),
           sortOrder = Provided(1.toShort)
         )
       )
@@ -251,13 +252,13 @@ class CompositeIdTest extends AnyFunSuite {
         ProductCategoriesRowUnsaved(
           productId = product2.productId,
           categoryId = category.categoryId,
-          isPrimary = Provided(false),
+          isPrimary = Provided(IsPrimary(false)),
           sortOrder = Provided(2.toShort)
         )
       )
 
       val primaries = productCategoriesRepo.select
-        .where(f => f.isPrimary.isEqual(true))
+        .where(f => f.isPrimary.isEqual(IsPrimary(true)))
         .toList
       val _ = assert(primaries.size == 1)
       val _ = assert(primaries.head.productId == product1.productId)
@@ -271,12 +272,12 @@ class CompositeIdTest extends AnyFunSuite {
       val _ = assert(updated.get.sortOrder == 100.toShort)
 
       productCategoriesRepo.delete
-        .where(f => f.isPrimary.isEqual(false))
+        .where(f => f.isPrimary.isEqual(IsPrimary(false)))
         .execute
 
       val remaining = productCategoriesRepo.selectAll
       val _ = assert(remaining.size == 1)
-      assert(remaining.head.isPrimary)
+      assert(remaining.head.isPrimary.value)
     }
   }
 }

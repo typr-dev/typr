@@ -131,7 +131,7 @@ public record AuditLogRow(
 
   public static RowParser<AuditLogRow> _rowParser =
       RowParsers.of(
-          AuditLogId.dbType,
+          AuditLogId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.text,

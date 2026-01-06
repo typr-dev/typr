@@ -66,19 +66,21 @@ object CompileBenchmark extends BleepScript("CompileBenchmark") {
             inlineImplicits = inlineImplicits,
             fixVerySlowImplicit = fixVerySlowImplicit
           )
-          generate(
-            options,
-            metadb,
-            ProjectGraph(
-              name = "",
-              targetSources,
-              None,
-              Selector.ExcludePostgresInternal, // All
-              sqlFiles,
-              Nil
-            ),
-            Map.empty
-          ).foreach(_.overwriteFolder())
+          generate
+            .orThrow(
+              options,
+              metadb,
+              ProjectGraph(
+                name = "",
+                targetSources,
+                None,
+                Selector.ExcludePostgresInternal, // All
+                sqlFiles,
+                Nil
+              ),
+              Map.empty
+            )
+            .foreach(_.overwriteFolder())
 
           crossIds.map { crossId =>
             started.projectPaths(CrossProjectName(ProjectName(projectName), Some(crossId))).sourcesDirs.fromSourceLayout.foreach { p =>

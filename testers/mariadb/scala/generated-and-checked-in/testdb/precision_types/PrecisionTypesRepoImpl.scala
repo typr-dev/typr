@@ -36,17 +36,17 @@ import dev.typr.foundations.scala.Fragment.sql
 class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def delete: DeleteBuilder[PrecisionTypesFields, PrecisionTypesRow] = DeleteBuilder.of("`precision_types`", PrecisionTypesFields.structure, Dialect.MARIADB)
 
-  override def deleteById(id: PrecisionTypesId)(using c: Connection): Boolean = sql"delete from `precision_types` where `id` = ${Fragment.encode(PrecisionTypesId.dbType, id)}".update().runUnchecked(c) > 0
+  override def deleteById(id: PrecisionTypesId)(using c: Connection): Boolean = sql"delete from `precision_types` where `id` = ${Fragment.encode(PrecisionTypesId.mariaType, id)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[PrecisionTypesId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(PrecisionTypesId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(PrecisionTypesId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `precision_types` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow = {
   sql"""insert into `precision_types`(`string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`)
-    values (${Fragment.encode(String10.dbType, unsaved.string10)}, ${Fragment.encode(String20.dbType, unsaved.string20)}, ${Fragment.encode(String50.dbType, unsaved.string50)}, ${Fragment.encode(String100.dbType, unsaved.string100)}, ${Fragment.encode(String255.dbType, unsaved.string255)}, ${Fragment.encode(PaddedString10.dbType, unsaved.char10)}, ${Fragment.encode(Decimal5_2.dbType, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.dbType, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.dbType, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.dbType, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.dbType, unsaved.numeric124)}, ${Fragment.encode(Binary16.dbType, unsaved.binary16)}, ${Fragment.encode(Binary32.dbType, unsaved.binary32)}, ${Fragment.encode(Binary64.dbType, unsaved.binary64)}, ${Fragment.encode(MariaTypes.time, unsaved.time0)}, ${Fragment.encode(LocalTime3.dbType, unsaved.time3)}, ${Fragment.encode(LocalTime6.dbType, unsaved.time6)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetime0)}, ${Fragment.encode(LocalDateTime3.dbType, unsaved.datetime3)}, ${Fragment.encode(LocalDateTime6.dbType, unsaved.datetime6)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.dbType, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.dbType, unsaved.ts6)})
+    values (${Fragment.encode(String10.mariaType, unsaved.string10)}, ${Fragment.encode(String20.mariaType, unsaved.string20)}, ${Fragment.encode(String50.mariaType, unsaved.string50)}, ${Fragment.encode(String100.mariaType, unsaved.string100)}, ${Fragment.encode(String255.mariaType, unsaved.string255)}, ${Fragment.encode(PaddedString10.mariaType, unsaved.char10)}, ${Fragment.encode(Decimal5_2.mariaType, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.mariaType, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.mariaType, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.mariaType, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.mariaType, unsaved.numeric124)}, ${Fragment.encode(Binary16.mariaType, unsaved.binary16)}, ${Fragment.encode(Binary32.mariaType, unsaved.binary32)}, ${Fragment.encode(Binary64.mariaType, unsaved.binary64)}, ${Fragment.encode(MariaTypes.time, unsaved.time0)}, ${Fragment.encode(LocalTime3.mariaType, unsaved.time3)}, ${Fragment.encode(LocalTime6.mariaType, unsaved.time6)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetime0)}, ${Fragment.encode(LocalDateTime3.mariaType, unsaved.datetime3)}, ${Fragment.encode(LocalDateTime6.mariaType, unsaved.datetime6)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.mariaType, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.mariaType, unsaved.ts6)})
     RETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`
     """
     .updateReturning(PrecisionTypesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -56,56 +56,56 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit("`string10`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String10.dbType, unsaved.string10)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String10.mariaType, unsaved.string10)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`string20`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String20.dbType, unsaved.string20)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String20.mariaType, unsaved.string20)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`string50`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String50.dbType, unsaved.string50)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String50.mariaType, unsaved.string50)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`string100`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String100.dbType, unsaved.string100)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String100.mariaType, unsaved.string100)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`string255`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String255.dbType, unsaved.string255)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String255.mariaType, unsaved.string255)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`char10`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(PaddedString10.dbType, unsaved.char10)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(PaddedString10.mariaType, unsaved.char10)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`decimal5_2`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal5_2.dbType, unsaved.decimal52)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal5_2.mariaType, unsaved.decimal52)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`decimal10_2`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal10_2.dbType, unsaved.decimal102)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal10_2.mariaType, unsaved.decimal102)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`decimal18_4`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal18_4.dbType, unsaved.decimal184)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal18_4.mariaType, unsaved.decimal184)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`numeric8_2`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal8_2.dbType, unsaved.numeric82)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal8_2.mariaType, unsaved.numeric82)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`numeric12_4`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal12_4.dbType, unsaved.numeric124)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal12_4.mariaType, unsaved.numeric124)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`binary16`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Binary16.dbType, unsaved.binary16)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Binary16.mariaType, unsaved.binary16)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`binary32`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Binary32.dbType, unsaved.binary32)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Binary32.mariaType, unsaved.binary32)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`binary64`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Binary64.dbType, unsaved.binary64)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Binary64.mariaType, unsaved.binary64)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`time0`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.time, unsaved.time0)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`time3`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalTime3.dbType, unsaved.time3)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalTime3.mariaType, unsaved.time3)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`time6`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalTime6.dbType, unsaved.time6)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalTime6.mariaType, unsaved.time6)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`datetime0`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.datetime, unsaved.datetime0)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`datetime3`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalDateTime3.dbType, unsaved.datetime3)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalDateTime3.mariaType, unsaved.datetime3)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`datetime6`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalDateTime6.dbType, unsaved.datetime6)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalDateTime6.mariaType, unsaved.datetime6)}"): @scala.annotation.nowarn
     unsaved.ts0.visit(
       {  },
       value => { columns.addOne(Fragment.lit("`ts0`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.timestamp, value)}"): @scala.annotation.nowarn }
     );
     unsaved.ts3.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`ts3`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(LocalDateTime3.dbType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit("`ts3`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(LocalDateTime3.mariaType, value)}"): @scala.annotation.nowarn }
     );
     unsaved.ts6.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`ts6`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(LocalDateTime6.dbType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit("`ts6`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(LocalDateTime6.mariaType, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `precision_types`(${Fragment.comma(columns)})
@@ -127,12 +127,12 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def selectById(id: PrecisionTypesId)(using c: Connection): Option[PrecisionTypesRow] = {
     sql"""select `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`
     from `precision_types`
-    where `id` = ${Fragment.encode(PrecisionTypesId.dbType, id)}""".query(PrecisionTypesRow.`_rowParser`.first()).runUnchecked(c)
+    where `id` = ${Fragment.encode(PrecisionTypesId.mariaType, id)}""".query(PrecisionTypesRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[PrecisionTypesId])(using c: Connection): List[PrecisionTypesRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(PrecisionTypesId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(PrecisionTypesId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6` from `precision_types` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -147,35 +147,35 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def update(row: PrecisionTypesRow)(using c: Connection): Boolean = {
     val id: PrecisionTypesId = row.id
     return sql"""update `precision_types`
-    set `string10` = ${Fragment.encode(String10.dbType, row.string10)},
-    `string20` = ${Fragment.encode(String20.dbType, row.string20)},
-    `string50` = ${Fragment.encode(String50.dbType, row.string50)},
-    `string100` = ${Fragment.encode(String100.dbType, row.string100)},
-    `string255` = ${Fragment.encode(String255.dbType, row.string255)},
-    `char10` = ${Fragment.encode(PaddedString10.dbType, row.char10)},
-    `decimal5_2` = ${Fragment.encode(Decimal5_2.dbType, row.decimal52)},
-    `decimal10_2` = ${Fragment.encode(Decimal10_2.dbType, row.decimal102)},
-    `decimal18_4` = ${Fragment.encode(Decimal18_4.dbType, row.decimal184)},
-    `numeric8_2` = ${Fragment.encode(Decimal8_2.dbType, row.numeric82)},
-    `numeric12_4` = ${Fragment.encode(Decimal12_4.dbType, row.numeric124)},
-    `binary16` = ${Fragment.encode(Binary16.dbType, row.binary16)},
-    `binary32` = ${Fragment.encode(Binary32.dbType, row.binary32)},
-    `binary64` = ${Fragment.encode(Binary64.dbType, row.binary64)},
+    set `string10` = ${Fragment.encode(String10.mariaType, row.string10)},
+    `string20` = ${Fragment.encode(String20.mariaType, row.string20)},
+    `string50` = ${Fragment.encode(String50.mariaType, row.string50)},
+    `string100` = ${Fragment.encode(String100.mariaType, row.string100)},
+    `string255` = ${Fragment.encode(String255.mariaType, row.string255)},
+    `char10` = ${Fragment.encode(PaddedString10.mariaType, row.char10)},
+    `decimal5_2` = ${Fragment.encode(Decimal5_2.mariaType, row.decimal52)},
+    `decimal10_2` = ${Fragment.encode(Decimal10_2.mariaType, row.decimal102)},
+    `decimal18_4` = ${Fragment.encode(Decimal18_4.mariaType, row.decimal184)},
+    `numeric8_2` = ${Fragment.encode(Decimal8_2.mariaType, row.numeric82)},
+    `numeric12_4` = ${Fragment.encode(Decimal12_4.mariaType, row.numeric124)},
+    `binary16` = ${Fragment.encode(Binary16.mariaType, row.binary16)},
+    `binary32` = ${Fragment.encode(Binary32.mariaType, row.binary32)},
+    `binary64` = ${Fragment.encode(Binary64.mariaType, row.binary64)},
     `time0` = ${Fragment.encode(MariaTypes.time, row.time0)},
-    `time3` = ${Fragment.encode(LocalTime3.dbType, row.time3)},
-    `time6` = ${Fragment.encode(LocalTime6.dbType, row.time6)},
+    `time3` = ${Fragment.encode(LocalTime3.mariaType, row.time3)},
+    `time6` = ${Fragment.encode(LocalTime6.mariaType, row.time6)},
     `datetime0` = ${Fragment.encode(MariaTypes.datetime, row.datetime0)},
-    `datetime3` = ${Fragment.encode(LocalDateTime3.dbType, row.datetime3)},
-    `datetime6` = ${Fragment.encode(LocalDateTime6.dbType, row.datetime6)},
+    `datetime3` = ${Fragment.encode(LocalDateTime3.mariaType, row.datetime3)},
+    `datetime6` = ${Fragment.encode(LocalDateTime6.mariaType, row.datetime6)},
     `ts0` = ${Fragment.encode(MariaTypes.timestamp, row.ts0)},
-    `ts3` = ${Fragment.encode(LocalDateTime3.dbType, row.ts3)},
-    `ts6` = ${Fragment.encode(LocalDateTime6.dbType, row.ts6)}
-    where `id` = ${Fragment.encode(PrecisionTypesId.dbType, id)}""".update().runUnchecked(c) > 0
+    `ts3` = ${Fragment.encode(LocalDateTime3.mariaType, row.ts3)},
+    `ts6` = ${Fragment.encode(LocalDateTime6.mariaType, row.ts6)}
+    where `id` = ${Fragment.encode(PrecisionTypesId.mariaType, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow = {
   sql"""INSERT INTO `precision_types`(`id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`)
-    VALUES (${Fragment.encode(PrecisionTypesId.dbType, unsaved.id)}, ${Fragment.encode(String10.dbType, unsaved.string10)}, ${Fragment.encode(String20.dbType, unsaved.string20)}, ${Fragment.encode(String50.dbType, unsaved.string50)}, ${Fragment.encode(String100.dbType, unsaved.string100)}, ${Fragment.encode(String255.dbType, unsaved.string255)}, ${Fragment.encode(PaddedString10.dbType, unsaved.char10)}, ${Fragment.encode(Decimal5_2.dbType, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.dbType, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.dbType, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.dbType, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.dbType, unsaved.numeric124)}, ${Fragment.encode(Binary16.dbType, unsaved.binary16)}, ${Fragment.encode(Binary32.dbType, unsaved.binary32)}, ${Fragment.encode(Binary64.dbType, unsaved.binary64)}, ${Fragment.encode(MariaTypes.time, unsaved.time0)}, ${Fragment.encode(LocalTime3.dbType, unsaved.time3)}, ${Fragment.encode(LocalTime6.dbType, unsaved.time6)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetime0)}, ${Fragment.encode(LocalDateTime3.dbType, unsaved.datetime3)}, ${Fragment.encode(LocalDateTime6.dbType, unsaved.datetime6)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.dbType, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.dbType, unsaved.ts6)})
+    VALUES (${Fragment.encode(PrecisionTypesId.mariaType, unsaved.id)}, ${Fragment.encode(String10.mariaType, unsaved.string10)}, ${Fragment.encode(String20.mariaType, unsaved.string20)}, ${Fragment.encode(String50.mariaType, unsaved.string50)}, ${Fragment.encode(String100.mariaType, unsaved.string100)}, ${Fragment.encode(String255.mariaType, unsaved.string255)}, ${Fragment.encode(PaddedString10.mariaType, unsaved.char10)}, ${Fragment.encode(Decimal5_2.mariaType, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.mariaType, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.mariaType, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.mariaType, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.mariaType, unsaved.numeric124)}, ${Fragment.encode(Binary16.mariaType, unsaved.binary16)}, ${Fragment.encode(Binary32.mariaType, unsaved.binary32)}, ${Fragment.encode(Binary64.mariaType, unsaved.binary64)}, ${Fragment.encode(MariaTypes.time, unsaved.time0)}, ${Fragment.encode(LocalTime3.mariaType, unsaved.time3)}, ${Fragment.encode(LocalTime6.mariaType, unsaved.time6)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetime0)}, ${Fragment.encode(LocalDateTime3.mariaType, unsaved.datetime3)}, ${Fragment.encode(LocalDateTime6.mariaType, unsaved.datetime6)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.mariaType, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.mariaType, unsaved.ts6)})
     ON DUPLICATE KEY UPDATE `string10` = VALUES(`string10`),
     `string20` = VALUES(`string20`),
     `string50` = VALUES(`string50`),

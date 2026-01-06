@@ -34,7 +34,7 @@ data class CustomersFields(val _path: List<Path>) : TupleExpr4<CustomersId, Stri
 
   fun createdAt(): OptField<LocalDateTime, CustomersRow> = OptField<LocalDateTime, CustomersRow>(_path, "CREATED_AT", CustomersRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, Db2Types.timestamp)
 
-  fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "CUSTOMER_ID", CustomersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.dbType)
+  fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "CUSTOMER_ID", CustomersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.db2Type)
 
   fun email(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "EMAIL", CustomersRow::email, null, null, { row, value -> row.copy(email = value) }, Db2Types.varchar)
 

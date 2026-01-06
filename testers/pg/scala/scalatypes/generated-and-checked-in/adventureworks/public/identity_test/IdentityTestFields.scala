@@ -49,7 +49,7 @@ class IdentityTestFields(val `_path`: java.util.List[Path]) extends TupleExpr3[I
       None,
       None,
       (row, value) => row.copy(name = value),
-      IdentityTestId.dbType
+      IdentityTestId.pgType
     )
   }
 

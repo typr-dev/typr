@@ -26,7 +26,7 @@ public record EmailaddressId(BusinessentityId businessentityid, Integer emailadd
 
   public static RowParser<EmailaddressId> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.int4,
           EmailaddressId::new,
           row -> new Object[] {row.businessentityid(), row.emailaddressid()});

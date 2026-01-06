@@ -12,6 +12,7 @@ import java.sql.Connection
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
+import testdb.userdefined.Email
 
 interface MariatestUniqueRepo {
   abstract fun delete(): DeleteBuilder<MariatestUniqueFields, MariatestUniqueRow>
@@ -62,7 +63,7 @@ interface MariatestUniqueRepo {
   ): MariatestUniqueRow?
 
   abstract fun selectByUniqueEmail(
-    email: String,
+    email: /* user-picked */ Email,
     c: Connection
   ): MariatestUniqueRow?
 

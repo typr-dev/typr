@@ -300,7 +300,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("text"),
       (row, value) => row.copy(mydomain = value),
-      Mydomain.dbType
+      Mydomain.pgType
     )
   }
 
@@ -312,7 +312,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("public.myenum"),
       (row, value) => row.copy(myenum = value),
-      Myenum.dbType
+      Myenum.pgType
     )
   }
 
@@ -708,7 +708,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       Some("text[]"),
       Some("mydomain[]"),
       (row, value) => row.copy(mydomaines = value),
-      Mydomain.dbTypeArray
+      Mydomain.pgTypeArray
     )
   }
 
@@ -720,7 +720,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("myenum[]"),
       (row, value) => row.copy(myenumes = value),
-      Myenum.dbTypeArray
+      Myenum.pgTypeArray
     )
   }
 

@@ -23,8 +23,9 @@ import testdb.categories.CategoriesRow
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import testdb.userdefined.IsPrimary
 
-class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr4[ProductsId, CategoriesId, Boolean, Short] with RelationStructure[ProductCategoriesFields, ProductCategoriesRow]  with FieldsBase[ProductCategoriesRow] {
+class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr4[ProductsId, CategoriesId, /* user-picked */ IsPrimary, Short] with RelationStructure[ProductCategoriesFields, ProductCategoriesRow]  with FieldsBase[ProductCategoriesRow] {
   def productId: IdField[ProductsId, ProductCategoriesRow] = {
     new IdField[ProductsId, ProductCategoriesRow](
       _path,
@@ -33,7 +34,7 @@ class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -45,19 +46,19 @@ class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(categoryId = value),
-      CategoriesId.dbType
+      CategoriesId.mariaType
     )
   }
 
-  def isPrimary: Field[Boolean, ProductCategoriesRow] = {
-    new Field[Boolean, ProductCategoriesRow](
+  def isPrimary: Field[/* user-picked */ IsPrimary, ProductCategoriesRow] = {
+    new Field[/* user-picked */ IsPrimary, ProductCategoriesRow](
       _path,
       "is_primary",
       _.isPrimary,
       None,
       None,
       (row, value) => row.copy(isPrimary = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsPrimary.mariaType
     )
   }
 
@@ -91,7 +92,7 @@ class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleEx
 
   override def `_2`: SqlExpr[CategoriesId] = categoryId
 
-  override def `_3`: SqlExpr[Boolean] = isPrimary
+  override def `_3`: SqlExpr[/* user-picked */ IsPrimary] = isPrimary
 
   override def `_4`: SqlExpr[Short] = sortOrder
 }

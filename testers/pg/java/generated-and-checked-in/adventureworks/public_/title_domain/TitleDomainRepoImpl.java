@@ -31,7 +31,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
   public Boolean deleteById(TitleDomainId code, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"public\".\"title_domain\" where \"code\" = "),
-                Fragment.encode(TitleDomainId.dbType, code),
+                Fragment.encode(TitleDomainId.pgType, code),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +42,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
   public Integer deleteByIds(TitleDomainId[] codes, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("),
-            Fragment.encode(TitleDomainId.dbTypeArray, codes),
+            Fragment.encode(TitleDomainId.pgTypeArray, codes),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -52,7 +52,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
   public TitleDomainRow insert(TitleDomainRow unsaved, Connection c) {
     return interpolate(
             Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("),
-            Fragment.encode(TitleDomainId.dbType, unsaved.code()),
+            Fragment.encode(TitleDomainId.pgType, unsaved.code()),
             Fragment.lit("::text)\nRETURNING \"code\"\n"))
         .updateReturning(TitleDomainRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -88,7 +88,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
   public Optional<TitleDomainRow> selectById(TitleDomainId code, Connection c) {
     return interpolate(
             Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = "),
-            Fragment.encode(TitleDomainId.dbType, code),
+            Fragment.encode(TitleDomainId.pgType, code),
             Fragment.lit(""))
         .query(TitleDomainRow._rowParser.first())
         .runUnchecked(c);
@@ -99,7 +99,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
     return interpolate(
             Fragment.lit(
                 "select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("),
-            Fragment.encode(TitleDomainId.dbTypeArray, codes),
+            Fragment.encode(TitleDomainId.pgTypeArray, codes),
             Fragment.lit(")"))
         .query(TitleDomainRow._rowParser.all())
         .runUnchecked(c);
@@ -126,7 +126,7 @@ public class TitleDomainRepoImpl implements TitleDomainRepo {
   public TitleDomainRow upsert(TitleDomainRow unsaved, Connection c) {
     return interpolate(
             Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("),
-            Fragment.encode(TitleDomainId.dbType, unsaved.code()),
+            Fragment.encode(TitleDomainId.pgType, unsaved.code()),
             Fragment.lit(
                 "::text)\n"
                     + "on conflict (\"code\")\n"

@@ -33,7 +33,7 @@ object Decimal8_2 {
 
   given bijection: Bijection[Decimal8_2, BigDecimal] = Bijection.apply[Decimal8_2, BigDecimal](_.value)(Decimal8_2.apply)
 
-  def of(value: BigDecimal): Option[Decimal8_2] = { val scaled = value.setScale(2, scala.math.BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 8) Some(new Decimal8_2(scaled)) else None }
+  def of(value: BigDecimal): Option[Decimal8_2] = { val scaled = value.setScale(2, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 8) Some(new Decimal8_2(scaled)) else None }
 
   def of(value: Int): Decimal8_2 = new Decimal8_2(BigDecimal(value))
 
@@ -43,5 +43,5 @@ object Decimal8_2 {
 
   given sqlServerType: SqlServerType[Decimal8_2] = ScalaDbTypes.SqlServerTypes.numeric.bimap(Decimal8_2.apply, _.value)
 
-  def unsafeForce(value: BigDecimal): Decimal8_2 = { val scaled = value.setScale(2, scala.math.BigDecimal.RoundingMode.HALF_UP); if (scaled.precision > 8) throw new IllegalArgumentException("Value exceeds precision(8, 2)"); new Decimal8_2(scaled) }
+  def unsafeForce(value: BigDecimal): Decimal8_2 = { val scaled = value.setScale(2, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision > 8) throw new IllegalArgumentException("Value exceeds precision(8, 2)"); new Decimal8_2(scaled) }
 }

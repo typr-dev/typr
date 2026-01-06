@@ -5,6 +5,7 @@ import org.junit.Assert._
 import org.junit.Test
 import testdb.all_scalar_types._
 import testdb.customer_orders_view._
+import testdb.userdefined.Email
 
 import java.time._
 import java.util.UUID
@@ -212,7 +213,7 @@ class DatabaseFeaturesTest {
   def testCustomerOrdersView(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers(name = "View Test Customer", email = "viewtest@example.com")
+    val customer = testInsert.Customers(email = Email("viewtest@example.com"), name = "View Test Customer")
     val _ = testInsert.Orders(customer.customerId, totalAmount = BigDecimal("199.99"))
 
     val viewResults = customerOrdersViewRepo.select.toList
@@ -228,8 +229,8 @@ class DatabaseFeaturesTest {
   def testViewDSLFilter(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer1 = testInsert.Customers(name = "View Filter A")
-    val customer2 = testInsert.Customers(name = "View Filter B")
+    val customer1 = testInsert.Customers(email = Email("filter-a@example.com"), name = "View Filter A")
+    val customer2 = testInsert.Customers(email = Email("filter-b@example.com"), name = "View Filter B")
     val _ = testInsert.Orders(customer1.customerId)
     val _ = testInsert.Orders(customer2.customerId)
 

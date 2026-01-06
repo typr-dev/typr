@@ -6,9 +6,10 @@
 package adventureworks.person.person
 
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.kotlin.DeleteBuilder
 import dev.typr.foundations.kotlin.Dialect
@@ -31,19 +32,19 @@ class PersonRepoImpl() : PersonRepo {
   override fun deleteById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"person\" where \"businessentityid\" = "), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"person\" where \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     businessentityids: Array<BusinessentityId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"person\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.dbTypeArray, businessentityids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"person\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: PersonRow,
     c: Connection
-  ): PersonRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"person\"(\"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.persontype), Fragment.lit("::bpchar, "), Fragment.encode(NameStyle.dbType, unsaved.namestyle), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.nullable(), unsaved.title), Fragment.lit(", "), Fragment.encode(FirstName.dbType, unsaved.firstname), Fragment.lit("::varchar, "), Fragment.encode(Name.dbType.nullable(), unsaved.middlename), Fragment.lit("::varchar, "), Fragment.encode(Name.dbType, unsaved.lastname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text.nullable(), unsaved.suffix), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.emailpromotion), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.additionalcontactinfo), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.demographics), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\"\n"))
+  ): PersonRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"person\"(\"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.persontype), Fragment.lit("::bpchar, "), Fragment.encode(NameStyle.pgType, unsaved.namestyle), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.nullable(), unsaved.title), Fragment.lit(", "), Fragment.encode(FirstName.pgType, unsaved.firstname), Fragment.lit("::varchar, "), Fragment.encode(MiddleName.pgType.nullable(), unsaved.middlename), Fragment.lit("::varchar, "), Fragment.encode(LastName.pgType, unsaved.lastname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text.nullable(), unsaved.suffix), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.emailpromotion), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.additionalcontactinfo), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.demographics), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(PersonRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -53,17 +54,17 @@ class PersonRepoImpl() : PersonRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"businessentityid\""))
-    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4")))
     columns.add(Fragment.lit("\"persontype\""))
     values.add(Fragment.interpolate(Fragment.encode(PgTypes.bpchar, unsaved.persontype), Fragment.lit("::bpchar")))
     columns.add(Fragment.lit("\"title\""))
     values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.title), Fragment.lit("")))
     columns.add(Fragment.lit("\"firstname\""))
-    values.add(Fragment.interpolate(Fragment.encode(FirstName.dbType, unsaved.firstname), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(FirstName.pgType, unsaved.firstname), Fragment.lit("::varchar")))
     columns.add(Fragment.lit("\"middlename\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.dbType.nullable(), unsaved.middlename), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(MiddleName.pgType.nullable(), unsaved.middlename), Fragment.lit("::varchar")))
     columns.add(Fragment.lit("\"lastname\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.dbType, unsaved.lastname), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(LastName.pgType, unsaved.lastname), Fragment.lit("::varchar")))
     columns.add(Fragment.lit("\"suffix\""))
     values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.suffix), Fragment.lit("")))
     columns.add(Fragment.lit("\"additionalcontactinfo\""))
@@ -73,7 +74,7 @@ class PersonRepoImpl() : PersonRepo {
     unsaved.namestyle.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"namestyle\""))
-      values.add(Fragment.interpolate(Fragment.encode(NameStyle.dbType, value), Fragment.lit("::bool"))) }
+      values.add(Fragment.interpolate(Fragment.encode(NameStyle.pgType, value), Fragment.lit("::bool"))) }
     );
     unsaved.emailpromotion.visit(
       {  },
@@ -114,12 +115,12 @@ class PersonRepoImpl() : PersonRepo {
   override fun selectById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): PersonRow? = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"person\"\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).query(PersonRow._rowParser.first()).runUnchecked(c)
+  ): PersonRow? = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"person\"\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(PersonRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     businessentityids: Array<BusinessentityId>,
     c: Connection
-  ): List<PersonRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"person\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.dbTypeArray, businessentityids), Fragment.lit(")")).query(PersonRow._rowParser.all()).runUnchecked(c)
+  ): List<PersonRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"person\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(PersonRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     businessentityids: Array<BusinessentityId>,
@@ -137,13 +138,13 @@ class PersonRepoImpl() : PersonRepo {
     c: Connection
   ): Boolean {
     val businessentityid: BusinessentityId = row.businessentityid
-    return Fragment.interpolate(Fragment.lit("update \"person\".\"person\"\nset \"persontype\" = "), Fragment.encode(PgTypes.bpchar, row.persontype), Fragment.lit("::bpchar,\n\"namestyle\" = "), Fragment.encode(NameStyle.dbType, row.namestyle), Fragment.lit("::bool,\n\"title\" = "), Fragment.encode(PgTypes.text.nullable(), row.title), Fragment.lit(",\n\"firstname\" = "), Fragment.encode(FirstName.dbType, row.firstname), Fragment.lit("::varchar,\n\"middlename\" = "), Fragment.encode(Name.dbType.nullable(), row.middlename), Fragment.lit("::varchar,\n\"lastname\" = "), Fragment.encode(Name.dbType, row.lastname), Fragment.lit("::varchar,\n\"suffix\" = "), Fragment.encode(PgTypes.text.nullable(), row.suffix), Fragment.lit(",\n\"emailpromotion\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.emailpromotion), Fragment.lit("::int4,\n\"additionalcontactinfo\" = "), Fragment.encode(PgTypes.xml.nullable(), row.additionalcontactinfo), Fragment.lit("::xml,\n\"demographics\" = "), Fragment.encode(PgTypes.xml.nullable(), row.demographics), Fragment.lit("::xml,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"person\".\"person\"\nset \"persontype\" = "), Fragment.encode(PgTypes.bpchar, row.persontype), Fragment.lit("::bpchar,\n\"namestyle\" = "), Fragment.encode(NameStyle.pgType, row.namestyle), Fragment.lit("::bool,\n\"title\" = "), Fragment.encode(PgTypes.text.nullable(), row.title), Fragment.lit(",\n\"firstname\" = "), Fragment.encode(FirstName.pgType, row.firstname), Fragment.lit("::varchar,\n\"middlename\" = "), Fragment.encode(MiddleName.pgType.nullable(), row.middlename), Fragment.lit("::varchar,\n\"lastname\" = "), Fragment.encode(LastName.pgType, row.lastname), Fragment.lit("::varchar,\n\"suffix\" = "), Fragment.encode(PgTypes.text.nullable(), row.suffix), Fragment.lit(",\n\"emailpromotion\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.emailpromotion), Fragment.lit("::int4,\n\"additionalcontactinfo\" = "), Fragment.encode(PgTypes.xml.nullable(), row.additionalcontactinfo), Fragment.lit("::xml,\n\"demographics\" = "), Fragment.encode(PgTypes.xml.nullable(), row.demographics), Fragment.lit("::xml,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: PersonRow,
     c: Connection
-  ): PersonRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"person\"(\"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.persontype), Fragment.lit("::bpchar, "), Fragment.encode(NameStyle.dbType, unsaved.namestyle), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.nullable(), unsaved.title), Fragment.lit(", "), Fragment.encode(FirstName.dbType, unsaved.firstname), Fragment.lit("::varchar, "), Fragment.encode(Name.dbType.nullable(), unsaved.middlename), Fragment.lit("::varchar, "), Fragment.encode(Name.dbType, unsaved.lastname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text.nullable(), unsaved.suffix), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.emailpromotion), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.additionalcontactinfo), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.demographics), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"businessentityid\")\ndo update set\n  \"persontype\" = EXCLUDED.\"persontype\",\n\"namestyle\" = EXCLUDED.\"namestyle\",\n\"title\" = EXCLUDED.\"title\",\n\"firstname\" = EXCLUDED.\"firstname\",\n\"middlename\" = EXCLUDED.\"middlename\",\n\"lastname\" = EXCLUDED.\"lastname\",\n\"suffix\" = EXCLUDED.\"suffix\",\n\"emailpromotion\" = EXCLUDED.\"emailpromotion\",\n\"additionalcontactinfo\" = EXCLUDED.\"additionalcontactinfo\",\n\"demographics\" = EXCLUDED.\"demographics\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\""))
+  ): PersonRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"person\"(\"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.persontype), Fragment.lit("::bpchar, "), Fragment.encode(NameStyle.pgType, unsaved.namestyle), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.nullable(), unsaved.title), Fragment.lit(", "), Fragment.encode(FirstName.pgType, unsaved.firstname), Fragment.lit("::varchar, "), Fragment.encode(MiddleName.pgType.nullable(), unsaved.middlename), Fragment.lit("::varchar, "), Fragment.encode(LastName.pgType, unsaved.lastname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text.nullable(), unsaved.suffix), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.emailpromotion), Fragment.lit("::int4, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.additionalcontactinfo), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.nullable(), unsaved.demographics), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"businessentityid\")\ndo update set\n  \"persontype\" = EXCLUDED.\"persontype\",\n\"namestyle\" = EXCLUDED.\"namestyle\",\n\"title\" = EXCLUDED.\"title\",\n\"firstname\" = EXCLUDED.\"firstname\",\n\"middlename\" = EXCLUDED.\"middlename\",\n\"lastname\" = EXCLUDED.\"lastname\",\n\"suffix\" = EXCLUDED.\"suffix\",\n\"emailpromotion\" = EXCLUDED.\"emailpromotion\",\n\"additionalcontactinfo\" = EXCLUDED.\"additionalcontactinfo\",\n\"demographics\" = EXCLUDED.\"demographics\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"persontype\", \"namestyle\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"emailpromotion\", \"additionalcontactinfo\", \"demographics\", \"rowguid\", \"modifieddate\""))
     .updateReturning(PersonRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

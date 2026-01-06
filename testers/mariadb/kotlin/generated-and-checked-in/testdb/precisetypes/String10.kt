@@ -38,7 +38,7 @@ data class String10 private constructor(@field:JsonValue val value: String) : St
     val bijection: Bijection<String10, String> =
       Bijection.of(String10::value, ::String10)
 
-    val dbType: MariaType<String10> =
+    val mariaType: MariaType<String10> =
       MariaTypes.varchar.bimap(::String10, String10::value)
 
     fun of(value: String): String10? = if (value.length <= 10) String10(value) else null

@@ -24,14 +24,14 @@ class Db2testUniqueRepoImpl() : Db2testUniqueRepo {
   override fun deleteById(
     id: Db2testUniqueId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_UNIQUE\" where \"ID\" = "), Fragment.encode(Db2testUniqueId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_UNIQUE\" where \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     ids: Array<Db2testUniqueId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in ids) { fragments.add(Fragment.encode(Db2testUniqueId.dbType, id)) }
+    for (id in ids) { fragments.add(Fragment.encode(Db2testUniqueId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_UNIQUE\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -64,14 +64,14 @@ class Db2testUniqueRepoImpl() : Db2testUniqueRepo {
   override fun selectById(
     id: Db2testUniqueId,
     c: Connection
-  ): Db2testUniqueRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\nwhere \"ID\" = "), Fragment.encode(Db2testUniqueId.dbType, id), Fragment.lit("")).query(Db2testUniqueRow._rowParser.first()).runUnchecked(c)
+  ): Db2testUniqueRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\nwhere \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.lit("")).query(Db2testUniqueRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     ids: Array<Db2testUniqueId>,
     c: Connection
   ): List<Db2testUniqueRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in ids) { fragments.add(Fragment.encode(Db2testUniqueId.dbType, id)) }
+    for (id in ids) { fragments.add(Fragment.encode(Db2testUniqueId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\" from \"DB2TEST_UNIQUE\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(Db2testUniqueRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -102,14 +102,14 @@ class Db2testUniqueRepoImpl() : Db2testUniqueRepo {
     c: Connection
   ): Boolean {
     val id: Db2testUniqueId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"DB2TEST_UNIQUE\"\nset \"EMAIL\" = "), Fragment.encode(Db2Types.varchar, row.email), Fragment.lit(",\n\"CODE\" = "), Fragment.encode(Db2Types.varchar, row.code), Fragment.lit(",\n\"CATEGORY\" = "), Fragment.encode(Db2Types.varchar, row.category), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(Db2testUniqueId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"DB2TEST_UNIQUE\"\nset \"EMAIL\" = "), Fragment.encode(Db2Types.varchar, row.email), Fragment.lit(",\n\"CODE\" = "), Fragment.encode(Db2Types.varchar, row.code), Fragment.lit(",\n\"CATEGORY\" = "), Fragment.encode(Db2Types.varchar, row.category), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: Db2testUniqueRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"DB2TEST_UNIQUE\" AS t\nUSING (VALUES ("), Fragment.encode(Db2testUniqueId.dbType, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.lit(")) AS s(\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"CODE\" = s.\"CODE\",\n\"CATEGORY\" = s.\"CATEGORY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\") VALUES ("), Fragment.encode(Db2testUniqueId.dbType, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.lit(")"))
+    Fragment.interpolate(Fragment.lit("MERGE INTO \"DB2TEST_UNIQUE\" AS t\nUSING (VALUES ("), Fragment.encode(Db2testUniqueId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.lit(")) AS s(\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"CODE\" = s.\"CODE\",\n\"CATEGORY\" = s.\"CATEGORY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\") VALUES ("), Fragment.encode(Db2testUniqueId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }

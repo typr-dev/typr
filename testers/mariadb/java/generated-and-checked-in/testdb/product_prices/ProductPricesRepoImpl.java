@@ -33,7 +33,7 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
   public Boolean deleteById(ProductPricesId priceId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `product_prices` where `price_id` = "),
-                Fragment.encode(ProductPricesId.dbType, priceId),
+                Fragment.encode(ProductPricesId.mariaType, priceId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -44,7 +44,7 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
   public Integer deleteByIds(ProductPricesId[] priceIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : priceIds) {
-      fragments.add(Fragment.encode(ProductPricesId.dbType, id));
+      fragments.add(Fragment.encode(ProductPricesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -62,9 +62,9 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
                 "insert into `product_prices`(`product_id`, `tier_id`, `price`, `currency_code`,"
                     + " `valid_from`, `valid_to`)\n"
                     + "values ("),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
-            Fragment.encode(PriceTiersId.dbType.opt(), unsaved.tierId()),
+            Fragment.encode(PriceTiersId.mariaType.opt(), unsaved.tierId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.numeric, unsaved.price()),
             Fragment.lit(", "),
@@ -89,7 +89,7 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
     ;
     columns.add(Fragment.lit("`product_id`"));
     values.add(
-        interpolate(Fragment.encode(ProductsId.dbType, unsaved.productId()), Fragment.lit("")));
+        interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId()), Fragment.lit("")));
     columns.add(Fragment.lit("`price`"));
     values.add(interpolate(Fragment.encode(MariaTypes.numeric, unsaved.price()), Fragment.lit("")));
     columns.add(Fragment.lit("`valid_from`"));
@@ -102,7 +102,8 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
             value -> {
               columns.add(Fragment.lit("`tier_id`"));
               values.add(
-                  interpolate(Fragment.encode(PriceTiersId.dbType.opt(), value), Fragment.lit("")));
+                  interpolate(
+                      Fragment.encode(PriceTiersId.mariaType.opt(), value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -166,7 +167,7 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
                     + " `valid_from`, `valid_to`\n"
                     + "from `product_prices`\n"
                     + "where `price_id` = "),
-            Fragment.encode(ProductPricesId.dbType, priceId),
+            Fragment.encode(ProductPricesId.mariaType, priceId),
             Fragment.lit(""))
         .query(ProductPricesRow._rowParser.first())
         .runUnchecked(c);
@@ -176,7 +177,7 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
   public List<ProductPricesRow> selectByIds(ProductPricesId[] priceIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : priceIds) {
-      fragments.add(Fragment.encode(ProductPricesId.dbType, id));
+      fragments.add(Fragment.encode(ProductPricesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -213,9 +214,9 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
     ;
     return interpolate(
                 Fragment.lit("update `product_prices`\nset `product_id` = "),
-                Fragment.encode(ProductsId.dbType, row.productId()),
+                Fragment.encode(ProductsId.mariaType, row.productId()),
                 Fragment.lit(",\n`tier_id` = "),
-                Fragment.encode(PriceTiersId.dbType.opt(), row.tierId()),
+                Fragment.encode(PriceTiersId.mariaType.opt(), row.tierId()),
                 Fragment.lit(",\n`price` = "),
                 Fragment.encode(MariaTypes.numeric, row.price()),
                 Fragment.lit(",\n`currency_code` = "),
@@ -225,7 +226,7 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
                 Fragment.lit(",\n`valid_to` = "),
                 Fragment.encode(MariaTypes.date.opt(), row.validTo()),
                 Fragment.lit("\nwhere `price_id` = "),
-                Fragment.encode(ProductPricesId.dbType, priceId),
+                Fragment.encode(ProductPricesId.mariaType, priceId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -239,11 +240,11 @@ public class ProductPricesRepoImpl implements ProductPricesRepo {
                 "INSERT INTO `product_prices`(`price_id`, `product_id`, `tier_id`, `price`,"
                     + " `currency_code`, `valid_from`, `valid_to`)\n"
                     + "VALUES ("),
-            Fragment.encode(ProductPricesId.dbType, unsaved.priceId()),
+            Fragment.encode(ProductPricesId.mariaType, unsaved.priceId()),
             Fragment.lit(", "),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
-            Fragment.encode(PriceTiersId.dbType.opt(), unsaved.tierId()),
+            Fragment.encode(PriceTiersId.mariaType.opt(), unsaved.tierId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.numeric, unsaved.price()),
             Fragment.lit(", "),

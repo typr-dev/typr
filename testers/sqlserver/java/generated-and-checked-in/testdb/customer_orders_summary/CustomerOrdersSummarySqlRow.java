@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customers.CustomersId;
 import testdb.orders.OrdersId;
+import testdb.userdefined.Email;
 
 /** SQL file: customer-orders-summary.sql */
 public record CustomerOrdersSummarySqlRow(
@@ -23,7 +24,7 @@ public record CustomerOrdersSummarySqlRow(
     /** Points to {@link testdb.customers.CustomersRow#name()} */
     @JsonProperty("customer_name") String customerName,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    @JsonProperty("customer_email") String customerEmail,
+    @JsonProperty("customer_email") /* user-picked */ Email customerEmail,
     /** Points to {@link testdb.orders.OrdersRow#orderId()} */
     @JsonProperty("order_count") Optional<OrdersId> orderCount,
     /** Points to {@link testdb.orders.OrdersRow#totalAmount()} */
@@ -34,8 +35,8 @@ public record CustomerOrdersSummarySqlRow(
     @JsonProperty("last_order_date") Optional<LocalDateTime> lastOrderDate)
     implements Tuple7<
         CustomersId,
-        String,
-        String,
+        String, /* user-picked */
+        Email,
         Optional<OrdersId>,
         Optional<BigDecimal>,
         Optional<BigDecimal>,
@@ -67,7 +68,7 @@ public record CustomerOrdersSummarySqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public CustomerOrdersSummarySqlRow withCustomerEmail(String customerEmail) {
+  public CustomerOrdersSummarySqlRow withCustomerEmail(/* user-picked */ Email customerEmail) {
     return new CustomerOrdersSummarySqlRow(
         customerId,
         customerName,
@@ -135,7 +136,7 @@ public record CustomerOrdersSummarySqlRow(
       RowParsers.of(
           CustomersId.sqlServerType,
           SqlServerTypes.nvarchar,
-          SqlServerTypes.nvarchar,
+          Email.sqlServerType,
           OrdersId.sqlServerType.opt(),
           SqlServerTypes.money.opt(),
           SqlServerTypes.money.opt(),
@@ -166,7 +167,7 @@ public record CustomerOrdersSummarySqlRow(
   ;
 
   @Override
-  public String _3() {
+  public /* user-picked */ Email _3() {
     return customerEmail;
   }
   ;

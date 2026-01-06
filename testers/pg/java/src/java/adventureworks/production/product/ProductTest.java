@@ -167,7 +167,7 @@ public class ProductTest extends SnapshotTest {
                             p.reverse(Name.bijection)
                                 .upper(Name.bijection)
                                 .stringAppend(
-                                    new SqlExpr.ConstReq<>(new Name("flaff"), Name.dbType),
+                                    new SqlExpr.ConstReq<>(new Name("flaff"), Name.pgType),
                                     Name.bijection)
                                 .substring(
                                     new SqlExpr.ConstReq<>(2, PgTypes.int4),
@@ -179,7 +179,7 @@ public class ProductTest extends SnapshotTest {
                         p -> p.sizeunitmeasurecode(),
                         p ->
                             new SqlExpr.ConstOpt<>(
-                                Optional.of(unitmeasure.unitmeasurecode()), UnitmeasureId.dbType))
+                                Optional.of(unitmeasure.unitmeasurecode()), UnitmeasureId.pgType))
                     .setComputedValue(
                         p -> p.sellstartdate(),
                         p -> new SqlExpr.ConstReq<>(sellStartDate, PgTypes.timestamp))

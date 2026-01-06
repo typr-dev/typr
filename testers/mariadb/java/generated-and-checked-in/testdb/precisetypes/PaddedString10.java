@@ -31,7 +31,7 @@ public record PaddedString10(@JsonValue String value) implements PaddedStringN {
   public static Bijection<PaddedString10, String> bijection =
       Bijection.of(PaddedString10::value, PaddedString10::new);
 
-  public static MariaType<PaddedString10> dbType =
+  public static MariaType<PaddedString10> mariaType =
       MariaTypes.char_.bimap(PaddedString10::new, PaddedString10::value);
 
   public static Optional<PaddedString10> of(String value) {

@@ -11,13 +11,13 @@ import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
 import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
 import dev.typr.foundations.scala.TupleExpr3
+import testdb.userdefined.IsActive
 
-class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3[CustomerStatusId, String, Boolean] with RelationStructure[CustomerStatusFields, CustomerStatusRow]  with FieldsBase[CustomerStatusRow] {
+class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3[CustomerStatusId, String, /* user-picked */ IsActive] with RelationStructure[CustomerStatusFields, CustomerStatusRow]  with FieldsBase[CustomerStatusRow] {
   def statusCode: IdField[CustomerStatusId, CustomerStatusRow] = {
     new IdField[CustomerStatusId, CustomerStatusRow](
       _path,
@@ -26,7 +26,7 @@ class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(statusCode = value),
-      CustomerStatusId.dbType
+      CustomerStatusId.mariaType
     )
   }
 
@@ -42,15 +42,15 @@ class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3
     )
   }
 
-  def isActive: Field[Boolean, CustomerStatusRow] = {
-    new Field[Boolean, CustomerStatusRow](
+  def isActive: Field[/* user-picked */ IsActive, CustomerStatusRow] = {
+    new Field[/* user-picked */ IsActive, CustomerStatusRow](
       _path,
       "is_active",
       _.isActive,
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsActive.mariaType
     )
   }
 
@@ -64,7 +64,7 @@ class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3
 
   override def `_2`: SqlExpr[String] = description
 
-  override def `_3`: SqlExpr[Boolean] = isActive
+  override def `_3`: SqlExpr[/* user-picked */ IsActive] = isActive
 }
 
 object CustomerStatusFields {

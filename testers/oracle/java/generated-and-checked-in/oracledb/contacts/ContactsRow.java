@@ -11,18 +11,18 @@ import dev.typr.foundations.RowParser;
 import dev.typr.foundations.RowParsers;
 import dev.typr.foundations.Tuple.Tuple4;
 import java.util.Optional;
-import oracledb.EmailTableT;
 import oracledb.TagVarrayT;
 import oracledb.customtypes.Defaulted;
+import oracledb.userdefined.Email;
 
 /** Table: CONTACTS Primary key: CONTACT_ID */
 public record ContactsRow(
     /** Default: "TYPR"."ISEQ$$_72857".nextval */
     @JsonProperty("CONTACT_ID") ContactsId contactId,
     @JsonProperty("NAME") String name,
-    @JsonProperty("EMAILS") Optional<EmailTableT> emails,
+    @JsonProperty("EMAILS") Optional</* user-picked */ Email> emails,
     @JsonProperty("TAGS") Optional<TagVarrayT> tags)
-    implements Tuple4<ContactsId, String, Optional<EmailTableT>, Optional<TagVarrayT>> {
+    implements Tuple4<ContactsId, String, Optional</* user-picked */ Email>, Optional<TagVarrayT>> {
   /** Default: "TYPR"."ISEQ$$_72857".nextval */
   public ContactsRow withContactId(ContactsId contactId) {
     return new ContactsRow(contactId, name, emails, tags);
@@ -34,7 +34,7 @@ public record ContactsRow(
   }
   ;
 
-  public ContactsRow withEmails(Optional<EmailTableT> emails) {
+  public ContactsRow withEmails(Optional</* user-picked */ Email> emails) {
     return new ContactsRow(contactId, name, emails, tags);
   }
   ;
@@ -48,7 +48,7 @@ public record ContactsRow(
       RowParsers.of(
           ContactsId.oracleType,
           OracleTypes.varchar2,
-          EmailTableT.oracleType.opt(),
+          Email.oracleType.opt(),
           TagVarrayT.oracleType.opt(),
           ContactsRow::new,
           row -> new Object[] {row.contactId(), row.name(), row.emails(), row.tags()});
@@ -67,7 +67,7 @@ public record ContactsRow(
   ;
 
   @Override
-  public Optional<EmailTableT> _3() {
+  public Optional</* user-picked */ Email> _3() {
     return emails;
   }
   ;

@@ -30,7 +30,7 @@ public class TitleRepoImpl implements TitleRepo {
   public Boolean deleteById(TitleId code, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"public\".\"title\" where \"code\" = "),
-                Fragment.encode(TitleId.dbType, code),
+                Fragment.encode(TitleId.pgType, code),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -41,7 +41,7 @@ public class TitleRepoImpl implements TitleRepo {
   public Integer deleteByIds(TitleId[] codes, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("),
-            Fragment.encode(TitleId.dbTypeArray, codes),
+            Fragment.encode(TitleId.pgTypeArray, codes),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -51,7 +51,7 @@ public class TitleRepoImpl implements TitleRepo {
   public TitleRow insert(TitleRow unsaved, Connection c) {
     return interpolate(
             Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("),
-            Fragment.encode(TitleId.dbType, unsaved.code()),
+            Fragment.encode(TitleId.pgType, unsaved.code()),
             Fragment.lit(")\nRETURNING \"code\"\n"))
         .updateReturning(TitleRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -80,7 +80,7 @@ public class TitleRepoImpl implements TitleRepo {
   public Optional<TitleRow> selectById(TitleId code, Connection c) {
     return interpolate(
             Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = "),
-            Fragment.encode(TitleId.dbType, code),
+            Fragment.encode(TitleId.pgType, code),
             Fragment.lit(""))
         .query(TitleRow._rowParser.first())
         .runUnchecked(c);
@@ -90,7 +90,7 @@ public class TitleRepoImpl implements TitleRepo {
   public List<TitleRow> selectByIds(TitleId[] codes, Connection c) {
     return interpolate(
             Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("),
-            Fragment.encode(TitleId.dbTypeArray, codes),
+            Fragment.encode(TitleId.pgTypeArray, codes),
             Fragment.lit(")"))
         .query(TitleRow._rowParser.all())
         .runUnchecked(c);
@@ -113,7 +113,7 @@ public class TitleRepoImpl implements TitleRepo {
   public TitleRow upsert(TitleRow unsaved, Connection c) {
     return interpolate(
             Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("),
-            Fragment.encode(TitleId.dbType, unsaved.code()),
+            Fragment.encode(TitleId.pgType, unsaved.code()),
             Fragment.lit(
                 ")\n"
                     + "on conflict (\"code\")\n"

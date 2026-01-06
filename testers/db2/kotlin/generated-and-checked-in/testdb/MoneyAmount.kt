@@ -19,7 +19,7 @@ data class MoneyAmount(@field:JsonValue val value: BigDecimal) {
     val bijection: Bijection<MoneyAmount, BigDecimal> =
       Bijection.of(MoneyAmount::value, ::MoneyAmount)
 
-    val dbType: Db2Type<MoneyAmount> =
+    val db2Type: Db2Type<MoneyAmount> =
       KotlinDbTypes.Db2Types.decimal.bimap(::MoneyAmount, MoneyAmount::value).renamed("\"MONEY_AMOUNT\"")
   }
 }

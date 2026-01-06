@@ -13,22 +13,23 @@ import dev.typr.foundations.scala.SelectBuilder
 import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
+import testdb.userdefined.Email
 import dev.typr.foundations.scala.Fragment.sql
 
 class MariatestUniqueRepoImpl extends MariatestUniqueRepo {
   override def delete: DeleteBuilder[MariatestUniqueFields, MariatestUniqueRow] = DeleteBuilder.of("`mariatest_unique`", MariatestUniqueFields.structure, Dialect.MARIADB)
 
-  override def deleteById(id: MariatestUniqueId)(using c: Connection): Boolean = sql"delete from `mariatest_unique` where `id` = ${Fragment.encode(MariatestUniqueId.dbType, id)}".update().runUnchecked(c) > 0
+  override def deleteById(id: MariatestUniqueId)(using c: Connection): Boolean = sql"delete from `mariatest_unique` where `id` = ${Fragment.encode(MariatestUniqueId.mariaType, id)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[MariatestUniqueId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestUniqueId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestUniqueId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `mariatest_unique` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: MariatestUniqueRow)(using c: Connection): MariatestUniqueRow = {
   sql"""insert into `mariatest_unique`(`email`, `code`, `category`)
-    values (${Fragment.encode(MariaTypes.varchar, unsaved.email)}, ${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.category)})
+    values (${Fragment.encode(Email.mariaType, unsaved.email)}, ${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.category)})
     RETURNING `id`, `email`, `code`, `category`
     """
     .updateReturning(MariatestUniqueRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -38,7 +39,7 @@ class MariatestUniqueRepoImpl extends MariatestUniqueRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit("`email`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.email)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Email.mariaType, unsaved.email)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`code`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.code)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`category`")): @scala.annotation.nowarn
@@ -63,12 +64,12 @@ class MariatestUniqueRepoImpl extends MariatestUniqueRepo {
   override def selectById(id: MariatestUniqueId)(using c: Connection): Option[MariatestUniqueRow] = {
     sql"""select `id`, `email`, `code`, `category`
     from `mariatest_unique`
-    where `id` = ${Fragment.encode(MariatestUniqueId.dbType, id)}""".query(MariatestUniqueRow.`_rowParser`.first()).runUnchecked(c)
+    where `id` = ${Fragment.encode(MariatestUniqueId.mariaType, id)}""".query(MariatestUniqueRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[MariatestUniqueId])(using c: Connection): List[MariatestUniqueRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestUniqueId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestUniqueId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category` from `mariatest_unique` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestUniqueRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -88,10 +89,10 @@ class MariatestUniqueRepoImpl extends MariatestUniqueRepo {
     """.query(MariatestUniqueRow.`_rowParser`.first()).runUnchecked(c)
   }
 
-  override def selectByUniqueEmail(email: String)(using c: Connection): Option[MariatestUniqueRow] = {
+  override def selectByUniqueEmail(email: /* user-picked */ Email)(using c: Connection): Option[MariatestUniqueRow] = {
     sql"""select `id`, `email`, `code`, `category`
     from `mariatest_unique`
-    where `email` = ${Fragment.encode(MariaTypes.varchar, email)}
+    where `email` = ${Fragment.encode(Email.mariaType, email)}
     """.query(MariatestUniqueRow.`_rowParser`.first()).runUnchecked(c)
   }
 
@@ -100,15 +101,15 @@ class MariatestUniqueRepoImpl extends MariatestUniqueRepo {
   override def update(row: MariatestUniqueRow)(using c: Connection): Boolean = {
     val id: MariatestUniqueId = row.id
     return sql"""update `mariatest_unique`
-    set `email` = ${Fragment.encode(MariaTypes.varchar, row.email)},
+    set `email` = ${Fragment.encode(Email.mariaType, row.email)},
     `code` = ${Fragment.encode(MariaTypes.varchar, row.code)},
     `category` = ${Fragment.encode(MariaTypes.varchar, row.category)}
-    where `id` = ${Fragment.encode(MariatestUniqueId.dbType, id)}""".update().runUnchecked(c) > 0
+    where `id` = ${Fragment.encode(MariatestUniqueId.mariaType, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: MariatestUniqueRow)(using c: Connection): MariatestUniqueRow = {
   sql"""INSERT INTO `mariatest_unique`(`id`, `email`, `code`, `category`)
-    VALUES (${Fragment.encode(MariatestUniqueId.dbType, unsaved.id)}, ${Fragment.encode(MariaTypes.varchar, unsaved.email)}, ${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.category)})
+    VALUES (${Fragment.encode(MariatestUniqueId.mariaType, unsaved.id)}, ${Fragment.encode(Email.mariaType, unsaved.email)}, ${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.category)})
     ON DUPLICATE KEY UPDATE `email` = VALUES(`email`),
     `code` = VALUES(`code`),
     `category` = VALUES(`category`)

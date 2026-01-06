@@ -73,7 +73,7 @@ public class OrdersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderId(value),
-        OrdersId.dbType);
+        OrdersId.mariaType);
   }
 
   public Field<String, OrdersRow> orderNumber() {
@@ -95,7 +95,7 @@ public class OrdersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCustomerId(value),
-        CustomersId.dbType);
+        CustomersId.mariaType);
   }
 
   public Field<String, OrdersRow> orderStatus() {
@@ -128,7 +128,7 @@ public class OrdersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withShippingAddressId(value),
-        CustomerAddressesId.dbType);
+        CustomerAddressesId.mariaType);
   }
 
   public OptField<CustomerAddressesId, OrdersRow> billingAddressId() {
@@ -139,7 +139,7 @@ public class OrdersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withBillingAddressId(value),
-        CustomerAddressesId.dbType);
+        CustomerAddressesId.mariaType);
   }
 
   public Field<BigDecimal, OrdersRow> subtotal() {
@@ -216,7 +216,7 @@ public class OrdersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withPromotionId(value),
-        PromotionsId.dbType);
+        PromotionsId.mariaType);
   }
 
   public OptField<String, OrdersRow> notes() {

@@ -9,6 +9,7 @@ import dev.typr.foundations.scala.DeleteBuilder
 import dev.typr.foundations.scala.SelectBuilder
 import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
+import testdb.userdefined.Email
 
 trait MariatestUniqueRepo {
   def delete: DeleteBuilder[MariatestUniqueFields, MariatestUniqueRow]
@@ -36,7 +37,7 @@ trait MariatestUniqueRepo {
     category: String
   )(using c: Connection): Option[MariatestUniqueRow]
 
-  def selectByUniqueEmail(email: String)(using c: Connection): Option[MariatestUniqueRow]
+  def selectByUniqueEmail(email: /* user-picked */ Email)(using c: Connection): Option[MariatestUniqueRow]
 
   def update: UpdateBuilder[MariatestUniqueFields, MariatestUniqueRow]
 

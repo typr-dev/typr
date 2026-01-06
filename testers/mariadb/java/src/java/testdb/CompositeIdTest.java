@@ -11,6 +11,7 @@ import testdb.customtypes.Defaulted.Provided;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.product_categories.*;
 import testdb.products.*;
+import testdb.userdefined.IsPrimary;
 
 /** Tests for composite primary keys using the product_categories table. */
 public class CompositeIdTest {
@@ -76,7 +77,7 @@ public class CompositeIdTest {
               new ProductCategoriesRowUnsaved(
                   product.productId(),
                   category.categoryId(),
-                  new Provided<>(true),
+                  new Provided<>(new IsPrimary(true)),
                   new Provided<>((short) 1)),
               c);
 
@@ -86,7 +87,7 @@ public class CompositeIdTest {
           assertTrue(selected.isPresent());
           assertEquals(product.productId(), selected.get().productId());
           assertEquals(category.categoryId(), selected.get().categoryId());
-          assertTrue(selected.get().isPrimary());
+          assertEquals(new IsPrimary(true), selected.get().isPrimary());
           assertEquals((short) 1, (short) selected.get().sortOrder());
         });
   }
@@ -137,14 +138,14 @@ public class CompositeIdTest {
               new ProductCategoriesRowUnsaved(
                   product.productId(),
                   category1.categoryId(),
-                  new Provided<>(true),
+                  new Provided<>(new IsPrimary(true)),
                   new Provided<>((short) 1)),
               c);
           productCategoriesRepo.insert(
               new ProductCategoriesRowUnsaved(
                   product.productId(),
                   category2.categoryId(),
-                  new Provided<>(false),
+                  new Provided<>(new IsPrimary(false)),
                   new Provided<>((short) 2)),
               c);
 
@@ -155,8 +156,8 @@ public class CompositeIdTest {
           var tracked = productCategoriesRepo.selectByIdsTracked(ids, c);
 
           assertEquals(2, tracked.size());
-          assertTrue(tracked.get(id1).isPrimary());
-          assertFalse(tracked.get(id2).isPrimary());
+          assertEquals(new IsPrimary(true), tracked.get(id1).isPrimary());
+          assertEquals(new IsPrimary(false), tracked.get(id2).isPrimary());
         });
   }
 
@@ -174,17 +175,17 @@ public class CompositeIdTest {
                   new ProductCategoriesRowUnsaved(
                       product.productId(),
                       category.categoryId(),
-                      new Provided<>(false),
+                      new Provided<>(new IsPrimary(false)),
                       new Provided<>((short) 10)),
                   c);
 
-          var updated = inserted.withIsPrimary(true).withSortOrder((short) 5);
+          var updated = inserted.withIsPrimary(new IsPrimary(true)).withSortOrder((short) 5);
           var success = productCategoriesRepo.update(updated, c);
           assertTrue(success);
 
           var selected = productCategoriesRepo.selectById(inserted.compositeId(), c);
           assertTrue(selected.isPresent());
-          assertTrue(selected.get().isPrimary());
+          assertEquals(new IsPrimary(true), selected.get().isPrimary());
           assertEquals((short) 5, (short) selected.get().sortOrder());
         });
   }
@@ -255,16 +256,16 @@ public class CompositeIdTest {
 
           var row =
               new ProductCategoriesRow(
-                  product.productId(), category.categoryId(), false, (short) 1);
+                  product.productId(), category.categoryId(), new IsPrimary(false), (short) 1);
           var inserted = productCategoriesRepo.upsert(row, c);
-          assertFalse(inserted.isPrimary());
+          assertEquals(new IsPrimary(false), inserted.isPrimary());
           assertEquals((short) 1, (short) inserted.sortOrder());
 
           var updatedRow =
               new ProductCategoriesRow(
-                  product.productId(), category.categoryId(), true, (short) 99);
+                  product.productId(), category.categoryId(), new IsPrimary(true), (short) 99);
           var updated = productCategoriesRepo.upsert(updatedRow, c);
-          assertTrue(updated.isPrimary());
+          assertEquals(new IsPrimary(true), updated.isPrimary());
           assertEquals((short) 99, (short) updated.sortOrder());
 
           var all = productCategoriesRepo.selectAll(c);
@@ -288,19 +289,22 @@ public class CompositeIdTest {
               new ProductCategoriesRowUnsaved(
                   product1.productId(),
                   category.categoryId(),
-                  new Provided<>(true),
+                  new Provided<>(new IsPrimary(true)),
                   new Provided<>((short) 1)),
               c);
           productCategoriesRepo.insert(
               new ProductCategoriesRowUnsaved(
                   product2.productId(),
                   category.categoryId(),
-                  new Provided<>(false),
+                  new Provided<>(new IsPrimary(false)),
                   new Provided<>((short) 2)),
               c);
 
           var primaries =
-              productCategoriesRepo.select().where(f -> f.isPrimary().isEqual(true)).toList(c);
+              productCategoriesRepo
+                  .select()
+                  .where(f -> f.isPrimary().isEqual(new IsPrimary(true)))
+                  .toList(c);
           assertEquals(1, primaries.size());
           assertEquals(product1.productId(), primaries.get(0).productId());
 
@@ -315,11 +319,14 @@ public class CompositeIdTest {
                   new ProductCategoriesId(product2.productId(), category.categoryId()), c);
           assertEquals((short) 100, (short) updated.get().sortOrder());
 
-          productCategoriesRepo.delete().where(f -> f.isPrimary().isEqual(false)).execute(c);
+          productCategoriesRepo
+              .delete()
+              .where(f -> f.isPrimary().isEqual(new IsPrimary(false)))
+              .execute(c);
 
           var remaining = productCategoriesRepo.selectAll(c);
           assertEquals(1, remaining.size());
-          assertTrue(remaining.get(0).isPrimary());
+          assertEquals(new IsPrimary(true), remaining.get(0).isPrimary());
         });
   }
 }

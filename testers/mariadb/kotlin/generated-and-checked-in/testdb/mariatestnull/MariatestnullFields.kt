@@ -171,7 +171,7 @@ data class MariatestnullFields(val _path: List<Path>) : TupleExpr41<Byte, Short,
 
   override fun rowParser(): RowParser<MariatestnullRow> = MariatestnullRow._rowParser.underlying
 
-  fun setCol(): OptField<XYZSet, MariatestnullRow> = OptField<XYZSet, MariatestnullRow>(_path, "set_col", MariatestnullRow::setCol, null, null, { row, value -> row.copy(setCol = value) }, XYZSet.dbType)
+  fun setCol(): OptField<XYZSet, MariatestnullRow> = OptField<XYZSet, MariatestnullRow>(_path, "set_col", MariatestnullRow::setCol, null, null, { row, value -> row.copy(setCol = value) }, XYZSet.mariaType)
 
   fun smallintCol(): OptField<Short, MariatestnullRow> = OptField<Short, MariatestnullRow>(_path, "smallint_col", MariatestnullRow::smallintCol, null, null, { row, value -> row.copy(smallintCol = value) }, KotlinDbTypes.MariaTypes.smallint)
 

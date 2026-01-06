@@ -38,7 +38,7 @@ case class UnitmeasureRow(
 }
 
 object UnitmeasureRow {
-  val `_rowParser`: RowParser[UnitmeasureRow] = RowParsers.of(UnitmeasureId.dbType, Name.dbType, PgTypes.timestamp)(UnitmeasureRow.apply)(row => Array[Any](row.unitmeasurecode, row.name, row.modifieddate))
+  val `_rowParser`: RowParser[UnitmeasureRow] = RowParsers.of(UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp)(UnitmeasureRow.apply)(row => Array[Any](row.unitmeasurecode, row.name, row.modifieddate))
 
   given pgText: PgText[UnitmeasureRow] = PgText.from(`_rowParser`.underlying)
 }

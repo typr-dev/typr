@@ -43,7 +43,7 @@ public class OrderItemsFields extends TupleExpr5<OrdersId, Integer, String, Inte
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderId(value),
-        OrdersId.dbType);
+        OrdersId.db2Type);
   }
 
   public IdField<Integer, OrderItemsRow> itemNumber() {

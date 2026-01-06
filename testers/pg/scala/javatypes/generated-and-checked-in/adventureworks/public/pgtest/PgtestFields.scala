@@ -300,7 +300,7 @@ class PgtestFields(val `_path`: java.util.List[Path]) extends TupleExpr70[java.l
       Optional.empty(),
       Optional.of("text"),
       (row, value) => row.copy(mydomain = value),
-      Mydomain.dbType
+      Mydomain.pgType
     )
   }
 
@@ -312,7 +312,7 @@ class PgtestFields(val `_path`: java.util.List[Path]) extends TupleExpr70[java.l
       Optional.empty(),
       Optional.of("public.myenum"),
       (row, value) => row.copy(myenum = value),
-      Myenum.dbType
+      Myenum.pgType
     )
   }
 
@@ -708,7 +708,7 @@ class PgtestFields(val `_path`: java.util.List[Path]) extends TupleExpr70[java.l
       Optional.of("text[]"),
       Optional.of("mydomain[]"),
       (row, value) => row.copy(mydomaines = value),
-      Mydomain.dbTypeArray
+      Mydomain.pgTypeArray
     )
   }
 
@@ -720,7 +720,7 @@ class PgtestFields(val `_path`: java.util.List[Path]) extends TupleExpr70[java.l
       Optional.empty(),
       Optional.of("myenum[]"),
       (row, value) => row.copy(myenumes = value),
-      Myenum.dbTypeArray
+      Myenum.pgTypeArray
     )
   }
 

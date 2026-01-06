@@ -6,6 +6,7 @@ import testdb.customers.*
 import testdb.order_items.*
 import testdb.orders.*
 import testdb.products.*
+import testdb.userdefined.Email
 import java.math.BigDecimal
 import java.util.Random
 
@@ -25,7 +26,7 @@ class ForeignKeyTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "FK Test Customer",
-                email = "fktest@example.com",
+                email = Email("fktest@example.com"),
                 c = c
             )
             val order = testInsert.Orders(
@@ -48,7 +49,7 @@ class ForeignKeyTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "OrderItems Test Customer",
-                email = "orderitems@example.com",
+                email = Email("orderitems@example.com"),
                 c = c
             )
             val product = testInsert.Products(name = "Test Product", c = c)
@@ -79,7 +80,7 @@ class ForeignKeyTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Multiple Orders Customer",
-                email = "multiorder@example.com",
+                email = Email("multiorder@example.com"),
                 c = c
             )
 
@@ -113,7 +114,7 @@ class ForeignKeyTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Multiple Items Customer",
-                email = "multiitems@example.com",
+                email = Email("multiitems@example.com"),
                 c = c
             )
             val product1 = testInsert.Products(name = "Product 1", c = c)
@@ -145,7 +146,7 @@ class ForeignKeyTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Cascade Test Customer",
-                email = "cascade@example.com",
+                email = Email("cascade@example.com"),
                 c = c
             )
             val product = testInsert.Products(name = "Cascade Product", c = c)

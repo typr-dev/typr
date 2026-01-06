@@ -18,6 +18,7 @@ import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
+import testdb.userdefined.Email
 
 class CustomersRepoImpl() : CustomersRepo {
   override fun delete(): DeleteBuilder<CustomersFields, CustomersRow> = DeleteBuilder.of("[customers]", CustomersFields.structure, Dialect.SQLSERVER)
@@ -39,7 +40,7 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun insert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersRow = Fragment.interpolate(Fragment.lit("insert into [customers]([name], [email], [created_at])\nOUTPUT INSERTED.[customer_id], INSERTED.[name], INSERTED.[email], INSERTED.[created_at]\nvalues ("), Fragment.encode(SqlServerTypes.nvarchar, unsaved.name), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.email), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")\n"))
+  ): CustomersRow = Fragment.interpolate(Fragment.lit("insert into [customers]([name], [email], [created_at])\nOUTPUT INSERTED.[customer_id], INSERTED.[name], INSERTED.[email], INSERTED.[created_at]\nvalues ("), Fragment.encode(SqlServerTypes.nvarchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.sqlServerType, unsaved.email), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")\n"))
     .updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -51,7 +52,7 @@ class CustomersRepoImpl() : CustomersRepo {
     columns.add(Fragment.lit("[name]"))
     values.add(Fragment.interpolate(Fragment.encode(SqlServerTypes.nvarchar, unsaved.name), Fragment.lit("")))
     columns.add(Fragment.lit("[email]"))
-    values.add(Fragment.interpolate(Fragment.encode(SqlServerTypes.nvarchar, unsaved.email), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(Email.sqlServerType, unsaved.email), Fragment.lit("")))
     unsaved.createdAt.visit(
       {  },
       { value -> columns.add(Fragment.lit("[created_at]"))
@@ -89,9 +90,9 @@ class CustomersRepoImpl() : CustomersRepo {
   }
 
   override fun selectByUniqueEmail(
-    email: String,
+    email: /* user-picked */ Email,
     c: Connection
-  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select [customer_id], [name], [email], [created_at]\nfrom [customers]\nwhere [email] = "), Fragment.encode(SqlServerTypes.nvarchar, email), Fragment.lit("\n")).query(CustomersRow._rowParser.first()).runUnchecked(c)
+  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select [customer_id], [name], [email], [created_at]\nfrom [customers]\nwhere [email] = "), Fragment.encode(Email.sqlServerType, email), Fragment.lit("\n")).query(CustomersRow._rowParser.first()).runUnchecked(c)
 
   override fun update(): UpdateBuilder<CustomersFields, CustomersRow> = UpdateBuilder.of("[customers]", CustomersFields.structure, CustomersRow._rowParser, Dialect.SQLSERVER)
 
@@ -100,13 +101,13 @@ class CustomersRepoImpl() : CustomersRepo {
     c: Connection
   ): Boolean {
     val customerId: CustomersId = row.customerId
-    return Fragment.interpolate(Fragment.lit("update [customers]\nset [name] = "), Fragment.encode(SqlServerTypes.nvarchar, row.name), Fragment.lit(",\n[email] = "), Fragment.encode(SqlServerTypes.nvarchar, row.email), Fragment.lit(",\n[created_at] = "), Fragment.encode(SqlServerTypes.datetime2.nullable(), row.createdAt), Fragment.lit("\nwhere [customer_id] = "), Fragment.encode(CustomersId.sqlServerType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update [customers]\nset [name] = "), Fragment.encode(SqlServerTypes.nvarchar, row.name), Fragment.lit(",\n[email] = "), Fragment.encode(Email.sqlServerType, row.email), Fragment.lit(",\n[created_at] = "), Fragment.encode(SqlServerTypes.datetime2.nullable(), row.createdAt), Fragment.lit("\nwhere [customer_id] = "), Fragment.encode(CustomersId.sqlServerType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersRow = Fragment.interpolate(Fragment.lit("MERGE INTO [customers] AS target\nUSING (VALUES ("), Fragment.encode(CustomersId.sqlServerType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.name), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.email), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")) AS source([customer_id], [name], [email], [created_at])\nON target.[customer_id] = source.[customer_id]\nWHEN MATCHED THEN UPDATE SET [name] = source.[name],\n[email] = source.[email],\n[created_at] = source.[created_at]\nWHEN NOT MATCHED THEN INSERT ([customer_id], [name], [email], [created_at]) VALUES ("), Fragment.encode(CustomersId.sqlServerType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.name), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.email), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")\nOUTPUT INSERTED.[customer_id], INSERTED.[name], INSERTED.[email], INSERTED.[created_at];"))
+  ): CustomersRow = Fragment.interpolate(Fragment.lit("MERGE INTO [customers] AS target\nUSING (VALUES ("), Fragment.encode(CustomersId.sqlServerType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.sqlServerType, unsaved.email), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")) AS source([customer_id], [name], [email], [created_at])\nON target.[customer_id] = source.[customer_id]\nWHEN MATCHED THEN UPDATE SET [name] = source.[name],\n[email] = source.[email],\n[created_at] = source.[created_at]\nWHEN NOT MATCHED THEN INSERT ([customer_id], [name], [email], [created_at]) VALUES ("), Fragment.encode(CustomersId.sqlServerType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.sqlServerType, unsaved.email), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")\nOUTPUT INSERTED.[customer_id], INSERTED.[name], INSERTED.[email], INSERTED.[created_at];"))
     .updateReturning(CustomersRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

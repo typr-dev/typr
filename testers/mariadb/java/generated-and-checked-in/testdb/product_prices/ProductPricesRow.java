@@ -92,9 +92,9 @@ public record ProductPricesRow(
 
   public static RowParser<ProductPricesRow> _rowParser =
       RowParsers.of(
-          ProductPricesId.dbType,
-          ProductsId.dbType,
-          PriceTiersId.dbType.opt(),
+          ProductPricesId.mariaType,
+          ProductsId.mariaType,
+          PriceTiersId.mariaType.opt(),
           MariaTypes.numeric,
           MariaTypes.char_,
           MariaTypes.date,

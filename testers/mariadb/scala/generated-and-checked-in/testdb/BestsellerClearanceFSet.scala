@@ -24,8 +24,6 @@ case class BestsellerClearanceFSet(members: Set[BestsellerClearanceFSetMember]) 
 }
 
 object BestsellerClearanceFSet {
-  given dbType: MariaType[BestsellerClearanceFSet] = MariaTypes.set.bimap((ms: MariaSet) => BestsellerClearanceFSet.fromString(ms.toCommaSeparated), (s: BestsellerClearanceFSet) => MariaSet.fromString(s.toCommaSeparated))
-
   def empty: BestsellerClearanceFSet = BestsellerClearanceFSet(Set.empty)
 
   def fromString(str: String): BestsellerClearanceFSet = {
@@ -34,6 +32,8 @@ object BestsellerClearanceFSet {
       else BestsellerClearanceFSet(str.split(",").flatMap(v => BestsellerClearanceFSetMember.ByName.get(v.trim)).toSet)
     }
   }
+
+  given mariaType: MariaType[BestsellerClearanceFSet] = MariaTypes.set.bimap((ms: MariaSet) => BestsellerClearanceFSet.fromString(ms.toCommaSeparated), (s: BestsellerClearanceFSet) => MariaSet.fromString(s.toCommaSeparated))
 
   def of(members: List[BestsellerClearanceFSetMember]): BestsellerClearanceFSet = BestsellerClearanceFSet(members.toSet)
 }

@@ -194,11 +194,11 @@ public record AddressRow(
 
   public static RowParser<AddressRow> _rowParser =
       RowParsers.of(
-          AddressId.dbType,
+          AddressId.pgType,
           PgTypes.text,
           PgTypes.text.opt(),
           PgTypes.text,
-          StateprovinceId.dbType,
+          StateprovinceId.pgType,
           PgTypes.text,
           PgTypes.bytea.opt(),
           PgTypes.uuid,

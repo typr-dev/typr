@@ -24,7 +24,7 @@ class TitleFields(val `_path`: java.util.List[Path]) extends TupleExpr1[TitleId]
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(code = value),
-      TitleId.dbType
+      TitleId.pgType
     )
   }
 

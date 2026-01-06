@@ -18,7 +18,7 @@ case class SqlIdentifier(@JsonValue value: String)
 object SqlIdentifier {
   given bijection: Bijection[SqlIdentifier, String] = Bijection.apply[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
 
-  given dbType: PgType[SqlIdentifier] = PgTypes.name.bimap(SqlIdentifier.apply, _.value).renamed(""""information_schema"."sql_identifier"""")
+  given pgType: PgType[SqlIdentifier] = PgTypes.name.bimap(SqlIdentifier.apply, _.value).renamed(""""information_schema"."sql_identifier"""")
 
-  given dbTypeArray: PgType[Array[SqlIdentifier]] = PgTypes.nameArray.bimap(xs => xs.map(SqlIdentifier.apply), xs => xs.map(_.value)).renamed(""""information_schema"."sql_identifier"[]""")
+  given pgTypeArray: PgType[Array[SqlIdentifier]] = PgTypes.nameArray.bimap(xs => xs.map(SqlIdentifier.apply), xs => xs.map(_.value)).renamed(""""information_schema"."sql_identifier"[]""")
 }

@@ -31,7 +31,7 @@ public record MariatestIdentityRow(
 
   public static RowParser<MariatestIdentityRow> _rowParser =
       RowParsers.of(
-          MariatestIdentityId.dbType,
+          MariatestIdentityId.mariaType,
           MariaTypes.varchar,
           MariatestIdentityRow::new,
           row -> new Object[] {row.id(), row.name()});

@@ -57,7 +57,7 @@ public class InventoryFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withInventoryId(value),
-        InventoryId.dbType);
+        InventoryId.mariaType);
   }
 
   public Field<ProductsId, InventoryRow> productId() {
@@ -68,7 +68,7 @@ public class InventoryFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public Field<WarehousesId, InventoryRow> warehouseId() {
@@ -79,7 +79,7 @@ public class InventoryFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withWarehouseId(value),
-        WarehousesId.dbType);
+        WarehousesId.mariaType);
   }
 
   public Field<Integer, InventoryRow> quantityOnHand() {

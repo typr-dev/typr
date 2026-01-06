@@ -39,13 +39,13 @@ data class String255 private constructor(@field:JsonValue val value: String) : S
     val bijection: Bijection<String255, String> =
       Bijection.of(String255::value, ::String255)
 
-    val dbType: PgType<String255> =
+    fun of(value: String): String255? = if (value.length <= 255) String255(value) else null
+
+    val pgType: PgType<String255> =
       PgTypes.text.bimap(::String255, String255::value)
 
-    val dbTypeArray: PgType<Array<String255>> =
+    val pgTypeArray: PgType<Array<String255>> =
       PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::String255, String255::class.java) }, { xs -> arrayMap.map(xs, String255::value, String::class.java) })
-
-    fun of(value: String): String255? = if (value.length <= 255) String255(value) else null
 
     fun truncate(value: String): String255 = String255(if (value.length <= 255) value else value.substring(0, 255))
 

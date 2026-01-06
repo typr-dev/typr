@@ -41,7 +41,7 @@ public class ProductsRepoImpl implements ProductsRepo {
   public Integer deleteByIds(ProductsId[] productIds, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"products\"\nwhere \"product_id\" = ANY("),
-            Fragment.encode(ProductsId.dbTypeArray, productIds),
+            Fragment.encode(ProductsId.duckDbTypeArray, productIds),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -105,7 +105,7 @@ public class ProductsRepoImpl implements ProductsRepo {
                 "select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\n"
                     + "from \"products\"\n"
                     + "where \"product_id\" = ANY("),
-            Fragment.encode(ProductsId.dbTypeArray, productIds),
+            Fragment.encode(ProductsId.duckDbTypeArray, productIds),
             Fragment.lit(")"))
         .query(ProductsRow._rowParser.all())
         .runUnchecked(c);

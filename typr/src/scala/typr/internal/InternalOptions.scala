@@ -21,5 +21,6 @@ case class InternalOptions(
     naming: Naming,
     pkg: jvm.QIdent,
     readonlyRepo: Selector,
-    typeOverride: TypeOverride
+    typeOverride: TypeOverride,
+    typeDefinitions: TypeDefinitions
 )

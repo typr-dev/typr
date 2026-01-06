@@ -27,19 +27,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class ProductRepoImpl extends ProductRepo {
   override def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of(""""production"."product"""", ProductFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(productid: ProductId)(using c: Connection): Boolean = sql"""delete from "production"."product" where "productid" = ${Fragment.encode(ProductId.dbType, productid)}""".update().runUnchecked(c) > 0
+  override def deleteById(productid: ProductId)(using c: Connection): Boolean = sql"""delete from "production"."product" where "productid" = ${Fragment.encode(ProductId.pgType, productid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(productids: Array[ProductId])(using c: Connection): Int = {
     sql"""delete
     from "production"."product"
-    where "productid" = ANY(${Fragment.encode(ProductId.dbTypeArray, productids)})"""
+    where "productid" = ANY(${Fragment.encode(ProductId.pgTypeArray, productids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: ProductRow)(using c: Connection): ProductRow = {
   sql"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
-    values (${Fragment.encode(ProductId.dbType, unsaved.productid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.text, unsaved.productnumber)}, ${Fragment.encode(Flag.dbType, unsaved.makeflag)}::bool, ${Fragment.encode(Flag.dbType, unsaved.finishedgoodsflag)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.color)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.safetystocklevel)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.reorderpoint)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.listprice)}::numeric, ${Fragment.encode(PgTypes.text.nullable, unsaved.size)}, ${Fragment.encode(UnitmeasureId.dbType.nullable, unsaved.sizeunitmeasurecode)}::bpchar, ${Fragment.encode(UnitmeasureId.dbType.nullable, unsaved.weightunitmeasurecode)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.weight)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.daystomanufacture)}::int4, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.productline)}::bpchar, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.`class`)}::bpchar, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.style)}::bpchar, ${Fragment.encode(ProductsubcategoryId.dbType.nullable, unsaved.productsubcategoryid)}::int4, ${Fragment.encode(ProductmodelId.dbType.nullable, unsaved.productmodelid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.sellenddate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.discontinueddate)}::timestamp, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.text, unsaved.productnumber)}, ${Fragment.encode(Flag.pgType, unsaved.makeflag)}::bool, ${Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.color)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.safetystocklevel)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.reorderpoint)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.listprice)}::numeric, ${Fragment.encode(PgTypes.text.nullable, unsaved.size)}, ${Fragment.encode(UnitmeasureId.pgType.nullable, unsaved.sizeunitmeasurecode)}::bpchar, ${Fragment.encode(UnitmeasureId.pgType.nullable, unsaved.weightunitmeasurecode)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.weight)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.daystomanufacture)}::int4, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.productline)}::bpchar, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.`class`)}::bpchar, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.style)}::bpchar, ${Fragment.encode(ProductsubcategoryId.pgType.nullable, unsaved.productsubcategoryid)}::int4, ${Fragment.encode(ProductmodelId.pgType.nullable, unsaved.productmodelid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.sellenddate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.discontinueddate)}::timestamp, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
     """
     .updateReturning(ProductRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -49,7 +49,7 @@ class ProductRepoImpl extends ProductRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.name)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""productnumber"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.productnumber)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""color"""")): @scala.annotation.nowarn
@@ -65,9 +65,9 @@ class ProductRepoImpl extends ProductRepo {
     columns.addOne(Fragment.lit(""""size"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text.nullable, unsaved.size)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""sizeunitmeasurecode"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(UnitmeasureId.dbType.nullable, unsaved.sizeunitmeasurecode)}::bpchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(UnitmeasureId.pgType.nullable, unsaved.sizeunitmeasurecode)}::bpchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""weightunitmeasurecode"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(UnitmeasureId.dbType.nullable, unsaved.weightunitmeasurecode)}::bpchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(UnitmeasureId.pgType.nullable, unsaved.weightunitmeasurecode)}::bpchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""weight"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.weight)}::numeric"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""daystomanufacture"""")): @scala.annotation.nowarn
@@ -79,9 +79,9 @@ class ProductRepoImpl extends ProductRepo {
     columns.addOne(Fragment.lit(""""style"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.bpchar.nullable, unsaved.style)}::bpchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""productsubcategoryid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ProductsubcategoryId.dbType.nullable, unsaved.productsubcategoryid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(ProductsubcategoryId.pgType.nullable, unsaved.productsubcategoryid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""productmodelid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ProductmodelId.dbType.nullable, unsaved.productmodelid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(ProductmodelId.pgType.nullable, unsaved.productmodelid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""sellstartdate"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate)}::timestamp"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""sellenddate"""")): @scala.annotation.nowarn
@@ -90,15 +90,15 @@ class ProductRepoImpl extends ProductRepo {
     values.addOne(sql"${Fragment.encode(PgTypes.timestamp.nullable, unsaved.discontinueddate)}::timestamp"): @scala.annotation.nowarn
     unsaved.productid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""productid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ProductId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""productid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ProductId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.makeflag.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""makeflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Flag.dbType, value)}::bool"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""makeflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Flag.pgType, value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.finishedgoodsflag.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""finishedgoodsflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Flag.dbType, value)}::bool"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""finishedgoodsflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Flag.pgType, value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -139,13 +139,13 @@ class ProductRepoImpl extends ProductRepo {
   override def selectById(productid: ProductId)(using c: Connection): Option[ProductRow] = {
     sql"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
     from "production"."product"
-    where "productid" = ${Fragment.encode(ProductId.dbType, productid)}""".query(ProductRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = ${Fragment.encode(ProductId.pgType, productid)}""".query(ProductRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(productids: Array[ProductId])(using c: Connection): List[ProductRow] = {
     sql"""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
     from "production"."product"
-    where "productid" = ANY(${Fragment.encode(ProductId.dbTypeArray, productids)})""".query(ProductRow.`_rowParser`.all()).runUnchecked(c)
+    where "productid" = ANY(${Fragment.encode(ProductId.pgTypeArray, productids)})""".query(ProductRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(productids: Array[ProductId])(using c: Connection): Map[ProductId, ProductRow] = {
@@ -159,36 +159,36 @@ class ProductRepoImpl extends ProductRepo {
   override def update(row: ProductRow)(using c: Connection): Boolean = {
     val productid: ProductId = row.productid
     return sql"""update "production"."product"
-    set "name" = ${Fragment.encode(Name.dbType, row.name)}::varchar,
+    set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "productnumber" = ${Fragment.encode(PgTypes.text, row.productnumber)},
-    "makeflag" = ${Fragment.encode(Flag.dbType, row.makeflag)}::bool,
-    "finishedgoodsflag" = ${Fragment.encode(Flag.dbType, row.finishedgoodsflag)}::bool,
+    "makeflag" = ${Fragment.encode(Flag.pgType, row.makeflag)}::bool,
+    "finishedgoodsflag" = ${Fragment.encode(Flag.pgType, row.finishedgoodsflag)}::bool,
     "color" = ${Fragment.encode(PgTypes.text.nullable, row.color)},
     "safetystocklevel" = ${Fragment.encode(ScalaDbTypes.PgTypes.int2, row.safetystocklevel)}::int2,
     "reorderpoint" = ${Fragment.encode(ScalaDbTypes.PgTypes.int2, row.reorderpoint)}::int2,
     "standardcost" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.standardcost)}::numeric,
     "listprice" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.listprice)}::numeric,
     "size" = ${Fragment.encode(PgTypes.text.nullable, row.size)},
-    "sizeunitmeasurecode" = ${Fragment.encode(UnitmeasureId.dbType.nullable, row.sizeunitmeasurecode)}::bpchar,
-    "weightunitmeasurecode" = ${Fragment.encode(UnitmeasureId.dbType.nullable, row.weightunitmeasurecode)}::bpchar,
+    "sizeunitmeasurecode" = ${Fragment.encode(UnitmeasureId.pgType.nullable, row.sizeunitmeasurecode)}::bpchar,
+    "weightunitmeasurecode" = ${Fragment.encode(UnitmeasureId.pgType.nullable, row.weightunitmeasurecode)}::bpchar,
     "weight" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, row.weight)}::numeric,
     "daystomanufacture" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, row.daystomanufacture)}::int4,
     "productline" = ${Fragment.encode(PgTypes.bpchar.nullable, row.productline)}::bpchar,
     "class" = ${Fragment.encode(PgTypes.bpchar.nullable, row.`class`)}::bpchar,
     "style" = ${Fragment.encode(PgTypes.bpchar.nullable, row.style)}::bpchar,
-    "productsubcategoryid" = ${Fragment.encode(ProductsubcategoryId.dbType.nullable, row.productsubcategoryid)}::int4,
-    "productmodelid" = ${Fragment.encode(ProductmodelId.dbType.nullable, row.productmodelid)}::int4,
+    "productsubcategoryid" = ${Fragment.encode(ProductsubcategoryId.pgType.nullable, row.productsubcategoryid)}::int4,
+    "productmodelid" = ${Fragment.encode(ProductmodelId.pgType.nullable, row.productmodelid)}::int4,
     "sellstartdate" = ${Fragment.encode(PgTypes.timestamp, row.sellstartdate)}::timestamp,
     "sellenddate" = ${Fragment.encode(PgTypes.timestamp.nullable, row.sellenddate)}::timestamp,
     "discontinueddate" = ${Fragment.encode(PgTypes.timestamp.nullable, row.discontinueddate)}::timestamp,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "productid" = ${Fragment.encode(ProductId.dbType, productid)}""".update().runUnchecked(c) > 0
+    where "productid" = ${Fragment.encode(ProductId.pgType, productid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ProductRow)(using c: Connection): ProductRow = {
   sql"""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
-    values (${Fragment.encode(ProductId.dbType, unsaved.productid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.text, unsaved.productnumber)}, ${Fragment.encode(Flag.dbType, unsaved.makeflag)}::bool, ${Fragment.encode(Flag.dbType, unsaved.finishedgoodsflag)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.color)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.safetystocklevel)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.reorderpoint)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.listprice)}::numeric, ${Fragment.encode(PgTypes.text.nullable, unsaved.size)}, ${Fragment.encode(UnitmeasureId.dbType.nullable, unsaved.sizeunitmeasurecode)}::bpchar, ${Fragment.encode(UnitmeasureId.dbType.nullable, unsaved.weightunitmeasurecode)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.weight)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.daystomanufacture)}::int4, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.productline)}::bpchar, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.`class`)}::bpchar, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.style)}::bpchar, ${Fragment.encode(ProductsubcategoryId.dbType.nullable, unsaved.productsubcategoryid)}::int4, ${Fragment.encode(ProductmodelId.dbType.nullable, unsaved.productmodelid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.sellenddate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.discontinueddate)}::timestamp, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.text, unsaved.productnumber)}, ${Fragment.encode(Flag.pgType, unsaved.makeflag)}::bool, ${Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.color)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.safetystocklevel)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.reorderpoint)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.listprice)}::numeric, ${Fragment.encode(PgTypes.text.nullable, unsaved.size)}, ${Fragment.encode(UnitmeasureId.pgType.nullable, unsaved.sizeunitmeasurecode)}::bpchar, ${Fragment.encode(UnitmeasureId.pgType.nullable, unsaved.weightunitmeasurecode)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.weight)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.daystomanufacture)}::int4, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.productline)}::bpchar, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.`class`)}::bpchar, ${Fragment.encode(PgTypes.bpchar.nullable, unsaved.style)}::bpchar, ${Fragment.encode(ProductsubcategoryId.pgType.nullable, unsaved.productsubcategoryid)}::int4, ${Fragment.encode(ProductmodelId.pgType.nullable, unsaved.productmodelid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.sellenddate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.discontinueddate)}::timestamp, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("productid")
     do update set
       "name" = EXCLUDED."name",

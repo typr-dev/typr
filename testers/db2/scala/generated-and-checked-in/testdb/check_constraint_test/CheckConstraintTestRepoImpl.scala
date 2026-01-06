@@ -20,17 +20,17 @@ import dev.typr.foundations.scala.Fragment.sql
 class CheckConstraintTestRepoImpl extends CheckConstraintTestRepo {
   override def delete: DeleteBuilder[CheckConstraintTestFields, CheckConstraintTestRow] = DeleteBuilder.of(""""CHECK_CONSTRAINT_TEST"""", CheckConstraintTestFields.structure, Dialect.DB2)
 
-  override def deleteById(id: CheckConstraintTestId)(using c: Connection): Boolean = sql"""delete from "CHECK_CONSTRAINT_TEST" where "ID" = ${Fragment.encode(CheckConstraintTestId.dbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: CheckConstraintTestId)(using c: Connection): Boolean = sql"""delete from "CHECK_CONSTRAINT_TEST" where "ID" = ${Fragment.encode(CheckConstraintTestId.db2Type, id)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[CheckConstraintTestId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(CheckConstraintTestId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(CheckConstraintTestId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""delete from "CHECK_CONSTRAINT_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: CheckConstraintTestRow)(using c: Connection): CheckConstraintTestRow = {
   sql"""SELECT "ID", "AGE", "STATUS", "PRICE" FROM FINAL TABLE (INSERT INTO "CHECK_CONSTRAINT_TEST"("ID", "AGE", "STATUS", "PRICE")
-    VALUES (${Fragment.encode(CheckConstraintTestId.dbType, unsaved.id)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.age)}, ${Fragment.encode(Db2Types.varchar, unsaved.status)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.price)}))
+    VALUES (${Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.age)}, ${Fragment.encode(Db2Types.varchar, unsaved.status)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.price)}))
     """
     .updateReturning(CheckConstraintTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -46,12 +46,12 @@ class CheckConstraintTestRepoImpl extends CheckConstraintTestRepo {
   override def selectById(id: CheckConstraintTestId)(using c: Connection): Option[CheckConstraintTestRow] = {
     sql"""select "ID", "AGE", "STATUS", "PRICE"
     from "CHECK_CONSTRAINT_TEST"
-    where "ID" = ${Fragment.encode(CheckConstraintTestId.dbType, id)}""".query(CheckConstraintTestRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(CheckConstraintTestId.db2Type, id)}""".query(CheckConstraintTestRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[CheckConstraintTestId])(using c: Connection): List[CheckConstraintTestRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(CheckConstraintTestId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(CheckConstraintTestId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""select "ID", "AGE", "STATUS", "PRICE" from "CHECK_CONSTRAINT_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(CheckConstraintTestRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -69,17 +69,17 @@ class CheckConstraintTestRepoImpl extends CheckConstraintTestRepo {
     set "AGE" = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, row.age)},
     "STATUS" = ${Fragment.encode(Db2Types.varchar, row.status)},
     "PRICE" = ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, row.price)}
-    where "ID" = ${Fragment.encode(CheckConstraintTestId.dbType, id)}""".update().runUnchecked(c) > 0
+    where "ID" = ${Fragment.encode(CheckConstraintTestId.db2Type, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: CheckConstraintTestRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "CHECK_CONSTRAINT_TEST" AS t
-    USING (VALUES (${Fragment.encode(CheckConstraintTestId.dbType, unsaved.id)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.age)}, ${Fragment.encode(Db2Types.varchar, unsaved.status)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.price)})) AS s("ID", "AGE", "STATUS", "PRICE")
+    USING (VALUES (${Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.age)}, ${Fragment.encode(Db2Types.varchar, unsaved.status)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.price)})) AS s("ID", "AGE", "STATUS", "PRICE")
     ON t."ID" = s."ID"
     WHEN MATCHED THEN UPDATE SET "AGE" = s."AGE",
     "STATUS" = s."STATUS",
     "PRICE" = s."PRICE"
-    WHEN NOT MATCHED THEN INSERT ("ID", "AGE", "STATUS", "PRICE") VALUES (${Fragment.encode(CheckConstraintTestId.dbType, unsaved.id)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.age)}, ${Fragment.encode(Db2Types.varchar, unsaved.status)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.price)})"""
+    WHEN NOT MATCHED THEN INSERT ("ID", "AGE", "STATUS", "PRICE") VALUES (${Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.age)}, ${Fragment.encode(Db2Types.varchar, unsaved.status)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.price)})"""
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

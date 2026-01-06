@@ -16,5 +16,5 @@ case class DistinctTypeTestId(@JsonValue value: Int) extends scala.AnyVal
 object DistinctTypeTestId {
   given bijection: Bijection[DistinctTypeTestId, Int] = Bijection.apply[DistinctTypeTestId, Int](_.value)(DistinctTypeTestId.apply)
 
-  given dbType: Db2Type[DistinctTypeTestId] = ScalaDbTypes.Db2Types.integer.bimap(DistinctTypeTestId.apply, _.value)
+  given db2Type: Db2Type[DistinctTypeTestId] = ScalaDbTypes.Db2Types.integer.bimap(DistinctTypeTestId.apply, _.value)
 }

@@ -42,7 +42,7 @@ class Db2testFields(val `_path`: java.util.List[Path]) extends TupleExpr24[Short
       None,
       None,
       (row, value) => row.copy(intCol = value),
-      Db2testId.dbType
+      Db2testId.db2Type
     )
   }
 

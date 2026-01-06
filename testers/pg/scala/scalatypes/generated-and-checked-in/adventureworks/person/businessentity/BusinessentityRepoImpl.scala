@@ -20,19 +20,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class BusinessentityRepoImpl extends BusinessentityRepo {
   override def delete: DeleteBuilder[BusinessentityFields, BusinessentityRow] = DeleteBuilder.of(""""person"."businessentity"""", BusinessentityFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "person"."businessentity" where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "person"."businessentity" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
     sql"""delete
     from "person"."businessentity"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})"""
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: BusinessentityRow)(using c: Connection): BusinessentityRow = {
   sql"""insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "businessentityid", "rowguid", "modifieddate"
     """
     .updateReturning(BusinessentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -43,7 +43,7 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
     val values: ListBuffer[Fragment] = ListBuffer()
     unsaved.businessentityid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(BusinessentityId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(BusinessentityId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -86,13 +86,13 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
   override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[BusinessentityRow] = {
     sql"""select "businessentityid", "rowguid", "modifieddate"
     from "person"."businessentity"
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".query(BusinessentityRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".query(BusinessentityRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[BusinessentityRow] = {
     sql"""select "businessentityid", "rowguid", "modifieddate"
     from "person"."businessentity"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})""".query(BusinessentityRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})""".query(BusinessentityRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, BusinessentityRow] = {
@@ -108,12 +108,12 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
     return sql"""update "person"."businessentity"
     set "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: BusinessentityRow)(using c: Connection): BusinessentityRow = {
   sql"""insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid")
     do update set
       "rowguid" = EXCLUDED."rowguid",

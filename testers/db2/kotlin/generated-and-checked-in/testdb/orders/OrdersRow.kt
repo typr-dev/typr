@@ -53,6 +53,6 @@ data class OrdersRow(
   ): OrdersRowUnsaved = OrdersRowUnsaved(customerId, totalAmount, orderDate, status)
 
   companion object {
-    val _rowParser: RowParser<OrdersRow> = RowParsers.of(OrdersId.dbType, CustomersId.dbType, Db2Types.date, KotlinDbTypes.Db2Types.decimal.nullable(), Db2Types.varchar.nullable(), { t0, t1, t2, t3, t4 -> OrdersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status) })
+    val _rowParser: RowParser<OrdersRow> = RowParsers.of(OrdersId.db2Type, CustomersId.db2Type, Db2Types.date, KotlinDbTypes.Db2Types.decimal.nullable(), Db2Types.varchar.nullable(), { t0, t1, t2, t3, t4 -> OrdersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status) })
   }
 }

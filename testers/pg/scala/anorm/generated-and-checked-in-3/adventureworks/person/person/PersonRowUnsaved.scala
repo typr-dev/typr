@@ -12,9 +12,10 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -39,9 +40,9 @@ case class PersonRowUnsaved(
   /** First name of the person. */
   firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  middlename: Option[Name] = None,
+  middlename: Option[/* user-picked */ MiddleName] = None,
   /** Last name of the person. */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   suffix: Option[/* max 10 chars */ String] = None,
   /** Additional contact information about the person stored in xml format. */
@@ -97,9 +98,9 @@ object PersonRowUnsaved {
       sb.append(Text.DELIMETER)
       /* user-picked */ FirstName.pgText.unsafeEncode(row.firstname, sb)
       sb.append(Text.DELIMETER)
-      Text.option(using Name.pgText).unsafeEncode(row.middlename, sb)
+      Text.option(using MiddleName.pgText).unsafeEncode(row.middlename, sb)
       sb.append(Text.DELIMETER)
-      Name.pgText.unsafeEncode(row.lastname, sb)
+      /* user-picked */ LastName.pgText.unsafeEncode(row.lastname, sb)
       sb.append(Text.DELIMETER)
       Text.option(using Text.stringInstance).unsafeEncode(row.suffix, sb)
       sb.append(Text.DELIMETER)
@@ -125,8 +126,8 @@ object PersonRowUnsaved {
             persontype = json.\("persontype").as(using Reads.StringReads),
             title = json.\("title").toOption.map(_.as(using Reads.StringReads)),
             firstname = json.\("firstname").as(using FirstName.reads),
-            middlename = json.\("middlename").toOption.map(_.as(using Name.reads)),
-            lastname = json.\("lastname").as(using Name.reads),
+            middlename = json.\("middlename").toOption.map(_.as(using MiddleName.reads)),
+            lastname = json.\("lastname").as(using LastName.reads),
             suffix = json.\("suffix").toOption.map(_.as(using Reads.StringReads)),
             additionalcontactinfo = json.\("additionalcontactinfo").toOption.map(_.as(using TypoXml.reads)),
             demographics = json.\("demographics").toOption.map(_.as(using TypoXml.reads)),
@@ -147,8 +148,8 @@ object PersonRowUnsaved {
         "persontype" -> Writes.StringWrites.writes(o.persontype),
         "title" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.title),
         "firstname" -> FirstName.writes.writes(o.firstname),
-        "middlename" -> Writes.OptionWrites(using Name.writes).writes(o.middlename),
-        "lastname" -> Name.writes.writes(o.lastname),
+        "middlename" -> Writes.OptionWrites(using MiddleName.writes).writes(o.middlename),
+        "lastname" -> LastName.writes.writes(o.lastname),
         "suffix" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.suffix),
         "additionalcontactinfo" -> Writes.OptionWrites(using TypoXml.writes).writes(o.additionalcontactinfo),
         "demographics" -> Writes.OptionWrites(using TypoXml.writes).writes(o.demographics),

@@ -6,9 +6,10 @@
 package adventureworks.person.person
 
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.DeleteBuilder
@@ -26,19 +27,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class PersonRepoImpl extends PersonRepo {
   override def delete: DeleteBuilder[PersonFields, PersonRow] = DeleteBuilder.of(""""person"."person"""", PersonFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "person"."person" where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "person"."person" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
     sql"""delete
     from "person"."person"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})"""
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   sql"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.persontype)}::bpchar, ${Fragment.encode(NameStyle.dbType, unsaved.namestyle)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.title)}, ${Fragment.encode(FirstName.dbType, unsaved.firstname)}::varchar, ${Fragment.encode(Name.dbType.nullable, unsaved.middlename)}::varchar, ${Fragment.encode(Name.dbType, unsaved.lastname)}::varchar, ${Fragment.encode(PgTypes.text.nullable, unsaved.suffix)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.emailpromotion)}::int4, ${Fragment.encode(PgTypes.xml.nullable, unsaved.additionalcontactinfo)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.demographics)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.persontype)}::bpchar, ${Fragment.encode(NameStyle.pgType, unsaved.namestyle)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.title)}, ${Fragment.encode(FirstName.pgType, unsaved.firstname)}::varchar, ${Fragment.encode(MiddleName.pgType.nullable, unsaved.middlename)}::varchar, ${Fragment.encode(LastName.pgType, unsaved.lastname)}::varchar, ${Fragment.encode(PgTypes.text.nullable, unsaved.suffix)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.emailpromotion)}::int4, ${Fragment.encode(PgTypes.xml.nullable, unsaved.additionalcontactinfo)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.demographics)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
     """
     .updateReturning(PersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -48,17 +49,17 @@ class PersonRepoImpl extends PersonRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""persontype"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.bpchar, unsaved.persontype)}::bpchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""title"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text.nullable, unsaved.title)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""firstname"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(FirstName.dbType, unsaved.firstname)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(FirstName.pgType, unsaved.firstname)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""middlename"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType.nullable, unsaved.middlename)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MiddleName.pgType.nullable, unsaved.middlename)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""lastname"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.lastname)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LastName.pgType, unsaved.lastname)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""suffix"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text.nullable, unsaved.suffix)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""additionalcontactinfo"""")): @scala.annotation.nowarn
@@ -67,7 +68,7 @@ class PersonRepoImpl extends PersonRepo {
     values.addOne(sql"${Fragment.encode(PgTypes.xml.nullable, unsaved.demographics)}::xml"): @scala.annotation.nowarn
     unsaved.namestyle.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""namestyle"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(NameStyle.dbType, value)}::bool"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""namestyle"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(NameStyle.pgType, value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.emailpromotion.visit(
       {  },
@@ -112,13 +113,13 @@ class PersonRepoImpl extends PersonRepo {
   override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[PersonRow] = {
     sql"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
     from "person"."person"
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".query(PersonRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".query(PersonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[PersonRow] = {
     sql"""select "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"
     from "person"."person"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})""".query(PersonRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})""".query(PersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, PersonRow] = {
@@ -133,23 +134,23 @@ class PersonRepoImpl extends PersonRepo {
     val businessentityid: BusinessentityId = row.businessentityid
     return sql"""update "person"."person"
     set "persontype" = ${Fragment.encode(PgTypes.bpchar, row.persontype)}::bpchar,
-    "namestyle" = ${Fragment.encode(NameStyle.dbType, row.namestyle)}::bool,
+    "namestyle" = ${Fragment.encode(NameStyle.pgType, row.namestyle)}::bool,
     "title" = ${Fragment.encode(PgTypes.text.nullable, row.title)},
-    "firstname" = ${Fragment.encode(FirstName.dbType, row.firstname)}::varchar,
-    "middlename" = ${Fragment.encode(Name.dbType.nullable, row.middlename)}::varchar,
-    "lastname" = ${Fragment.encode(Name.dbType, row.lastname)}::varchar,
+    "firstname" = ${Fragment.encode(FirstName.pgType, row.firstname)}::varchar,
+    "middlename" = ${Fragment.encode(MiddleName.pgType.nullable, row.middlename)}::varchar,
+    "lastname" = ${Fragment.encode(LastName.pgType, row.lastname)}::varchar,
     "suffix" = ${Fragment.encode(PgTypes.text.nullable, row.suffix)},
     "emailpromotion" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, row.emailpromotion)}::int4,
     "additionalcontactinfo" = ${Fragment.encode(PgTypes.xml.nullable, row.additionalcontactinfo)}::xml,
     "demographics" = ${Fragment.encode(PgTypes.xml.nullable, row.demographics)}::xml,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: PersonRow)(using c: Connection): PersonRow = {
   sql"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.persontype)}::bpchar, ${Fragment.encode(NameStyle.dbType, unsaved.namestyle)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.title)}, ${Fragment.encode(FirstName.dbType, unsaved.firstname)}::varchar, ${Fragment.encode(Name.dbType.nullable, unsaved.middlename)}::varchar, ${Fragment.encode(Name.dbType, unsaved.lastname)}::varchar, ${Fragment.encode(PgTypes.text.nullable, unsaved.suffix)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.emailpromotion)}::int4, ${Fragment.encode(PgTypes.xml.nullable, unsaved.additionalcontactinfo)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.demographics)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.persontype)}::bpchar, ${Fragment.encode(NameStyle.pgType, unsaved.namestyle)}::bool, ${Fragment.encode(PgTypes.text.nullable, unsaved.title)}, ${Fragment.encode(FirstName.pgType, unsaved.firstname)}::varchar, ${Fragment.encode(MiddleName.pgType.nullable, unsaved.middlename)}::varchar, ${Fragment.encode(LastName.pgType, unsaved.lastname)}::varchar, ${Fragment.encode(PgTypes.text.nullable, unsaved.suffix)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.emailpromotion)}::int4, ${Fragment.encode(PgTypes.xml.nullable, unsaved.additionalcontactinfo)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.demographics)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid")
     do update set
       "persontype" = EXCLUDED."persontype",

@@ -32,7 +32,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(historyId = value),
-      OrderHistoryId.dbType
+      OrderHistoryId.mariaType
     )
   }
 
@@ -44,7 +44,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.dbType
+      OrdersId.mariaType
     )
   }
 

@@ -14,17 +14,19 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.Priority;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.Email;
 
 /** Table: customers Primary key: customer_id */
 public record CustomersRow(
     @JsonProperty("customer_id") CustomersId customerId,
     String name,
-    Optional<String> email,
+    Optional</* user-picked */ Email> email,
     /** Default: current_timestamp */
     @JsonProperty("created_at") LocalDateTime createdAt,
     /** Default: 'medium' */
     Optional<Priority> priority)
-    implements Tuple5<CustomersId, String, Optional<String>, LocalDateTime, Optional<Priority>> {
+    implements Tuple5<
+        CustomersId, String, Optional</* user-picked */ Email>, LocalDateTime, Optional<Priority>> {
   public CustomersRow withCustomerId(CustomersId customerId) {
     return new CustomersRow(customerId, name, email, createdAt, priority);
   }
@@ -35,7 +37,7 @@ public record CustomersRow(
   }
   ;
 
-  public CustomersRow withEmail(Optional<String> email) {
+  public CustomersRow withEmail(Optional</* user-picked */ Email> email) {
     return new CustomersRow(customerId, name, email, createdAt, priority);
   }
   ;
@@ -56,7 +58,7 @@ public record CustomersRow(
       RowParsers.of(
           CustomersId.duckDbType,
           DuckDbTypes.varchar,
-          DuckDbTypes.varchar.opt(),
+          Email.duckDbType.opt(),
           DuckDbTypes.timestamp,
           Priority.duckDbType.opt(),
           CustomersRow::new,
@@ -79,7 +81,7 @@ public record CustomersRow(
   ;
 
   @Override
-  public Optional<String> _3() {
+  public Optional</* user-picked */ Email> _3() {
     return email;
   }
   ;

@@ -10,6 +10,9 @@ import testdb.customer_orders.*;
 import testdb.customtypes.Defaulted;
 import testdb.product_search.*;
 import testdb.simple_customer_lookup.*;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 /**
  * Tests for SQL script generated code. These tests verify that the code generated from SQL files in
@@ -168,10 +171,18 @@ public class SqlScriptTest {
         c -> {
           // Create a customer
           var status = testInsert.CustomerStatus().insert(c);
-          var customer = testInsert.Customers(new byte[] {1, 2, 3}).insert(c);
+          var customer =
+              testInsert
+                  .Customers(new byte[] {1, 2, 3})
+                  .with(
+                      r ->
+                          r.withEmail(new Email("customer@example.com"))
+                              .withFirstName(new FirstName("Test"))
+                              .withLastName(new LastName("User")))
+                  .insert(c);
 
           // Look up by customer ID
-          var results = simpleCustomerLookupRepo.apply(customer.email(), c);
+          var results = simpleCustomerLookupRepo.apply(customer.email().value(), c);
 
           assertNotNull(results);
           assertEquals(1, results.size());

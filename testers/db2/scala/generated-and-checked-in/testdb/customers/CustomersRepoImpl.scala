@@ -19,17 +19,17 @@ import dev.typr.foundations.scala.Fragment.sql
 class CustomersRepoImpl extends CustomersRepo {
   override def delete: DeleteBuilder[CustomersFields, CustomersRow] = DeleteBuilder.of(""""CUSTOMERS"""", CustomersFields.structure, Dialect.DB2)
 
-  override def deleteById(customerId: CustomersId)(using c: Connection): Boolean = sql"""delete from "CUSTOMERS" where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.dbType, customerId)}""".update().runUnchecked(c) > 0
+  override def deleteById(customerId: CustomersId)(using c: Connection): Boolean = sql"""delete from "CUSTOMERS" where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.db2Type, customerId)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(customerIds: Array[CustomersId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    customerIds.foreach { id => fragments.addOne(Fragment.encode(CustomersId.dbType, id)): @scala.annotation.nowarn }
+    customerIds.foreach { id => fragments.addOne(Fragment.encode(CustomersId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""delete from "CUSTOMERS" where "CUSTOMER_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""SELECT "CUSTOMER_ID", "NAME", "EMAIL", "CREATED_AT" FROM FINAL TABLE (INSERT INTO "CUSTOMERS"("CUSTOMER_ID", "NAME", "EMAIL", "CREATED_AT")
-    VALUES (${Fragment.encode(CustomersId.dbType, unsaved.customerId)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.createdAt)}))
+    VALUES (${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.createdAt)}))
     """
     .updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -43,7 +43,7 @@ class CustomersRepoImpl extends CustomersRepo {
     values.addOne(sql"${Fragment.encode(Db2Types.varchar, unsaved.email)}"): @scala.annotation.nowarn
     unsaved.customerId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""CUSTOMER_ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CustomersId.dbType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""CUSTOMER_ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CustomersId.db2Type, value)}"): @scala.annotation.nowarn }
     );
     unsaved.createdAt.visit(
       {  },
@@ -68,12 +68,12 @@ class CustomersRepoImpl extends CustomersRepo {
   override def selectById(customerId: CustomersId)(using c: Connection): Option[CustomersRow] = {
     sql"""select "CUSTOMER_ID", "NAME", "EMAIL", "CREATED_AT"
     from "CUSTOMERS"
-    where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.dbType, customerId)}""".query(CustomersRow.`_rowParser`.first()).runUnchecked(c)
+    where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.db2Type, customerId)}""".query(CustomersRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(customerIds: Array[CustomersId])(using c: Connection): List[CustomersRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    customerIds.foreach { id => fragments.addOne(Fragment.encode(CustomersId.dbType, id)): @scala.annotation.nowarn }
+    customerIds.foreach { id => fragments.addOne(Fragment.encode(CustomersId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""select "CUSTOMER_ID", "NAME", "EMAIL", "CREATED_AT" from "CUSTOMERS" where "CUSTOMER_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(CustomersRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -98,17 +98,17 @@ class CustomersRepoImpl extends CustomersRepo {
     set "NAME" = ${Fragment.encode(Db2Types.varchar, row.name)},
     "EMAIL" = ${Fragment.encode(Db2Types.varchar, row.email)},
     "CREATED_AT" = ${Fragment.encode(Db2Types.timestamp.nullable, row.createdAt)}
-    where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.dbType, customerId)}""".update().runUnchecked(c) > 0
+    where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.db2Type, customerId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: CustomersRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "CUSTOMERS" AS t
-    USING (VALUES (${Fragment.encode(CustomersId.dbType, unsaved.customerId)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.createdAt)})) AS s("CUSTOMER_ID", "NAME", "EMAIL", "CREATED_AT")
+    USING (VALUES (${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.createdAt)})) AS s("CUSTOMER_ID", "NAME", "EMAIL", "CREATED_AT")
     ON t."CUSTOMER_ID" = s."CUSTOMER_ID"
     WHEN MATCHED THEN UPDATE SET "NAME" = s."NAME",
     "EMAIL" = s."EMAIL",
     "CREATED_AT" = s."CREATED_AT"
-    WHEN NOT MATCHED THEN INSERT ("CUSTOMER_ID", "NAME", "EMAIL", "CREATED_AT") VALUES (${Fragment.encode(CustomersId.dbType, unsaved.customerId)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.createdAt)})"""
+    WHEN NOT MATCHED THEN INSERT ("CUSTOMER_ID", "NAME", "EMAIL", "CREATED_AT") VALUES (${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.createdAt)})"""
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

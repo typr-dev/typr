@@ -19,10 +19,10 @@ data class ShortText(@field:JsonValue val value: String) {
     val bijection: Bijection<ShortText, String> =
       Bijection.of(ShortText::value, ::ShortText)
 
-    val dbType: PgType<ShortText> =
+    val pgType: PgType<ShortText> =
       PgTypes.text.bimap(::ShortText, ShortText::value).renamed("\"public\".\"short_text\"")
 
-    val dbTypeArray: PgType<Array<ShortText>> =
+    val pgTypeArray: PgType<Array<ShortText>> =
       PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::ShortText, ShortText::class.java) }, { xs -> arrayMap.map(xs, ShortText::value, String::class.java) }).renamed("\"public\".\"short_text\"[]")
   }
 }

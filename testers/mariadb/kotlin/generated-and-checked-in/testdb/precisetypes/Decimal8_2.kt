@@ -45,7 +45,7 @@ data class Decimal8_2 private constructor(@field:JsonValue val value: BigDecimal
     val bijection: Bijection<Decimal8_2, BigDecimal> =
       Bijection.of(Decimal8_2::value, ::Decimal8_2)
 
-    val dbType: MariaType<Decimal8_2> =
+    val mariaType: MariaType<Decimal8_2> =
       KotlinDbTypes.MariaTypes.numeric.bimap(::Decimal8_2, Decimal8_2::value)
 
     fun of(value: BigDecimal): Decimal8_2? {

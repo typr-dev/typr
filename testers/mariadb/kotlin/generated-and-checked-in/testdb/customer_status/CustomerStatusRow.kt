@@ -8,10 +8,10 @@ package testdb.customer_status
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: customer_status
   * Primary key: status_code
@@ -24,19 +24,19 @@ data class CustomerStatusRow(
   /** 
     * Default: 1
     */
-  @field:JsonProperty("is_active") val isActive: Boolean
-) : Tuple3<CustomerStatusId, String, Boolean> {
+  @field:JsonProperty("is_active") val isActive: /* user-picked */ IsActive
+) : Tuple3<CustomerStatusId, String, /* user-picked */ IsActive> {
   override fun _1(): CustomerStatusId = statusCode
 
   override fun _2(): String = description
 
-  override fun _3(): Boolean = isActive
+  override fun _3(): /* user-picked */ IsActive = isActive
 
   fun id(): CustomerStatusId = statusCode
 
-  fun toUnsavedRow(isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive)): CustomerStatusRowUnsaved = CustomerStatusRowUnsaved(statusCode, description, isActive)
+  fun toUnsavedRow(isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive)): CustomerStatusRowUnsaved = CustomerStatusRowUnsaved(statusCode, description, isActive)
 
   companion object {
-    val _rowParser: RowParser<CustomerStatusRow> = RowParsers.of(CustomerStatusId.dbType, MariaTypes.varchar, KotlinDbTypes.MariaTypes.bool, { t0, t1, t2 -> CustomerStatusRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.statusCode, row.description, row.isActive) })
+    val _rowParser: RowParser<CustomerStatusRow> = RowParsers.of(CustomerStatusId.mariaType, MariaTypes.varchar, IsActive.mariaType, { t0, t1, t2 -> CustomerStatusRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.statusCode, row.description, row.isActive) })
   }
 }

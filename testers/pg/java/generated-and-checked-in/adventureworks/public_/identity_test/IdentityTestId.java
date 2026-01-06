@@ -27,10 +27,10 @@ public record IdentityTestId(@JsonValue String value) {
   public static Bijection<IdentityTestId, String> bijection =
       Bijection.of(IdentityTestId::value, IdentityTestId::new);
 
-  public static PgType<IdentityTestId> dbType =
+  public static PgType<IdentityTestId> pgType =
       PgTypes.text.bimap(IdentityTestId::new, IdentityTestId::value);
 
-  public static PgType<IdentityTestId[]> dbTypeArray =
+  public static PgType<IdentityTestId[]> pgTypeArray =
       PgTypes.textArray.bimap(
           xs -> arrayMap.map(xs, IdentityTestId::new, IdentityTestId.class),
           xs -> arrayMap.map(xs, IdentityTestId::value, String.class));

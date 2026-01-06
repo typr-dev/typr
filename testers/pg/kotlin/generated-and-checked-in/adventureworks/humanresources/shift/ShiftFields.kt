@@ -39,11 +39,11 @@ data class ShiftFields(val _path: List<Path>) : TupleExpr5<ShiftId, Name, LocalT
 
   fun modifieddate(): Field<LocalDateTime, ShiftRow> = Field<LocalDateTime, ShiftRow>(_path, "modifieddate", ShiftRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, ShiftRow> = Field<Name, ShiftRow>(_path, "name", ShiftRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, ShiftRow> = Field<Name, ShiftRow>(_path, "name", ShiftRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
   override fun rowParser(): RowParser<ShiftRow> = ShiftRow._rowParser.underlying
 
-  fun shiftid(): IdField<ShiftId, ShiftRow> = IdField<ShiftId, ShiftRow>(_path, "shiftid", ShiftRow::shiftid, null, "int4", { row, value -> row.copy(shiftid = value) }, ShiftId.dbType)
+  fun shiftid(): IdField<ShiftId, ShiftRow> = IdField<ShiftId, ShiftRow>(_path, "shiftid", ShiftRow::shiftid, null, "int4", { row, value -> row.copy(shiftid = value) }, ShiftId.pgType)
 
   fun starttime(): Field<LocalTime, ShiftRow> = Field<LocalTime, ShiftRow>(_path, "starttime", ShiftRow::starttime, null, "time", { row, value -> row.copy(starttime = value) }, PgTypes.time)
 

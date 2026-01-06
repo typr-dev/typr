@@ -27,7 +27,7 @@ class CountryregionFields(val `_path`: java.util.List[Path]) extends TupleExpr3[
       None,
       None,
       (row, value) => row.copy(countryregioncode = value),
-      CountryregionId.dbType
+      CountryregionId.pgType
     )
   }
 
@@ -39,7 +39,7 @@ class CountryregionFields(val `_path`: java.util.List[Path]) extends TupleExpr3[
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

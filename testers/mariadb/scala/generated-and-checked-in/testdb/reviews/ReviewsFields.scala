@@ -15,7 +15,6 @@ import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.scala.ForeignKey
 import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
 import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
@@ -31,8 +30,10 @@ import testdb.order_items.OrderItemsRow
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import testdb.userdefined.IsApproved
+import testdb.userdefined.IsVerifiedPurchase
 
-class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[ReviewsId, ProductsId, CustomersId, OrderItemsId, Uint1, String, String, Json, Json, Json, Boolean, Boolean, Uint4, Uint4, String, LocalDateTime, LocalDateTime, LocalDateTime] with RelationStructure[ReviewsFields, ReviewsRow]  with FieldsBase[ReviewsRow] {
+class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[ReviewsId, ProductsId, CustomersId, OrderItemsId, Uint1, String, String, Json, Json, Json, /* user-picked */ IsVerifiedPurchase, /* user-picked */ IsApproved, Uint4, Uint4, String, LocalDateTime, LocalDateTime, LocalDateTime] with RelationStructure[ReviewsFields, ReviewsRow]  with FieldsBase[ReviewsRow] {
   def reviewId: IdField[ReviewsId, ReviewsRow] = {
     new IdField[ReviewsId, ReviewsRow](
       _path,
@@ -41,7 +42,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(reviewId = value),
-      ReviewsId.dbType
+      ReviewsId.mariaType
     )
   }
 
@@ -53,7 +54,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -65,7 +66,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.dbType
+      CustomersId.mariaType
     )
   }
 
@@ -77,7 +78,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(orderItemId = value),
-      OrderItemsId.dbType
+      OrderItemsId.mariaType
     )
   }
 
@@ -153,27 +154,27 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
     )
   }
 
-  def isVerifiedPurchase: Field[Boolean, ReviewsRow] = {
-    new Field[Boolean, ReviewsRow](
+  def isVerifiedPurchase: Field[/* user-picked */ IsVerifiedPurchase, ReviewsRow] = {
+    new Field[/* user-picked */ IsVerifiedPurchase, ReviewsRow](
       _path,
       "is_verified_purchase",
       _.isVerifiedPurchase,
       None,
       None,
       (row, value) => row.copy(isVerifiedPurchase = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsVerifiedPurchase.mariaType
     )
   }
 
-  def isApproved: Field[Boolean, ReviewsRow] = {
-    new Field[Boolean, ReviewsRow](
+  def isApproved: Field[/* user-picked */ IsApproved, ReviewsRow] = {
+    new Field[/* user-picked */ IsApproved, ReviewsRow](
       _path,
       "is_approved",
       _.isApproved,
       None,
       None,
       (row, value) => row.copy(isApproved = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsApproved.mariaType
     )
   }
 
@@ -281,9 +282,9 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
 
   override def `_10`: SqlExpr[Json] = images
 
-  override def `_11`: SqlExpr[Boolean] = isVerifiedPurchase
+  override def `_11`: SqlExpr[/* user-picked */ IsVerifiedPurchase] = isVerifiedPurchase
 
-  override def `_12`: SqlExpr[Boolean] = isApproved
+  override def `_12`: SqlExpr[/* user-picked */ IsApproved] = isApproved
 
   override def `_13`: SqlExpr[Uint4] = helpfulVotes
 

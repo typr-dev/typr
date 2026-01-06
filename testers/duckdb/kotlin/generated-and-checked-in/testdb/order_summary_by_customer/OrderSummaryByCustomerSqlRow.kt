@@ -16,6 +16,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import testdb.Priority
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
 /** SQL file: order_summary_by_customer.sql */
 data class OrderSummaryByCustomerSqlRow(
@@ -24,7 +25,7 @@ data class OrderSummaryByCustomerSqlRow(
   /** Points to [testdb.customers.CustomersRow.name] */
   @field:JsonProperty("customer_name") val customerName: String,
   /** Points to [testdb.customers.CustomersRow.email] */
-  val email: String?,
+  val email: /* user-picked */ Email?,
   /** Points to [testdb.customers.CustomersRow.priority] */
   val priority: Priority?,
   /** Points to [testdb.orders.OrdersRow.orderId] */
@@ -37,12 +38,12 @@ data class OrderSummaryByCustomerSqlRow(
   @field:JsonProperty("first_order_date") val firstOrderDate: LocalDate?,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
   @field:JsonProperty("avg_order_amount") val avgOrderAmount: Double?
-) : Tuple9<CustomersId, String, String?, Priority?, Long?, BigDecimal?, LocalDate?, LocalDate?, Double?> {
+) : Tuple9<CustomersId, String, /* user-picked */ Email?, Priority?, Long?, BigDecimal?, LocalDate?, LocalDate?, Double?> {
   override fun _1(): CustomersId = customerId
 
   override fun _2(): String = customerName
 
-  override fun _3(): String? = email
+  override fun _3(): /* user-picked */ Email? = email
 
   override fun _4(): Priority? = priority
 
@@ -57,6 +58,6 @@ data class OrderSummaryByCustomerSqlRow(
   override fun _9(): Double? = avgOrderAmount
 
   companion object {
-    val _rowParser: RowParser<OrderSummaryByCustomerSqlRow> = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable(), Priority.duckDbType.nullable(), KotlinDbTypes.DuckDbTypes.bigint.nullable(), DuckDbTypes.numeric.nullable(), DuckDbTypes.date.nullable(), DuckDbTypes.date.nullable(), KotlinDbTypes.DuckDbTypes.double_.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> OrderSummaryByCustomerSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount) })
+    val _rowParser: RowParser<OrderSummaryByCustomerSqlRow> = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable(), Priority.duckDbType.nullable(), KotlinDbTypes.DuckDbTypes.bigint.nullable(), DuckDbTypes.numeric.nullable(), DuckDbTypes.date.nullable(), DuckDbTypes.date.nullable(), KotlinDbTypes.DuckDbTypes.double_.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> OrderSummaryByCustomerSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount) })
   }
 }

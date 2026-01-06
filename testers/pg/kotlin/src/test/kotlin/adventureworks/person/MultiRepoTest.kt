@@ -92,7 +92,7 @@ class PersonWithAddressesTest {
             val personRow = testInsert.personPerson(
                 businessentityid = businessentityRow.businessentityid,
                 persontype = "SC",
-                firstname = FirstName("name"),
+                firstname = FirstName(Name("name")),
                 c = c
             )
             val countryregionRow = testInsert.personCountryregion(

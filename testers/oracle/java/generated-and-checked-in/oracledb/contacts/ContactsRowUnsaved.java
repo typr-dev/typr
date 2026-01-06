@@ -7,15 +7,15 @@ package oracledb.contacts;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
-import oracledb.EmailTableT;
 import oracledb.TagVarrayT;
 import oracledb.customtypes.Defaulted;
 import oracledb.customtypes.Defaulted.UseDefault;
+import oracledb.userdefined.Email;
 
 /** This class corresponds to a row in table `CONTACTS` which has not been persisted yet */
 public record ContactsRowUnsaved(
     @JsonProperty("NAME") String name,
-    @JsonProperty("EMAILS") Optional<EmailTableT> emails,
+    @JsonProperty("EMAILS") Optional</* user-picked */ Email> emails,
     @JsonProperty("TAGS") Optional<TagVarrayT> tags,
     /** Default: "TYPR"."ISEQ$$_72857".nextval */
     @JsonProperty("CONTACT_ID") Defaulted<ContactsId> contactId) {
@@ -29,7 +29,7 @@ public record ContactsRowUnsaved(
   }
   ;
 
-  public ContactsRowUnsaved withEmails(Optional<EmailTableT> emails) {
+  public ContactsRowUnsaved withEmails(Optional</* user-picked */ Email> emails) {
     return new ContactsRowUnsaved(name, emails, tags, contactId);
   }
   ;

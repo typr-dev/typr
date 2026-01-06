@@ -31,7 +31,7 @@ data class BusinessentityRowUnsaved(
 
   companion object {
     val pgText: PgText<BusinessentityRowUnsaved> =
-      PgText.instance({ row, sb -> Defaulted.pgText(BusinessentityId.dbType.text()).unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> Defaulted.pgText(BusinessentityId.pgType.text()).unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)

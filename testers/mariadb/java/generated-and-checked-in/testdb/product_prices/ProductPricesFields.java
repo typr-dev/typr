@@ -50,7 +50,7 @@ public class ProductPricesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withPriceId(value),
-        ProductPricesId.dbType);
+        ProductPricesId.mariaType);
   }
 
   public Field<ProductsId, ProductPricesRow> productId() {
@@ -61,7 +61,7 @@ public class ProductPricesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public OptField<PriceTiersId, ProductPricesRow> tierId() {
@@ -72,7 +72,7 @@ public class ProductPricesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTierId(value),
-        PriceTiersId.dbType);
+        PriceTiersId.mariaType);
   }
 
   public Field<BigDecimal, ProductPricesRow> price() {

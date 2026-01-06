@@ -309,9 +309,9 @@ public record OrderItemsRow(
 
   public static RowParser<OrderItemsRow> _rowParser =
       RowParsers.of(
-          OrderItemsId.dbType,
-          OrdersId.dbType,
-          ProductsId.dbType,
+          OrderItemsId.mariaType,
+          OrdersId.mariaType,
+          ProductsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.smallintUnsigned,
@@ -320,7 +320,7 @@ public record OrderItemsRow(
           MariaTypes.numeric,
           MariaTypes.numeric,
           MariaTypes.text,
-          WarehousesId.dbType.opt(),
+          WarehousesId.mariaType.opt(),
           MariaTypes.tinytext.opt(),
           OrderItemsRow::new,
           row ->

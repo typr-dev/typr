@@ -87,6 +87,6 @@ data class AuditLogRow(
   ): AuditLogRowUnsaved = AuditLogRowUnsaved(tableName, recordId, action, oldValues, newValues, changedBy, changedAt, clientIp, sessionId)
 
   companion object {
-    val _rowParser: RowParser<AuditLogRow> = RowParsers.of(AuditLogId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable(), MariaTypes.json.nullable(), MariaTypes.varchar.nullable(), MariaTypes.datetime, MariaTypes.inet6.nullable(), MariaTypes.varbinary.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> AuditLogRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId) })
+    val _rowParser: RowParser<AuditLogRow> = RowParsers.of(AuditLogId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable(), MariaTypes.json.nullable(), MariaTypes.varchar.nullable(), MariaTypes.datetime, MariaTypes.inet6.nullable(), MariaTypes.varbinary.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> AuditLogRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId) })
   }
 }

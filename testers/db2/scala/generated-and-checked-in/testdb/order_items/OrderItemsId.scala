@@ -23,5 +23,5 @@ case class OrderItemsId(
 }
 
 object OrderItemsId {
-  val `_rowParser`: RowParser[OrderItemsId] = RowParsers.of(OrdersId.dbType, ScalaDbTypes.Db2Types.integer)(OrderItemsId.apply)(row => Array[Any](row.orderId, row.itemNumber))
+  val `_rowParser`: RowParser[OrderItemsId] = RowParsers.of(OrdersId.db2Type, ScalaDbTypes.Db2Types.integer)(OrderItemsId.apply)(row => Array[Any](row.orderId, row.itemNumber))
 }

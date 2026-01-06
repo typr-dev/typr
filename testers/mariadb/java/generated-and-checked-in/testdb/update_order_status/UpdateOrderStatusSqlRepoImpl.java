@@ -27,7 +27,7 @@ public class UpdateOrderStatusSqlRepoImpl implements UpdateOrderStatusSqlRepo {
                 " = 'shipped' THEN NOW(6) ELSE shipped_at END,\n    delivered_at = CASE WHEN "),
             Fragment.encode(MariaTypes.varchar, newStatus),
             Fragment.lit(" = 'delivered' THEN NOW(6) ELSE delivered_at END\nWHERE order_id = "),
-            Fragment.encode(OrdersId.dbType, orderId),
+            Fragment.encode(OrdersId.mariaType, orderId),
             Fragment.lit("\n"))
         .update()
         .runUnchecked(c);

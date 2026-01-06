@@ -19,10 +19,10 @@ data class SqlIdentifier(@field:JsonValue val value: String) {
     val bijection: Bijection<SqlIdentifier, String> =
       Bijection.of(SqlIdentifier::value, ::SqlIdentifier)
 
-    val dbType: PgType<SqlIdentifier> =
+    val pgType: PgType<SqlIdentifier> =
       PgTypes.name.bimap(::SqlIdentifier, SqlIdentifier::value).renamed("\"information_schema\".\"sql_identifier\"")
 
-    val dbTypeArray: PgType<Array<SqlIdentifier>> =
+    val pgTypeArray: PgType<Array<SqlIdentifier>> =
       PgTypes.nameArray.bimap({ xs -> arrayMap.map(xs, ::SqlIdentifier, SqlIdentifier::class.java) }, { xs -> arrayMap.map(xs, SqlIdentifier::value, String::class.java) }).renamed("\"information_schema\".\"sql_identifier\"[]")
   }
 }

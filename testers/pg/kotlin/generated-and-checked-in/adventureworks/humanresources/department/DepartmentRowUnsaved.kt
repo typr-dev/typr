@@ -32,11 +32,11 @@ data class DepartmentRowUnsaved(
 
   companion object {
     val pgText: PgText<DepartmentRowUnsaved> =
-      PgText.instance({ row, sb -> Name.dbType.text().unsafeEncode(row.name, sb)
+      PgText.instance({ row, sb -> Name.pgType.text().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
-      Name.dbType.text().unsafeEncode(row.groupname, sb)
+      Name.pgType.text().unsafeEncode(row.groupname, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(DepartmentId.dbType.text()).unsafeEncode(row.departmentid, sb)
+      Defaulted.pgText(DepartmentId.pgType.text()).unsafeEncode(row.departmentid, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
   }

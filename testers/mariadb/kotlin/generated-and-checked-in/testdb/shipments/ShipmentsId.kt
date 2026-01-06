@@ -21,7 +21,7 @@ data class ShipmentsId(@field:JsonValue val value: Uint8) {
     val bijection: Bijection<ShipmentsId, Uint8> =
       Bijection.of(ShipmentsId::value, ::ShipmentsId)
 
-    val dbType: MariaType<ShipmentsId> =
+    val mariaType: MariaType<ShipmentsId> =
       MariaTypes.bigintUnsigned.bimap(::ShipmentsId, ShipmentsId::value)
   }
 }

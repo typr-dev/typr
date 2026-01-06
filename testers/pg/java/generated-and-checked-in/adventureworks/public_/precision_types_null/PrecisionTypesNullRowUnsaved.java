@@ -839,19 +839,19 @@ public record PrecisionTypesNullRowUnsaved(
   public static PgText<PrecisionTypesNullRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            String10.dbType.opt().text().unsafeEncode(row.string10, sb);
+            String10.pgType.opt().text().unsafeEncode(row.string10, sb);
             sb.append(PgText.DELIMETER);
-            String20.dbType.opt().text().unsafeEncode(row.string20, sb);
+            String20.pgType.opt().text().unsafeEncode(row.string20, sb);
             sb.append(PgText.DELIMETER);
-            String50.dbType.opt().text().unsafeEncode(row.string50, sb);
+            String50.pgType.opt().text().unsafeEncode(row.string50, sb);
             sb.append(PgText.DELIMETER);
-            String100.dbType.opt().text().unsafeEncode(row.string100, sb);
+            String100.pgType.opt().text().unsafeEncode(row.string100, sb);
             sb.append(PgText.DELIMETER);
-            String255.dbType.opt().text().unsafeEncode(row.string255, sb);
+            String255.pgType.opt().text().unsafeEncode(row.string255, sb);
             sb.append(PgText.DELIMETER);
-            PaddedString3.dbType.opt().text().unsafeEncode(row.bpchar3, sb);
+            PaddedString3.pgType.opt().text().unsafeEncode(row.bpchar3, sb);
             sb.append(PgText.DELIMETER);
-            PaddedString10.dbType.opt().text().unsafeEncode(row.bpchar10, sb);
+            PaddedString10.pgType.opt().text().unsafeEncode(row.bpchar10, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.numeric.opt().text().unsafeEncode(row.decimal52, sb);
             sb.append(PgText.DELIMETER);
@@ -887,7 +887,7 @@ public record PrecisionTypesNullRowUnsaved(
             sb.append(PgText.DELIMETER);
             PgTypes.timetz.opt().text().unsafeEncode(row.timetz6, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(PrecisionTypesNullId.dbType.text()).unsafeEncode(row.id, sb);
+            Defaulted.pgText(PrecisionTypesNullId.pgType.text()).unsafeEncode(row.id, sb);
           });
 
   public PrecisionTypesNullRow toRow(java.util.function.Supplier<PrecisionTypesNullId> idDefault) {

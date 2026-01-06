@@ -22,19 +22,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class AddressRepoImpl extends AddressRepo {
   override def delete: DeleteBuilder[AddressFields, AddressRow] = DeleteBuilder.of(""""person"."address"""", AddressFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(addressid: AddressId)(using c: Connection): Boolean = sql"""delete from "person"."address" where "addressid" = ${Fragment.encode(AddressId.dbType, addressid)}""".update().runUnchecked(c) > 0
+  override def deleteById(addressid: AddressId)(using c: Connection): Boolean = sql"""delete from "person"."address" where "addressid" = ${Fragment.encode(AddressId.pgType, addressid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(addressids: Array[AddressId])(using c: Connection): Int = {
     sql"""delete
     from "person"."address"
-    where "addressid" = ANY(${Fragment.encode(AddressId.dbTypeArray, addressids)})"""
+    where "addressid" = ANY(${Fragment.encode(AddressId.pgTypeArray, addressids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: AddressRow)(using c: Connection): AddressRow = {
   sql"""insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
-    values (${Fragment.encode(AddressId.dbType, unsaved.addressid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.addressline1)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.addressline2)}, ${Fragment.encode(PgTypes.text, unsaved.city)}, ${Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.postalcode)}, ${Fragment.encode(PgTypes.bytea.nullable, unsaved.spatiallocation)}::bytea, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(AddressId.pgType, unsaved.addressid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.addressline1)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.addressline2)}, ${Fragment.encode(PgTypes.text, unsaved.city)}, ${Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.postalcode)}, ${Fragment.encode(PgTypes.bytea.nullable, unsaved.spatiallocation)}::bytea, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
     """
     .updateReturning(AddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -50,14 +50,14 @@ class AddressRepoImpl extends AddressRepo {
     columns.addOne(Fragment.lit(""""city"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.city)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""stateprovinceid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""postalcode"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.postalcode)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""spatiallocation"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.bytea.nullable, unsaved.spatiallocation)}::bytea"): @scala.annotation.nowarn
     unsaved.addressid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""addressid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(AddressId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""addressid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(AddressId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -98,13 +98,13 @@ class AddressRepoImpl extends AddressRepo {
   override def selectById(addressid: AddressId)(using c: Connection): Option[AddressRow] = {
     sql"""select "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
     from "person"."address"
-    where "addressid" = ${Fragment.encode(AddressId.dbType, addressid)}""".query(AddressRow.`_rowParser`.first()).runUnchecked(c)
+    where "addressid" = ${Fragment.encode(AddressId.pgType, addressid)}""".query(AddressRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(addressids: Array[AddressId])(using c: Connection): List[AddressRow] = {
     sql"""select "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
     from "person"."address"
-    where "addressid" = ANY(${Fragment.encode(AddressId.dbTypeArray, addressids)})""".query(AddressRow.`_rowParser`.all()).runUnchecked(c)
+    where "addressid" = ANY(${Fragment.encode(AddressId.pgTypeArray, addressids)})""".query(AddressRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(addressids: Array[AddressId])(using c: Connection): Map[AddressId, AddressRow] = {
@@ -121,17 +121,17 @@ class AddressRepoImpl extends AddressRepo {
     set "addressline1" = ${Fragment.encode(PgTypes.text, row.addressline1)},
     "addressline2" = ${Fragment.encode(PgTypes.text.nullable, row.addressline2)},
     "city" = ${Fragment.encode(PgTypes.text, row.city)},
-    "stateprovinceid" = ${Fragment.encode(StateprovinceId.dbType, row.stateprovinceid)}::int4,
+    "stateprovinceid" = ${Fragment.encode(StateprovinceId.pgType, row.stateprovinceid)}::int4,
     "postalcode" = ${Fragment.encode(PgTypes.text, row.postalcode)},
     "spatiallocation" = ${Fragment.encode(PgTypes.bytea.nullable, row.spatiallocation)}::bytea,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "addressid" = ${Fragment.encode(AddressId.dbType, addressid)}""".update().runUnchecked(c) > 0
+    where "addressid" = ${Fragment.encode(AddressId.pgType, addressid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: AddressRow)(using c: Connection): AddressRow = {
   sql"""insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
-    values (${Fragment.encode(AddressId.dbType, unsaved.addressid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.addressline1)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.addressline2)}, ${Fragment.encode(PgTypes.text, unsaved.city)}, ${Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.postalcode)}, ${Fragment.encode(PgTypes.bytea.nullable, unsaved.spatiallocation)}::bytea, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(AddressId.pgType, unsaved.addressid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.addressline1)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.addressline2)}, ${Fragment.encode(PgTypes.text, unsaved.city)}, ${Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.postalcode)}, ${Fragment.encode(PgTypes.bytea.nullable, unsaved.spatiallocation)}::bytea, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("addressid")
     do update set
       "addressline1" = EXCLUDED."addressline1",

@@ -26,6 +26,6 @@ public record PrecisionTypesId(@JsonValue Integer value) {
   public static Bijection<PrecisionTypesId, Integer> bijection =
       Bijection.of(PrecisionTypesId::value, PrecisionTypesId::new);
 
-  public static MariaType<PrecisionTypesId> dbType =
+  public static MariaType<PrecisionTypesId> mariaType =
       MariaTypes.int_.bimap(PrecisionTypesId::new, PrecisionTypesId::value);
 }

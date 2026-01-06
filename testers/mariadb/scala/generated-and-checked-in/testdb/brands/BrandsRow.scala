@@ -11,8 +11,8 @@ import dev.typr.foundations.Tuple.Tuple7
 import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: brands
  * Primary key: brand_id
@@ -41,15 +41,15 @@ case class BrandsRow(
   /** 
    * Default: 1
    */
-  @JsonProperty("is_active") isActive: Boolean
-) extends Tuple7[BrandsId, String, String, Option[Array[Byte]], Option[String], Option[String], Boolean] {
+  @JsonProperty("is_active") isActive: /* user-picked */ IsActive
+) extends Tuple7[BrandsId, String, String, Option[Array[Byte]], Option[String], Option[String], /* user-picked */ IsActive] {
   def id: BrandsId = brandId
 
   def toUnsavedRow(
     logoBlob: Defaulted[Option[Array[Byte]]] = Defaulted.Provided(this.logoBlob),
     websiteUrl: Defaulted[Option[String]] = Defaulted.Provided(this.websiteUrl),
     countryOfOrigin: Defaulted[Option[String]] = Defaulted.Provided(this.countryOfOrigin),
-    isActive: Defaulted[Boolean] = Defaulted.Provided(this.isActive)
+    isActive: Defaulted[/* user-picked */ IsActive] = Defaulted.Provided(this.isActive)
   ): BrandsRowUnsaved = {
     new BrandsRowUnsaved(
       name,
@@ -73,9 +73,9 @@ case class BrandsRow(
 
   override def `_6`: Option[String] = countryOfOrigin
 
-  override def `_7`: Boolean = isActive
+  override def `_7`: /* user-picked */ IsActive = isActive
 }
 
 object BrandsRow {
-  val `_rowParser`: RowParser[BrandsRow] = RowParsers.of(BrandsId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable, MariaTypes.varchar.nullable, MariaTypes.char_.nullable, ScalaDbTypes.MariaTypes.bool)(BrandsRow.apply)(row => Array[Any](row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive))
+  val `_rowParser`: RowParser[BrandsRow] = RowParsers.of(BrandsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable, MariaTypes.varchar.nullable, MariaTypes.char_.nullable, IsActive.mariaType)(BrandsRow.apply)(row => Array[Any](row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive))
 }

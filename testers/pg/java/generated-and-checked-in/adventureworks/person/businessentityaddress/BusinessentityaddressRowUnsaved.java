@@ -106,11 +106,11 @@ public record BusinessentityaddressRowUnsaved(
   public static PgText<BusinessentityaddressRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb);
+            BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb);
             sb.append(PgText.DELIMETER);
-            AddressId.dbType.text().unsafeEncode(row.addressid, sb);
+            AddressId.pgType.text().unsafeEncode(row.addressid, sb);
             sb.append(PgText.DELIMETER);
-            AddresstypeId.dbType.text().unsafeEncode(row.addresstypeid, sb);
+            AddresstypeId.pgType.text().unsafeEncode(row.addresstypeid, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb);
             sb.append(PgText.DELIMETER);

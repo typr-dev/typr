@@ -19,6 +19,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.AllBrandsCategoriesCSet
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: promotions
   * Primary key: promotion_id
@@ -71,12 +72,12 @@ data class PromotionsRow(
   /** 
     * Default: 1
     */
-  @field:JsonProperty("is_active") val isActive: Boolean,
+  @field:JsonProperty("is_active") val isActive: /* user-picked */ IsActive,
   /** 
     * Default: current_timestamp()
     */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime
-) : Tuple16<PromotionsId, String, String, String?, String, BigDecimal, BigDecimal?, Uint4?, Uint4, Uint1?, AllBrandsCategoriesCSet?, Json?, LocalDateTime, LocalDateTime, Boolean, LocalDateTime> {
+) : Tuple16<PromotionsId, String, String, String?, String, BigDecimal, BigDecimal?, Uint4?, Uint4, Uint1?, AllBrandsCategoriesCSet?, Json?, LocalDateTime, LocalDateTime, /* user-picked */ IsActive, LocalDateTime> {
   override fun _1(): PromotionsId = promotionId
 
   override fun _10(): Uint1? = maxUsesPerCustomer
@@ -89,7 +90,7 @@ data class PromotionsRow(
 
   override fun _14(): LocalDateTime = validTo
 
-  override fun _15(): Boolean = isActive
+  override fun _15(): /* user-picked */ IsActive = isActive
 
   override fun _16(): LocalDateTime = createdAt
 
@@ -119,11 +120,11 @@ data class PromotionsRow(
     maxUsesPerCustomer: Defaulted<Uint1?> = Defaulted.Provided(this.maxUsesPerCustomer),
     applicableTo: Defaulted<AllBrandsCategoriesCSet?> = Defaulted.Provided(this.applicableTo),
     rulesJson: Defaulted<Json?> = Defaulted.Provided(this.rulesJson),
-    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive),
+    isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive),
     createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt)
   ): PromotionsRowUnsaved = PromotionsRowUnsaved(code, name, discountType, discountValue, validFrom, validTo, description, minOrderAmount, maxUses, usesCount, maxUsesPerCustomer, applicableTo, rulesJson, isActive, createdAt)
 
   companion object {
-    val _rowParser: RowParser<PromotionsRow> = RowParsers.of(PromotionsId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable(), MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.intUnsigned.nullable(), MariaTypes.intUnsigned, MariaTypes.tinyintUnsigned.nullable(), AllBrandsCategoriesCSet.dbType.nullable(), MariaTypes.json.nullable(), MariaTypes.datetime, MariaTypes.datetime, KotlinDbTypes.MariaTypes.bool, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15 -> PromotionsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) }, { row -> arrayOf<Any?>(row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt) })
+    val _rowParser: RowParser<PromotionsRow> = RowParsers.of(PromotionsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable(), MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.intUnsigned.nullable(), MariaTypes.intUnsigned, MariaTypes.tinyintUnsigned.nullable(), AllBrandsCategoriesCSet.mariaType.nullable(), MariaTypes.json.nullable(), MariaTypes.datetime, MariaTypes.datetime, IsActive.mariaType, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15 -> PromotionsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) }, { row -> arrayOf<Any?>(row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt) })
   }
 }

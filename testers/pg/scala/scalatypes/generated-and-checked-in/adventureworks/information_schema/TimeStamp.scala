@@ -19,7 +19,7 @@ case class TimeStamp(@JsonValue value: Instant)
 object TimeStamp {
   given bijection: Bijection[TimeStamp, Instant] = Bijection.apply[TimeStamp, Instant](_.value)(TimeStamp.apply)
 
-  given dbType: PgType[TimeStamp] = PgTypes.timestamptz.bimap(TimeStamp.apply, _.value).renamed(""""information_schema"."time_stamp"""")
+  given pgType: PgType[TimeStamp] = PgTypes.timestamptz.bimap(TimeStamp.apply, _.value).renamed(""""information_schema"."time_stamp"""")
 
-  given dbTypeArray: PgType[Array[TimeStamp]] = PgTypes.timestamptzArray.bimap(xs => xs.map(TimeStamp.apply), xs => xs.map(_.value)).renamed(""""information_schema"."time_stamp"[]""")
+  given pgTypeArray: PgType[Array[TimeStamp]] = PgTypes.timestamptzArray.bimap(xs => xs.map(TimeStamp.apply), xs => xs.map(_.value)).renamed(""""information_schema"."time_stamp"[]""")
 }

@@ -37,7 +37,7 @@ data class UnitmeasureRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)): UnitmeasureRowUnsaved = UnitmeasureRowUnsaved(unitmeasurecode, name, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<UnitmeasureRow> = RowParsers.of(UnitmeasureId.dbType, Name.dbType, PgTypes.timestamp, { t0, t1, t2 -> UnitmeasureRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.unitmeasurecode, row.name, row.modifieddate) })
+    val _rowParser: RowParser<UnitmeasureRow> = RowParsers.of(UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> UnitmeasureRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.unitmeasurecode, row.name, row.modifieddate) })
 
     val pgText: PgText<UnitmeasureRow> =
       PgText.from(_rowParser.underlying)

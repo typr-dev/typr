@@ -5,7 +5,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.{BusinessentityId, BusinessentityRepoImpl, BusinessentityRowUnsaved}
 import adventureworks.person.person.{PersonRepoImpl, PersonRowUnsaved}
 import adventureworks.public.{Flag, Name}
-import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.{CurrentFlag, FirstName, LastName, MiddleName, SalariedFlag}
 import org.junit.Assert.*
 import org.junit.Test
 import dev.typr.foundations.data.Xml
@@ -27,10 +27,10 @@ class EmployeeTest {
         PersonRowUnsaved(
           businessentityid = businessentityRow.businessentityid,
           persontype = "SC",
-          firstname = FirstName("firstname"),
-          lastname = Name("lastname")
+          firstname = FirstName(Name("firstname")),
+          lastname = LastName(Name("lastname"))
         ).copy(
-          middlename = Some(Name("middlename")),
+          middlename = Some(MiddleName(Name("middlename"))),
           suffix = Some("suffix"),
           additionalcontactinfo = Some(Xml("<additionalcontactinfo/>"))
         )
@@ -46,10 +46,10 @@ class EmployeeTest {
         gender = "F",
         hiredate = LocalDate.now().minusYears(1)
       ).copy(
-        salariedflag = Defaulted.Provided(Flag(true)),
+        salariedflag = Defaulted.Provided(SalariedFlag(Flag(true))),
         vacationhours = Defaulted.Provided(1: Short),
         sickleavehours = Defaulted.Provided(2: Short),
-        currentflag = Defaulted.Provided(Flag(true)),
+        currentflag = Defaulted.Provided(CurrentFlag(Flag(true))),
         rowguid = Defaulted.Provided(UUID.randomUUID()),
         modifieddate = Defaulted.Provided(DbNow.localDateTime()),
         organizationnode = Defaulted.Provided(Some("/"))
@@ -87,10 +87,10 @@ class EmployeeTest {
 
       val withDefaults = employeeRepo.insert(minimalUnsaved)
 
-      assertEquals(Flag(true), withDefaults.salariedflag)
+      assertEquals(SalariedFlag(Flag(true)), withDefaults.salariedflag)
       assertEquals(0: Short, withDefaults.vacationhours)
       assertEquals(0: Short, withDefaults.sickleavehours)
-      assertEquals(Flag(true), withDefaults.currentflag)
+      assertEquals(CurrentFlag(Flag(true)), withDefaults.currentflag)
       assertEquals(Some("/"), withDefaults.organizationnode)
     }
   }

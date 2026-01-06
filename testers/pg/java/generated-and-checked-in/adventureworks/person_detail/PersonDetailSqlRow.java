@@ -6,8 +6,9 @@
 package adventureworks.person_detail;
 
 import adventureworks.person.businessentity.BusinessentityId;
-import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.RowParser;
 import dev.typr.foundations.RowParsers;
@@ -24,9 +25,9 @@ public record PersonDetailSqlRow(
     /** Points to {@link adventureworks.person.person.PersonRow#firstname()} */
     /* user-picked */ FirstName firstname,
     /** Points to {@link adventureworks.person.person.PersonRow#middlename()} */
-    Optional<Name> middlename,
+    Optional</* user-picked */ MiddleName> middlename,
     /** Points to {@link adventureworks.person.person.PersonRow#lastname()} */
-    Name lastname,
+    /* user-picked */ LastName lastname,
     /** Points to {@link adventureworks.humanresources.employee.EmployeeRow#jobtitle()} */
     String jobtitle,
     /** Points to {@link adventureworks.person.address.AddressRow#addressline1()} */
@@ -41,8 +42,8 @@ public record PersonDetailSqlRow(
         BusinessentityId,
         Optional</* max 8 chars */ String>, /* user-picked */
         FirstName,
-        Optional<Name>,
-        Name,
+        Optional</* user-picked */ MiddleName>, /* user-picked */
+        LastName,
         String,
         Optional<String>,
         Optional<String>,
@@ -97,7 +98,7 @@ public record PersonDetailSqlRow(
   ;
 
   /** Points to {@link adventureworks.person.person.PersonRow#middlename()} */
-  public PersonDetailSqlRow withMiddlename(Optional<Name> middlename) {
+  public PersonDetailSqlRow withMiddlename(Optional</* user-picked */ MiddleName> middlename) {
     return new PersonDetailSqlRow(
         businessentityid,
         title,
@@ -113,7 +114,7 @@ public record PersonDetailSqlRow(
   ;
 
   /** Points to {@link adventureworks.person.person.PersonRow#lastname()} */
-  public PersonDetailSqlRow withLastname(Name lastname) {
+  public PersonDetailSqlRow withLastname(/* user-picked */ LastName lastname) {
     return new PersonDetailSqlRow(
         businessentityid,
         title,
@@ -210,11 +211,11 @@ public record PersonDetailSqlRow(
 
   public static RowParser<PersonDetailSqlRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.text.opt(),
-          FirstName.dbType,
-          Name.dbType.opt(),
-          Name.dbType,
+          FirstName.pgType,
+          MiddleName.pgType.opt(),
+          LastName.pgType,
           PgTypes.text,
           PgTypes.text.opt(),
           PgTypes.text.opt(),
@@ -261,13 +262,13 @@ public record PersonDetailSqlRow(
   ;
 
   @Override
-  public Optional<Name> _4() {
+  public Optional</* user-picked */ MiddleName> _4() {
     return middlename;
   }
   ;
 
   @Override
-  public Name _5() {
+  public /* user-picked */ LastName _5() {
     return lastname;
   }
   ;

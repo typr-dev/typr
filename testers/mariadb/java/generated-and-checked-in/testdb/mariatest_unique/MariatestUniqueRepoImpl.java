@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.Email;
 
 public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
   @Override
@@ -31,7 +32,7 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
   public Boolean deleteById(MariatestUniqueId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `mariatest_unique` where `id` = "),
-                Fragment.encode(MariatestUniqueId.dbType, id),
+                Fragment.encode(MariatestUniqueId.mariaType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +43,7 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
   public Integer deleteByIds(MariatestUniqueId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(MariatestUniqueId.dbType, id));
+      fragments.add(Fragment.encode(MariatestUniqueId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -57,7 +58,7 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
   public MariatestUniqueRow insert(MariatestUniqueRow unsaved, Connection c) {
     return interpolate(
             Fragment.lit("insert into `mariatest_unique`(`email`, `code`, `category`)\nvalues ("),
-            Fragment.encode(MariaTypes.varchar, unsaved.email()),
+            Fragment.encode(Email.mariaType, unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.code()),
             Fragment.lit(", "),
@@ -74,7 +75,7 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
     ArrayList<Fragment> values = new ArrayList<>();
     ;
     columns.add(Fragment.lit("`email`"));
-    values.add(interpolate(Fragment.encode(MariaTypes.varchar, unsaved.email()), Fragment.lit("")));
+    values.add(interpolate(Fragment.encode(Email.mariaType, unsaved.email()), Fragment.lit("")));
     columns.add(Fragment.lit("`code`"));
     values.add(interpolate(Fragment.encode(MariaTypes.varchar, unsaved.code()), Fragment.lit("")));
     columns.add(Fragment.lit("`category`"));
@@ -113,7 +114,7 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
     return interpolate(
             Fragment.lit(
                 "select `id`, `email`, `code`, `category`\nfrom `mariatest_unique`\nwhere `id` = "),
-            Fragment.encode(MariatestUniqueId.dbType, id),
+            Fragment.encode(MariatestUniqueId.mariaType, id),
             Fragment.lit(""))
         .query(MariatestUniqueRow._rowParser.first())
         .runUnchecked(c);
@@ -123,7 +124,7 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
   public List<MariatestUniqueRow> selectByIds(MariatestUniqueId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(MariatestUniqueId.dbType, id));
+      fragments.add(Fragment.encode(MariatestUniqueId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -161,13 +162,14 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
   }
 
   @Override
-  public Optional<MariatestUniqueRow> selectByUniqueEmail(String email, Connection c) {
+  public Optional<MariatestUniqueRow> selectByUniqueEmail(
+      /* user-picked */ Email email, Connection c) {
     return interpolate(
             Fragment.lit(
                 "select `id`, `email`, `code`, `category`\n"
                     + "from `mariatest_unique`\n"
                     + "where `email` = "),
-            Fragment.encode(MariaTypes.varchar, email),
+            Fragment.encode(Email.mariaType, email),
             Fragment.lit("\n"))
         .query(MariatestUniqueRow._rowParser.first())
         .runUnchecked(c);
@@ -188,13 +190,13 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
     ;
     return interpolate(
                 Fragment.lit("update `mariatest_unique`\nset `email` = "),
-                Fragment.encode(MariaTypes.varchar, row.email()),
+                Fragment.encode(Email.mariaType, row.email()),
                 Fragment.lit(",\n`code` = "),
                 Fragment.encode(MariaTypes.varchar, row.code()),
                 Fragment.lit(",\n`category` = "),
                 Fragment.encode(MariaTypes.varchar, row.category()),
                 Fragment.lit("\nwhere `id` = "),
-                Fragment.encode(MariatestUniqueId.dbType, id),
+                Fragment.encode(MariatestUniqueId.mariaType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -206,9 +208,9 @@ public class MariatestUniqueRepoImpl implements MariatestUniqueRepo {
     return interpolate(
             Fragment.lit(
                 "INSERT INTO `mariatest_unique`(`id`, `email`, `code`, `category`)\nVALUES ("),
-            Fragment.encode(MariatestUniqueId.dbType, unsaved.id()),
+            Fragment.encode(MariatestUniqueId.mariaType, unsaved.id()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.varchar, unsaved.email()),
+            Fragment.encode(Email.mariaType, unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.code()),
             Fragment.lit(", "),

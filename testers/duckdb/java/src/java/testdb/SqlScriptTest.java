@@ -18,6 +18,7 @@ import testdb.order_summary_by_customer.*;
 import testdb.orders.*;
 import testdb.product_summary.*;
 import testdb.products.*;
+import testdb.userdefined.Email;
 
 /**
  * Tests for SQL script generated repositories. These tests exercise the typed query classes
@@ -62,7 +63,7 @@ public class SqlScriptTest {
           var customer =
               testInsert
                   .Customers()
-                  .with(r -> r.withEmail(Optional.of("unique-search@example.com")))
+                  .with(r -> r.withEmail(Optional.of(new Email("unique-search@example.com"))))
                   .insert(c);
 
           var results =

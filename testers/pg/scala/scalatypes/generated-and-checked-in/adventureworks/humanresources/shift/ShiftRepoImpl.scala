@@ -21,19 +21,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class ShiftRepoImpl extends ShiftRepo {
   override def delete: DeleteBuilder[ShiftFields, ShiftRow] = DeleteBuilder.of(""""humanresources"."shift"""", ShiftFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(shiftid: ShiftId)(using c: Connection): Boolean = sql"""delete from "humanresources"."shift" where "shiftid" = ${Fragment.encode(ShiftId.dbType, shiftid)}""".update().runUnchecked(c) > 0
+  override def deleteById(shiftid: ShiftId)(using c: Connection): Boolean = sql"""delete from "humanresources"."shift" where "shiftid" = ${Fragment.encode(ShiftId.pgType, shiftid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Int = {
     sql"""delete
     from "humanresources"."shift"
-    where "shiftid" = ANY(${Fragment.encode(ShiftId.dbTypeArray, shiftids)})"""
+    where "shiftid" = ANY(${Fragment.encode(ShiftId.pgTypeArray, shiftids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   sql"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
-    values (${Fragment.encode(ShiftId.dbType, unsaved.shiftid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.time, unsaved.starttime)}::time, ${Fragment.encode(PgTypes.time, unsaved.endtime)}::time, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.time, unsaved.starttime)}::time, ${Fragment.encode(PgTypes.time, unsaved.endtime)}::time, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "shiftid", "name", "starttime", "endtime", "modifieddate"
     """
     .updateReturning(ShiftRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -43,14 +43,14 @@ class ShiftRepoImpl extends ShiftRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.name)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""starttime"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.time, unsaved.starttime)}::time"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""endtime"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.time, unsaved.endtime)}::time"): @scala.annotation.nowarn
     unsaved.shiftid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ShiftId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ShiftId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
@@ -87,13 +87,13 @@ class ShiftRepoImpl extends ShiftRepo {
   override def selectById(shiftid: ShiftId)(using c: Connection): Option[ShiftRow] = {
     sql"""select "shiftid", "name", "starttime", "endtime", "modifieddate"
     from "humanresources"."shift"
-    where "shiftid" = ${Fragment.encode(ShiftId.dbType, shiftid)}""".query(ShiftRow.`_rowParser`.first()).runUnchecked(c)
+    where "shiftid" = ${Fragment.encode(ShiftId.pgType, shiftid)}""".query(ShiftRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(shiftids: Array[ShiftId])(using c: Connection): List[ShiftRow] = {
     sql"""select "shiftid", "name", "starttime", "endtime", "modifieddate"
     from "humanresources"."shift"
-    where "shiftid" = ANY(${Fragment.encode(ShiftId.dbTypeArray, shiftids)})""".query(ShiftRow.`_rowParser`.all()).runUnchecked(c)
+    where "shiftid" = ANY(${Fragment.encode(ShiftId.pgTypeArray, shiftids)})""".query(ShiftRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): Map[ShiftId, ShiftRow] = {
@@ -107,16 +107,16 @@ class ShiftRepoImpl extends ShiftRepo {
   override def update(row: ShiftRow)(using c: Connection): Boolean = {
     val shiftid: ShiftId = row.shiftid
     return sql"""update "humanresources"."shift"
-    set "name" = ${Fragment.encode(Name.dbType, row.name)}::varchar,
+    set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "starttime" = ${Fragment.encode(PgTypes.time, row.starttime)}::time,
     "endtime" = ${Fragment.encode(PgTypes.time, row.endtime)}::time,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "shiftid" = ${Fragment.encode(ShiftId.dbType, shiftid)}""".update().runUnchecked(c) > 0
+    where "shiftid" = ${Fragment.encode(ShiftId.pgType, shiftid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ShiftRow)(using c: Connection): ShiftRow = {
   sql"""insert into "humanresources"."shift"("shiftid", "name", "starttime", "endtime", "modifieddate")
-    values (${Fragment.encode(ShiftId.dbType, unsaved.shiftid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.time, unsaved.starttime)}::time, ${Fragment.encode(PgTypes.time, unsaved.endtime)}::time, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.time, unsaved.starttime)}::time, ${Fragment.encode(PgTypes.time, unsaved.endtime)}::time, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("shiftid")
     do update set
       "name" = EXCLUDED."name",

@@ -5,6 +5,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import testdb.customers.*
 import testdb.departments.*
+import testdb.userdefined.Email
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -30,7 +31,7 @@ class MockRepoTest {
     fun testMockInsertAndSelect() {
         val mock = createCustomersMock()
         val customer = CustomersRow(
-            CustomersId(1), "Mock User", "mock@test.com",
+            CustomersId(1), "Mock User", Email("mock@test.com"),
             LocalDateTime.now(), Priority.medium
         )
 

@@ -34,7 +34,7 @@ public class PasswordRepoImpl implements PasswordRepo {
   public Boolean deleteById(BusinessentityId businessentityid, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"person\".\"password\" where \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -45,7 +45,7 @@ public class PasswordRepoImpl implements PasswordRepo {
   public Integer deleteByIds(BusinessentityId[] businessentityids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"person\".\"password\"\nwhere \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -58,7 +58,7 @@ public class PasswordRepoImpl implements PasswordRepo {
                 "insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\","
                     + " \"passwordsalt\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.text, unsaved.passwordhash()),
             Fragment.lit(", "),
@@ -84,7 +84,7 @@ public class PasswordRepoImpl implements PasswordRepo {
     columns.add(Fragment.lit("\"businessentityid\""));
     values.add(
         interpolate(
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"passwordhash\""));
     values.add(
@@ -178,7 +178,7 @@ public class PasswordRepoImpl implements PasswordRepo {
                     + " \"modifieddate\"\n"
                     + "from \"person\".\"password\"\n"
                     + "where \"businessentityid\" = "),
-            Fragment.encode(BusinessentityId.dbType, businessentityid),
+            Fragment.encode(BusinessentityId.pgType, businessentityid),
             Fragment.lit(""))
         .query(PasswordRow._rowParser.first())
         .runUnchecked(c);
@@ -192,7 +192,7 @@ public class PasswordRepoImpl implements PasswordRepo {
                     + " \"modifieddate\"\n"
                     + "from \"person\".\"password\"\n"
                     + "where \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .query(PasswordRow._rowParser.all())
         .runUnchecked(c);
@@ -229,7 +229,7 @@ public class PasswordRepoImpl implements PasswordRepo {
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -243,7 +243,7 @@ public class PasswordRepoImpl implements PasswordRepo {
                 "insert into \"person\".\"password\"(\"businessentityid\", \"passwordhash\","
                     + " \"passwordsalt\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.text, unsaved.passwordhash()),
             Fragment.lit(", "),

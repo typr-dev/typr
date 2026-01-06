@@ -25,6 +25,6 @@ data class BusinessentityaddressId(
   override fun _3(): AddresstypeId = addresstypeid
 
   companion object {
-    val _rowParser: RowParser<BusinessentityaddressId> = RowParsers.of(BusinessentityId.dbType, AddressId.dbType, AddresstypeId.dbType, { t0, t1, t2 -> BusinessentityaddressId(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.addressid, row.addresstypeid) })
+    val _rowParser: RowParser<BusinessentityaddressId> = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, { t0, t1, t2 -> BusinessentityaddressId(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.addressid, row.addresstypeid) })
   }
 }

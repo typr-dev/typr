@@ -49,5 +49,5 @@ case class ProductmodelRowUnsaved(
 }
 
 object ProductmodelRowUnsaved {
-  given pgText: PgText[ProductmodelRowUnsaved] = PgText.instance((row, sb) => { Name.dbType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt().text.unsafeEncode(row.catalogdescription, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt().text.unsafeEncode(row.instructions, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ProductmodelId.dbType.text).unsafeEncode(row.productmodelid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[ProductmodelRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt().text.unsafeEncode(row.catalogdescription, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt().text.unsafeEncode(row.instructions, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ProductmodelId.pgType.text).unsafeEncode(row.productmodelid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
 }

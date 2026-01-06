@@ -26,6 +26,6 @@ data class Db2testIdentityAlwaysRow(
   fun toUnsavedRow(): Db2testIdentityAlwaysRowUnsaved = Db2testIdentityAlwaysRowUnsaved(name)
 
   companion object {
-    val _rowParser: RowParser<Db2testIdentityAlwaysRow> = RowParsers.of(Db2testIdentityAlwaysId.dbType, Db2Types.varchar, { t0, t1 -> Db2testIdentityAlwaysRow(t0, t1) }, { row -> arrayOf<Any?>(row.id, row.name) })
+    val _rowParser: RowParser<Db2testIdentityAlwaysRow> = RowParsers.of(Db2testIdentityAlwaysId.db2Type, Db2Types.varchar, { t0, t1 -> Db2testIdentityAlwaysRow(t0, t1) }, { row -> arrayOf<Any?>(row.id, row.name) })
   }
 }

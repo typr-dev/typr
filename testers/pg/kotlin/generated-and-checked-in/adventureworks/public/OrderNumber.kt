@@ -19,10 +19,10 @@ data class OrderNumber(@field:JsonValue val value: String) {
     val bijection: Bijection<OrderNumber, String> =
       Bijection.of(OrderNumber::value, ::OrderNumber)
 
-    val dbType: PgType<OrderNumber> =
+    val pgType: PgType<OrderNumber> =
       PgTypes.text.bimap(::OrderNumber, OrderNumber::value).renamed("\"public\".\"OrderNumber\"")
 
-    val dbTypeArray: PgType<Array<OrderNumber>> =
+    val pgTypeArray: PgType<Array<OrderNumber>> =
       PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::OrderNumber, OrderNumber::class.java) }, { xs -> arrayMap.map(xs, OrderNumber::value, String::class.java) }).renamed("\"public\".\"OrderNumber\"[]")
   }
 }

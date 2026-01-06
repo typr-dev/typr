@@ -11,6 +11,7 @@ import testdb.customers.*;
 import testdb.find_customers_by_email.*;
 import testdb.orders.*;
 import testdb.products.*;
+import testdb.userdefined.Email;
 
 /**
  * Tests for SQL script generated repositories. These tests exercise the typed query classes
@@ -96,7 +97,7 @@ public class SqlScriptTest {
           var customer =
               testInsert
                   .Customers()
-                  .with(r -> r.withEmail("unique-sqlserver-test@example.com"))
+                  .with(r -> r.withEmail(new Email("unique-sqlserver-test@example.com")))
                   .insert(c);
 
           var results = findByEmailRepo.apply("%unique-sqlserver-test%", c);

@@ -82,9 +82,9 @@ data class PrecisionTypesNullFields(val _path: List<Path>) : TupleExpr25<Precisi
 
   override fun _path(): List<Path> = _path
 
-  fun bpchar10(): OptField<PaddedString10, PrecisionTypesNullRow> = OptField<PaddedString10, PrecisionTypesNullRow>(_path, "bpchar10", PrecisionTypesNullRow::bpchar10, null, "bpchar", { row, value -> row.copy(bpchar10 = value) }, PaddedString10.dbType)
+  fun bpchar10(): OptField<PaddedString10, PrecisionTypesNullRow> = OptField<PaddedString10, PrecisionTypesNullRow>(_path, "bpchar10", PrecisionTypesNullRow::bpchar10, null, "bpchar", { row, value -> row.copy(bpchar10 = value) }, PaddedString10.pgType)
 
-  fun bpchar3(): OptField<PaddedString3, PrecisionTypesNullRow> = OptField<PaddedString3, PrecisionTypesNullRow>(_path, "bpchar3", PrecisionTypesNullRow::bpchar3, null, "bpchar", { row, value -> row.copy(bpchar3 = value) }, PaddedString3.dbType)
+  fun bpchar3(): OptField<PaddedString3, PrecisionTypesNullRow> = OptField<PaddedString3, PrecisionTypesNullRow>(_path, "bpchar3", PrecisionTypesNullRow::bpchar3, null, "bpchar", { row, value -> row.copy(bpchar3 = value) }, PaddedString3.pgType)
 
   override fun columns(): List<FieldLike<*, PrecisionTypesNullRow>> = listOf(this.id().underlying, this.string10().underlying, this.string20().underlying, this.string50().underlying, this.string100().underlying, this.string255().underlying, this.bpchar3().underlying, this.bpchar10().underlying, this.decimal52().underlying, this.decimal102().underlying, this.decimal184().underlying, this.numeric82().underlying, this.numeric124().underlying, this.timestamp0().underlying, this.timestamp3().underlying, this.timestamp6().underlying, this.timestamptz0().underlying, this.timestamptz3().underlying, this.timestamptz6().underlying, this.time0().underlying, this.time3().underlying, this.time6().underlying, this.timetz0().underlying, this.timetz3().underlying, this.timetz6().underlying)
 
@@ -94,7 +94,7 @@ data class PrecisionTypesNullFields(val _path: List<Path>) : TupleExpr25<Precisi
 
   fun decimal52(): OptField<BigDecimal, PrecisionTypesNullRow> = OptField<BigDecimal, PrecisionTypesNullRow>(_path, "decimal5_2", PrecisionTypesNullRow::decimal52, null, "numeric", { row, value -> row.copy(decimal52 = value) }, PgTypes.numeric)
 
-  fun id(): IdField<PrecisionTypesNullId, PrecisionTypesNullRow> = IdField<PrecisionTypesNullId, PrecisionTypesNullRow>(_path, "id", PrecisionTypesNullRow::id, null, "int4", { row, value -> row.copy(id = value) }, PrecisionTypesNullId.dbType)
+  fun id(): IdField<PrecisionTypesNullId, PrecisionTypesNullRow> = IdField<PrecisionTypesNullId, PrecisionTypesNullRow>(_path, "id", PrecisionTypesNullRow::id, null, "int4", { row, value -> row.copy(id = value) }, PrecisionTypesNullId.pgType)
 
   fun numeric124(): OptField<BigDecimal, PrecisionTypesNullRow> = OptField<BigDecimal, PrecisionTypesNullRow>(_path, "numeric12_4", PrecisionTypesNullRow::numeric124, null, "numeric", { row, value -> row.copy(numeric124 = value) }, PgTypes.numeric)
 
@@ -102,15 +102,15 @@ data class PrecisionTypesNullFields(val _path: List<Path>) : TupleExpr25<Precisi
 
   override fun rowParser(): RowParser<PrecisionTypesNullRow> = PrecisionTypesNullRow._rowParser.underlying
 
-  fun string10(): OptField<String10, PrecisionTypesNullRow> = OptField<String10, PrecisionTypesNullRow>(_path, "string10", PrecisionTypesNullRow::string10, null, null, { row, value -> row.copy(string10 = value) }, String10.dbType)
+  fun string10(): OptField<String10, PrecisionTypesNullRow> = OptField<String10, PrecisionTypesNullRow>(_path, "string10", PrecisionTypesNullRow::string10, null, null, { row, value -> row.copy(string10 = value) }, String10.pgType)
 
-  fun string100(): OptField<String100, PrecisionTypesNullRow> = OptField<String100, PrecisionTypesNullRow>(_path, "string100", PrecisionTypesNullRow::string100, null, null, { row, value -> row.copy(string100 = value) }, String100.dbType)
+  fun string100(): OptField<String100, PrecisionTypesNullRow> = OptField<String100, PrecisionTypesNullRow>(_path, "string100", PrecisionTypesNullRow::string100, null, null, { row, value -> row.copy(string100 = value) }, String100.pgType)
 
-  fun string20(): OptField<String20, PrecisionTypesNullRow> = OptField<String20, PrecisionTypesNullRow>(_path, "string20", PrecisionTypesNullRow::string20, null, null, { row, value -> row.copy(string20 = value) }, String20.dbType)
+  fun string20(): OptField<String20, PrecisionTypesNullRow> = OptField<String20, PrecisionTypesNullRow>(_path, "string20", PrecisionTypesNullRow::string20, null, null, { row, value -> row.copy(string20 = value) }, String20.pgType)
 
-  fun string255(): OptField<String255, PrecisionTypesNullRow> = OptField<String255, PrecisionTypesNullRow>(_path, "string255", PrecisionTypesNullRow::string255, null, null, { row, value -> row.copy(string255 = value) }, String255.dbType)
+  fun string255(): OptField<String255, PrecisionTypesNullRow> = OptField<String255, PrecisionTypesNullRow>(_path, "string255", PrecisionTypesNullRow::string255, null, null, { row, value -> row.copy(string255 = value) }, String255.pgType)
 
-  fun string50(): OptField<String50, PrecisionTypesNullRow> = OptField<String50, PrecisionTypesNullRow>(_path, "string50", PrecisionTypesNullRow::string50, null, null, { row, value -> row.copy(string50 = value) }, String50.dbType)
+  fun string50(): OptField<String50, PrecisionTypesNullRow> = OptField<String50, PrecisionTypesNullRow>(_path, "string50", PrecisionTypesNullRow::string50, null, null, { row, value -> row.copy(string50 = value) }, String50.pgType)
 
   fun time0(): OptField<LocalTime, PrecisionTypesNullRow> = OptField<LocalTime, PrecisionTypesNullRow>(_path, "time0", PrecisionTypesNullRow::time0, null, "time", { row, value -> row.copy(time0 = value) }, PgTypes.time)
 

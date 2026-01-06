@@ -23,7 +23,7 @@ class TitleDomainFields(val `_path`: java.util.List[Path]) extends TupleExpr1[Ti
       None,
       Some("text"),
       (row, value) => row.copy(code = value),
-      TitleDomainId.dbType
+      TitleDomainId.pgType
     )
   }
 

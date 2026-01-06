@@ -15,6 +15,8 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.order_items.OrderItemsId
 import testdb.products.ProductsId
+import testdb.userdefined.IsApproved
+import testdb.userdefined.IsVerifiedPurchase
 
 /** This class corresponds to a row in table `reviews` which has not been persisted yet */
 data class ReviewsRowUnsaved(
@@ -55,11 +57,11 @@ data class ReviewsRowUnsaved(
   /** Default: 0
 
     */
-  @field:JsonProperty("is_verified_purchase") val isVerifiedPurchase: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_verified_purchase") val isVerifiedPurchase: Defaulted</* user-picked */ IsVerifiedPurchase> = UseDefault(),
   /** Default: 0
 
     */
-  @field:JsonProperty("is_approved") val isApproved: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_approved") val isApproved: Defaulted</* user-picked */ IsApproved> = UseDefault(),
   /** Default: 0
 
     */
@@ -92,8 +94,8 @@ data class ReviewsRowUnsaved(
     prosDefault: () -> Json?,
     consDefault: () -> Json?,
     imagesDefault: () -> Json?,
-    isVerifiedPurchaseDefault: () -> Boolean,
-    isApprovedDefault: () -> Boolean,
+    isVerifiedPurchaseDefault: () -> /* user-picked */ IsVerifiedPurchase,
+    isApprovedDefault: () -> /* user-picked */ IsApproved,
     helpfulVotesDefault: () -> Uint4,
     unhelpfulVotesDefault: () -> Uint4,
     adminResponseDefault: () -> String?,

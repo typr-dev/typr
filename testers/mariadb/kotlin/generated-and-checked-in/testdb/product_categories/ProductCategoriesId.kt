@@ -22,6 +22,6 @@ data class ProductCategoriesId(
   override fun _2(): CategoriesId = categoryId
 
   companion object {
-    val _rowParser: RowParser<ProductCategoriesId> = RowParsers.of(ProductsId.dbType, CategoriesId.dbType, { t0, t1 -> ProductCategoriesId(t0, t1) }, { row -> arrayOf<Any?>(row.productId, row.categoryId) })
+    val _rowParser: RowParser<ProductCategoriesId> = RowParsers.of(ProductsId.mariaType, CategoriesId.mariaType, { t0, t1 -> ProductCategoriesId(t0, t1) }, { row -> arrayOf<Any?>(row.productId, row.categoryId) })
   }
 }

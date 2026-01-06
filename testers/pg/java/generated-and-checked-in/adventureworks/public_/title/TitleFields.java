@@ -34,7 +34,7 @@ public class TitleFields extends TupleExpr1<TitleId>
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCode(value),
-        TitleId.dbType);
+        TitleId.pgType);
   }
 
   @Override

@@ -32,7 +32,7 @@ public class CheckConstraintTestRepoImpl implements CheckConstraintTestRepo {
   public Boolean deleteById(CheckConstraintTestId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"CHECK_CONSTRAINT_TEST\" where \"ID\" = "),
-                Fragment.encode(CheckConstraintTestId.dbType, id),
+                Fragment.encode(CheckConstraintTestId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +43,7 @@ public class CheckConstraintTestRepoImpl implements CheckConstraintTestRepo {
   public Integer deleteByIds(CheckConstraintTestId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(CheckConstraintTestId.dbType, id));
+      fragments.add(Fragment.encode(CheckConstraintTestId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -61,7 +61,7 @@ public class CheckConstraintTestRepoImpl implements CheckConstraintTestRepo {
                 "SELECT \"ID\", \"AGE\", \"STATUS\", \"PRICE\" FROM FINAL TABLE (INSERT INTO"
                     + " \"CHECK_CONSTRAINT_TEST\"(\"ID\", \"AGE\", \"STATUS\", \"PRICE\")\n"
                     + "VALUES ("),
-            Fragment.encode(CheckConstraintTestId.dbType, unsaved.id()),
+            Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.integer, unsaved.age()),
             Fragment.lit(", "),
@@ -98,7 +98,7 @@ public class CheckConstraintTestRepoImpl implements CheckConstraintTestRepo {
                 "select \"ID\", \"AGE\", \"STATUS\", \"PRICE\"\n"
                     + "from \"CHECK_CONSTRAINT_TEST\"\n"
                     + "where \"ID\" = "),
-            Fragment.encode(CheckConstraintTestId.dbType, id),
+            Fragment.encode(CheckConstraintTestId.db2Type, id),
             Fragment.lit(""))
         .query(CheckConstraintTestRow._rowParser.first())
         .runUnchecked(c);
@@ -108,7 +108,7 @@ public class CheckConstraintTestRepoImpl implements CheckConstraintTestRepo {
   public List<CheckConstraintTestRow> selectByIds(CheckConstraintTestId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(CheckConstraintTestId.dbType, id));
+      fragments.add(Fragment.encode(CheckConstraintTestId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -151,7 +151,7 @@ public class CheckConstraintTestRepoImpl implements CheckConstraintTestRepo {
                 Fragment.lit(",\n\"PRICE\" = "),
                 Fragment.encode(Db2Types.decimal.opt(), row.price()),
                 Fragment.lit("\nwhere \"ID\" = "),
-                Fragment.encode(CheckConstraintTestId.dbType, id),
+                Fragment.encode(CheckConstraintTestId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -162,7 +162,7 @@ public class CheckConstraintTestRepoImpl implements CheckConstraintTestRepo {
   public void upsert(CheckConstraintTestRow unsaved, Connection c) {
     interpolate(
             Fragment.lit("MERGE INTO \"CHECK_CONSTRAINT_TEST\" AS t\nUSING (VALUES ("),
-            Fragment.encode(CheckConstraintTestId.dbType, unsaved.id()),
+            Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.integer, unsaved.age()),
             Fragment.lit(", "),
@@ -177,7 +177,7 @@ public class CheckConstraintTestRepoImpl implements CheckConstraintTestRepo {
                     + "\"PRICE\" = s.\"PRICE\"\n"
                     + "WHEN NOT MATCHED THEN INSERT (\"ID\", \"AGE\", \"STATUS\", \"PRICE\") VALUES"
                     + " ("),
-            Fragment.encode(CheckConstraintTestId.dbType, unsaved.id()),
+            Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.integer, unsaved.age()),
             Fragment.lit(", "),

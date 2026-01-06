@@ -157,8 +157,8 @@ public record OrderHistoryRow(
 
   public static RowParser<OrderHistoryRow> _rowParser =
       RowParsers.of(
-          OrderHistoryId.dbType,
-          OrdersId.dbType,
+          OrderHistoryId.mariaType,
+          OrdersId.mariaType,
           MariaTypes.text.opt(),
           MariaTypes.text,
           MariaTypes.varchar.opt(),

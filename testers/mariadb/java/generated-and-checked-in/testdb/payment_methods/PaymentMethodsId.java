@@ -27,6 +27,6 @@ public record PaymentMethodsId(@JsonValue Uint1 value) {
   public static Bijection<PaymentMethodsId, Uint1> bijection =
       Bijection.of(PaymentMethodsId::value, PaymentMethodsId::new);
 
-  public static MariaType<PaymentMethodsId> dbType =
+  public static MariaType<PaymentMethodsId> mariaType =
       MariaTypes.tinyintUnsigned.bimap(PaymentMethodsId::new, PaymentMethodsId::value);
 }

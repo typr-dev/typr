@@ -10,6 +10,7 @@ import dev.typr.foundations.data.Uint1
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.products.ProductsId
+import testdb.userdefined.IsPrimary
 
 /** This class corresponds to a row in table `product_images` which has not been persisted yet */
 data class ProductImagesRowUnsaved(
@@ -34,7 +35,7 @@ data class ProductImagesRowUnsaved(
   /** Default: 0
 
     */
-  @field:JsonProperty("is_primary") val isPrimary: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_primary") val isPrimary: Defaulted</* user-picked */ IsPrimary> = UseDefault(),
   /** Default: NULL
     * Optional embedded image data
     */
@@ -44,7 +45,7 @@ data class ProductImagesRowUnsaved(
     thumbnailUrlDefault: () -> String?,
     altTextDefault: () -> String?,
     sortOrderDefault: () -> Uint1,
-    isPrimaryDefault: () -> Boolean,
+    isPrimaryDefault: () -> /* user-picked */ IsPrimary,
     imageDataDefault: () -> ByteArray?,
     imageIdDefault: () -> ProductImagesId
   ): ProductImagesRow = ProductImagesRow(imageId = imageIdDefault(), productId = productId, imageUrl = imageUrl, thumbnailUrl = thumbnailUrl.getOrElse(thumbnailUrlDefault), altText = altText.getOrElse(altTextDefault), sortOrder = sortOrder.getOrElse(sortOrderDefault), isPrimary = isPrimary.getOrElse(isPrimaryDefault), imageData = imageData.getOrElse(imageDataDefault))

@@ -66,7 +66,7 @@ public record UsersRow(
 
   public static RowParser<UsersRow> _rowParser =
       RowParsers.of(
-          UsersId.dbType,
+          UsersId.pgType,
           PgTypes.text,
           PgTypes.text.opt(),
           PgTypes.unknown,

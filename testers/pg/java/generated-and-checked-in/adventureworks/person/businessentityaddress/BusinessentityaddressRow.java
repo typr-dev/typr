@@ -88,9 +88,9 @@ public record BusinessentityaddressRow(
 
   public static RowParser<BusinessentityaddressRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
-          AddressId.dbType,
-          AddresstypeId.dbType,
+          BusinessentityId.pgType,
+          AddressId.pgType,
+          AddresstypeId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
           BusinessentityaddressRow::new,

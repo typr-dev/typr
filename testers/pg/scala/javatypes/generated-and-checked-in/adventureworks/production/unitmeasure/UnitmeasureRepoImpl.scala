@@ -22,19 +22,19 @@ import dev.typr.foundations.Fragment.interpolate
 class UnitmeasureRepoImpl extends UnitmeasureRepo {
   override def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "production"."unitmeasure" where "unitmeasurecode" = """), Fragment.encode(UnitmeasureId.dbType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "production"."unitmeasure" where "unitmeasurecode" = """), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "production"."unitmeasure"
-    where "unitmeasurecode" = ANY("""), Fragment.encode(UnitmeasureId.dbTypeArray, unitmeasurecodes), Fragment.lit(")"))
+    where "unitmeasurecode" = ANY("""), Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
   interpolate(Fragment.lit("""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
-    values ("""), Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     RETURNING "unitmeasurecode", "name", "modifieddate"
     """))
     .updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -44,9 +44,9 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""unitmeasurecode"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
       {  },
       value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
@@ -82,13 +82,13 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
   override def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Optional[UnitmeasureRow] = {
     interpolate(Fragment.lit("""select "unitmeasurecode", "name", "modifieddate"
     from "production"."unitmeasure"
-    where "unitmeasurecode" = """), Fragment.encode(UnitmeasureId.dbType, unitmeasurecode), Fragment.lit("")).query(UnitmeasureRow.`_rowParser`.first()).runUnchecked(c)
+    where "unitmeasurecode" = """), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).query(UnitmeasureRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.List[UnitmeasureRow] = {
     interpolate(Fragment.lit("""select "unitmeasurecode", "name", "modifieddate"
     from "production"."unitmeasure"
-    where "unitmeasurecode" = ANY("""), Fragment.encode(UnitmeasureId.dbTypeArray, unitmeasurecodes), Fragment.lit(")")).query(UnitmeasureRow.`_rowParser`.all()).runUnchecked(c)
+    where "unitmeasurecode" = ANY("""), Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes), Fragment.lit(")")).query(UnitmeasureRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.Map[UnitmeasureId, UnitmeasureRow] = {
@@ -102,14 +102,14 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
   override def update(row: UnitmeasureRow)(using c: Connection): java.lang.Boolean = {
     val unitmeasurecode: UnitmeasureId = row.unitmeasurecode
     return interpolate(Fragment.lit("""update "production"."unitmeasure"
-    set "name" = """), Fragment.encode(Name.dbType, row.name), Fragment.lit("""::varchar,
+    set "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.lit("""::varchar,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "unitmeasurecode" = """), Fragment.encode(UnitmeasureId.dbType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "unitmeasurecode" = """), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
   interpolate(Fragment.lit("""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
-    values ("""), Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     on conflict ("unitmeasurecode")
     do update set
       "name" = EXCLUDED."name",

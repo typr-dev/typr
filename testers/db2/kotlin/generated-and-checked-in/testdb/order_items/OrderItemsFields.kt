@@ -47,7 +47,7 @@ data class OrderItemsFields(val _path: List<Path>) : TupleExpr5<OrdersId, Int, S
 
   fun itemNumber(): IdField<Int, OrderItemsRow> = IdField<Int, OrderItemsRow>(_path, "ITEM_NUMBER", OrderItemsRow::itemNumber, null, null, { row, value -> row.copy(itemNumber = value) }, KotlinDbTypes.Db2Types.integer)
 
-  fun orderId(): IdField<OrdersId, OrderItemsRow> = IdField<OrdersId, OrderItemsRow>(_path, "ORDER_ID", OrderItemsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.dbType)
+  fun orderId(): IdField<OrdersId, OrderItemsRow> = IdField<OrdersId, OrderItemsRow>(_path, "ORDER_ID", OrderItemsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.db2Type)
 
   fun productName(): Field<String, OrderItemsRow> = Field<String, OrderItemsRow>(_path, "PRODUCT_NAME", OrderItemsRow::productName, null, null, { row, value -> row.copy(productName = value) }, Db2Types.varchar)
 

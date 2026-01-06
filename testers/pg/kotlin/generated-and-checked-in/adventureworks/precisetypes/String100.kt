@@ -39,13 +39,13 @@ data class String100 private constructor(@field:JsonValue val value: String) : S
     val bijection: Bijection<String100, String> =
       Bijection.of(String100::value, ::String100)
 
-    val dbType: PgType<String100> =
+    fun of(value: String): String100? = if (value.length <= 100) String100(value) else null
+
+    val pgType: PgType<String100> =
       PgTypes.text.bimap(::String100, String100::value)
 
-    val dbTypeArray: PgType<Array<String100>> =
+    val pgTypeArray: PgType<Array<String100>> =
       PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::String100, String100::class.java) }, { xs -> arrayMap.map(xs, String100::value, String::class.java) })
-
-    fun of(value: String): String100? = if (value.length <= 100) String100(value) else null
 
     fun truncate(value: String): String100 = String100(if (value.length <= 100) value else value.substring(0, 100))
 

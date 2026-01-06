@@ -139,7 +139,7 @@ class DbLibFoundations(
   }
   def FR(content: jvm.Code) = SQL(content)
 
-  val dbTypeArrayName = jvm.Ident("dbTypeArray")
+  val dbTypeArrayName = adapter.typeArrayFieldName
   val rowParserName: jvm.Ident = jvm.Ident("_rowParser")
 
   import lang.prop
@@ -2012,6 +2012,75 @@ class DbLibFoundations(
           )
         )
     ).flatten
+  }
+
+  /** Generate type instances using full TypoType information. Handles Aligned types with Unpack transforms by generating two-step bimaps.
+    */
+  override def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, typoType: TypoType, overrideDbType: Option[String]): List[jvm.ClassMember] =
+    typoType match {
+      case TypoType.Aligned(canonicalJvmType, sourceType, transform, _) =>
+        transform match {
+          case TypoType.AlignmentTransform.Direct =>
+            // Direct mapping - same as standard
+            wrapperTypeInstances(wrapperType, canonicalJvmType, sourceType.underlyingDbType, overrideDbType)
+
+          case TypoType.AlignmentTransform.Unpack =>
+            // Two-step bimap through the source type wrapper
+            generateUnpackInstances(wrapperType, canonicalJvmType, sourceType, overrideDbType)
+        }
+
+      case TypoType.Standard(jvmType, dbType) =>
+        wrapperTypeInstances(wrapperType, jvmType, dbType, overrideDbType)
+
+      case TypoType.Generated(_, dbType, qualifiedType) =>
+        wrapperTypeInstances(wrapperType, qualifiedType, dbType, overrideDbType)
+
+      case other =>
+        // For other TypoTypes, use the underlying info
+        wrapperTypeInstances(wrapperType, other.jvmType, other.underlyingDbType, overrideDbType)
+    }
+
+  /** Generate instances for Unpack transform - bimap through an intermediate wrapper type.
+    *
+    * For unified FirstName(String) where PostgreSQL uses Name domain: `Name.pgType.bimap(n -> new FirstName(n.value()), fn -> new Name(fn.value()))`
+    */
+  private def generateUnpackInstances(
+      wrapperType: jvm.Type.Qualified,
+      @annotation.nowarn canonicalJvmType: jvm.Type,
+      sourceType: TypoType,
+      overrideDbType: Option[String]
+  ): List[jvm.ClassMember] = {
+    val value = jvm.Ident("value")
+    val x = jvm.Ident("x")
+    val w = jvm.Ident("w")
+
+    // The intermediate wrapper must be a generated qualified type for us to reference its fields
+    val intermediateQualified: jvm.Type.Qualified = sourceType match {
+      case TypoType.Generated(_, _, q) => q
+      case _                           => sys.error(s"Unpack transform requires Generated sourceType, got: $sourceType")
+    }
+
+    def maybeRename(baseCode: jvm.Code, sqlType: String): jvm.Code = {
+      val sqlTypeLit = jvm.StrLit(sqlType)
+      code"$baseCode.renamed($sqlTypeLit)"
+    }
+
+    List[jvm.ClassMember](
+      jvm.Given(
+        tparams = Nil,
+        name = adapter.typeFieldName,
+        implicitParams = Nil,
+        tpe = adapter.TypeClass.of(wrapperType),
+        body = {
+          // Generate: IntermediateType.pgType.bimap(x -> new WrapperType(x.value()), w -> new IntermediateType(w.value()))
+          // Note: Use direct method calls ($x.$value()) not FieldGetterRef which is for method references
+          val toWrapper = jvm.Lambda(x, code"new $wrapperType($x.$value())")
+          val fromWrapper = jvm.Lambda(w, code"new $intermediateQualified($w.$value())")
+          val base = code"$intermediateQualified.${adapter.typeFieldName}.bimap($toWrapper, $fromWrapper)"
+          overrideDbType.fold(base)(maybeRename(base, _))
+        }
+      )
+    )
   }
 
   override val missingInstances: List[jvm.ClassMember] = Nil

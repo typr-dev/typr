@@ -27,7 +27,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Cust
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.dbType
+      CustomersId.db2Type
     )
   }
 

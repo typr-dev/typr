@@ -42,7 +42,7 @@ public class OrdersRepoImpl implements OrdersRepo {
   public Integer deleteByIds(OrdersId[] orderIds, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"orders\"\nwhere \"order_id\" = ANY("),
-            Fragment.encode(OrdersId.dbTypeArray, orderIds),
+            Fragment.encode(OrdersId.duckDbTypeArray, orderIds),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -160,7 +160,7 @@ public class OrdersRepoImpl implements OrdersRepo {
                     + " \"status\"\n"
                     + "from \"orders\"\n"
                     + "where \"order_id\" = ANY("),
-            Fragment.encode(OrdersId.dbTypeArray, orderIds),
+            Fragment.encode(OrdersId.duckDbTypeArray, orderIds),
             Fragment.lit(")"))
         .query(OrdersRow._rowParser.all())
         .runUnchecked(c);

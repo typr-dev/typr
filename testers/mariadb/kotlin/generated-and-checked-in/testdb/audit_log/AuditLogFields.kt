@@ -54,7 +54,7 @@ data class AuditLogFields(val _path: List<Path>) : TupleExpr10<AuditLogId, Strin
 
   override fun columns(): List<FieldLike<*, AuditLogRow>> = listOf(this.logId().underlying, this.tableName().underlying, this.recordId().underlying, this.action().underlying, this.oldValues().underlying, this.newValues().underlying, this.changedBy().underlying, this.changedAt().underlying, this.clientIp().underlying, this.sessionId().underlying)
 
-  fun logId(): IdField<AuditLogId, AuditLogRow> = IdField<AuditLogId, AuditLogRow>(_path, "log_id", AuditLogRow::logId, null, null, { row, value -> row.copy(logId = value) }, AuditLogId.dbType)
+  fun logId(): IdField<AuditLogId, AuditLogRow> = IdField<AuditLogId, AuditLogRow>(_path, "log_id", AuditLogRow::logId, null, null, { row, value -> row.copy(logId = value) }, AuditLogId.mariaType)
 
   fun newValues(): OptField<Json, AuditLogRow> = OptField<Json, AuditLogRow>(_path, "new_values", AuditLogRow::newValues, null, null, { row, value -> row.copy(newValues = value) }, MariaTypes.json)
 

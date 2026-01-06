@@ -2,6 +2,7 @@ package testdb
 
 import org.junit.Assert._
 import org.junit.Test
+import testdb.userdefined.Email
 
 import scala.util.Random
 
@@ -14,7 +15,7 @@ class TestInsertTest {
   def testCustomersInsert(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val row = testInsert.Customers()
+    val row = testInsert.Customers(email = Email("test@example.com"))
     assertNotNull(row)
     assertNotNull(row.customerId)
     assertNotNull(row.name)
@@ -24,7 +25,7 @@ class TestInsertTest {
   def testCustomersWithCustomization(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val row = testInsert.Customers(name = "Custom Name")
+    val row = testInsert.Customers(email = Email("custom@example.com"), name = "Custom Name")
 
     assertNotNull(row)
     assertEquals("Custom Name", row.name)
@@ -57,7 +58,7 @@ class TestInsertTest {
   def testOrdersWithCustomerFK(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers()
+    val customer = testInsert.Customers(email = Email("orders-fk@example.com"))
 
     val order = testInsert.Orders(customer.customerId)
 
@@ -69,7 +70,7 @@ class TestInsertTest {
   def testOrderItemsWithFKs(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers()
+    val customer = testInsert.Customers(email = Email("orderitems-fk@example.com"))
     val product = testInsert.Products()
     val order = testInsert.Orders(customer.customerId)
 
@@ -84,9 +85,9 @@ class TestInsertTest {
   def testMultipleInserts(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val row1 = testInsert.Customers()
-    val row2 = testInsert.Customers()
-    val row3 = testInsert.Customers()
+    val row1 = testInsert.Customers(email = Email("multi1@example.com"))
+    val row2 = testInsert.Customers(email = Email("multi2@example.com"))
+    val row3 = testInsert.Customers(email = Email("multi3@example.com"))
 
     assertNotEquals(row1.customerId, row2.customerId)
     assertNotEquals(row2.customerId, row3.customerId)
@@ -100,9 +101,9 @@ class TestInsertTest {
     val testInsert1 = TestInsert(Random(123))
     val testInsert2 = TestInsert(Random(123))
 
-    val row1 = testInsert1.Customers()
+    val row1 = testInsert1.Customers(email = Email("seeded1@test.com"))
     // Use different email to avoid UNIQUE constraint violation (same seed = same email)
-    val row2 = testInsert2.Customers(email = "unique2@test.com")
+    val row2 = testInsert2.Customers(email = Email("seeded2@test.com"))
 
     assertEquals(row1.name, row2.name)
   }
@@ -111,9 +112,9 @@ class TestInsertTest {
   def testChainedCustomization(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val row = testInsert.Customers(name = "First", email = "first@test.com")
+    val row = testInsert.Customers(email = Email("first@test.com"), name = "First")
 
     assertEquals("First", row.name)
-    assertEquals("first@test.com", row.email)
+    assertEquals(Email("first@test.com"), row.email)
   }
 }

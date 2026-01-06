@@ -18,8 +18,9 @@ import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr14
 import java.time.LocalDateTime
 import testdb.orders.OrdersId
+import testdb.userdefined.Email
 
-class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleExpr14[OrdersId, String, String, String, BigDecimal, String, LocalDateTime, String, String, Long, BigDecimal, String, String, String] with RelationStructure[VOrderDetailsViewFields, VOrderDetailsViewRow]  with FieldsBase[VOrderDetailsViewRow] {
+class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleExpr14[OrdersId, String, String, String, BigDecimal, String, LocalDateTime, /* user-picked */ Email, String, Long, BigDecimal, String, String, String] with RelationStructure[VOrderDetailsViewFields, VOrderDetailsViewRow]  with FieldsBase[VOrderDetailsViewRow] {
   def orderId: Field[OrdersId, VOrderDetailsViewRow] = {
     new Field[OrdersId, VOrderDetailsViewRow](
       _path,
@@ -28,7 +29,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.dbType
+      OrdersId.mariaType
     )
   }
 
@@ -104,15 +105,15 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
     )
   }
 
-  def customerEmail: Field[String, VOrderDetailsViewRow] = {
-    new Field[String, VOrderDetailsViewRow](
+  def customerEmail: Field[/* user-picked */ Email, VOrderDetailsViewRow] = {
+    new Field[/* user-picked */ Email, VOrderDetailsViewRow](
       _path,
       "customer_email",
       _.customerEmail,
       None,
       None,
       (row, value) => row.copy(customerEmail = value),
-      MariaTypes.varchar
+      Email.mariaType
     )
   }
 
@@ -208,7 +209,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
 
   override def `_7`: SqlExpr[LocalDateTime] = orderedAt
 
-  override def `_8`: SqlExpr[String] = customerEmail
+  override def `_8`: SqlExpr[/* user-picked */ Email] = customerEmail
 
   override def `_9`: SqlExpr[String] = customerName
 

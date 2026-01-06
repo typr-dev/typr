@@ -19,6 +19,7 @@ import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
 import testdb.Priority
+import testdb.userdefined.Email
 
 class CustomersRepoImpl() : CustomersRepo {
   override fun delete(): DeleteBuilder<CustomersFields, CustomersRow> = DeleteBuilder.of("\"customers\"", CustomersFields.structure, Dialect.DUCKDB)
@@ -31,14 +32,14 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun deleteByIds(
     customerIds: Array<CustomersId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"customers\"\nwhere \"customer_id\" = ANY("), Fragment.encode(CustomersId.dbTypeArray, customerIds), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"customers\"\nwhere \"customer_id\" = ANY("), Fragment.encode(CustomersId.duckDbTypeArray, customerIds), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersRow = Fragment.interpolate(Fragment.lit("insert into \"customers\"(\"customer_id\", \"name\", \"email\", \"created_at\", \"priority\")\nvalues ("), Fragment.encode(CustomersId.duckDbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.email), Fragment.lit(", "), Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(Priority.duckDbType.nullable(), unsaved.priority), Fragment.lit(")\nRETURNING \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"))
+  ): CustomersRow = Fragment.interpolate(Fragment.lit("insert into \"customers\"(\"customer_id\", \"name\", \"email\", \"created_at\", \"priority\")\nvalues ("), Fragment.encode(CustomersId.duckDbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.duckDbType.nullable(), unsaved.email), Fragment.lit(", "), Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(Priority.duckDbType.nullable(), unsaved.priority), Fragment.lit(")\nRETURNING \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"))
     .updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -52,7 +53,7 @@ class CustomersRepoImpl() : CustomersRepo {
     columns.add(Fragment.lit("\"name\""))
     values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit("")))
     columns.add(Fragment.lit("\"email\""))
-    values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.email), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(Email.duckDbType.nullable(), unsaved.email), Fragment.lit("")))
     unsaved.createdAt.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"created_at\""))
@@ -79,7 +80,7 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun selectByIds(
     customerIds: Array<CustomersId>,
     c: Connection
-  ): List<CustomersRow> = Fragment.interpolate(Fragment.lit("select \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\nfrom \"customers\"\nwhere \"customer_id\" = ANY("), Fragment.encode(CustomersId.dbTypeArray, customerIds), Fragment.lit(")")).query(CustomersRow._rowParser.all()).runUnchecked(c)
+  ): List<CustomersRow> = Fragment.interpolate(Fragment.lit("select \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\nfrom \"customers\"\nwhere \"customer_id\" = ANY("), Fragment.encode(CustomersId.duckDbTypeArray, customerIds), Fragment.lit(")")).query(CustomersRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     customerIds: Array<CustomersId>,
@@ -97,13 +98,13 @@ class CustomersRepoImpl() : CustomersRepo {
     c: Connection
   ): Boolean {
     val customerId: CustomersId = row.customerId
-    return Fragment.interpolate(Fragment.lit("update \"customers\"\nset \"name\" = "), Fragment.encode(DuckDbTypes.varchar, row.name), Fragment.lit(",\n\"email\" = "), Fragment.encode(DuckDbTypes.varchar.nullable(), row.email), Fragment.lit(",\n\"created_at\" = "), Fragment.encode(DuckDbTypes.timestamp, row.createdAt), Fragment.lit(",\n\"priority\" = "), Fragment.encode(Priority.duckDbType.nullable(), row.priority), Fragment.lit("\nwhere \"customer_id\" = "), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"customers\"\nset \"name\" = "), Fragment.encode(DuckDbTypes.varchar, row.name), Fragment.lit(",\n\"email\" = "), Fragment.encode(Email.duckDbType.nullable(), row.email), Fragment.lit(",\n\"created_at\" = "), Fragment.encode(DuckDbTypes.timestamp, row.createdAt), Fragment.lit(",\n\"priority\" = "), Fragment.encode(Priority.duckDbType.nullable(), row.priority), Fragment.lit("\nwhere \"customer_id\" = "), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersRow = Fragment.interpolate(Fragment.lit("INSERT INTO \"customers\"(\"customer_id\", \"name\", \"email\", \"created_at\", \"priority\")\nVALUES ("), Fragment.encode(CustomersId.duckDbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.email), Fragment.lit(", "), Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(Priority.duckDbType.nullable(), unsaved.priority), Fragment.lit(")\nON CONFLICT (\"customer_id\")\nDO UPDATE SET\n  \"name\" = EXCLUDED.\"name\",\n\"email\" = EXCLUDED.\"email\",\n\"created_at\" = EXCLUDED.\"created_at\",\n\"priority\" = EXCLUDED.\"priority\"\nRETURNING \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\""))
+  ): CustomersRow = Fragment.interpolate(Fragment.lit("INSERT INTO \"customers\"(\"customer_id\", \"name\", \"email\", \"created_at\", \"priority\")\nVALUES ("), Fragment.encode(CustomersId.duckDbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.duckDbType.nullable(), unsaved.email), Fragment.lit(", "), Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(Priority.duckDbType.nullable(), unsaved.priority), Fragment.lit(")\nON CONFLICT (\"customer_id\")\nDO UPDATE SET\n  \"name\" = EXCLUDED.\"name\",\n\"email\" = EXCLUDED.\"email\",\n\"created_at\" = EXCLUDED.\"created_at\",\n\"priority\" = EXCLUDED.\"priority\"\nRETURNING \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\""))
     .updateReturning(CustomersRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

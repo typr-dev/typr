@@ -12,7 +12,8 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoShort
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import doobie.postgres.Text
 import io.circe.Decoder
 import io.circe.Encoder
@@ -48,7 +49,7 @@ case class EmployeeRowUnsaved(
   /** Default: true
    * Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt from collective bargaining.
    */
-  salariedflag: Defaulted[Flag] = new UseDefault(),
+  salariedflag: Defaulted[/* user-picked */ SalariedFlag] = new UseDefault(),
   /** Default: 0
    * Number of available vacation hours.
    * Constraint CK_Employee_VacationHours affecting columns vacationhours:  (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -62,7 +63,7 @@ case class EmployeeRowUnsaved(
   /** Default: true
    * 0 = Inactive, 1 = Active
    */
-  currentflag: Defaulted[Flag] = new UseDefault(),
+  currentflag: Defaulted[/* user-picked */ CurrentFlag] = new UseDefault(),
   /** Default: uuid_generate_v1() */
   rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
@@ -73,10 +74,10 @@ case class EmployeeRowUnsaved(
   organizationnode: Defaulted[Option[String]] = new UseDefault()
 ) {
   def toRow(
-    salariedflagDefault: => Flag,
+    salariedflagDefault: => /* user-picked */ SalariedFlag,
     vacationhoursDefault: => TypoShort,
     sickleavehoursDefault: => TypoShort,
-    currentflagDefault: => Flag,
+    currentflagDefault: => /* user-picked */ CurrentFlag,
     rowguidDefault: => TypoUUID,
     modifieddateDefault: => TypoLocalDateTime,
     organizationnodeDefault: => Option[String]
@@ -102,9 +103,9 @@ case class EmployeeRowUnsaved(
 }
 
 object EmployeeRowUnsaved {
-  implicit lazy val decoder: Decoder[EmployeeRowUnsaved] = Decoder.forProduct15[EmployeeRowUnsaved, BusinessentityId, String, String, String, TypoLocalDate, String, String, TypoLocalDate, Defaulted[Flag], Defaulted[TypoShort], Defaulted[TypoShort], Defaulted[Flag], Defaulted[TypoUUID], Defaulted[TypoLocalDateTime], Defaulted[Option[String]]]("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")(EmployeeRowUnsaved.apply)(BusinessentityId.decoder, Decoder.decodeString, Decoder.decodeString, Decoder.decodeString, TypoLocalDate.decoder, Decoder.decodeString, Decoder.decodeString, TypoLocalDate.decoder, Defaulted.decoder(Flag.decoder), Defaulted.decoder(TypoShort.decoder), Defaulted.decoder(TypoShort.decoder), Defaulted.decoder(Flag.decoder), Defaulted.decoder(TypoUUID.decoder), Defaulted.decoder(TypoLocalDateTime.decoder), Defaulted.decoder(Decoder.decodeOption(Decoder.decodeString)))
+  implicit lazy val decoder: Decoder[EmployeeRowUnsaved] = Decoder.forProduct15[EmployeeRowUnsaved, BusinessentityId, String, String, String, TypoLocalDate, String, String, TypoLocalDate, Defaulted[/* user-picked */ SalariedFlag], Defaulted[TypoShort], Defaulted[TypoShort], Defaulted[/* user-picked */ CurrentFlag], Defaulted[TypoUUID], Defaulted[TypoLocalDateTime], Defaulted[Option[String]]]("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")(EmployeeRowUnsaved.apply)(BusinessentityId.decoder, Decoder.decodeString, Decoder.decodeString, Decoder.decodeString, TypoLocalDate.decoder, Decoder.decodeString, Decoder.decodeString, TypoLocalDate.decoder, Defaulted.decoder(SalariedFlag.decoder), Defaulted.decoder(TypoShort.decoder), Defaulted.decoder(TypoShort.decoder), Defaulted.decoder(CurrentFlag.decoder), Defaulted.decoder(TypoUUID.decoder), Defaulted.decoder(TypoLocalDateTime.decoder), Defaulted.decoder(Decoder.decodeOption(Decoder.decodeString)))
 
-  implicit lazy val encoder: Encoder[EmployeeRowUnsaved] = Encoder.forProduct15[EmployeeRowUnsaved, BusinessentityId, String, String, String, TypoLocalDate, String, String, TypoLocalDate, Defaulted[Flag], Defaulted[TypoShort], Defaulted[TypoShort], Defaulted[Flag], Defaulted[TypoUUID], Defaulted[TypoLocalDateTime], Defaulted[Option[String]]]("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")(x => (x.businessentityid, x.nationalidnumber, x.loginid, x.jobtitle, x.birthdate, x.maritalstatus, x.gender, x.hiredate, x.salariedflag, x.vacationhours, x.sickleavehours, x.currentflag, x.rowguid, x.modifieddate, x.organizationnode))(BusinessentityId.encoder, Encoder.encodeString, Encoder.encodeString, Encoder.encodeString, TypoLocalDate.encoder, Encoder.encodeString, Encoder.encodeString, TypoLocalDate.encoder, Defaulted.encoder(Flag.encoder), Defaulted.encoder(TypoShort.encoder), Defaulted.encoder(TypoShort.encoder), Defaulted.encoder(Flag.encoder), Defaulted.encoder(TypoUUID.encoder), Defaulted.encoder(TypoLocalDateTime.encoder), Defaulted.encoder(Encoder.encodeOption(Encoder.encodeString)))
+  implicit lazy val encoder: Encoder[EmployeeRowUnsaved] = Encoder.forProduct15[EmployeeRowUnsaved, BusinessentityId, String, String, String, TypoLocalDate, String, String, TypoLocalDate, Defaulted[/* user-picked */ SalariedFlag], Defaulted[TypoShort], Defaulted[TypoShort], Defaulted[/* user-picked */ CurrentFlag], Defaulted[TypoUUID], Defaulted[TypoLocalDateTime], Defaulted[Option[String]]]("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")(x => (x.businessentityid, x.nationalidnumber, x.loginid, x.jobtitle, x.birthdate, x.maritalstatus, x.gender, x.hiredate, x.salariedflag, x.vacationhours, x.sickleavehours, x.currentflag, x.rowguid, x.modifieddate, x.organizationnode))(BusinessentityId.encoder, Encoder.encodeString, Encoder.encodeString, Encoder.encodeString, TypoLocalDate.encoder, Encoder.encodeString, Encoder.encodeString, TypoLocalDate.encoder, Defaulted.encoder(SalariedFlag.encoder), Defaulted.encoder(TypoShort.encoder), Defaulted.encoder(TypoShort.encoder), Defaulted.encoder(CurrentFlag.encoder), Defaulted.encoder(TypoUUID.encoder), Defaulted.encoder(TypoLocalDateTime.encoder), Defaulted.encoder(Encoder.encodeOption(Encoder.encodeString)))
 
   implicit lazy val pgText: Text[EmployeeRowUnsaved] = {
     Text.instance[EmployeeRowUnsaved]{ (row, sb) =>
@@ -124,13 +125,13 @@ object EmployeeRowUnsaved {
       sb.append(Text.DELIMETER)
       TypoLocalDate.pgText.unsafeEncode(row.hiredate, sb)
       sb.append(Text.DELIMETER)
-      Defaulted.pgText(Flag.pgText).unsafeEncode(row.salariedflag, sb)
+      Defaulted.pgText(SalariedFlag.pgText).unsafeEncode(row.salariedflag, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoShort.pgText).unsafeEncode(row.vacationhours, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoShort.pgText).unsafeEncode(row.sickleavehours, sb)
       sb.append(Text.DELIMETER)
-      Defaulted.pgText(Flag.pgText).unsafeEncode(row.currentflag, sb)
+      Defaulted.pgText(CurrentFlag.pgText).unsafeEncode(row.currentflag, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoUUID.pgText).unsafeEncode(row.rowguid, sb)
       sb.append(Text.DELIMETER)

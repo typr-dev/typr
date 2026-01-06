@@ -24,8 +24,11 @@ import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusFields
 import testdb.customer_status.CustomerStatusId
 import testdb.customer_status.CustomerStatusRow
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
-data class CustomersFields(val _path: List<Path>) : TupleExpr14<CustomersId, String, ByteArray, String, String, String, CustomerStatusId, String, Json, EmailMailPushSmsSet, String, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
+data class CustomersFields(val _path: List<Path>) : TupleExpr14<CustomersId, /* user-picked */ Email, ByteArray, /* user-picked */ FirstName, /* user-picked */ LastName, String, CustomerStatusId, String, Json, EmailMailPushSmsSet, String, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   override fun _1(): SqlExpr<CustomersId> = customerId()
 
   override fun _10(): SqlExpr<EmailMailPushSmsSet> = marketingFlags()
@@ -38,13 +41,13 @@ data class CustomersFields(val _path: List<Path>) : TupleExpr14<CustomersId, Str
 
   override fun _14(): SqlExpr<LocalDateTime> = lastLoginAt()
 
-  override fun _2(): SqlExpr<String> = email()
+  override fun _2(): SqlExpr</* user-picked */ Email> = email()
 
   override fun _3(): SqlExpr<ByteArray> = passwordHash()
 
-  override fun _4(): SqlExpr<String> = firstName()
+  override fun _4(): SqlExpr</* user-picked */ FirstName> = firstName()
 
-  override fun _5(): SqlExpr<String> = lastName()
+  override fun _5(): SqlExpr</* user-picked */ LastName> = lastName()
 
   override fun _6(): SqlExpr<String> = phone()
 
@@ -60,19 +63,19 @@ data class CustomersFields(val _path: List<Path>) : TupleExpr14<CustomersId, Str
 
   fun createdAt(): Field<LocalDateTime, CustomersRow> = Field<LocalDateTime, CustomersRow>(_path, "created_at", CustomersRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
 
-  fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "customer_id", CustomersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.dbType)
+  fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "customer_id", CustomersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType)
 
-  fun email(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "email", CustomersRow::email, null, null, { row, value -> row.copy(email = value) }, MariaTypes.varchar)
+  fun email(): Field</* user-picked */ Email, CustomersRow> = Field</* user-picked */ Email, CustomersRow>(_path, "email", CustomersRow::email, null, null, { row, value -> row.copy(email = value) }, Email.mariaType)
 
-  fun firstName(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "first_name", CustomersRow::firstName, null, null, { row, value -> row.copy(firstName = value) }, MariaTypes.varchar)
+  fun firstName(): Field</* user-picked */ FirstName, CustomersRow> = Field</* user-picked */ FirstName, CustomersRow>(_path, "first_name", CustomersRow::firstName, null, null, { row, value -> row.copy(firstName = value) }, FirstName.mariaType)
 
   fun fkCustomerStatus(): ForeignKey<CustomerStatusFields, CustomerStatusRow> = ForeignKey.of<CustomerStatusFields, CustomerStatusRow>("fk_customer_status").withColumnPair<CustomerStatusId>(status(), CustomerStatusFields::statusCode)
 
   fun lastLoginAt(): OptField<LocalDateTime, CustomersRow> = OptField<LocalDateTime, CustomersRow>(_path, "last_login_at", CustomersRow::lastLoginAt, null, null, { row, value -> row.copy(lastLoginAt = value) }, MariaTypes.datetime)
 
-  fun lastName(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "last_name", CustomersRow::lastName, null, null, { row, value -> row.copy(lastName = value) }, MariaTypes.varchar)
+  fun lastName(): Field</* user-picked */ LastName, CustomersRow> = Field</* user-picked */ LastName, CustomersRow>(_path, "last_name", CustomersRow::lastName, null, null, { row, value -> row.copy(lastName = value) }, LastName.mariaType)
 
-  fun marketingFlags(): OptField<EmailMailPushSmsSet, CustomersRow> = OptField<EmailMailPushSmsSet, CustomersRow>(_path, "marketing_flags", CustomersRow::marketingFlags, null, null, { row, value -> row.copy(marketingFlags = value) }, EmailMailPushSmsSet.dbType)
+  fun marketingFlags(): OptField<EmailMailPushSmsSet, CustomersRow> = OptField<EmailMailPushSmsSet, CustomersRow>(_path, "marketing_flags", CustomersRow::marketingFlags, null, null, { row, value -> row.copy(marketingFlags = value) }, EmailMailPushSmsSet.mariaType)
 
   fun notes(): OptField<String, CustomersRow> = OptField<String, CustomersRow>(_path, "notes", CustomersRow::notes, null, null, { row, value -> row.copy(notes = value) }, MariaTypes.text)
 
@@ -84,7 +87,7 @@ data class CustomersFields(val _path: List<Path>) : TupleExpr14<CustomersId, Str
 
   override fun rowParser(): RowParser<CustomersRow> = CustomersRow._rowParser.underlying
 
-  fun status(): Field<CustomerStatusId, CustomersRow> = Field<CustomerStatusId, CustomersRow>(_path, "status", CustomersRow::status, null, null, { row, value -> row.copy(status = value) }, CustomerStatusId.dbType)
+  fun status(): Field<CustomerStatusId, CustomersRow> = Field<CustomerStatusId, CustomersRow>(_path, "status", CustomersRow::status, null, null, { row, value -> row.copy(status = value) }, CustomerStatusId.mariaType)
 
   fun tier(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "tier", CustomersRow::tier, null, null, { row, value -> row.copy(tier = value) }, MariaTypes.text)
 

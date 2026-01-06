@@ -10,6 +10,8 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import typr.dsl.Path
 import typr.dsl.RelationStructure
 import typr.dsl.SqlExpr.Field
@@ -19,8 +21,8 @@ trait VemployeeViewFields {
   def businessentityid: Field[BusinessentityId, VemployeeViewRow]
   def title: Field[String, VemployeeViewRow]
   def firstname: Field[/* user-picked */ FirstName, VemployeeViewRow]
-  def middlename: Field[Name, VemployeeViewRow]
-  def lastname: Field[Name, VemployeeViewRow]
+  def middlename: Field[/* user-picked */ MiddleName, VemployeeViewRow]
+  def lastname: Field[/* user-picked */ LastName, VemployeeViewRow]
   def suffix: Field[String, VemployeeViewRow]
   def jobtitle: Field[String, VemployeeViewRow]
   def phonenumber: Field[Phone, VemployeeViewRow]
@@ -47,8 +49,8 @@ object VemployeeViewFields {
       override def businessentityid = Field[BusinessentityId, VemployeeViewRow](_path, "businessentityid", None, None, x => x.businessentityid, (row, value) => row.copy(businessentityid = value))
       override def title = Field[String, VemployeeViewRow](_path, "title", None, None, x => x.title, (row, value) => row.copy(title = value))
       override def firstname = Field[/* user-picked */ FirstName, VemployeeViewRow](_path, "firstname", None, None, x => x.firstname, (row, value) => row.copy(firstname = value))
-      override def middlename = Field[Name, VemployeeViewRow](_path, "middlename", None, None, x => x.middlename, (row, value) => row.copy(middlename = value))
-      override def lastname = Field[Name, VemployeeViewRow](_path, "lastname", None, None, x => x.lastname, (row, value) => row.copy(lastname = value))
+      override def middlename = Field[/* user-picked */ MiddleName, VemployeeViewRow](_path, "middlename", None, None, x => x.middlename, (row, value) => row.copy(middlename = value))
+      override def lastname = Field[/* user-picked */ LastName, VemployeeViewRow](_path, "lastname", None, None, x => x.lastname, (row, value) => row.copy(lastname = value))
       override def suffix = Field[String, VemployeeViewRow](_path, "suffix", None, None, x => x.suffix, (row, value) => row.copy(suffix = value))
       override def jobtitle = Field[String, VemployeeViewRow](_path, "jobtitle", None, None, x => x.jobtitle, (row, value) => row.copy(jobtitle = value))
       override def phonenumber = Field[Phone, VemployeeViewRow](_path, "phonenumber", None, None, x => x.phonenumber, (row, value) => row.copy(phonenumber = value))

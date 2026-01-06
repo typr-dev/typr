@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.AllBrandsCategoriesCSet;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.IsActive;
 
 /** Table: promotions Primary key: promotion_id */
 public record PromotionsRow(
@@ -50,7 +51,7 @@ public record PromotionsRow(
     /** */
     @JsonProperty("valid_to") LocalDateTime validTo,
     /** Default: 1 */
-    @JsonProperty("is_active") Boolean isActive,
+    @JsonProperty("is_active") /* user-picked */ IsActive isActive,
     /** Default: current_timestamp() */
     @JsonProperty("created_at") LocalDateTime createdAt)
     implements Tuple16<
@@ -67,8 +68,8 @@ public record PromotionsRow(
         Optional<AllBrandsCategoriesCSet>,
         Optional<Json>,
         LocalDateTime,
-        LocalDateTime,
-        Boolean,
+        LocalDateTime, /* user-picked */
+        IsActive,
         LocalDateTime> {
   /** AUTO_INCREMENT */
   public PromotionsRow withPromotionId(PromotionsId promotionId) {
@@ -379,7 +380,7 @@ public record PromotionsRow(
   ;
 
   /** Default: 1 */
-  public PromotionsRow withIsActive(Boolean isActive) {
+  public PromotionsRow withIsActive(/* user-picked */ IsActive isActive) {
     return new PromotionsRow(
         promotionId,
         code,
@@ -424,7 +425,7 @@ public record PromotionsRow(
 
   public static RowParser<PromotionsRow> _rowParser =
       RowParsers.of(
-          PromotionsId.dbType,
+          PromotionsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.text.opt(),
@@ -434,11 +435,11 @@ public record PromotionsRow(
           MariaTypes.intUnsigned.opt(),
           MariaTypes.intUnsigned,
           MariaTypes.tinyintUnsigned.opt(),
-          AllBrandsCategoriesCSet.dbType.opt(),
+          AllBrandsCategoriesCSet.mariaType.opt(),
           MariaTypes.json.opt(),
           MariaTypes.datetime,
           MariaTypes.datetime,
-          MariaTypes.bool,
+          IsActive.mariaType,
           MariaTypes.datetime,
           PromotionsRow::new,
           row ->
@@ -499,7 +500,7 @@ public record PromotionsRow(
   ;
 
   @Override
-  public Boolean _15() {
+  public /* user-picked */ IsActive _15() {
     return isActive;
   }
   ;
@@ -571,7 +572,7 @@ public record PromotionsRow(
       Defaulted<Optional<Uint1>> maxUsesPerCustomer,
       Defaulted<Optional<AllBrandsCategoriesCSet>> applicableTo,
       Defaulted<Optional<Json>> rulesJson,
-      Defaulted<Boolean> isActive,
+      Defaulted</* user-picked */ IsActive> isActive,
       Defaulted<LocalDateTime> createdAt) {
     return new PromotionsRowUnsaved(
         code,

@@ -61,8 +61,8 @@ public record AddresstypeRow(
 
   public static RowParser<AddresstypeRow> _rowParser =
       RowParsers.of(
-          AddresstypeId.dbType,
-          Name.dbType,
+          AddresstypeId.pgType,
+          Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
           AddresstypeRow::new,

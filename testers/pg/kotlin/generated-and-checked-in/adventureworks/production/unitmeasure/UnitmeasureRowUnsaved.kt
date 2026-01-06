@@ -25,9 +25,9 @@ data class UnitmeasureRowUnsaved(
 
   companion object {
     val pgText: PgText<UnitmeasureRowUnsaved> =
-      PgText.instance({ row, sb -> UnitmeasureId.dbType.text().unsafeEncode(row.unitmeasurecode, sb)
+      PgText.instance({ row, sb -> UnitmeasureId.pgType.text().unsafeEncode(row.unitmeasurecode, sb)
       sb.append(PgText.DELIMETER)
-      Name.dbType.text().unsafeEncode(row.name, sb)
+      Name.pgType.text().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
   }

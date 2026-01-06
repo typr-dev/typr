@@ -24,13 +24,14 @@ import org.mariadb.jdbc.type.Point;
 import testdb.customers.CustomersFields;
 import testdb.customers.CustomersId;
 import testdb.customers.CustomersRow;
+import testdb.userdefined.IsDefault;
 
 public class CustomerAddressesFields
     extends TupleExpr14<
         CustomerAddressesId,
         CustomersId,
-        String,
-        Boolean,
+        String, /* user-picked */
+        IsDefault,
         String,
         String,
         String,
@@ -60,7 +61,7 @@ public class CustomerAddressesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withAddressId(value),
-        CustomerAddressesId.dbType);
+        CustomerAddressesId.mariaType);
   }
 
   public Field<CustomersId, CustomerAddressesRow> customerId() {
@@ -71,7 +72,7 @@ public class CustomerAddressesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCustomerId(value),
-        CustomersId.dbType);
+        CustomersId.mariaType);
   }
 
   public Field<String, CustomerAddressesRow> addressType() {
@@ -85,15 +86,15 @@ public class CustomerAddressesFields
         MariaTypes.text);
   }
 
-  public Field<Boolean, CustomerAddressesRow> isDefault() {
-    return new Field<Boolean, CustomerAddressesRow>(
+  public Field</* user-picked */ IsDefault, CustomerAddressesRow> isDefault() {
+    return new Field</* user-picked */ IsDefault, CustomerAddressesRow>(
         _path,
         "is_default",
         CustomerAddressesRow::isDefault,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsDefault(value),
-        MariaTypes.bool);
+        IsDefault.mariaType);
   }
 
   public Field<String, CustomerAddressesRow> recipientName() {
@@ -262,7 +263,7 @@ public class CustomerAddressesFields
   }
 
   @Override
-  public SqlExpr<Boolean> _4() {
+  public SqlExpr</* user-picked */ IsDefault> _4() {
     return isDefault();
   }
 

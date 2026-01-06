@@ -11,7 +11,8 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoShort
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import doobie.postgres.Text
 import doobie.util.Read
 import doobie.util.Write
@@ -53,7 +54,7 @@ case class EmployeeRow(
   /** Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt from collective bargaining.
    * Default: true
    */
-  salariedflag: Flag,
+  salariedflag: /* user-picked */ SalariedFlag,
   /** Number of available vacation hours.
    * Default: 0
    * Constraint CK_Employee_VacationHours affecting columns vacationhours: (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -67,7 +68,7 @@ case class EmployeeRow(
   /** 0 = Inactive, 1 = Active
    * Default: true
    */
-  currentflag: Flag,
+  currentflag: /* user-picked */ CurrentFlag,
   /** Default: uuid_generate_v1() */
   rowguid: TypoUUID,
   /** Default: now() */
@@ -80,10 +81,10 @@ case class EmployeeRow(
   def id: BusinessentityId = businessentityid
 
   def toUnsavedRow(
-    salariedflag: Defaulted[Flag] = Defaulted.Provided(this.salariedflag),
+    salariedflag: Defaulted[/* user-picked */ SalariedFlag] = Defaulted.Provided(this.salariedflag),
     vacationhours: Defaulted[TypoShort] = Defaulted.Provided(this.vacationhours),
     sickleavehours: Defaulted[TypoShort] = Defaulted.Provided(this.sickleavehours),
-    currentflag: Defaulted[Flag] = Defaulted.Provided(this.currentflag),
+    currentflag: Defaulted[/* user-picked */ CurrentFlag] = Defaulted.Provided(this.currentflag),
     rowguid: Defaulted[TypoUUID] = Defaulted.Provided(this.rowguid),
     modifieddate: Defaulted[TypoLocalDateTime] = Defaulted.Provided(this.modifieddate),
     organizationnode: Defaulted[Option[String]] = Defaulted.Provided(this.organizationnode)
@@ -109,9 +110,9 @@ case class EmployeeRow(
 }
 
 object EmployeeRow {
-  given decoder: Decoder[EmployeeRow] = Decoder.forProduct15[EmployeeRow, BusinessentityId, String, String, String, TypoLocalDate, String, String, TypoLocalDate, Flag, TypoShort, TypoShort, Flag, TypoUUID, TypoLocalDateTime, Option[String]]("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")(EmployeeRow.apply)(using BusinessentityId.decoder, Decoder.decodeString, Decoder.decodeString, Decoder.decodeString, TypoLocalDate.decoder, Decoder.decodeString, Decoder.decodeString, TypoLocalDate.decoder, Flag.decoder, TypoShort.decoder, TypoShort.decoder, Flag.decoder, TypoUUID.decoder, TypoLocalDateTime.decoder, Decoder.decodeOption(using Decoder.decodeString))
+  given decoder: Decoder[EmployeeRow] = Decoder.forProduct15[EmployeeRow, BusinessentityId, String, String, String, TypoLocalDate, String, String, TypoLocalDate, /* user-picked */ SalariedFlag, TypoShort, TypoShort, /* user-picked */ CurrentFlag, TypoUUID, TypoLocalDateTime, Option[String]]("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")(EmployeeRow.apply)(using BusinessentityId.decoder, Decoder.decodeString, Decoder.decodeString, Decoder.decodeString, TypoLocalDate.decoder, Decoder.decodeString, Decoder.decodeString, TypoLocalDate.decoder, SalariedFlag.decoder, TypoShort.decoder, TypoShort.decoder, CurrentFlag.decoder, TypoUUID.decoder, TypoLocalDateTime.decoder, Decoder.decodeOption(using Decoder.decodeString))
 
-  given encoder: Encoder[EmployeeRow] = Encoder.forProduct15[EmployeeRow, BusinessentityId, String, String, String, TypoLocalDate, String, String, TypoLocalDate, Flag, TypoShort, TypoShort, Flag, TypoUUID, TypoLocalDateTime, Option[String]]("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")(x => (x.businessentityid, x.nationalidnumber, x.loginid, x.jobtitle, x.birthdate, x.maritalstatus, x.gender, x.hiredate, x.salariedflag, x.vacationhours, x.sickleavehours, x.currentflag, x.rowguid, x.modifieddate, x.organizationnode))(using BusinessentityId.encoder, Encoder.encodeString, Encoder.encodeString, Encoder.encodeString, TypoLocalDate.encoder, Encoder.encodeString, Encoder.encodeString, TypoLocalDate.encoder, Flag.encoder, TypoShort.encoder, TypoShort.encoder, Flag.encoder, TypoUUID.encoder, TypoLocalDateTime.encoder, Encoder.encodeOption(using Encoder.encodeString))
+  given encoder: Encoder[EmployeeRow] = Encoder.forProduct15[EmployeeRow, BusinessentityId, String, String, String, TypoLocalDate, String, String, TypoLocalDate, /* user-picked */ SalariedFlag, TypoShort, TypoShort, /* user-picked */ CurrentFlag, TypoUUID, TypoLocalDateTime, Option[String]]("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")(x => (x.businessentityid, x.nationalidnumber, x.loginid, x.jobtitle, x.birthdate, x.maritalstatus, x.gender, x.hiredate, x.salariedflag, x.vacationhours, x.sickleavehours, x.currentflag, x.rowguid, x.modifieddate, x.organizationnode))(using BusinessentityId.encoder, Encoder.encodeString, Encoder.encodeString, Encoder.encodeString, TypoLocalDate.encoder, Encoder.encodeString, Encoder.encodeString, TypoLocalDate.encoder, SalariedFlag.encoder, TypoShort.encoder, TypoShort.encoder, CurrentFlag.encoder, TypoUUID.encoder, TypoLocalDateTime.encoder, Encoder.encodeOption(using Encoder.encodeString))
 
   given pgText: Text[EmployeeRow] = {
     Text.instance[EmployeeRow]{ (row, sb) =>
@@ -131,13 +132,13 @@ object EmployeeRow {
       sb.append(Text.DELIMETER)
       TypoLocalDate.pgText.unsafeEncode(row.hiredate, sb)
       sb.append(Text.DELIMETER)
-      Flag.pgText.unsafeEncode(row.salariedflag, sb)
+      /* user-picked */ SalariedFlag.pgText.unsafeEncode(row.salariedflag, sb)
       sb.append(Text.DELIMETER)
       TypoShort.pgText.unsafeEncode(row.vacationhours, sb)
       sb.append(Text.DELIMETER)
       TypoShort.pgText.unsafeEncode(row.sickleavehours, sb)
       sb.append(Text.DELIMETER)
-      Flag.pgText.unsafeEncode(row.currentflag, sb)
+      /* user-picked */ CurrentFlag.pgText.unsafeEncode(row.currentflag, sb)
       sb.append(Text.DELIMETER)
       TypoUUID.pgText.unsafeEncode(row.rowguid, sb)
       sb.append(Text.DELIMETER)
@@ -157,10 +158,10 @@ object EmployeeRow {
         new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.Single(TypoLocalDate.get).asInstanceOf[Read[Any]],
-        new Read.Single(Flag.get).asInstanceOf[Read[Any]],
+        new Read.Single(/* user-picked */ SalariedFlag.get).asInstanceOf[Read[Any]],
         new Read.Single(TypoShort.get).asInstanceOf[Read[Any]],
         new Read.Single(TypoShort.get).asInstanceOf[Read[Any]],
-        new Read.Single(Flag.get).asInstanceOf[Read[Any]],
+        new Read.Single(/* user-picked */ CurrentFlag.get).asInstanceOf[Read[Any]],
         new Read.Single(TypoUUID.get).asInstanceOf[Read[Any]],
         new Read.Single(TypoLocalDateTime.get).asInstanceOf[Read[Any]],
         new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]]
@@ -174,10 +175,10 @@ object EmployeeRow {
             maritalstatus = arr(5).asInstanceOf[String],
             gender = arr(6).asInstanceOf[String],
             hiredate = arr(7).asInstanceOf[TypoLocalDate],
-            salariedflag = arr(8).asInstanceOf[Flag],
+            salariedflag = arr(8).asInstanceOf[/* user-picked */ SalariedFlag],
             vacationhours = arr(9).asInstanceOf[TypoShort],
             sickleavehours = arr(10).asInstanceOf[TypoShort],
-            currentflag = arr(11).asInstanceOf[Flag],
+            currentflag = arr(11).asInstanceOf[/* user-picked */ CurrentFlag],
             rowguid = arr(12).asInstanceOf[TypoUUID],
             modifieddate = arr(13).asInstanceOf[TypoLocalDateTime],
             organizationnode = arr(14).asInstanceOf[Option[String]]
@@ -195,10 +196,10 @@ object EmployeeRow {
            new Write.Single(Meta.StringMeta.put),
            new Write.Single(Meta.StringMeta.put),
            new Write.Single(TypoLocalDate.put),
-           new Write.Single(Flag.put),
+           new Write.Single(/* user-picked */ SalariedFlag.put),
            new Write.Single(TypoShort.put),
            new Write.Single(TypoShort.put),
-           new Write.Single(Flag.put),
+           new Write.Single(/* user-picked */ CurrentFlag.put),
            new Write.Single(TypoUUID.put),
            new Write.Single(TypoLocalDateTime.put),
            new Write.Single(Meta.StringMeta.put).toOpt),

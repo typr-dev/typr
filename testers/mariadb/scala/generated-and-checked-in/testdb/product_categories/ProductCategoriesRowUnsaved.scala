@@ -10,6 +10,7 @@ import testdb.categories.CategoriesId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.products.ProductsId
+import testdb.userdefined.IsPrimary
 
 /** This class corresponds to a row in table `product_categories` which has not been persisted yet */
 case class ProductCategoriesRowUnsaved(
@@ -24,14 +25,14 @@ case class ProductCategoriesRowUnsaved(
   /** Default: 0
 
    */
-  @JsonProperty("is_primary") isPrimary: Defaulted[Boolean] = new UseDefault(),
+  @JsonProperty("is_primary") isPrimary: Defaulted[/* user-picked */ IsPrimary] = new UseDefault(),
   /** Default: 0
 
    */
   @JsonProperty("sort_order") sortOrder: Defaulted[Short] = new UseDefault()
 ) {
   def toRow(
-    isPrimaryDefault: => Boolean,
+    isPrimaryDefault: => /* user-picked */ IsPrimary,
     sortOrderDefault: => Short
   ): ProductCategoriesRow = {
     new ProductCategoriesRow(

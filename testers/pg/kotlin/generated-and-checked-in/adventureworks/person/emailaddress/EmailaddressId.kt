@@ -21,6 +21,6 @@ data class EmailaddressId(
   override fun _2(): Int = emailaddressid
 
   companion object {
-    val _rowParser: RowParser<EmailaddressId> = RowParsers.of(BusinessentityId.dbType, KotlinDbTypes.PgTypes.int4, { t0, t1 -> EmailaddressId(t0, t1) }, { row -> arrayOf<Any?>(row.businessentityid, row.emailaddressid) })
+    val _rowParser: RowParser<EmailaddressId> = RowParsers.of(BusinessentityId.pgType, KotlinDbTypes.PgTypes.int4, { t0, t1 -> EmailaddressId(t0, t1) }, { row -> arrayOf<Any?>(row.businessentityid, row.emailaddressid) })
   }
 }

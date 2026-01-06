@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 
 public class BrandsRepoImpl implements BrandsRepo {
   @Override
@@ -31,7 +32,7 @@ public class BrandsRepoImpl implements BrandsRepo {
   public Boolean deleteById(BrandsId brandId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `brands` where `brand_id` = "),
-                Fragment.encode(BrandsId.dbType, brandId),
+                Fragment.encode(BrandsId.mariaType, brandId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +43,7 @@ public class BrandsRepoImpl implements BrandsRepo {
   public Integer deleteByIds(BrandsId[] brandIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : brandIds) {
-      fragments.add(Fragment.encode(BrandsId.dbType, id));
+      fragments.add(Fragment.encode(BrandsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -70,7 +71,7 @@ public class BrandsRepoImpl implements BrandsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.char_.opt(), unsaved.countryOfOrigin()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(
                 ")\n"
                     + "RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`,"
@@ -126,7 +127,7 @@ public class BrandsRepoImpl implements BrandsRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_active`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(interpolate(Fragment.encode(IsActive.mariaType, value), Fragment.lit("")));
             });
     ;
     Fragment q =
@@ -168,7 +169,7 @@ public class BrandsRepoImpl implements BrandsRepo {
                     + " `country_of_origin`, `is_active`\n"
                     + "from `brands`\n"
                     + "where `brand_id` = "),
-            Fragment.encode(BrandsId.dbType, brandId),
+            Fragment.encode(BrandsId.mariaType, brandId),
             Fragment.lit(""))
         .query(BrandsRow._rowParser.first())
         .runUnchecked(c);
@@ -178,7 +179,7 @@ public class BrandsRepoImpl implements BrandsRepo {
   public List<BrandsRow> selectByIds(BrandsId[] brandIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : brandIds) {
-      fragments.add(Fragment.encode(BrandsId.dbType, id));
+      fragments.add(Fragment.encode(BrandsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -234,9 +235,9 @@ public class BrandsRepoImpl implements BrandsRepo {
                 Fragment.lit(",\n`country_of_origin` = "),
                 Fragment.encode(MariaTypes.char_.opt(), row.countryOfOrigin()),
                 Fragment.lit(",\n`is_active` = "),
-                Fragment.encode(MariaTypes.bool, row.isActive()),
+                Fragment.encode(IsActive.mariaType, row.isActive()),
                 Fragment.lit("\nwhere `brand_id` = "),
-                Fragment.encode(BrandsId.dbType, brandId),
+                Fragment.encode(BrandsId.mariaType, brandId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -250,7 +251,7 @@ public class BrandsRepoImpl implements BrandsRepo {
                 "INSERT INTO `brands`(`brand_id`, `name`, `slug`, `logo_blob`, `website_url`,"
                     + " `country_of_origin`, `is_active`)\n"
                     + "VALUES ("),
-            Fragment.encode(BrandsId.dbType, unsaved.brandId()),
+            Fragment.encode(BrandsId.mariaType, unsaved.brandId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.name()),
             Fragment.lit(", "),
@@ -262,7 +263,7 @@ public class BrandsRepoImpl implements BrandsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.char_.opt(), unsaved.countryOfOrigin()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(
                 ")\n"
                     + "ON DUPLICATE KEY UPDATE `name` = VALUES(`name`),\n"

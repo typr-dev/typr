@@ -32,7 +32,7 @@ public class IdentityParamsTestRepoImpl implements IdentityParamsTestRepo {
   public Boolean deleteById(IdentityParamsTestId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"IDENTITY_PARAMS_TEST\" where \"ID\" = "),
-                Fragment.encode(IdentityParamsTestId.dbType, id),
+                Fragment.encode(IdentityParamsTestId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +43,7 @@ public class IdentityParamsTestRepoImpl implements IdentityParamsTestRepo {
   public Integer deleteByIds(IdentityParamsTestId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(IdentityParamsTestId.dbType, id));
+      fragments.add(Fragment.encode(IdentityParamsTestId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -107,7 +107,7 @@ public class IdentityParamsTestRepoImpl implements IdentityParamsTestRepo {
   public Optional<IdentityParamsTestRow> selectById(IdentityParamsTestId id, Connection c) {
     return interpolate(
             Fragment.lit("select \"ID\", \"NAME\"\nfrom \"IDENTITY_PARAMS_TEST\"\nwhere \"ID\" = "),
-            Fragment.encode(IdentityParamsTestId.dbType, id),
+            Fragment.encode(IdentityParamsTestId.db2Type, id),
             Fragment.lit(""))
         .query(IdentityParamsTestRow._rowParser.first())
         .runUnchecked(c);
@@ -117,7 +117,7 @@ public class IdentityParamsTestRepoImpl implements IdentityParamsTestRepo {
   public List<IdentityParamsTestRow> selectByIds(IdentityParamsTestId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(IdentityParamsTestId.dbType, id));
+      fragments.add(Fragment.encode(IdentityParamsTestId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -154,7 +154,7 @@ public class IdentityParamsTestRepoImpl implements IdentityParamsTestRepo {
                 Fragment.lit("update \"IDENTITY_PARAMS_TEST\"\nset \"NAME\" = "),
                 Fragment.encode(Db2Types.varchar, row.name()),
                 Fragment.lit("\nwhere \"ID\" = "),
-                Fragment.encode(IdentityParamsTestId.dbType, id),
+                Fragment.encode(IdentityParamsTestId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -165,7 +165,7 @@ public class IdentityParamsTestRepoImpl implements IdentityParamsTestRepo {
   public void upsert(IdentityParamsTestRow unsaved, Connection c) {
     interpolate(
             Fragment.lit("MERGE INTO \"IDENTITY_PARAMS_TEST\" AS t\nUSING (VALUES ("),
-            Fragment.encode(IdentityParamsTestId.dbType, unsaved.id()),
+            Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.name()),
             Fragment.lit(
@@ -173,7 +173,7 @@ public class IdentityParamsTestRepoImpl implements IdentityParamsTestRepo {
                     + "ON t.\"ID\" = s.\"ID\"\n"
                     + "WHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\n"
                     + "WHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("),
-            Fragment.encode(IdentityParamsTestId.dbType, unsaved.id()),
+            Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.name()),
             Fragment.lit(")"))

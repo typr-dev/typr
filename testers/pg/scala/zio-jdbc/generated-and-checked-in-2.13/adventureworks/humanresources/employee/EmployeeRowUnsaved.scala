@@ -13,7 +13,8 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoShort
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -50,7 +51,7 @@ case class EmployeeRowUnsaved(
   /** Default: true
    * Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt from collective bargaining.
    */
-  salariedflag: Defaulted[Flag] = new UseDefault(),
+  salariedflag: Defaulted[/* user-picked */ SalariedFlag] = new UseDefault(),
   /** Default: 0
    * Number of available vacation hours.
    * Constraint CK_Employee_VacationHours affecting columns vacationhours:  (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -64,7 +65,7 @@ case class EmployeeRowUnsaved(
   /** Default: true
    * 0 = Inactive, 1 = Active
    */
-  currentflag: Defaulted[Flag] = new UseDefault(),
+  currentflag: Defaulted[/* user-picked */ CurrentFlag] = new UseDefault(),
   /** Default: uuid_generate_v1() */
   rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
@@ -75,10 +76,10 @@ case class EmployeeRowUnsaved(
   organizationnode: Defaulted[Option[String]] = new UseDefault()
 ) {
   def toRow(
-    salariedflagDefault: => Flag,
+    salariedflagDefault: => /* user-picked */ SalariedFlag,
     vacationhoursDefault: => TypoShort,
     sickleavehoursDefault: => TypoShort,
-    currentflagDefault: => Flag,
+    currentflagDefault: => /* user-picked */ CurrentFlag,
     rowguidDefault: => TypoUUID,
     modifieddateDefault: => TypoLocalDateTime,
     organizationnodeDefault: => Option[String]
@@ -114,10 +115,10 @@ object EmployeeRowUnsaved {
       val maritalstatus = jsonObj.get("maritalstatus").toRight("Missing field 'maritalstatus'").flatMap(_.as(JsonDecoder.string))
       val gender = jsonObj.get("gender").toRight("Missing field 'gender'").flatMap(_.as(JsonDecoder.string))
       val hiredate = jsonObj.get("hiredate").toRight("Missing field 'hiredate'").flatMap(_.as(TypoLocalDate.jsonDecoder))
-      val salariedflag = jsonObj.get("salariedflag").toRight("Missing field 'salariedflag'").flatMap(_.as(Defaulted.jsonDecoder(Flag.jsonDecoder)))
+      val salariedflag = jsonObj.get("salariedflag").toRight("Missing field 'salariedflag'").flatMap(_.as(Defaulted.jsonDecoder(SalariedFlag.jsonDecoder)))
       val vacationhours = jsonObj.get("vacationhours").toRight("Missing field 'vacationhours'").flatMap(_.as(Defaulted.jsonDecoder(TypoShort.jsonDecoder)))
       val sickleavehours = jsonObj.get("sickleavehours").toRight("Missing field 'sickleavehours'").flatMap(_.as(Defaulted.jsonDecoder(TypoShort.jsonDecoder)))
-      val currentflag = jsonObj.get("currentflag").toRight("Missing field 'currentflag'").flatMap(_.as(Defaulted.jsonDecoder(Flag.jsonDecoder)))
+      val currentflag = jsonObj.get("currentflag").toRight("Missing field 'currentflag'").flatMap(_.as(Defaulted.jsonDecoder(CurrentFlag.jsonDecoder)))
       val rowguid = jsonObj.get("rowguid").toRight("Missing field 'rowguid'").flatMap(_.as(Defaulted.jsonDecoder(TypoUUID.jsonDecoder)))
       val modifieddate = jsonObj.get("modifieddate").toRight("Missing field 'modifieddate'").flatMap(_.as(Defaulted.jsonDecoder(TypoLocalDateTime.jsonDecoder)))
       val organizationnode = jsonObj.get("organizationnode").toRight("Missing field 'organizationnode'").flatMap(_.as(Defaulted.jsonDecoder(JsonDecoder.option(JsonDecoder.string))))
@@ -156,7 +157,7 @@ object EmployeeRowUnsaved {
         TypoLocalDate.jsonEncoder.unsafeEncode(a.hiredate, indent, out)
         out.write(",")
         out.write(""""salariedflag":""")
-        Defaulted.jsonEncoder(Flag.jsonEncoder).unsafeEncode(a.salariedflag, indent, out)
+        Defaulted.jsonEncoder(SalariedFlag.jsonEncoder).unsafeEncode(a.salariedflag, indent, out)
         out.write(",")
         out.write(""""vacationhours":""")
         Defaulted.jsonEncoder(TypoShort.jsonEncoder).unsafeEncode(a.vacationhours, indent, out)
@@ -165,7 +166,7 @@ object EmployeeRowUnsaved {
         Defaulted.jsonEncoder(TypoShort.jsonEncoder).unsafeEncode(a.sickleavehours, indent, out)
         out.write(",")
         out.write(""""currentflag":""")
-        Defaulted.jsonEncoder(Flag.jsonEncoder).unsafeEncode(a.currentflag, indent, out)
+        Defaulted.jsonEncoder(CurrentFlag.jsonEncoder).unsafeEncode(a.currentflag, indent, out)
         out.write(",")
         out.write(""""rowguid":""")
         Defaulted.jsonEncoder(TypoUUID.jsonEncoder).unsafeEncode(a.rowguid, indent, out)
@@ -198,13 +199,13 @@ object EmployeeRowUnsaved {
       sb.append(Text.DELIMETER)
       TypoLocalDate.pgText.unsafeEncode(row.hiredate, sb)
       sb.append(Text.DELIMETER)
-      Defaulted.pgText(Flag.pgText).unsafeEncode(row.salariedflag, sb)
+      Defaulted.pgText(SalariedFlag.pgText).unsafeEncode(row.salariedflag, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoShort.pgText).unsafeEncode(row.vacationhours, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoShort.pgText).unsafeEncode(row.sickleavehours, sb)
       sb.append(Text.DELIMETER)
-      Defaulted.pgText(Flag.pgText).unsafeEncode(row.currentflag, sb)
+      Defaulted.pgText(CurrentFlag.pgText).unsafeEncode(row.currentflag, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoUUID.pgText).unsafeEncode(row.rowguid, sb)
       sb.append(Text.DELIMETER)

@@ -6,7 +6,8 @@
 package adventureworks.humanresources.employee
 
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.dsl.DeleteBuilder
@@ -23,19 +24,19 @@ import dev.typr.foundations.Fragment.interpolate
 class EmployeeRepoImpl extends EmployeeRepo {
   override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "humanresources"."employee" where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "humanresources"."employee" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "humanresources"."employee"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.dbTypeArray, businessentityids), Fragment.lit(")"))
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values ("""), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.lit(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date, "), Fragment.encode(Flag.dbType, unsaved.salariedflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.lit("::int2, "), Fragment.encode(Flag.dbType, unsaved.currentflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text.opt(), unsaved.organizationnode), Fragment.lit(""")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.lit(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date, "), Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.lit("::int2, "), Fragment.encode(CurrentFlag.pgType, unsaved.currentflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text.opt(), unsaved.organizationnode), Fragment.lit(""")
     RETURNING "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     """))
     .updateReturning(EmployeeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -45,7 +46,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""nationalidnumber"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""loginid"""")): @scala.annotation.nowarn
@@ -62,7 +63,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     values.add(interpolate(Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date"))): @scala.annotation.nowarn
     unsaved.salariedflag.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""salariedflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(Flag.dbType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.lit(""""salariedflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(SalariedFlag.pgType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
     );
     unsaved.vacationhours.visit(
       {  },
@@ -74,7 +75,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     );
     unsaved.currentflag.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""currentflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(Flag.dbType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.lit(""""currentflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(CurrentFlag.pgType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -119,13 +120,13 @@ class EmployeeRepoImpl extends EmployeeRepo {
   override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[EmployeeRow] = {
     interpolate(Fragment.lit("""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     from "humanresources"."employee"
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).query(EmployeeRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(EmployeeRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[EmployeeRow] = {
     interpolate(Fragment.lit("""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     from "humanresources"."employee"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.dbTypeArray, businessentityids), Fragment.lit(")")).query(EmployeeRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(EmployeeRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, EmployeeRow] = {
@@ -146,19 +147,19 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "maritalstatus" = """), Fragment.encode(PgTypes.bpchar, row.maritalstatus), Fragment.lit("""::bpchar,
     "gender" = """), Fragment.encode(PgTypes.bpchar, row.gender), Fragment.lit("""::bpchar,
     "hiredate" = """), Fragment.encode(PgTypes.date, row.hiredate), Fragment.lit("""::date,
-    "salariedflag" = """), Fragment.encode(Flag.dbType, row.salariedflag), Fragment.lit("""::bool,
+    "salariedflag" = """), Fragment.encode(SalariedFlag.pgType, row.salariedflag), Fragment.lit("""::bool,
     "vacationhours" = """), Fragment.encode(PgTypes.int2, row.vacationhours), Fragment.lit("""::int2,
     "sickleavehours" = """), Fragment.encode(PgTypes.int2, row.sickleavehours), Fragment.lit("""::int2,
-    "currentflag" = """), Fragment.encode(Flag.dbType, row.currentflag), Fragment.lit("""::bool,
+    "currentflag" = """), Fragment.encode(CurrentFlag.pgType, row.currentflag), Fragment.lit("""::bool,
     "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp,
     "organizationnode" = """), Fragment.encode(PgTypes.text.opt(), row.organizationnode), Fragment.lit("""
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values ("""), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.lit(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date, "), Fragment.encode(Flag.dbType, unsaved.salariedflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.lit("::int2, "), Fragment.encode(Flag.dbType, unsaved.currentflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text.opt(), unsaved.organizationnode), Fragment.lit(""")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.lit(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date, "), Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.lit("::int2, "), Fragment.encode(CurrentFlag.pgType, unsaved.currentflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text.opt(), unsaved.organizationnode), Fragment.lit(""")
     on conflict ("businessentityid")
     do update set
       "nationalidnumber" = EXCLUDED."nationalidnumber",

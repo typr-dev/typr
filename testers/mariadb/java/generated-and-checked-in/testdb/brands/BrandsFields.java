@@ -18,9 +18,10 @@ import dev.typr.foundations.dsl.SqlExpr.OptField;
 import dev.typr.foundations.dsl.TupleExpr.TupleExpr7;
 import java.util.List;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 
 public class BrandsFields
-    extends TupleExpr7<BrandsId, String, String, byte[], String, String, Boolean>
+    extends TupleExpr7<BrandsId, String, String, byte[], String, String, /* user-picked */ IsActive>
     implements RelationStructure<BrandsFields, BrandsRow>, FieldsBase<BrandsRow> {
   List<Path> _path;
 
@@ -38,7 +39,7 @@ public class BrandsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withBrandId(value),
-        BrandsId.dbType);
+        BrandsId.mariaType);
   }
 
   public Field<String, BrandsRow> name() {
@@ -96,15 +97,15 @@ public class BrandsFields
         MariaTypes.char_);
   }
 
-  public Field<Boolean, BrandsRow> isActive() {
-    return new Field<Boolean, BrandsRow>(
+  public Field</* user-picked */ IsActive, BrandsRow> isActive() {
+    return new Field</* user-picked */ IsActive, BrandsRow>(
         _path,
         "is_active",
         BrandsRow::isActive,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsActive(value),
-        MariaTypes.bool);
+        IsActive.mariaType);
   }
 
   @Override
@@ -165,7 +166,7 @@ public class BrandsFields
   }
 
   @Override
-  public SqlExpr<Boolean> _7() {
+  public SqlExpr</* user-picked */ IsActive> _7() {
     return isActive();
   }
 }

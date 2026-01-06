@@ -11,13 +11,35 @@ import scala.collection.immutable.SortedMap
 object generate {
   private type Files = Map[jvm.Type.Qualified, jvm.File]
 
+  /** Errors that can occur during code generation */
+  sealed trait GenerateError {
+    def message: String
+  }
+  object GenerateError {
+    case class IncompatibleTypes(errors: List[String]) extends GenerateError {
+      def message: String = s"TypeDefinitions has ${errors.size} incompatible type(s):\n${errors.mkString("\n")}"
+    }
+  }
+
+  /** Convenience method that throws on error. Use `apply` for proper error handling. */
+  def orThrow(
+      publicOptions: Options,
+      metaDb0: MetaDb,
+      graph: ProjectGraph[Selector, List[SqlFile]],
+      openEnumsByTable: Map[db.RelationName, OpenEnum]
+  ): List[Generated] =
+    apply(publicOptions, metaDb0, graph, openEnumsByTable) match {
+      case Right(generated) => generated
+      case Left(error)      => sys.error(error.message)
+    }
+
   // use this constructor if you need to run `typo` multiple times with different options but same database/scripts
   def apply(
       publicOptions: Options,
       metaDb0: MetaDb,
       graph: ProjectGraph[Selector, List[SqlFile]],
       openEnumsByTable: Map[db.RelationName, OpenEnum]
-  ): List[Generated] = {
+  ): Either[GenerateError, List[Generated]] = {
     Banner.maybePrint(publicOptions)
     val metaDb = publicOptions.rewriteDatabase(metaDb0)
     val pkg = jvm.Type.Qualified(publicOptions.pkg).value
@@ -28,6 +50,33 @@ object generate {
 
     val naming = publicOptions.naming(pkg, publicOptions.lang)
     val language = publicOptions.lang
+    val sharedTypesPackage = pkg / jvm.Ident("userdefined")
+
+    // Scan tables for TypeDefinitions matches
+    val tablesForTypeDefs = metaDb.relations.values.flatMap(_.get).collect { case t: db.Table => t }.toList
+    val databaseName = metaDb.dbType match {
+      case DbType.PostgreSQL => "postgres"
+      case DbType.MariaDB    => "mariadb"
+      case DbType.DuckDB     => "duckdb"
+      case DbType.Oracle     => "oracle"
+      case DbType.SqlServer  => "sqlserver"
+      case DbType.DB2        => "db2"
+    }
+
+    val scanResult = TypeMatcher.scanTables(
+      publicOptions.typeDefinitions,
+      databaseName,
+      tablesForTypeDefs,
+      sharedTypesPackage
+    )
+
+    // Check for TypeDefinitions errors - return early if any
+    if (scanResult.errors.nonEmpty) {
+      return Left(GenerateError.IncompatibleTypes(scanResult.errors))
+    }
+
+    // Combine TypeDefinitions override with user-provided override (user takes precedence)
+    val combinedTypeOverride = publicOptions.typeOverride.orElse(scanResult.typeOverride)
 
     /** Old DbLibs (Anorm, Doobie, ZioJdbc) use typr.dsl (Legacy DSL) */
     def requireScalaWithLegacyDsl(lib: String): LangScala = language match {
@@ -81,15 +130,16 @@ object generate {
       naming = naming,
       pkg = pkg,
       readonlyRepo = publicOptions.readonlyRepo,
-      typeOverride = publicOptions.typeOverride
+      typeOverride = combinedTypeOverride,
+      typeDefinitions = publicOptions.typeDefinitions
     )
     val customTypes = new CustomTypes(customTypesPackage, language)
     val duckDbStructLookup = MetaDb.buildStructLookup(metaDb.duckDbStructTypes)
     val mariaSetTypes = metaDb.mariaSetTypes.map(ComputedMariaSet(naming))
     val mariaSetLookup = mariaSetTypes.map(s => s.sortedValues.toList -> s).toMap
     val scalaTypeMapper = publicOptions.dbLib match {
-      case Some(DbLibName.Typo) => TypeMapperJvmNew(language, options.typeOverride, publicOptions.nullabilityOverride, naming, duckDbStructLookup, mariaSetLookup, publicOptions.enablePreciseTypes)
-      case _                    => TypeMapperJvmOld(language, options.typeOverride, publicOptions.nullabilityOverride, naming, customTypes)
+      case Some(DbLibName.Typo) => TypeMapperJvmNew(language, combinedTypeOverride, publicOptions.nullabilityOverride, naming, duckDbStructLookup, mariaSetLookup, publicOptions.enablePreciseTypes)
+      case _                    => TypeMapperJvmOld(language, combinedTypeOverride, publicOptions.nullabilityOverride, naming, customTypes)
     }
     val enums = metaDb.enums.map(ComputedStringEnum(naming))
     val domains = metaDb.domains.map(ComputedDomain(naming, scalaTypeMapper))
@@ -103,6 +153,10 @@ object generate {
     val pgCompositeTypes = metaDb.pgCompositeTypes
       .map(ComputedPgCompositeType(naming, scalaTypeMapper))
     val pgCompositeLookup = pgCompositeTypes.map(c => c.underlying.compositeType.name -> c).toMap
+
+    // Generate shared types from TypeDefinitions
+    val computedSharedTypes = ComputedSharedType.fromScanResult(scanResult, sharedTypesPackage, scalaTypeMapper)
+
     val projectsWithFiles: ProjectGraph[Files, List[jvm.File]] =
       graph.valueFromProject { project =>
         val isRoot = graph == project
@@ -249,6 +303,8 @@ object generate {
             }
           }
         }
+        val sharedTypeFiles = computedSharedTypes.map(FileSharedType(_, options, language))
+
         val defaultFile = FileDefault(default, options.jsonLibs, options.dbLib, language)
         val mostFiles: List[jvm.File] =
           List(
@@ -262,6 +318,7 @@ object generate {
             pgCompositeTypeFiles,
             mariaSetTypeFiles,
             preciseTypeFiles,
+            sharedTypeFiles,
             customTypes.All.values.map(FileCustomType(options, language)),
             relationFilesByName.map { case (_, f) => f },
             sqlFileFiles
@@ -280,7 +337,7 @@ object generate {
           }
           minimize(
             mostFiles,
-            entryPoints = sqlFileFiles ++ keptRelations ++ domainFiles ++ oracleObjectTypeFiles ++ oracleCollectionTypeFiles ++ duckDbStructTypeFiles ++ compositeEntryPoints
+            entryPoints = sqlFileFiles ++ keptRelations ++ domainFiles ++ oracleObjectTypeFiles ++ oracleCollectionTypeFiles ++ duckDbStructTypeFiles ++ compositeEntryPoints ++ sharedTypeFiles
           )
         }
 
@@ -295,7 +352,7 @@ object generate {
               val keptTables =
                 computedRelations.collect { case x: ComputedTable if options.enableTestInserts.include(x.dbTable.name) && keptTypes(x.names.RepoImplName) => x }
               if (keptTables.nonEmpty) {
-                val computed = ComputedTestInserts(project.name, options, language, customTypes, domains, enums, mariaSetTypes, computedRelationsByName, keptTables)
+                val computed = ComputedTestInserts(project.name, options, language, customTypes, domains, enums, mariaSetTypes, computedSharedTypes, computedRelationsByName, keptTables)
                 FileTestInserts(computed, dbLib, language)
               } else Nil
             case _ => Nil
@@ -322,7 +379,7 @@ object generate {
       }
 
     val deduplicated = deduplicate(projectsWithFiles)
-    deduplicated.toList.flatMap { p => Generated(publicOptions.lang, p.target, p.testTarget, p.value.valuesIterator ++ p.scripts) }
+    Right(deduplicated.toList.flatMap { p => Generated(publicOptions.lang, p.target, p.testTarget, p.value.valuesIterator ++ p.scripts) })
   }
 
   // projects in graph will have duplicated files, this will pull the files up until they are no longer duplicated

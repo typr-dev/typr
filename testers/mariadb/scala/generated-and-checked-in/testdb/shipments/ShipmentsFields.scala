@@ -40,7 +40,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(shipmentId = value),
-      ShipmentsId.dbType
+      ShipmentsId.mariaType
     )
   }
 
@@ -52,7 +52,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.dbType
+      OrdersId.mariaType
     )
   }
 
@@ -64,7 +64,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(carrierId = value),
-      ShippingCarriersId.dbType
+      ShippingCarriersId.mariaType
     )
   }
 
@@ -196,7 +196,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(originWarehouseId = value),
-      WarehousesId.dbType
+      WarehousesId.mariaType
     )
   }
 

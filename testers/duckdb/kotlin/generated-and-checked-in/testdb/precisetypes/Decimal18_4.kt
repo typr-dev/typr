@@ -46,11 +46,11 @@ data class Decimal18_4 private constructor(@field:JsonValue val value: BigDecima
     val bijection: Bijection<Decimal18_4, BigDecimal> =
       Bijection.of(Decimal18_4::value, ::Decimal18_4)
 
-    val dbTypeArray: DuckDbType<Array<Decimal18_4>> =
-      DuckDbTypes.decimalArray.bimap({ xs -> arrayMap.map(xs, ::Decimal18_4, Decimal18_4::class.java) }, { xs -> arrayMap.map(xs, Decimal18_4::value, BigDecimal::class.java) })
-
     val duckDbType: DuckDbType<Decimal18_4> =
       DuckDbTypes.numeric.bimap(::Decimal18_4, Decimal18_4::value)
+
+    val duckDbTypeArray: DuckDbType<Array<Decimal18_4>> =
+      DuckDbTypes.decimalArray.bimap({ xs -> arrayMap.map(xs, ::Decimal18_4, Decimal18_4::class.java) }, { xs -> arrayMap.map(xs, Decimal18_4::value, BigDecimal::class.java) })
 
     fun of(value: BigDecimal): Decimal18_4? {
       val scaled = value.setScale(4, RoundingMode.HALF_UP)

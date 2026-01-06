@@ -31,7 +31,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   public Boolean deleteById(CustomersId customerId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"CUSTOMERS\" where \"CUSTOMER_ID\" = "),
-                Fragment.encode(CustomersId.dbType, customerId),
+                Fragment.encode(CustomersId.db2Type, customerId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +42,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   public Integer deleteByIds(CustomersId[] customerIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : customerIds) {
-      fragments.add(Fragment.encode(CustomersId.dbType, id));
+      fragments.add(Fragment.encode(CustomersId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -61,7 +61,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                     + " (INSERT INTO \"CUSTOMERS\"(\"CUSTOMER_ID\", \"NAME\", \"EMAIL\","
                     + " \"CREATED_AT\")\n"
                     + "VALUES ("),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.db2Type, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.name()),
             Fragment.lit(", "),
@@ -89,7 +89,8 @@ public class CustomersRepoImpl implements CustomersRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("\"CUSTOMER_ID\""));
-              values.add(interpolate(Fragment.encode(CustomersId.dbType, value), Fragment.lit("")));
+              values.add(
+                  interpolate(Fragment.encode(CustomersId.db2Type, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -138,7 +139,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                 "select \"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\"\n"
                     + "from \"CUSTOMERS\"\n"
                     + "where \"CUSTOMER_ID\" = "),
-            Fragment.encode(CustomersId.dbType, customerId),
+            Fragment.encode(CustomersId.db2Type, customerId),
             Fragment.lit(""))
         .query(CustomersRow._rowParser.first())
         .runUnchecked(c);
@@ -148,7 +149,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   public List<CustomersRow> selectByIds(CustomersId[] customerIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : customerIds) {
-      fragments.add(Fragment.encode(CustomersId.dbType, id));
+      fragments.add(Fragment.encode(CustomersId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -200,7 +201,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                 Fragment.lit(",\n\"CREATED_AT\" = "),
                 Fragment.encode(Db2Types.timestamp.opt(), row.createdAt()),
                 Fragment.lit("\nwhere \"CUSTOMER_ID\" = "),
-                Fragment.encode(CustomersId.dbType, customerId),
+                Fragment.encode(CustomersId.db2Type, customerId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -211,7 +212,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   public void upsert(CustomersRow unsaved, Connection c) {
     interpolate(
             Fragment.lit("MERGE INTO \"CUSTOMERS\" AS t\nUSING (VALUES ("),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.db2Type, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.name()),
             Fragment.lit(", "),
@@ -226,7 +227,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                     + "\"CREATED_AT\" = s.\"CREATED_AT\"\n"
                     + "WHEN NOT MATCHED THEN INSERT (\"CUSTOMER_ID\", \"NAME\", \"EMAIL\","
                     + " \"CREATED_AT\") VALUES ("),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.db2Type, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.name()),
             Fragment.lit(", "),

@@ -16,6 +16,9 @@ import java.time.LocalDateTime
 import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusId
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
 /** Table: customers
  * Primary key: customer_id
@@ -26,13 +29,13 @@ case class CustomersRow(
    */
   @JsonProperty("customer_id") customerId: CustomersId,
   /**  */
-  email: String,
+  email: /* user-picked */ Email,
   /**  */
   @JsonProperty("password_hash") passwordHash: Array[Byte],
   /**  */
-  @JsonProperty("first_name") firstName: String,
+  @JsonProperty("first_name") firstName: /* user-picked */ FirstName,
   /**  */
-  @JsonProperty("last_name") lastName: String,
+  @JsonProperty("last_name") lastName: /* user-picked */ LastName,
   /** 
    * Default: NULL
    */
@@ -70,7 +73,7 @@ case class CustomersRow(
    * Default: NULL
    */
   @JsonProperty("last_login_at") lastLoginAt: Option[LocalDateTime]
-) extends Tuple14[CustomersId, String, Array[Byte], String, String, Option[String], CustomerStatusId, String, Option[Json], Option[EmailMailPushSmsSet], Option[String], LocalDateTime, LocalDateTime, Option[LocalDateTime]] {
+) extends Tuple14[CustomersId, /* user-picked */ Email, Array[Byte], /* user-picked */ FirstName, /* user-picked */ LastName, Option[String], CustomerStatusId, String, Option[Json], Option[EmailMailPushSmsSet], Option[String], LocalDateTime, LocalDateTime, Option[LocalDateTime]] {
   def id: CustomersId = customerId
 
   def toUnsavedRow(
@@ -103,13 +106,13 @@ case class CustomersRow(
 
   override def `_1`: CustomersId = customerId
 
-  override def `_2`: String = email
+  override def `_2`: /* user-picked */ Email = email
 
   override def `_3`: Array[Byte] = passwordHash
 
-  override def `_4`: String = firstName
+  override def `_4`: /* user-picked */ FirstName = firstName
 
-  override def `_5`: String = lastName
+  override def `_5`: /* user-picked */ LastName = lastName
 
   override def `_6`: Option[String] = phone
 
@@ -131,5 +134,5 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.dbType, MariaTypes.varchar, MariaTypes.binary, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, CustomerStatusId.dbType, MariaTypes.text, MariaTypes.json.nullable, EmailMailPushSmsSet.dbType.nullable, MariaTypes.text.nullable, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt))
+  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.mariaType, Email.mariaType, MariaTypes.binary, FirstName.mariaType, LastName.mariaType, MariaTypes.varchar.nullable, CustomerStatusId.mariaType, MariaTypes.text, MariaTypes.json.nullable, EmailMailPushSmsSet.mariaType.nullable, MariaTypes.text.nullable, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt))
 }

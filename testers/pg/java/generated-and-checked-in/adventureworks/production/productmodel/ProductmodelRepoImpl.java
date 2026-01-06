@@ -35,7 +35,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
     return interpolate(
                 Fragment.lit(
                     "delete from \"production\".\"productmodel\" where \"productmodelid\" = "),
-                Fragment.encode(ProductmodelId.dbType, productmodelid),
+                Fragment.encode(ProductmodelId.pgType, productmodelid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -47,7 +47,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
     return interpolate(
             Fragment.lit(
                 "delete\nfrom \"production\".\"productmodel\"\nwhere \"productmodelid\" = ANY("),
-            Fragment.encode(ProductmodelId.dbTypeArray, productmodelids),
+            Fragment.encode(ProductmodelId.pgTypeArray, productmodelids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -60,9 +60,9 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
                 "insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\","
                     + " \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(ProductmodelId.dbType, unsaved.productmodelid()),
+            Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.xml.opt(), unsaved.catalogdescription()),
             Fragment.lit("::xml, "),
@@ -87,7 +87,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
     ;
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.name()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.name()), Fragment.lit("::varchar")));
     columns.add(Fragment.lit("\"catalogdescription\""));
     values.add(
         interpolate(
@@ -105,7 +105,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
               columns.add(Fragment.lit("\"productmodelid\""));
               values.add(
                   interpolate(
-                      Fragment.encode(ProductmodelId.dbType, value), Fragment.lit("::int4")));
+                      Fragment.encode(ProductmodelId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     unsaved
@@ -195,7 +195,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
                     + " \"rowguid\", \"modifieddate\"\n"
                     + "from \"production\".\"productmodel\"\n"
                     + "where \"productmodelid\" = "),
-            Fragment.encode(ProductmodelId.dbType, productmodelid),
+            Fragment.encode(ProductmodelId.pgType, productmodelid),
             Fragment.lit(""))
         .query(ProductmodelRow._rowParser.first())
         .runUnchecked(c);
@@ -209,7 +209,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
                     + " \"rowguid\", \"modifieddate\"\n"
                     + "from \"production\".\"productmodel\"\n"
                     + "where \"productmodelid\" = ANY("),
-            Fragment.encode(ProductmodelId.dbTypeArray, productmodelids),
+            Fragment.encode(ProductmodelId.pgTypeArray, productmodelids),
             Fragment.lit(")"))
         .query(ProductmodelRow._rowParser.all())
         .runUnchecked(c);
@@ -238,7 +238,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"production\".\"productmodel\"\nset \"name\" = "),
-                Fragment.encode(Name.dbType, row.name()),
+                Fragment.encode(Name.pgType, row.name()),
                 Fragment.lit("::varchar,\n\"catalogdescription\" = "),
                 Fragment.encode(PgTypes.xml.opt(), row.catalogdescription()),
                 Fragment.lit("::xml,\n\"instructions\" = "),
@@ -248,7 +248,7 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"productmodelid\" = "),
-                Fragment.encode(ProductmodelId.dbType, productmodelid),
+                Fragment.encode(ProductmodelId.pgType, productmodelid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -262,9 +262,9 @@ public class ProductmodelRepoImpl implements ProductmodelRepo {
                 "insert into \"production\".\"productmodel\"(\"productmodelid\", \"name\","
                     + " \"catalogdescription\", \"instructions\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(ProductmodelId.dbType, unsaved.productmodelid()),
+            Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.xml.opt(), unsaved.catalogdescription()),
             Fragment.lit("::xml, "),

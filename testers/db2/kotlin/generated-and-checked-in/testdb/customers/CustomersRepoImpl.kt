@@ -25,21 +25,21 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun deleteById(
     customerId: CustomersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"CUSTOMERS\" where \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.dbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"CUSTOMERS\" where \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.db2Type, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     customerIds: Array<CustomersId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.dbType, id)) }
+    for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("delete from \"CUSTOMERS\" where \"CUSTOMER_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersRow = Fragment.interpolate(Fragment.lit("SELECT \"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\" FROM FINAL TABLE (INSERT INTO \"CUSTOMERS\"(\"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\")\nVALUES ("), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.timestamp.nullable(), unsaved.createdAt), Fragment.lit("))\n"))
+  ): CustomersRow = Fragment.interpolate(Fragment.lit("SELECT \"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\" FROM FINAL TABLE (INSERT INTO \"CUSTOMERS\"(\"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\")\nVALUES ("), Fragment.encode(CustomersId.db2Type, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.timestamp.nullable(), unsaved.createdAt), Fragment.lit("))\n"))
     .updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -55,7 +55,7 @@ class CustomersRepoImpl() : CustomersRepo {
     unsaved.customerId.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"CUSTOMER_ID\""))
-      values.add(Fragment.interpolate(Fragment.encode(CustomersId.dbType, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(CustomersId.db2Type, value), Fragment.lit(""))) }
     );
     unsaved.createdAt.visit(
       {  },
@@ -73,14 +73,14 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun selectById(
     customerId: CustomersId,
     c: Connection
-  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\"\nfrom \"CUSTOMERS\"\nwhere \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.dbType, customerId), Fragment.lit("")).query(CustomersRow._rowParser.first()).runUnchecked(c)
+  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\"\nfrom \"CUSTOMERS\"\nwhere \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.db2Type, customerId), Fragment.lit("")).query(CustomersRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     customerIds: Array<CustomersId>,
     c: Connection
   ): List<CustomersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.dbType, id)) }
+    for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\" from \"CUSTOMERS\" where \"CUSTOMER_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CustomersRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -105,14 +105,14 @@ class CustomersRepoImpl() : CustomersRepo {
     c: Connection
   ): Boolean {
     val customerId: CustomersId = row.customerId
-    return Fragment.interpolate(Fragment.lit("update \"CUSTOMERS\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.lit(",\n\"EMAIL\" = "), Fragment.encode(Db2Types.varchar, row.email), Fragment.lit(",\n\"CREATED_AT\" = "), Fragment.encode(Db2Types.timestamp.nullable(), row.createdAt), Fragment.lit("\nwhere \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.dbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"CUSTOMERS\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.lit(",\n\"EMAIL\" = "), Fragment.encode(Db2Types.varchar, row.email), Fragment.lit(",\n\"CREATED_AT\" = "), Fragment.encode(Db2Types.timestamp.nullable(), row.createdAt), Fragment.lit("\nwhere \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.db2Type, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: CustomersRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"CUSTOMERS\" AS t\nUSING (VALUES ("), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.timestamp.nullable(), unsaved.createdAt), Fragment.lit(")) AS s(\"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\")\nON t.\"CUSTOMER_ID\" = s.\"CUSTOMER_ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\",\n\"EMAIL\" = s.\"EMAIL\",\n\"CREATED_AT\" = s.\"CREATED_AT\"\nWHEN NOT MATCHED THEN INSERT (\"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\") VALUES ("), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.timestamp.nullable(), unsaved.createdAt), Fragment.lit(")"))
+    Fragment.interpolate(Fragment.lit("MERGE INTO \"CUSTOMERS\" AS t\nUSING (VALUES ("), Fragment.encode(CustomersId.db2Type, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.timestamp.nullable(), unsaved.createdAt), Fragment.lit(")) AS s(\"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\")\nON t.\"CUSTOMER_ID\" = s.\"CUSTOMER_ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\",\n\"EMAIL\" = s.\"EMAIL\",\n\"CREATED_AT\" = s.\"CREATED_AT\"\nWHEN NOT MATCHED THEN INSERT (\"CUSTOMER_ID\", \"NAME\", \"EMAIL\", \"CREATED_AT\") VALUES ("), Fragment.encode(CustomersId.db2Type, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.timestamp.nullable(), unsaved.createdAt), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }

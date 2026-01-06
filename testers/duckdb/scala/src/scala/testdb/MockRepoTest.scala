@@ -5,6 +5,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import testdb.customers.*
 import testdb.departments.*
+import testdb.userdefined.Email
 
 import java.time.LocalDateTime
 
@@ -17,7 +18,7 @@ class MockRepoTest {
     val customer = CustomersRow(
       CustomersId(1),
       "Mock User",
-      Some("mock@test.com"),
+      Some(Email("mock@test.com")),
       LocalDateTime.now(),
       Some(Priority.medium)
     )

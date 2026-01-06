@@ -19,19 +19,19 @@ import dev.typr.foundations.Fragment.interpolate
 class TitleDomainRepoImpl extends TitleDomainRepo {
   override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."title_domain" where "code" = """), Fragment.encode(TitleDomainId.dbType, code), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."title_domain" where "code" = """), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "public"."title_domain"
-    where "code" = ANY("""), Fragment.encode(TitleDomainId.dbTypeArray, codes), Fragment.lit(")"))
+    where "code" = ANY("""), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
   interpolate(Fragment.lit("""insert into "public"."title_domain"("code")
-    values ("""), Fragment.encode(TitleDomainId.dbType, unsaved.code), Fragment.lit("""::text)
+    values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("""::text)
     RETURNING "code"
     """))
     .updateReturning(TitleDomainRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -53,13 +53,13 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
   override def selectById(code: TitleDomainId)(using c: Connection): Optional[TitleDomainRow] = {
     interpolate(Fragment.lit("""select "code"
     from "public"."title_domain"
-    where "code" = """), Fragment.encode(TitleDomainId.dbType, code), Fragment.lit("")).query(TitleDomainRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = """), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).query(TitleDomainRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(codes: Array[TitleDomainId])(using c: Connection): java.util.List[TitleDomainRow] = {
     interpolate(Fragment.lit("""select "code"
     from "public"."title_domain"
-    where "code" = ANY("""), Fragment.encode(TitleDomainId.dbTypeArray, codes), Fragment.lit(")")).query(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
+    where "code" = ANY("""), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")")).query(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): java.util.Map[TitleDomainId, TitleDomainRow] = {
@@ -72,7 +72,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
 
   override def upsert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
   interpolate(Fragment.lit("""insert into "public"."title_domain"("code")
-    values ("""), Fragment.encode(TitleDomainId.dbType, unsaved.code), Fragment.lit("""::text)
+    values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("""::text)
     on conflict ("code")
     do update set "code" = EXCLUDED."code"
     returning "code""""))

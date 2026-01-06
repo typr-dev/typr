@@ -23,5 +23,5 @@ case class ProductCategoriesId(
 }
 
 object ProductCategoriesId {
-  val `_rowParser`: RowParser[ProductCategoriesId] = RowParsers.of(ProductsId.dbType, CategoriesId.dbType)(ProductCategoriesId.apply)(row => Array[Any](row.productId, row.categoryId))
+  val `_rowParser`: RowParser[ProductCategoriesId] = RowParsers.of(ProductsId.mariaType, CategoriesId.mariaType)(ProductCategoriesId.apply)(row => Array[Any](row.productId, row.categoryId))
 }

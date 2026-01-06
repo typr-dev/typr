@@ -21,19 +21,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class UnitmeasureRepoImpl extends UnitmeasureRepo {
   override def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow] = DeleteBuilder.of(""""production"."unitmeasure"""", UnitmeasureFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): Boolean = sql"""delete from "production"."unitmeasure" where "unitmeasurecode" = ${Fragment.encode(UnitmeasureId.dbType, unitmeasurecode)}""".update().runUnchecked(c) > 0
+  override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): Boolean = sql"""delete from "production"."unitmeasure" where "unitmeasurecode" = ${Fragment.encode(UnitmeasureId.pgType, unitmeasurecode)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Int = {
     sql"""delete
     from "production"."unitmeasure"
-    where "unitmeasurecode" = ANY(${Fragment.encode(UnitmeasureId.dbTypeArray, unitmeasurecodes)})"""
+    where "unitmeasurecode" = ANY(${Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
   sql"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
-    values (${Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode)}::bpchar, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode)}::bpchar, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "unitmeasurecode", "name", "modifieddate"
     """
     .updateReturning(UnitmeasureRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -43,9 +43,9 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""unitmeasurecode"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode)}::bpchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode)}::bpchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.name)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
       {  },
       value => { columns.addOne(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
@@ -81,13 +81,13 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
   override def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Option[UnitmeasureRow] = {
     sql"""select "unitmeasurecode", "name", "modifieddate"
     from "production"."unitmeasure"
-    where "unitmeasurecode" = ${Fragment.encode(UnitmeasureId.dbType, unitmeasurecode)}""".query(UnitmeasureRow.`_rowParser`.first()).runUnchecked(c)
+    where "unitmeasurecode" = ${Fragment.encode(UnitmeasureId.pgType, unitmeasurecode)}""".query(UnitmeasureRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): List[UnitmeasureRow] = {
     sql"""select "unitmeasurecode", "name", "modifieddate"
     from "production"."unitmeasure"
-    where "unitmeasurecode" = ANY(${Fragment.encode(UnitmeasureId.dbTypeArray, unitmeasurecodes)})""".query(UnitmeasureRow.`_rowParser`.all()).runUnchecked(c)
+    where "unitmeasurecode" = ANY(${Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes)})""".query(UnitmeasureRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Map[UnitmeasureId, UnitmeasureRow] = {
@@ -101,14 +101,14 @@ class UnitmeasureRepoImpl extends UnitmeasureRepo {
   override def update(row: UnitmeasureRow)(using c: Connection): Boolean = {
     val unitmeasurecode: UnitmeasureId = row.unitmeasurecode
     return sql"""update "production"."unitmeasure"
-    set "name" = ${Fragment.encode(Name.dbType, row.name)}::varchar,
+    set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "unitmeasurecode" = ${Fragment.encode(UnitmeasureId.dbType, unitmeasurecode)}""".update().runUnchecked(c) > 0
+    where "unitmeasurecode" = ${Fragment.encode(UnitmeasureId.pgType, unitmeasurecode)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow = {
   sql"""insert into "production"."unitmeasure"("unitmeasurecode", "name", "modifieddate")
-    values (${Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode)}::bpchar, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode)}::bpchar, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("unitmeasurecode")
     do update set
       "name" = EXCLUDED."name",

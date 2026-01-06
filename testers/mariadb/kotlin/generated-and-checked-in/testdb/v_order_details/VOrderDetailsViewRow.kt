@@ -15,6 +15,7 @@ import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.orders.OrdersId
+import testdb.userdefined.Email
 
 /** View: v_order_details
   * VIEW
@@ -56,7 +57,7 @@ data class VOrderDetailsViewRow(
   /** 
     * Points to [testdb.customers.CustomersRow.email]
     */
-  @field:JsonProperty("customer_email") val customerEmail: String,
+  @field:JsonProperty("customer_email") val customerEmail: /* user-picked */ Email,
   /** 
     * Default: NULL
     */
@@ -83,7 +84,7 @@ data class VOrderDetailsViewRow(
     * Points to [testdb.shipping_carriers.ShippingCarriersRow.name]
     */
   @field:JsonProperty("carrier_name") val carrierName: String?
-) : Tuple14<OrdersId, String, String, String, BigDecimal, String, LocalDateTime, String, String?, Long, BigDecimal?, String?, String?, String?> {
+) : Tuple14<OrdersId, String, String, String, BigDecimal, String, LocalDateTime, /* user-picked */ Email, String?, Long, BigDecimal?, String?, String?, String?> {
   override fun _1(): OrdersId = orderId
 
   override fun _10(): Long = itemCount
@@ -108,11 +109,11 @@ data class VOrderDetailsViewRow(
 
   override fun _7(): LocalDateTime = orderedAt
 
-  override fun _8(): String = customerEmail
+  override fun _8(): /* user-picked */ Email = customerEmail
 
   override fun _9(): String? = customerName
 
   companion object {
-    val _rowParser: RowParser<VOrderDetailsViewRow> = RowParsers.of(OrdersId.dbType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.datetime, MariaTypes.varchar, MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> VOrderDetailsViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.totalAmount, row.currencyCode, row.orderedAt, row.customerEmail, row.customerName, row.itemCount, row.totalQuantity, row.trackingNumber, row.shippingStatus, row.carrierName) })
+    val _rowParser: RowParser<VOrderDetailsViewRow> = RowParsers.of(OrdersId.mariaType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.datetime, Email.mariaType, MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> VOrderDetailsViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.totalAmount, row.currencyCode, row.orderedAt, row.customerEmail, row.customerName, row.itemCount, row.totalQuantity, row.trackingNumber, row.shippingStatus, row.carrierName) })
   }
 }

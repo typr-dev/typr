@@ -46,7 +46,7 @@ data class EmployeedepartmenthistoryFields(val _path: List<Path>) : TupleExpr6<B
 
   override fun _path(): List<Path> = _path
 
-  fun businessentityid(): IdField<BusinessentityId, EmployeedepartmenthistoryRow> = IdField<BusinessentityId, EmployeedepartmenthistoryRow>(_path, "businessentityid", EmployeedepartmenthistoryRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.dbType)
+  fun businessentityid(): IdField<BusinessentityId, EmployeedepartmenthistoryRow> = IdField<BusinessentityId, EmployeedepartmenthistoryRow>(_path, "businessentityid", EmployeedepartmenthistoryRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
   override fun columns(): List<FieldLike<*, EmployeedepartmenthistoryRow>> = listOf(this.businessentityid().underlying, this.departmentid().underlying, this.shiftid().underlying, this.startdate().underlying, this.enddate().underlying, this.modifieddate().underlying)
 
@@ -54,7 +54,7 @@ data class EmployeedepartmenthistoryFields(val _path: List<Path>) : TupleExpr6<B
 
   fun compositeIdIs(compositeId: EmployeedepartmenthistoryId): SqlExpr<Boolean> = SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid), startdate().isEqual(compositeId.startdate), departmentid().isEqual(compositeId.departmentid), shiftid().isEqual(compositeId.shiftid))
 
-  fun departmentid(): IdField<DepartmentId, EmployeedepartmenthistoryRow> = IdField<DepartmentId, EmployeedepartmenthistoryRow>(_path, "departmentid", EmployeedepartmenthistoryRow::departmentid, null, "int2", { row, value -> row.copy(departmentid = value) }, DepartmentId.dbType)
+  fun departmentid(): IdField<DepartmentId, EmployeedepartmenthistoryRow> = IdField<DepartmentId, EmployeedepartmenthistoryRow>(_path, "departmentid", EmployeedepartmenthistoryRow::departmentid, null, "int2", { row, value -> row.copy(departmentid = value) }, DepartmentId.pgType)
 
   fun enddate(): OptField<LocalDate, EmployeedepartmenthistoryRow> = OptField<LocalDate, EmployeedepartmenthistoryRow>(_path, "enddate", EmployeedepartmenthistoryRow::enddate, null, "date", { row, value -> row.copy(enddate = value) }, PgTypes.date)
 
@@ -68,7 +68,7 @@ data class EmployeedepartmenthistoryFields(val _path: List<Path>) : TupleExpr6<B
 
   override fun rowParser(): RowParser<EmployeedepartmenthistoryRow> = EmployeedepartmenthistoryRow._rowParser.underlying
 
-  fun shiftid(): IdField<ShiftId, EmployeedepartmenthistoryRow> = IdField<ShiftId, EmployeedepartmenthistoryRow>(_path, "shiftid", EmployeedepartmenthistoryRow::shiftid, null, "int2", { row, value -> row.copy(shiftid = value) }, ShiftId.dbType)
+  fun shiftid(): IdField<ShiftId, EmployeedepartmenthistoryRow> = IdField<ShiftId, EmployeedepartmenthistoryRow>(_path, "shiftid", EmployeedepartmenthistoryRow::shiftid, null, "int2", { row, value -> row.copy(shiftid = value) }, ShiftId.pgType)
 
   fun startdate(): IdField<LocalDate, EmployeedepartmenthistoryRow> = IdField<LocalDate, EmployeedepartmenthistoryRow>(_path, "startdate", EmployeedepartmenthistoryRow::startdate, null, "date", { row, value -> row.copy(startdate = value) }, PgTypes.date)
 

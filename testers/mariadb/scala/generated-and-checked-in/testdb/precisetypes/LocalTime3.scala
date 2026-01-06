@@ -30,7 +30,7 @@ case class LocalTime3 private(@JsonValue value: LocalTime) extends LocalTimeN {
 object LocalTime3 {
   given bijection: Bijection[LocalTime3, LocalTime] = Bijection.apply[LocalTime3, LocalTime](_.value)(LocalTime3.apply)
 
-  given dbType: MariaType[LocalTime3] = MariaTypes.time.bimap(LocalTime3.apply, _.value)
+  given mariaType: MariaType[LocalTime3] = MariaTypes.time.bimap(LocalTime3.apply, _.value)
 
   def now: LocalTime3 = new LocalTime3(LocalTime.now().truncatedTo(ChronoUnit.MILLIS))
 

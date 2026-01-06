@@ -54,7 +54,7 @@ public record CustomersRow(
 
   public static RowParser<CustomersRow> _rowParser =
       RowParsers.of(
-          CustomersId.dbType,
+          CustomersId.db2Type,
           Db2Types.varchar,
           Db2Types.varchar,
           Db2Types.timestamp.opt(),

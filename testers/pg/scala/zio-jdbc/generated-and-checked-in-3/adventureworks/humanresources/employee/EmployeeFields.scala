@@ -12,7 +12,8 @@ import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import typr.dsl.ForeignKey
 import typr.dsl.Path
 import typr.dsl.RelationStructure
@@ -30,10 +31,10 @@ trait EmployeeFields {
   def maritalstatus: Field[String, EmployeeRow]
   def gender: Field[String, EmployeeRow]
   def hiredate: Field[TypoLocalDate, EmployeeRow]
-  def salariedflag: Field[Flag, EmployeeRow]
+  def salariedflag: Field[/* user-picked */ SalariedFlag, EmployeeRow]
   def vacationhours: Field[TypoShort, EmployeeRow]
   def sickleavehours: Field[TypoShort, EmployeeRow]
-  def currentflag: Field[Flag, EmployeeRow]
+  def currentflag: Field[/* user-picked */ CurrentFlag, EmployeeRow]
   def rowguid: Field[TypoUUID, EmployeeRow]
   def modifieddate: Field[TypoLocalDateTime, EmployeeRow]
   def organizationnode: OptField[String, EmployeeRow]
@@ -58,10 +59,10 @@ object EmployeeFields {
       override def maritalstatus = Field[String, EmployeeRow](_path, "maritalstatus", None, Some("bpchar"), x => x.maritalstatus, (row, value) => row.copy(maritalstatus = value))
       override def gender = Field[String, EmployeeRow](_path, "gender", None, Some("bpchar"), x => x.gender, (row, value) => row.copy(gender = value))
       override def hiredate = Field[TypoLocalDate, EmployeeRow](_path, "hiredate", Some("text"), Some("date"), x => x.hiredate, (row, value) => row.copy(hiredate = value))
-      override def salariedflag = Field[Flag, EmployeeRow](_path, "salariedflag", None, Some("bool"), x => x.salariedflag, (row, value) => row.copy(salariedflag = value))
+      override def salariedflag = Field[/* user-picked */ SalariedFlag, EmployeeRow](_path, "salariedflag", None, Some("bool"), x => x.salariedflag, (row, value) => row.copy(salariedflag = value))
       override def vacationhours = Field[TypoShort, EmployeeRow](_path, "vacationhours", None, Some("int2"), x => x.vacationhours, (row, value) => row.copy(vacationhours = value))
       override def sickleavehours = Field[TypoShort, EmployeeRow](_path, "sickleavehours", None, Some("int2"), x => x.sickleavehours, (row, value) => row.copy(sickleavehours = value))
-      override def currentflag = Field[Flag, EmployeeRow](_path, "currentflag", None, Some("bool"), x => x.currentflag, (row, value) => row.copy(currentflag = value))
+      override def currentflag = Field[/* user-picked */ CurrentFlag, EmployeeRow](_path, "currentflag", None, Some("bool"), x => x.currentflag, (row, value) => row.copy(currentflag = value))
       override def rowguid = Field[TypoUUID, EmployeeRow](_path, "rowguid", None, Some("uuid"), x => x.rowguid, (row, value) => row.copy(rowguid = value))
       override def modifieddate = Field[TypoLocalDateTime, EmployeeRow](_path, "modifieddate", Some("text"), Some("timestamp"), x => x.modifieddate, (row, value) => row.copy(modifieddate = value))
       override def organizationnode = OptField[String, EmployeeRow](_path, "organizationnode", None, None, x => x.organizationnode, (row, value) => row.copy(organizationnode = value))

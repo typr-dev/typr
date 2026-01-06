@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.data.Json
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.IsActive
 
 /** This class corresponds to a row in table `shipping_carriers` which has not been persisted yet */
 data class ShippingCarriersRowUnsaved(
@@ -27,12 +28,12 @@ data class ShippingCarriersRowUnsaved(
   /** Default: 1
 
     */
-  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
+  @field:JsonProperty("is_active") val isActive: Defaulted</* user-picked */ IsActive> = UseDefault()
 ) {
   fun toRow(
     trackingUrlTemplateDefault: () -> String?,
     apiConfigDefault: () -> Json?,
-    isActiveDefault: () -> Boolean,
+    isActiveDefault: () -> /* user-picked */ IsActive,
     carrierIdDefault: () -> ShippingCarriersId
   ): ShippingCarriersRow = ShippingCarriersRow(carrierId = carrierIdDefault(), code = code, name = name, trackingUrlTemplate = trackingUrlTemplate.getOrElse(trackingUrlTemplateDefault), apiConfig = apiConfig.getOrElse(apiConfigDefault), isActive = isActive.getOrElse(isActiveDefault))
 }

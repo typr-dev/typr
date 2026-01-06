@@ -24,19 +24,20 @@ import testdb.categories.CategoriesRow
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import testdb.userdefined.IsPrimary
 
-data class ProductCategoriesFields(val _path: List<Path>) : TupleExpr4<ProductsId, CategoriesId, Boolean, Short>, RelationStructure<ProductCategoriesFields, ProductCategoriesRow>, FieldsBase<ProductCategoriesRow> {
+data class ProductCategoriesFields(val _path: List<Path>) : TupleExpr4<ProductsId, CategoriesId, /* user-picked */ IsPrimary, Short>, RelationStructure<ProductCategoriesFields, ProductCategoriesRow>, FieldsBase<ProductCategoriesRow> {
   override fun _1(): SqlExpr<ProductsId> = productId()
 
   override fun _2(): SqlExpr<CategoriesId> = categoryId()
 
-  override fun _3(): SqlExpr<Boolean> = isPrimary()
+  override fun _3(): SqlExpr</* user-picked */ IsPrimary> = isPrimary()
 
   override fun _4(): SqlExpr<Short> = sortOrder()
 
   override fun _path(): List<Path> = _path
 
-  fun categoryId(): IdField<CategoriesId, ProductCategoriesRow> = IdField<CategoriesId, ProductCategoriesRow>(_path, "category_id", ProductCategoriesRow::categoryId, null, null, { row, value -> row.copy(categoryId = value) }, CategoriesId.dbType)
+  fun categoryId(): IdField<CategoriesId, ProductCategoriesRow> = IdField<CategoriesId, ProductCategoriesRow>(_path, "category_id", ProductCategoriesRow::categoryId, null, null, { row, value -> row.copy(categoryId = value) }, CategoriesId.mariaType)
 
   override fun columns(): List<FieldLike<*, ProductCategoriesRow>> = listOf(this.productId().underlying, this.categoryId().underlying, this.isPrimary().underlying, this.sortOrder().underlying)
 
@@ -48,9 +49,9 @@ data class ProductCategoriesFields(val _path: List<Path>) : TupleExpr4<ProductsI
 
   fun fkProducts(): ForeignKey<ProductsFields, ProductsRow> = ForeignKey.of<ProductsFields, ProductsRow>("fk_pc_product").withColumnPair<ProductsId>(productId(), ProductsFields::productId)
 
-  fun isPrimary(): Field<Boolean, ProductCategoriesRow> = Field<Boolean, ProductCategoriesRow>(_path, "is_primary", ProductCategoriesRow::isPrimary, null, null, { row, value -> row.copy(isPrimary = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isPrimary(): Field</* user-picked */ IsPrimary, ProductCategoriesRow> = Field</* user-picked */ IsPrimary, ProductCategoriesRow>(_path, "is_primary", ProductCategoriesRow::isPrimary, null, null, { row, value -> row.copy(isPrimary = value) }, IsPrimary.mariaType)
 
-  fun productId(): IdField<ProductsId, ProductCategoriesRow> = IdField<ProductsId, ProductCategoriesRow>(_path, "product_id", ProductCategoriesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.dbType)
+  fun productId(): IdField<ProductsId, ProductCategoriesRow> = IdField<ProductsId, ProductCategoriesRow>(_path, "product_id", ProductCategoriesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
 
   override fun rowParser(): RowParser<ProductCategoriesRow> = ProductCategoriesRow._rowParser.underlying
 

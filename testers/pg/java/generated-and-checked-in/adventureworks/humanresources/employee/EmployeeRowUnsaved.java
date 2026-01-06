@@ -8,7 +8,8 @@ package adventureworks.humanresources.employee;
 import adventureworks.customtypes.Defaulted;
 import adventureworks.customtypes.Defaulted.UseDefault;
 import adventureworks.person.businessentity.BusinessentityId;
-import adventureworks.public_.Flag;
+import adventureworks.userdefined.CurrentFlag;
+import adventureworks.userdefined.SalariedFlag;
 import dev.typr.foundations.PgText;
 import dev.typr.foundations.PgTypes;
 import java.time.LocalDate;
@@ -56,7 +57,7 @@ public record EmployeeRowUnsaved(
      * Default: true Job classification. 0 = Hourly, not exempt from collective bargaining. 1 =
      * Salaried, exempt from collective bargaining.
      */
-    Defaulted<Flag> salariedflag,
+    Defaulted</* user-picked */ SalariedFlag> salariedflag,
     /**
      * Default: 0 Number of available vacation hours. Constraint CK_Employee_VacationHours affecting
      * columns vacationhours: (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -68,7 +69,7 @@ public record EmployeeRowUnsaved(
      */
     Defaulted<Short> sickleavehours,
     /** Default: true 0 = Inactive, 1 = Active */
-    Defaulted<Flag> currentflag,
+    Defaulted</* user-picked */ CurrentFlag> currentflag,
     /** Default: uuid_generate_v1() */
     Defaulted<UUID> rowguid,
     /** Default: now() */
@@ -313,7 +314,8 @@ public record EmployeeRowUnsaved(
    * Default: true Job classification. 0 = Hourly, not exempt from collective bargaining. 1 =
    * Salaried, exempt from collective bargaining.
    */
-  public EmployeeRowUnsaved withSalariedflag(Defaulted<Flag> salariedflag) {
+  public EmployeeRowUnsaved withSalariedflag(
+      Defaulted</* user-picked */ SalariedFlag> salariedflag) {
     return new EmployeeRowUnsaved(
         businessentityid,
         nationalidnumber,
@@ -382,7 +384,7 @@ public record EmployeeRowUnsaved(
   ;
 
   /** Default: true 0 = Inactive, 1 = Active */
-  public EmployeeRowUnsaved withCurrentflag(Defaulted<Flag> currentflag) {
+  public EmployeeRowUnsaved withCurrentflag(Defaulted</* user-picked */ CurrentFlag> currentflag) {
     return new EmployeeRowUnsaved(
         businessentityid,
         nationalidnumber,
@@ -468,7 +470,7 @@ public record EmployeeRowUnsaved(
   public static PgText<EmployeeRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb);
+            BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.text.text().unsafeEncode(row.nationalidnumber, sb);
             sb.append(PgText.DELIMETER);
@@ -484,13 +486,13 @@ public record EmployeeRowUnsaved(
             sb.append(PgText.DELIMETER);
             PgTypes.date.text().unsafeEncode(row.hiredate, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(Flag.dbType.text()).unsafeEncode(row.salariedflag, sb);
+            Defaulted.pgText(SalariedFlag.pgType.text()).unsafeEncode(row.salariedflag, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.int2.text()).unsafeEncode(row.vacationhours, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.int2.text()).unsafeEncode(row.sickleavehours, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(Flag.dbType.text()).unsafeEncode(row.currentflag, sb);
+            Defaulted.pgText(CurrentFlag.pgType.text()).unsafeEncode(row.currentflag, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb);
             sb.append(PgText.DELIMETER);
@@ -500,10 +502,10 @@ public record EmployeeRowUnsaved(
           });
 
   public EmployeeRow toRow(
-      java.util.function.Supplier<Flag> salariedflagDefault,
+      java.util.function.Supplier</* user-picked */ SalariedFlag> salariedflagDefault,
       java.util.function.Supplier<Short> vacationhoursDefault,
       java.util.function.Supplier<Short> sickleavehoursDefault,
-      java.util.function.Supplier<Flag> currentflagDefault,
+      java.util.function.Supplier</* user-picked */ CurrentFlag> currentflagDefault,
       java.util.function.Supplier<UUID> rowguidDefault,
       java.util.function.Supplier<LocalDateTime> modifieddateDefault,
       java.util.function.Supplier<Optional<String>> organizationnodeDefault) {

@@ -52,7 +52,7 @@ data class MariatestSpatialFields(val _path: List<Path>) : TupleExpr9<MariatestS
 
   fun geometrycollectionCol(): Field<GeometryCollection, MariatestSpatialRow> = Field<GeometryCollection, MariatestSpatialRow>(_path, "geometrycollection_col", MariatestSpatialRow::geometrycollectionCol, null, null, { row, value -> row.copy(geometrycollectionCol = value) }, MariaTypes.geometrycollection)
 
-  fun id(): IdField<MariatestSpatialId, MariatestSpatialRow> = IdField<MariatestSpatialId, MariatestSpatialRow>(_path, "id", MariatestSpatialRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestSpatialId.dbType)
+  fun id(): IdField<MariatestSpatialId, MariatestSpatialRow> = IdField<MariatestSpatialId, MariatestSpatialRow>(_path, "id", MariatestSpatialRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestSpatialId.mariaType)
 
   fun linestringCol(): Field<LineString, MariatestSpatialRow> = Field<LineString, MariatestSpatialRow>(_path, "linestring_col", MariatestSpatialRow::linestringCol, null, null, { row, value -> row.copy(linestringCol = value) }, MariaTypes.linestring)
 

@@ -36,13 +36,13 @@ public record Decimal18_4(@JsonValue BigDecimal value) implements DecimalN {
   public static Bijection<Decimal18_4, BigDecimal> bijection =
       Bijection.of(Decimal18_4::value, Decimal18_4::new);
 
-  public static DuckDbType<Decimal18_4[]> dbTypeArray =
+  public static DuckDbType<Decimal18_4> duckDbType =
+      DuckDbTypes.numeric.bimap(Decimal18_4::new, Decimal18_4::value);
+
+  public static DuckDbType<Decimal18_4[]> duckDbTypeArray =
       DuckDbTypes.decimalArray.bimap(
           xs -> arrayMap.map(xs, Decimal18_4::new, Decimal18_4.class),
           xs -> arrayMap.map(xs, Decimal18_4::value, BigDecimal.class));
-
-  public static DuckDbType<Decimal18_4> duckDbType =
-      DuckDbTypes.numeric.bimap(Decimal18_4::new, Decimal18_4::value);
 
   public static Optional<Decimal18_4> of(BigDecimal value) {
     BigDecimal scaled = value.setScale(4, RoundingMode.HALF_UP);

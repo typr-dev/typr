@@ -51,7 +51,7 @@ case class FlaffRow(
 }
 
 object FlaffRow {
-  val `_rowParser`: RowParser[FlaffRow] = RowParsers.of(ShortText.dbType, PgTypes.text, PgTypes.int4, ShortText.dbType, ShortText.dbType.opt(), FlaffRow.apply, row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
+  val `_rowParser`: RowParser[FlaffRow] = RowParsers.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), FlaffRow.apply, row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
 
   def apply(
     compositeId: FlaffId,

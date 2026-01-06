@@ -9,6 +9,7 @@ import testdb.order_summary_by_customer.*
 import testdb.product_summary.*
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.Random
@@ -49,7 +50,7 @@ class SqlScriptTest {
         DuckDbTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Email Customer",
-                email = "unique-kotlin-search@example.com",
+                email = Email("unique-kotlin-search@example.com"),
                 c = c
             )
 

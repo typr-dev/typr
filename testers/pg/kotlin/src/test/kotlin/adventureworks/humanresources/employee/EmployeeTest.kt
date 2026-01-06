@@ -6,7 +6,10 @@ import adventureworks.WithConnection
 import adventureworks.customtypes.*
 import adventureworks.person.businessentity.*
 import adventureworks.public.Flag
+import adventureworks.public.Name
+import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.SalariedFlag
 import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDate
@@ -24,7 +27,7 @@ class EmployeeTest {
             val personRow = testInsert.personPerson(
                 businessentityid = businessentityRow.businessentityid,
                 persontype = "SC",
-                firstname = FirstName("firstname"),
+                firstname = FirstName(Name("firstname")),
                 c = c
             )
 
@@ -73,10 +76,10 @@ class EmployeeTest {
             )
             assertEquals(personRow.businessentityid, inserted.businessentityid)
             // check static default values
-            assertEquals(Flag(true), inserted.salariedflag)
+            assertEquals(SalariedFlag(Flag(true)), inserted.salariedflag)
             assertEquals(0.toShort(), inserted.vacationhours)
             assertEquals(0.toShort(), inserted.sickleavehours)
-            assertEquals(Flag(true), inserted.currentflag)
+            assertEquals(CurrentFlag(Flag(true)), inserted.currentflag)
             assertNotNull(inserted.rowguid)
             assertNotNull(inserted.modifieddate)
             assertEquals("/", inserted.organizationnode)

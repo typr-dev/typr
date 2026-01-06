@@ -38,7 +38,7 @@ public class IdentityParamsTestFields extends TupleExpr2<IdentityParamsTestId, S
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        IdentityParamsTestId.dbType);
+        IdentityParamsTestId.db2Type);
   }
 
   public Field<String, IdentityParamsTestRow> name() {

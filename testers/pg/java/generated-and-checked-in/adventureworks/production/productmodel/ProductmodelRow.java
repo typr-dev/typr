@@ -82,8 +82,8 @@ public record ProductmodelRow(
 
   public static RowParser<ProductmodelRow> _rowParser =
       RowParsers.of(
-          ProductmodelId.dbType,
-          Name.dbType,
+          ProductmodelId.pgType,
+          Name.pgType,
           PgTypes.xml.opt(),
           PgTypes.xml.opt(),
           PgTypes.uuid,

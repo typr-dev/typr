@@ -31,5 +31,5 @@ case class EmployeedepartmenthistoryId(
 }
 
 object EmployeedepartmenthistoryId {
-  val `_rowParser`: RowParser[EmployeedepartmenthistoryId] = RowParsers.of(BusinessentityId.dbType, PgTypes.date, DepartmentId.dbType, ShiftId.dbType, EmployeedepartmenthistoryId.apply, row => Array[Any](row.businessentityid, row.startdate, row.departmentid, row.shiftid))
+  val `_rowParser`: RowParser[EmployeedepartmenthistoryId] = RowParsers.of(BusinessentityId.pgType, PgTypes.date, DepartmentId.pgType, ShiftId.pgType, EmployeedepartmenthistoryId.apply, row => Array[Any](row.businessentityid, row.startdate, row.departmentid, row.shiftid))
 }

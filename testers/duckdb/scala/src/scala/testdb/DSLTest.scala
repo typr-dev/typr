@@ -4,6 +4,7 @@ import dev.typr.foundations.dsl.Bijection
 import org.junit.Assert._
 import org.junit.Test
 import testdb.customers._
+import testdb.userdefined.Email
 
 import java.time.LocalDateTime
 
@@ -20,7 +21,7 @@ class DSLTest {
       CustomersRow(
         CustomersId(5001),
         "DSL Test User",
-        Some("dsl@test.com"),
+        Some(Email("dsl@test.com")),
         LocalDateTime.now(),
         Some(Priority.high)
       )
@@ -360,7 +361,7 @@ class DSLTest {
       CustomersRow(
         CustomersId(5700),
         "ProjectionTest",
-        Some("projection@test.com"),
+        Some(Email("projection@test.com")),
         LocalDateTime.now(),
         None
       )
@@ -373,6 +374,6 @@ class DSLTest {
 
     assertEquals(1, results.size)
     assertEquals("ProjectionTest", results.head._1)
-    assertEquals("projection@test.com", results.head._2)
+    assertEquals(Email("projection@test.com"), results.head._2)
   }
 }

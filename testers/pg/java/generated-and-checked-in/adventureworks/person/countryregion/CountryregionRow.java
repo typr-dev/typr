@@ -46,8 +46,8 @@ public record CountryregionRow(
 
   public static RowParser<CountryregionRow> _rowParser =
       RowParsers.of(
-          CountryregionId.dbType,
-          Name.dbType,
+          CountryregionId.pgType,
+          Name.pgType,
           PgTypes.timestamp,
           CountryregionRow::new,
           row -> new Object[] {row.countryregioncode(), row.name(), row.modifieddate()});

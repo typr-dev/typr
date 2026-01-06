@@ -17,8 +17,9 @@ import dev.typr.foundations.scala.SqlExpr.IdField
 import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr4
 import java.time.LocalDateTime
+import testdb.userdefined.Email
 
-class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[CustomersId, String, String, LocalDateTime] with RelationStructure[CustomersFields, CustomersRow]  with FieldsBase[CustomersRow] {
+class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[CustomersId, String, /* user-picked */ Email, LocalDateTime] with RelationStructure[CustomersFields, CustomersRow]  with FieldsBase[CustomersRow] {
   def customerId: IdField[CustomersId, CustomersRow] = {
     new IdField[CustomersId, CustomersRow](
       _path,
@@ -43,15 +44,15 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Cust
     )
   }
 
-  def email: Field[String, CustomersRow] = {
-    new Field[String, CustomersRow](
+  def email: Field[/* user-picked */ Email, CustomersRow] = {
+    new Field[/* user-picked */ Email, CustomersRow](
       _path,
       "email",
       _.email,
       None,
       None,
       (row, value) => row.copy(email = value),
-      SqlServerTypes.nvarchar
+      Email.sqlServerType
     )
   }
 
@@ -77,7 +78,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Cust
 
   override def `_2`: SqlExpr[String] = name
 
-  override def `_3`: SqlExpr[String] = email
+  override def `_3`: SqlExpr[/* user-picked */ Email] = email
 
   override def `_4`: SqlExpr[LocalDateTime] = createdAt
 }

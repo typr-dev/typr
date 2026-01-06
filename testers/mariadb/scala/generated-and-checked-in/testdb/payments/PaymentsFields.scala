@@ -37,7 +37,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(paymentId = value),
-      PaymentsId.dbType
+      PaymentsId.mariaType
     )
   }
 
@@ -49,7 +49,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.dbType
+      OrdersId.mariaType
     )
   }
 
@@ -61,7 +61,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(methodId = value),
-      PaymentMethodsId.dbType
+      PaymentMethodsId.mariaType
     )
   }
 

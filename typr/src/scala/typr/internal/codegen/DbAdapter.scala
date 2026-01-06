@@ -57,6 +57,9 @@ trait DbAdapter {
   /** Field name for type instance on generated types */
   def typeFieldName: jvm.Ident
 
+  /** Field name for array type instance on generated types (derived from typeFieldName) */
+  def typeArrayFieldName: jvm.Ident = jvm.Ident(typeFieldName.value + "Array")
+
   /** Field name for text instance on generated types */
   def textFieldName: jvm.Ident
 

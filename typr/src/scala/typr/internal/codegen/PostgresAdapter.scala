@@ -86,7 +86,7 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
   val Types: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.PgTypes")
   val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.PgType")
   val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.PgText")
-  val typeFieldName: jvm.Ident = jvm.Ident("dbType")
+  val typeFieldName: jvm.Ident = jvm.Ident("pgType")
   val textFieldName: jvm.Ident = jvm.Ident("pgText")
 
   def dialectRef(lang: Lang): Code = code"${lang.dsl.Dialect}.POSTGRESQL"
@@ -145,6 +145,10 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
           // Java and Kotlin use boxed arrays
           code"${lookupType(element, naming, TypeSupportJava)}Array"
       }
+
+    case TypoType.Aligned(_, sourceType, _, _) =>
+      // For aligned types, lookup through the source type
+      lookupType(sourceType, naming, typeSupport)
   }
 
   def lookupPrimitive(primitive: analysis.WellKnownPrimitive, typeSupport: TypeSupport): Code = {

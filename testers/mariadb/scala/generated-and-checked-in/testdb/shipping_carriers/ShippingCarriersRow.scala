@@ -12,8 +12,8 @@ import dev.typr.foundations.data.Json
 import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: shipping_carriers
  * Primary key: carrier_id
@@ -38,14 +38,14 @@ case class ShippingCarriersRow(
   /** 
    * Default: 1
    */
-  @JsonProperty("is_active") isActive: Boolean
-) extends Tuple6[ShippingCarriersId, String, String, Option[String], Option[Json], Boolean] {
+  @JsonProperty("is_active") isActive: /* user-picked */ IsActive
+) extends Tuple6[ShippingCarriersId, String, String, Option[String], Option[Json], /* user-picked */ IsActive] {
   def id: ShippingCarriersId = carrierId
 
   def toUnsavedRow(
     trackingUrlTemplate: Defaulted[Option[String]] = Defaulted.Provided(this.trackingUrlTemplate),
     apiConfig: Defaulted[Option[Json]] = Defaulted.Provided(this.apiConfig),
-    isActive: Defaulted[Boolean] = Defaulted.Provided(this.isActive)
+    isActive: Defaulted[/* user-picked */ IsActive] = Defaulted.Provided(this.isActive)
   ): ShippingCarriersRowUnsaved = {
     new ShippingCarriersRowUnsaved(
       code,
@@ -66,9 +66,9 @@ case class ShippingCarriersRow(
 
   override def `_5`: Option[Json] = apiConfig
 
-  override def `_6`: Boolean = isActive
+  override def `_6`: /* user-picked */ IsActive = isActive
 }
 
 object ShippingCarriersRow {
-  val `_rowParser`: RowParser[ShippingCarriersRow] = RowParsers.of(ShippingCarriersId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.json.nullable, ScalaDbTypes.MariaTypes.bool)(ShippingCarriersRow.apply)(row => Array[Any](row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive))
+  val `_rowParser`: RowParser[ShippingCarriersRow] = RowParsers.of(ShippingCarriersId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.json.nullable, IsActive.mariaType)(ShippingCarriersRow.apply)(row => Array[Any](row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive))
 }

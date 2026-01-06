@@ -34,7 +34,7 @@ public class ShiftRepoImpl implements ShiftRepo {
   public Boolean deleteById(ShiftId shiftid, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"humanresources\".\"shift\" where \"shiftid\" = "),
-                Fragment.encode(ShiftId.dbType, shiftid),
+                Fragment.encode(ShiftId.pgType, shiftid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -45,7 +45,7 @@ public class ShiftRepoImpl implements ShiftRepo {
   public Integer deleteByIds(ShiftId[] shiftids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"humanresources\".\"shift\"\nwhere \"shiftid\" = ANY("),
-            Fragment.encode(ShiftId.dbTypeArray, shiftids),
+            Fragment.encode(ShiftId.pgTypeArray, shiftids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -58,9 +58,9 @@ public class ShiftRepoImpl implements ShiftRepo {
                 "insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\","
                     + " \"endtime\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(ShiftId.dbType, unsaved.shiftid()),
+            Fragment.encode(ShiftId.pgType, unsaved.shiftid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.time, unsaved.starttime()),
             Fragment.lit("::time, "),
@@ -83,7 +83,7 @@ public class ShiftRepoImpl implements ShiftRepo {
     ;
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.name()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.name()), Fragment.lit("::varchar")));
     columns.add(Fragment.lit("\"starttime\""));
     values.add(
         interpolate(Fragment.encode(PgTypes.time, unsaved.starttime()), Fragment.lit("::time")));
@@ -97,7 +97,7 @@ public class ShiftRepoImpl implements ShiftRepo {
             value -> {
               columns.add(Fragment.lit("\"shiftid\""));
               values.add(
-                  interpolate(Fragment.encode(ShiftId.dbType, value), Fragment.lit("::int4")));
+                  interpolate(Fragment.encode(ShiftId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     unsaved
@@ -175,7 +175,7 @@ public class ShiftRepoImpl implements ShiftRepo {
                 "select \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"
                     + "from \"humanresources\".\"shift\"\n"
                     + "where \"shiftid\" = "),
-            Fragment.encode(ShiftId.dbType, shiftid),
+            Fragment.encode(ShiftId.pgType, shiftid),
             Fragment.lit(""))
         .query(ShiftRow._rowParser.first())
         .runUnchecked(c);
@@ -188,7 +188,7 @@ public class ShiftRepoImpl implements ShiftRepo {
                 "select \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"
                     + "from \"humanresources\".\"shift\"\n"
                     + "where \"shiftid\" = ANY("),
-            Fragment.encode(ShiftId.dbTypeArray, shiftids),
+            Fragment.encode(ShiftId.pgTypeArray, shiftids),
             Fragment.lit(")"))
         .query(ShiftRow._rowParser.all())
         .runUnchecked(c);
@@ -216,7 +216,7 @@ public class ShiftRepoImpl implements ShiftRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"humanresources\".\"shift\"\nset \"name\" = "),
-                Fragment.encode(Name.dbType, row.name()),
+                Fragment.encode(Name.pgType, row.name()),
                 Fragment.lit("::varchar,\n\"starttime\" = "),
                 Fragment.encode(PgTypes.time, row.starttime()),
                 Fragment.lit("::time,\n\"endtime\" = "),
@@ -224,7 +224,7 @@ public class ShiftRepoImpl implements ShiftRepo {
                 Fragment.lit("::time,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"shiftid\" = "),
-                Fragment.encode(ShiftId.dbType, shiftid),
+                Fragment.encode(ShiftId.pgType, shiftid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -238,9 +238,9 @@ public class ShiftRepoImpl implements ShiftRepo {
                 "insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\","
                     + " \"endtime\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(ShiftId.dbType, unsaved.shiftid()),
+            Fragment.encode(ShiftId.pgType, unsaved.shiftid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.time, unsaved.starttime()),
             Fragment.lit("::time, "),

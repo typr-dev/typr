@@ -35,13 +35,13 @@ data class ShiftRowUnsaved(
 
   companion object {
     val pgText: PgText<ShiftRowUnsaved> =
-      PgText.instance({ row, sb -> Name.dbType.text().unsafeEncode(row.name, sb)
+      PgText.instance({ row, sb -> Name.pgType.text().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.time.text().unsafeEncode(row.starttime, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.time.text().unsafeEncode(row.endtime, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(ShiftId.dbType.text()).unsafeEncode(row.shiftid, sb)
+      Defaulted.pgText(ShiftId.pgType.text()).unsafeEncode(row.shiftid, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
   }

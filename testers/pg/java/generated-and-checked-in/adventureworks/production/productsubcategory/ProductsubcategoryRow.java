@@ -83,9 +83,9 @@ public record ProductsubcategoryRow(
 
   public static RowParser<ProductsubcategoryRow> _rowParser =
       RowParsers.of(
-          ProductsubcategoryId.dbType,
-          ProductcategoryId.dbType,
-          Name.dbType,
+          ProductsubcategoryId.pgType,
+          ProductcategoryId.pgType,
+          Name.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
           ProductsubcategoryRow::new,

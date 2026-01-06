@@ -74,7 +74,7 @@ public record PasswordRowUnsaved(
   public static PgText<PasswordRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb);
+            BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.text.text().unsafeEncode(row.passwordhash, sb);
             sb.append(PgText.DELIMETER);

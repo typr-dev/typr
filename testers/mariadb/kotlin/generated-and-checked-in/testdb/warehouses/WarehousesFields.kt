@@ -10,7 +10,6 @@ import dev.typr.foundations.RowParser
 import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RelationStructure
 import dev.typr.foundations.kotlin.SqlExpr
 import dev.typr.foundations.kotlin.SqlExpr.Field
@@ -20,8 +19,10 @@ import dev.typr.foundations.kotlin.TupleExpr10
 import kotlin.collections.List
 import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
+import testdb.userdefined.Email
+import testdb.userdefined.IsActive
 
-data class WarehousesFields(val _path: List<Path>) : TupleExpr10<WarehousesId, String, String, String, Point, Polygon, String, Boolean, String, String>, RelationStructure<WarehousesFields, WarehousesRow>, FieldsBase<WarehousesRow> {
+data class WarehousesFields(val _path: List<Path>) : TupleExpr10<WarehousesId, String, String, String, Point, Polygon, String, /* user-picked */ IsActive, /* user-picked */ Email, String>, RelationStructure<WarehousesFields, WarehousesRow>, FieldsBase<WarehousesRow> {
   override fun _1(): SqlExpr<WarehousesId> = warehouseId()
 
   override fun _10(): SqlExpr<String> = contactPhone()
@@ -38,9 +39,9 @@ data class WarehousesFields(val _path: List<Path>) : TupleExpr10<WarehousesId, S
 
   override fun _7(): SqlExpr<String> = timezone()
 
-  override fun _8(): SqlExpr<Boolean> = isActive()
+  override fun _8(): SqlExpr</* user-picked */ IsActive> = isActive()
 
-  override fun _9(): SqlExpr<String> = contactEmail()
+  override fun _9(): SqlExpr</* user-picked */ Email> = contactEmail()
 
   override fun _path(): List<Path> = _path
 
@@ -50,11 +51,11 @@ data class WarehousesFields(val _path: List<Path>) : TupleExpr10<WarehousesId, S
 
   override fun columns(): List<FieldLike<*, WarehousesRow>> = listOf(this.warehouseId().underlying, this.code().underlying, this.name().underlying, this.address().underlying, this.location().underlying, this.serviceArea().underlying, this.timezone().underlying, this.isActive().underlying, this.contactEmail().underlying, this.contactPhone().underlying)
 
-  fun contactEmail(): OptField<String, WarehousesRow> = OptField<String, WarehousesRow>(_path, "contact_email", WarehousesRow::contactEmail, null, null, { row, value -> row.copy(contactEmail = value) }, MariaTypes.varchar)
+  fun contactEmail(): OptField</* user-picked */ Email, WarehousesRow> = OptField</* user-picked */ Email, WarehousesRow>(_path, "contact_email", WarehousesRow::contactEmail, null, null, { row, value -> row.copy(contactEmail = value) }, Email.mariaType)
 
   fun contactPhone(): OptField<String, WarehousesRow> = OptField<String, WarehousesRow>(_path, "contact_phone", WarehousesRow::contactPhone, null, null, { row, value -> row.copy(contactPhone = value) }, MariaTypes.varchar)
 
-  fun isActive(): Field<Boolean, WarehousesRow> = Field<Boolean, WarehousesRow>(_path, "is_active", WarehousesRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isActive(): Field</* user-picked */ IsActive, WarehousesRow> = Field</* user-picked */ IsActive, WarehousesRow>(_path, "is_active", WarehousesRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
 
   fun location(): Field<Point, WarehousesRow> = Field<Point, WarehousesRow>(_path, "location", WarehousesRow::location, null, null, { row, value -> row.copy(location = value) }, MariaTypes.point)
 
@@ -66,7 +67,7 @@ data class WarehousesFields(val _path: List<Path>) : TupleExpr10<WarehousesId, S
 
   fun timezone(): Field<String, WarehousesRow> = Field<String, WarehousesRow>(_path, "timezone", WarehousesRow::timezone, null, null, { row, value -> row.copy(timezone = value) }, MariaTypes.varchar)
 
-  fun warehouseId(): IdField<WarehousesId, WarehousesRow> = IdField<WarehousesId, WarehousesRow>(_path, "warehouse_id", WarehousesRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.dbType)
+  fun warehouseId(): IdField<WarehousesId, WarehousesRow> = IdField<WarehousesId, WarehousesRow>(_path, "warehouse_id", WarehousesRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.mariaType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<WarehousesFields, WarehousesRow> = WarehousesFields(_path)
 

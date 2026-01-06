@@ -27,10 +27,10 @@ public record ProductsubcategoryId(@JsonValue Integer value) {
   public static Bijection<ProductsubcategoryId, Integer> bijection =
       Bijection.of(ProductsubcategoryId::value, ProductsubcategoryId::new);
 
-  public static PgType<ProductsubcategoryId> dbType =
+  public static PgType<ProductsubcategoryId> pgType =
       PgTypes.int4.bimap(ProductsubcategoryId::new, ProductsubcategoryId::value);
 
-  public static PgType<ProductsubcategoryId[]> dbTypeArray =
+  public static PgType<ProductsubcategoryId[]> pgTypeArray =
       PgTypes.int4Array.bimap(
           xs -> arrayMap.map(xs, ProductsubcategoryId::new, ProductsubcategoryId.class),
           xs -> arrayMap.map(xs, ProductsubcategoryId::value, Integer.class));

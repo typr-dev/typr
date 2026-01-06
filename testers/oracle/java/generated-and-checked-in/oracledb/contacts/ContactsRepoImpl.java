@@ -20,8 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import oracledb.EmailTableT;
 import oracledb.TagVarrayT;
+import oracledb.userdefined.Email;
 
 public class ContactsRepoImpl implements ContactsRepo {
   @Override
@@ -65,7 +65,7 @@ public class ContactsRepoImpl implements ContactsRepo {
             Fragment.lit(", "),
             Fragment.encode(OracleTypes.varchar2, unsaved.name()),
             Fragment.lit(", "),
-            Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails()),
+            Fragment.encode(Email.oracleType.opt(), unsaved.emails()),
             Fragment.lit(", "),
             Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags()),
             Fragment.lit(")\n"))
@@ -85,8 +85,7 @@ public class ContactsRepoImpl implements ContactsRepo {
         interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.name()), Fragment.lit("")));
     columns.add(Fragment.lit("\"EMAILS\""));
     values.add(
-        interpolate(
-            Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails()), Fragment.lit("")));
+        interpolate(Fragment.encode(Email.oracleType.opt(), unsaved.emails()), Fragment.lit("")));
     columns.add(Fragment.lit("\"TAGS\""));
     values.add(
         interpolate(
@@ -180,7 +179,7 @@ public class ContactsRepoImpl implements ContactsRepo {
                 Fragment.lit("update \"CONTACTS\"\nset \"NAME\" = "),
                 Fragment.encode(OracleTypes.varchar2, row.name()),
                 Fragment.lit(",\n\"EMAILS\" = "),
-                Fragment.encode(EmailTableT.oracleType.opt(), row.emails()),
+                Fragment.encode(Email.oracleType.opt(), row.emails()),
                 Fragment.lit(",\n\"TAGS\" = "),
                 Fragment.encode(TagVarrayT.oracleType.opt(), row.tags()),
                 Fragment.lit("\nwhere \"CONTACT_ID\" = "),
@@ -199,7 +198,7 @@ public class ContactsRepoImpl implements ContactsRepo {
             Fragment.lit(", "),
             Fragment.encode(OracleTypes.varchar2, unsaved.name()),
             Fragment.lit(", "),
-            Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails()),
+            Fragment.encode(Email.oracleType.opt(), unsaved.emails()),
             Fragment.lit(", "),
             Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags()),
             Fragment.lit(
@@ -214,7 +213,7 @@ public class ContactsRepoImpl implements ContactsRepo {
             Fragment.lit(", "),
             Fragment.encode(OracleTypes.varchar2, unsaved.name()),
             Fragment.lit(", "),
-            Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails()),
+            Fragment.encode(Email.oracleType.opt(), unsaved.emails()),
             Fragment.lit(", "),
             Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags()),
             Fragment.lit(")"))

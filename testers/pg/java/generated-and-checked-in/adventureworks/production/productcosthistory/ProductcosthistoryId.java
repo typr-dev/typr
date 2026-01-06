@@ -27,7 +27,7 @@ public record ProductcosthistoryId(ProductId productid, LocalDateTime startdate)
 
   public static RowParser<ProductcosthistoryId> _rowParser =
       RowParsers.of(
-          ProductId.dbType,
+          ProductId.pgType,
           PgTypes.timestamp,
           ProductcosthistoryId::new,
           row -> new Object[] {row.productid(), row.startdate()});

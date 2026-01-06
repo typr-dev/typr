@@ -29,7 +29,7 @@ class ProductsRepoImpl() : ProductsRepo {
   override fun deleteByIds(
     productIds: Array<ProductsId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"products\"\nwhere \"product_id\" = ANY("), Fragment.encode(ProductsId.dbTypeArray, productIds), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"products\"\nwhere \"product_id\" = ANY("), Fragment.encode(ProductsId.duckDbTypeArray, productIds), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
@@ -51,7 +51,7 @@ class ProductsRepoImpl() : ProductsRepo {
   override fun selectByIds(
     productIds: Array<ProductsId>,
     c: Connection
-  ): List<ProductsRow> = Fragment.interpolate(Fragment.lit("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"product_id\" = ANY("), Fragment.encode(ProductsId.dbTypeArray, productIds), Fragment.lit(")")).query(ProductsRow._rowParser.all()).runUnchecked(c)
+  ): List<ProductsRow> = Fragment.interpolate(Fragment.lit("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"product_id\" = ANY("), Fragment.encode(ProductsId.duckDbTypeArray, productIds), Fragment.lit(")")).query(ProductsRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     productIds: Array<ProductsId>,

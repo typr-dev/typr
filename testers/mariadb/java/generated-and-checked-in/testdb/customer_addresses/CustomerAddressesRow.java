@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.mariadb.jdbc.type.Point;
 import testdb.customers.CustomersId;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.IsDefault;
 
 /** Table: customer_addresses Primary key: address_id */
 public record CustomerAddressesRow(
@@ -25,7 +26,7 @@ public record CustomerAddressesRow(
     /** */
     @JsonProperty("address_type") String addressType,
     /** Default: 0 */
-    @JsonProperty("is_default") Boolean isDefault,
+    @JsonProperty("is_default") /* user-picked */ IsDefault isDefault,
     /** */
     @JsonProperty("recipient_name") String recipientName,
     /** */
@@ -49,8 +50,8 @@ public record CustomerAddressesRow(
     implements Tuple14<
         CustomerAddressesId,
         CustomersId,
-        String,
-        Boolean,
+        String, /* user-picked */
+        IsDefault,
         String,
         String,
         Optional<String>,
@@ -122,7 +123,7 @@ public record CustomerAddressesRow(
   ;
 
   /** Default: 0 */
-  public CustomerAddressesRow withIsDefault(Boolean isDefault) {
+  public CustomerAddressesRow withIsDefault(/* user-picked */ IsDefault isDefault) {
     return new CustomerAddressesRow(
         addressId,
         customerId,
@@ -343,10 +344,10 @@ public record CustomerAddressesRow(
 
   public static RowParser<CustomerAddressesRow> _rowParser =
       RowParsers.of(
-          CustomerAddressesId.dbType,
-          CustomersId.dbType,
+          CustomerAddressesId.mariaType,
+          CustomersId.mariaType,
           MariaTypes.text,
-          MariaTypes.bool,
+          IsDefault.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.varchar.opt(),
@@ -426,7 +427,7 @@ public record CustomerAddressesRow(
   ;
 
   @Override
-  public Boolean _4() {
+  public /* user-picked */ IsDefault _4() {
     return isDefault;
   }
   ;
@@ -467,7 +468,7 @@ public record CustomerAddressesRow(
   ;
 
   public CustomerAddressesRowUnsaved toUnsavedRow(
-      Defaulted<Boolean> isDefault,
+      Defaulted</* user-picked */ IsDefault> isDefault,
       Defaulted<Optional<String>> streetLine2,
       Defaulted<Optional<String>> stateProvince,
       Defaulted<Optional<Point>> location,

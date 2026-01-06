@@ -66,13 +66,13 @@ data class SalesterritoryRowUnsaved(
 
   companion object {
     val pgText: PgText<SalesterritoryRowUnsaved> =
-      PgText.instance({ row, sb -> Name.dbType.text().unsafeEncode(row.name, sb)
+      PgText.instance({ row, sb -> Name.pgType.text().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
-      CountryregionId.dbType.text().unsafeEncode(row.countryregioncode, sb)
+      CountryregionId.pgType.text().unsafeEncode(row.countryregioncode, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.text.text().unsafeEncode(row.group, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(SalesterritoryId.dbType.text()).unsafeEncode(row.territoryid, sb)
+      Defaulted.pgText(SalesterritoryId.pgType.text()).unsafeEncode(row.territoryid, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.salesytd, sb)
       sb.append(PgText.DELIMETER)

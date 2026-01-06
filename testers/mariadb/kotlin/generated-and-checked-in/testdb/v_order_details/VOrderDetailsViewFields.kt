@@ -20,8 +20,9 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
 import testdb.orders.OrdersId
+import testdb.userdefined.Email
 
-data class VOrderDetailsViewFields(val _path: List<Path>) : TupleExpr14<OrdersId, String, String, String, BigDecimal, String, LocalDateTime, String, String, Long, BigDecimal, String, String, String>, RelationStructure<VOrderDetailsViewFields, VOrderDetailsViewRow>, FieldsBase<VOrderDetailsViewRow> {
+data class VOrderDetailsViewFields(val _path: List<Path>) : TupleExpr14<OrdersId, String, String, String, BigDecimal, String, LocalDateTime, /* user-picked */ Email, String, Long, BigDecimal, String, String, String>, RelationStructure<VOrderDetailsViewFields, VOrderDetailsViewRow>, FieldsBase<VOrderDetailsViewRow> {
   override fun _1(): SqlExpr<OrdersId> = orderId()
 
   override fun _10(): SqlExpr<Long> = itemCount()
@@ -46,7 +47,7 @@ data class VOrderDetailsViewFields(val _path: List<Path>) : TupleExpr14<OrdersId
 
   override fun _7(): SqlExpr<LocalDateTime> = orderedAt()
 
-  override fun _8(): SqlExpr<String> = customerEmail()
+  override fun _8(): SqlExpr</* user-picked */ Email> = customerEmail()
 
   override fun _9(): SqlExpr<String> = customerName()
 
@@ -58,13 +59,13 @@ data class VOrderDetailsViewFields(val _path: List<Path>) : TupleExpr14<OrdersId
 
   fun currencyCode(): Field<String, VOrderDetailsViewRow> = Field<String, VOrderDetailsViewRow>(_path, "currency_code", VOrderDetailsViewRow::currencyCode, null, null, { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_)
 
-  fun customerEmail(): Field<String, VOrderDetailsViewRow> = Field<String, VOrderDetailsViewRow>(_path, "customer_email", VOrderDetailsViewRow::customerEmail, null, null, { row, value -> row.copy(customerEmail = value) }, MariaTypes.varchar)
+  fun customerEmail(): Field</* user-picked */ Email, VOrderDetailsViewRow> = Field</* user-picked */ Email, VOrderDetailsViewRow>(_path, "customer_email", VOrderDetailsViewRow::customerEmail, null, null, { row, value -> row.copy(customerEmail = value) }, Email.mariaType)
 
   fun customerName(): OptField<String, VOrderDetailsViewRow> = OptField<String, VOrderDetailsViewRow>(_path, "customer_name", VOrderDetailsViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, MariaTypes.varchar)
 
   fun itemCount(): Field<Long, VOrderDetailsViewRow> = Field<Long, VOrderDetailsViewRow>(_path, "item_count", VOrderDetailsViewRow::itemCount, null, null, { row, value -> row.copy(itemCount = value) }, KotlinDbTypes.MariaTypes.bigint)
 
-  fun orderId(): Field<OrdersId, VOrderDetailsViewRow> = Field<OrdersId, VOrderDetailsViewRow>(_path, "order_id", VOrderDetailsViewRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.dbType)
+  fun orderId(): Field<OrdersId, VOrderDetailsViewRow> = Field<OrdersId, VOrderDetailsViewRow>(_path, "order_id", VOrderDetailsViewRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType)
 
   fun orderNumber(): Field<String, VOrderDetailsViewRow> = Field<String, VOrderDetailsViewRow>(_path, "order_number", VOrderDetailsViewRow::orderNumber, null, null, { row, value -> row.copy(orderNumber = value) }, MariaTypes.varchar)
 

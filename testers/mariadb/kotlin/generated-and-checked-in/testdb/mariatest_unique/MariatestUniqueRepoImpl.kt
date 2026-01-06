@@ -17,6 +17,7 @@ import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
+import testdb.userdefined.Email
 
 class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
   override fun delete(): DeleteBuilder<MariatestUniqueFields, MariatestUniqueRow> = DeleteBuilder.of("`mariatest_unique`", MariatestUniqueFields.structure, Dialect.MARIADB)
@@ -24,21 +25,21 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
   override fun deleteById(
     id: MariatestUniqueId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `mariatest_unique` where `id` = "), Fragment.encode(MariatestUniqueId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `mariatest_unique` where `id` = "), Fragment.encode(MariatestUniqueId.mariaType, id), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     ids: Array<MariatestUniqueId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in ids) { fragments.add(Fragment.encode(MariatestUniqueId.dbType, id)) }
+    for (id in ids) { fragments.add(Fragment.encode(MariatestUniqueId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("delete from `mariatest_unique` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: MariatestUniqueRow,
     c: Connection
-  ): MariatestUniqueRow = Fragment.interpolate(Fragment.lit("insert into `mariatest_unique`(`email`, `code`, `category`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.category), Fragment.lit(")\nRETURNING `id`, `email`, `code`, `category`\n"))
+  ): MariatestUniqueRow = Fragment.interpolate(Fragment.lit("insert into `mariatest_unique`(`email`, `code`, `category`)\nvalues ("), Fragment.encode(Email.mariaType, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.category), Fragment.lit(")\nRETURNING `id`, `email`, `code`, `category`\n"))
     .updateReturning(MariatestUniqueRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -48,7 +49,7 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`email`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.email), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(Email.mariaType, unsaved.email), Fragment.lit("")))
     columns.add(Fragment.lit("`code`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit("")))
     columns.add(Fragment.lit("`category`"))
@@ -64,14 +65,14 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
   override fun selectById(
     id: MariatestUniqueId,
     c: Connection
-  ): MariatestUniqueRow? = Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category`\nfrom `mariatest_unique`\nwhere `id` = "), Fragment.encode(MariatestUniqueId.dbType, id), Fragment.lit("")).query(MariatestUniqueRow._rowParser.first()).runUnchecked(c)
+  ): MariatestUniqueRow? = Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category`\nfrom `mariatest_unique`\nwhere `id` = "), Fragment.encode(MariatestUniqueId.mariaType, id), Fragment.lit("")).query(MariatestUniqueRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     ids: Array<MariatestUniqueId>,
     c: Connection
   ): List<MariatestUniqueRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in ids) { fragments.add(Fragment.encode(MariatestUniqueId.dbType, id)) }
+    for (id in ids) { fragments.add(Fragment.encode(MariatestUniqueId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category` from `mariatest_unique` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(MariatestUniqueRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -91,9 +92,9 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
   ): MariatestUniqueRow? = Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category`\nfrom `mariatest_unique`\nwhere `code` = "), Fragment.encode(MariaTypes.varchar, code), Fragment.lit(" AND `category` = "), Fragment.encode(MariaTypes.varchar, category), Fragment.lit("\n")).query(MariatestUniqueRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByUniqueEmail(
-    email: String,
+    email: /* user-picked */ Email,
     c: Connection
-  ): MariatestUniqueRow? = Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category`\nfrom `mariatest_unique`\nwhere `email` = "), Fragment.encode(MariaTypes.varchar, email), Fragment.lit("\n")).query(MariatestUniqueRow._rowParser.first()).runUnchecked(c)
+  ): MariatestUniqueRow? = Fragment.interpolate(Fragment.lit("select `id`, `email`, `code`, `category`\nfrom `mariatest_unique`\nwhere `email` = "), Fragment.encode(Email.mariaType, email), Fragment.lit("\n")).query(MariatestUniqueRow._rowParser.first()).runUnchecked(c)
 
   override fun update(): UpdateBuilder<MariatestUniqueFields, MariatestUniqueRow> = UpdateBuilder.of("`mariatest_unique`", MariatestUniqueFields.structure, MariatestUniqueRow._rowParser, Dialect.MARIADB)
 
@@ -102,13 +103,13 @@ class MariatestUniqueRepoImpl() : MariatestUniqueRepo {
     c: Connection
   ): Boolean {
     val id: MariatestUniqueId = row.id
-    return Fragment.interpolate(Fragment.lit("update `mariatest_unique`\nset `email` = "), Fragment.encode(MariaTypes.varchar, row.email), Fragment.lit(",\n`code` = "), Fragment.encode(MariaTypes.varchar, row.code), Fragment.lit(",\n`category` = "), Fragment.encode(MariaTypes.varchar, row.category), Fragment.lit("\nwhere `id` = "), Fragment.encode(MariatestUniqueId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `mariatest_unique`\nset `email` = "), Fragment.encode(Email.mariaType, row.email), Fragment.lit(",\n`code` = "), Fragment.encode(MariaTypes.varchar, row.code), Fragment.lit(",\n`category` = "), Fragment.encode(MariaTypes.varchar, row.category), Fragment.lit("\nwhere `id` = "), Fragment.encode(MariatestUniqueId.mariaType, id), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: MariatestUniqueRow,
     c: Connection
-  ): MariatestUniqueRow = Fragment.interpolate(Fragment.lit("INSERT INTO `mariatest_unique`(`id`, `email`, `code`, `category`)\nVALUES ("), Fragment.encode(MariatestUniqueId.dbType, unsaved.id), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.category), Fragment.lit(")\nON DUPLICATE KEY UPDATE `email` = VALUES(`email`),\n`code` = VALUES(`code`),\n`category` = VALUES(`category`)\nRETURNING `id`, `email`, `code`, `category`"))
+  ): MariatestUniqueRow = Fragment.interpolate(Fragment.lit("INSERT INTO `mariatest_unique`(`id`, `email`, `code`, `category`)\nVALUES ("), Fragment.encode(MariatestUniqueId.mariaType, unsaved.id), Fragment.lit(", "), Fragment.encode(Email.mariaType, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.category), Fragment.lit(")\nON DUPLICATE KEY UPDATE `email` = VALUES(`email`),\n`code` = VALUES(`code`),\n`category` = VALUES(`category`)\nRETURNING `id`, `email`, `code`, `category`"))
     .updateReturning(MariatestUniqueRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

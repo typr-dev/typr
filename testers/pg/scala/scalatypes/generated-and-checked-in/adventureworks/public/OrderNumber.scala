@@ -18,7 +18,7 @@ case class OrderNumber(@JsonValue value: String)
 object OrderNumber {
   given bijection: Bijection[OrderNumber, String] = Bijection.apply[OrderNumber, String](_.value)(OrderNumber.apply)
 
-  given dbType: PgType[OrderNumber] = PgTypes.text.bimap(OrderNumber.apply, _.value).renamed(""""public"."OrderNumber"""")
+  given pgType: PgType[OrderNumber] = PgTypes.text.bimap(OrderNumber.apply, _.value).renamed(""""public"."OrderNumber"""")
 
-  given dbTypeArray: PgType[Array[OrderNumber]] = PgTypes.textArray.bimap(xs => xs.map(OrderNumber.apply), xs => xs.map(_.value)).renamed(""""public"."OrderNumber"[]""")
+  given pgTypeArray: PgType[Array[OrderNumber]] = PgTypes.textArray.bimap(xs => xs.map(OrderNumber.apply), xs => xs.map(_.value)).renamed(""""public"."OrderNumber"[]""")
 }

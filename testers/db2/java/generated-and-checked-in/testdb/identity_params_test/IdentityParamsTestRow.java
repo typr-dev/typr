@@ -29,7 +29,7 @@ public record IdentityParamsTestRow(
 
   public static RowParser<IdentityParamsTestRow> _rowParser =
       RowParsers.of(
-          IdentityParamsTestId.dbType,
+          IdentityParamsTestId.db2Type,
           Db2Types.varchar,
           IdentityParamsTestRow::new,
           row -> new Object[] {row.id(), row.name()});

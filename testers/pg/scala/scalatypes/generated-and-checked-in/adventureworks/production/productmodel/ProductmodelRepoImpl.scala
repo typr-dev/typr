@@ -22,19 +22,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class ProductmodelRepoImpl extends ProductmodelRepo {
   override def delete: DeleteBuilder[ProductmodelFields, ProductmodelRow] = DeleteBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(productmodelid: ProductmodelId)(using c: Connection): Boolean = sql"""delete from "production"."productmodel" where "productmodelid" = ${Fragment.encode(ProductmodelId.dbType, productmodelid)}""".update().runUnchecked(c) > 0
+  override def deleteById(productmodelid: ProductmodelId)(using c: Connection): Boolean = sql"""delete from "production"."productmodel" where "productmodelid" = ${Fragment.encode(ProductmodelId.pgType, productmodelid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(productmodelids: Array[ProductmodelId])(using c: Connection): Int = {
     sql"""delete
     from "production"."productmodel"
-    where "productmodelid" = ANY(${Fragment.encode(ProductmodelId.dbTypeArray, productmodelids)})"""
+    where "productmodelid" = ANY(${Fragment.encode(ProductmodelId.pgTypeArray, productmodelids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
   sql"""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
-    values (${Fragment.encode(ProductmodelId.dbType, unsaved.productmodelid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.xml.nullable, unsaved.catalogdescription)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.instructions)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.xml.nullable, unsaved.catalogdescription)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.instructions)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
     """
     .updateReturning(ProductmodelRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -44,14 +44,14 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.name)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""catalogdescription"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.xml.nullable, unsaved.catalogdescription)}::xml"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""instructions"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.xml.nullable, unsaved.instructions)}::xml"): @scala.annotation.nowarn
     unsaved.productmodelid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""productmodelid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ProductmodelId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""productmodelid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ProductmodelId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -92,13 +92,13 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
   override def selectById(productmodelid: ProductmodelId)(using c: Connection): Option[ProductmodelRow] = {
     sql"""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
     from "production"."productmodel"
-    where "productmodelid" = ${Fragment.encode(ProductmodelId.dbType, productmodelid)}""".query(ProductmodelRow.`_rowParser`.first()).runUnchecked(c)
+    where "productmodelid" = ${Fragment.encode(ProductmodelId.pgType, productmodelid)}""".query(ProductmodelRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(productmodelids: Array[ProductmodelId])(using c: Connection): List[ProductmodelRow] = {
     sql"""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
     from "production"."productmodel"
-    where "productmodelid" = ANY(${Fragment.encode(ProductmodelId.dbTypeArray, productmodelids)})""".query(ProductmodelRow.`_rowParser`.all()).runUnchecked(c)
+    where "productmodelid" = ANY(${Fragment.encode(ProductmodelId.pgTypeArray, productmodelids)})""".query(ProductmodelRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(productmodelids: Array[ProductmodelId])(using c: Connection): Map[ProductmodelId, ProductmodelRow] = {
@@ -112,17 +112,17 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
   override def update(row: ProductmodelRow)(using c: Connection): Boolean = {
     val productmodelid: ProductmodelId = row.productmodelid
     return sql"""update "production"."productmodel"
-    set "name" = ${Fragment.encode(Name.dbType, row.name)}::varchar,
+    set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "catalogdescription" = ${Fragment.encode(PgTypes.xml.nullable, row.catalogdescription)}::xml,
     "instructions" = ${Fragment.encode(PgTypes.xml.nullable, row.instructions)}::xml,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "productmodelid" = ${Fragment.encode(ProductmodelId.dbType, productmodelid)}""".update().runUnchecked(c) > 0
+    where "productmodelid" = ${Fragment.encode(ProductmodelId.pgType, productmodelid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
   sql"""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
-    values (${Fragment.encode(ProductmodelId.dbType, unsaved.productmodelid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.xml.nullable, unsaved.catalogdescription)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.instructions)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.xml.nullable, unsaved.catalogdescription)}::xml, ${Fragment.encode(PgTypes.xml.nullable, unsaved.instructions)}::xml, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("productmodelid")
     do update set
       "name" = EXCLUDED."name",

@@ -229,8 +229,8 @@ public record SalespersonRow(
 
   public static RowParser<SalespersonRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
-          SalesterritoryId.dbType.opt(),
+          BusinessentityId.pgType,
+          SalesterritoryId.pgType.opt(),
           PgTypes.numeric.opt(),
           PgTypes.numeric,
           PgTypes.numeric,

@@ -27,21 +27,21 @@ class OrdersRepoImpl() : OrdersRepo {
   override fun deleteById(
     orderId: OrdersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"ORDERS\" where \"ORDER_ID\" = "), Fragment.encode(OrdersId.dbType, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"ORDERS\" where \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     orderIds: Array<OrdersId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in orderIds) { fragments.add(Fragment.encode(OrdersId.dbType, id)) }
+    for (id in orderIds) { fragments.add(Fragment.encode(OrdersId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("delete from \"ORDERS\" where \"ORDER_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: OrdersRow,
     c: Connection
-  ): OrdersRow = Fragment.interpolate(Fragment.lit("SELECT \"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\" FROM FINAL TABLE (INSERT INTO \"ORDERS\"(\"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\")\nVALUES ("), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(Db2Types.varchar.nullable(), unsaved.status), Fragment.lit("))\n"))
+  ): OrdersRow = Fragment.interpolate(Fragment.lit("SELECT \"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\" FROM FINAL TABLE (INSERT INTO \"ORDERS\"(\"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\")\nVALUES ("), Fragment.encode(CustomersId.db2Type, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(Db2Types.varchar.nullable(), unsaved.status), Fragment.lit("))\n"))
     .updateReturning(OrdersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -51,7 +51,7 @@ class OrdersRepoImpl() : OrdersRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"CUSTOMER_ID\""))
-    values.add(Fragment.interpolate(Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(CustomersId.db2Type, unsaved.customerId), Fragment.lit("")))
     columns.add(Fragment.lit("\"TOTAL_AMOUNT\""))
     values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.totalAmount), Fragment.lit("")))
     unsaved.orderDate.visit(
@@ -75,14 +75,14 @@ class OrdersRepoImpl() : OrdersRepo {
   override fun selectById(
     orderId: OrdersId,
     c: Connection
-  ): OrdersRow? = Fragment.interpolate(Fragment.lit("select \"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\"\nfrom \"ORDERS\"\nwhere \"ORDER_ID\" = "), Fragment.encode(OrdersId.dbType, orderId), Fragment.lit("")).query(OrdersRow._rowParser.first()).runUnchecked(c)
+  ): OrdersRow? = Fragment.interpolate(Fragment.lit("select \"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\"\nfrom \"ORDERS\"\nwhere \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, orderId), Fragment.lit("")).query(OrdersRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     orderIds: Array<OrdersId>,
     c: Connection
   ): List<OrdersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in orderIds) { fragments.add(Fragment.encode(OrdersId.dbType, id)) }
+    for (id in orderIds) { fragments.add(Fragment.encode(OrdersId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("select \"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\" from \"ORDERS\" where \"ORDER_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(OrdersRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -102,14 +102,14 @@ class OrdersRepoImpl() : OrdersRepo {
     c: Connection
   ): Boolean {
     val orderId: OrdersId = row.orderId
-    return Fragment.interpolate(Fragment.lit("update \"ORDERS\"\nset \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.dbType, row.customerId), Fragment.lit(",\n\"ORDER_DATE\" = "), Fragment.encode(Db2Types.date, row.orderDate), Fragment.lit(",\n\"TOTAL_AMOUNT\" = "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), row.totalAmount), Fragment.lit(",\n\"STATUS\" = "), Fragment.encode(Db2Types.varchar.nullable(), row.status), Fragment.lit("\nwhere \"ORDER_ID\" = "), Fragment.encode(OrdersId.dbType, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"ORDERS\"\nset \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.db2Type, row.customerId), Fragment.lit(",\n\"ORDER_DATE\" = "), Fragment.encode(Db2Types.date, row.orderDate), Fragment.lit(",\n\"TOTAL_AMOUNT\" = "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), row.totalAmount), Fragment.lit(",\n\"STATUS\" = "), Fragment.encode(Db2Types.varchar.nullable(), row.status), Fragment.lit("\nwhere \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: OrdersRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"ORDERS\" AS t\nUSING (VALUES ("), Fragment.encode(OrdersId.dbType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(Db2Types.varchar.nullable(), unsaved.status), Fragment.lit(")) AS s(\"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\")\nON t.\"ORDER_ID\" = s.\"ORDER_ID\"\nWHEN MATCHED THEN UPDATE SET \"CUSTOMER_ID\" = s.\"CUSTOMER_ID\",\n\"ORDER_DATE\" = s.\"ORDER_DATE\",\n\"TOTAL_AMOUNT\" = s.\"TOTAL_AMOUNT\",\n\"STATUS\" = s.\"STATUS\"\nWHEN NOT MATCHED THEN INSERT (\"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\") VALUES ("), Fragment.encode(OrdersId.dbType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(Db2Types.varchar.nullable(), unsaved.status), Fragment.lit(")"))
+    Fragment.interpolate(Fragment.lit("MERGE INTO \"ORDERS\" AS t\nUSING (VALUES ("), Fragment.encode(OrdersId.db2Type, unsaved.orderId), Fragment.lit(", "), Fragment.encode(CustomersId.db2Type, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(Db2Types.varchar.nullable(), unsaved.status), Fragment.lit(")) AS s(\"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\")\nON t.\"ORDER_ID\" = s.\"ORDER_ID\"\nWHEN MATCHED THEN UPDATE SET \"CUSTOMER_ID\" = s.\"CUSTOMER_ID\",\n\"ORDER_DATE\" = s.\"ORDER_DATE\",\n\"TOTAL_AMOUNT\" = s.\"TOTAL_AMOUNT\",\n\"STATUS\" = s.\"STATUS\"\nWHEN NOT MATCHED THEN INSERT (\"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\", \"TOTAL_AMOUNT\", \"STATUS\") VALUES ("), Fragment.encode(OrdersId.db2Type, unsaved.orderId), Fragment.lit(", "), Fragment.encode(CustomersId.db2Type, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Db2Types.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(Db2Types.varchar.nullable(), unsaved.status), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }

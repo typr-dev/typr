@@ -16,9 +16,10 @@ import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr10
+import testdb.userdefined.IsActive
 import testdb.warehouses.WarehousesId
 
-class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends TupleExpr10[WarehousesId, String, String, String, String, String, String, Boolean, Long, BigDecimal] with RelationStructure[VWarehouseCoverageViewFields, VWarehouseCoverageViewRow]  with FieldsBase[VWarehouseCoverageViewRow] {
+class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends TupleExpr10[WarehousesId, String, String, String, String, String, String, /* user-picked */ IsActive, Long, BigDecimal] with RelationStructure[VWarehouseCoverageViewFields, VWarehouseCoverageViewRow]  with FieldsBase[VWarehouseCoverageViewRow] {
   def warehouseId: Field[WarehousesId, VWarehouseCoverageViewRow] = {
     new Field[WarehousesId, VWarehouseCoverageViewRow](
       _path,
@@ -27,7 +28,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.dbType
+      WarehousesId.mariaType
     )
   }
 
@@ -103,15 +104,15 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
     )
   }
 
-  def isActive: Field[Boolean, VWarehouseCoverageViewRow] = {
-    new Field[Boolean, VWarehouseCoverageViewRow](
+  def isActive: Field[/* user-picked */ IsActive, VWarehouseCoverageViewRow] = {
+    new Field[/* user-picked */ IsActive, VWarehouseCoverageViewRow](
       _path,
       "is_active",
       _.isActive,
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsActive.mariaType
     )
   }
 
@@ -159,7 +160,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
 
   override def `_7`: SqlExpr[String] = timezone
 
-  override def `_8`: SqlExpr[Boolean] = isActive
+  override def `_8`: SqlExpr[/* user-picked */ IsActive] = isActive
 
   override def `_9`: SqlExpr[Long] = productsStocked
 

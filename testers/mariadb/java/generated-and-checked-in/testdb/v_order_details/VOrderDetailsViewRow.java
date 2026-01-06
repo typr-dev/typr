@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.orders.OrdersId;
+import testdb.userdefined.Email;
 
 /** View: v_order_details VIEW */
 public record VOrderDetailsViewRow(
@@ -32,7 +33,7 @@ public record VOrderDetailsViewRow(
     /** Default: current_timestamp(6) Points to {@link testdb.orders.OrdersRow#orderedAt()} */
     @JsonProperty("ordered_at") LocalDateTime orderedAt,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    @JsonProperty("customer_email") String customerEmail,
+    @JsonProperty("customer_email") /* user-picked */ Email customerEmail,
     /** Default: NULL */
     @JsonProperty("customer_name") Optional<String> customerName,
     /** Default: 0 */
@@ -52,8 +53,8 @@ public record VOrderDetailsViewRow(
         String,
         BigDecimal,
         String,
-        LocalDateTime,
-        String,
+        LocalDateTime, /* user-picked */
+        Email,
         Optional<String>,
         Long,
         Optional<BigDecimal>,
@@ -201,7 +202,7 @@ public record VOrderDetailsViewRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public VOrderDetailsViewRow withCustomerEmail(String customerEmail) {
+  public VOrderDetailsViewRow withCustomerEmail(/* user-picked */ Email customerEmail) {
     return new VOrderDetailsViewRow(
         orderId,
         orderNumber,
@@ -342,14 +343,14 @@ public record VOrderDetailsViewRow(
 
   public static RowParser<VOrderDetailsViewRow> _rowParser =
       RowParsers.of(
-          OrdersId.dbType,
+          OrdersId.mariaType,
           MariaTypes.varchar,
           MariaTypes.text,
           MariaTypes.text,
           MariaTypes.numeric,
           MariaTypes.char_,
           MariaTypes.datetime,
-          MariaTypes.varchar,
+          Email.mariaType,
           MariaTypes.varchar.opt(),
           MariaTypes.bigint,
           MariaTypes.numeric.opt(),
@@ -449,7 +450,7 @@ public record VOrderDetailsViewRow(
   ;
 
   @Override
-  public String _8() {
+  public /* user-picked */ Email _8() {
     return customerEmail;
   }
   ;

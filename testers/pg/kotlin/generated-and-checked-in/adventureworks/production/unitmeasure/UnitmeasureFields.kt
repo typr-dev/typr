@@ -32,11 +32,11 @@ data class UnitmeasureFields(val _path: List<Path>) : TupleExpr3<UnitmeasureId, 
 
   fun modifieddate(): Field<LocalDateTime, UnitmeasureRow> = Field<LocalDateTime, UnitmeasureRow>(_path, "modifieddate", UnitmeasureRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, UnitmeasureRow> = Field<Name, UnitmeasureRow>(_path, "name", UnitmeasureRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, UnitmeasureRow> = Field<Name, UnitmeasureRow>(_path, "name", UnitmeasureRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
   override fun rowParser(): RowParser<UnitmeasureRow> = UnitmeasureRow._rowParser.underlying
 
-  fun unitmeasurecode(): IdField<UnitmeasureId, UnitmeasureRow> = IdField<UnitmeasureId, UnitmeasureRow>(_path, "unitmeasurecode", UnitmeasureRow::unitmeasurecode, null, "bpchar", { row, value -> row.copy(unitmeasurecode = value) }, UnitmeasureId.dbType)
+  fun unitmeasurecode(): IdField<UnitmeasureId, UnitmeasureRow> = IdField<UnitmeasureId, UnitmeasureRow>(_path, "unitmeasurecode", UnitmeasureRow::unitmeasurecode, null, "bpchar", { row, value -> row.copy(unitmeasurecode = value) }, UnitmeasureId.pgType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<UnitmeasureFields, UnitmeasureRow> = UnitmeasureFields(_path)
 

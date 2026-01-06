@@ -10,6 +10,7 @@ import org.junit.Test
 import testdb.categories.*
 import testdb.product_categories.*
 import testdb.products.*
+import testdb.userdefined.IsPrimary
 import java.math.BigDecimal
 import java.sql.Connection
 import java.time.LocalDateTime
@@ -186,10 +187,10 @@ class TupleInTest {
         )
 
         val pc1 = repos.productCategoriesRepo.insert(
-            ProductCategoriesRow(product1.productId, category.categoryId, true, 1.toShort()), c
+            ProductCategoriesRow(product1.productId, category.categoryId, IsPrimary(true), 1.toShort()), c
         )
         val pc2 = repos.productCategoriesRepo.insert(
-            ProductCategoriesRow(product2.productId, category.categoryId, false, 2.toShort()), c
+            ProductCategoriesRow(product2.productId, category.categoryId, IsPrimary(false), 2.toShort()), c
         )
 
         val result = repos.productCategoriesRepo
@@ -197,7 +198,7 @@ class TupleInTest {
             .where { pc ->
                 SqlExpr.all(
                     pc.compositeIdIn(listOf(pc1.compositeId(), pc2.compositeId())),
-                    pc.isPrimary().isEqual(true)
+                    pc.isPrimary().isEqual(IsPrimary(true))
                 )
             }
             .toList(c)
@@ -378,7 +379,7 @@ class TupleInTest {
                     .among(
                         repos.productCategoriesRepo
                             .select()
-                            .where { inner -> inner.isPrimary().isEqual(false) }
+                            .where { inner -> inner.isPrimary().isEqual(IsPrimary(false)) }
                             .map { inner -> inner.productId().tupleWith(inner.categoryId()) }
                             .subquery()
                     )
@@ -415,7 +416,7 @@ class TupleInTest {
                     .among(
                         repos.productCategoriesRepo
                             .select()
-                            .where { inner -> inner.isPrimary().isEqual(true) }
+                            .where { inner -> inner.isPrimary().isEqual(IsPrimary(true)) }
                             .map { inner -> inner.productId().tupleWith(inner.categoryId()) }
                             .subquery()
                     )
@@ -446,10 +447,10 @@ class TupleInTest {
         )
 
         val pc1 = repos.productCategoriesRepo.insert(
-            ProductCategoriesRow(product1.productId, category.categoryId, false, 1.toShort()), c
+            ProductCategoriesRow(product1.productId, category.categoryId, IsPrimary(false), 1.toShort()), c
         )
         val pc2 = repos.productCategoriesRepo.insert(
-            ProductCategoriesRow(product2.productId, category.categoryId, false, 2.toShort()), c
+            ProductCategoriesRow(product2.productId, category.categoryId, IsPrimary(false), 2.toShort()), c
         )
 
         val result = repos.productCategoriesRepo
@@ -461,7 +462,7 @@ class TupleInTest {
                         .among(
                             repos.productCategoriesRepo
                                 .select()
-                                .where { inner -> inner.isPrimary().isEqual(false) }
+                                .where { inner -> inner.isPrimary().isEqual(IsPrimary(false)) }
                                 .map { inner -> inner.productId().tupleWith(inner.categoryId()) }
                                 .subquery()
                         ),
@@ -554,13 +555,13 @@ class TupleInTest {
         )
 
         val pc1 = repos.productCategoriesRepo.insert(
-            ProductCategoriesRow(product1.productId, category1.categoryId, true, 1.toShort()), c
+            ProductCategoriesRow(product1.productId, category1.categoryId, IsPrimary(true), 1.toShort()), c
         )
         val pc2 = repos.productCategoriesRepo.insert(
-            ProductCategoriesRow(product2.productId, category1.categoryId, false, 2.toShort()), c
+            ProductCategoriesRow(product2.productId, category1.categoryId, IsPrimary(false), 2.toShort()), c
         )
         val pc3 = repos.productCategoriesRepo.insert(
-            ProductCategoriesRow(product3.productId, category1.categoryId, true, 3.toShort()), c
+            ProductCategoriesRow(product3.productId, category1.categoryId, IsPrimary(true), 3.toShort()), c
         )
 
         // Test truly nested tuple: ((productId, categoryId), isPrimary)
@@ -573,10 +574,10 @@ class TupleInTest {
                     .among(listOf(
                         dev.typr.foundations.Tuple.of(
                             dev.typr.foundations.Tuple.of(product1.productId, category1.categoryId),
-                            true),
+                            IsPrimary(true)),
                         dev.typr.foundations.Tuple.of(
                             dev.typr.foundations.Tuple.of(product3.productId, category1.categoryId),
-                            true)
+                            IsPrimary(true))
                     ))
             }
             .toList(c)
@@ -593,7 +594,7 @@ class TupleInTest {
                     .among(listOf(
                         dev.typr.foundations.Tuple.of(
                             dev.typr.foundations.Tuple.of(product1.productId, category1.categoryId),
-                            false)  // Wrong: isPrimary doesn't match
+                            IsPrimary(false))  // Wrong: isPrimary doesn't match
                     ))
             }
             .toList(c)
@@ -692,7 +693,7 @@ class TupleInTest {
             }),
             ProductCategoriesRepoMock({ unsaved ->
                 unsaved.toRow(
-                    { false },          // isPrimary
+                    { IsPrimary(false) },          // isPrimary
                     { 0.toShort() }     // sortOrder
                 )
             })

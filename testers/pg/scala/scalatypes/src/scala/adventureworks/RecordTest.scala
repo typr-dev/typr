@@ -7,7 +7,7 @@ import adventureworks.person.person.*
 import adventureworks.person_row_join.*
 import adventureworks.public.Name
 import adventureworks.sales.salesperson.*
-import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.{FirstName, LastName}
 import org.junit.Test
 
 import java.time.LocalDate
@@ -29,8 +29,8 @@ class RecordTest {
         PersonRowUnsaved(
           businessentityid = businessentityRow.businessentityid,
           persontype = "EM",
-          firstname = FirstName("a"),
-          lastname = Name("lastname")
+          firstname = FirstName(Name("a")),
+          lastname = LastName(Name("lastname"))
         )
       )
 

@@ -25,14 +25,17 @@ import testdb.EmailMailPushSmsSet;
 import testdb.customer_status.CustomerStatusFields;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customer_status.CustomerStatusRow;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 public class CustomersFields
     extends TupleExpr14<
-        CustomersId,
-        String,
-        byte[],
-        String,
-        String,
+        CustomersId, /* user-picked */
+        Email,
+        byte[], /* user-picked */
+        FirstName, /* user-picked */
+        LastName,
         String,
         CustomerStatusId,
         String,
@@ -59,18 +62,18 @@ public class CustomersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCustomerId(value),
-        CustomersId.dbType);
+        CustomersId.mariaType);
   }
 
-  public Field<String, CustomersRow> email() {
-    return new Field<String, CustomersRow>(
+  public Field</* user-picked */ Email, CustomersRow> email() {
+    return new Field</* user-picked */ Email, CustomersRow>(
         _path,
         "email",
         CustomersRow::email,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withEmail(value),
-        MariaTypes.varchar);
+        Email.mariaType);
   }
 
   public Field<byte[], CustomersRow> passwordHash() {
@@ -84,26 +87,26 @@ public class CustomersFields
         MariaTypes.binary);
   }
 
-  public Field<String, CustomersRow> firstName() {
-    return new Field<String, CustomersRow>(
+  public Field</* user-picked */ FirstName, CustomersRow> firstName() {
+    return new Field</* user-picked */ FirstName, CustomersRow>(
         _path,
         "first_name",
         CustomersRow::firstName,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withFirstName(value),
-        MariaTypes.varchar);
+        FirstName.mariaType);
   }
 
-  public Field<String, CustomersRow> lastName() {
-    return new Field<String, CustomersRow>(
+  public Field</* user-picked */ LastName, CustomersRow> lastName() {
+    return new Field</* user-picked */ LastName, CustomersRow>(
         _path,
         "last_name",
         CustomersRow::lastName,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withLastName(value),
-        MariaTypes.varchar);
+        LastName.mariaType);
   }
 
   public OptField<String, CustomersRow> phone() {
@@ -125,7 +128,7 @@ public class CustomersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withStatus(value),
-        CustomerStatusId.dbType);
+        CustomerStatusId.mariaType);
   }
 
   public Field<String, CustomersRow> tier() {
@@ -158,7 +161,7 @@ public class CustomersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withMarketingFlags(value),
-        EmailMailPushSmsSet.dbType);
+        EmailMailPushSmsSet.mariaType);
   }
 
   public OptField<String, CustomersRow> notes() {
@@ -250,7 +253,7 @@ public class CustomersFields
   }
 
   @Override
-  public SqlExpr<String> _2() {
+  public SqlExpr</* user-picked */ Email> _2() {
     return email();
   }
 
@@ -260,12 +263,12 @@ public class CustomersFields
   }
 
   @Override
-  public SqlExpr<String> _4() {
+  public SqlExpr</* user-picked */ FirstName> _4() {
     return firstName();
   }
 
   @Override
-  public SqlExpr<String> _5() {
+  public SqlExpr</* user-picked */ LastName> _5() {
     return lastName();
   }
 

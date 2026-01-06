@@ -22,6 +22,6 @@ data class ProductcosthistoryId(
   override fun _2(): LocalDateTime = startdate
 
   companion object {
-    val _rowParser: RowParser<ProductcosthistoryId> = RowParsers.of(ProductId.dbType, PgTypes.timestamp, { t0, t1 -> ProductcosthistoryId(t0, t1) }, { row -> arrayOf<Any?>(row.productid, row.startdate) })
+    val _rowParser: RowParser<ProductcosthistoryId> = RowParsers.of(ProductId.pgType, PgTypes.timestamp, { t0, t1 -> ProductcosthistoryId(t0, t1) }, { row -> arrayOf<Any?>(row.productid, row.startdate) })
   }
 }

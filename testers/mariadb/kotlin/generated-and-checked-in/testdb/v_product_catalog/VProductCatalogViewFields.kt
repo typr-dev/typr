@@ -58,7 +58,7 @@ data class VProductCatalogViewFields(val _path: List<Path>) : TupleExpr11<Produc
 
   fun name(): Field<String, VProductCatalogViewRow> = Field<String, VProductCatalogViewRow>(_path, "name", VProductCatalogViewRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
 
-  fun productId(): Field<ProductsId, VProductCatalogViewRow> = Field<ProductsId, VProductCatalogViewRow>(_path, "product_id", VProductCatalogViewRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.dbType)
+  fun productId(): Field<ProductsId, VProductCatalogViewRow> = Field<ProductsId, VProductCatalogViewRow>(_path, "product_id", VProductCatalogViewRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
 
   fun reviewCount(): Field<Long, VProductCatalogViewRow> = Field<Long, VProductCatalogViewRow>(_path, "review_count", VProductCatalogViewRow::reviewCount, null, null, { row, value -> row.copy(reviewCount = value) }, KotlinDbTypes.MariaTypes.bigint)
 
@@ -70,7 +70,7 @@ data class VProductCatalogViewFields(val _path: List<Path>) : TupleExpr11<Produc
 
   fun status(): Field<String, VProductCatalogViewRow> = Field<String, VProductCatalogViewRow>(_path, "status", VProductCatalogViewRow::status, null, null, { row, value -> row.copy(status = value) }, MariaTypes.text)
 
-  fun tags(): OptField<BestsellerClearanceFSet, VProductCatalogViewRow> = OptField<BestsellerClearanceFSet, VProductCatalogViewRow>(_path, "tags", VProductCatalogViewRow::tags, null, null, { row, value -> row.copy(tags = value) }, BestsellerClearanceFSet.dbType)
+  fun tags(): OptField<BestsellerClearanceFSet, VProductCatalogViewRow> = OptField<BestsellerClearanceFSet, VProductCatalogViewRow>(_path, "tags", VProductCatalogViewRow::tags, null, null, { row, value -> row.copy(tags = value) }, BestsellerClearanceFSet.mariaType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<VProductCatalogViewFields, VProductCatalogViewRow> = VProductCatalogViewFields(_path)
 

@@ -26,7 +26,7 @@ data class Db2testIdentityAlwaysFields(val _path: List<Path>) : TupleExpr2<Db2te
 
   override fun columns(): List<FieldLike<*, Db2testIdentityAlwaysRow>> = listOf(this.id().underlying, this.name().underlying)
 
-  fun id(): IdField<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow> = IdField<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow>(_path, "ID", Db2testIdentityAlwaysRow::id, null, null, { row, value -> row.copy(id = value) }, Db2testIdentityAlwaysId.dbType)
+  fun id(): IdField<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow> = IdField<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow>(_path, "ID", Db2testIdentityAlwaysRow::id, null, null, { row, value -> row.copy(id = value) }, Db2testIdentityAlwaysId.db2Type)
 
   fun name(): Field<String, Db2testIdentityAlwaysRow> = Field<String, Db2testIdentityAlwaysRow>(_path, "NAME", Db2testIdentityAlwaysRow::name, null, null, { row, value -> row.copy(name = value) }, Db2Types.varchar)
 

@@ -26,5 +26,5 @@ case class BusinessentityaddressId(
 }
 
 object BusinessentityaddressId {
-  val `_rowParser`: RowParser[BusinessentityaddressId] = RowParsers.of(BusinessentityId.dbType, AddressId.dbType, AddresstypeId.dbType)(BusinessentityaddressId.apply)(row => Array[Any](row.businessentityid, row.addressid, row.addresstypeid))
+  val `_rowParser`: RowParser[BusinessentityaddressId] = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType)(BusinessentityaddressId.apply)(row => Array[Any](row.businessentityid, row.addressid, row.addresstypeid))
 }

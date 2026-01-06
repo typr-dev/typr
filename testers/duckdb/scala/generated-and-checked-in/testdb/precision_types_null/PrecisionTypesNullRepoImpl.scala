@@ -29,7 +29,7 @@ class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
   override def deleteByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): Int = {
     sql"""delete
     from "precision_types_null"
-    where "id" = ANY(${Fragment.encode(PrecisionTypesNullId.dbTypeArray, ids)})"""
+    where "id" = ANY(${Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids)})"""
       .update()
       .runUnchecked(c)
   }
@@ -59,7 +59,7 @@ class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
   override def selectByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): List[PrecisionTypesNullRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     from "precision_types_null"
-    where "id" = ANY(${Fragment.encode(PrecisionTypesNullId.dbTypeArray, ids)})""".query(PrecisionTypesNullRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids)})""".query(PrecisionTypesNullRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(ids: Array[PrecisionTypesNullId])(using c: Connection): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = {

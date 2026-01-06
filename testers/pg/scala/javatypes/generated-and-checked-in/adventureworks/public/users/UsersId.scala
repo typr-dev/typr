@@ -17,7 +17,7 @@ case class UsersId(@JsonValue value: UUID) extends scala.AnyVal
 object UsersId {
   given bijection: Bijection[UsersId, UUID] = Bijection.apply[UsersId, UUID](_.value)(UsersId.apply)
 
-  given dbType: PgType[UsersId] = PgTypes.uuid.bimap(UsersId.apply, _.value)
+  given pgType: PgType[UsersId] = PgTypes.uuid.bimap(UsersId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[UsersId]] = PgTypes.uuidArray.bimap(xs => xs.map(UsersId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[UsersId]] = PgTypes.uuidArray.bimap(xs => xs.map(UsersId.apply), xs => xs.map(_.value))
 }

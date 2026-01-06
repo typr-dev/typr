@@ -26,6 +26,6 @@ public record DistinctTypeTestId(@JsonValue Integer value) {
   public static Bijection<DistinctTypeTestId, Integer> bijection =
       Bijection.of(DistinctTypeTestId::value, DistinctTypeTestId::new);
 
-  public static Db2Type<DistinctTypeTestId> dbType =
+  public static Db2Type<DistinctTypeTestId> db2Type =
       Db2Types.integer.bimap(DistinctTypeTestId::new, DistinctTypeTestId::value);
 }

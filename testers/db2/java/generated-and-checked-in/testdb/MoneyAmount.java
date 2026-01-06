@@ -21,6 +21,6 @@ public record MoneyAmount(@JsonValue BigDecimal value) {
   public static Bijection<MoneyAmount, BigDecimal> bijection =
       Bijection.of(MoneyAmount::value, MoneyAmount::new);
 
-  public static Db2Type<MoneyAmount> dbType =
+  public static Db2Type<MoneyAmount> db2Type =
       Db2Types.decimal.bimap(MoneyAmount::new, MoneyAmount::value).renamed("\"MONEY_AMOUNT\"");
 }

@@ -41,11 +41,11 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
                 Fragment.lit(
                     "delete from \"person\".\"businessentityaddress\" where \"businessentityid\""
                         + " = "),
-                Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+                Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
                 Fragment.lit(" AND \"addressid\" = "),
-                Fragment.encode(AddressId.dbType, compositeId.addressid()),
+                Fragment.encode(AddressId.pgType, compositeId.addressid()),
                 Fragment.lit(" AND \"addresstypeid\" = "),
-                Fragment.encode(AddresstypeId.dbType, compositeId.addresstypeid()),
+                Fragment.encode(AddresstypeId.pgType, compositeId.addresstypeid()),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -70,11 +70,11 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
                     + "from \"person\".\"businessentityaddress\"\n"
                     + "where (\"businessentityid\", \"addressid\", \"addresstypeid\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityid),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityid),
             Fragment.lit(", "),
-            Fragment.encode(AddressId.dbTypeArray, addressid),
+            Fragment.encode(AddressId.pgTypeArray, addressid),
             Fragment.lit(", "),
-            Fragment.encode(AddresstypeId.dbTypeArray, addresstypeid),
+            Fragment.encode(AddresstypeId.pgTypeArray, addresstypeid),
             Fragment.lit("))\n"))
         .update()
         .runUnchecked(c);
@@ -87,11 +87,11 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
                 "insert into \"person\".\"businessentityaddress\"(\"businessentityid\","
                     + " \"addressid\", \"addresstypeid\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(AddressId.dbType, unsaved.addressid()),
+            Fragment.encode(AddressId.pgType, unsaved.addressid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid()),
+            Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),
@@ -113,16 +113,16 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
     columns.add(Fragment.lit("\"businessentityid\""));
     values.add(
         interpolate(
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"addressid\""));
     values.add(
         interpolate(
-            Fragment.encode(AddressId.dbType, unsaved.addressid()), Fragment.lit("::int4")));
+            Fragment.encode(AddressId.pgType, unsaved.addressid()), Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"addresstypeid\""));
     values.add(
         interpolate(
-            Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid()),
+            Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid()),
             Fragment.lit("::int4")));
     unsaved
         .rowguid()
@@ -213,11 +213,11 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
                     + " \"modifieddate\"\n"
                     + "from \"person\".\"businessentityaddress\"\n"
                     + "where \"businessentityid\" = "),
-            Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
             Fragment.lit(" AND \"addressid\" = "),
-            Fragment.encode(AddressId.dbType, compositeId.addressid()),
+            Fragment.encode(AddressId.pgType, compositeId.addressid()),
             Fragment.lit(" AND \"addresstypeid\" = "),
-            Fragment.encode(AddresstypeId.dbType, compositeId.addresstypeid()),
+            Fragment.encode(AddresstypeId.pgType, compositeId.addresstypeid()),
             Fragment.lit(""))
         .query(BusinessentityaddressRow._rowParser.first())
         .runUnchecked(c);
@@ -243,11 +243,11 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
                     + "from \"person\".\"businessentityaddress\"\n"
                     + "where (\"businessentityid\", \"addressid\", \"addresstypeid\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityid),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityid),
             Fragment.lit(", "),
-            Fragment.encode(AddressId.dbTypeArray, addressid),
+            Fragment.encode(AddressId.pgTypeArray, addressid),
             Fragment.lit(", "),
-            Fragment.encode(AddresstypeId.dbTypeArray, addresstypeid),
+            Fragment.encode(AddresstypeId.pgTypeArray, addresstypeid),
             Fragment.lit("))\n"))
         .query(BusinessentityaddressRow._rowParser.all())
         .runUnchecked(c);
@@ -281,11 +281,11 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+                Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
                 Fragment.lit(" AND \"addressid\" = "),
-                Fragment.encode(AddressId.dbType, compositeId.addressid()),
+                Fragment.encode(AddressId.pgType, compositeId.addressid()),
                 Fragment.lit(" AND \"addresstypeid\" = "),
-                Fragment.encode(AddresstypeId.dbType, compositeId.addresstypeid()),
+                Fragment.encode(AddresstypeId.pgType, compositeId.addresstypeid()),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -299,11 +299,11 @@ public class BusinessentityaddressRepoImpl implements BusinessentityaddressRepo 
                 "insert into \"person\".\"businessentityaddress\"(\"businessentityid\","
                     + " \"addressid\", \"addresstypeid\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(AddressId.dbType, unsaved.addressid()),
+            Fragment.encode(AddressId.pgType, unsaved.addressid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid()),
+            Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),

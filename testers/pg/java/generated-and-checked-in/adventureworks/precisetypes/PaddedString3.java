@@ -32,20 +32,20 @@ public record PaddedString3(@JsonValue String value) implements PaddedStringN {
   public static Bijection<PaddedString3, String> bijection =
       Bijection.of(PaddedString3::value, PaddedString3::new);
 
-  public static PgType<PaddedString3> dbType =
-      PgTypes.bpchar.bimap(PaddedString3::new, PaddedString3::value);
-
-  public static PgType<PaddedString3[]> dbTypeArray =
-      PgTypes.bpcharArray.bimap(
-          xs -> arrayMap.map(xs, PaddedString3::new, PaddedString3.class),
-          xs -> arrayMap.map(xs, PaddedString3::value, String.class));
-
   public static Optional<PaddedString3> of(String value) {
     return (value.length() <= 3
         ? Optional.of(new PaddedString3(String.format("%-3s", value)))
         : Optional.empty());
   }
   ;
+
+  public static PgType<PaddedString3> pgType =
+      PgTypes.bpchar.bimap(PaddedString3::new, PaddedString3::value);
+
+  public static PgType<PaddedString3[]> pgTypeArray =
+      PgTypes.bpcharArray.bimap(
+          xs -> arrayMap.map(xs, PaddedString3::new, PaddedString3.class),
+          xs -> arrayMap.map(xs, PaddedString3::value, String.class));
 
   public static PaddedString3 unsafeForce(String value) {
     if (value.length() > 3) {

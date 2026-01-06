@@ -60,11 +60,11 @@ data class InventoryFields(val _path: List<Path>) : TupleExpr11<InventoryId, Pro
 
   fun fkWarehouses(): ForeignKey<WarehousesFields, WarehousesRow> = ForeignKey.of<WarehousesFields, WarehousesRow>("fk_inventory_warehouse").withColumnPair<WarehousesId>(warehouseId(), WarehousesFields::warehouseId)
 
-  fun inventoryId(): IdField<InventoryId, InventoryRow> = IdField<InventoryId, InventoryRow>(_path, "inventory_id", InventoryRow::inventoryId, null, null, { row, value -> row.copy(inventoryId = value) }, InventoryId.dbType)
+  fun inventoryId(): IdField<InventoryId, InventoryRow> = IdField<InventoryId, InventoryRow>(_path, "inventory_id", InventoryRow::inventoryId, null, null, { row, value -> row.copy(inventoryId = value) }, InventoryId.mariaType)
 
   fun lastCountedAt(): OptField<LocalDateTime, InventoryRow> = OptField<LocalDateTime, InventoryRow>(_path, "last_counted_at", InventoryRow::lastCountedAt, null, null, { row, value -> row.copy(lastCountedAt = value) }, MariaTypes.datetime)
 
-  fun productId(): Field<ProductsId, InventoryRow> = Field<ProductsId, InventoryRow>(_path, "product_id", InventoryRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.dbType)
+  fun productId(): Field<ProductsId, InventoryRow> = Field<ProductsId, InventoryRow>(_path, "product_id", InventoryRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
 
   fun quantityOnHand(): Field<Int, InventoryRow> = Field<Int, InventoryRow>(_path, "quantity_on_hand", InventoryRow::quantityOnHand, null, null, { row, value -> row.copy(quantityOnHand = value) }, KotlinDbTypes.MariaTypes.int_)
 
@@ -80,7 +80,7 @@ data class InventoryFields(val _path: List<Path>) : TupleExpr11<InventoryId, Pro
 
   fun updatedAt(): Field<LocalDateTime, InventoryRow> = Field<LocalDateTime, InventoryRow>(_path, "updated_at", InventoryRow::updatedAt, null, null, { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
 
-  fun warehouseId(): Field<WarehousesId, InventoryRow> = Field<WarehousesId, InventoryRow>(_path, "warehouse_id", InventoryRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.dbType)
+  fun warehouseId(): Field<WarehousesId, InventoryRow> = Field<WarehousesId, InventoryRow>(_path, "warehouse_id", InventoryRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.mariaType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<InventoryFields, InventoryRow> = InventoryFields(_path)
 

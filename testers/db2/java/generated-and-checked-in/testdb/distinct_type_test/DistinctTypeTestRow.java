@@ -38,9 +38,9 @@ public record DistinctTypeTestRow(
 
   public static RowParser<DistinctTypeTestRow> _rowParser =
       RowParsers.of(
-          DistinctTypeTestId.dbType,
-          EmailAddress.dbType,
-          MoneyAmount.dbType.opt(),
+          DistinctTypeTestId.db2Type,
+          EmailAddress.db2Type,
+          MoneyAmount.db2Type.opt(),
           DistinctTypeTestRow::new,
           row -> new Object[] {row.id(), row.email(), row.balance()});
   ;

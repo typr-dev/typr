@@ -40,13 +40,13 @@ data class ProductmodelRowUnsaved(
 
   companion object {
     val pgText: PgText<ProductmodelRowUnsaved> =
-      PgText.instance({ row, sb -> Name.dbType.text().unsafeEncode(row.name, sb)
+      PgText.instance({ row, sb -> Name.pgType.text().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.xml.nullable().text().unsafeEncode(row.catalogdescription, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.xml.nullable().text().unsafeEncode(row.instructions, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(ProductmodelId.dbType.text()).unsafeEncode(row.productmodelid, sb)
+      Defaulted.pgText(ProductmodelId.pgType.text()).unsafeEncode(row.productmodelid, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)

@@ -23,6 +23,7 @@ import adventureworks.production.unitmeasure.UnitmeasureRow;
 import adventureworks.public_.Name;
 import adventureworks.public_.NameStyle;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -262,9 +263,9 @@ public class CompositeIdsTest extends SnapshotTest {
         "SC",
         new NameStyle(true),
         Optional.empty(),
-        new FirstName("first name " + i),
+        new FirstName(new Name("first name " + i)),
         Optional.empty(),
-        new Name("last name " + i),
+        new LastName(new Name("last name " + i)),
         Optional.empty(),
         1,
         Optional.empty(),

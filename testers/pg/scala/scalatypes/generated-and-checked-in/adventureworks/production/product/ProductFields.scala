@@ -41,7 +41,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int4"),
       (row, value) => row.copy(productid = value),
-      ProductId.dbType
+      ProductId.pgType
     )
   }
 
@@ -53,7 +53,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 
@@ -77,7 +77,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bool"),
       (row, value) => row.copy(makeflag = value),
-      Flag.dbType
+      Flag.pgType
     )
   }
 
@@ -89,7 +89,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bool"),
       (row, value) => row.copy(finishedgoodsflag = value),
-      Flag.dbType
+      Flag.pgType
     )
   }
 
@@ -173,7 +173,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bpchar"),
       (row, value) => row.copy(sizeunitmeasurecode = value),
-      UnitmeasureId.dbType
+      UnitmeasureId.pgType
     )
   }
 
@@ -185,7 +185,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bpchar"),
       (row, value) => row.copy(weightunitmeasurecode = value),
-      UnitmeasureId.dbType
+      UnitmeasureId.pgType
     )
   }
 
@@ -257,7 +257,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int4"),
       (row, value) => row.copy(productsubcategoryid = value),
-      ProductsubcategoryId.dbType
+      ProductsubcategoryId.pgType
     )
   }
 
@@ -269,7 +269,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int4"),
       (row, value) => row.copy(productmodelid = value),
-      ProductmodelId.dbType
+      ProductmodelId.pgType
     )
   }
 

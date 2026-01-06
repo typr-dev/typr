@@ -33,7 +33,7 @@ public class AddressRepoImpl implements AddressRepo {
   public Boolean deleteById(AddressId addressid, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"person\".\"address\" where \"addressid\" = "),
-                Fragment.encode(AddressId.dbType, addressid),
+                Fragment.encode(AddressId.pgType, addressid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -44,7 +44,7 @@ public class AddressRepoImpl implements AddressRepo {
   public Integer deleteByIds(AddressId[] addressids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"person\".\"address\"\nwhere \"addressid\" = ANY("),
-            Fragment.encode(AddressId.dbTypeArray, addressids),
+            Fragment.encode(AddressId.pgTypeArray, addressids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -58,7 +58,7 @@ public class AddressRepoImpl implements AddressRepo {
                     + " \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\","
                     + " \"spatiallocation\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(AddressId.dbType, unsaved.addressid()),
+            Fragment.encode(AddressId.pgType, unsaved.addressid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.text, unsaved.addressline1()),
             Fragment.lit(", "),
@@ -66,7 +66,7 @@ public class AddressRepoImpl implements AddressRepo {
             Fragment.lit(", "),
             Fragment.encode(PgTypes.text, unsaved.city()),
             Fragment.lit(", "),
-            Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid()),
+            Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.text, unsaved.postalcode()),
             Fragment.lit(", "),
@@ -101,7 +101,7 @@ public class AddressRepoImpl implements AddressRepo {
     columns.add(Fragment.lit("\"stateprovinceid\""));
     values.add(
         interpolate(
-            Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid()),
+            Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"postalcode\""));
     values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.postalcode()), Fragment.lit("")));
@@ -117,7 +117,7 @@ public class AddressRepoImpl implements AddressRepo {
             value -> {
               columns.add(Fragment.lit("\"addressid\""));
               values.add(
-                  interpolate(Fragment.encode(AddressId.dbType, value), Fragment.lit("::int4")));
+                  interpolate(Fragment.encode(AddressId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     unsaved
@@ -211,7 +211,7 @@ public class AddressRepoImpl implements AddressRepo {
                     + " \"modifieddate\"\n"
                     + "from \"person\".\"address\"\n"
                     + "where \"addressid\" = "),
-            Fragment.encode(AddressId.dbType, addressid),
+            Fragment.encode(AddressId.pgType, addressid),
             Fragment.lit(""))
         .query(AddressRow._rowParser.first())
         .runUnchecked(c);
@@ -226,7 +226,7 @@ public class AddressRepoImpl implements AddressRepo {
                     + " \"modifieddate\"\n"
                     + "from \"person\".\"address\"\n"
                     + "where \"addressid\" = ANY("),
-            Fragment.encode(AddressId.dbTypeArray, addressids),
+            Fragment.encode(AddressId.pgTypeArray, addressids),
             Fragment.lit(")"))
         .query(AddressRow._rowParser.all())
         .runUnchecked(c);
@@ -260,7 +260,7 @@ public class AddressRepoImpl implements AddressRepo {
                 Fragment.lit(",\n\"city\" = "),
                 Fragment.encode(PgTypes.text, row.city()),
                 Fragment.lit(",\n\"stateprovinceid\" = "),
-                Fragment.encode(StateprovinceId.dbType, row.stateprovinceid()),
+                Fragment.encode(StateprovinceId.pgType, row.stateprovinceid()),
                 Fragment.lit("::int4,\n\"postalcode\" = "),
                 Fragment.encode(PgTypes.text, row.postalcode()),
                 Fragment.lit(",\n\"spatiallocation\" = "),
@@ -270,7 +270,7 @@ public class AddressRepoImpl implements AddressRepo {
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"addressid\" = "),
-                Fragment.encode(AddressId.dbType, addressid),
+                Fragment.encode(AddressId.pgType, addressid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -285,7 +285,7 @@ public class AddressRepoImpl implements AddressRepo {
                     + " \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\","
                     + " \"spatiallocation\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(AddressId.dbType, unsaved.addressid()),
+            Fragment.encode(AddressId.pgType, unsaved.addressid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.text, unsaved.addressline1()),
             Fragment.lit(", "),
@@ -293,7 +293,7 @@ public class AddressRepoImpl implements AddressRepo {
             Fragment.lit(", "),
             Fragment.encode(PgTypes.text, unsaved.city()),
             Fragment.lit(", "),
-            Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid()),
+            Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.text, unsaved.postalcode()),
             Fragment.lit(", "),

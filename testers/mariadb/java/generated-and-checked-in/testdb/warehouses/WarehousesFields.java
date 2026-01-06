@@ -20,10 +20,21 @@ import java.util.List;
 import java.util.Optional;
 import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
+import testdb.userdefined.Email;
+import testdb.userdefined.IsActive;
 
 public class WarehousesFields
     extends TupleExpr10<
-        WarehousesId, String, String, String, Point, Polygon, String, Boolean, String, String>
+        WarehousesId,
+        String,
+        String,
+        String,
+        Point,
+        Polygon,
+        String, /* user-picked */
+        IsActive, /* user-picked */
+        Email,
+        String>
     implements RelationStructure<WarehousesFields, WarehousesRow>, FieldsBase<WarehousesRow> {
   List<Path> _path;
 
@@ -42,7 +53,7 @@ public class WarehousesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withWarehouseId(value),
-        WarehousesId.dbType);
+        WarehousesId.mariaType);
   }
 
   public Field<String, WarehousesRow> code() {
@@ -111,26 +122,26 @@ public class WarehousesFields
         MariaTypes.varchar);
   }
 
-  public Field<Boolean, WarehousesRow> isActive() {
-    return new Field<Boolean, WarehousesRow>(
+  public Field</* user-picked */ IsActive, WarehousesRow> isActive() {
+    return new Field</* user-picked */ IsActive, WarehousesRow>(
         _path,
         "is_active",
         WarehousesRow::isActive,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsActive(value),
-        MariaTypes.bool);
+        IsActive.mariaType);
   }
 
-  public OptField<String, WarehousesRow> contactEmail() {
-    return new OptField<String, WarehousesRow>(
+  public OptField</* user-picked */ Email, WarehousesRow> contactEmail() {
+    return new OptField</* user-picked */ Email, WarehousesRow>(
         _path,
         "contact_email",
         WarehousesRow::contactEmail,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withContactEmail(value),
-        MariaTypes.varchar);
+        Email.mariaType);
   }
 
   public OptField<String, WarehousesRow> contactPhone() {
@@ -210,12 +221,12 @@ public class WarehousesFields
   }
 
   @Override
-  public SqlExpr<Boolean> _8() {
+  public SqlExpr</* user-picked */ IsActive> _8() {
     return isActive();
   }
 
   @Override
-  public SqlExpr<String> _9() {
+  public SqlExpr</* user-picked */ Email> _9() {
     return contactEmail();
   }
 

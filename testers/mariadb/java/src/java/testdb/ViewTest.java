@@ -18,6 +18,10 @@ import testdb.order_items.*;
 import testdb.orders.*;
 import testdb.products.*;
 import testdb.reviews.*;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.IsApproved;
+import testdb.userdefined.LastName;
 import testdb.v_customer_summary.*;
 import testdb.v_product_catalog.*;
 import testdb.warehouses.*;
@@ -45,10 +49,18 @@ public class ViewTest {
     MariaDbTestHelper.run(
         c -> {
           customersRepo.insert(
-              new CustomersRowUnsaved("view1@example.com", "hash1".getBytes(), "View", "Customer1"),
+              new CustomersRowUnsaved(
+                  new Email("view1@example.com"),
+                  "hash1".getBytes(),
+                  new FirstName("View"),
+                  new LastName("Customer1")),
               c);
           customersRepo.insert(
-              new CustomersRowUnsaved("view2@example.com", "hash2".getBytes(), "View", "Customer2"),
+              new CustomersRowUnsaved(
+                  new Email("view2@example.com"),
+                  "hash2".getBytes(),
+                  new FirstName("View"),
+                  new LastName("Customer2")),
               c);
 
           var summaries = customerSummaryRepo.selectAll(c);
@@ -61,7 +73,11 @@ public class ViewTest {
     MariaDbTestHelper.run(
         c -> {
           customersRepo.insert(
-              new CustomersRowUnsaved("summary@example.com", "hash".getBytes(), "Summary", "Test")
+              new CustomersRowUnsaved(
+                      new Email("summary@example.com"),
+                      "hash".getBytes(),
+                      new FirstName("Summary"),
+                      new LastName("Test"))
                   .withStatus(new Provided<>(new CustomerStatusId("suspended")))
                   .withTier(new Provided<>("gold")),
               c);
@@ -70,7 +86,7 @@ public class ViewTest {
           assertEquals(1, summaries.size());
 
           var summary = summaries.get(0);
-          assertEquals("summary@example.com", summary.email());
+          assertEquals(new Email("summary@example.com"), summary.email());
           assertEquals(Optional.of("Summary Test"), summary.fullName());
           assertEquals("gold", summary.tier());
           assertEquals("suspended", summary.status().value());
@@ -86,7 +102,10 @@ public class ViewTest {
           var customer =
               customersRepo.insert(
                   new CustomersRowUnsaved(
-                      "orders@example.com", "hash".getBytes(), "With", "Orders"),
+                      new Email("orders@example.com"),
+                      "hash".getBytes(),
+                      new FirstName("With"),
+                      new LastName("Orders")),
                   c);
 
           var brand = brandsRepo.insert(new BrandsRowUnsaved("TestBrand", "test-brand"), c);
@@ -278,7 +297,10 @@ public class ViewTest {
           var customer =
               customersRepo.insert(
                   new CustomersRowUnsaved(
-                      "reviewer@example.com", "hash".getBytes(), "Reviewer", "User"),
+                      new Email("reviewer@example.com"),
+                      "hash".getBytes(),
+                      new FirstName("Reviewer"),
+                      new LastName("User")),
                   c);
 
           var product =
@@ -315,7 +337,7 @@ public class ViewTest {
                   new UseDefault<>(),
                   new UseDefault<>(),
                   new UseDefault<>(),
-                  new Provided<>(true),
+                  new Provided<>(new IsApproved(true)),
                   new UseDefault<>(),
                   new UseDefault<>(),
                   new UseDefault<>(),
@@ -335,7 +357,7 @@ public class ViewTest {
                   new UseDefault<>(),
                   new UseDefault<>(),
                   new UseDefault<>(),
-                  new Provided<>(true),
+                  new Provided<>(new IsApproved(true)),
                   new UseDefault<>(),
                   new UseDefault<>(),
                   new UseDefault<>(),
@@ -356,15 +378,27 @@ public class ViewTest {
     MariaDbTestHelper.run(
         c -> {
           customersRepo.insert(
-              new CustomersRowUnsaved("dsl1@example.com", "hash1".getBytes(), "DSL", "Bronze")
+              new CustomersRowUnsaved(
+                      new Email("dsl1@example.com"),
+                      "hash1".getBytes(),
+                      new FirstName("DSL"),
+                      new LastName("Bronze"))
                   .withTier(new Provided<>("bronze")),
               c);
           customersRepo.insert(
-              new CustomersRowUnsaved("dsl2@example.com", "hash2".getBytes(), "DSL", "Gold")
+              new CustomersRowUnsaved(
+                      new Email("dsl2@example.com"),
+                      "hash2".getBytes(),
+                      new FirstName("DSL"),
+                      new LastName("Gold"))
                   .withTier(new Provided<>("gold")),
               c);
           customersRepo.insert(
-              new CustomersRowUnsaved("dsl3@example.com", "hash3".getBytes(), "DSL", "Gold2")
+              new CustomersRowUnsaved(
+                      new Email("dsl3@example.com"),
+                      "hash3".getBytes(),
+                      new FirstName("DSL"),
+                      new LastName("Gold2"))
                   .withTier(new Provided<>("gold")),
               c);
 
@@ -375,7 +409,7 @@ public class ViewTest {
           var specificCustomer =
               customerSummaryRepo
                   .select()
-                  .where(f -> f.email().isEqual("dsl1@example.com"))
+                  .where(f -> f.email().isEqual(new Email("dsl1@example.com")))
                   .toList(c);
           assertEquals(1, specificCustomer.size());
           assertEquals("bronze", specificCustomer.get(0).tier());

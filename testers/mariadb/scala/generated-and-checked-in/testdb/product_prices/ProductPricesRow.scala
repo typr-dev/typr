@@ -80,5 +80,5 @@ case class ProductPricesRow(
 }
 
 object ProductPricesRow {
-  val `_rowParser`: RowParser[ProductPricesRow] = RowParsers.of(ProductPricesId.dbType, ProductsId.dbType, PriceTiersId.dbType.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.date, MariaTypes.date.nullable)(ProductPricesRow.apply)(row => Array[Any](row.priceId, row.productId, row.tierId, row.price, row.currencyCode, row.validFrom, row.validTo))
+  val `_rowParser`: RowParser[ProductPricesRow] = RowParsers.of(ProductPricesId.mariaType, ProductsId.mariaType, PriceTiersId.mariaType.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.date, MariaTypes.date.nullable)(ProductPricesRow.apply)(row => Array[Any](row.priceId, row.productId, row.tierId, row.price, row.currencyCode, row.validFrom, row.validTo))
 }

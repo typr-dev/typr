@@ -19,7 +19,7 @@ case class Flag(@JsonValue value: Boolean)
 object Flag {
   given bijection: Bijection[Flag, Boolean] = Bijection.apply[Flag, Boolean](_.value)(Flag.apply)
 
-  given dbType: PgType[Flag] = ScalaDbTypes.PgTypes.bool.bimap(Flag.apply, _.value).renamed(""""public"."Flag"""")
+  given pgType: PgType[Flag] = ScalaDbTypes.PgTypes.bool.bimap(Flag.apply, _.value).renamed(""""public"."Flag"""")
 
-  given dbTypeArray: PgType[Array[Flag]] = PgTypes.boolArrayUnboxed.bimap(xs => xs.map(Flag.apply), xs => xs.map(_.value)).renamed(""""public"."Flag"[]""")
+  given pgTypeArray: PgType[Array[Flag]] = PgTypes.boolArrayUnboxed.bimap(xs => xs.map(Flag.apply), xs => xs.map(_.value)).renamed(""""public"."Flag"[]""")
 }

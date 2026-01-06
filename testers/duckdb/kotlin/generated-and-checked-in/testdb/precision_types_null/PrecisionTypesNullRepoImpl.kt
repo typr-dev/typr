@@ -35,7 +35,7 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
   override fun deleteByIds(
     ids: Array<PrecisionTypesNullId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"precision_types_null\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesNullId.dbTypeArray, ids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"precision_types_null\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
@@ -57,7 +57,7 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
   override fun selectByIds(
     ids: Array<PrecisionTypesNullId>,
     c: Connection
-  ): List<PrecisionTypesNullRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types_null\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesNullId.dbTypeArray, ids), Fragment.lit(")")).query(PrecisionTypesNullRow._rowParser.all()).runUnchecked(c)
+  ): List<PrecisionTypesNullRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types_null\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids), Fragment.lit(")")).query(PrecisionTypesNullRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     ids: Array<PrecisionTypesNullId>,

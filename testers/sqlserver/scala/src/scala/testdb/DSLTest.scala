@@ -6,6 +6,7 @@ import org.junit.Test
 import testdb.customers._
 import testdb.orders._
 import testdb.products._
+import testdb.userdefined.Email
 
 import scala.util.Random
 
@@ -104,7 +105,7 @@ class DSLTest {
   def testSelectWithProjection(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val _ = testInsert.Customers(name = "ProjectionTest", email = "projection@test.com")
+    val _ = testInsert.Customers(email = Email("projection@test.com"), name = "ProjectionTest")
 
     val results = customersRepo.select
       .where(_.name.isEqual("ProjectionTest"))
@@ -113,7 +114,7 @@ class DSLTest {
 
     assertEquals(1, results.size)
     assertEquals("ProjectionTest", results.head._1)
-    assertEquals("projection@test.com", results.head._2)
+    assertEquals(Email("projection@test.com"), results.head._2)
   }
 
   @Test
@@ -152,15 +153,15 @@ class DSLTest {
   def testComplexWhereClause(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val _ = testInsert.Customers(name = "Complex A", email = "complex-a@test.com")
-    val _ = testInsert.Customers(name = "Complex B", email = "complex-b@test.com")
-    val _ = testInsert.Customers(name = "Other", email = "other@test.com")
+    val _ = testInsert.Customers(email = Email("complex-a@test.com"), name = "Complex A")
+    val _ = testInsert.Customers(email = Email("complex-b@test.com"), name = "Complex B")
+    val _ = testInsert.Customers(email = Email("other@test.com"), name = "Other")
 
     val results = customersRepo.select
       .where(cust =>
         cust.name
           .like("Complex%", Bijection.asString())
-          .and(cust.email.like("%@test.com", Bijection.asString()))
+          .and(cust.email.like("%@test.com", Email.bijection))
       )
       .toList
 

@@ -35,9 +35,9 @@ data class ProductcategoryFields(val _path: List<Path>) : TupleExpr4<Productcate
 
   fun modifieddate(): Field<LocalDateTime, ProductcategoryRow> = Field<LocalDateTime, ProductcategoryRow>(_path, "modifieddate", ProductcategoryRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, ProductcategoryRow> = Field<Name, ProductcategoryRow>(_path, "name", ProductcategoryRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, ProductcategoryRow> = Field<Name, ProductcategoryRow>(_path, "name", ProductcategoryRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
-  fun productcategoryid(): IdField<ProductcategoryId, ProductcategoryRow> = IdField<ProductcategoryId, ProductcategoryRow>(_path, "productcategoryid", ProductcategoryRow::productcategoryid, null, "int4", { row, value -> row.copy(productcategoryid = value) }, ProductcategoryId.dbType)
+  fun productcategoryid(): IdField<ProductcategoryId, ProductcategoryRow> = IdField<ProductcategoryId, ProductcategoryRow>(_path, "productcategoryid", ProductcategoryRow::productcategoryid, null, "int4", { row, value -> row.copy(productcategoryid = value) }, ProductcategoryId.pgType)
 
   override fun rowParser(): RowParser<ProductcategoryRow> = ProductcategoryRow._rowParser.underlying
 

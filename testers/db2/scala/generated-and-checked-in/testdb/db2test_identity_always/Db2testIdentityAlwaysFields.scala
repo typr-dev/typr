@@ -25,7 +25,7 @@ class Db2testIdentityAlwaysFields(val `_path`: java.util.List[Path]) extends Tup
       None,
       None,
       (row, value) => row.copy(id = value),
-      Db2testIdentityAlwaysId.dbType
+      Db2testIdentityAlwaysId.db2Type
     )
   }
 

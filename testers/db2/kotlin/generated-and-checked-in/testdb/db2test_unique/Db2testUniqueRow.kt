@@ -32,6 +32,6 @@ data class Db2testUniqueRow(
   fun toUnsavedRow(): Db2testUniqueRowUnsaved = Db2testUniqueRowUnsaved(email, code, category)
 
   companion object {
-    val _rowParser: RowParser<Db2testUniqueRow> = RowParsers.of(Db2testUniqueId.dbType, Db2Types.varchar, Db2Types.varchar, Db2Types.varchar, { t0, t1, t2, t3 -> Db2testUniqueRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
+    val _rowParser: RowParser<Db2testUniqueRow> = RowParsers.of(Db2testUniqueId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.varchar, { t0, t1, t2, t3 -> Db2testUniqueRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
   }
 }

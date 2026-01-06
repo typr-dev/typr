@@ -14,6 +14,7 @@ import dev.typr.foundations.scala.SelectBuilder
 import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
+import testdb.userdefined.Email
 import dev.typr.foundations.scala.Fragment.sql
 
 class CustomersRepoImpl extends CustomersRepo {
@@ -30,7 +31,7 @@ class CustomersRepoImpl extends CustomersRepo {
   override def insert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""insert into [customers]([name], [email], [created_at])
     OUTPUT INSERTED.[customer_id], INSERTED.[name], INSERTED.[email], INSERTED.[created_at]
-    values (${Fragment.encode(SqlServerTypes.nvarchar, unsaved.name)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.email)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})
+    values (${Fragment.encode(SqlServerTypes.nvarchar, unsaved.name)}, ${Fragment.encode(Email.sqlServerType, unsaved.email)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})
     """
     .updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -41,7 +42,7 @@ class CustomersRepoImpl extends CustomersRepo {
     columns.addOne(Fragment.lit("[name]")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar, unsaved.name)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("[email]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar, unsaved.email)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Email.sqlServerType, unsaved.email)}"): @scala.annotation.nowarn
     unsaved.createdAt.visit(
       {  },
       value => { columns.addOne(Fragment.lit("[created_at]")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.nullable, value)}"): @scala.annotation.nowarn }
@@ -81,10 +82,10 @@ class CustomersRepoImpl extends CustomersRepo {
     return ret.toMap
   }
 
-  override def selectByUniqueEmail(email: String)(using c: Connection): Option[CustomersRow] = {
+  override def selectByUniqueEmail(email: /* user-picked */ Email)(using c: Connection): Option[CustomersRow] = {
     sql"""select [customer_id], [name], [email], [created_at]
     from [customers]
-    where [email] = ${Fragment.encode(SqlServerTypes.nvarchar, email)}
+    where [email] = ${Fragment.encode(Email.sqlServerType, email)}
     """.query(CustomersRow.`_rowParser`.first()).runUnchecked(c)
   }
 
@@ -94,19 +95,19 @@ class CustomersRepoImpl extends CustomersRepo {
     val customerId: CustomersId = row.customerId
     return sql"""update [customers]
     set [name] = ${Fragment.encode(SqlServerTypes.nvarchar, row.name)},
-    [email] = ${Fragment.encode(SqlServerTypes.nvarchar, row.email)},
+    [email] = ${Fragment.encode(Email.sqlServerType, row.email)},
     [created_at] = ${Fragment.encode(SqlServerTypes.datetime2.nullable, row.createdAt)}
     where [customer_id] = ${Fragment.encode(CustomersId.sqlServerType, customerId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""MERGE INTO [customers] AS target
-    USING (VALUES (${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.name)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.email)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})) AS source([customer_id], [name], [email], [created_at])
+    USING (VALUES (${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.name)}, ${Fragment.encode(Email.sqlServerType, unsaved.email)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})) AS source([customer_id], [name], [email], [created_at])
     ON target.[customer_id] = source.[customer_id]
     WHEN MATCHED THEN UPDATE SET [name] = source.[name],
     [email] = source.[email],
     [created_at] = source.[created_at]
-    WHEN NOT MATCHED THEN INSERT ([customer_id], [name], [email], [created_at]) VALUES (${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.name)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.email)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})
+    WHEN NOT MATCHED THEN INSERT ([customer_id], [name], [email], [created_at]) VALUES (${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.name)}, ${Fragment.encode(Email.sqlServerType, unsaved.email)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})
     OUTPUT INSERTED.[customer_id], INSERTED.[name], INSERTED.[email], INSERTED.[created_at];"""
     .updateReturning(CustomersRow.`_rowParser`.exactlyOne())
     .runUnchecked(c)

@@ -48,7 +48,7 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
   public Integer deleteByIds(PrecisionTypesNullId[] ids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"precision_types_null\"\nwhere \"id\" = ANY("),
-            Fragment.encode(PrecisionTypesNullId.dbTypeArray, ids),
+            Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -140,7 +140,7 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
                     + " \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\n"
                     + "from \"precision_types_null\"\n"
                     + "where \"id\" = ANY("),
-            Fragment.encode(PrecisionTypesNullId.dbTypeArray, ids),
+            Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids),
             Fragment.lit(")"))
         .query(PrecisionTypesNullRow._rowParser.all())
         .runUnchecked(c);

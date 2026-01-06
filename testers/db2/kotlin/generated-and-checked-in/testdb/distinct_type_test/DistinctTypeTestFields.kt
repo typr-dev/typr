@@ -28,13 +28,13 @@ data class DistinctTypeTestFields(val _path: List<Path>) : TupleExpr3<DistinctTy
 
   override fun _path(): List<Path> = _path
 
-  fun balance(): OptField<MoneyAmount, DistinctTypeTestRow> = OptField<MoneyAmount, DistinctTypeTestRow>(_path, "BALANCE", DistinctTypeTestRow::balance, null, null, { row, value -> row.copy(balance = value) }, MoneyAmount.dbType)
+  fun balance(): OptField<MoneyAmount, DistinctTypeTestRow> = OptField<MoneyAmount, DistinctTypeTestRow>(_path, "BALANCE", DistinctTypeTestRow::balance, null, null, { row, value -> row.copy(balance = value) }, MoneyAmount.db2Type)
 
   override fun columns(): List<FieldLike<*, DistinctTypeTestRow>> = listOf(this.id().underlying, this.email().underlying, this.balance().underlying)
 
-  fun email(): Field<EmailAddress, DistinctTypeTestRow> = Field<EmailAddress, DistinctTypeTestRow>(_path, "EMAIL", DistinctTypeTestRow::email, null, null, { row, value -> row.copy(email = value) }, EmailAddress.dbType)
+  fun email(): Field<EmailAddress, DistinctTypeTestRow> = Field<EmailAddress, DistinctTypeTestRow>(_path, "EMAIL", DistinctTypeTestRow::email, null, null, { row, value -> row.copy(email = value) }, EmailAddress.db2Type)
 
-  fun id(): IdField<DistinctTypeTestId, DistinctTypeTestRow> = IdField<DistinctTypeTestId, DistinctTypeTestRow>(_path, "ID", DistinctTypeTestRow::id, null, null, { row, value -> row.copy(id = value) }, DistinctTypeTestId.dbType)
+  fun id(): IdField<DistinctTypeTestId, DistinctTypeTestRow> = IdField<DistinctTypeTestId, DistinctTypeTestRow>(_path, "ID", DistinctTypeTestRow::id, null, null, { row, value -> row.copy(id = value) }, DistinctTypeTestId.db2Type)
 
   override fun rowParser(): RowParser<DistinctTypeTestRow> = DistinctTypeTestRow._rowParser.underlying
 

@@ -17,7 +17,7 @@ public class SeekTest extends SnapshotTest {
     var query =
         productRepo
             .select()
-            .seek(f -> f.name().asc(), new SqlExpr.ConstReq<>(new Name("foo"), Name.dbType))
+            .seek(f -> f.name().asc(), new SqlExpr.ConstReq<>(new Name("foo"), Name.pgType))
             .seek(
                 f -> f.weight().asc(),
                 new SqlExpr.ConstOpt<>(Optional.of(new BigDecimal("22.2")), PgTypes.numeric))
@@ -32,7 +32,7 @@ public class SeekTest extends SnapshotTest {
     var query =
         productRepo
             .select()
-            .seek(f -> f.name().desc(), new SqlExpr.ConstReq<>(new Name("foo"), Name.dbType))
+            .seek(f -> f.name().desc(), new SqlExpr.ConstReq<>(new Name("foo"), Name.pgType))
             .seek(
                 f -> f.weight().desc(),
                 new SqlExpr.ConstOpt<>(Optional.of(new BigDecimal("22.2")), PgTypes.numeric))
@@ -47,7 +47,7 @@ public class SeekTest extends SnapshotTest {
     var query =
         productRepo
             .select()
-            .seek(f -> f.name().asc(), new SqlExpr.ConstReq<>(new Name("foo"), Name.dbType))
+            .seek(f -> f.name().asc(), new SqlExpr.ConstReq<>(new Name("foo"), Name.pgType))
             .seek(
                 f -> f.weight().desc(),
                 new SqlExpr.ConstOpt<>(Optional.of(new BigDecimal("22.2")), PgTypes.numeric))

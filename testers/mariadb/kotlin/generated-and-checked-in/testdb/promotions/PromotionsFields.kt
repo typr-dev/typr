@@ -24,8 +24,9 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
 import testdb.AllBrandsCategoriesCSet
+import testdb.userdefined.IsActive
 
-data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, String, String, String, String, BigDecimal, BigDecimal, Uint4, Uint4, Uint1, AllBrandsCategoriesCSet, Json, LocalDateTime, LocalDateTime, Boolean, LocalDateTime>, RelationStructure<PromotionsFields, PromotionsRow>, FieldsBase<PromotionsRow> {
+data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, String, String, String, String, BigDecimal, BigDecimal, Uint4, Uint4, Uint1, AllBrandsCategoriesCSet, Json, LocalDateTime, LocalDateTime, /* user-picked */ IsActive, LocalDateTime>, RelationStructure<PromotionsFields, PromotionsRow>, FieldsBase<PromotionsRow> {
   override fun _1(): SqlExpr<PromotionsId> = promotionId()
 
   override fun _10(): SqlExpr<Uint1> = maxUsesPerCustomer()
@@ -38,7 +39,7 @@ data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, S
 
   override fun _14(): SqlExpr<LocalDateTime> = validTo()
 
-  override fun _15(): SqlExpr<Boolean> = isActive()
+  override fun _15(): SqlExpr</* user-picked */ IsActive> = isActive()
 
   override fun _16(): SqlExpr<LocalDateTime> = createdAt()
 
@@ -60,7 +61,7 @@ data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, S
 
   override fun _path(): List<Path> = _path
 
-  fun applicableTo(): OptField<AllBrandsCategoriesCSet, PromotionsRow> = OptField<AllBrandsCategoriesCSet, PromotionsRow>(_path, "applicable_to", PromotionsRow::applicableTo, null, null, { row, value -> row.copy(applicableTo = value) }, AllBrandsCategoriesCSet.dbType)
+  fun applicableTo(): OptField<AllBrandsCategoriesCSet, PromotionsRow> = OptField<AllBrandsCategoriesCSet, PromotionsRow>(_path, "applicable_to", PromotionsRow::applicableTo, null, null, { row, value -> row.copy(applicableTo = value) }, AllBrandsCategoriesCSet.mariaType)
 
   fun code(): Field<String, PromotionsRow> = Field<String, PromotionsRow>(_path, "code", PromotionsRow::code, null, null, { row, value -> row.copy(code = value) }, MariaTypes.varchar)
 
@@ -74,7 +75,7 @@ data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, S
 
   fun discountValue(): Field<BigDecimal, PromotionsRow> = Field<BigDecimal, PromotionsRow>(_path, "discount_value", PromotionsRow::discountValue, null, null, { row, value -> row.copy(discountValue = value) }, KotlinDbTypes.MariaTypes.numeric)
 
-  fun isActive(): Field<Boolean, PromotionsRow> = Field<Boolean, PromotionsRow>(_path, "is_active", PromotionsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isActive(): Field</* user-picked */ IsActive, PromotionsRow> = Field</* user-picked */ IsActive, PromotionsRow>(_path, "is_active", PromotionsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
 
   fun maxUses(): OptField<Uint4, PromotionsRow> = OptField<Uint4, PromotionsRow>(_path, "max_uses", PromotionsRow::maxUses, null, null, { row, value -> row.copy(maxUses = value) }, MariaTypes.intUnsigned)
 
@@ -84,7 +85,7 @@ data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, S
 
   fun name(): Field<String, PromotionsRow> = Field<String, PromotionsRow>(_path, "name", PromotionsRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
 
-  fun promotionId(): IdField<PromotionsId, PromotionsRow> = IdField<PromotionsId, PromotionsRow>(_path, "promotion_id", PromotionsRow::promotionId, null, null, { row, value -> row.copy(promotionId = value) }, PromotionsId.dbType)
+  fun promotionId(): IdField<PromotionsId, PromotionsRow> = IdField<PromotionsId, PromotionsRow>(_path, "promotion_id", PromotionsRow::promotionId, null, null, { row, value -> row.copy(promotionId = value) }, PromotionsId.mariaType)
 
   override fun rowParser(): RowParser<PromotionsRow> = PromotionsRow._rowParser.underlying
 

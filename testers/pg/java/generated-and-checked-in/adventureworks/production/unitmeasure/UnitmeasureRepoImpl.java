@@ -35,7 +35,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
     return interpolate(
                 Fragment.lit(
                     "delete from \"production\".\"unitmeasure\" where \"unitmeasurecode\" = "),
-                Fragment.encode(UnitmeasureId.dbType, unitmeasurecode),
+                Fragment.encode(UnitmeasureId.pgType, unitmeasurecode),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -47,7 +47,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
     return interpolate(
             Fragment.lit(
                 "delete\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("),
-            Fragment.encode(UnitmeasureId.dbTypeArray, unitmeasurecodes),
+            Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -60,9 +60,9 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
                 "insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode()),
+            Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode()),
             Fragment.lit("::bpchar, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
@@ -80,11 +80,11 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
     columns.add(Fragment.lit("\"unitmeasurecode\""));
     values.add(
         interpolate(
-            Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode()),
+            Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode()),
             Fragment.lit("::bpchar")));
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.name()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.name()), Fragment.lit("::varchar")));
     unsaved
         .modifieddate()
         .visit(
@@ -157,7 +157,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
                 "select \"unitmeasurecode\", \"name\", \"modifieddate\"\n"
                     + "from \"production\".\"unitmeasure\"\n"
                     + "where \"unitmeasurecode\" = "),
-            Fragment.encode(UnitmeasureId.dbType, unitmeasurecode),
+            Fragment.encode(UnitmeasureId.pgType, unitmeasurecode),
             Fragment.lit(""))
         .query(UnitmeasureRow._rowParser.first())
         .runUnchecked(c);
@@ -170,7 +170,7 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
                 "select \"unitmeasurecode\", \"name\", \"modifieddate\"\n"
                     + "from \"production\".\"unitmeasure\"\n"
                     + "where \"unitmeasurecode\" = ANY("),
-            Fragment.encode(UnitmeasureId.dbTypeArray, unitmeasurecodes),
+            Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes),
             Fragment.lit(")"))
         .query(UnitmeasureRow._rowParser.all())
         .runUnchecked(c);
@@ -199,11 +199,11 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"production\".\"unitmeasure\"\nset \"name\" = "),
-                Fragment.encode(Name.dbType, row.name()),
+                Fragment.encode(Name.pgType, row.name()),
                 Fragment.lit("::varchar,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"unitmeasurecode\" = "),
-                Fragment.encode(UnitmeasureId.dbType, unitmeasurecode),
+                Fragment.encode(UnitmeasureId.pgType, unitmeasurecode),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -217,9 +217,9 @@ public class UnitmeasureRepoImpl implements UnitmeasureRepo {
                 "insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(UnitmeasureId.dbType, unsaved.unitmeasurecode()),
+            Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode()),
             Fragment.lit("::bpchar, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(

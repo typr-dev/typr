@@ -11,7 +11,6 @@ import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RelationStructure
 import dev.typr.foundations.kotlin.SqlExpr
 import dev.typr.foundations.kotlin.SqlExpr.Field
@@ -24,8 +23,9 @@ import org.mariadb.jdbc.type.Point
 import testdb.customers.CustomersFields
 import testdb.customers.CustomersId
 import testdb.customers.CustomersRow
+import testdb.userdefined.IsDefault
 
-data class CustomerAddressesFields(val _path: List<Path>) : TupleExpr14<CustomerAddressesId, CustomersId, String, Boolean, String, String, String, String, String, String, String, Point, String, LocalDateTime>, RelationStructure<CustomerAddressesFields, CustomerAddressesRow>, FieldsBase<CustomerAddressesRow> {
+data class CustomerAddressesFields(val _path: List<Path>) : TupleExpr14<CustomerAddressesId, CustomersId, String, /* user-picked */ IsDefault, String, String, String, String, String, String, String, Point, String, LocalDateTime>, RelationStructure<CustomerAddressesFields, CustomerAddressesRow>, FieldsBase<CustomerAddressesRow> {
   override fun _1(): SqlExpr<CustomerAddressesId> = addressId()
 
   override fun _10(): SqlExpr<String> = postalCode()
@@ -42,7 +42,7 @@ data class CustomerAddressesFields(val _path: List<Path>) : TupleExpr14<Customer
 
   override fun _3(): SqlExpr<String> = addressType()
 
-  override fun _4(): SqlExpr<Boolean> = isDefault()
+  override fun _4(): SqlExpr</* user-picked */ IsDefault> = isDefault()
 
   override fun _5(): SqlExpr<String> = recipientName()
 
@@ -56,7 +56,7 @@ data class CustomerAddressesFields(val _path: List<Path>) : TupleExpr14<Customer
 
   override fun _path(): List<Path> = _path
 
-  fun addressId(): IdField<CustomerAddressesId, CustomerAddressesRow> = IdField<CustomerAddressesId, CustomerAddressesRow>(_path, "address_id", CustomerAddressesRow::addressId, null, null, { row, value -> row.copy(addressId = value) }, CustomerAddressesId.dbType)
+  fun addressId(): IdField<CustomerAddressesId, CustomerAddressesRow> = IdField<CustomerAddressesId, CustomerAddressesRow>(_path, "address_id", CustomerAddressesRow::addressId, null, null, { row, value -> row.copy(addressId = value) }, CustomerAddressesId.mariaType)
 
   fun addressType(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "address_type", CustomerAddressesRow::addressType, null, null, { row, value -> row.copy(addressType = value) }, MariaTypes.text)
 
@@ -68,13 +68,13 @@ data class CustomerAddressesFields(val _path: List<Path>) : TupleExpr14<Customer
 
   fun createdAt(): Field<LocalDateTime, CustomerAddressesRow> = Field<LocalDateTime, CustomerAddressesRow>(_path, "created_at", CustomerAddressesRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
 
-  fun customerId(): Field<CustomersId, CustomerAddressesRow> = Field<CustomersId, CustomerAddressesRow>(_path, "customer_id", CustomerAddressesRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.dbType)
+  fun customerId(): Field<CustomersId, CustomerAddressesRow> = Field<CustomersId, CustomerAddressesRow>(_path, "customer_id", CustomerAddressesRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType)
 
   fun deliveryNotes(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "delivery_notes", CustomerAddressesRow::deliveryNotes, null, null, { row, value -> row.copy(deliveryNotes = value) }, MariaTypes.tinytext)
 
   fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("fk_address_customer").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
 
-  fun isDefault(): Field<Boolean, CustomerAddressesRow> = Field<Boolean, CustomerAddressesRow>(_path, "is_default", CustomerAddressesRow::isDefault, null, null, { row, value -> row.copy(isDefault = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isDefault(): Field</* user-picked */ IsDefault, CustomerAddressesRow> = Field</* user-picked */ IsDefault, CustomerAddressesRow>(_path, "is_default", CustomerAddressesRow::isDefault, null, null, { row, value -> row.copy(isDefault = value) }, IsDefault.mariaType)
 
   fun location(): OptField<Point, CustomerAddressesRow> = OptField<Point, CustomerAddressesRow>(_path, "location", CustomerAddressesRow::location, null, null, { row, value -> row.copy(location = value) }, MariaTypes.point)
 

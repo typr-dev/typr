@@ -8,11 +8,11 @@ package testdb.brands
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: brands
   * Primary key: brand_id
@@ -41,8 +41,8 @@ data class BrandsRow(
   /** 
     * Default: 1
     */
-  @field:JsonProperty("is_active") val isActive: Boolean
-) : Tuple7<BrandsId, String, String, ByteArray?, String?, String?, Boolean> {
+  @field:JsonProperty("is_active") val isActive: /* user-picked */ IsActive
+) : Tuple7<BrandsId, String, String, ByteArray?, String?, String?, /* user-picked */ IsActive> {
   override fun _1(): BrandsId = brandId
 
   override fun _2(): String = name
@@ -55,7 +55,7 @@ data class BrandsRow(
 
   override fun _6(): String? = countryOfOrigin
 
-  override fun _7(): Boolean = isActive
+  override fun _7(): /* user-picked */ IsActive = isActive
 
   fun id(): BrandsId = brandId
 
@@ -63,10 +63,10 @@ data class BrandsRow(
     logoBlob: Defaulted<ByteArray?> = Defaulted.Provided(this.logoBlob),
     websiteUrl: Defaulted<String?> = Defaulted.Provided(this.websiteUrl),
     countryOfOrigin: Defaulted<String?> = Defaulted.Provided(this.countryOfOrigin),
-    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive)
+    isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive)
   ): BrandsRowUnsaved = BrandsRowUnsaved(name, slug, logoBlob, websiteUrl, countryOfOrigin, isActive)
 
   companion object {
-    val _rowParser: RowParser<BrandsRow> = RowParsers.of(BrandsId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable(), MariaTypes.varchar.nullable(), MariaTypes.char_.nullable(), KotlinDbTypes.MariaTypes.bool, { t0, t1, t2, t3, t4, t5, t6 -> BrandsRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive) })
+    val _rowParser: RowParser<BrandsRow> = RowParsers.of(BrandsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable(), MariaTypes.varchar.nullable(), MariaTypes.char_.nullable(), IsActive.mariaType, { t0, t1, t2, t3, t4, t5, t6 -> BrandsRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive) })
   }
 }

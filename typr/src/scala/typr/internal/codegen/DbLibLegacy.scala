@@ -31,4 +31,13 @@ trait DbLibLegacy extends DbLib {
 
   override def booleanAndChain(exprs: NonEmptyList[jvm.Code]): jvm.Code =
     exprs.toList.reduceLeft[jvm.Code] { case (acc, current) => code"$acc.and($current)" }
+
+  /** Legacy DbLibs don't support Aligned types - they're PostgreSQL-only and don't do multi-source generation. */
+  override def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, typoType: TypoType, overrideDbType: Option[String]): List[jvm.ClassMember] =
+    typoType match {
+      case TypoType.Aligned(_, _, _, _) =>
+        sys.error("Legacy DbLibs (Anorm, Doobie, ZioJdbc) do not support Aligned types. Use DbLibFoundations for multi-source generation.")
+      case _ =>
+        wrapperTypeInstances(wrapperType, typoType.jvmType, typoType.underlyingDbType, overrideDbType)
+    }
 }

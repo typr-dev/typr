@@ -34,7 +34,7 @@ class EmailaddressFields(val `_path`: java.util.List[Path]) extends TupleExpr5[B
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 

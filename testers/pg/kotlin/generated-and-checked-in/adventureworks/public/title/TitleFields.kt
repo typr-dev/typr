@@ -20,7 +20,7 @@ data class TitleFields(val _path: List<Path>) : TupleExpr1<TitleId>, RelationStr
 
   override fun _path(): List<Path> = _path
 
-  fun code(): IdField<TitleId, TitleRow> = IdField<TitleId, TitleRow>(_path, "code", TitleRow::code, null, null, { row, value -> row.copy(code = value) }, TitleId.dbType)
+  fun code(): IdField<TitleId, TitleRow> = IdField<TitleId, TitleRow>(_path, "code", TitleRow::code, null, null, { row, value -> row.copy(code = value) }, TitleId.pgType)
 
   override fun columns(): List<FieldLike<*, TitleRow>> = listOf(this.code().underlying)
 

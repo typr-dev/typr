@@ -27,11 +27,11 @@ public record AllScalarTypesId(@JsonValue Integer value) {
   public static Bijection<AllScalarTypesId, Integer> bijection =
       Bijection.of(AllScalarTypesId::value, AllScalarTypesId::new);
 
-  public static DuckDbType<AllScalarTypesId[]> dbTypeArray =
+  public static DuckDbType<AllScalarTypesId> duckDbType =
+      DuckDbTypes.integer.bimap(AllScalarTypesId::new, AllScalarTypesId::value);
+
+  public static DuckDbType<AllScalarTypesId[]> duckDbTypeArray =
       DuckDbTypes.integerArray.bimap(
           xs -> arrayMap.map(xs, AllScalarTypesId::new, AllScalarTypesId.class),
           xs -> arrayMap.map(xs, AllScalarTypesId::value, Integer.class));
-
-  public static DuckDbType<AllScalarTypesId> duckDbType =
-      DuckDbTypes.integer.bimap(AllScalarTypesId::new, AllScalarTypesId::value);
 }

@@ -32,7 +32,7 @@ class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
              JOIN person.person p ON p.businessentityid = s.businessentityid
              JOIN person.businessentityaddress bea ON bea.businessentityid = s.businessentityid
              LEFT JOIN person.address a ON a.addressid = bea.addressid
-    where s.businessentityid = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}::int4
+    where s.businessentityid = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}::int4
       and p.modifieddate > ${Fragment.encode(PgTypes.timestamp, modifiedAfter)}::timestamp""".query(PersonDetailSqlRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

@@ -36,7 +36,7 @@ data class PasswordFields(val _path: List<Path>) : TupleExpr5<BusinessentityId, 
 
   override fun _path(): List<Path> = _path
 
-  fun businessentityid(): IdField<BusinessentityId, PasswordRow> = IdField<BusinessentityId, PasswordRow>(_path, "businessentityid", PasswordRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.dbType)
+  fun businessentityid(): IdField<BusinessentityId, PasswordRow> = IdField<BusinessentityId, PasswordRow>(_path, "businessentityid", PasswordRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
   override fun columns(): List<FieldLike<*, PasswordRow>> = listOf(this.businessentityid().underlying, this.passwordhash().underlying, this.passwordsalt().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 

@@ -35,7 +35,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(inventoryId = value),
-      InventoryId.dbType
+      InventoryId.mariaType
     )
   }
 
@@ -47,7 +47,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -59,7 +59,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.dbType
+      WarehousesId.mariaType
     )
   }
 

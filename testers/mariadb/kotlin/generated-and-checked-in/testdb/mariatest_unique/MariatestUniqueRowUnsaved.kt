@@ -5,12 +5,12 @@
  */
 package testdb.mariatest_unique
 
-
+import testdb.userdefined.Email
 
 /** This class corresponds to a row in table `mariatest_unique` which has not been persisted yet */
 data class MariatestUniqueRowUnsaved(
   /**  */
-  val email: String,
+  val email: /* user-picked */ Email,
   /**  */
   val code: String,
   /**  */

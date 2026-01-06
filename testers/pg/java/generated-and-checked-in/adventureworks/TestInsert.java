@@ -125,6 +125,8 @@ import adventureworks.sales.salesterritory.SalesterritoryRepoImpl;
 import adventureworks.sales.salesterritory.SalesterritoryRow;
 import adventureworks.sales.salesterritory.SalesterritoryRowUnsaved;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.Inserter;
 import dev.typr.foundations.data.Inet;
 import dev.typr.foundations.data.Int2Vector;
@@ -319,7 +321,7 @@ public record TestInsert(Random random, TestDomainInsert domainInsert) {
   ;
 
   public Inserter<PersonRowUnsaved, PersonRow> personPerson(
-      BusinessentityId businessentityid, String persontype, /* user-picked */ FirstName firstname) {
+      BusinessentityId businessentityid, String persontype) {
     return Inserter.of(
         new PersonRowUnsaved(
             businessentityid,
@@ -327,11 +329,11 @@ public record TestInsert(Random random, TestDomainInsert domainInsert) {
             (random.nextBoolean()
                 ? Optional.empty()
                 : Optional.of(RandomHelper.alphanumeric(random, 8))),
-            firstname,
+            new FirstName(domainInsert.publicName(random)),
             (random.nextBoolean()
                 ? Optional.empty()
-                : Optional.of(domainInsert.publicName(random))),
-            domainInsert.publicName(random),
+                : Optional.of(new MiddleName(domainInsert.publicName(random)))),
+            new LastName(domainInsert.publicName(random)),
             (random.nextBoolean()
                 ? Optional.empty()
                 : Optional.of(RandomHelper.alphanumeric(random, 10))),

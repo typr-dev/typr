@@ -40,7 +40,7 @@ public class UsersFields
         Optional.empty(),
         Optional.of("uuid"),
         (row, value) -> row.withUserId(value),
-        UsersId.dbType);
+        UsersId.pgType);
   }
 
   public Field<String, UsersRow> name() {

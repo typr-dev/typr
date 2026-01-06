@@ -76,7 +76,7 @@ public class PrecisionTypesNullFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withId(value),
-        PrecisionTypesNullId.dbType);
+        PrecisionTypesNullId.pgType);
   }
 
   public OptField<String10, PrecisionTypesNullRow> string10() {
@@ -87,7 +87,7 @@ public class PrecisionTypesNullFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString10(value),
-        String10.dbType);
+        String10.pgType);
   }
 
   public OptField<String20, PrecisionTypesNullRow> string20() {
@@ -98,7 +98,7 @@ public class PrecisionTypesNullFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString20(value),
-        String20.dbType);
+        String20.pgType);
   }
 
   public OptField<String50, PrecisionTypesNullRow> string50() {
@@ -109,7 +109,7 @@ public class PrecisionTypesNullFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString50(value),
-        String50.dbType);
+        String50.pgType);
   }
 
   public OptField<String100, PrecisionTypesNullRow> string100() {
@@ -120,7 +120,7 @@ public class PrecisionTypesNullFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString100(value),
-        String100.dbType);
+        String100.pgType);
   }
 
   public OptField<String255, PrecisionTypesNullRow> string255() {
@@ -131,7 +131,7 @@ public class PrecisionTypesNullFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString255(value),
-        String255.dbType);
+        String255.pgType);
   }
 
   public OptField<PaddedString3, PrecisionTypesNullRow> bpchar3() {
@@ -142,7 +142,7 @@ public class PrecisionTypesNullFields
         Optional.empty(),
         Optional.of("bpchar"),
         (row, value) -> row.withBpchar3(value),
-        PaddedString3.dbType);
+        PaddedString3.pgType);
   }
 
   public OptField<PaddedString10, PrecisionTypesNullRow> bpchar10() {
@@ -153,7 +153,7 @@ public class PrecisionTypesNullFields
         Optional.empty(),
         Optional.of("bpchar"),
         (row, value) -> row.withBpchar10(value),
-        PaddedString10.dbType);
+        PaddedString10.pgType);
   }
 
   public OptField<BigDecimal, PrecisionTypesNullRow> decimal52() {

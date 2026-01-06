@@ -77,7 +77,7 @@ class PersonWithAddressesTest extends AnyFunSuite with TypeCheckedTripleEquals {
       val testInsert = new TestInsert(new Random(1), DomainInsert)
       for {
         businessentityRow <- testInsert.personBusinessentity()
-        personRow <- testInsert.personPerson(businessentityRow.businessentityid, persontype = "SC", FirstName("name"))
+        personRow <- testInsert.personPerson(businessentityRow.businessentityid, persontype = "SC", firstname = FirstName(Name("name")))
         countryregionRow <- testInsert.personCountryregion(CountryregionId("NOR"))
         salesterritoryRow <- testInsert.salesSalesterritory(countryregionRow.countryregioncode)
         stateprovinceRow <- testInsert.personStateprovince(countryregionRow.countryregioncode, salesterritoryRow.territoryid)

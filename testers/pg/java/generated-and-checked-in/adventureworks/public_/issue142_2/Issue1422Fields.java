@@ -38,7 +38,7 @@ public class Issue1422Fields extends TupleExpr1<Issue142Id>
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTabellkode(value),
-        Issue142Id.dbType);
+        Issue142Id.pgType);
   }
 
   @Override

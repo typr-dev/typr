@@ -10,9 +10,10 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import cats.instances.list.catsStdInstancesForList
 import doobie.free.connection.ConnectionIO
 import doobie.postgres.syntax.FragmentOps
@@ -36,7 +37,7 @@ class PersonRepoImpl extends PersonRepo {
 
   override def insert(unsaved: PersonRow): ConnectionIO[PersonRow] = {
     sql"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
-    values (${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.persontype)(new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.namestyle)(new Write.Single(NameStyle.put))}::bool, ${fromWrite(unsaved.title)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.firstname)(new Write.Single(/* user-picked */ FirstName.put))}::varchar, ${fromWrite(unsaved.middlename)(new Write.SingleOpt(Name.put))}::varchar, ${fromWrite(unsaved.lastname)(new Write.Single(Name.put))}::varchar, ${fromWrite(unsaved.suffix)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.emailpromotion)(new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.additionalcontactinfo)(new Write.SingleOpt(TypoXml.put))}::xml, ${fromWrite(unsaved.demographics)(new Write.SingleOpt(TypoXml.put))}::xml, ${fromWrite(unsaved.rowguid)(new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
+    values (${fromWrite(unsaved.businessentityid)(new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.persontype)(new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.namestyle)(new Write.Single(NameStyle.put))}::bool, ${fromWrite(unsaved.title)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.firstname)(new Write.Single(/* user-picked */ FirstName.put))}::varchar, ${fromWrite(unsaved.middlename)(new Write.SingleOpt(/* user-picked */ MiddleName.put))}::varchar, ${fromWrite(unsaved.lastname)(new Write.Single(/* user-picked */ LastName.put))}::varchar, ${fromWrite(unsaved.suffix)(new Write.SingleOpt(Meta.StringMeta.put))}, ${fromWrite(unsaved.emailpromotion)(new Write.Single(Meta.IntMeta.put))}::int4, ${fromWrite(unsaved.additionalcontactinfo)(new Write.SingleOpt(TypoXml.put))}::xml, ${fromWrite(unsaved.demographics)(new Write.SingleOpt(TypoXml.put))}::xml, ${fromWrite(unsaved.rowguid)(new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(new Write.Single(TypoLocalDateTime.put))}::timestamp)
     returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     """.query(PersonRow.read).unique
   }
@@ -47,8 +48,8 @@ class PersonRepoImpl extends PersonRepo {
       Some((Fragment.const0(s""""persontype""""), fr"${fromWrite(unsaved.persontype)(new Write.Single(Meta.StringMeta.put))}::bpchar")),
       Some((Fragment.const0(s""""title""""), fr"${fromWrite(unsaved.title)(new Write.SingleOpt(Meta.StringMeta.put))}")),
       Some((Fragment.const0(s""""firstname""""), fr"${fromWrite(unsaved.firstname)(new Write.Single(/* user-picked */ FirstName.put))}::varchar")),
-      Some((Fragment.const0(s""""middlename""""), fr"${fromWrite(unsaved.middlename)(new Write.SingleOpt(Name.put))}::varchar")),
-      Some((Fragment.const0(s""""lastname""""), fr"${fromWrite(unsaved.lastname)(new Write.Single(Name.put))}::varchar")),
+      Some((Fragment.const0(s""""middlename""""), fr"${fromWrite(unsaved.middlename)(new Write.SingleOpt(/* user-picked */ MiddleName.put))}::varchar")),
+      Some((Fragment.const0(s""""lastname""""), fr"${fromWrite(unsaved.lastname)(new Write.Single(/* user-picked */ LastName.put))}::varchar")),
       Some((Fragment.const0(s""""suffix""""), fr"${fromWrite(unsaved.suffix)(new Write.SingleOpt(Meta.StringMeta.put))}")),
       Some((Fragment.const0(s""""additionalcontactinfo""""), fr"${fromWrite(unsaved.additionalcontactinfo)(new Write.SingleOpt(TypoXml.put))}::xml")),
       Some((Fragment.const0(s""""demographics""""), fr"${fromWrite(unsaved.demographics)(new Write.SingleOpt(TypoXml.put))}::xml")),
@@ -118,8 +119,8 @@ class PersonRepoImpl extends PersonRepo {
     "namestyle" = ${fromWrite(row.namestyle)(new Write.Single(NameStyle.put))}::bool,
     "title" = ${fromWrite(row.title)(new Write.SingleOpt(Meta.StringMeta.put))},
     "firstname" = ${fromWrite(row.firstname)(new Write.Single(/* user-picked */ FirstName.put))}::varchar,
-    "middlename" = ${fromWrite(row.middlename)(new Write.SingleOpt(Name.put))}::varchar,
-    "lastname" = ${fromWrite(row.lastname)(new Write.Single(Name.put))}::varchar,
+    "middlename" = ${fromWrite(row.middlename)(new Write.SingleOpt(/* user-picked */ MiddleName.put))}::varchar,
+    "lastname" = ${fromWrite(row.lastname)(new Write.Single(/* user-picked */ LastName.put))}::varchar,
     "suffix" = ${fromWrite(row.suffix)(new Write.SingleOpt(Meta.StringMeta.put))},
     "emailpromotion" = ${fromWrite(row.emailpromotion)(new Write.Single(Meta.IntMeta.put))}::int4,
     "additionalcontactinfo" = ${fromWrite(row.additionalcontactinfo)(new Write.SingleOpt(TypoXml.put))}::xml,
@@ -138,8 +139,8 @@ class PersonRepoImpl extends PersonRepo {
     ${fromWrite(unsaved.namestyle)(new Write.Single(NameStyle.put))}::bool,
     ${fromWrite(unsaved.title)(new Write.SingleOpt(Meta.StringMeta.put))},
     ${fromWrite(unsaved.firstname)(new Write.Single(/* user-picked */ FirstName.put))}::varchar,
-    ${fromWrite(unsaved.middlename)(new Write.SingleOpt(Name.put))}::varchar,
-    ${fromWrite(unsaved.lastname)(new Write.Single(Name.put))}::varchar,
+    ${fromWrite(unsaved.middlename)(new Write.SingleOpt(/* user-picked */ MiddleName.put))}::varchar,
+    ${fromWrite(unsaved.lastname)(new Write.Single(/* user-picked */ LastName.put))}::varchar,
     ${fromWrite(unsaved.suffix)(new Write.SingleOpt(Meta.StringMeta.put))},
     ${fromWrite(unsaved.emailpromotion)(new Write.Single(Meta.IntMeta.put))}::int4,
     ${fromWrite(unsaved.additionalcontactinfo)(new Write.SingleOpt(TypoXml.put))}::xml,

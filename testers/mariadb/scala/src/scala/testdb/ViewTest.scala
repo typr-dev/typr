@@ -15,6 +15,10 @@ import testdb.reviews.*
 import testdb.v_customer_summary.*
 import testdb.v_product_catalog.*
 import testdb.warehouses.*
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
+import testdb.userdefined.IsApproved
 
 /** Tests for views - read-only operations using generated view repositories. Note: The database has seeded customer_status data including 'active', 'pending', 'suspended', 'closed'. Tests use these
   * existing statuses rather than inserting new ones.
@@ -37,18 +41,18 @@ class ViewTest extends AnyFunSuite {
 
       customersRepo.insert(
         CustomersRowUnsaved(
-          email = "view1@example.com",
+          email = Email("view1@example.com"),
           passwordHash = "hash1".getBytes,
-          firstName = "View",
-          lastName = "Customer1"
+          firstName = FirstName("View"),
+          lastName = LastName("Customer1")
         )
       )
       customersRepo.insert(
         CustomersRowUnsaved(
-          email = "view2@example.com",
+          email = Email("view2@example.com"),
           passwordHash = "hash2".getBytes,
-          firstName = "View",
-          lastName = "Customer2"
+          firstName = FirstName("View"),
+          lastName = LastName("Customer2")
         )
       )
 
@@ -63,10 +67,10 @@ class ViewTest extends AnyFunSuite {
 
       customersRepo.insert(
         CustomersRowUnsaved(
-          email = "summary@example.com",
+          email = Email("summary@example.com"),
           passwordHash = "hash".getBytes,
-          firstName = "Summary",
-          lastName = "Test",
+          firstName = FirstName("Summary"),
+          lastName = LastName("Test"),
           status = Provided(CustomerStatusId("suspended")),
           tier = Provided("gold")
         )
@@ -76,7 +80,7 @@ class ViewTest extends AnyFunSuite {
       val _ = assert(summaries.size == 1)
 
       val summary = summaries.head
-      val _ = assert(summary.email == "summary@example.com")
+      val _ = assert(summary.email == Email("summary@example.com"))
       val _ = assert(summary.fullName == Some("Summary Test"))
       val _ = assert(summary.tier == "gold")
       val _ = assert(summary.status.value == "suspended")
@@ -91,10 +95,10 @@ class ViewTest extends AnyFunSuite {
 
       val customer = customersRepo.insert(
         CustomersRowUnsaved(
-          email = "orders@example.com",
+          email = Email("orders@example.com"),
           passwordHash = "hash".getBytes,
-          firstName = "With",
-          lastName = "Orders"
+          firstName = FirstName("With"),
+          lastName = LastName("Orders")
         )
       )
 
@@ -237,10 +241,10 @@ class ViewTest extends AnyFunSuite {
 
       val customer = customersRepo.insert(
         CustomersRowUnsaved(
-          email = "reviewer@example.com",
+          email = Email("reviewer@example.com"),
           passwordHash = "hash".getBytes,
-          firstName = "Reviewer",
-          lastName = "User"
+          firstName = FirstName("Reviewer"),
+          lastName = LastName("User")
         )
       )
 
@@ -258,7 +262,7 @@ class ViewTest extends AnyFunSuite {
           productId = product.productId,
           customerId = customer.customerId,
           rating = Uint1.of(5),
-          isApproved = Provided(true)
+          isApproved = Provided(IsApproved(true))
         )
       )
       reviewsRepo.insert(
@@ -266,7 +270,7 @@ class ViewTest extends AnyFunSuite {
           productId = product.productId,
           customerId = customer.customerId,
           rating = Uint1.of(4),
-          isApproved = Provided(true)
+          isApproved = Provided(IsApproved(true))
         )
       )
 
@@ -283,28 +287,28 @@ class ViewTest extends AnyFunSuite {
 
       customersRepo.insert(
         CustomersRowUnsaved(
-          email = "dsl1@example.com",
+          email = Email("dsl1@example.com"),
           passwordHash = "hash1".getBytes,
-          firstName = "DSL",
-          lastName = "Bronze",
+          firstName = FirstName("DSL"),
+          lastName = LastName("Bronze"),
           tier = Provided("bronze")
         )
       )
       customersRepo.insert(
         CustomersRowUnsaved(
-          email = "dsl2@example.com",
+          email = Email("dsl2@example.com"),
           passwordHash = "hash2".getBytes,
-          firstName = "DSL",
-          lastName = "Gold",
+          firstName = FirstName("DSL"),
+          lastName = LastName("Gold"),
           tier = Provided("gold")
         )
       )
       customersRepo.insert(
         CustomersRowUnsaved(
-          email = "dsl3@example.com",
+          email = Email("dsl3@example.com"),
           passwordHash = "hash3".getBytes,
-          firstName = "DSL",
-          lastName = "Gold2",
+          firstName = FirstName("DSL"),
+          lastName = LastName("Gold2"),
           tier = Provided("gold")
         )
       )
@@ -315,7 +319,7 @@ class ViewTest extends AnyFunSuite {
       val _ = assert(goldCustomers.size == 2)
 
       val specificCustomer = customerSummaryRepo.select
-        .where(f => f.email.isEqual("dsl1@example.com"))
+        .where(f => f.email.isEqual(Email("dsl1@example.com")))
         .toList
       val _ = assert(specificCustomer.size == 1)
       assert(specificCustomer.head.tier == "bronze")

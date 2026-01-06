@@ -1,8 +1,8 @@
 package typr.openapi.codegen
 
-import typr.{jvm, Lang, Scope}
+import typr.{jvm, Lang, Scope, TypeDefinitions}
 import typr.internal.codegen._
-import typr.openapi.{ModelClass, SumType}
+import typr.openapi.{ModelClass, SumType, TypeInfo}
 
 /** Generates jvm.File for model classes */
 class ModelCodegen(
@@ -11,8 +11,45 @@ class ModelCodegen(
     lang: Lang,
     jsonLib: JsonLibSupport,
     validationSupport: ValidationSupport,
-    serverFramework: FrameworkSupport
+    serverFramework: FrameworkSupport,
+    typeDefinitions: TypeDefinitions,
+    externalFieldTypeOverrides: Map[String, jvm.Type.Qualified]
 ) {
+
+  /** Build field name to wrapper type mapping from TypeDefinitions.
+    *
+    * This matches property names against ApiMatch predicates and returns a map of field names to wrapper types. External overrides (from shared types) take precedence over TypeDefinitions-generated
+    * mappings.
+    */
+  private val fieldTypeOverrides: Map[String, jvm.Type.Qualified] = {
+    val fromTypeDefinitions =
+      if (typeDefinitions.isEmpty) Map.empty[String, jvm.Type.Qualified]
+      else {
+        typeDefinitions.entries.flatMap { entry =>
+          if (entry.api.name.nonEmpty) {
+            entry.api.name.map { pattern =>
+              pattern.toLowerCase -> jvm.Type.Qualified(modelPkg / jvm.Ident(entry.name))
+            }
+          } else Nil
+        }.toMap
+      }
+    fromTypeDefinitions ++ externalFieldTypeOverrides
+  }
+
+  /** Resolve the type for a property, checking TypeDefinitions first */
+  private def resolvePropertyType(propName: String, typeInfo: TypeInfo): jvm.Type = {
+    val baseType = typeMapper.map(typeInfo)
+
+    fieldTypeOverrides.get(propName.toLowerCase) match {
+      case Some(wrapperType) =>
+        typeInfo match {
+          case TypeInfo.Optional(_) => lang.Optional.tpe(wrapperType)
+          case TypeInfo.ListOf(_)   => lang.ListType.tpe.of(wrapperType)
+          case _                    => wrapperType
+        }
+      case None => baseType
+    }
+  }
 
   def generate(model: ModelClass): jvm.File = model match {
     case obj: ModelClass.ObjectType      => generateObjectType(obj)
@@ -26,7 +63,7 @@ class ModelCodegen(
     val comments = obj.description.map(d => jvm.Comments(List(d))).getOrElse(jvm.Comments.Empty)
 
     val params = obj.properties.map { prop =>
-      val propType = typeMapper.map(prop.typeInfo)
+      val propType = resolvePropertyType(prop.originalName, prop.typeInfo)
       val jsonAnnotations = jsonLib.propertyAnnotations(prop.originalName)
       val validationAnnotations = validationSupport.propertyAnnotations(prop)
       jvm.Param(
@@ -182,7 +219,7 @@ class ModelCodegen(
 
     // Generate common property abstract methods
     val commonMethods = sumType.commonProperties.map { prop =>
-      val propType = typeMapper.map(prop.typeInfo)
+      val propType = resolvePropertyType(prop.originalName, prop.typeInfo)
       jvm.Method(
         annotations = jsonLib.methodPropertyAnnotations(prop.originalName),
         comments = prop.description.map(d => jvm.Comments(List(d))).getOrElse(jvm.Comments.Empty),

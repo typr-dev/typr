@@ -38,7 +38,7 @@ public class Db2testIdentityAlwaysFields extends TupleExpr2<Db2testIdentityAlway
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        Db2testIdentityAlwaysId.dbType);
+        Db2testIdentityAlwaysId.db2Type);
   }
 
   public Field<String, Db2testIdentityAlwaysRow> name() {

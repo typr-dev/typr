@@ -56,7 +56,7 @@ public class MariatestSpatialFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        MariatestSpatialId.dbType);
+        MariatestSpatialId.mariaType);
   }
 
   public Field<Geometry, MariatestSpatialRow> geometryCol() {

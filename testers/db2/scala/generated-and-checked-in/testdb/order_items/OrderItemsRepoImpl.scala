@@ -20,17 +20,17 @@ import dev.typr.foundations.scala.Fragment.sql
 class OrderItemsRepoImpl extends OrderItemsRepo {
   override def delete: DeleteBuilder[OrderItemsFields, OrderItemsRow] = DeleteBuilder.of(""""ORDER_ITEMS"""", OrderItemsFields.structure, Dialect.DB2)
 
-  override def deleteById(compositeId: OrderItemsId)(using c: Connection): Boolean = sql"""delete from "ORDER_ITEMS" where "ORDER_ID" = ${Fragment.encode(OrdersId.dbType, compositeId.orderId)} AND "ITEM_NUMBER" = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, compositeId.itemNumber)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: OrderItemsId)(using c: Connection): Boolean = sql"""delete from "ORDER_ITEMS" where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, compositeId.orderId)} AND "ITEM_NUMBER" = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, compositeId.itemNumber)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(compositeIds: Array[OrderItemsId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => fragments.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.encode(OrdersId.dbType, id.orderId), Fragment.lit(", "), Fragment.encode(ScalaDbTypes.Db2Types.integer, id.itemNumber), Fragment.lit(")"))): @scala.annotation.nowarn }
+    compositeIds.foreach { id => fragments.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.encode(OrdersId.db2Type, id.orderId), Fragment.lit(", "), Fragment.encode(ScalaDbTypes.Db2Types.integer, id.itemNumber), Fragment.lit(")"))): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""delete from "ORDER_ITEMS" where ("ORDER_ID", "ITEM_NUMBER") in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: OrderItemsRow)(using c: Connection): OrderItemsRow = {
   sql"""SELECT "ORDER_ID", "ITEM_NUMBER", "PRODUCT_NAME", "QUANTITY", "UNIT_PRICE" FROM FINAL TABLE (INSERT INTO "ORDER_ITEMS"("ORDER_ID", "ITEM_NUMBER", "PRODUCT_NAME", "QUANTITY", "UNIT_PRICE")
-    VALUES (${Fragment.encode(OrdersId.dbType, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.itemNumber)}, ${Fragment.encode(Db2Types.varchar, unsaved.productName)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.unitPrice)}))
+    VALUES (${Fragment.encode(OrdersId.db2Type, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.itemNumber)}, ${Fragment.encode(Db2Types.varchar, unsaved.productName)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.unitPrice)}))
     """
     .updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -46,12 +46,12 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
   override def selectById(compositeId: OrderItemsId)(using c: Connection): Option[OrderItemsRow] = {
     sql"""select "ORDER_ID", "ITEM_NUMBER", "PRODUCT_NAME", "QUANTITY", "UNIT_PRICE"
     from "ORDER_ITEMS"
-    where "ORDER_ID" = ${Fragment.encode(OrdersId.dbType, compositeId.orderId)} AND "ITEM_NUMBER" = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, compositeId.itemNumber)}""".query(OrderItemsRow.`_rowParser`.first()).runUnchecked(c)
+    where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, compositeId.orderId)} AND "ITEM_NUMBER" = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, compositeId.itemNumber)}""".query(OrderItemsRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(compositeIds: Array[OrderItemsId])(using c: Connection): List[OrderItemsRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => fragments.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.encode(OrdersId.dbType, id.orderId), Fragment.lit(", "), Fragment.encode(ScalaDbTypes.Db2Types.integer, id.itemNumber), Fragment.lit(")"))): @scala.annotation.nowarn }
+    compositeIds.foreach { id => fragments.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.encode(OrdersId.db2Type, id.orderId), Fragment.lit(", "), Fragment.encode(ScalaDbTypes.Db2Types.integer, id.itemNumber), Fragment.lit(")"))): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""select "ORDER_ID", "ITEM_NUMBER", "PRODUCT_NAME", "QUANTITY", "UNIT_PRICE" from "ORDER_ITEMS" where ("ORDER_ID", "ITEM_NUMBER") in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(OrderItemsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -69,17 +69,17 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
     set "PRODUCT_NAME" = ${Fragment.encode(Db2Types.varchar, row.productName)},
     "QUANTITY" = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, row.quantity)},
     "UNIT_PRICE" = ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, row.unitPrice)}
-    where "ORDER_ID" = ${Fragment.encode(OrdersId.dbType, compositeId.orderId)} AND "ITEM_NUMBER" = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, compositeId.itemNumber)}""".update().runUnchecked(c) > 0
+    where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, compositeId.orderId)} AND "ITEM_NUMBER" = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, compositeId.itemNumber)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: OrderItemsRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "ORDER_ITEMS" AS t
-    USING (VALUES (${Fragment.encode(OrdersId.dbType, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.itemNumber)}, ${Fragment.encode(Db2Types.varchar, unsaved.productName)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.unitPrice)})) AS s("ORDER_ID", "ITEM_NUMBER", "PRODUCT_NAME", "QUANTITY", "UNIT_PRICE")
+    USING (VALUES (${Fragment.encode(OrdersId.db2Type, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.itemNumber)}, ${Fragment.encode(Db2Types.varchar, unsaved.productName)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.unitPrice)})) AS s("ORDER_ID", "ITEM_NUMBER", "PRODUCT_NAME", "QUANTITY", "UNIT_PRICE")
     ON t."ORDER_ID" = s."ORDER_ID" AND t."ITEM_NUMBER" = s."ITEM_NUMBER"
     WHEN MATCHED THEN UPDATE SET "PRODUCT_NAME" = s."PRODUCT_NAME",
     "QUANTITY" = s."QUANTITY",
     "UNIT_PRICE" = s."UNIT_PRICE"
-    WHEN NOT MATCHED THEN INSERT ("ORDER_ID", "ITEM_NUMBER", "PRODUCT_NAME", "QUANTITY", "UNIT_PRICE") VALUES (${Fragment.encode(OrdersId.dbType, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.itemNumber)}, ${Fragment.encode(Db2Types.varchar, unsaved.productName)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.unitPrice)})"""
+    WHEN NOT MATCHED THEN INSERT ("ORDER_ID", "ITEM_NUMBER", "PRODUCT_NAME", "QUANTITY", "UNIT_PRICE") VALUES (${Fragment.encode(OrdersId.db2Type, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.itemNumber)}, ${Fragment.encode(Db2Types.varchar, unsaved.productName)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.unitPrice)})"""
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

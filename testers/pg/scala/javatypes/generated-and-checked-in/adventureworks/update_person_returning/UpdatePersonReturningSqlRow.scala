@@ -25,5 +25,5 @@ case class UpdatePersonReturningSqlRow(
 }
 
 object UpdatePersonReturningSqlRow {
-  val `_rowParser`: RowParser[UpdatePersonReturningSqlRow] = RowParsers.of(FirstName.dbType, PgTypes.timestamp, UpdatePersonReturningSqlRow.apply, row => Array[Any](row.firstname, row.modifieddate))
+  val `_rowParser`: RowParser[UpdatePersonReturningSqlRow] = RowParsers.of(FirstName.pgType, PgTypes.timestamp, UpdatePersonReturningSqlRow.apply, row => Array[Any](row.firstname, row.modifieddate))
 }

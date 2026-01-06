@@ -20,6 +20,9 @@ import kotlin.collections.Map
 import kotlin.collections.MutableMap
 import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusId
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
 class CustomersRepoImpl() : CustomersRepo {
   override fun delete(): DeleteBuilder<CustomersFields, CustomersRow> = DeleteBuilder.of("`customers`", CustomersFields.structure, Dialect.MARIADB)
@@ -27,21 +30,21 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun deleteById(
     customerId: CustomersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `customers` where `customer_id` = "), Fragment.encode(CustomersId.dbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `customers` where `customer_id` = "), Fragment.encode(CustomersId.mariaType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     customerIds: Array<CustomersId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.dbType, id)) }
+    for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("delete from `customers` where `customer_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersRow = Fragment.interpolate(Fragment.lit("insert into `customers`(`email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.binary, unsaved.passwordHash), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.firstName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.lastName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.phone), Fragment.lit(", "), Fragment.encode(CustomerStatusId.dbType, unsaved.status), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.tier), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.preferences), Fragment.lit(", "), Fragment.encode(EmailMailPushSmsSet.dbType.nullable(), unsaved.marketingFlags), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.notes), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.lastLoginAt), Fragment.lit(")\nRETURNING `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`\n"))
+  ): CustomersRow = Fragment.interpolate(Fragment.lit("insert into `customers`(`email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`)\nvalues ("), Fragment.encode(Email.mariaType, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.binary, unsaved.passwordHash), Fragment.lit(", "), Fragment.encode(FirstName.mariaType, unsaved.firstName), Fragment.lit(", "), Fragment.encode(LastName.mariaType, unsaved.lastName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.phone), Fragment.lit(", "), Fragment.encode(CustomerStatusId.mariaType, unsaved.status), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.tier), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.preferences), Fragment.lit(", "), Fragment.encode(EmailMailPushSmsSet.mariaType.nullable(), unsaved.marketingFlags), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.notes), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.lastLoginAt), Fragment.lit(")\nRETURNING `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`\n"))
     .updateReturning(CustomersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -51,13 +54,13 @@ class CustomersRepoImpl() : CustomersRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`email`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.email), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(Email.mariaType, unsaved.email), Fragment.lit("")))
     columns.add(Fragment.lit("`password_hash`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.binary, unsaved.passwordHash), Fragment.lit("")))
     columns.add(Fragment.lit("`first_name`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.firstName), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(FirstName.mariaType, unsaved.firstName), Fragment.lit("")))
     columns.add(Fragment.lit("`last_name`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.lastName), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(LastName.mariaType, unsaved.lastName), Fragment.lit("")))
     unsaved.phone.visit(
       {  },
       { value -> columns.add(Fragment.lit("`phone`"))
@@ -66,7 +69,7 @@ class CustomersRepoImpl() : CustomersRepo {
     unsaved.status.visit(
       {  },
       { value -> columns.add(Fragment.lit("`status`"))
-      values.add(Fragment.interpolate(Fragment.encode(CustomerStatusId.dbType, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(CustomerStatusId.mariaType, value), Fragment.lit(""))) }
     );
     unsaved.tier.visit(
       {  },
@@ -81,7 +84,7 @@ class CustomersRepoImpl() : CustomersRepo {
     unsaved.marketingFlags.visit(
       {  },
       { value -> columns.add(Fragment.lit("`marketing_flags`"))
-      values.add(Fragment.interpolate(Fragment.encode(EmailMailPushSmsSet.dbType.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(EmailMailPushSmsSet.mariaType.nullable(), value), Fragment.lit(""))) }
     );
     unsaved.notes.visit(
       {  },
@@ -114,14 +117,14 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun selectById(
     customerId: CustomersId,
     c: Connection
-  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`\nfrom `customers`\nwhere `customer_id` = "), Fragment.encode(CustomersId.dbType, customerId), Fragment.lit("")).query(CustomersRow._rowParser.first()).runUnchecked(c)
+  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`\nfrom `customers`\nwhere `customer_id` = "), Fragment.encode(CustomersId.mariaType, customerId), Fragment.lit("")).query(CustomersRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     customerIds: Array<CustomersId>,
     c: Connection
   ): List<CustomersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.dbType, id)) }
+    for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("select `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at` from `customers` where `customer_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CustomersRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -135,9 +138,9 @@ class CustomersRepoImpl() : CustomersRepo {
   }
 
   override fun selectByUniqueEmail(
-    email: String,
+    email: /* user-picked */ Email,
     c: Connection
-  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`\nfrom `customers`\nwhere `email` = "), Fragment.encode(MariaTypes.varchar, email), Fragment.lit("\n")).query(CustomersRow._rowParser.first()).runUnchecked(c)
+  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`\nfrom `customers`\nwhere `email` = "), Fragment.encode(Email.mariaType, email), Fragment.lit("\n")).query(CustomersRow._rowParser.first()).runUnchecked(c)
 
   override fun update(): UpdateBuilder<CustomersFields, CustomersRow> = UpdateBuilder.of("`customers`", CustomersFields.structure, CustomersRow._rowParser, Dialect.MARIADB)
 
@@ -146,13 +149,13 @@ class CustomersRepoImpl() : CustomersRepo {
     c: Connection
   ): Boolean {
     val customerId: CustomersId = row.customerId
-    return Fragment.interpolate(Fragment.lit("update `customers`\nset `email` = "), Fragment.encode(MariaTypes.varchar, row.email), Fragment.lit(",\n`password_hash` = "), Fragment.encode(MariaTypes.binary, row.passwordHash), Fragment.lit(",\n`first_name` = "), Fragment.encode(MariaTypes.varchar, row.firstName), Fragment.lit(",\n`last_name` = "), Fragment.encode(MariaTypes.varchar, row.lastName), Fragment.lit(",\n`phone` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.phone), Fragment.lit(",\n`status` = "), Fragment.encode(CustomerStatusId.dbType, row.status), Fragment.lit(",\n`tier` = "), Fragment.encode(MariaTypes.text, row.tier), Fragment.lit(",\n`preferences` = "), Fragment.encode(MariaTypes.json.nullable(), row.preferences), Fragment.lit(",\n`marketing_flags` = "), Fragment.encode(EmailMailPushSmsSet.dbType.nullable(), row.marketingFlags), Fragment.lit(",\n`notes` = "), Fragment.encode(MariaTypes.text.nullable(), row.notes), Fragment.lit(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.lit(",\n`updated_at` = "), Fragment.encode(MariaTypes.datetime, row.updatedAt), Fragment.lit(",\n`last_login_at` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.lastLoginAt), Fragment.lit("\nwhere `customer_id` = "), Fragment.encode(CustomersId.dbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `customers`\nset `email` = "), Fragment.encode(Email.mariaType, row.email), Fragment.lit(",\n`password_hash` = "), Fragment.encode(MariaTypes.binary, row.passwordHash), Fragment.lit(",\n`first_name` = "), Fragment.encode(FirstName.mariaType, row.firstName), Fragment.lit(",\n`last_name` = "), Fragment.encode(LastName.mariaType, row.lastName), Fragment.lit(",\n`phone` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.phone), Fragment.lit(",\n`status` = "), Fragment.encode(CustomerStatusId.mariaType, row.status), Fragment.lit(",\n`tier` = "), Fragment.encode(MariaTypes.text, row.tier), Fragment.lit(",\n`preferences` = "), Fragment.encode(MariaTypes.json.nullable(), row.preferences), Fragment.lit(",\n`marketing_flags` = "), Fragment.encode(EmailMailPushSmsSet.mariaType.nullable(), row.marketingFlags), Fragment.lit(",\n`notes` = "), Fragment.encode(MariaTypes.text.nullable(), row.notes), Fragment.lit(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.lit(",\n`updated_at` = "), Fragment.encode(MariaTypes.datetime, row.updatedAt), Fragment.lit(",\n`last_login_at` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.lastLoginAt), Fragment.lit("\nwhere `customer_id` = "), Fragment.encode(CustomersId.mariaType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersRow = Fragment.interpolate(Fragment.lit("INSERT INTO `customers`(`customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`)\nVALUES ("), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.binary, unsaved.passwordHash), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.firstName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.lastName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.phone), Fragment.lit(", "), Fragment.encode(CustomerStatusId.dbType, unsaved.status), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.tier), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.preferences), Fragment.lit(", "), Fragment.encode(EmailMailPushSmsSet.dbType.nullable(), unsaved.marketingFlags), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.notes), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.lastLoginAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `email` = VALUES(`email`),\n`password_hash` = VALUES(`password_hash`),\n`first_name` = VALUES(`first_name`),\n`last_name` = VALUES(`last_name`),\n`phone` = VALUES(`phone`),\n`status` = VALUES(`status`),\n`tier` = VALUES(`tier`),\n`preferences` = VALUES(`preferences`),\n`marketing_flags` = VALUES(`marketing_flags`),\n`notes` = VALUES(`notes`),\n`created_at` = VALUES(`created_at`),\n`updated_at` = VALUES(`updated_at`),\n`last_login_at` = VALUES(`last_login_at`)\nRETURNING `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`"))
+  ): CustomersRow = Fragment.interpolate(Fragment.lit("INSERT INTO `customers`(`customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`)\nVALUES ("), Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(Email.mariaType, unsaved.email), Fragment.lit(", "), Fragment.encode(MariaTypes.binary, unsaved.passwordHash), Fragment.lit(", "), Fragment.encode(FirstName.mariaType, unsaved.firstName), Fragment.lit(", "), Fragment.encode(LastName.mariaType, unsaved.lastName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.phone), Fragment.lit(", "), Fragment.encode(CustomerStatusId.mariaType, unsaved.status), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.tier), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.preferences), Fragment.lit(", "), Fragment.encode(EmailMailPushSmsSet.mariaType.nullable(), unsaved.marketingFlags), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.notes), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.lastLoginAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `email` = VALUES(`email`),\n`password_hash` = VALUES(`password_hash`),\n`first_name` = VALUES(`first_name`),\n`last_name` = VALUES(`last_name`),\n`phone` = VALUES(`phone`),\n`status` = VALUES(`status`),\n`tier` = VALUES(`tier`),\n`preferences` = VALUES(`preferences`),\n`marketing_flags` = VALUES(`marketing_flags`),\n`notes` = VALUES(`notes`),\n`created_at` = VALUES(`created_at`),\n`updated_at` = VALUES(`updated_at`),\n`last_login_at` = VALUES(`last_login_at`)\nRETURNING `customer_id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`, `created_at`, `updated_at`, `last_login_at`"))
     .updateReturning(CustomersRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

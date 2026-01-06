@@ -41,10 +41,10 @@ public sealed interface Issue142Id permits Issue142Id.Unknown, Issue142Id.Known 
     }
   }
 
-  public static PgType<Issue142Id[]> dbTypeArray =
+  public static PgType<Issue142Id[]> pgTypeArray =
       PgTypes.textArray.bimap(
           xs -> arrayMap.map(xs, Issue142Id::apply, Issue142Id.class),
           xs -> arrayMap.map(xs, Issue142Id::value, String.class));
-  public static PgType<Issue142Id> dbType =
+  public static PgType<Issue142Id> pgType =
       PgTypes.text.bimap(Issue142Id::apply, Issue142Id::value);
 }

@@ -2,6 +2,7 @@ package oracledb.contacts
 
 import oracledb.{EmailTableT, TagVarrayT}
 import oracledb.customtypes.Defaulted
+import oracledb.userdefined.Email
 import oracledb.withConnection
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -11,7 +12,7 @@ class ContactsTest extends AnyFunSuite {
   test("insert contact with nested table and varray") {
     withConnection { c =>
       given java.sql.Connection = c
-      val emails = new EmailTableT(Array("john@example.com", "john.doe@work.com", "jdoe@personal.net"))
+      val emails = Email(new EmailTableT(Array("john@example.com", "john.doe@work.com", "jdoe@personal.net")))
       val tags = new TagVarrayT(Array("customer", "vip"))
 
       val unsaved = new ContactsRowUnsaved(
@@ -26,7 +27,7 @@ class ContactsTest extends AnyFunSuite {
       val inserted = repo.selectById(insertedId).get
       val _ = assert(inserted.name == "John Doe")
       val _ = assert(inserted.emails.isDefined)
-      val _ = assert(inserted.emails.get.value.sameElements(Array("john@example.com", "john.doe@work.com", "jdoe@personal.net")))
+      val _ = assert(inserted.emails.get.value.value.sameElements(Array("john@example.com", "john.doe@work.com", "jdoe@personal.net")))
       val _ = assert(inserted.tags.isDefined)
       val _ = assert(inserted.tags.get.value.sameElements(Array("customer", "vip")))
     }
@@ -35,7 +36,7 @@ class ContactsTest extends AnyFunSuite {
   test("insert contact with only emails") {
     withConnection { c =>
       given java.sql.Connection = c
-      val emails = new EmailTableT(Array("jane@example.com"))
+      val emails = Email(new EmailTableT(Array("jane@example.com")))
 
       val unsaved = new ContactsRowUnsaved(
         "Jane Smith",
@@ -48,7 +49,7 @@ class ContactsTest extends AnyFunSuite {
 
       val inserted = repo.selectById(insertedId).get
       val _ = assert(inserted.emails.isDefined)
-      val _ = assert(inserted.emails.get.value.length == 1)
+      val _ = assert(inserted.emails.get.value.value.length == 1)
       val _ = assert(inserted.tags.isEmpty)
     }
   }
@@ -102,7 +103,7 @@ class ContactsTest extends AnyFunSuite {
         "email4@test.com",
         "email5@test.com"
       )
-      val emails = new EmailTableT(emailArray)
+      val emails = Email(new EmailTableT(emailArray))
 
       val unsaved = new ContactsRowUnsaved(
         "Nested Table Test",
@@ -116,14 +117,14 @@ class ContactsTest extends AnyFunSuite {
       val found = repo.selectById(insertedId)
       val _ = assert(found.isDefined)
       val _ = assert(found.get.emails.isDefined)
-      val _ = assert(found.get.emails.get.value.sameElements(emailArray))
+      val _ = assert(found.get.emails.get.value.value.sameElements(emailArray))
     }
   }
 
   test("update emails") {
     withConnection { c =>
       given java.sql.Connection = c
-      val originalEmails = new EmailTableT(Array("old1@example.com", "old2@example.com"))
+      val originalEmails = Email(new EmailTableT(Array("old1@example.com", "old2@example.com")))
       val unsaved = new ContactsRowUnsaved(
         "Update Emails Test",
         Some(originalEmails),
@@ -134,14 +135,14 @@ class ContactsTest extends AnyFunSuite {
       val insertedId = repo.insert(unsaved)
       val inserted = repo.selectById(insertedId).get
 
-      val newEmails = new EmailTableT(Array("new1@example.com", "new2@example.com", "new3@example.com"))
+      val newEmails = Email(new EmailTableT(Array("new1@example.com", "new2@example.com", "new3@example.com")))
       val updatedRow = inserted.copy(emails = Some(newEmails))
 
       val wasUpdated = repo.update(updatedRow)
       val _ = assert(wasUpdated)
       val fetched = repo.selectById(insertedId).get
       val _ = assert(fetched.emails.isDefined)
-      val _ = assert(fetched.emails.get.value.sameElements(Array("new1@example.com", "new2@example.com", "new3@example.com")))
+      val _ = assert(fetched.emails.get.value.value.sameElements(Array("new1@example.com", "new2@example.com", "new3@example.com")))
     }
   }
 
@@ -173,7 +174,7 @@ class ContactsTest extends AnyFunSuite {
   test("update both collections") {
     withConnection { c =>
       given java.sql.Connection = c
-      val originalEmails = new EmailTableT(Array("original@test.com"))
+      val originalEmails = Email(new EmailTableT(Array("original@test.com")))
       val originalTags = new TagVarrayT(Array("original"))
 
       val unsaved = new ContactsRowUnsaved(
@@ -186,7 +187,7 @@ class ContactsTest extends AnyFunSuite {
       val insertedId = repo.insert(unsaved)
       val inserted = repo.selectById(insertedId).get
 
-      val newEmails = new EmailTableT(Array("updated1@test.com", "updated2@test.com"))
+      val newEmails = Email(new EmailTableT(Array("updated1@test.com", "updated2@test.com")))
       val newTags = new TagVarrayT(Array("updated1", "updated2", "updated3"))
 
       val updatedRow = inserted.copy(
@@ -199,7 +200,7 @@ class ContactsTest extends AnyFunSuite {
       val fetched = repo.selectById(insertedId).get
       val _ = assert(fetched.emails.isDefined)
       val _ = assert(fetched.tags.isDefined)
-      val _ = assert(fetched.emails.get.value.length == 2)
+      val _ = assert(fetched.emails.get.value.value.length == 2)
       val _ = assert(fetched.tags.get.value.length == 3)
     }
   }
@@ -207,7 +208,7 @@ class ContactsTest extends AnyFunSuite {
   test("clear emails") {
     withConnection { c =>
       given java.sql.Connection = c
-      val emails = new EmailTableT(Array("clear@test.com"))
+      val emails = Email(new EmailTableT(Array("clear@test.com")))
       val unsaved = new ContactsRowUnsaved(
         "Clear Emails Test",
         Some(emails),
@@ -232,7 +233,7 @@ class ContactsTest extends AnyFunSuite {
     withConnection { c =>
       given java.sql.Connection = c
       val manyEmails = (0 until 20).map(i => s"email$i@test.com").toArray
-      val emails = new EmailTableT(manyEmails)
+      val emails = Email(new EmailTableT(manyEmails))
 
       val unsaved = new ContactsRowUnsaved(
         "Many Emails Test",
@@ -244,14 +245,14 @@ class ContactsTest extends AnyFunSuite {
       val insertedId = repo.insert(unsaved)
       val inserted = repo.selectById(insertedId).get
       val _ = assert(inserted.emails.isDefined)
-      val _ = assert(inserted.emails.get.value.length == 20)
+      val _ = assert(inserted.emails.get.value.value.length == 20)
     }
   }
 
   test("delete contact") {
     withConnection { c =>
       given java.sql.Connection = c
-      val emails = new EmailTableT(Array("delete@test.com"))
+      val emails = Email(new EmailTableT(Array("delete@test.com")))
       val tags = new TagVarrayT(Array("delete"))
 
       val unsaved = new ContactsRowUnsaved(
@@ -274,8 +275,8 @@ class ContactsTest extends AnyFunSuite {
   test("select all") {
     withConnection { c =>
       given java.sql.Connection = c
-      val emails1 = new EmailTableT(Array("contact1@test.com"))
-      val emails2 = new EmailTableT(Array("contact2@test.com"))
+      val emails1 = Email(new EmailTableT(Array("contact1@test.com")))
+      val emails2 = Email(new EmailTableT(Array("contact2@test.com")))
 
       val unsaved1 = new ContactsRowUnsaved(
         "Contact 1",
@@ -316,7 +317,7 @@ class ContactsTest extends AnyFunSuite {
   test("empty email array") {
     withConnection { c =>
       given java.sql.Connection = c
-      val emptyEmails = new EmailTableT(Array())
+      val emptyEmails = Email(new EmailTableT(Array()))
 
       val unsaved = new ContactsRowUnsaved(
         "Empty Emails Test",
@@ -328,7 +329,7 @@ class ContactsTest extends AnyFunSuite {
       val insertedId = repo.insert(unsaved)
       val inserted = repo.selectById(insertedId).get
       val _ = assert(inserted.emails.isDefined)
-      val _ = assert(inserted.emails.get.value.length == 0)
+      val _ = assert(inserted.emails.get.value.value.length == 0)
     }
   }
 }

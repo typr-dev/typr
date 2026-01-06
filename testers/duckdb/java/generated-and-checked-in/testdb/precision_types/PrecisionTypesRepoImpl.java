@@ -47,7 +47,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
   public Integer deleteByIds(PrecisionTypesId[] ids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"precision_types\"\nwhere \"id\" = ANY("),
-            Fragment.encode(PrecisionTypesId.dbTypeArray, ids),
+            Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -138,7 +138,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                     + " \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\n"
                     + "from \"precision_types\"\n"
                     + "where \"id\" = ANY("),
-            Fragment.encode(PrecisionTypesId.dbTypeArray, ids),
+            Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids),
             Fragment.lit(")"))
         .query(PrecisionTypesRow._rowParser.all())
         .runUnchecked(c);

@@ -25,7 +25,7 @@ class Db2testUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[
       None,
       None,
       (row, value) => row.copy(id = value),
-      Db2testUniqueId.dbType
+      Db2testUniqueId.db2Type
     )
   }
 

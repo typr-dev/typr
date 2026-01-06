@@ -12,6 +12,7 @@ import java.sql.Connection
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
+import testdb.userdefined.Email
 
 interface CustomersRepo {
   abstract fun delete(): DeleteBuilder<CustomersFields, CustomersRow>
@@ -56,7 +57,7 @@ interface CustomersRepo {
   ): Map<CustomersId, CustomersRow>
 
   abstract fun selectByUniqueEmail(
-    email: String,
+    email: /* user-picked */ Email,
     c: Connection
   ): CustomersRow?
 

@@ -19,8 +19,10 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr4;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import testdb.userdefined.Email;
 
-public class CustomersFields extends TupleExpr4<CustomersId, String, String, LocalDateTime>
+public class CustomersFields
+    extends TupleExpr4<CustomersId, String, /* user-picked */ Email, LocalDateTime>
     implements RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   List<Path> _path;
 
@@ -52,15 +54,15 @@ public class CustomersFields extends TupleExpr4<CustomersId, String, String, Loc
         SqlServerTypes.nvarchar);
   }
 
-  public Field<String, CustomersRow> email() {
-    return new Field<String, CustomersRow>(
+  public Field</* user-picked */ Email, CustomersRow> email() {
+    return new Field</* user-picked */ Email, CustomersRow>(
         _path,
         "email",
         CustomersRow::email,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withEmail(value),
-        SqlServerTypes.nvarchar);
+        Email.sqlServerType);
   }
 
   public OptField<LocalDateTime, CustomersRow> createdAt() {
@@ -105,7 +107,7 @@ public class CustomersFields extends TupleExpr4<CustomersId, String, String, Loc
   }
 
   @Override
-  public SqlExpr<String> _3() {
+  public SqlExpr</* user-picked */ Email> _3() {
     return email();
   }
 

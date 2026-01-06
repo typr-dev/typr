@@ -32,7 +32,7 @@ data class IdentityTestFields(val _path: List<Path>) : TupleExpr3<Int, Int, Iden
 
   fun defaultGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "default_generated", IdentityTestRow::defaultGenerated, null, "int4", { row, value -> row.copy(defaultGenerated = value) }, KotlinDbTypes.PgTypes.int4)
 
-  fun name(): IdField<IdentityTestId, IdentityTestRow> = IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, null, null, { row, value -> row.copy(name = value) }, IdentityTestId.dbType)
+  fun name(): IdField<IdentityTestId, IdentityTestRow> = IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, null, null, { row, value -> row.copy(name = value) }, IdentityTestId.pgType)
 
   override fun rowParser(): RowParser<IdentityTestRow> = IdentityTestRow._rowParser.underlying
 

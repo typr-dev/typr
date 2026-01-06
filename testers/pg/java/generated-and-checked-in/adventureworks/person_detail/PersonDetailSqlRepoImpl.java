@@ -40,7 +40,7 @@ public class PersonDetailSqlRepoImpl implements PersonDetailSqlRepo {
                     + " s.businessentityid\n"
                     + "         LEFT JOIN person.address a ON a.addressid = bea.addressid\n"
                     + "where s.businessentityid = "),
-            Fragment.encode(BusinessentityId.dbType, businessentityid),
+            Fragment.encode(BusinessentityId.pgType, businessentityid),
             Fragment.lit("::int4\n  and p.modifieddate > "),
             Fragment.encode(PgTypes.timestamp, modifiedAfter),
             Fragment.lit("::timestamp"))

@@ -43,7 +43,7 @@ public class TitledpersonFields extends TupleExpr3<TitleDomainId, TitleId, Strin
         Optional.empty(),
         Optional.of("text"),
         (row, value) -> row.withTitleShort(value),
-        TitleDomainId.dbType);
+        TitleDomainId.pgType);
   }
 
   public Field<TitleId, TitledpersonRow> title() {
@@ -54,7 +54,7 @@ public class TitledpersonFields extends TupleExpr3<TitleDomainId, TitleId, Strin
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTitle(value),
-        TitleId.dbType);
+        TitleId.pgType);
   }
 
   public Field<String, TitledpersonRow> name() {

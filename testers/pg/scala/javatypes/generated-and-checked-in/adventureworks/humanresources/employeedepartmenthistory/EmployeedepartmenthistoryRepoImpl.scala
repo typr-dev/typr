@@ -25,7 +25,7 @@ import dev.typr.foundations.Fragment.interpolate
 class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
   override def delete: DeleteBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = DeleteBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.date, compositeId.startdate), Fragment.lit(""" AND "departmentid" = """), Fragment.encode(DepartmentId.dbType, compositeId.departmentid), Fragment.lit(""" AND "shiftid" = """), Fragment.encode(ShiftId.dbType, compositeId.shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.date, compositeId.startdate), Fragment.lit(""" AND "departmentid" = """), Fragment.encode(DepartmentId.pgType, compositeId.departmentid), Fragment.lit(""" AND "shiftid" = """), Fragment.encode(ShiftId.pgType, compositeId.shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Integer = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
@@ -35,13 +35,13 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     return interpolate(Fragment.lit("""delete
     from "humanresources"."employeedepartmenthistory"
     where ("businessentityid", "startdate", "departmentid", "shiftid")
-    in (select * from unnest("""), Fragment.encode(BusinessentityId.dbTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(PgTypes.dateArray, startdate), Fragment.lit(", "), Fragment.encode(DepartmentId.dbTypeArray, departmentid), Fragment.lit(", "), Fragment.encode(ShiftId.dbTypeArray, shiftid), Fragment.lit("""))
+    in (select * from unnest("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(PgTypes.dateArray, startdate), Fragment.lit(", "), Fragment.encode(DepartmentId.pgTypeArray, departmentid), Fragment.lit(", "), Fragment.encode(ShiftId.pgTypeArray, shiftid), Fragment.lit("""))
     """)).update().runUnchecked(c)
   }
 
   override def insert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(DepartmentId.dbType, unsaved.departmentid), Fragment.lit("::int2, "), Fragment.encode(ShiftId.dbType, unsaved.shiftid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.date, unsaved.startdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.date.opt(), unsaved.enddate), Fragment.lit("::date, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int2, "), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.date, unsaved.startdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.date.opt(), unsaved.enddate), Fragment.lit("::date, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     RETURNING "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     """))
     .updateReturning(EmployeedepartmenthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -51,11 +51,11 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""departmentid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(DepartmentId.dbType, unsaved.departmentid), Fragment.lit("::int2"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int2"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(ShiftId.dbType, unsaved.shiftid), Fragment.lit("::int2"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int2"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""startdate"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.date, unsaved.startdate), Fragment.lit("::date"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""enddate"""")): @scala.annotation.nowarn
@@ -95,7 +95,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
   override def selectById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Optional[EmployeedepartmenthistoryRow] = {
     interpolate(Fragment.lit("""select "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     from "humanresources"."employeedepartmenthistory"
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.date, compositeId.startdate), Fragment.lit(""" AND "departmentid" = """), Fragment.encode(DepartmentId.dbType, compositeId.departmentid), Fragment.lit(""" AND "shiftid" = """), Fragment.encode(ShiftId.dbType, compositeId.shiftid), Fragment.lit("")).query(EmployeedepartmenthistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.date, compositeId.startdate), Fragment.lit(""" AND "departmentid" = """), Fragment.encode(DepartmentId.pgType, compositeId.departmentid), Fragment.lit(""" AND "shiftid" = """), Fragment.encode(ShiftId.pgType, compositeId.shiftid), Fragment.lit("")).query(EmployeedepartmenthistoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): java.util.List[EmployeedepartmenthistoryRow] = {
@@ -106,7 +106,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     return interpolate(Fragment.lit("""select "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     from "humanresources"."employeedepartmenthistory"
     where ("businessentityid", "startdate", "departmentid", "shiftid")
-    in (select * from unnest("""), Fragment.encode(BusinessentityId.dbTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(PgTypes.dateArray, startdate), Fragment.lit(", "), Fragment.encode(DepartmentId.dbTypeArray, departmentid), Fragment.lit(", "), Fragment.encode(ShiftId.dbTypeArray, shiftid), Fragment.lit("""))
+    in (select * from unnest("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(PgTypes.dateArray, startdate), Fragment.lit(", "), Fragment.encode(DepartmentId.pgTypeArray, departmentid), Fragment.lit(", "), Fragment.encode(ShiftId.pgTypeArray, shiftid), Fragment.lit("""))
     """)).query(EmployeedepartmenthistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -123,12 +123,12 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     return interpolate(Fragment.lit("""update "humanresources"."employeedepartmenthistory"
     set "enddate" = """), Fragment.encode(PgTypes.date.opt(), row.enddate), Fragment.lit("""::date,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.date, compositeId.startdate), Fragment.lit(""" AND "departmentid" = """), Fragment.encode(DepartmentId.dbType, compositeId.departmentid), Fragment.lit(""" AND "shiftid" = """), Fragment.encode(ShiftId.dbType, compositeId.shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.date, compositeId.startdate), Fragment.lit(""" AND "departmentid" = """), Fragment.encode(DepartmentId.pgType, compositeId.departmentid), Fragment.lit(""" AND "shiftid" = """), Fragment.encode(ShiftId.pgType, compositeId.shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   interpolate(Fragment.lit("""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(DepartmentId.dbType, unsaved.departmentid), Fragment.lit("::int2, "), Fragment.encode(ShiftId.dbType, unsaved.shiftid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.date, unsaved.startdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.date.opt(), unsaved.enddate), Fragment.lit("::date, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int2, "), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int2, "), Fragment.encode(PgTypes.date, unsaved.startdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.date.opt(), unsaved.enddate), Fragment.lit("::date, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     on conflict ("businessentityid", "startdate", "departmentid", "shiftid")
     do update set
       "enddate" = EXCLUDED."enddate",

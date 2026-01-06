@@ -29,7 +29,7 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
       Optional.empty(),
       Optional.of("uuid"),
       (row, value) => row.copy(userId = value),
-      UsersId.dbType
+      UsersId.pgType
     )
   }
 

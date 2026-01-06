@@ -39,5 +39,5 @@ case class UsersRowUnsaved(
 }
 
 object UsersRowUnsaved {
-  given pgText: PgText[UsersRowUnsaved] = PgText.instance((row, sb) => { UsersId.dbType.text.unsafeEncode(row.userId, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.text.nullable.text.unsafeEncode(row.lastName, sb); sb.append(PgText.DELIMETER); PgTypes.unknown.text.unsafeEncode(row.email, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.password, sb); sb.append(PgText.DELIMETER); PgTypes.timestamptz.nullable.text.unsafeEncode(row.verifiedOn, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamptz.text).unsafeEncode(row.createdAt, sb) })
+  given pgText: PgText[UsersRowUnsaved] = PgText.instance((row, sb) => { UsersId.pgType.text.unsafeEncode(row.userId, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.text.nullable.text.unsafeEncode(row.lastName, sb); sb.append(PgText.DELIMETER); PgTypes.unknown.text.unsafeEncode(row.email, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.password, sb); sb.append(PgText.DELIMETER); PgTypes.timestamptz.nullable.text.unsafeEncode(row.verifiedOn, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamptz.text).unsafeEncode(row.createdAt, sb) })
 }

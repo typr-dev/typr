@@ -23,9 +23,18 @@ import java.util.Optional;
 import testdb.products.ProductsFields;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
+import testdb.userdefined.IsPrimary;
 
 public class ProductImagesFields
-    extends TupleExpr8<ProductImagesId, ProductsId, String, String, String, Uint1, Boolean, byte[]>
+    extends TupleExpr8<
+        ProductImagesId,
+        ProductsId,
+        String,
+        String,
+        String,
+        Uint1, /* user-picked */
+        IsPrimary,
+        byte[]>
     implements RelationStructure<ProductImagesFields, ProductImagesRow>,
         FieldsBase<ProductImagesRow> {
   List<Path> _path;
@@ -45,7 +54,7 @@ public class ProductImagesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withImageId(value),
-        ProductImagesId.dbType);
+        ProductImagesId.mariaType);
   }
 
   public Field<ProductsId, ProductImagesRow> productId() {
@@ -56,7 +65,7 @@ public class ProductImagesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public Field<String, ProductImagesRow> imageUrl() {
@@ -103,15 +112,15 @@ public class ProductImagesFields
         MariaTypes.tinyintUnsigned);
   }
 
-  public Field<Boolean, ProductImagesRow> isPrimary() {
-    return new Field<Boolean, ProductImagesRow>(
+  public Field</* user-picked */ IsPrimary, ProductImagesRow> isPrimary() {
+    return new Field</* user-picked */ IsPrimary, ProductImagesRow>(
         _path,
         "is_primary",
         ProductImagesRow::isPrimary,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsPrimary(value),
-        MariaTypes.bool);
+        IsPrimary.mariaType);
   }
 
   public OptField<byte[], ProductImagesRow> imageData() {
@@ -189,7 +198,7 @@ public class ProductImagesFields
   }
 
   @Override
-  public SqlExpr<Boolean> _7() {
+  public SqlExpr</* user-picked */ IsPrimary> _7() {
     return isPrimary();
   }
 

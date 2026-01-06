@@ -5,8 +5,9 @@
  */
 package adventureworks.person_dynamic
 
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.RowParser
 import dev.typr.foundations.RowParsers
@@ -20,19 +21,19 @@ case class PersonDynamicSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Optional[Name],
+  middlename: Optional[/* user-picked */ MiddleName],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name
-) extends Tuple4[Optional[/* max 8 chars */ String], /* user-picked */ FirstName, Optional[Name], Name] {
+  lastname: /* user-picked */ LastName
+) extends Tuple4[Optional[/* max 8 chars */ String], /* user-picked */ FirstName, Optional[/* user-picked */ MiddleName], /* user-picked */ LastName] {
   override def `_1`: Optional[/* max 8 chars */ String] = title
 
   override def `_2`: /* user-picked */ FirstName = firstname
 
-  override def `_3`: Optional[Name] = middlename
+  override def `_3`: Optional[/* user-picked */ MiddleName] = middlename
 
-  override def `_4`: Name = lastname
+  override def `_4`: /* user-picked */ LastName = lastname
 }
 
 object PersonDynamicSqlRow {
-  val `_rowParser`: RowParser[PersonDynamicSqlRow] = RowParsers.of(PgTypes.text.opt(), FirstName.dbType, Name.dbType.opt(), Name.dbType, PersonDynamicSqlRow.apply, row => Array[Any](row.title, row.firstname, row.middlename, row.lastname))
+  val `_rowParser`: RowParser[PersonDynamicSqlRow] = RowParsers.of(PgTypes.text.opt(), FirstName.pgType, MiddleName.pgType.opt(), LastName.pgType, PersonDynamicSqlRow.apply, row => Array[Any](row.title, row.firstname, row.middlename, row.lastname))
 }

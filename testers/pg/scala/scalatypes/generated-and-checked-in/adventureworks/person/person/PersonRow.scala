@@ -7,9 +7,10 @@ package adventureworks.person.person
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple13
@@ -43,9 +44,9 @@ case class PersonRow(
   /** First name of the person. */
   firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  middlename: Option[Name],
+  middlename: Option[/* user-picked */ MiddleName],
   /** Last name of the person. */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   suffix: Option[/* max 10 chars */ String],
   /** 0 = Contact does not wish to receive e-mail promotions, 1 = Contact does wish to receive e-mail promotions from AdventureWorks, 2 = Contact does wish to receive e-mail promotions from AdventureWorks and selected partners.
@@ -61,7 +62,7 @@ case class PersonRow(
   rowguid: UUID,
   /** Default: now() */
   modifieddate: LocalDateTime
-) extends Tuple13[BusinessentityId, String, NameStyle, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[Name], Name, Option[/* max 10 chars */ String], Int, Option[Xml], Option[Xml], UUID, LocalDateTime] {
+) extends Tuple13[BusinessentityId, String, NameStyle, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[/* user-picked */ MiddleName], /* user-picked */ LastName, Option[/* max 10 chars */ String], Int, Option[Xml], Option[Xml], UUID, LocalDateTime] {
   def id: BusinessentityId = businessentityid
 
   def toUnsavedRow(
@@ -97,9 +98,9 @@ case class PersonRow(
 
   override def `_5`: /* user-picked */ FirstName = firstname
 
-  override def `_6`: Option[Name] = middlename
+  override def `_6`: Option[/* user-picked */ MiddleName] = middlename
 
-  override def `_7`: Name = lastname
+  override def `_7`: /* user-picked */ LastName = lastname
 
   override def `_8`: Option[/* max 10 chars */ String] = suffix
 
@@ -115,7 +116,7 @@ case class PersonRow(
 }
 
 object PersonRow {
-  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(BusinessentityId.dbType, PgTypes.bpchar, NameStyle.dbType, PgTypes.text.nullable, FirstName.dbType, Name.dbType.nullable, Name.dbType, PgTypes.text.nullable, ScalaDbTypes.PgTypes.int4, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.uuid, PgTypes.timestamp)(PersonRow.apply)(row => Array[Any](row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text.nullable, FirstName.pgType, MiddleName.pgType.nullable, LastName.pgType, PgTypes.text.nullable, ScalaDbTypes.PgTypes.int4, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.uuid, PgTypes.timestamp)(PersonRow.apply)(row => Array[Any](row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate))
 
   given pgText: PgText[PersonRow] = PgText.from(`_rowParser`.underlying)
 }

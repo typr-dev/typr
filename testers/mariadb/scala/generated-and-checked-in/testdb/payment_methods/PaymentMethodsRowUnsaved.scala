@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.data.Json
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.IsActive
 
 /** This class corresponds to a row in table `payment_methods` which has not been persisted yet */
 case class PaymentMethodsRowUnsaved(
@@ -25,7 +26,7 @@ case class PaymentMethodsRowUnsaved(
   /** Default: 1
 
    */
-  @JsonProperty("is_active") isActive: Defaulted[Boolean] = new UseDefault(),
+  @JsonProperty("is_active") isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault(),
   /** Default: 0
 
    */
@@ -33,7 +34,7 @@ case class PaymentMethodsRowUnsaved(
 ) {
   def toRow(
     processorConfigDefault: => Option[Json],
-    isActiveDefault: => Boolean,
+    isActiveDefault: => /* user-picked */ IsActive,
     sortOrderDefault: => Byte,
     methodIdDefault: => PaymentMethodsId
   ): PaymentMethodsRow = {

@@ -22,19 +22,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class UsersRepoImpl extends UsersRepo {
   override def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of(""""public"."users"""", UsersFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(userId: UsersId)(using c: Connection): Boolean = sql"""delete from "public"."users" where "user_id" = ${Fragment.encode(UsersId.dbType, userId)}""".update().runUnchecked(c) > 0
+  override def deleteById(userId: UsersId)(using c: Connection): Boolean = sql"""delete from "public"."users" where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(userIds: Array[UsersId])(using c: Connection): Int = {
     sql"""delete
     from "public"."users"
-    where "user_id" = ANY(${Fragment.encode(UsersId.dbTypeArray, userIds)})"""
+    where "user_id" = ANY(${Fragment.encode(UsersId.pgTypeArray, userIds)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   sql"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
-    values (${Fragment.encode(UsersId.dbType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.nullable, unsaved.verifiedOn)}::timestamptz)
+    values (${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.nullable, unsaved.verifiedOn)}::timestamptz)
     RETURNING "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     """
     .updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -44,7 +44,7 @@ class UsersRepoImpl extends UsersRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""user_id"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(UsersId.dbType, unsaved.userId)}::uuid"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.name)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""last_name"""")): @scala.annotation.nowarn
@@ -90,13 +90,13 @@ class UsersRepoImpl extends UsersRepo {
   override def selectById(userId: UsersId)(using c: Connection): Option[UsersRow] = {
     sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     from "public"."users"
-    where "user_id" = ${Fragment.encode(UsersId.dbType, userId)}""".query(UsersRow.`_rowParser`.first()).runUnchecked(c)
+    where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".query(UsersRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(userIds: Array[UsersId])(using c: Connection): List[UsersRow] = {
     sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     from "public"."users"
-    where "user_id" = ANY(${Fragment.encode(UsersId.dbTypeArray, userIds)})""".query(UsersRow.`_rowParser`.all()).runUnchecked(c)
+    where "user_id" = ANY(${Fragment.encode(UsersId.pgTypeArray, userIds)})""".query(UsersRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(userIds: Array[UsersId])(using c: Connection): Map[UsersId, UsersRow] = {
@@ -123,12 +123,12 @@ class UsersRepoImpl extends UsersRepo {
     "password" = ${Fragment.encode(PgTypes.text, row.password)},
     "created_at" = ${Fragment.encode(PgTypes.timestamptz, row.createdAt)}::timestamptz,
     "verified_on" = ${Fragment.encode(PgTypes.timestamptz.nullable, row.verifiedOn)}::timestamptz
-    where "user_id" = ${Fragment.encode(UsersId.dbType, userId)}""".update().runUnchecked(c) > 0
+    where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   sql"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
-    values (${Fragment.encode(UsersId.dbType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.nullable, unsaved.verifiedOn)}::timestamptz)
+    values (${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.nullable, unsaved.verifiedOn)}::timestamptz)
     on conflict ("user_id")
     do update set
       "name" = EXCLUDED."name",

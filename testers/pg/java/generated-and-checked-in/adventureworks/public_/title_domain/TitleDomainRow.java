@@ -18,7 +18,7 @@ public record TitleDomainRow(TitleDomainId code) implements Tuple1<TitleDomainId
   ;
 
   public static RowParser<TitleDomainRow> _rowParser =
-      RowParsers.of(TitleDomainId.dbType, TitleDomainRow::new, row -> new Object[] {row.code()});
+      RowParsers.of(TitleDomainId.pgType, TitleDomainRow::new, row -> new Object[] {row.code()});
   ;
 
   public static PgText<TitleDomainRow> pgText = PgText.from(_rowParser);

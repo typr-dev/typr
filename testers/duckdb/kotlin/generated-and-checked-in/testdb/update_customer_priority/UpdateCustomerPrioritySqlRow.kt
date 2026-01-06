@@ -14,6 +14,7 @@ import dev.typr.foundations.kotlin.nullable
 import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
 /** SQL file: update_customer_priority.sql */
 data class UpdateCustomerPrioritySqlRow(
@@ -22,23 +23,23 @@ data class UpdateCustomerPrioritySqlRow(
   /** Points to [testdb.customers.CustomersRow.name] */
   val name: String,
   /** Points to [testdb.customers.CustomersRow.email] */
-  val email: String?,
+  val email: /* user-picked */ Email?,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** Points to [testdb.customers.CustomersRow.priority] */
   val priority: Priority?
-) : Tuple5<CustomersId, String, String?, LocalDateTime, Priority?> {
+) : Tuple5<CustomersId, String, /* user-picked */ Email?, LocalDateTime, Priority?> {
   override fun _1(): CustomersId = customerId
 
   override fun _2(): String = name
 
-  override fun _3(): String? = email
+  override fun _3(): /* user-picked */ Email? = email
 
   override fun _4(): LocalDateTime = createdAt
 
   override fun _5(): Priority? = priority
 
   companion object {
-    val _rowParser: RowParser<UpdateCustomerPrioritySqlRow> = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable(), DuckDbTypes.timestamp, Priority.duckDbType.nullable(), { t0, t1, t2, t3, t4 -> UpdateCustomerPrioritySqlRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt, row.priority) })
+    val _rowParser: RowParser<UpdateCustomerPrioritySqlRow> = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable(), DuckDbTypes.timestamp, Priority.duckDbType.nullable(), { t0, t1, t2, t3, t4 -> UpdateCustomerPrioritySqlRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt, row.priority) })
   }
 }

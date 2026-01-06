@@ -81,6 +81,9 @@ object GeneratedOracle {
               lang = lang,
               dbLib = Some(dbLib), // Use Typo's Java DSL
               jsonLibs = List(jsonLib), // Jackson for JSON serialization
+              typeDefinitions = TypeDefinitions(
+                TypeEntry.db("Email", DbMatch.column("*email*"))
+              ),
               generateMockRepos = Selector.All,
               enablePrimaryKeyType = Selector.All, // Generate type-safe ID types
               enableTestInserts = Selector.All, // Generate test data factories
@@ -90,7 +93,7 @@ object GeneratedOracle {
             val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in$suffix")
 
             val newFiles: Generated =
-              generate(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), Map.empty).head
+              generate.orThrow(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), Map.empty).head
 
             val changedFiles = newFiles
               .overwriteFolder(softWrite = FileSync.SoftWrite.Yes(Set.empty))

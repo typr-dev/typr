@@ -10,6 +10,8 @@ import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
+import testdb.userdefined.IsActive
 
 /** This class corresponds to a row in table `warehouses` which has not been persisted yet */
 case class WarehousesRowUnsaved(
@@ -32,11 +34,11 @@ case class WarehousesRowUnsaved(
   /** Default: 1
 
    */
-  @JsonProperty("is_active") isActive: Defaulted[Boolean] = new UseDefault(),
+  @JsonProperty("is_active") isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault(),
   /** Default: NULL
 
    */
-  @JsonProperty("contact_email") contactEmail: Defaulted[Option[String]] = new UseDefault(),
+  @JsonProperty("contact_email") contactEmail: Defaulted[Option[/* user-picked */ Email]] = new UseDefault(),
   /** Default: NULL
 
    */
@@ -45,8 +47,8 @@ case class WarehousesRowUnsaved(
   def toRow(
     serviceAreaDefault: => Option[Polygon],
     timezoneDefault: => String,
-    isActiveDefault: => Boolean,
-    contactEmailDefault: => Option[String],
+    isActiveDefault: => /* user-picked */ IsActive,
+    contactEmailDefault: => Option[/* user-picked */ Email],
     contactPhoneDefault: => Option[String],
     warehouseIdDefault: => WarehousesId
   ): WarehousesRow = {

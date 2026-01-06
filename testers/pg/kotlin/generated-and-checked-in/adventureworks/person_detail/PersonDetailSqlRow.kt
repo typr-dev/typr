@@ -6,8 +6,9 @@
 package adventureworks.person_detail
 
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple10
 import dev.typr.foundations.kotlin.RowParser
@@ -24,9 +25,9 @@ data class PersonDetailSqlRow(
   /** Points to [adventureworks.person.person.PersonRow.firstname] */
   val firstname: /* user-picked */ FirstName,
   /** Points to [adventureworks.person.person.PersonRow.middlename] */
-  val middlename: Name?,
+  val middlename: /* user-picked */ MiddleName?,
   /** Points to [adventureworks.person.person.PersonRow.lastname] */
-  val lastname: Name,
+  val lastname: /* user-picked */ LastName,
   /** Points to [adventureworks.humanresources.employee.EmployeeRow.jobtitle] */
   val jobtitle: String,
   /** Points to [adventureworks.person.address.AddressRow.addressline1] */
@@ -37,7 +38,7 @@ data class PersonDetailSqlRow(
   val postalcode: String?,
   /** Points to [adventureworks.person.address.AddressRow.rowguid] */
   val rowguid: UUID?
-) : Tuple10<BusinessentityId, /* max 8 chars */ String?, /* user-picked */ FirstName, Name?, Name, String, String?, String?, String?, UUID?> {
+) : Tuple10<BusinessentityId, /* max 8 chars */ String?, /* user-picked */ FirstName, /* user-picked */ MiddleName?, /* user-picked */ LastName, String, String?, String?, String?, UUID?> {
   override fun _1(): BusinessentityId = businessentityid
 
   override fun _10(): UUID? = rowguid
@@ -46,9 +47,9 @@ data class PersonDetailSqlRow(
 
   override fun _3(): /* user-picked */ FirstName = firstname
 
-  override fun _4(): Name? = middlename
+  override fun _4(): /* user-picked */ MiddleName? = middlename
 
-  override fun _5(): Name = lastname
+  override fun _5(): /* user-picked */ LastName = lastname
 
   override fun _6(): String = jobtitle
 
@@ -59,6 +60,6 @@ data class PersonDetailSqlRow(
   override fun _9(): String? = postalcode
 
   companion object {
-    val _rowParser: RowParser<PersonDetailSqlRow> = RowParsers.of(BusinessentityId.dbType, PgTypes.text.nullable(), FirstName.dbType, Name.dbType.nullable(), Name.dbType, PgTypes.text, PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.uuid.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PersonDetailSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid) })
+    val _rowParser: RowParser<PersonDetailSqlRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.nullable(), FirstName.pgType, MiddleName.pgType.nullable(), LastName.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.uuid.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PersonDetailSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid) })
   }
 }

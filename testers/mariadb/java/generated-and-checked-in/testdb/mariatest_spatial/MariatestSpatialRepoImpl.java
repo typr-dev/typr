@@ -32,7 +32,7 @@ public class MariatestSpatialRepoImpl implements MariatestSpatialRepo {
   public Boolean deleteById(MariatestSpatialId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `mariatest_spatial` where `id` = "),
-                Fragment.encode(MariatestSpatialId.dbType, id),
+                Fragment.encode(MariatestSpatialId.mariaType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +43,7 @@ public class MariatestSpatialRepoImpl implements MariatestSpatialRepo {
   public Integer deleteByIds(MariatestSpatialId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(MariatestSpatialId.dbType, id));
+      fragments.add(Fragment.encode(MariatestSpatialId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -168,7 +168,7 @@ public class MariatestSpatialRepoImpl implements MariatestSpatialRepo {
                     + " `geometrycollection_col`\n"
                     + "from `mariatest_spatial`\n"
                     + "where `id` = "),
-            Fragment.encode(MariatestSpatialId.dbType, id),
+            Fragment.encode(MariatestSpatialId.mariaType, id),
             Fragment.lit(""))
         .query(MariatestSpatialRow._rowParser.first())
         .runUnchecked(c);
@@ -178,7 +178,7 @@ public class MariatestSpatialRepoImpl implements MariatestSpatialRepo {
   public List<MariatestSpatialRow> selectByIds(MariatestSpatialId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(MariatestSpatialId.dbType, id));
+      fragments.add(Fragment.encode(MariatestSpatialId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -232,7 +232,7 @@ public class MariatestSpatialRepoImpl implements MariatestSpatialRepo {
                 Fragment.lit(",\n`geometrycollection_col` = "),
                 Fragment.encode(MariaTypes.geometrycollection, row.geometrycollectionCol()),
                 Fragment.lit("\nwhere `id` = "),
-                Fragment.encode(MariatestSpatialId.dbType, id),
+                Fragment.encode(MariatestSpatialId.mariaType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -247,7 +247,7 @@ public class MariatestSpatialRepoImpl implements MariatestSpatialRepo {
                     + " `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`,"
                     + " `multipolygon_col`, `geometrycollection_col`)\n"
                     + "VALUES ("),
-            Fragment.encode(MariatestSpatialId.dbType, unsaved.id()),
+            Fragment.encode(MariatestSpatialId.mariaType, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.geometry, unsaved.geometryCol()),
             Fragment.lit(", "),

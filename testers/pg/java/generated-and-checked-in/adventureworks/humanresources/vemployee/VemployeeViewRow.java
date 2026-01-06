@@ -9,6 +9,8 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Name;
 import adventureworks.public_.Phone;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.RowParser;
 import dev.typr.foundations.RowParsers;
@@ -24,9 +26,9 @@ public record VemployeeViewRow(
     /** Points to {@link adventureworks.person.person.PersonRow#firstname()} */
     /* user-picked */ FirstName firstname,
     /** Points to {@link adventureworks.person.person.PersonRow#middlename()} */
-    Name middlename,
+    /* user-picked */ MiddleName middlename,
     /** Points to {@link adventureworks.person.person.PersonRow#lastname()} */
-    Name lastname,
+    /* user-picked */ LastName lastname,
     /** Points to {@link adventureworks.person.person.PersonRow#suffix()} */
     String suffix,
     /** Points to {@link adventureworks.humanresources.employee.EmployeeRow#jobtitle()} */
@@ -56,9 +58,9 @@ public record VemployeeViewRow(
     implements Tuple18<
         BusinessentityId,
         String, /* user-picked */
-        FirstName,
-        Name,
-        Name,
+        FirstName, /* user-picked */
+        MiddleName, /* user-picked */
+        LastName,
         String,
         String,
         Phone,
@@ -145,7 +147,7 @@ public record VemployeeViewRow(
   ;
 
   /** Points to {@link adventureworks.person.person.PersonRow#middlename()} */
-  public VemployeeViewRow withMiddlename(Name middlename) {
+  public VemployeeViewRow withMiddlename(/* user-picked */ MiddleName middlename) {
     return new VemployeeViewRow(
         businessentityid,
         title,
@@ -169,7 +171,7 @@ public record VemployeeViewRow(
   ;
 
   /** Points to {@link adventureworks.person.person.PersonRow#lastname()} */
-  public VemployeeViewRow withLastname(Name lastname) {
+  public VemployeeViewRow withLastname(/* user-picked */ LastName lastname) {
     return new VemployeeViewRow(
         businessentityid,
         title,
@@ -506,23 +508,23 @@ public record VemployeeViewRow(
 
   public static RowParser<VemployeeViewRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.text,
-          FirstName.dbType,
-          Name.dbType,
-          Name.dbType,
+          FirstName.pgType,
+          MiddleName.pgType,
+          LastName.pgType,
           PgTypes.text,
           PgTypes.text,
-          Phone.dbType,
-          Name.dbType,
+          Phone.pgType,
+          Name.pgType,
           PgTypes.text,
           PgTypes.int4,
           PgTypes.text,
           PgTypes.text,
           PgTypes.text,
-          Name.dbType,
+          Name.pgType,
           PgTypes.text,
-          Name.dbType,
+          Name.pgType,
           PgTypes.xml,
           VemployeeViewRow::new,
           row ->
@@ -621,13 +623,13 @@ public record VemployeeViewRow(
   ;
 
   @Override
-  public Name _4() {
+  public /* user-picked */ MiddleName _4() {
     return middlename;
   }
   ;
 
   @Override
-  public Name _5() {
+  public /* user-picked */ LastName _5() {
     return lastname;
   }
   ;

@@ -33,7 +33,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
   public Boolean deleteById(IdentityTestId name, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"public\".\"identity-test\" where \"name\" = "),
-                Fragment.encode(IdentityTestId.dbType, name),
+                Fragment.encode(IdentityTestId.pgType, name),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -44,7 +44,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
   public Integer deleteByIds(IdentityTestId[] names, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"public\".\"identity-test\"\nwhere \"name\" = ANY("),
-            Fragment.encode(IdentityTestId.dbTypeArray, names),
+            Fragment.encode(IdentityTestId.pgTypeArray, names),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -58,7 +58,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
                     + "values ("),
             Fragment.encode(PgTypes.int4, unsaved.defaultGenerated()),
             Fragment.lit("::int4, "),
-            Fragment.encode(IdentityTestId.dbType, unsaved.name()),
+            Fragment.encode(IdentityTestId.pgType, unsaved.name()),
             Fragment.lit(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"))
         .updateReturning(IdentityTestRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -72,7 +72,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
     ;
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(IdentityTestId.dbType, unsaved.name()), Fragment.lit("")));
+        interpolate(Fragment.encode(IdentityTestId.pgType, unsaved.name()), Fragment.lit("")));
     unsaved
         .defaultGenerated()
         .visit(
@@ -142,7 +142,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
                 "select \"always_generated\", \"default_generated\", \"name\"\n"
                     + "from \"public\".\"identity-test\"\n"
                     + "where \"name\" = "),
-            Fragment.encode(IdentityTestId.dbType, name),
+            Fragment.encode(IdentityTestId.pgType, name),
             Fragment.lit(""))
         .query(IdentityTestRow._rowParser.first())
         .runUnchecked(c);
@@ -155,7 +155,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
                 "select \"always_generated\", \"default_generated\", \"name\"\n"
                     + "from \"public\".\"identity-test\"\n"
                     + "where \"name\" = ANY("),
-            Fragment.encode(IdentityTestId.dbTypeArray, names),
+            Fragment.encode(IdentityTestId.pgTypeArray, names),
             Fragment.lit(")"))
         .query(IdentityTestRow._rowParser.all())
         .runUnchecked(c);
@@ -186,7 +186,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
                 Fragment.lit("update \"public\".\"identity-test\"\nset \"default_generated\" = "),
                 Fragment.encode(PgTypes.int4, row.defaultGenerated()),
                 Fragment.lit("::int4\nwhere \"name\" = "),
-                Fragment.encode(IdentityTestId.dbType, name),
+                Fragment.encode(IdentityTestId.pgType, name),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -201,7 +201,7 @@ public class IdentityTestRepoImpl implements IdentityTestRepo {
                     + "values ("),
             Fragment.encode(PgTypes.int4, unsaved.defaultGenerated()),
             Fragment.lit("::int4, "),
-            Fragment.encode(IdentityTestId.dbType, unsaved.name()),
+            Fragment.encode(IdentityTestId.pgType, unsaved.name()),
             Fragment.lit(
                 ")\n"
                     + "on conflict (\"name\")\n"

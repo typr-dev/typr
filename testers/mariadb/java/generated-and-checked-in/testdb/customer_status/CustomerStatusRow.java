@@ -11,6 +11,7 @@ import dev.typr.foundations.RowParser;
 import dev.typr.foundations.RowParsers;
 import dev.typr.foundations.Tuple.Tuple3;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.IsActive;
 
 /** Table: customer_status Primary key: status_code */
 public record CustomerStatusRow(
@@ -19,8 +20,8 @@ public record CustomerStatusRow(
     /** */
     String description,
     /** Default: 1 */
-    @JsonProperty("is_active") Boolean isActive)
-    implements Tuple3<CustomerStatusId, String, Boolean> {
+    @JsonProperty("is_active") /* user-picked */ IsActive isActive)
+    implements Tuple3<CustomerStatusId, String, /* user-picked */ IsActive> {
   /** */
   public CustomerStatusRow withStatusCode(CustomerStatusId statusCode) {
     return new CustomerStatusRow(statusCode, description, isActive);
@@ -34,16 +35,16 @@ public record CustomerStatusRow(
   ;
 
   /** Default: 1 */
-  public CustomerStatusRow withIsActive(Boolean isActive) {
+  public CustomerStatusRow withIsActive(/* user-picked */ IsActive isActive) {
     return new CustomerStatusRow(statusCode, description, isActive);
   }
   ;
 
   public static RowParser<CustomerStatusRow> _rowParser =
       RowParsers.of(
-          CustomerStatusId.dbType,
+          CustomerStatusId.mariaType,
           MariaTypes.varchar,
-          MariaTypes.bool,
+          IsActive.mariaType,
           CustomerStatusRow::new,
           row -> new Object[] {row.statusCode(), row.description(), row.isActive()});
   ;
@@ -61,7 +62,7 @@ public record CustomerStatusRow(
   ;
 
   @Override
-  public Boolean _3() {
+  public /* user-picked */ IsActive _3() {
     return isActive;
   }
   ;
@@ -71,7 +72,7 @@ public record CustomerStatusRow(
   }
   ;
 
-  public CustomerStatusRowUnsaved toUnsavedRow(Defaulted<Boolean> isActive) {
+  public CustomerStatusRowUnsaved toUnsavedRow(Defaulted</* user-picked */ IsActive> isActive) {
     return new CustomerStatusRowUnsaved(statusCode, description, isActive);
   }
   ;

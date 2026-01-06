@@ -65,7 +65,7 @@ case class ProductcosthistoryRow(
 }
 
 object ProductcosthistoryRow {
-  val `_rowParser`: RowParser[ProductcosthistoryRow] = RowParsers.of(ProductId.dbType, PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.numeric, PgTypes.timestamp, ProductcosthistoryRow.apply, row => Array[Any](row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
+  val `_rowParser`: RowParser[ProductcosthistoryRow] = RowParsers.of(ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.numeric, PgTypes.timestamp, ProductcosthistoryRow.apply, row => Array[Any](row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
 
   def apply(
     compositeId: ProductcosthistoryId,

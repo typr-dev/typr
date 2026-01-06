@@ -17,7 +17,7 @@ case class PrecisionTypesId(@JsonValue value: Int) extends scala.AnyVal
 object PrecisionTypesId {
   given bijection: Bijection[PrecisionTypesId, Int] = Bijection.apply[PrecisionTypesId, Int](_.value)(PrecisionTypesId.apply)
 
-  given dbTypeArray: DuckDbType[Array[PrecisionTypesId]] = DuckDbTypes.integerArray.bimap(xs => xs.map(PrecisionTypesId.apply), xs => xs.map(_.value))
-
   given duckDbType: DuckDbType[PrecisionTypesId] = ScalaDbTypes.DuckDbTypes.integer.bimap(PrecisionTypesId.apply, _.value)
+
+  given duckDbTypeArray: DuckDbType[Array[PrecisionTypesId]] = DuckDbTypes.integerArray.bimap(xs => xs.map(PrecisionTypesId.apply), xs => xs.map(_.value))
 }

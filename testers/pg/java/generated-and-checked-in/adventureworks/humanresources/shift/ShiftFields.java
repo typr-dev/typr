@@ -39,7 +39,7 @@ public class ShiftFields extends TupleExpr5<ShiftId, Name, LocalTime, LocalTime,
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withShiftid(value),
-        ShiftId.dbType);
+        ShiftId.pgType);
   }
 
   public Field<Name, ShiftRow> name() {
@@ -50,7 +50,7 @@ public class ShiftFields extends TupleExpr5<ShiftId, Name, LocalTime, LocalTime,
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<LocalTime, ShiftRow> starttime() {

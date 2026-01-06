@@ -89,5 +89,5 @@ case class OrderHistoryRow(
 }
 
 object OrderHistoryRow {
-  val `_rowParser`: RowParser[OrderHistoryRow] = RowParsers.of(OrderHistoryId.dbType, OrdersId.dbType, MariaTypes.text.nullable, MariaTypes.text, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable, MariaTypes.json.nullable, MariaTypes.datetime)(OrderHistoryRow.apply)(row => Array[Any](row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt))
+  val `_rowParser`: RowParser[OrderHistoryRow] = RowParsers.of(OrderHistoryId.mariaType, OrdersId.mariaType, MariaTypes.text.nullable, MariaTypes.text, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable, MariaTypes.json.nullable, MariaTypes.datetime)(OrderHistoryRow.apply)(row => Array[Any](row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt))
 }

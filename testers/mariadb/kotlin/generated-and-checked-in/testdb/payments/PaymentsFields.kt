@@ -73,11 +73,11 @@ data class PaymentsFields(val _path: List<Path>) : TupleExpr12<PaymentsId, Order
 
   fun ipAddress(): OptField<Inet6, PaymentsRow> = OptField<Inet6, PaymentsRow>(_path, "ip_address", PaymentsRow::ipAddress, null, null, { row, value -> row.copy(ipAddress = value) }, MariaTypes.inet6)
 
-  fun methodId(): Field<PaymentMethodsId, PaymentsRow> = Field<PaymentMethodsId, PaymentsRow>(_path, "method_id", PaymentsRow::methodId, null, null, { row, value -> row.copy(methodId = value) }, PaymentMethodsId.dbType)
+  fun methodId(): Field<PaymentMethodsId, PaymentsRow> = Field<PaymentMethodsId, PaymentsRow>(_path, "method_id", PaymentsRow::methodId, null, null, { row, value -> row.copy(methodId = value) }, PaymentMethodsId.mariaType)
 
-  fun orderId(): Field<OrdersId, PaymentsRow> = Field<OrdersId, PaymentsRow>(_path, "order_id", PaymentsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.dbType)
+  fun orderId(): Field<OrdersId, PaymentsRow> = Field<OrdersId, PaymentsRow>(_path, "order_id", PaymentsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType)
 
-  fun paymentId(): IdField<PaymentsId, PaymentsRow> = IdField<PaymentsId, PaymentsRow>(_path, "payment_id", PaymentsRow::paymentId, null, null, { row, value -> row.copy(paymentId = value) }, PaymentsId.dbType)
+  fun paymentId(): IdField<PaymentsId, PaymentsRow> = IdField<PaymentsId, PaymentsRow>(_path, "payment_id", PaymentsRow::paymentId, null, null, { row, value -> row.copy(paymentId = value) }, PaymentsId.mariaType)
 
   fun processedAt(): OptField<LocalDateTime, PaymentsRow> = OptField<LocalDateTime, PaymentsRow>(_path, "processed_at", PaymentsRow::processedAt, null, null, { row, value -> row.copy(processedAt = value) }, MariaTypes.datetime)
 

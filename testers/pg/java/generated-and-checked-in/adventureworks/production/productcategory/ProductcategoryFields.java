@@ -41,7 +41,7 @@ public class ProductcategoryFields extends TupleExpr4<ProductcategoryId, Name, U
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withProductcategoryid(value),
-        ProductcategoryId.dbType);
+        ProductcategoryId.pgType);
   }
 
   public Field<Name, ProductcategoryRow> name() {
@@ -52,7 +52,7 @@ public class ProductcategoryFields extends TupleExpr4<ProductcategoryId, Name, U
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<UUID, ProductcategoryRow> rowguid() {

@@ -13,6 +13,7 @@ import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
 /** SQL file: find-customers-by-email.sql */
 data class FindCustomersByEmailSqlRow(
@@ -21,19 +22,19 @@ data class FindCustomersByEmailSqlRow(
   /** Points to [testdb.customers.CustomersRow.name] */
   @field:JsonProperty("customer_name") val customerName: String,
   /** Points to [testdb.customers.CustomersRow.email] */
-  @field:JsonProperty("customer_email") val customerEmail: String,
+  @field:JsonProperty("customer_email") val customerEmail: /* user-picked */ Email,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime?
-) : Tuple4<CustomersId, String, String, LocalDateTime?> {
+) : Tuple4<CustomersId, String, /* user-picked */ Email, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
   override fun _2(): String = customerName
 
-  override fun _3(): String = customerEmail
+  override fun _3(): /* user-picked */ Email = customerEmail
 
   override fun _4(): LocalDateTime? = createdAt
 
   companion object {
-    val _rowParser: RowParser<FindCustomersByEmailSqlRow> = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar, SqlServerTypes.datetime2.nullable(), { t0, t1, t2, t3 -> FindCustomersByEmailSqlRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.customerEmail, row.createdAt) })
+    val _rowParser: RowParser<FindCustomersByEmailSqlRow> = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.nullable(), { t0, t1, t2, t3 -> FindCustomersByEmailSqlRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.customerEmail, row.createdAt) })
   }
 }

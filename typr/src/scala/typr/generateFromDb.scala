@@ -49,6 +49,14 @@ object generateFromDb {
       scripts <- eventualScripts
     } yield internal.generate(options, metaDb, scripts, openEnums)
 
-    Await.result(combined, Duration.Inf)
+    Await.result(combined, Duration.Inf) match {
+      case Right(generated) => generated
+      case Left(error) =>
+        error match {
+          case internal.generate.GenerateError.IncompatibleTypes(errors) =>
+            errors.foreach(options.logger.warn)
+            sys.error(s"TypeDefinitions has ${errors.size} incompatible type(s). See warnings above.")
+        }
+    }
   }
 }

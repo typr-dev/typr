@@ -72,15 +72,15 @@ data class OrderItemsFields(val _path: List<Path>) : TupleExpr13<OrderItemsId, O
 
   fun fulfillmentStatus(): Field<String, OrderItemsRow> = Field<String, OrderItemsRow>(_path, "fulfillment_status", OrderItemsRow::fulfillmentStatus, null, null, { row, value -> row.copy(fulfillmentStatus = value) }, MariaTypes.text)
 
-  fun itemId(): IdField<OrderItemsId, OrderItemsRow> = IdField<OrderItemsId, OrderItemsRow>(_path, "item_id", OrderItemsRow::itemId, null, null, { row, value -> row.copy(itemId = value) }, OrderItemsId.dbType)
+  fun itemId(): IdField<OrderItemsId, OrderItemsRow> = IdField<OrderItemsId, OrderItemsRow>(_path, "item_id", OrderItemsRow::itemId, null, null, { row, value -> row.copy(itemId = value) }, OrderItemsId.mariaType)
 
   fun lineTotal(): Field<BigDecimal, OrderItemsRow> = Field<BigDecimal, OrderItemsRow>(_path, "line_total", OrderItemsRow::lineTotal, null, null, { row, value -> row.copy(lineTotal = value) }, KotlinDbTypes.MariaTypes.numeric)
 
   fun notes(): OptField<String, OrderItemsRow> = OptField<String, OrderItemsRow>(_path, "notes", OrderItemsRow::notes, null, null, { row, value -> row.copy(notes = value) }, MariaTypes.tinytext)
 
-  fun orderId(): Field<OrdersId, OrderItemsRow> = Field<OrdersId, OrderItemsRow>(_path, "order_id", OrderItemsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.dbType)
+  fun orderId(): Field<OrdersId, OrderItemsRow> = Field<OrdersId, OrderItemsRow>(_path, "order_id", OrderItemsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType)
 
-  fun productId(): Field<ProductsId, OrderItemsRow> = Field<ProductsId, OrderItemsRow>(_path, "product_id", OrderItemsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.dbType)
+  fun productId(): Field<ProductsId, OrderItemsRow> = Field<ProductsId, OrderItemsRow>(_path, "product_id", OrderItemsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
 
   fun productName(): Field<String, OrderItemsRow> = Field<String, OrderItemsRow>(_path, "product_name", OrderItemsRow::productName, null, null, { row, value -> row.copy(productName = value) }, MariaTypes.varchar)
 
@@ -94,7 +94,7 @@ data class OrderItemsFields(val _path: List<Path>) : TupleExpr13<OrderItemsId, O
 
   fun unitPrice(): Field<BigDecimal, OrderItemsRow> = Field<BigDecimal, OrderItemsRow>(_path, "unit_price", OrderItemsRow::unitPrice, null, null, { row, value -> row.copy(unitPrice = value) }, KotlinDbTypes.MariaTypes.numeric)
 
-  fun warehouseId(): OptField<WarehousesId, OrderItemsRow> = OptField<WarehousesId, OrderItemsRow>(_path, "warehouse_id", OrderItemsRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.dbType)
+  fun warehouseId(): OptField<WarehousesId, OrderItemsRow> = OptField<WarehousesId, OrderItemsRow>(_path, "warehouse_id", OrderItemsRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.mariaType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<OrderItemsFields, OrderItemsRow> = OrderItemsFields(_path)
 

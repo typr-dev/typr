@@ -38,7 +38,7 @@ public class CustomersFields extends TupleExpr4<CustomersId, String, String, Loc
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCustomerId(value),
-        CustomersId.dbType);
+        CustomersId.db2Type);
   }
 
   public Field<String, CustomersRow> name() {

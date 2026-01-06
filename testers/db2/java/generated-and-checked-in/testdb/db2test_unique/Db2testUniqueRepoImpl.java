@@ -31,7 +31,7 @@ public class Db2testUniqueRepoImpl implements Db2testUniqueRepo {
   public Boolean deleteById(Db2testUniqueId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"DB2TEST_UNIQUE\" where \"ID\" = "),
-                Fragment.encode(Db2testUniqueId.dbType, id),
+                Fragment.encode(Db2testUniqueId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +42,7 @@ public class Db2testUniqueRepoImpl implements Db2testUniqueRepo {
   public Integer deleteByIds(Db2testUniqueId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(Db2testUniqueId.dbType, id));
+      fragments.add(Fragment.encode(Db2testUniqueId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -121,7 +121,7 @@ public class Db2testUniqueRepoImpl implements Db2testUniqueRepo {
                 "select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\n"
                     + "from \"DB2TEST_UNIQUE\"\n"
                     + "where \"ID\" = "),
-            Fragment.encode(Db2testUniqueId.dbType, id),
+            Fragment.encode(Db2testUniqueId.db2Type, id),
             Fragment.lit(""))
         .query(Db2testUniqueRow._rowParser.first())
         .runUnchecked(c);
@@ -131,7 +131,7 @@ public class Db2testUniqueRepoImpl implements Db2testUniqueRepo {
   public List<Db2testUniqueRow> selectByIds(Db2testUniqueId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(Db2testUniqueId.dbType, id));
+      fragments.add(Fragment.encode(Db2testUniqueId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -203,7 +203,7 @@ public class Db2testUniqueRepoImpl implements Db2testUniqueRepo {
                 Fragment.lit(",\n\"CATEGORY\" = "),
                 Fragment.encode(Db2Types.varchar, row.category()),
                 Fragment.lit("\nwhere \"ID\" = "),
-                Fragment.encode(Db2testUniqueId.dbType, id),
+                Fragment.encode(Db2testUniqueId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -214,7 +214,7 @@ public class Db2testUniqueRepoImpl implements Db2testUniqueRepo {
   public void upsert(Db2testUniqueRow unsaved, Connection c) {
     interpolate(
             Fragment.lit("MERGE INTO \"DB2TEST_UNIQUE\" AS t\nUSING (VALUES ("),
-            Fragment.encode(Db2testUniqueId.dbType, unsaved.id()),
+            Fragment.encode(Db2testUniqueId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.email()),
             Fragment.lit(", "),
@@ -229,7 +229,7 @@ public class Db2testUniqueRepoImpl implements Db2testUniqueRepo {
                     + "\"CATEGORY\" = s.\"CATEGORY\"\n"
                     + "WHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\")"
                     + " VALUES ("),
-            Fragment.encode(Db2testUniqueId.dbType, unsaved.id()),
+            Fragment.encode(Db2testUniqueId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.email()),
             Fragment.lit(", "),

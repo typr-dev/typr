@@ -39,7 +39,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 
@@ -51,7 +51,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(addressid = value),
-      AddressId.dbType
+      AddressId.pgType
     )
   }
 
@@ -63,7 +63,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(addresstypeid = value),
-      AddresstypeId.dbType
+      AddresstypeId.pgType
     )
   }
 

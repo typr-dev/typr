@@ -16,7 +16,7 @@ case class ShiftId(@JsonValue value: Integer) extends scala.AnyVal
 object ShiftId {
   given bijection: Bijection[ShiftId, Integer] = Bijection.apply[ShiftId, Integer](_.value)(ShiftId.apply)
 
-  given dbType: PgType[ShiftId] = PgTypes.int4.bimap(ShiftId.apply, _.value)
+  given pgType: PgType[ShiftId] = PgTypes.int4.bimap(ShiftId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[ShiftId]] = PgTypes.int4Array.bimap(xs => xs.map(ShiftId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[ShiftId]] = PgTypes.int4Array.bimap(xs => xs.map(ShiftId.apply), xs => xs.map(_.value))
 }

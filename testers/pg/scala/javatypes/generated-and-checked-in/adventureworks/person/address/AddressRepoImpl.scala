@@ -22,19 +22,19 @@ import dev.typr.foundations.Fragment.interpolate
 class AddressRepoImpl extends AddressRepo {
   override def delete: DeleteBuilder[AddressFields, AddressRow] = DeleteBuilder.of(""""person"."address"""", AddressFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(addressid: AddressId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."address" where "addressid" = """), Fragment.encode(AddressId.dbType, addressid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(addressid: AddressId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."address" where "addressid" = """), Fragment.encode(AddressId.pgType, addressid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(addressids: Array[AddressId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "person"."address"
-    where "addressid" = ANY("""), Fragment.encode(AddressId.dbTypeArray, addressids), Fragment.lit(")"))
+    where "addressid" = ANY("""), Fragment.encode(AddressId.pgTypeArray, addressids), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: AddressRow)(using c: Connection): AddressRow = {
   interpolate(Fragment.lit("""insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(AddressId.dbType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.addressline2), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit(", "), Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.addressline2), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit(", "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     RETURNING "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
     """))
     .updateReturning(AddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -50,14 +50,14 @@ class AddressRepoImpl extends AddressRepo {
     columns.add(Fragment.lit(""""city"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""stateprovinceid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""postalcode"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""spatiallocation"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.lit("::bytea"))): @scala.annotation.nowarn
     unsaved.addressid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""addressid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(AddressId.dbType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.lit(""""addressid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(AddressId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -98,13 +98,13 @@ class AddressRepoImpl extends AddressRepo {
   override def selectById(addressid: AddressId)(using c: Connection): Optional[AddressRow] = {
     interpolate(Fragment.lit("""select "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
     from "person"."address"
-    where "addressid" = """), Fragment.encode(AddressId.dbType, addressid), Fragment.lit("")).query(AddressRow.`_rowParser`.first()).runUnchecked(c)
+    where "addressid" = """), Fragment.encode(AddressId.pgType, addressid), Fragment.lit("")).query(AddressRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(addressids: Array[AddressId])(using c: Connection): java.util.List[AddressRow] = {
     interpolate(Fragment.lit("""select "addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate"
     from "person"."address"
-    where "addressid" = ANY("""), Fragment.encode(AddressId.dbTypeArray, addressids), Fragment.lit(")")).query(AddressRow.`_rowParser`.all()).runUnchecked(c)
+    where "addressid" = ANY("""), Fragment.encode(AddressId.pgTypeArray, addressids), Fragment.lit(")")).query(AddressRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(addressids: Array[AddressId])(using c: Connection): java.util.Map[AddressId, AddressRow] = {
@@ -121,17 +121,17 @@ class AddressRepoImpl extends AddressRepo {
     set "addressline1" = """), Fragment.encode(PgTypes.text, row.addressline1), Fragment.lit(""",
     "addressline2" = """), Fragment.encode(PgTypes.text.opt(), row.addressline2), Fragment.lit(""",
     "city" = """), Fragment.encode(PgTypes.text, row.city), Fragment.lit(""",
-    "stateprovinceid" = """), Fragment.encode(StateprovinceId.dbType, row.stateprovinceid), Fragment.lit("""::int4,
+    "stateprovinceid" = """), Fragment.encode(StateprovinceId.pgType, row.stateprovinceid), Fragment.lit("""::int4,
     "postalcode" = """), Fragment.encode(PgTypes.text, row.postalcode), Fragment.lit(""",
     "spatiallocation" = """), Fragment.encode(PgTypes.bytea.opt(), row.spatiallocation), Fragment.lit("""::bytea,
     "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "addressid" = """), Fragment.encode(AddressId.dbType, addressid), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "addressid" = """), Fragment.encode(AddressId.pgType, addressid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: AddressRow)(using c: Connection): AddressRow = {
   interpolate(Fragment.lit("""insert into "person"."address"("addressid", "addressline1", "addressline2", "city", "stateprovinceid", "postalcode", "spatiallocation", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(AddressId.dbType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.addressline2), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit(", "), Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.addressline2), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit(", "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     on conflict ("addressid")
     do update set
       "addressline1" = EXCLUDED."addressline1",

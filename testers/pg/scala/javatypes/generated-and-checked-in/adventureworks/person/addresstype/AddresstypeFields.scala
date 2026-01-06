@@ -29,7 +29,7 @@ class AddresstypeFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Ad
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(addresstypeid = value),
-      AddresstypeId.dbType
+      AddresstypeId.pgType
     )
   }
 
@@ -41,7 +41,7 @@ class AddresstypeFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Ad
       Optional.empty(),
       Optional.of("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

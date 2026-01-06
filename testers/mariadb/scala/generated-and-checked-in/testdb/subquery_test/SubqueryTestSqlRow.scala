@@ -13,25 +13,27 @@ import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
 import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
 
 /** SQL file: subquery_test.sql */
 case class SubqueryTestSqlRow(
   /** Points to [[testdb.customers.CustomersRow.customerId]] */
   @JsonProperty("customer_id") customerId: CustomersId,
   /** Points to [[testdb.customers.CustomersRow.email]] */
-  email: String,
+  email: /* user-picked */ Email,
   /** Points to [[testdb.customers.CustomersRow.firstName]] */
-  @JsonProperty("first_name") firstName: String,
+  @JsonProperty("first_name") firstName: /* user-picked */ FirstName,
   @JsonProperty("order_count") orderCount: Long,
   @JsonProperty("total_spent") totalSpent: BigDecimal,
   /** Points to [[testdb.brands.BrandsRow.name]] */
   @JsonProperty("favorite_brand") favoriteBrand: Option[String]
-) extends Tuple6[CustomersId, String, String, Long, BigDecimal, Option[String]] {
+) extends Tuple6[CustomersId, /* user-picked */ Email, /* user-picked */ FirstName, Long, BigDecimal, Option[String]] {
   override def `_1`: CustomersId = customerId
 
-  override def `_2`: String = email
+  override def `_2`: /* user-picked */ Email = email
 
-  override def `_3`: String = firstName
+  override def `_3`: /* user-picked */ FirstName = firstName
 
   override def `_4`: Long = orderCount
 
@@ -41,5 +43,5 @@ case class SubqueryTestSqlRow(
 }
 
 object SubqueryTestSqlRow {
-  val `_rowParser`: RowParser[SubqueryTestSqlRow] = RowParsers.of(CustomersId.dbType, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.varchar.nullable)(SubqueryTestSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand))
+  val `_rowParser`: RowParser[SubqueryTestSqlRow] = RowParsers.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.varchar.nullable)(SubqueryTestSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand))
 }

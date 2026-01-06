@@ -11,7 +11,6 @@ import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
 import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
@@ -19,8 +18,10 @@ import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr10
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
+import testdb.userdefined.Email
+import testdb.userdefined.IsActive
 
-class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[WarehousesId, String, String, String, Point, Polygon, String, Boolean, String, String] with RelationStructure[WarehousesFields, WarehousesRow]  with FieldsBase[WarehousesRow] {
+class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[WarehousesId, String, String, String, Point, Polygon, String, /* user-picked */ IsActive, /* user-picked */ Email, String] with RelationStructure[WarehousesFields, WarehousesRow]  with FieldsBase[WarehousesRow] {
   def warehouseId: IdField[WarehousesId, WarehousesRow] = {
     new IdField[WarehousesId, WarehousesRow](
       _path,
@@ -29,7 +30,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.dbType
+      WarehousesId.mariaType
     )
   }
 
@@ -105,27 +106,27 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
     )
   }
 
-  def isActive: Field[Boolean, WarehousesRow] = {
-    new Field[Boolean, WarehousesRow](
+  def isActive: Field[/* user-picked */ IsActive, WarehousesRow] = {
+    new Field[/* user-picked */ IsActive, WarehousesRow](
       _path,
       "is_active",
       _.isActive,
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsActive.mariaType
     )
   }
 
-  def contactEmail: OptField[String, WarehousesRow] = {
-    new OptField[String, WarehousesRow](
+  def contactEmail: OptField[/* user-picked */ Email, WarehousesRow] = {
+    new OptField[/* user-picked */ Email, WarehousesRow](
       _path,
       "contact_email",
       _.contactEmail,
       None,
       None,
       (row, value) => row.copy(contactEmail = value),
-      MariaTypes.varchar
+      Email.mariaType
     )
   }
 
@@ -161,9 +162,9 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
 
   override def `_7`: SqlExpr[String] = timezone
 
-  override def `_8`: SqlExpr[Boolean] = isActive
+  override def `_8`: SqlExpr[/* user-picked */ IsActive] = isActive
 
-  override def `_9`: SqlExpr[String] = contactEmail
+  override def `_9`: SqlExpr[/* user-picked */ Email] = contactEmail
 
   override def `_10`: SqlExpr[String] = contactPhone
 }

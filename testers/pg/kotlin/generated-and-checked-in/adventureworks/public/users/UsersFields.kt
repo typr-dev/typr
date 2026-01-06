@@ -51,7 +51,7 @@ data class UsersFields(val _path: List<Path>) : TupleExpr7<UsersId, String, Stri
 
   override fun rowParser(): RowParser<UsersRow> = UsersRow._rowParser.underlying
 
-  fun userId(): IdField<UsersId, UsersRow> = IdField<UsersId, UsersRow>(_path, "user_id", UsersRow::userId, null, "uuid", { row, value -> row.copy(userId = value) }, UsersId.dbType)
+  fun userId(): IdField<UsersId, UsersRow> = IdField<UsersId, UsersRow>(_path, "user_id", UsersRow::userId, null, "uuid", { row, value -> row.copy(userId = value) }, UsersId.pgType)
 
   fun verifiedOn(): OptField<Instant, UsersRow> = OptField<Instant, UsersRow>(_path, "verified_on", UsersRow::verifiedOn, null, "timestamptz", { row, value -> row.copy(verifiedOn = value) }, PgTypes.timestamptz)
 

@@ -33,9 +33,9 @@ public record BusinessentityaddressId(
 
   public static RowParser<BusinessentityaddressId> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
-          AddressId.dbType,
-          AddresstypeId.dbType,
+          BusinessentityId.pgType,
+          AddressId.pgType,
+          AddresstypeId.pgType,
           BusinessentityaddressId::new,
           row -> new Object[] {row.businessentityid(), row.addressid(), row.addresstypeid()});
   ;

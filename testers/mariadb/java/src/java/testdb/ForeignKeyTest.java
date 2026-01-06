@@ -11,6 +11,9 @@ import testdb.customer_status.*;
 import testdb.customers.*;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.orders.*;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 /**
  * Tests for foreign key relationships in the MariaDB ordering system. Tests type-safe FK
@@ -50,15 +53,19 @@ public class ForeignKeyTest {
 
           // Create a customer with FK to the status - use short constructor
           var customer =
-              new CustomersRowUnsaved("test@example.com", new byte[] {1, 2, 3, 4}, "John", "Doe");
+              new CustomersRowUnsaved(
+                  new Email("test@example.com"),
+                  new byte[] {1, 2, 3, 4},
+                  new FirstName("John"),
+                  new LastName("Doe"));
 
           var insertedCustomer = customersRepo.insert(customer, c);
 
           assertNotNull(insertedCustomer);
           assertNotNull(insertedCustomer.customerId());
-          assertEquals("test@example.com", insertedCustomer.email());
-          assertEquals("John", insertedCustomer.firstName());
-          assertEquals("Doe", insertedCustomer.lastName());
+          assertEquals(new Email("test@example.com"), insertedCustomer.email());
+          assertEquals(new FirstName("John"), insertedCustomer.firstName());
+          assertEquals(new LastName("Doe"), insertedCustomer.lastName());
         });
   }
 

@@ -265,13 +265,13 @@ data class PgtestFields(val _path: List<Path>) : TupleExpr70<Boolean, PGbox, Str
 
   fun moneyes(): Field<Array<Money>, PgtestRow> = Field<Array<Money>, PgtestRow>(_path, "moneyes", PgtestRow::moneyes, "numeric[]", "money[]", { row, value -> row.copy(moneyes = value) }, PgTypes.moneyArray)
 
-  fun mydomain(): Field<Mydomain, PgtestRow> = Field<Mydomain, PgtestRow>(_path, "mydomain", PgtestRow::mydomain, null, "text", { row, value -> row.copy(mydomain = value) }, Mydomain.dbType)
+  fun mydomain(): Field<Mydomain, PgtestRow> = Field<Mydomain, PgtestRow>(_path, "mydomain", PgtestRow::mydomain, null, "text", { row, value -> row.copy(mydomain = value) }, Mydomain.pgType)
 
-  fun mydomaines(): Field<Array<Mydomain>, PgtestRow> = Field<Array<Mydomain>, PgtestRow>(_path, "mydomaines", PgtestRow::mydomaines, "text[]", "mydomain[]", { row, value -> row.copy(mydomaines = value) }, Mydomain.dbTypeArray)
+  fun mydomaines(): Field<Array<Mydomain>, PgtestRow> = Field<Array<Mydomain>, PgtestRow>(_path, "mydomaines", PgtestRow::mydomaines, "text[]", "mydomain[]", { row, value -> row.copy(mydomaines = value) }, Mydomain.pgTypeArray)
 
-  fun myenum(): Field<Myenum, PgtestRow> = Field<Myenum, PgtestRow>(_path, "myenum", PgtestRow::myenum, null, "public.myenum", { row, value -> row.copy(myenum = value) }, Myenum.dbType)
+  fun myenum(): Field<Myenum, PgtestRow> = Field<Myenum, PgtestRow>(_path, "myenum", PgtestRow::myenum, null, "public.myenum", { row, value -> row.copy(myenum = value) }, Myenum.pgType)
 
-  fun myenumes(): Field<Array<Myenum>, PgtestRow> = Field<Array<Myenum>, PgtestRow>(_path, "myenumes", PgtestRow::myenumes, null, "myenum[]", { row, value -> row.copy(myenumes = value) }, Myenum.dbTypeArray)
+  fun myenumes(): Field<Array<Myenum>, PgtestRow> = Field<Array<Myenum>, PgtestRow>(_path, "myenumes", PgtestRow::myenumes, null, "myenum[]", { row, value -> row.copy(myenumes = value) }, Myenum.pgTypeArray)
 
   fun name(): Field<String, PgtestRow> = Field<String, PgtestRow>(_path, "name", PgtestRow::name, null, "name", { row, value -> row.copy(name = value) }, PgTypes.name)
 

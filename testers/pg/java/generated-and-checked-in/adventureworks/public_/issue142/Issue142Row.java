@@ -18,7 +18,7 @@ public record Issue142Row(Issue142Id tabellkode) implements Tuple1<Issue142Id> {
   ;
 
   public static RowParser<Issue142Row> _rowParser =
-      RowParsers.of(Issue142Id.dbType, Issue142Row::new, row -> new Object[] {row.tabellkode()});
+      RowParsers.of(Issue142Id.pgType, Issue142Row::new, row -> new Object[] {row.tabellkode()});
   ;
 
   public static PgText<Issue142Row> pgText = PgText.from(_rowParser);

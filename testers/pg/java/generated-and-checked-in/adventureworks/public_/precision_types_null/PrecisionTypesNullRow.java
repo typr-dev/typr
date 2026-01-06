@@ -833,14 +833,14 @@ public record PrecisionTypesNullRow(
 
   public static RowParser<PrecisionTypesNullRow> _rowParser =
       RowParsers.of(
-          PrecisionTypesNullId.dbType,
-          String10.dbType.opt(),
-          String20.dbType.opt(),
-          String50.dbType.opt(),
-          String100.dbType.opt(),
-          String255.dbType.opt(),
-          PaddedString3.dbType.opt(),
-          PaddedString10.dbType.opt(),
+          PrecisionTypesNullId.pgType,
+          String10.pgType.opt(),
+          String20.pgType.opt(),
+          String50.pgType.opt(),
+          String100.pgType.opt(),
+          String255.pgType.opt(),
+          PaddedString3.pgType.opt(),
+          PaddedString10.pgType.opt(),
           PgTypes.numeric.opt(),
           PgTypes.numeric.opt(),
           PgTypes.numeric.opt(),

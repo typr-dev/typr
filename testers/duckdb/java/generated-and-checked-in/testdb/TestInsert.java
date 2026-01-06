@@ -58,6 +58,7 @@ import testdb.precision_types_null.PrecisionTypesNullRow;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRepoImpl;
 import testdb.products.ProductsRow;
+import testdb.userdefined.Email;
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 public record TestInsert(Random random) {
@@ -144,7 +145,7 @@ public record TestInsert(Random random) {
             RandomHelper.alphanumeric(random, 20),
             (random.nextBoolean()
                 ? Optional.empty()
-                : Optional.of(RandomHelper.alphanumeric(random, 20))),
+                : Optional.of(new Email(RandomHelper.alphanumeric(random, 20)))),
             new UseDefault(),
             new UseDefault()),
         (CustomersRowUnsaved row, Connection c) -> (new CustomersRepoImpl()).insert(row, c));

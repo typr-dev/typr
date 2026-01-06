@@ -26,19 +26,19 @@ class AddresstypeRepoImpl() : AddresstypeRepo {
   override fun deleteById(
     addresstypeid: AddresstypeId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"addresstype\" where \"addresstypeid\" = "), Fragment.encode(AddresstypeId.dbType, addresstypeid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"addresstype\" where \"addresstypeid\" = "), Fragment.encode(AddresstypeId.pgType, addresstypeid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     addresstypeids: Array<AddresstypeId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"addresstype\"\nwhere \"addresstypeid\" = ANY("), Fragment.encode(AddresstypeId.dbTypeArray, addresstypeids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"addresstype\"\nwhere \"addresstypeid\" = ANY("), Fragment.encode(AddresstypeId.pgTypeArray, addresstypeids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: AddresstypeRow,
     c: Connection
-  ): AddresstypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"addresstype\"(\"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
+  ): AddresstypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"addresstype\"(\"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(AddresstypeRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -48,11 +48,11 @@ class AddresstypeRepoImpl() : AddresstypeRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.addresstypeid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"addresstypeid\""))
-      values.add(Fragment.interpolate(Fragment.encode(AddresstypeId.dbType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(AddresstypeId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.rowguid.visit(
       {  },
@@ -88,12 +88,12 @@ class AddresstypeRepoImpl() : AddresstypeRepo {
   override fun selectById(
     addresstypeid: AddresstypeId,
     c: Connection
-  ): AddresstypeRow? = Fragment.interpolate(Fragment.lit("select \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"addresstype\"\nwhere \"addresstypeid\" = "), Fragment.encode(AddresstypeId.dbType, addresstypeid), Fragment.lit("")).query(AddresstypeRow._rowParser.first()).runUnchecked(c)
+  ): AddresstypeRow? = Fragment.interpolate(Fragment.lit("select \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"addresstype\"\nwhere \"addresstypeid\" = "), Fragment.encode(AddresstypeId.pgType, addresstypeid), Fragment.lit("")).query(AddresstypeRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     addresstypeids: Array<AddresstypeId>,
     c: Connection
-  ): List<AddresstypeRow> = Fragment.interpolate(Fragment.lit("select \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"addresstype\"\nwhere \"addresstypeid\" = ANY("), Fragment.encode(AddresstypeId.dbTypeArray, addresstypeids), Fragment.lit(")")).query(AddresstypeRow._rowParser.all()).runUnchecked(c)
+  ): List<AddresstypeRow> = Fragment.interpolate(Fragment.lit("select \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"addresstype\"\nwhere \"addresstypeid\" = ANY("), Fragment.encode(AddresstypeId.pgTypeArray, addresstypeids), Fragment.lit(")")).query(AddresstypeRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     addresstypeids: Array<AddresstypeId>,
@@ -111,13 +111,13 @@ class AddresstypeRepoImpl() : AddresstypeRepo {
     c: Connection
   ): Boolean {
     val addresstypeid: AddresstypeId = row.addresstypeid
-    return Fragment.interpolate(Fragment.lit("update \"person\".\"addresstype\"\nset \"name\" = "), Fragment.encode(Name.dbType, row.name), Fragment.lit("::varchar,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"addresstypeid\" = "), Fragment.encode(AddresstypeId.dbType, addresstypeid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"person\".\"addresstype\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"addresstypeid\" = "), Fragment.encode(AddresstypeId.pgType, addresstypeid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: AddresstypeRow,
     c: Connection
-  ): AddresstypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"addresstype\"(\"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"addresstypeid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\""))
+  ): AddresstypeRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"addresstype\"(\"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"addresstypeid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\""))
     .updateReturning(AddresstypeRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

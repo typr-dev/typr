@@ -34,7 +34,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
     return interpolate(
                 Fragment.lit(
                     "delete from \"person\".\"businessentity\" where \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -46,7 +46,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
     return interpolate(
             Fragment.lit(
                 "delete\nfrom \"person\".\"businessentity\"\nwhere \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -59,7 +59,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
                 "insert into \"person\".\"businessentity\"(\"businessentityid\", \"rowguid\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),
@@ -84,7 +84,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
               columns.add(Fragment.lit("\"businessentityid\""));
               values.add(
                   interpolate(
-                      Fragment.encode(BusinessentityId.dbType, value), Fragment.lit("::int4")));
+                      Fragment.encode(BusinessentityId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     unsaved
@@ -175,7 +175,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
                 "select \"businessentityid\", \"rowguid\", \"modifieddate\"\n"
                     + "from \"person\".\"businessentity\"\n"
                     + "where \"businessentityid\" = "),
-            Fragment.encode(BusinessentityId.dbType, businessentityid),
+            Fragment.encode(BusinessentityId.pgType, businessentityid),
             Fragment.lit(""))
         .query(BusinessentityRow._rowParser.first())
         .runUnchecked(c);
@@ -188,7 +188,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
                 "select \"businessentityid\", \"rowguid\", \"modifieddate\"\n"
                     + "from \"person\".\"businessentity\"\n"
                     + "where \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .query(BusinessentityRow._rowParser.all())
         .runUnchecked(c);
@@ -222,7 +222,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -236,7 +236,7 @@ public class BusinessentityRepoImpl implements BusinessentityRepo {
                 "insert into \"person\".\"businessentity\"(\"businessentityid\", \"rowguid\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),

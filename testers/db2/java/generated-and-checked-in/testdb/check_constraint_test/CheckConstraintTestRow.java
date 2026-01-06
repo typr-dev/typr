@@ -50,7 +50,7 @@ public record CheckConstraintTestRow(
 
   public static RowParser<CheckConstraintTestRow> _rowParser =
       RowParsers.of(
-          CheckConstraintTestId.dbType,
+          CheckConstraintTestId.db2Type,
           Db2Types.integer,
           Db2Types.varchar,
           Db2Types.decimal.opt(),

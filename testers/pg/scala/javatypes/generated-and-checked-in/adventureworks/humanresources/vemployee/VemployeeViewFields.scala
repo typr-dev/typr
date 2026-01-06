@@ -9,6 +9,8 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.RowParser
 import dev.typr.foundations.data.Xml
@@ -21,7 +23,7 @@ import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.dsl.TupleExpr.TupleExpr18
 import java.util.Optional
 
-class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18[BusinessentityId, String, /* user-picked */ FirstName, Name, Name, String, String, Phone, Name, String, Integer, String, String, String, Name, String, Name, Xml] with RelationStructure[VemployeeViewFields, VemployeeViewRow]  with FieldsBase[VemployeeViewRow] {
+class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18[BusinessentityId, String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, String, String, Phone, Name, String, Integer, String, String, String, Name, String, Name, Xml] with RelationStructure[VemployeeViewFields, VemployeeViewRow]  with FieldsBase[VemployeeViewRow] {
   def businessentityid: Field[BusinessentityId, VemployeeViewRow] = {
     new Field[BusinessentityId, VemployeeViewRow](
       _path,
@@ -30,7 +32,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 
@@ -54,31 +56,31 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(firstname = value),
-      FirstName.dbType
+      FirstName.pgType
     )
   }
 
-  def middlename: Field[Name, VemployeeViewRow] = {
-    new Field[Name, VemployeeViewRow](
+  def middlename: Field[/* user-picked */ MiddleName, VemployeeViewRow] = {
+    new Field[/* user-picked */ MiddleName, VemployeeViewRow](
       _path,
       "middlename",
       _.middlename,
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(middlename = value),
-      Name.dbType
+      MiddleName.pgType
     )
   }
 
-  def lastname: Field[Name, VemployeeViewRow] = {
-    new Field[Name, VemployeeViewRow](
+  def lastname: Field[/* user-picked */ LastName, VemployeeViewRow] = {
+    new Field[/* user-picked */ LastName, VemployeeViewRow](
       _path,
       "lastname",
       _.lastname,
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(lastname = value),
-      Name.dbType
+      LastName.pgType
     )
   }
 
@@ -114,7 +116,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(phonenumber = value),
-      Phone.dbType
+      Phone.pgType
     )
   }
 
@@ -126,7 +128,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(phonenumbertype = value),
-      Name.dbType
+      Name.pgType
     )
   }
 
@@ -198,7 +200,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(stateprovincename = value),
-      Name.dbType
+      Name.pgType
     )
   }
 
@@ -222,7 +224,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(countryregionname = value),
-      Name.dbType
+      Name.pgType
     )
   }
 
@@ -250,9 +252,9 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
 
   override def `_3`: SqlExpr[/* user-picked */ FirstName] = firstname
 
-  override def `_4`: SqlExpr[Name] = middlename
+  override def `_4`: SqlExpr[/* user-picked */ MiddleName] = middlename
 
-  override def `_5`: SqlExpr[Name] = lastname
+  override def `_5`: SqlExpr[/* user-picked */ LastName] = lastname
 
   override def `_6`: SqlExpr[String] = suffix
 

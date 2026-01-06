@@ -10,6 +10,7 @@ import dev.typr.foundations.data.Uint1
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.products.ProductsId
+import testdb.userdefined.IsPrimary
 
 /** This class corresponds to a row in table `product_images` which has not been persisted yet */
 case class ProductImagesRowUnsaved(
@@ -34,7 +35,7 @@ case class ProductImagesRowUnsaved(
   /** Default: 0
 
    */
-  @JsonProperty("is_primary") isPrimary: Defaulted[Boolean] = new UseDefault(),
+  @JsonProperty("is_primary") isPrimary: Defaulted[/* user-picked */ IsPrimary] = new UseDefault(),
   /** Default: NULL
    * Optional embedded image data
    */
@@ -44,7 +45,7 @@ case class ProductImagesRowUnsaved(
     thumbnailUrlDefault: => Option[String],
     altTextDefault: => Option[String],
     sortOrderDefault: => Uint1,
-    isPrimaryDefault: => Boolean,
+    isPrimaryDefault: => /* user-picked */ IsPrimary,
     imageDataDefault: => Option[Array[Byte]],
     imageIdDefault: => ProductImagesId
   ): ProductImagesRow = {

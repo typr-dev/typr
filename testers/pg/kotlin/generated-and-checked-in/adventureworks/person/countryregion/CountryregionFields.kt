@@ -30,11 +30,11 @@ data class CountryregionFields(val _path: List<Path>) : TupleExpr3<Countryregion
 
   override fun columns(): List<FieldLike<*, CountryregionRow>> = listOf(this.countryregioncode().underlying, this.name().underlying, this.modifieddate().underlying)
 
-  fun countryregioncode(): IdField<CountryregionId, CountryregionRow> = IdField<CountryregionId, CountryregionRow>(_path, "countryregioncode", CountryregionRow::countryregioncode, null, null, { row, value -> row.copy(countryregioncode = value) }, CountryregionId.dbType)
+  fun countryregioncode(): IdField<CountryregionId, CountryregionRow> = IdField<CountryregionId, CountryregionRow>(_path, "countryregioncode", CountryregionRow::countryregioncode, null, null, { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
 
   fun modifieddate(): Field<LocalDateTime, CountryregionRow> = Field<LocalDateTime, CountryregionRow>(_path, "modifieddate", CountryregionRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, CountryregionRow> = Field<Name, CountryregionRow>(_path, "name", CountryregionRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, CountryregionRow> = Field<Name, CountryregionRow>(_path, "name", CountryregionRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
   override fun rowParser(): RowParser<CountryregionRow> = CountryregionRow._rowParser.underlying
 

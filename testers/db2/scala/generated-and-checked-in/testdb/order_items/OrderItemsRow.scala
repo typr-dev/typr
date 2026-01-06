@@ -40,7 +40,7 @@ case class OrderItemsRow(
 }
 
 object OrderItemsRow {
-  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrdersId.dbType, ScalaDbTypes.Db2Types.integer, Db2Types.varchar, ScalaDbTypes.Db2Types.integer, ScalaDbTypes.Db2Types.decimal)(OrderItemsRow.apply)(row => Array[Any](row.orderId, row.itemNumber, row.productName, row.quantity, row.unitPrice))
+  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrdersId.db2Type, ScalaDbTypes.Db2Types.integer, Db2Types.varchar, ScalaDbTypes.Db2Types.integer, ScalaDbTypes.Db2Types.decimal)(OrderItemsRow.apply)(row => Array[Any](row.orderId, row.itemNumber, row.productName, row.quantity, row.unitPrice))
 
   def apply(
     compositeId: OrderItemsId,

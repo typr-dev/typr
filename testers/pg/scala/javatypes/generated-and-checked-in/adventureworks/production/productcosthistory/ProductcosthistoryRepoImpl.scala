@@ -23,7 +23,7 @@ import dev.typr.foundations.Fragment.interpolate
 class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
   override def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = DeleteBuilder.of(""""production"."productcosthistory"""", ProductcosthistoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "production"."productcosthistory" where "productid" = """), Fragment.encode(ProductId.dbType, compositeId.productid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "production"."productcosthistory" where "productid" = """), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Integer = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
@@ -31,13 +31,13 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     return interpolate(Fragment.lit("""delete
     from "production"."productcosthistory"
     where ("productid", "startdate")
-    in (select * from unnest("""), Fragment.encode(ProductId.dbTypeArray, productid), Fragment.lit(", "), Fragment.encode(PgTypes.timestampArray, startdate), Fragment.lit("""))
+    in (select * from unnest("""), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit(", "), Fragment.encode(PgTypes.timestampArray, startdate), Fragment.lit("""))
     """)).update().runUnchecked(c)
   }
 
   override def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
   interpolate(Fragment.lit("""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
-    values ("""), Fragment.encode(ProductId.dbType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     RETURNING "productid", "startdate", "enddate", "standardcost", "modifieddate"
     """))
     .updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -47,7 +47,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(ProductId.dbType, unsaved.productid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""startdate"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""enddate"""")): @scala.annotation.nowarn
@@ -89,7 +89,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
   override def selectById(compositeId: ProductcosthistoryId)(using c: Connection): Optional[ProductcosthistoryRow] = {
     interpolate(Fragment.lit("""select "productid", "startdate", "enddate", "standardcost", "modifieddate"
     from "production"."productcosthistory"
-    where "productid" = """), Fragment.encode(ProductId.dbType, compositeId.productid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).query(ProductcosthistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = """), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).query(ProductcosthistoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): java.util.List[ProductcosthistoryRow] = {
@@ -98,7 +98,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     return interpolate(Fragment.lit("""select "productid", "startdate", "enddate", "standardcost", "modifieddate"
     from "production"."productcosthistory"
     where ("productid", "startdate")
-    in (select * from unnest("""), Fragment.encode(ProductId.dbTypeArray, productid), Fragment.lit(", "), Fragment.encode(PgTypes.timestampArray, startdate), Fragment.lit("""))
+    in (select * from unnest("""), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit(", "), Fragment.encode(PgTypes.timestampArray, startdate), Fragment.lit("""))
     """)).query(ProductcosthistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -116,12 +116,12 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     set "enddate" = """), Fragment.encode(PgTypes.timestamp.opt(), row.enddate), Fragment.lit("""::timestamp,
     "standardcost" = """), Fragment.encode(PgTypes.numeric, row.standardcost), Fragment.lit("""::numeric,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "productid" = """), Fragment.encode(ProductId.dbType, compositeId.productid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "productid" = """), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(""" AND "startdate" = """), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
   interpolate(Fragment.lit("""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
-    values ("""), Fragment.encode(ProductId.dbType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     on conflict ("productid", "startdate")
     do update set
       "enddate" = EXCLUDED."enddate",

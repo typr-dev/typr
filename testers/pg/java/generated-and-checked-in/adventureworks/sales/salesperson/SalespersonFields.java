@@ -58,7 +58,7 @@ public class SalespersonFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public OptField<SalesterritoryId, SalespersonRow> territoryid() {
@@ -69,7 +69,7 @@ public class SalespersonFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withTerritoryid(value),
-        SalesterritoryId.dbType);
+        SalesterritoryId.pgType);
   }
 
   public OptField<BigDecimal, SalespersonRow> salesquota() {

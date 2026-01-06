@@ -83,6 +83,6 @@ data class CategoriesRow(
   ): CategoriesRowUnsaved = CategoriesRowUnsaved(name, slug, parentId, description, imageUrl, sortOrder, isVisible, metadata)
 
   companion object {
-    val _rowParser: RowParser<CategoriesRow> = RowParsers.of(CategoriesId.dbType, CategoriesId.dbType.nullable(), MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable(), MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.smallint, KotlinDbTypes.MariaTypes.bool, MariaTypes.json.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> CategoriesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata) })
+    val _rowParser: RowParser<CategoriesRow> = RowParsers.of(CategoriesId.mariaType, CategoriesId.mariaType.nullable(), MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable(), MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.smallint, KotlinDbTypes.MariaTypes.bool, MariaTypes.json.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> CategoriesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata) })
   }
 }

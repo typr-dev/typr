@@ -7,6 +7,9 @@ import dev.typr.foundations.data.maria.Inet6;
 import java.time.Year;
 import java.util.Random;
 import org.junit.Test;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 /** Tests for TestInsert functionality - automatic random data generation for testing. */
 public class TestInsertTest {
@@ -87,7 +90,15 @@ public class TestInsertTest {
           var status = testInsert.CustomerStatus().insert(c);
 
           // Now create a customer - requires password_hash
-          var customer = testInsert.Customers(new byte[] {1, 2, 3}).insert(c);
+          var customer =
+              testInsert
+                  .Customers(new byte[] {1, 2, 3})
+                  .with(
+                      r ->
+                          r.withEmail(new Email("customer@example.com"))
+                              .withFirstName(new FirstName("Test"))
+                              .withLastName(new LastName("User")))
+                  .insert(c);
 
           assertNotNull(customer);
           assertNotNull(customer.customerId());
@@ -116,7 +127,8 @@ public class TestInsertTest {
   public void testMariatestUniqueInsert() {
     MariaDbTestHelper.run(
         c -> {
-          var inserter = testInsert.MariatestUnique();
+          var inserter =
+              testInsert.MariatestUnique().with(r -> r.withEmail(new Email("unique@example.com")));
           var row = inserter.insert(c);
 
           assertNotNull(row);

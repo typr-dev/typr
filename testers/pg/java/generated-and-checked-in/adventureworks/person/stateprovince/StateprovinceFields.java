@@ -51,7 +51,7 @@ public class StateprovinceFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withStateprovinceid(value),
-        StateprovinceId.dbType);
+        StateprovinceId.pgType);
   }
 
   public Field<String, StateprovinceRow> stateprovincecode() {
@@ -73,7 +73,7 @@ public class StateprovinceFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCountryregioncode(value),
-        CountryregionId.dbType);
+        CountryregionId.pgType);
   }
 
   public Field<Flag, StateprovinceRow> isonlystateprovinceflag() {
@@ -84,7 +84,7 @@ public class StateprovinceFields
         Optional.empty(),
         Optional.of("bool"),
         (row, value) -> row.withIsonlystateprovinceflag(value),
-        Flag.dbType);
+        Flag.pgType);
   }
 
   public Field<Name, StateprovinceRow> name() {
@@ -95,7 +95,7 @@ public class StateprovinceFields
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<SalesterritoryId, StateprovinceRow> territoryid() {
@@ -106,7 +106,7 @@ public class StateprovinceFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withTerritoryid(value),
-        SalesterritoryId.dbType);
+        SalesterritoryId.pgType);
   }
 
   public Field<UUID, StateprovinceRow> rowguid() {

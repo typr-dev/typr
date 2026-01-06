@@ -28,7 +28,7 @@ public record OrderItemsId(
 
   public static RowParser<OrderItemsId> _rowParser =
       RowParsers.of(
-          OrdersId.dbType,
+          OrdersId.db2Type,
           Db2Types.integer,
           OrderItemsId::new,
           row -> new Object[] {row.orderId(), row.itemNumber()});

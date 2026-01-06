@@ -35,7 +35,7 @@ public record Decimal8_2(@JsonValue BigDecimal value) implements DecimalN {
   public static Bijection<Decimal8_2, BigDecimal> bijection =
       Bijection.of(Decimal8_2::value, Decimal8_2::new);
 
-  public static MariaType<Decimal8_2> dbType =
+  public static MariaType<Decimal8_2> mariaType =
       MariaTypes.numeric.bimap(Decimal8_2::new, Decimal8_2::value);
 
   public static Optional<Decimal8_2> of(BigDecimal value) {

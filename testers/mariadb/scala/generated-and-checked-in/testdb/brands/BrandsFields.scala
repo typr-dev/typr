@@ -11,14 +11,14 @@ import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
 import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
 import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr7
+import testdb.userdefined.IsActive
 
-class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsId, String, String, Array[Byte], String, String, Boolean] with RelationStructure[BrandsFields, BrandsRow]  with FieldsBase[BrandsRow] {
+class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsId, String, String, Array[Byte], String, String, /* user-picked */ IsActive] with RelationStructure[BrandsFields, BrandsRow]  with FieldsBase[BrandsRow] {
   def brandId: IdField[BrandsId, BrandsRow] = {
     new IdField[BrandsId, BrandsRow](
       _path,
@@ -27,7 +27,7 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
       None,
       None,
       (row, value) => row.copy(brandId = value),
-      BrandsId.dbType
+      BrandsId.mariaType
     )
   }
 
@@ -91,15 +91,15 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
     )
   }
 
-  def isActive: Field[Boolean, BrandsRow] = {
-    new Field[Boolean, BrandsRow](
+  def isActive: Field[/* user-picked */ IsActive, BrandsRow] = {
+    new Field[/* user-picked */ IsActive, BrandsRow](
       _path,
       "is_active",
       _.isActive,
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsActive.mariaType
     )
   }
 
@@ -121,7 +121,7 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
 
   override def `_6`: SqlExpr[String] = countryOfOrigin
 
-  override def `_7`: SqlExpr[Boolean] = isActive
+  override def `_7`: SqlExpr[/* user-picked */ IsActive] = isActive
 }
 
 object BrandsFields {

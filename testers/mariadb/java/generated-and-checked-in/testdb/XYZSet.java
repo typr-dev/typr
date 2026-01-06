@@ -20,11 +20,6 @@ public record XYZSet(Set<XYZSetMember> members) {
   }
   ;
 
-  public static MariaType<XYZSet> dbType =
-      MariaTypes.set.bimap(
-          (MariaSet ms) -> XYZSet.fromString(ms.toCommaSeparated()),
-          (XYZSet s) -> MariaSet.fromString(s.toCommaSeparated()));
-
   public static XYZSet empty() {
     return new XYZSet(EnumSet.noneOf(XYZSetMember.class));
   }
@@ -46,6 +41,11 @@ public record XYZSet(Set<XYZSetMember> members) {
     return new XYZSet(set);
   }
   ;
+
+  public static MariaType<XYZSet> mariaType =
+      MariaTypes.set.bimap(
+          (MariaSet ms) -> XYZSet.fromString(ms.toCommaSeparated()),
+          (XYZSet s) -> MariaSet.fromString(s.toCommaSeparated()));
 
   public static XYZSet of(List<XYZSetMember> members) {
     if (members.isEmpty()) {

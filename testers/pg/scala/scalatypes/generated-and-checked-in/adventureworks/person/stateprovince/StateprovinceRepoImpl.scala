@@ -24,19 +24,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class StateprovinceRepoImpl extends StateprovinceRepo {
   override def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(stateprovinceid: StateprovinceId)(using c: Connection): Boolean = sql"""delete from "person"."stateprovince" where "stateprovinceid" = ${Fragment.encode(StateprovinceId.dbType, stateprovinceid)}""".update().runUnchecked(c) > 0
+  override def deleteById(stateprovinceid: StateprovinceId)(using c: Connection): Boolean = sql"""delete from "person"."stateprovince" where "stateprovinceid" = ${Fragment.encode(StateprovinceId.pgType, stateprovinceid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): Int = {
     sql"""delete
     from "person"."stateprovince"
-    where "stateprovinceid" = ANY(${Fragment.encode(StateprovinceId.dbTypeArray, stateprovinceids)})"""
+    where "stateprovinceid" = ANY(${Fragment.encode(StateprovinceId.pgTypeArray, stateprovinceids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: StateprovinceRow)(using c: Connection): StateprovinceRow = {
   sql"""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
-    values (${Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode)}::bpchar, ${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}, ${Fragment.encode(Flag.dbType, unsaved.isonlystateprovinceflag)}::bool, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode)}::bpchar, ${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag)}::bool, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     """
     .updateReturning(StateprovinceRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -48,18 +48,18 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     columns.addOne(Fragment.lit(""""stateprovincecode"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode)}::bpchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.name)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid)}::int4"): @scala.annotation.nowarn
     unsaved.stateprovinceid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""stateprovinceid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(StateprovinceId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""stateprovinceid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(StateprovinceId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.isonlystateprovinceflag.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""isonlystateprovinceflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Flag.dbType, value)}::bool"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""isonlystateprovinceflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Flag.pgType, value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -100,13 +100,13 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
   override def selectById(stateprovinceid: StateprovinceId)(using c: Connection): Option[StateprovinceRow] = {
     sql"""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     from "person"."stateprovince"
-    where "stateprovinceid" = ${Fragment.encode(StateprovinceId.dbType, stateprovinceid)}""".query(StateprovinceRow.`_rowParser`.first()).runUnchecked(c)
+    where "stateprovinceid" = ${Fragment.encode(StateprovinceId.pgType, stateprovinceid)}""".query(StateprovinceRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): List[StateprovinceRow] = {
     sql"""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     from "person"."stateprovince"
-    where "stateprovinceid" = ANY(${Fragment.encode(StateprovinceId.dbTypeArray, stateprovinceids)})""".query(StateprovinceRow.`_rowParser`.all()).runUnchecked(c)
+    where "stateprovinceid" = ANY(${Fragment.encode(StateprovinceId.pgTypeArray, stateprovinceids)})""".query(StateprovinceRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(using c: Connection): Map[StateprovinceId, StateprovinceRow] = {
@@ -121,18 +121,18 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     val stateprovinceid: StateprovinceId = row.stateprovinceid
     return sql"""update "person"."stateprovince"
     set "stateprovincecode" = ${Fragment.encode(PgTypes.bpchar, row.stateprovincecode)}::bpchar,
-    "countryregioncode" = ${Fragment.encode(CountryregionId.dbType, row.countryregioncode)},
-    "isonlystateprovinceflag" = ${Fragment.encode(Flag.dbType, row.isonlystateprovinceflag)}::bool,
-    "name" = ${Fragment.encode(Name.dbType, row.name)}::varchar,
-    "territoryid" = ${Fragment.encode(SalesterritoryId.dbType, row.territoryid)}::int4,
+    "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, row.countryregioncode)},
+    "isonlystateprovinceflag" = ${Fragment.encode(Flag.pgType, row.isonlystateprovinceflag)}::bool,
+    "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
+    "territoryid" = ${Fragment.encode(SalesterritoryId.pgType, row.territoryid)}::int4,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "stateprovinceid" = ${Fragment.encode(StateprovinceId.dbType, stateprovinceid)}""".update().runUnchecked(c) > 0
+    where "stateprovinceid" = ${Fragment.encode(StateprovinceId.pgType, stateprovinceid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: StateprovinceRow)(using c: Connection): StateprovinceRow = {
   sql"""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
-    values (${Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode)}::bpchar, ${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}, ${Fragment.encode(Flag.dbType, unsaved.isonlystateprovinceflag)}::bool, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid)}::int4, ${Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode)}::bpchar, ${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag)}::bool, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid)}::int4, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("stateprovinceid")
     do update set
       "stateprovincecode" = EXCLUDED."stateprovincecode",

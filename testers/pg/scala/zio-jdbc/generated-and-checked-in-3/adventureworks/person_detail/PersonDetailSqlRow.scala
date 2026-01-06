@@ -7,8 +7,9 @@ package adventureworks.person_detail
 
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import java.sql.ResultSet
 import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
@@ -25,9 +26,9 @@ case class PersonDetailSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Option[Name],
+  middlename: Option[/* user-picked */ MiddleName],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
   jobtitle: String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
@@ -49,8 +50,8 @@ object PersonDetailSqlRow {
             businessentityid = BusinessentityId.jdbcDecoder.unsafeDecode(columIndex + 0, rs)._2,
             title = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 1, rs)._2,
             firstname = FirstName.jdbcDecoder.unsafeDecode(columIndex + 2, rs)._2,
-            middlename = JdbcDecoder.optionDecoder(using Name.jdbcDecoder).unsafeDecode(columIndex + 3, rs)._2,
-            lastname = Name.jdbcDecoder.unsafeDecode(columIndex + 4, rs)._2,
+            middlename = JdbcDecoder.optionDecoder(using MiddleName.jdbcDecoder).unsafeDecode(columIndex + 3, rs)._2,
+            lastname = LastName.jdbcDecoder.unsafeDecode(columIndex + 4, rs)._2,
             jobtitle = JdbcDecoder.stringDecoder.unsafeDecode(columIndex + 5, rs)._2,
             addressline1 = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 6, rs)._2,
             city = JdbcDecoder.optionDecoder(using JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 7, rs)._2,
@@ -65,8 +66,8 @@ object PersonDetailSqlRow {
       val businessentityid = jsonObj.get("businessentityid").toRight("Missing field 'businessentityid'").flatMap(_.as(using BusinessentityId.jsonDecoder))
       val title = jsonObj.get("title").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
       val firstname = jsonObj.get("firstname").toRight("Missing field 'firstname'").flatMap(_.as(using FirstName.jsonDecoder))
-      val middlename = jsonObj.get("middlename").fold[Either[String, Option[Name]]](Right(None))(_.as(using JsonDecoder.option(using Name.jsonDecoder)))
-      val lastname = jsonObj.get("lastname").toRight("Missing field 'lastname'").flatMap(_.as(using Name.jsonDecoder))
+      val middlename = jsonObj.get("middlename").fold[Either[String, Option[MiddleName]]](Right(None))(_.as(using JsonDecoder.option(using MiddleName.jsonDecoder)))
+      val lastname = jsonObj.get("lastname").toRight("Missing field 'lastname'").flatMap(_.as(using LastName.jsonDecoder))
       val jobtitle = jsonObj.get("jobtitle").toRight("Missing field 'jobtitle'").flatMap(_.as(using JsonDecoder.string))
       val addressline1 = jsonObj.get("addressline1").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
       val city = jsonObj.get("city").fold[Either[String, Option[String]]](Right(None))(_.as(using JsonDecoder.option(using JsonDecoder.string)))
@@ -92,10 +93,10 @@ object PersonDetailSqlRow {
         FirstName.jsonEncoder.unsafeEncode(a.firstname, indent, out)
         out.write(",")
         out.write(""""middlename":""")
-        JsonEncoder.option(using Name.jsonEncoder).unsafeEncode(a.middlename, indent, out)
+        JsonEncoder.option(using MiddleName.jsonEncoder).unsafeEncode(a.middlename, indent, out)
         out.write(",")
         out.write(""""lastname":""")
-        Name.jsonEncoder.unsafeEncode(a.lastname, indent, out)
+        LastName.jsonEncoder.unsafeEncode(a.lastname, indent, out)
         out.write(",")
         out.write(""""jobtitle":""")
         JsonEncoder.string.unsafeEncode(a.jobtitle, indent, out)

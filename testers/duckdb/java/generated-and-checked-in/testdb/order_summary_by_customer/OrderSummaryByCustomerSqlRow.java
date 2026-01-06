@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import testdb.Priority;
 import testdb.customers.CustomersId;
+import testdb.userdefined.Email;
 
 /** SQL file: order_summary_by_customer.sql */
 public record OrderSummaryByCustomerSqlRow(
@@ -23,7 +24,7 @@ public record OrderSummaryByCustomerSqlRow(
     /** Points to {@link testdb.customers.CustomersRow#name()} */
     @JsonProperty("customer_name") String customerName,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    Optional<String> email,
+    Optional</* user-picked */ Email> email,
     /** Points to {@link testdb.customers.CustomersRow#priority()} */
     Optional<Priority> priority,
     /** Points to {@link testdb.orders.OrdersRow#orderId()} */
@@ -39,7 +40,7 @@ public record OrderSummaryByCustomerSqlRow(
     implements Tuple9<
         CustomersId,
         String,
-        Optional<String>,
+        Optional</* user-picked */ Email>,
         Optional<Priority>,
         Optional<Long>,
         Optional<BigDecimal>,
@@ -77,7 +78,7 @@ public record OrderSummaryByCustomerSqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public OrderSummaryByCustomerSqlRow withEmail(Optional<String> email) {
+  public OrderSummaryByCustomerSqlRow withEmail(Optional</* user-picked */ Email> email) {
     return new OrderSummaryByCustomerSqlRow(
         customerId,
         customerName,
@@ -185,7 +186,7 @@ public record OrderSummaryByCustomerSqlRow(
       RowParsers.of(
           CustomersId.duckDbType,
           DuckDbTypes.varchar,
-          DuckDbTypes.varchar.opt(),
+          Email.duckDbType.opt(),
           Priority.duckDbType.opt(),
           DuckDbTypes.bigint.opt(),
           DuckDbTypes.numeric.opt(),
@@ -220,7 +221,7 @@ public record OrderSummaryByCustomerSqlRow(
   ;
 
   @Override
-  public Optional<String> _3() {
+  public Optional</* user-picked */ Email> _3() {
     return email;
   }
   ;

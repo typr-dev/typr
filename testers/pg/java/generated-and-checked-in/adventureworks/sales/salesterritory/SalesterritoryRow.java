@@ -248,9 +248,9 @@ public record SalesterritoryRow(
 
   public static RowParser<SalesterritoryRow> _rowParser =
       RowParsers.of(
-          SalesterritoryId.dbType,
-          Name.dbType,
-          CountryregionId.dbType,
+          SalesterritoryId.pgType,
+          Name.pgType,
+          CountryregionId.pgType,
           PgTypes.text,
           PgTypes.numeric,
           PgTypes.numeric,

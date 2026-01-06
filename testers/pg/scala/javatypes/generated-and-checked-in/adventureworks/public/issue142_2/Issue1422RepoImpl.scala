@@ -20,19 +20,19 @@ import dev.typr.foundations.Fragment.interpolate
 class Issue1422RepoImpl extends Issue1422Repo {
   override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."issue142_2" where "tabellkode" = """), Fragment.encode(Issue142Id.dbType, tabellkode), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."issue142_2" where "tabellkode" = """), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "public"."issue142_2"
-    where "tabellkode" = ANY("""), Fragment.encode(Issue142Id.dbTypeArray, tabellkodes), Fragment.lit(")"))
+    where "tabellkode" = ANY("""), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row = {
   interpolate(Fragment.lit("""insert into "public"."issue142_2"("tabellkode")
-    values ("""), Fragment.encode(Issue142Id.dbType, unsaved.tabellkode), Fragment.lit(""")
+    values ("""), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(""")
     RETURNING "tabellkode"
     """))
     .updateReturning(Issue1422Row.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -54,13 +54,13 @@ class Issue1422RepoImpl extends Issue1422Repo {
   override def selectById(tabellkode: Issue142Id)(using c: Connection): Optional[Issue1422Row] = {
     interpolate(Fragment.lit("""select "tabellkode"
     from "public"."issue142_2"
-    where "tabellkode" = """), Fragment.encode(Issue142Id.dbType, tabellkode), Fragment.lit("")).query(Issue1422Row.`_rowParser`.first()).runUnchecked(c)
+    where "tabellkode" = """), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).query(Issue1422Row.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.List[Issue1422Row] = {
     interpolate(Fragment.lit("""select "tabellkode"
     from "public"."issue142_2"
-    where "tabellkode" = ANY("""), Fragment.encode(Issue142Id.dbTypeArray, tabellkodes), Fragment.lit(")")).query(Issue1422Row.`_rowParser`.all()).runUnchecked(c)
+    where "tabellkode" = ANY("""), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")")).query(Issue1422Row.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.Map[Issue142Id, Issue1422Row] = {
@@ -73,7 +73,7 @@ class Issue1422RepoImpl extends Issue1422Repo {
 
   override def upsert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row = {
   interpolate(Fragment.lit("""insert into "public"."issue142_2"("tabellkode")
-    values ("""), Fragment.encode(Issue142Id.dbType, unsaved.tabellkode), Fragment.lit(""")
+    values ("""), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(""")
     on conflict ("tabellkode")
     do update set "tabellkode" = EXCLUDED."tabellkode"
     returning "tabellkode""""))

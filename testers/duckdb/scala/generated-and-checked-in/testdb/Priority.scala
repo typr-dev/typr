@@ -18,7 +18,7 @@ import dev.typr.foundations.DuckDbTypes
 sealed abstract class Priority(val value: java.lang.String)
 
 object Priority {
-  given dbTypeArray: DuckDbType[Array[Priority]] = {
+  given duckDbTypeArray: DuckDbType[Array[Priority]] = {
     DuckDbTypes.varcharArray
       .bimap(xs => xs.map(Priority.force), xs => xs.map(_.value))
       .renamedDropPrecision("priority")

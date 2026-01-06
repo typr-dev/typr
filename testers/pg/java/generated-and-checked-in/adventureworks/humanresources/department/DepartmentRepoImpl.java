@@ -35,7 +35,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
     return interpolate(
                 Fragment.lit(
                     "delete from \"humanresources\".\"department\" where \"departmentid\" = "),
-                Fragment.encode(DepartmentId.dbType, departmentid),
+                Fragment.encode(DepartmentId.pgType, departmentid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -47,7 +47,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
     return interpolate(
             Fragment.lit(
                 "delete\nfrom \"humanresources\".\"department\"\nwhere \"departmentid\" = ANY("),
-            Fragment.encode(DepartmentId.dbTypeArray, departmentids),
+            Fragment.encode(DepartmentId.pgTypeArray, departmentids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -60,11 +60,11 @@ public class DepartmentRepoImpl implements DepartmentRepo {
                 "insert into \"humanresources\".\"department\"(\"departmentid\", \"name\","
                     + " \"groupname\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(DepartmentId.dbType, unsaved.departmentid()),
+            Fragment.encode(DepartmentId.pgType, unsaved.departmentid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
-            Fragment.encode(Name.dbType, unsaved.groupname()),
+            Fragment.encode(Name.pgType, unsaved.groupname()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
@@ -82,10 +82,10 @@ public class DepartmentRepoImpl implements DepartmentRepo {
     ;
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.name()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.name()), Fragment.lit("::varchar")));
     columns.add(Fragment.lit("\"groupname\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.groupname()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.groupname()), Fragment.lit("::varchar")));
     unsaved
         .departmentid()
         .visit(
@@ -93,7 +93,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
             value -> {
               columns.add(Fragment.lit("\"departmentid\""));
               values.add(
-                  interpolate(Fragment.encode(DepartmentId.dbType, value), Fragment.lit("::int4")));
+                  interpolate(Fragment.encode(DepartmentId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     unsaved
@@ -169,7 +169,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
                 "select \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"
                     + "from \"humanresources\".\"department\"\n"
                     + "where \"departmentid\" = "),
-            Fragment.encode(DepartmentId.dbType, departmentid),
+            Fragment.encode(DepartmentId.pgType, departmentid),
             Fragment.lit(""))
         .query(DepartmentRow._rowParser.first())
         .runUnchecked(c);
@@ -182,7 +182,7 @@ public class DepartmentRepoImpl implements DepartmentRepo {
                 "select \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"
                     + "from \"humanresources\".\"department\"\n"
                     + "where \"departmentid\" = ANY("),
-            Fragment.encode(DepartmentId.dbTypeArray, departmentids),
+            Fragment.encode(DepartmentId.pgTypeArray, departmentids),
             Fragment.lit(")"))
         .query(DepartmentRow._rowParser.all())
         .runUnchecked(c);
@@ -211,13 +211,13 @@ public class DepartmentRepoImpl implements DepartmentRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"humanresources\".\"department\"\nset \"name\" = "),
-                Fragment.encode(Name.dbType, row.name()),
+                Fragment.encode(Name.pgType, row.name()),
                 Fragment.lit("::varchar,\n\"groupname\" = "),
-                Fragment.encode(Name.dbType, row.groupname()),
+                Fragment.encode(Name.pgType, row.groupname()),
                 Fragment.lit("::varchar,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"departmentid\" = "),
-                Fragment.encode(DepartmentId.dbType, departmentid),
+                Fragment.encode(DepartmentId.pgType, departmentid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -231,11 +231,11 @@ public class DepartmentRepoImpl implements DepartmentRepo {
                 "insert into \"humanresources\".\"department\"(\"departmentid\", \"name\","
                     + " \"groupname\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(DepartmentId.dbType, unsaved.departmentid()),
+            Fragment.encode(DepartmentId.pgType, unsaved.departmentid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
-            Fragment.encode(Name.dbType, unsaved.groupname()),
+            Fragment.encode(Name.pgType, unsaved.groupname()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(

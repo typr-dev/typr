@@ -17,11 +17,11 @@ enum class Myenum(val value: kotlin.String) {
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, Myenum> = entries.associateBy { it.value }
-        val dbTypeArray: PgType<Array<Myenum>> =
+        val pgTypeArray: PgType<Array<Myenum>> =
           PgTypes.textArray
               .bimap({ xs -> arrayMap.map(xs, Myenum::force, Myenum::class.java) }, { xs -> arrayMap.map(xs, Myenum::value, String::class.java) })
             .renamedDropPrecision("public.myenum")
-        val dbType: PgType<Myenum> =
+        val pgType: PgType<Myenum> =
           PgTypes.text.bimap(Myenum::force, Myenum::value)
             .renamedDropPrecision("public.myenum")
 

@@ -34,7 +34,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -58,7 +58,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(brandId = value),
-      BrandsId.dbType
+      BrandsId.mariaType
     )
   }
 
@@ -178,7 +178,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(tags = value),
-      BestsellerClearanceFSet.dbType
+      BestsellerClearanceFSet.mariaType
     )
   }
 

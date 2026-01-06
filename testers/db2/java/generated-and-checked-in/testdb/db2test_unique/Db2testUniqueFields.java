@@ -38,7 +38,7 @@ public class Db2testUniqueFields extends TupleExpr4<Db2testUniqueId, String, Str
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        Db2testUniqueId.dbType);
+        Db2testUniqueId.db2Type);
   }
 
   public Field<String, Db2testUniqueRow> email() {

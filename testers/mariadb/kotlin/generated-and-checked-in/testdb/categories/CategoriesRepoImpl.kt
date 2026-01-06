@@ -26,21 +26,21 @@ class CategoriesRepoImpl() : CategoriesRepo {
   override fun deleteById(
     categoryId: CategoriesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `categories` where `category_id` = "), Fragment.encode(CategoriesId.dbType, categoryId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `categories` where `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     categoryIds: Array<CategoriesId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in categoryIds) { fragments.add(Fragment.encode(CategoriesId.dbType, id)) }
+    for (id in categoryIds) { fragments.add(Fragment.encode(CategoriesId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("delete from `categories` where `category_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: CategoriesRow,
     c: Connection
-  ): CategoriesRow = Fragment.interpolate(Fragment.lit("insert into `categories`(`parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nvalues ("), Fragment.encode(CategoriesId.dbType.nullable(), unsaved.parentId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumtext.nullable(), unsaved.description), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVisible), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
+  ): CategoriesRow = Fragment.interpolate(Fragment.lit("insert into `categories`(`parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nvalues ("), Fragment.encode(CategoriesId.mariaType.nullable(), unsaved.parentId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumtext.nullable(), unsaved.description), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVisible), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
     .updateReturning(CategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -56,7 +56,7 @@ class CategoriesRepoImpl() : CategoriesRepo {
     unsaved.parentId.visit(
       {  },
       { value -> columns.add(Fragment.lit("`parent_id`"))
-      values.add(Fragment.interpolate(Fragment.encode(CategoriesId.dbType.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(CategoriesId.mariaType.nullable(), value), Fragment.lit(""))) }
     );
     unsaved.description.visit(
       {  },
@@ -94,14 +94,14 @@ class CategoriesRepoImpl() : CategoriesRepo {
   override fun selectById(
     categoryId: CategoriesId,
     c: Connection
-  ): CategoriesRow? = Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\nfrom `categories`\nwhere `category_id` = "), Fragment.encode(CategoriesId.dbType, categoryId), Fragment.lit("")).query(CategoriesRow._rowParser.first()).runUnchecked(c)
+  ): CategoriesRow? = Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\nfrom `categories`\nwhere `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.lit("")).query(CategoriesRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     categoryIds: Array<CategoriesId>,
     c: Connection
   ): List<CategoriesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in categoryIds) { fragments.add(Fragment.encode(CategoriesId.dbType, id)) }
+    for (id in categoryIds) { fragments.add(Fragment.encode(CategoriesId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata` from `categories` where `category_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CategoriesRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -126,13 +126,13 @@ class CategoriesRepoImpl() : CategoriesRepo {
     c: Connection
   ): Boolean {
     val categoryId: CategoriesId = row.categoryId
-    return Fragment.interpolate(Fragment.lit("update `categories`\nset `parent_id` = "), Fragment.encode(CategoriesId.dbType.nullable(), row.parentId), Fragment.lit(",\n`name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit(",\n`slug` = "), Fragment.encode(MariaTypes.varchar, row.slug), Fragment.lit(",\n`description` = "), Fragment.encode(MariaTypes.mediumtext.nullable(), row.description), Fragment.lit(",\n`image_url` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.imageUrl), Fragment.lit(",\n`sort_order` = "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, row.sortOrder), Fragment.lit(",\n`is_visible` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isVisible), Fragment.lit(",\n`metadata` = "), Fragment.encode(MariaTypes.json.nullable(), row.metadata), Fragment.lit("\nwhere `category_id` = "), Fragment.encode(CategoriesId.dbType, categoryId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `categories`\nset `parent_id` = "), Fragment.encode(CategoriesId.mariaType.nullable(), row.parentId), Fragment.lit(",\n`name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit(",\n`slug` = "), Fragment.encode(MariaTypes.varchar, row.slug), Fragment.lit(",\n`description` = "), Fragment.encode(MariaTypes.mediumtext.nullable(), row.description), Fragment.lit(",\n`image_url` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.imageUrl), Fragment.lit(",\n`sort_order` = "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, row.sortOrder), Fragment.lit(",\n`is_visible` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isVisible), Fragment.lit(",\n`metadata` = "), Fragment.encode(MariaTypes.json.nullable(), row.metadata), Fragment.lit("\nwhere `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: CategoriesRow,
     c: Connection
-  ): CategoriesRow = Fragment.interpolate(Fragment.lit("INSERT INTO `categories`(`category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nVALUES ("), Fragment.encode(CategoriesId.dbType, unsaved.categoryId), Fragment.lit(", "), Fragment.encode(CategoriesId.dbType.nullable(), unsaved.parentId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumtext.nullable(), unsaved.description), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVisible), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nON DUPLICATE KEY UPDATE `parent_id` = VALUES(`parent_id`),\n`name` = VALUES(`name`),\n`slug` = VALUES(`slug`),\n`description` = VALUES(`description`),\n`image_url` = VALUES(`image_url`),\n`sort_order` = VALUES(`sort_order`),\n`is_visible` = VALUES(`is_visible`),\n`metadata` = VALUES(`metadata`)\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`"))
+  ): CategoriesRow = Fragment.interpolate(Fragment.lit("INSERT INTO `categories`(`category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nVALUES ("), Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.lit(", "), Fragment.encode(CategoriesId.mariaType.nullable(), unsaved.parentId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumtext.nullable(), unsaved.description), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVisible), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nON DUPLICATE KEY UPDATE `parent_id` = VALUES(`parent_id`),\n`name` = VALUES(`name`),\n`slug` = VALUES(`slug`),\n`description` = VALUES(`description`),\n`image_url` = VALUES(`image_url`),\n`sort_order` = VALUES(`sort_order`),\n`is_visible` = VALUES(`is_visible`),\n`metadata` = VALUES(`metadata`)\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`"))
     .updateReturning(CategoriesRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

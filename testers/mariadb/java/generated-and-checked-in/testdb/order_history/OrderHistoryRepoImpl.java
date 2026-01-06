@@ -32,7 +32,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
   public Boolean deleteById(OrderHistoryId historyId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `order_history` where `history_id` = "),
-                Fragment.encode(OrderHistoryId.dbType, historyId),
+                Fragment.encode(OrderHistoryId.mariaType, historyId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +43,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
   public Integer deleteByIds(OrderHistoryId[] historyIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : historyIds) {
-      fragments.add(Fragment.encode(OrderHistoryId.dbType, id));
+      fragments.add(Fragment.encode(OrderHistoryId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -61,7 +61,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
                 "insert into `order_history`(`order_id`, `previous_status`, `new_status`,"
                     + " `changed_by`, `change_reason`, `metadata`, `created_at`)\n"
                     + "values ("),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.mariaType, unsaved.orderId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text.opt(), unsaved.previousStatus()),
             Fragment.lit(", "),
@@ -89,7 +89,8 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
     ArrayList<Fragment> values = new ArrayList<>();
     ;
     columns.add(Fragment.lit("`order_id`"));
-    values.add(interpolate(Fragment.encode(OrdersId.dbType, unsaved.orderId()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(OrdersId.mariaType, unsaved.orderId()), Fragment.lit("")));
     columns.add(Fragment.lit("`new_status`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.text, unsaved.newStatus()), Fragment.lit("")));
@@ -185,7 +186,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
                     + " `change_reason`, `metadata`, `created_at`\n"
                     + "from `order_history`\n"
                     + "where `history_id` = "),
-            Fragment.encode(OrderHistoryId.dbType, historyId),
+            Fragment.encode(OrderHistoryId.mariaType, historyId),
             Fragment.lit(""))
         .query(OrderHistoryRow._rowParser.first())
         .runUnchecked(c);
@@ -195,7 +196,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
   public List<OrderHistoryRow> selectByIds(OrderHistoryId[] historyIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : historyIds) {
-      fragments.add(Fragment.encode(OrderHistoryId.dbType, id));
+      fragments.add(Fragment.encode(OrderHistoryId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -232,7 +233,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
     ;
     return interpolate(
                 Fragment.lit("update `order_history`\nset `order_id` = "),
-                Fragment.encode(OrdersId.dbType, row.orderId()),
+                Fragment.encode(OrdersId.mariaType, row.orderId()),
                 Fragment.lit(",\n`previous_status` = "),
                 Fragment.encode(MariaTypes.text.opt(), row.previousStatus()),
                 Fragment.lit(",\n`new_status` = "),
@@ -246,7 +247,7 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
                 Fragment.lit(",\n`created_at` = "),
                 Fragment.encode(MariaTypes.datetime, row.createdAt()),
                 Fragment.lit("\nwhere `history_id` = "),
-                Fragment.encode(OrderHistoryId.dbType, historyId),
+                Fragment.encode(OrderHistoryId.mariaType, historyId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -260,9 +261,9 @@ public class OrderHistoryRepoImpl implements OrderHistoryRepo {
                 "INSERT INTO `order_history`(`history_id`, `order_id`, `previous_status`,"
                     + " `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\n"
                     + "VALUES ("),
-            Fragment.encode(OrderHistoryId.dbType, unsaved.historyId()),
+            Fragment.encode(OrderHistoryId.mariaType, unsaved.historyId()),
             Fragment.lit(", "),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.mariaType, unsaved.orderId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text.opt(), unsaved.previousStatus()),
             Fragment.lit(", "),

@@ -20,10 +20,10 @@ data class NameStyle(@field:JsonValue val value: Boolean) {
     val bijection: Bijection<NameStyle, Boolean> =
       Bijection.of(NameStyle::value, ::NameStyle)
 
-    val dbType: PgType<NameStyle> =
+    val pgType: PgType<NameStyle> =
       KotlinDbTypes.PgTypes.bool.bimap(::NameStyle, NameStyle::value).renamed("\"public\".\"NameStyle\"")
 
-    val dbTypeArray: PgType<Array<NameStyle>> =
+    val pgTypeArray: PgType<Array<NameStyle>> =
       PgTypes.boolArray.bimap({ xs -> arrayMap.map(xs, ::NameStyle, NameStyle::class.java) }, { xs -> arrayMap.map(xs, NameStyle::value, Boolean::class.javaObjectType) }).renamed("\"public\".\"NameStyle\"[]")
   }
 }

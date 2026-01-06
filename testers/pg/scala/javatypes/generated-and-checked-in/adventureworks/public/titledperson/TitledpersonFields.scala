@@ -32,7 +32,7 @@ class TitledpersonFields(val `_path`: java.util.List[Path]) extends TupleExpr3[T
       Optional.empty(),
       Optional.of("text"),
       (row, value) => row.copy(titleShort = value),
-      TitleDomainId.dbType
+      TitleDomainId.pgType
     )
   }
 
@@ -44,7 +44,7 @@ class TitledpersonFields(val `_path`: java.util.List[Path]) extends TupleExpr3[T
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(title = value),
-      TitleId.dbType
+      TitleId.pgType
     )
   }
 

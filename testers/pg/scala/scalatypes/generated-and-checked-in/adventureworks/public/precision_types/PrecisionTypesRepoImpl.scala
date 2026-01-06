@@ -28,19 +28,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def delete: DeleteBuilder[PrecisionTypesFields, PrecisionTypesRow] = DeleteBuilder.of(""""public"."precision_types"""", PrecisionTypesFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(id: PrecisionTypesId)(using c: Connection): Boolean = sql"""delete from "public"."precision_types" where "id" = ${Fragment.encode(PrecisionTypesId.dbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: PrecisionTypesId)(using c: Connection): Boolean = sql"""delete from "public"."precision_types" where "id" = ${Fragment.encode(PrecisionTypesId.pgType, id)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[PrecisionTypesId])(using c: Connection): Int = {
     sql"""delete
     from "public"."precision_types"
-    where "id" = ANY(${Fragment.encode(PrecisionTypesId.dbTypeArray, ids)})"""
+    where "id" = ANY(${Fragment.encode(PrecisionTypesId.pgTypeArray, ids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow = {
   sql"""insert into "public"."precision_types"("id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6")
-    values (${Fragment.encode(PrecisionTypesId.dbType, unsaved.id)}::int4, ${Fragment.encode(String10.dbType, unsaved.string10)}, ${Fragment.encode(String20.dbType, unsaved.string20)}, ${Fragment.encode(String50.dbType, unsaved.string50)}, ${Fragment.encode(String100.dbType, unsaved.string100)}, ${Fragment.encode(String255.dbType, unsaved.string255)}, ${Fragment.encode(PaddedString3.dbType, unsaved.bpchar3)}::bpchar, ${Fragment.encode(PaddedString10.dbType, unsaved.bpchar10)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal52)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal102)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal184)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.numeric82)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.numeric124)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp0)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp3)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp6)}::timestamp, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz0)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz3)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz6)}::timestamptz, ${Fragment.encode(PgTypes.time, unsaved.time0)}::time, ${Fragment.encode(PgTypes.time, unsaved.time3)}::time, ${Fragment.encode(PgTypes.time, unsaved.time6)}::time, ${Fragment.encode(PgTypes.timetz, unsaved.timetz0)}::timetz, ${Fragment.encode(PgTypes.timetz, unsaved.timetz3)}::timetz, ${Fragment.encode(PgTypes.timetz, unsaved.timetz6)}::timetz)
+    values (${Fragment.encode(PrecisionTypesId.pgType, unsaved.id)}::int4, ${Fragment.encode(String10.pgType, unsaved.string10)}, ${Fragment.encode(String20.pgType, unsaved.string20)}, ${Fragment.encode(String50.pgType, unsaved.string50)}, ${Fragment.encode(String100.pgType, unsaved.string100)}, ${Fragment.encode(String255.pgType, unsaved.string255)}, ${Fragment.encode(PaddedString3.pgType, unsaved.bpchar3)}::bpchar, ${Fragment.encode(PaddedString10.pgType, unsaved.bpchar10)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal52)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal102)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal184)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.numeric82)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.numeric124)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp0)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp3)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp6)}::timestamp, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz0)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz3)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz6)}::timestamptz, ${Fragment.encode(PgTypes.time, unsaved.time0)}::time, ${Fragment.encode(PgTypes.time, unsaved.time3)}::time, ${Fragment.encode(PgTypes.time, unsaved.time6)}::time, ${Fragment.encode(PgTypes.timetz, unsaved.timetz0)}::timetz, ${Fragment.encode(PgTypes.timetz, unsaved.timetz3)}::timetz, ${Fragment.encode(PgTypes.timetz, unsaved.timetz6)}::timetz)
     RETURNING "id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6"
     """
     .updateReturning(PrecisionTypesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -50,19 +50,19 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""string10"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String10.dbType, unsaved.string10)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String10.pgType, unsaved.string10)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""string20"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String20.dbType, unsaved.string20)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String20.pgType, unsaved.string20)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""string50"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String50.dbType, unsaved.string50)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String50.pgType, unsaved.string50)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""string100"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String100.dbType, unsaved.string100)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String100.pgType, unsaved.string100)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""string255"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String255.dbType, unsaved.string255)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String255.pgType, unsaved.string255)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""bpchar3"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(PaddedString3.dbType, unsaved.bpchar3)}::bpchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(PaddedString3.pgType, unsaved.bpchar3)}::bpchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""bpchar10"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(PaddedString10.dbType, unsaved.bpchar10)}::bpchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(PaddedString10.pgType, unsaved.bpchar10)}::bpchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""decimal5_2"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal52)}::numeric"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""decimal10_2"""")): @scala.annotation.nowarn
@@ -99,7 +99,7 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     values.addOne(sql"${Fragment.encode(PgTypes.timetz, unsaved.timetz6)}::timetz"): @scala.annotation.nowarn
     unsaved.id.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""id"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PrecisionTypesId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""id"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PrecisionTypesId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "public"."precision_types"(${Fragment.comma(columns)})
@@ -132,13 +132,13 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def selectById(id: PrecisionTypesId)(using c: Connection): Option[PrecisionTypesRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6"
     from "public"."precision_types"
-    where "id" = ${Fragment.encode(PrecisionTypesId.dbType, id)}""".query(PrecisionTypesRow.`_rowParser`.first()).runUnchecked(c)
+    where "id" = ${Fragment.encode(PrecisionTypesId.pgType, id)}""".query(PrecisionTypesRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[PrecisionTypesId])(using c: Connection): List[PrecisionTypesRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6"
     from "public"."precision_types"
-    where "id" = ANY(${Fragment.encode(PrecisionTypesId.dbTypeArray, ids)})""".query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${Fragment.encode(PrecisionTypesId.pgTypeArray, ids)})""".query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(ids: Array[PrecisionTypesId])(using c: Connection): Map[PrecisionTypesId, PrecisionTypesRow] = {
@@ -152,13 +152,13 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def update(row: PrecisionTypesRow)(using c: Connection): Boolean = {
     val id: PrecisionTypesId = row.id
     return sql"""update "public"."precision_types"
-    set "string10" = ${Fragment.encode(String10.dbType, row.string10)},
-    "string20" = ${Fragment.encode(String20.dbType, row.string20)},
-    "string50" = ${Fragment.encode(String50.dbType, row.string50)},
-    "string100" = ${Fragment.encode(String100.dbType, row.string100)},
-    "string255" = ${Fragment.encode(String255.dbType, row.string255)},
-    "bpchar3" = ${Fragment.encode(PaddedString3.dbType, row.bpchar3)}::bpchar,
-    "bpchar10" = ${Fragment.encode(PaddedString10.dbType, row.bpchar10)}::bpchar,
+    set "string10" = ${Fragment.encode(String10.pgType, row.string10)},
+    "string20" = ${Fragment.encode(String20.pgType, row.string20)},
+    "string50" = ${Fragment.encode(String50.pgType, row.string50)},
+    "string100" = ${Fragment.encode(String100.pgType, row.string100)},
+    "string255" = ${Fragment.encode(String255.pgType, row.string255)},
+    "bpchar3" = ${Fragment.encode(PaddedString3.pgType, row.bpchar3)}::bpchar,
+    "bpchar10" = ${Fragment.encode(PaddedString10.pgType, row.bpchar10)}::bpchar,
     "decimal5_2" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.decimal52)}::numeric,
     "decimal10_2" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.decimal102)}::numeric,
     "decimal18_4" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.decimal184)}::numeric,
@@ -176,12 +176,12 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     "timetz0" = ${Fragment.encode(PgTypes.timetz, row.timetz0)}::timetz,
     "timetz3" = ${Fragment.encode(PgTypes.timetz, row.timetz3)}::timetz,
     "timetz6" = ${Fragment.encode(PgTypes.timetz, row.timetz6)}::timetz
-    where "id" = ${Fragment.encode(PrecisionTypesId.dbType, id)}""".update().runUnchecked(c) > 0
+    where "id" = ${Fragment.encode(PrecisionTypesId.pgType, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow = {
   sql"""insert into "public"."precision_types"("id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6")
-    values (${Fragment.encode(PrecisionTypesId.dbType, unsaved.id)}::int4, ${Fragment.encode(String10.dbType, unsaved.string10)}, ${Fragment.encode(String20.dbType, unsaved.string20)}, ${Fragment.encode(String50.dbType, unsaved.string50)}, ${Fragment.encode(String100.dbType, unsaved.string100)}, ${Fragment.encode(String255.dbType, unsaved.string255)}, ${Fragment.encode(PaddedString3.dbType, unsaved.bpchar3)}::bpchar, ${Fragment.encode(PaddedString10.dbType, unsaved.bpchar10)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal52)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal102)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal184)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.numeric82)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.numeric124)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp0)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp3)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp6)}::timestamp, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz0)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz3)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz6)}::timestamptz, ${Fragment.encode(PgTypes.time, unsaved.time0)}::time, ${Fragment.encode(PgTypes.time, unsaved.time3)}::time, ${Fragment.encode(PgTypes.time, unsaved.time6)}::time, ${Fragment.encode(PgTypes.timetz, unsaved.timetz0)}::timetz, ${Fragment.encode(PgTypes.timetz, unsaved.timetz3)}::timetz, ${Fragment.encode(PgTypes.timetz, unsaved.timetz6)}::timetz)
+    values (${Fragment.encode(PrecisionTypesId.pgType, unsaved.id)}::int4, ${Fragment.encode(String10.pgType, unsaved.string10)}, ${Fragment.encode(String20.pgType, unsaved.string20)}, ${Fragment.encode(String50.pgType, unsaved.string50)}, ${Fragment.encode(String100.pgType, unsaved.string100)}, ${Fragment.encode(String255.pgType, unsaved.string255)}, ${Fragment.encode(PaddedString3.pgType, unsaved.bpchar3)}::bpchar, ${Fragment.encode(PaddedString10.pgType, unsaved.bpchar10)}::bpchar, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal52)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal102)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.decimal184)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.numeric82)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.numeric124)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp0)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp3)}::timestamp, ${Fragment.encode(PgTypes.timestamp, unsaved.timestamp6)}::timestamp, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz0)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz3)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz6)}::timestamptz, ${Fragment.encode(PgTypes.time, unsaved.time0)}::time, ${Fragment.encode(PgTypes.time, unsaved.time3)}::time, ${Fragment.encode(PgTypes.time, unsaved.time6)}::time, ${Fragment.encode(PgTypes.timetz, unsaved.timetz0)}::timetz, ${Fragment.encode(PgTypes.timetz, unsaved.timetz3)}::timetz, ${Fragment.encode(PgTypes.timetz, unsaved.timetz6)}::timetz)
     on conflict ("id")
     do update set
       "string10" = EXCLUDED."string10",

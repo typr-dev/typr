@@ -276,9 +276,9 @@ public record PaymentsRow(
 
   public static RowParser<PaymentsRow> _rowParser =
       RowParsers.of(
-          PaymentsId.dbType,
-          OrdersId.dbType,
-          PaymentMethodsId.dbType,
+          PaymentsId.mariaType,
+          OrdersId.mariaType,
+          PaymentMethodsId.mariaType,
           MariaTypes.varchar.opt(),
           MariaTypes.numeric,
           MariaTypes.char_,

@@ -7,7 +7,8 @@ package adventureworks.humanresources.employee
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple15
@@ -53,7 +54,7 @@ case class EmployeeRow(
   /** Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt from collective bargaining.
    * Default: true
    */
-  salariedflag: Flag,
+  salariedflag: /* user-picked */ SalariedFlag,
   /** Number of available vacation hours.
    * Default: 0
    * Constraint CK_Employee_VacationHours affecting columns vacationhours: (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -67,7 +68,7 @@ case class EmployeeRow(
   /** 0 = Inactive, 1 = Active
    * Default: true
    */
-  currentflag: Flag,
+  currentflag: /* user-picked */ CurrentFlag,
   /** Default: uuid_generate_v1() */
   rowguid: UUID,
   /** Default: now() */
@@ -76,14 +77,14 @@ case class EmployeeRow(
    * Default: '/'::character varying
    */
   organizationnode: Option[String]
-) extends Tuple15[BusinessentityId, String, String, String, LocalDate, String, String, LocalDate, Flag, Short, Short, Flag, UUID, LocalDateTime, Option[String]] {
+) extends Tuple15[BusinessentityId, String, String, String, LocalDate, String, String, LocalDate, /* user-picked */ SalariedFlag, Short, Short, /* user-picked */ CurrentFlag, UUID, LocalDateTime, Option[String]] {
   def id: BusinessentityId = businessentityid
 
   def toUnsavedRow(
-    salariedflag: Defaulted[Flag] = Defaulted.Provided(this.salariedflag),
+    salariedflag: Defaulted[/* user-picked */ SalariedFlag] = Defaulted.Provided(this.salariedflag),
     vacationhours: Defaulted[Short] = Defaulted.Provided(this.vacationhours),
     sickleavehours: Defaulted[Short] = Defaulted.Provided(this.sickleavehours),
-    currentflag: Defaulted[Flag] = Defaulted.Provided(this.currentflag),
+    currentflag: Defaulted[/* user-picked */ CurrentFlag] = Defaulted.Provided(this.currentflag),
     rowguid: Defaulted[UUID] = Defaulted.Provided(this.rowguid),
     modifieddate: Defaulted[LocalDateTime] = Defaulted.Provided(this.modifieddate),
     organizationnode: Defaulted[Option[String]] = Defaulted.Provided(this.organizationnode)
@@ -123,13 +124,13 @@ case class EmployeeRow(
 
   override def `_8`: LocalDate = hiredate
 
-  override def `_9`: Flag = salariedflag
+  override def `_9`: /* user-picked */ SalariedFlag = salariedflag
 
   override def `_10`: Short = vacationhours
 
   override def `_11`: Short = sickleavehours
 
-  override def `_12`: Flag = currentflag
+  override def `_12`: /* user-picked */ CurrentFlag = currentflag
 
   override def `_13`: UUID = rowguid
 
@@ -139,7 +140,7 @@ case class EmployeeRow(
 }
 
 object EmployeeRow {
-  val `_rowParser`: RowParser[EmployeeRow] = RowParsers.of(BusinessentityId.dbType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, Flag.dbType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, Flag.dbType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text.nullable)(EmployeeRow.apply)(row => Array[Any](row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
+  val `_rowParser`: RowParser[EmployeeRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, SalariedFlag.pgType, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, CurrentFlag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text.nullable)(EmployeeRow.apply)(row => Array[Any](row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
 
   given pgText: PgText[EmployeeRow] = PgText.from(`_rowParser`.underlying)
 }

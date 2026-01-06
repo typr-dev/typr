@@ -41,5 +41,5 @@ case class AddresstypeRowUnsaved(
 }
 
 object AddresstypeRowUnsaved {
-  given pgText: PgText[AddresstypeRowUnsaved] = PgText.instance((row, sb) => { Name.dbType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using AddresstypeId.dbType.text).unsafeEncode(row.addresstypeid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[AddresstypeRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using AddresstypeId.pgType.text).unsafeEncode(row.addresstypeid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
 }

@@ -27,7 +27,7 @@ class DepartmentFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Dep
       None,
       Some("int4"),
       (row, value) => row.copy(departmentid = value),
-      DepartmentId.dbType
+      DepartmentId.pgType
     )
   }
 
@@ -39,7 +39,7 @@ class DepartmentFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Dep
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 
@@ -51,7 +51,7 @@ class DepartmentFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Dep
       None,
       Some("varchar"),
       (row, value) => row.copy(groupname = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

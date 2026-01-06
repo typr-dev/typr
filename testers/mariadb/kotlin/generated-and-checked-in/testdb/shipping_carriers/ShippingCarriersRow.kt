@@ -9,11 +9,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple6
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: shipping_carriers
   * Primary key: carrier_id
@@ -38,8 +38,8 @@ data class ShippingCarriersRow(
   /** 
     * Default: 1
     */
-  @field:JsonProperty("is_active") val isActive: Boolean
-) : Tuple6<ShippingCarriersId, String, String, String?, Json?, Boolean> {
+  @field:JsonProperty("is_active") val isActive: /* user-picked */ IsActive
+) : Tuple6<ShippingCarriersId, String, String, String?, Json?, /* user-picked */ IsActive> {
   override fun _1(): ShippingCarriersId = carrierId
 
   override fun _2(): String = code
@@ -50,17 +50,17 @@ data class ShippingCarriersRow(
 
   override fun _5(): Json? = apiConfig
 
-  override fun _6(): Boolean = isActive
+  override fun _6(): /* user-picked */ IsActive = isActive
 
   fun id(): ShippingCarriersId = carrierId
 
   fun toUnsavedRow(
     trackingUrlTemplate: Defaulted<String?> = Defaulted.Provided(this.trackingUrlTemplate),
     apiConfig: Defaulted<Json?> = Defaulted.Provided(this.apiConfig),
-    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive)
+    isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive)
   ): ShippingCarriersRowUnsaved = ShippingCarriersRowUnsaved(code, name, trackingUrlTemplate, apiConfig, isActive)
 
   companion object {
-    val _rowParser: RowParser<ShippingCarriersRow> = RowParsers.of(ShippingCarriersId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.json.nullable(), KotlinDbTypes.MariaTypes.bool, { t0, t1, t2, t3, t4, t5 -> ShippingCarriersRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive) })
+    val _rowParser: RowParser<ShippingCarriersRow> = RowParsers.of(ShippingCarriersId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.json.nullable(), IsActive.mariaType, { t0, t1, t2, t3, t4, t5 -> ShippingCarriersRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive) })
   }
 }

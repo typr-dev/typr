@@ -100,7 +100,7 @@ data class Db2testFields(val _path: List<Path>) : TupleExpr24<Short, Db2testId, 
 
   fun graphicCol(): Field<String, Db2testRow> = Field<String, Db2testRow>(_path, "GRAPHIC_COL", Db2testRow::graphicCol, null, null, { row, value -> row.copy(graphicCol = value) }, Db2Types.graphic)
 
-  fun intCol(): IdField<Db2testId, Db2testRow> = IdField<Db2testId, Db2testRow>(_path, "INT_COL", Db2testRow::intCol, null, null, { row, value -> row.copy(intCol = value) }, Db2testId.dbType)
+  fun intCol(): IdField<Db2testId, Db2testRow> = IdField<Db2testId, Db2testRow>(_path, "INT_COL", Db2testRow::intCol, null, null, { row, value -> row.copy(intCol = value) }, Db2testId.db2Type)
 
   fun numericCol(): Field<BigDecimal, Db2testRow> = Field<BigDecimal, Db2testRow>(_path, "NUMERIC_COL", Db2testRow::numericCol, null, null, { row, value -> row.copy(numericCol = value) }, KotlinDbTypes.Db2Types.decimal)
 

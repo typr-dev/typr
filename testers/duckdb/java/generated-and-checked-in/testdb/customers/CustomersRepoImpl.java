@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import testdb.Priority;
+import testdb.userdefined.Email;
 
 public class CustomersRepoImpl implements CustomersRepo {
   @Override
@@ -43,7 +44,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   public Integer deleteByIds(CustomersId[] customerIds, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"customers\"\nwhere \"customer_id\" = ANY("),
-            Fragment.encode(CustomersId.dbTypeArray, customerIds),
+            Fragment.encode(CustomersId.duckDbTypeArray, customerIds),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -60,7 +61,7 @@ public class CustomersRepoImpl implements CustomersRepo {
             Fragment.lit(", "),
             Fragment.encode(DuckDbTypes.varchar, unsaved.name()),
             Fragment.lit(", "),
-            Fragment.encode(DuckDbTypes.varchar.opt(), unsaved.email()),
+            Fragment.encode(Email.duckDbType.opt(), unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt()),
             Fragment.lit(", "),
@@ -87,7 +88,7 @@ public class CustomersRepoImpl implements CustomersRepo {
     values.add(interpolate(Fragment.encode(DuckDbTypes.varchar, unsaved.name()), Fragment.lit("")));
     columns.add(Fragment.lit("\"email\""));
     values.add(
-        interpolate(Fragment.encode(DuckDbTypes.varchar.opt(), unsaved.email()), Fragment.lit("")));
+        interpolate(Fragment.encode(Email.duckDbType.opt(), unsaved.email()), Fragment.lit("")));
     unsaved
         .createdAt()
         .visit(
@@ -158,7 +159,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                 "select \"customer_id\", \"name\", \"email\", \"created_at\", \"priority\"\n"
                     + "from \"customers\"\n"
                     + "where \"customer_id\" = ANY("),
-            Fragment.encode(CustomersId.dbTypeArray, customerIds),
+            Fragment.encode(CustomersId.duckDbTypeArray, customerIds),
             Fragment.lit(")"))
         .query(CustomersRow._rowParser.all())
         .runUnchecked(c);
@@ -186,7 +187,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                 Fragment.lit("update \"customers\"\nset \"name\" = "),
                 Fragment.encode(DuckDbTypes.varchar, row.name()),
                 Fragment.lit(",\n\"email\" = "),
-                Fragment.encode(DuckDbTypes.varchar.opt(), row.email()),
+                Fragment.encode(Email.duckDbType.opt(), row.email()),
                 Fragment.lit(",\n\"created_at\" = "),
                 Fragment.encode(DuckDbTypes.timestamp, row.createdAt()),
                 Fragment.lit(",\n\"priority\" = "),
@@ -210,7 +211,7 @@ public class CustomersRepoImpl implements CustomersRepo {
             Fragment.lit(", "),
             Fragment.encode(DuckDbTypes.varchar, unsaved.name()),
             Fragment.lit(", "),
-            Fragment.encode(DuckDbTypes.varchar.opt(), unsaved.email()),
+            Fragment.encode(Email.duckDbType.opt(), unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt()),
             Fragment.lit(", "),

@@ -42,7 +42,7 @@ object Db2Adapter extends DbAdapter {
   val Types: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.Db2Types")
   val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.Db2Type")
   val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.Db2Text")
-  val typeFieldName: jvm.Ident = jvm.Ident("dbType")
+  val typeFieldName: jvm.Ident = jvm.Ident("db2Type")
   val textFieldName: jvm.Ident = jvm.Ident("db2Text")
   def dialectRef(lang: Lang): Code = code"${lang.dsl.Dialect}.DB2"
 
@@ -78,6 +78,9 @@ object Db2Adapter extends DbAdapter {
 
       case TypoType.Array(_, _) =>
         sys.error("Db2Adapter.lookupType: DB2 does not support array types")
+
+      case TypoType.Aligned(_, sourceType, _, _) =>
+        lookupType(sourceType, naming, typeSupport)
     }
 
   def lookupPrimitive(primitive: analysis.WellKnownPrimitive, typeSupport: TypeSupport): Code = {

@@ -10,9 +10,10 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import doobie.postgres.Text
 import doobie.util.Read
 import doobie.util.Write
@@ -42,9 +43,9 @@ case class PersonRow(
   /** First name of the person. */
   firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  middlename: Option[Name],
+  middlename: Option[/* user-picked */ MiddleName],
   /** Last name of the person. */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   suffix: Option[/* max 10 chars */ String],
   /** 0 = Contact does not wish to receive e-mail promotions, 1 = Contact does wish to receive e-mail promotions from AdventureWorks, 2 = Contact does wish to receive e-mail promotions from AdventureWorks and selected partners.
@@ -88,9 +89,9 @@ case class PersonRow(
 }
 
 object PersonRow {
-  given decoder: Decoder[PersonRow] = Decoder.forProduct13[PersonRow, BusinessentityId, String, NameStyle, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[Name], Name, Option[/* max 10 chars */ String], Int, Option[TypoXml], Option[TypoXml], TypoUUID, TypoLocalDateTime]("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")(PersonRow.apply)(using BusinessentityId.decoder, Decoder.decodeString, NameStyle.decoder, Decoder.decodeOption(using Decoder.decodeString), FirstName.decoder, Decoder.decodeOption(using Name.decoder), Name.decoder, Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeInt, Decoder.decodeOption(using TypoXml.decoder), Decoder.decodeOption(using TypoXml.decoder), TypoUUID.decoder, TypoLocalDateTime.decoder)
+  given decoder: Decoder[PersonRow] = Decoder.forProduct13[PersonRow, BusinessentityId, String, NameStyle, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[/* user-picked */ MiddleName], /* user-picked */ LastName, Option[/* max 10 chars */ String], Int, Option[TypoXml], Option[TypoXml], TypoUUID, TypoLocalDateTime]("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")(PersonRow.apply)(using BusinessentityId.decoder, Decoder.decodeString, NameStyle.decoder, Decoder.decodeOption(using Decoder.decodeString), FirstName.decoder, Decoder.decodeOption(using MiddleName.decoder), LastName.decoder, Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeInt, Decoder.decodeOption(using TypoXml.decoder), Decoder.decodeOption(using TypoXml.decoder), TypoUUID.decoder, TypoLocalDateTime.decoder)
 
-  given encoder: Encoder[PersonRow] = Encoder.forProduct13[PersonRow, BusinessentityId, String, NameStyle, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[Name], Name, Option[/* max 10 chars */ String], Int, Option[TypoXml], Option[TypoXml], TypoUUID, TypoLocalDateTime]("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")(x => (x.businessentityid, x.persontype, x.namestyle, x.title, x.firstname, x.middlename, x.lastname, x.suffix, x.emailpromotion, x.additionalcontactinfo, x.demographics, x.rowguid, x.modifieddate))(using BusinessentityId.encoder, Encoder.encodeString, NameStyle.encoder, Encoder.encodeOption(using Encoder.encodeString), FirstName.encoder, Encoder.encodeOption(using Name.encoder), Name.encoder, Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeInt, Encoder.encodeOption(using TypoXml.encoder), Encoder.encodeOption(using TypoXml.encoder), TypoUUID.encoder, TypoLocalDateTime.encoder)
+  given encoder: Encoder[PersonRow] = Encoder.forProduct13[PersonRow, BusinessentityId, String, NameStyle, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[/* user-picked */ MiddleName], /* user-picked */ LastName, Option[/* max 10 chars */ String], Int, Option[TypoXml], Option[TypoXml], TypoUUID, TypoLocalDateTime]("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")(x => (x.businessentityid, x.persontype, x.namestyle, x.title, x.firstname, x.middlename, x.lastname, x.suffix, x.emailpromotion, x.additionalcontactinfo, x.demographics, x.rowguid, x.modifieddate))(using BusinessentityId.encoder, Encoder.encodeString, NameStyle.encoder, Encoder.encodeOption(using Encoder.encodeString), FirstName.encoder, Encoder.encodeOption(using MiddleName.encoder), LastName.encoder, Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeInt, Encoder.encodeOption(using TypoXml.encoder), Encoder.encodeOption(using TypoXml.encoder), TypoUUID.encoder, TypoLocalDateTime.encoder)
 
   given pgText: Text[PersonRow] = {
     Text.instance[PersonRow]{ (row, sb) =>
@@ -104,9 +105,9 @@ object PersonRow {
       sb.append(Text.DELIMETER)
       /* user-picked */ FirstName.pgText.unsafeEncode(row.firstname, sb)
       sb.append(Text.DELIMETER)
-      Text.option(using Name.pgText).unsafeEncode(row.middlename, sb)
+      Text.option(using MiddleName.pgText).unsafeEncode(row.middlename, sb)
       sb.append(Text.DELIMETER)
-      Name.pgText.unsafeEncode(row.lastname, sb)
+      /* user-picked */ LastName.pgText.unsafeEncode(row.lastname, sb)
       sb.append(Text.DELIMETER)
       Text.option(using Text.stringInstance).unsafeEncode(row.suffix, sb)
       sb.append(Text.DELIMETER)
@@ -129,8 +130,8 @@ object PersonRow {
         new Read.Single(NameStyle.get).asInstanceOf[Read[Any]],
         new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.Single(/* user-picked */ FirstName.get).asInstanceOf[Read[Any]],
-        new Read.SingleOpt(Name.get).asInstanceOf[Read[Any]],
-        new Read.Single(Name.get).asInstanceOf[Read[Any]],
+        new Read.SingleOpt(/* user-picked */ MiddleName.get).asInstanceOf[Read[Any]],
+        new Read.Single(/* user-picked */ LastName.get).asInstanceOf[Read[Any]],
         new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.Single(Meta.IntMeta.get).asInstanceOf[Read[Any]],
         new Read.SingleOpt(TypoXml.get).asInstanceOf[Read[Any]],
@@ -144,8 +145,8 @@ object PersonRow {
             namestyle = arr(2).asInstanceOf[NameStyle],
             title = arr(3).asInstanceOf[Option[/* max 8 chars */ String]],
             firstname = arr(4).asInstanceOf[/* user-picked */ FirstName],
-            middlename = arr(5).asInstanceOf[Option[Name]],
-            lastname = arr(6).asInstanceOf[Name],
+            middlename = arr(5).asInstanceOf[Option[/* user-picked */ MiddleName]],
+            lastname = arr(6).asInstanceOf[/* user-picked */ LastName],
             suffix = arr(7).asInstanceOf[Option[/* max 10 chars */ String]],
             emailpromotion = arr(8).asInstanceOf[Int],
             additionalcontactinfo = arr(9).asInstanceOf[Option[TypoXml]],
@@ -163,8 +164,8 @@ object PersonRow {
            new Write.Single(NameStyle.put),
            new Write.Single(Meta.StringMeta.put).toOpt,
            new Write.Single(/* user-picked */ FirstName.put),
-           new Write.Single(Name.put).toOpt,
-           new Write.Single(Name.put),
+           new Write.Single(/* user-picked */ MiddleName.put).toOpt,
+           new Write.Single(/* user-picked */ LastName.put),
            new Write.Single(Meta.StringMeta.put).toOpt,
            new Write.Single(Meta.IntMeta.put),
            new Write.Single(TypoXml.put).toOpt,

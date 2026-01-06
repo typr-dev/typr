@@ -481,7 +481,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(setCol = value),
-      XYZSet.dbType
+      XYZSet.mariaType
     )
   }
 

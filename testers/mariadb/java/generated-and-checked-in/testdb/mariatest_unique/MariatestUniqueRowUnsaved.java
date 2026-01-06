@@ -5,16 +5,18 @@
  */
 package testdb.mariatest_unique;
 
+import testdb.userdefined.Email;
+
 /** This class corresponds to a row in table `mariatest_unique` which has not been persisted yet */
 public record MariatestUniqueRowUnsaved(
     /** */
-    String email,
+    /* user-picked */ Email email,
     /** */
     String code,
     /** */
     String category) {
   /** */
-  public MariatestUniqueRowUnsaved withEmail(String email) {
+  public MariatestUniqueRowUnsaved withEmail(/* user-picked */ Email email) {
     return new MariatestUniqueRowUnsaved(email, code, category);
   }
   ;

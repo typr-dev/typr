@@ -57,11 +57,11 @@ public record FlaffRow(
 
   public static RowParser<FlaffRow> _rowParser =
       RowParsers.of(
-          ShortText.dbType,
+          ShortText.pgType,
           PgTypes.text,
           PgTypes.int4,
-          ShortText.dbType,
-          ShortText.dbType.opt(),
+          ShortText.pgType,
+          ShortText.pgType.opt(),
           FlaffRow::new,
           row ->
               new Object[] {

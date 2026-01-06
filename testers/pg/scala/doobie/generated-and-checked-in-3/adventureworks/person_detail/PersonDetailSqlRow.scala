@@ -7,8 +7,9 @@ package adventureworks.person_detail
 
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import doobie.util.Read
 import doobie.util.meta.Meta
 import io.circe.Decoder
@@ -23,9 +24,9 @@ case class PersonDetailSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Option[Name],
+  middlename: Option[/* user-picked */ MiddleName],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
   jobtitle: String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
@@ -39,17 +40,17 @@ case class PersonDetailSqlRow(
 )
 
 object PersonDetailSqlRow {
-  given decoder: Decoder[PersonDetailSqlRow] = Decoder.forProduct10[PersonDetailSqlRow, BusinessentityId, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[Name], Name, String, Option[String], Option[String], Option[String], Option[TypoUUID]]("businessentityid", "title", "firstname", "middlename", "lastname", "jobtitle", "addressline1", "city", "postalcode", "rowguid")(PersonDetailSqlRow.apply)(using BusinessentityId.decoder, Decoder.decodeOption(using Decoder.decodeString), FirstName.decoder, Decoder.decodeOption(using Name.decoder), Name.decoder, Decoder.decodeString, Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using TypoUUID.decoder))
+  given decoder: Decoder[PersonDetailSqlRow] = Decoder.forProduct10[PersonDetailSqlRow, BusinessentityId, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[/* user-picked */ MiddleName], /* user-picked */ LastName, String, Option[String], Option[String], Option[String], Option[TypoUUID]]("businessentityid", "title", "firstname", "middlename", "lastname", "jobtitle", "addressline1", "city", "postalcode", "rowguid")(PersonDetailSqlRow.apply)(using BusinessentityId.decoder, Decoder.decodeOption(using Decoder.decodeString), FirstName.decoder, Decoder.decodeOption(using MiddleName.decoder), LastName.decoder, Decoder.decodeString, Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using Decoder.decodeString), Decoder.decodeOption(using TypoUUID.decoder))
 
-  given encoder: Encoder[PersonDetailSqlRow] = Encoder.forProduct10[PersonDetailSqlRow, BusinessentityId, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[Name], Name, String, Option[String], Option[String], Option[String], Option[TypoUUID]]("businessentityid", "title", "firstname", "middlename", "lastname", "jobtitle", "addressline1", "city", "postalcode", "rowguid")(x => (x.businessentityid, x.title, x.firstname, x.middlename, x.lastname, x.jobtitle, x.addressline1, x.city, x.postalcode, x.rowguid))(using BusinessentityId.encoder, Encoder.encodeOption(using Encoder.encodeString), FirstName.encoder, Encoder.encodeOption(using Name.encoder), Name.encoder, Encoder.encodeString, Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using TypoUUID.encoder))
+  given encoder: Encoder[PersonDetailSqlRow] = Encoder.forProduct10[PersonDetailSqlRow, BusinessentityId, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[/* user-picked */ MiddleName], /* user-picked */ LastName, String, Option[String], Option[String], Option[String], Option[TypoUUID]]("businessentityid", "title", "firstname", "middlename", "lastname", "jobtitle", "addressline1", "city", "postalcode", "rowguid")(x => (x.businessentityid, x.title, x.firstname, x.middlename, x.lastname, x.jobtitle, x.addressline1, x.city, x.postalcode, x.rowguid))(using BusinessentityId.encoder, Encoder.encodeOption(using Encoder.encodeString), FirstName.encoder, Encoder.encodeOption(using MiddleName.encoder), LastName.encoder, Encoder.encodeString, Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using Encoder.encodeString), Encoder.encodeOption(using TypoUUID.encoder))
 
   given read: Read[PersonDetailSqlRow] = {
     new Read.CompositeOfInstances(Array(
       new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
         new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.Single(/* user-picked */ FirstName.get).asInstanceOf[Read[Any]],
-        new Read.SingleOpt(Name.get).asInstanceOf[Read[Any]],
-        new Read.Single(Name.get).asInstanceOf[Read[Any]],
+        new Read.SingleOpt(/* user-picked */ MiddleName.get).asInstanceOf[Read[Any]],
+        new Read.Single(/* user-picked */ LastName.get).asInstanceOf[Read[Any]],
         new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.SingleOpt(Meta.StringMeta.get).asInstanceOf[Read[Any]],
@@ -60,8 +61,8 @@ object PersonDetailSqlRow {
         businessentityid = arr(0).asInstanceOf[BusinessentityId],
             title = arr(1).asInstanceOf[Option[/* max 8 chars */ String]],
             firstname = arr(2).asInstanceOf[/* user-picked */ FirstName],
-            middlename = arr(3).asInstanceOf[Option[Name]],
-            lastname = arr(4).asInstanceOf[Name],
+            middlename = arr(3).asInstanceOf[Option[/* user-picked */ MiddleName]],
+            lastname = arr(4).asInstanceOf[/* user-picked */ LastName],
             jobtitle = arr(5).asInstanceOf[String],
             addressline1 = arr(6).asInstanceOf[Option[String]],
             city = arr(7).asInstanceOf[Option[String]],

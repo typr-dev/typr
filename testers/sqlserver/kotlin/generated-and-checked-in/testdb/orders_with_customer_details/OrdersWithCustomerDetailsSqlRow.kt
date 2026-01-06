@@ -16,6 +16,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.orders.OrdersId
+import testdb.userdefined.Email
 
 /** SQL file: orders-with-customer-details.sql */
 data class OrdersWithCustomerDetailsSqlRow(
@@ -30,8 +31,8 @@ data class OrdersWithCustomerDetailsSqlRow(
   /** Points to [testdb.customers.CustomersRow.name] */
   @field:JsonProperty("customer_name") val customerName: String,
   /** Points to [testdb.customers.CustomersRow.email] */
-  @field:JsonProperty("customer_email") val customerEmail: String
-) : Tuple6<OrdersId, LocalDateTime?, BigDecimal, CustomersId, String, String> {
+  @field:JsonProperty("customer_email") val customerEmail: /* user-picked */ Email
+) : Tuple6<OrdersId, LocalDateTime?, BigDecimal, CustomersId, String, /* user-picked */ Email> {
   override fun _1(): OrdersId = orderId
 
   override fun _2(): LocalDateTime? = orderDate
@@ -42,9 +43,9 @@ data class OrdersWithCustomerDetailsSqlRow(
 
   override fun _5(): String = customerName
 
-  override fun _6(): String = customerEmail
+  override fun _6(): /* user-picked */ Email = customerEmail
 
   companion object {
-    val _rowParser: RowParser<OrdersWithCustomerDetailsSqlRow> = RowParsers.of(OrdersId.sqlServerType, SqlServerTypes.datetime2.nullable(), KotlinDbTypes.SqlServerTypes.money, CustomersId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar, { t0, t1, t2, t3, t4, t5 -> OrdersWithCustomerDetailsSqlRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.orderId, row.orderDate, row.totalAmount, row.customerId, row.customerName, row.customerEmail) })
+    val _rowParser: RowParser<OrdersWithCustomerDetailsSqlRow> = RowParsers.of(OrdersId.sqlServerType, SqlServerTypes.datetime2.nullable(), KotlinDbTypes.SqlServerTypes.money, CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, { t0, t1, t2, t3, t4, t5 -> OrdersWithCustomerDetailsSqlRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.orderId, row.orderDate, row.totalAmount, row.customerId, row.customerName, row.customerEmail) })
   }
 }

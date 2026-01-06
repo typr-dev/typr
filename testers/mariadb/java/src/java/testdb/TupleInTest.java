@@ -19,6 +19,7 @@ import org.junit.Test;
 import testdb.categories.*;
 import testdb.product_categories.*;
 import testdb.products.*;
+import testdb.userdefined.IsPrimary;
 
 /**
  * Comprehensive tests for tuple IN functionality on MariaDB. Tests cover: - Composite ID IN with
@@ -200,11 +201,13 @@ public class TupleInTest {
     // Insert with different isPrimary values using full row
     var pc1 =
         repos.productCategoriesRepo.insert(
-            new ProductCategoriesRow(product1.productId(), category.categoryId(), true, (short) 1),
+            new ProductCategoriesRow(
+                product1.productId(), category.categoryId(), new IsPrimary(true), (short) 1),
             c);
     var pc2 =
         repos.productCategoriesRepo.insert(
-            new ProductCategoriesRow(product2.productId(), category.categoryId(), false, (short) 2),
+            new ProductCategoriesRow(
+                product2.productId(), category.categoryId(), new IsPrimary(false), (short) 2),
             c);
 
     // Query with compositeIdIn AND isPrimary condition using SqlExpr.all
@@ -216,7 +219,7 @@ public class TupleInTest {
                 pc ->
                     SqlExpr.all(
                         pc.compositeIdIn(List.of(pc1.compositeId(), pc2.compositeId())),
-                        pc.isPrimary().isEqual(true)))
+                        pc.isPrimary().isEqual(new IsPrimary(true))))
             .toList(c);
 
     assertEquals(1, result.size());
@@ -416,7 +419,7 @@ public class TupleInTest {
                             repos
                                 .productCategoriesRepo
                                 .select()
-                                .where(inner -> inner.isPrimary().isEqual(false))
+                                .where(inner -> inner.isPrimary().isEqual(new IsPrimary(false)))
                                 .map(inner -> inner.productId().tupleWith(inner.categoryId()))
                                 .subquery()))
             .toList(c);
@@ -455,7 +458,7 @@ public class TupleInTest {
                             repos
                                 .productCategoriesRepo
                                 .select()
-                                .where(inner -> inner.isPrimary().isEqual(true))
+                                .where(inner -> inner.isPrimary().isEqual(new IsPrimary(true)))
                                 .map(inner -> inner.productId().tupleWith(inner.categoryId()))
                                 .subquery()))
             .toList(c);
@@ -486,11 +489,13 @@ public class TupleInTest {
     // Insert with different sortOrder values
     var pc1 =
         repos.productCategoriesRepo.insert(
-            new ProductCategoriesRow(product1.productId(), category.categoryId(), false, (short) 1),
+            new ProductCategoriesRow(
+                product1.productId(), category.categoryId(), new IsPrimary(false), (short) 1),
             c);
     var pc2 =
         repos.productCategoriesRepo.insert(
-            new ProductCategoriesRow(product2.productId(), category.categoryId(), false, (short) 2),
+            new ProductCategoriesRow(
+                product2.productId(), category.categoryId(), new IsPrimary(false), (short) 2),
             c);
 
     // Combine tuple IN subquery with sortOrder condition
@@ -507,7 +512,7 @@ public class TupleInTest {
                                 repos
                                     .productCategoriesRepo
                                     .select()
-                                    .where(inner -> inner.isPrimary().isEqual(false))
+                                    .where(inner -> inner.isPrimary().isEqual(new IsPrimary(false)))
                                     .map(inner -> inner.productId().tupleWith(inner.categoryId()))
                                     .subquery()),
                         pc.sortOrder().greaterThan((short) 1)))
@@ -814,12 +819,15 @@ public class TupleInTest {
           var pc1 =
               repos.productCategoriesRepo.insert(
                   new ProductCategoriesRow(
-                      product1.productId(), category1.categoryId(), true, (short) 1),
+                      product1.productId(), category1.categoryId(), new IsPrimary(true), (short) 1),
                   c);
           var pc2 =
               repos.productCategoriesRepo.insert(
                   new ProductCategoriesRow(
-                      product2.productId(), category2.categoryId(), false, (short) 2),
+                      product2.productId(),
+                      category2.categoryId(),
+                      new IsPrimary(false),
+                      (short) 2),
                   c);
 
           // Test truly nested tuple: ((productId, categoryId), isPrimary)
@@ -838,11 +846,11 @@ public class TupleInTest {
                                       dev.typr.foundations.Tuple.of(
                                           dev.typr.foundations.Tuple.of(
                                               product1.productId(), category1.categoryId()),
-                                          true),
+                                          new IsPrimary(true)),
                                       dev.typr.foundations.Tuple.of(
                                           dev.typr.foundations.Tuple.of(
                                               product2.productId(), category2.categoryId()),
-                                          false))))
+                                          new IsPrimary(false)))))
                   .toList(c);
 
           assertEquals("Should find 2 rows matching nested tuple pattern", 2, result.size());
@@ -863,7 +871,7 @@ public class TupleInTest {
                                       dev.typr.foundations.Tuple.of(
                                           dev.typr.foundations.Tuple.of(
                                               product1.productId(), category1.categoryId()),
-                                          false)))) // pc1 has isPrimary=true
+                                          new IsPrimary(false))))) // pc1 has isPrimary=true
                   .toList(c);
 
           assertEquals("Should not match misaligned nested tuple", 0, resultNoMatch.size());
@@ -890,10 +898,12 @@ public class TupleInTest {
 
     // Create associations with full row constructor to set isPrimary
     repos.productCategoriesRepo.insert(
-        new ProductCategoriesRow(product1.productId(), category1.categoryId(), true, (short) 1),
+        new ProductCategoriesRow(
+            product1.productId(), category1.categoryId(), new IsPrimary(true), (short) 1),
         null);
     repos.productCategoriesRepo.insert(
-        new ProductCategoriesRow(product2.productId(), category2.categoryId(), false, (short) 2),
+        new ProductCategoriesRow(
+            product2.productId(), category2.categoryId(), new IsPrimary(false), (short) 2),
         null);
 
     // Test truly nested tuple in mock
@@ -911,11 +921,11 @@ public class TupleInTest {
                                 dev.typr.foundations.Tuple.of(
                                     dev.typr.foundations.Tuple.of(
                                         product1.productId(), category1.categoryId()),
-                                    true),
+                                    new IsPrimary(true)),
                                 dev.typr.foundations.Tuple.of(
                                     dev.typr.foundations.Tuple.of(
                                         product2.productId(), category2.categoryId()),
-                                    false))))
+                                    new IsPrimary(false)))))
             .toList(null);
 
     assertEquals("Should find 2 rows matching nested tuple pattern", 2, result.size());
@@ -1024,7 +1034,7 @@ public class TupleInTest {
         new ProductCategoriesRepoMock(
             unsaved ->
                 unsaved.toRow(
-                    () -> false, // isPrimary
+                    () -> new IsPrimary(false), // isPrimary
                     () -> (short) 0 // sortOrder
                     )));
   }

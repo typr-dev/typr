@@ -83,7 +83,7 @@ public record EmailaddressRow(
 
   public static RowParser<EmailaddressRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.int4,
           PgTypes.text.opt(),
           PgTypes.uuid,

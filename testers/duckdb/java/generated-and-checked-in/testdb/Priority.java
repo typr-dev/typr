@@ -32,7 +32,7 @@ public enum Priority {
       java.util.Arrays.stream(Priority.values())
           .collect(java.util.stream.Collectors.toMap(n -> n.value, n -> n));
 
-  public static DuckDbType<Priority[]> dbTypeArray =
+  public static DuckDbType<Priority[]> duckDbTypeArray =
       DuckDbTypes.varcharArray
           .bimap(
               xs -> arrayMap.map(xs, Priority::force, Priority.class),

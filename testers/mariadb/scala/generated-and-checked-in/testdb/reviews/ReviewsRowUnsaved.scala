@@ -15,6 +15,8 @@ import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
 import testdb.order_items.OrderItemsId
 import testdb.products.ProductsId
+import testdb.userdefined.IsApproved
+import testdb.userdefined.IsVerifiedPurchase
 
 /** This class corresponds to a row in table `reviews` which has not been persisted yet */
 case class ReviewsRowUnsaved(
@@ -55,11 +57,11 @@ case class ReviewsRowUnsaved(
   /** Default: 0
 
    */
-  @JsonProperty("is_verified_purchase") isVerifiedPurchase: Defaulted[Boolean] = new UseDefault(),
+  @JsonProperty("is_verified_purchase") isVerifiedPurchase: Defaulted[/* user-picked */ IsVerifiedPurchase] = new UseDefault(),
   /** Default: 0
 
    */
-  @JsonProperty("is_approved") isApproved: Defaulted[Boolean] = new UseDefault(),
+  @JsonProperty("is_approved") isApproved: Defaulted[/* user-picked */ IsApproved] = new UseDefault(),
   /** Default: 0
 
    */
@@ -92,8 +94,8 @@ case class ReviewsRowUnsaved(
     prosDefault: => Option[Json],
     consDefault: => Option[Json],
     imagesDefault: => Option[Json],
-    isVerifiedPurchaseDefault: => Boolean,
-    isApprovedDefault: => Boolean,
+    isVerifiedPurchaseDefault: => /* user-picked */ IsVerifiedPurchase,
+    isApprovedDefault: => /* user-picked */ IsApproved,
     helpfulVotesDefault: => Uint4,
     unhelpfulVotesDefault: => Uint4,
     adminResponseDefault: => Option[String],

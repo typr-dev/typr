@@ -17,7 +17,7 @@ case class AddressId(@JsonValue value: Int) extends scala.AnyVal
 object AddressId {
   given bijection: Bijection[AddressId, Int] = Bijection.apply[AddressId, Int](_.value)(AddressId.apply)
 
-  given dbType: PgType[AddressId] = ScalaDbTypes.PgTypes.int4.bimap(AddressId.apply, _.value)
+  given pgType: PgType[AddressId] = ScalaDbTypes.PgTypes.int4.bimap(AddressId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[AddressId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(AddressId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[AddressId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(AddressId.apply), xs => xs.map(_.value))
 }

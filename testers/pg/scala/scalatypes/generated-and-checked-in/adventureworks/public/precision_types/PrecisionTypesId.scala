@@ -17,7 +17,7 @@ case class PrecisionTypesId(@JsonValue value: Int) extends scala.AnyVal
 object PrecisionTypesId {
   given bijection: Bijection[PrecisionTypesId, Int] = Bijection.apply[PrecisionTypesId, Int](_.value)(PrecisionTypesId.apply)
 
-  given dbType: PgType[PrecisionTypesId] = ScalaDbTypes.PgTypes.int4.bimap(PrecisionTypesId.apply, _.value)
+  given pgType: PgType[PrecisionTypesId] = ScalaDbTypes.PgTypes.int4.bimap(PrecisionTypesId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[PrecisionTypesId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(PrecisionTypesId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[PrecisionTypesId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(PrecisionTypesId.apply), xs => xs.map(_.value))
 }

@@ -52,7 +52,7 @@ public record BusinessentityRow(
 
   public static RowParser<BusinessentityRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
           BusinessentityRow::new,

@@ -4,6 +4,7 @@ import org.junit.Assert._
 import org.junit.Test
 import testdb.customer_orders_summary._
 import testdb.find_customers_by_email._
+import testdb.userdefined.Email
 
 import scala.util.Random
 
@@ -62,7 +63,7 @@ class SqlScriptTest {
   def testFindCustomersByEmail(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers(email = "unique-sqlserver-test@example.com")
+    val customer = testInsert.Customers(email = Email("unique-sqlserver-test@example.com"))
 
     val results = findByEmailRepo("%unique-sqlserver-test%")
 

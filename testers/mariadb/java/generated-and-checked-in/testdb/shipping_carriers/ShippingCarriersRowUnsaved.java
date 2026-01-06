@@ -10,6 +10,7 @@ import dev.typr.foundations.data.Json;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.IsActive;
 
 /** This class corresponds to a row in table `shipping_carriers` which has not been persisted yet */
 public record ShippingCarriersRowUnsaved(
@@ -22,7 +23,7 @@ public record ShippingCarriersRowUnsaved(
     /** Default: NULL */
     @JsonProperty("api_config") Defaulted<Optional<Json>> apiConfig,
     /** Default: 1 */
-    @JsonProperty("is_active") Defaulted<Boolean> isActive) {
+    @JsonProperty("is_active") Defaulted</* user-picked */ IsActive> isActive) {
   public ShippingCarriersRowUnsaved(
       /** */
       String code,
@@ -58,7 +59,7 @@ public record ShippingCarriersRowUnsaved(
   ;
 
   /** Default: 1 */
-  public ShippingCarriersRowUnsaved withIsActive(Defaulted<Boolean> isActive) {
+  public ShippingCarriersRowUnsaved withIsActive(Defaulted</* user-picked */ IsActive> isActive) {
     return new ShippingCarriersRowUnsaved(code, name, trackingUrlTemplate, apiConfig, isActive);
   }
   ;
@@ -66,7 +67,7 @@ public record ShippingCarriersRowUnsaved(
   public ShippingCarriersRow toRow(
       java.util.function.Supplier<Optional<String>> trackingUrlTemplateDefault,
       java.util.function.Supplier<Optional<Json>> apiConfigDefault,
-      java.util.function.Supplier<Boolean> isActiveDefault,
+      java.util.function.Supplier</* user-picked */ IsActive> isActiveDefault,
       java.util.function.Supplier<ShippingCarriersId> carrierIdDefault) {
     return new ShippingCarriersRow(
         carrierIdDefault.get(),

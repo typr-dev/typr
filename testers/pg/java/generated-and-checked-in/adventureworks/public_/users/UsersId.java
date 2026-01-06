@@ -27,9 +27,9 @@ public record UsersId(@JsonValue UUID value) {
 
   public static Bijection<UsersId, UUID> bijection = Bijection.of(UsersId::value, UsersId::new);
 
-  public static PgType<UsersId> dbType = PgTypes.uuid.bimap(UsersId::new, UsersId::value);
+  public static PgType<UsersId> pgType = PgTypes.uuid.bimap(UsersId::new, UsersId::value);
 
-  public static PgType<UsersId[]> dbTypeArray =
+  public static PgType<UsersId[]> pgTypeArray =
       PgTypes.uuidArray.bimap(
           xs -> arrayMap.map(xs, UsersId::new, UsersId.class),
           xs -> arrayMap.map(xs, UsersId::value, UUID.class));

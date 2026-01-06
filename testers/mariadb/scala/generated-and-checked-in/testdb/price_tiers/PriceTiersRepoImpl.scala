@@ -19,11 +19,11 @@ import dev.typr.foundations.scala.Fragment.sql
 class PriceTiersRepoImpl extends PriceTiersRepo {
   override def delete: DeleteBuilder[PriceTiersFields, PriceTiersRow] = DeleteBuilder.of("`price_tiers`", PriceTiersFields.structure, Dialect.MARIADB)
 
-  override def deleteById(tierId: PriceTiersId)(using c: Connection): Boolean = sql"delete from `price_tiers` where `tier_id` = ${Fragment.encode(PriceTiersId.dbType, tierId)}".update().runUnchecked(c) > 0
+  override def deleteById(tierId: PriceTiersId)(using c: Connection): Boolean = sql"delete from `price_tiers` where `tier_id` = ${Fragment.encode(PriceTiersId.mariaType, tierId)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(tierIds: Array[PriceTiersId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    tierIds.foreach { id => fragments.addOne(Fragment.encode(PriceTiersId.dbType, id)): @scala.annotation.nowarn }
+    tierIds.foreach { id => fragments.addOne(Fragment.encode(PriceTiersId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `price_tiers` where `tier_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -68,12 +68,12 @@ class PriceTiersRepoImpl extends PriceTiersRepo {
   override def selectById(tierId: PriceTiersId)(using c: Connection): Option[PriceTiersRow] = {
     sql"""select `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`
     from `price_tiers`
-    where `tier_id` = ${Fragment.encode(PriceTiersId.dbType, tierId)}""".query(PriceTiersRow.`_rowParser`.first()).runUnchecked(c)
+    where `tier_id` = ${Fragment.encode(PriceTiersId.mariaType, tierId)}""".query(PriceTiersRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(tierIds: Array[PriceTiersId])(using c: Connection): List[PriceTiersRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    tierIds.foreach { id => fragments.addOne(Fragment.encode(PriceTiersId.dbType, id)): @scala.annotation.nowarn }
+    tierIds.foreach { id => fragments.addOne(Fragment.encode(PriceTiersId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value` from `price_tiers` where `tier_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(PriceTiersRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -92,12 +92,12 @@ class PriceTiersRepoImpl extends PriceTiersRepo {
     `min_quantity` = ${Fragment.encode(MariaTypes.intUnsigned, row.minQuantity)},
     `discount_type` = ${Fragment.encode(MariaTypes.text, row.discountType)},
     `discount_value` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.discountValue)}
-    where `tier_id` = ${Fragment.encode(PriceTiersId.dbType, tierId)}""".update().runUnchecked(c) > 0
+    where `tier_id` = ${Fragment.encode(PriceTiersId.mariaType, tierId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: PriceTiersRow)(using c: Connection): PriceTiersRow = {
   sql"""INSERT INTO `price_tiers`(`tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`)
-    VALUES (${Fragment.encode(PriceTiersId.dbType, unsaved.tierId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.minQuantity)}, ${Fragment.encode(MariaTypes.text, unsaved.discountType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountValue)})
+    VALUES (${Fragment.encode(PriceTiersId.mariaType, unsaved.tierId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.minQuantity)}, ${Fragment.encode(MariaTypes.text, unsaved.discountType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountValue)})
     ON DUPLICATE KEY UPDATE `name` = VALUES(`name`),
     `min_quantity` = VALUES(`min_quantity`),
     `discount_type` = VALUES(`discount_type`),

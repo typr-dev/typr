@@ -19,7 +19,7 @@ data class Issue142Row(val tabellkode: Issue142Id) : Tuple1<Issue142Id> {
   fun id(): Issue142Id = tabellkode
 
   companion object {
-    val _rowParser: RowParser<Issue142Row> = RowParsers.of(Issue142Id.dbType, { t0 -> Issue142Row(t0) }, { row -> arrayOf<Any?>(row.tabellkode) })
+    val _rowParser: RowParser<Issue142Row> = RowParsers.of(Issue142Id.pgType, { t0 -> Issue142Row(t0) }, { row -> arrayOf<Any?>(row.tabellkode) })
 
     val pgText: PgText<Issue142Row> =
       PgText.from(_rowParser.underlying)

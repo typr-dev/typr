@@ -16,6 +16,8 @@ import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.order_items.OrderItemsId;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsApproved;
+import testdb.userdefined.IsVerifiedPurchase;
 
 /** This class corresponds to a row in table `reviews` which has not been persisted yet */
 public record ReviewsRowUnsaved(
@@ -38,9 +40,10 @@ public record ReviewsRowUnsaved(
     /** Default: NULL Array of image URLs */
     Defaulted<Optional<Json>> images,
     /** Default: 0 */
-    @JsonProperty("is_verified_purchase") Defaulted<Boolean> isVerifiedPurchase,
+    @JsonProperty("is_verified_purchase")
+        Defaulted</* user-picked */ IsVerifiedPurchase> isVerifiedPurchase,
     /** Default: 0 */
-    @JsonProperty("is_approved") Defaulted<Boolean> isApproved,
+    @JsonProperty("is_approved") Defaulted</* user-picked */ IsApproved> isApproved,
     /** Default: 0 */
     @JsonProperty("helpful_votes") Defaulted<Uint4> helpfulVotes,
     /** Default: 0 */
@@ -289,7 +292,8 @@ public record ReviewsRowUnsaved(
   ;
 
   /** Default: 0 */
-  public ReviewsRowUnsaved withIsVerifiedPurchase(Defaulted<Boolean> isVerifiedPurchase) {
+  public ReviewsRowUnsaved withIsVerifiedPurchase(
+      Defaulted</* user-picked */ IsVerifiedPurchase> isVerifiedPurchase) {
     return new ReviewsRowUnsaved(
         productId,
         customerId,
@@ -312,7 +316,7 @@ public record ReviewsRowUnsaved(
   ;
 
   /** Default: 0 */
-  public ReviewsRowUnsaved withIsApproved(Defaulted<Boolean> isApproved) {
+  public ReviewsRowUnsaved withIsApproved(Defaulted</* user-picked */ IsApproved> isApproved) {
     return new ReviewsRowUnsaved(
         productId,
         customerId,
@@ -479,8 +483,8 @@ public record ReviewsRowUnsaved(
       java.util.function.Supplier<Optional<Json>> prosDefault,
       java.util.function.Supplier<Optional<Json>> consDefault,
       java.util.function.Supplier<Optional<Json>> imagesDefault,
-      java.util.function.Supplier<Boolean> isVerifiedPurchaseDefault,
-      java.util.function.Supplier<Boolean> isApprovedDefault,
+      java.util.function.Supplier</* user-picked */ IsVerifiedPurchase> isVerifiedPurchaseDefault,
+      java.util.function.Supplier</* user-picked */ IsApproved> isApprovedDefault,
       java.util.function.Supplier<Uint4> helpfulVotesDefault,
       java.util.function.Supplier<Uint4> unhelpfulVotesDefault,
       java.util.function.Supplier<Optional<String>> adminResponseDefault,

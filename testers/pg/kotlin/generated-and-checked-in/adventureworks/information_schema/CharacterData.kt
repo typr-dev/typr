@@ -19,10 +19,10 @@ data class CharacterData(@field:JsonValue val value: String) {
     val bijection: Bijection<CharacterData, String> =
       Bijection.of(CharacterData::value, ::CharacterData)
 
-    val dbType: PgType<CharacterData> =
+    val pgType: PgType<CharacterData> =
       PgTypes.text.bimap(::CharacterData, CharacterData::value).renamed("\"information_schema\".\"character_data\"")
 
-    val dbTypeArray: PgType<Array<CharacterData>> =
+    val pgTypeArray: PgType<Array<CharacterData>> =
       PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::CharacterData, CharacterData::class.java) }, { xs -> arrayMap.map(xs, CharacterData::value, String::class.java) }).renamed("\"information_schema\".\"character_data\"[]")
   }
 }

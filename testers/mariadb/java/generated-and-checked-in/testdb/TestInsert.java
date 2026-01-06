@@ -144,6 +144,9 @@ import testdb.shipping_carriers.ShippingCarriersId;
 import testdb.shipping_carriers.ShippingCarriersRepoImpl;
 import testdb.shipping_carriers.ShippingCarriersRow;
 import testdb.shipping_carriers.ShippingCarriersRowUnsaved;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 import testdb.warehouses.WarehousesId;
 import testdb.warehouses.WarehousesRepoImpl;
 import testdb.warehouses.WarehousesRow;
@@ -236,10 +239,10 @@ public record TestInsert(Random random) {
   public Inserter<CustomersRowUnsaved, CustomersRow> Customers(byte[] passwordHash) {
     return Inserter.of(
         new CustomersRowUnsaved(
-            RandomHelper.alphanumeric(random, 20),
+            new Email(RandomHelper.alphanumeric(random, 20)),
             passwordHash,
-            RandomHelper.alphanumeric(random, 20),
-            RandomHelper.alphanumeric(random, 20),
+            new FirstName(RandomHelper.alphanumeric(random, 20)),
+            new LastName(RandomHelper.alphanumeric(random, 20)),
             new UseDefault(),
             new UseDefault(),
             new UseDefault(),
@@ -385,7 +388,7 @@ public record TestInsert(Random random) {
   public Inserter<MariatestUniqueRowUnsaved, MariatestUniqueRow> MariatestUnique() {
     return Inserter.of(
         new MariatestUniqueRowUnsaved(
-            RandomHelper.alphanumeric(random, 20),
+            new Email(RandomHelper.alphanumeric(random, 20)),
             RandomHelper.alphanumeric(random, 20),
             RandomHelper.alphanumeric(random, 20)),
         (MariatestUniqueRowUnsaved row, Connection c) ->

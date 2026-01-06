@@ -13,6 +13,7 @@ import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
 
 /** Table: customers
   * Primary key: customer_id
@@ -21,15 +22,15 @@ data class CustomersRow(
   /** IDENTITY(1, 1) */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   val name: String,
-  val email: String,
+  val email: /* user-picked */ Email,
   /** Default: (getdate()) */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime?
-) : Tuple4<CustomersId, String, String, LocalDateTime?> {
+) : Tuple4<CustomersId, String, /* user-picked */ Email, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
   override fun _2(): String = name
 
-  override fun _3(): String = email
+  override fun _3(): /* user-picked */ Email = email
 
   override fun _4(): LocalDateTime? = createdAt
 
@@ -38,6 +39,6 @@ data class CustomersRow(
   fun toUnsavedRow(createdAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.createdAt)): CustomersRowUnsaved = CustomersRowUnsaved(name, email, createdAt)
 
   companion object {
-    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar, SqlServerTypes.datetime2.nullable(), { t0, t1, t2, t3 -> CustomersRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt) })
+    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.nullable(), { t0, t1, t2, t3 -> CustomersRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt) })
   }
 }

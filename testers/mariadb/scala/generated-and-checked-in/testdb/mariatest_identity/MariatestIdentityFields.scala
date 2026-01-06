@@ -25,7 +25,7 @@ class MariatestIdentityFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(id = value),
-      MariatestIdentityId.dbType
+      MariatestIdentityId.mariaType
     )
   }
 

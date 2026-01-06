@@ -24,8 +24,6 @@ case class EmailMailPushSmsSet(members: Set[EmailMailPushSmsSetMember]) {
 }
 
 object EmailMailPushSmsSet {
-  given dbType: MariaType[EmailMailPushSmsSet] = MariaTypes.set.bimap((ms: MariaSet) => EmailMailPushSmsSet.fromString(ms.toCommaSeparated), (s: EmailMailPushSmsSet) => MariaSet.fromString(s.toCommaSeparated))
-
   def empty: EmailMailPushSmsSet = EmailMailPushSmsSet(Set.empty)
 
   def fromString(str: String): EmailMailPushSmsSet = {
@@ -34,6 +32,8 @@ object EmailMailPushSmsSet {
       else EmailMailPushSmsSet(str.split(",").flatMap(v => EmailMailPushSmsSetMember.ByName.get(v.trim)).toSet)
     }
   }
+
+  given mariaType: MariaType[EmailMailPushSmsSet] = MariaTypes.set.bimap((ms: MariaSet) => EmailMailPushSmsSet.fromString(ms.toCommaSeparated), (s: EmailMailPushSmsSet) => MariaSet.fromString(s.toCommaSeparated))
 
   def of(members: List[EmailMailPushSmsSetMember]): EmailMailPushSmsSet = EmailMailPushSmsSet(members.toSet)
 }

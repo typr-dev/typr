@@ -12,6 +12,7 @@ import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
 import dev.typr.foundations.scala.ScalaDbTypes
+import testdb.userdefined.IsActive
 import testdb.warehouses.WarehousesId
 
 /** View: v_warehouse_coverage
@@ -52,7 +53,7 @@ case class VWarehouseCoverageViewRow(
    * Default: 1
    * Points to [[testdb.warehouses.WarehousesRow.isActive]]
    */
-  @JsonProperty("is_active") isActive: Boolean,
+  @JsonProperty("is_active") isActive: /* user-picked */ IsActive,
   /** 
    * Default: 0
    */
@@ -61,7 +62,7 @@ case class VWarehouseCoverageViewRow(
    * Default: NULL
    */
   @JsonProperty("total_inventory") totalInventory: Option[BigDecimal]
-) extends Tuple10[WarehousesId, String, String, String, Option[String], Option[String], String, Boolean, Long, Option[BigDecimal]] {
+) extends Tuple10[WarehousesId, String, String, String, Option[String], Option[String], String, /* user-picked */ IsActive, Long, Option[BigDecimal]] {
   override def `_1`: WarehousesId = warehouseId
 
   override def `_2`: String = code
@@ -76,7 +77,7 @@ case class VWarehouseCoverageViewRow(
 
   override def `_7`: String = timezone
 
-  override def `_8`: Boolean = isActive
+  override def `_8`: /* user-picked */ IsActive = isActive
 
   override def `_9`: Long = productsStocked
 
@@ -84,5 +85,5 @@ case class VWarehouseCoverageViewRow(
 }
 
 object VWarehouseCoverageViewRow {
-  val `_rowParser`: RowParser[VWarehouseCoverageViewRow] = RowParsers.of(WarehousesId.dbType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.longtext.nullable, MariaTypes.longtext.nullable, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bool, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric.nullable)(VWarehouseCoverageViewRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.locationWkt, row.serviceAreaWkt, row.timezone, row.isActive, row.productsStocked, row.totalInventory))
+  val `_rowParser`: RowParser[VWarehouseCoverageViewRow] = RowParsers.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.longtext.nullable, MariaTypes.longtext.nullable, MariaTypes.varchar, IsActive.mariaType, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric.nullable)(VWarehouseCoverageViewRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.locationWkt, row.serviceAreaWkt, row.timezone, row.isActive, row.productsStocked, row.totalInventory))
 }

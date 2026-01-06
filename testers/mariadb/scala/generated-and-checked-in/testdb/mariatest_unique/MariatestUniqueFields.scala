@@ -15,8 +15,9 @@ import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
 import dev.typr.foundations.scala.TupleExpr4
+import testdb.userdefined.Email
 
-class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[MariatestUniqueId, String, String, String] with RelationStructure[MariatestUniqueFields, MariatestUniqueRow]  with FieldsBase[MariatestUniqueRow] {
+class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[MariatestUniqueId, /* user-picked */ Email, String, String] with RelationStructure[MariatestUniqueFields, MariatestUniqueRow]  with FieldsBase[MariatestUniqueRow] {
   def id: IdField[MariatestUniqueId, MariatestUniqueRow] = {
     new IdField[MariatestUniqueId, MariatestUniqueRow](
       _path,
@@ -25,19 +26,19 @@ class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(id = value),
-      MariatestUniqueId.dbType
+      MariatestUniqueId.mariaType
     )
   }
 
-  def email: Field[String, MariatestUniqueRow] = {
-    new Field[String, MariatestUniqueRow](
+  def email: Field[/* user-picked */ Email, MariatestUniqueRow] = {
+    new Field[/* user-picked */ Email, MariatestUniqueRow](
       _path,
       "email",
       _.email,
       None,
       None,
       (row, value) => row.copy(email = value),
-      MariaTypes.varchar
+      Email.mariaType
     )
   }
 
@@ -73,7 +74,7 @@ class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr
 
   override def `_1`: SqlExpr[MariatestUniqueId] = id
 
-  override def `_2`: SqlExpr[String] = email
+  override def `_2`: SqlExpr[/* user-picked */ Email] = email
 
   override def `_3`: SqlExpr[String] = code
 

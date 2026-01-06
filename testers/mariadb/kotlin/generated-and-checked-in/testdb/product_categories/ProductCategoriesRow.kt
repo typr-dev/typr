@@ -13,6 +13,7 @@ import dev.typr.foundations.kotlin.RowParsers
 import testdb.categories.CategoriesId
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
+import testdb.userdefined.IsPrimary
 
 /** Table: product_categories
   * Composite primary key: product_id, category_id
@@ -29,17 +30,17 @@ data class ProductCategoriesRow(
   /** 
     * Default: 0
     */
-  @field:JsonProperty("is_primary") val isPrimary: Boolean,
+  @field:JsonProperty("is_primary") val isPrimary: /* user-picked */ IsPrimary,
   /** 
     * Default: 0
     */
   @field:JsonProperty("sort_order") val sortOrder: Short
-) : Tuple4<ProductsId, CategoriesId, Boolean, Short> {
+) : Tuple4<ProductsId, CategoriesId, /* user-picked */ IsPrimary, Short> {
   override fun _1(): ProductsId = productId
 
   override fun _2(): CategoriesId = categoryId
 
-  override fun _3(): Boolean = isPrimary
+  override fun _3(): /* user-picked */ IsPrimary = isPrimary
 
   override fun _4(): Short = sortOrder
 
@@ -48,16 +49,16 @@ data class ProductCategoriesRow(
   fun id(): ProductCategoriesId = this.compositeId()
 
   fun toUnsavedRow(
-    isPrimary: Defaulted<Boolean> = Defaulted.Provided(this.isPrimary),
+    isPrimary: Defaulted</* user-picked */ IsPrimary> = Defaulted.Provided(this.isPrimary),
     sortOrder: Defaulted<Short> = Defaulted.Provided(this.sortOrder)
   ): ProductCategoriesRowUnsaved = ProductCategoriesRowUnsaved(productId, categoryId, isPrimary, sortOrder)
 
   companion object {
-    val _rowParser: RowParser<ProductCategoriesRow> = RowParsers.of(ProductsId.dbType, CategoriesId.dbType, KotlinDbTypes.MariaTypes.bool, KotlinDbTypes.MariaTypes.smallint, { t0, t1, t2, t3 -> ProductCategoriesRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.productId, row.categoryId, row.isPrimary, row.sortOrder) })
+    val _rowParser: RowParser<ProductCategoriesRow> = RowParsers.of(ProductsId.mariaType, CategoriesId.mariaType, IsPrimary.mariaType, KotlinDbTypes.MariaTypes.smallint, { t0, t1, t2, t3 -> ProductCategoriesRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.productId, row.categoryId, row.isPrimary, row.sortOrder) })
 
     fun apply(
       compositeId: ProductCategoriesId,
-      isPrimary: Boolean,
+      isPrimary: /* user-picked */ IsPrimary,
       sortOrder: Short
     ): ProductCategoriesRow = ProductCategoriesRow(compositeId.productId, compositeId.categoryId, isPrimary, sortOrder)
   }

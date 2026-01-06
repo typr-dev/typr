@@ -11,6 +11,10 @@ import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersRepoImpl
 import testdb.customers.CustomersRowUnsaved
 import testdb.customtypes.Defaulted.Provided
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.IsApproved
+import testdb.userdefined.LastName
 import testdb.inventory.InventoryRepoImpl
 import testdb.inventory.InventoryRowUnsaved
 import testdb.order_items.OrderItemsRepoImpl
@@ -49,19 +53,19 @@ class ViewTest {
         WithConnection.run { c ->
             customersRepo.insert(
                 CustomersRowUnsaved(
-                    email = "view1@example.com",
+                    email = Email("view1@example.com"),
                     passwordHash = "hash1".toByteArray(),
-                    firstName = "View",
-                    lastName = "Customer1"
+                    firstName = FirstName("View"),
+                    lastName = LastName("Customer1")
                 ),
                 c
             )
             customersRepo.insert(
                 CustomersRowUnsaved(
-                    email = "view2@example.com",
+                    email = Email("view2@example.com"),
                     passwordHash = "hash2".toByteArray(),
-                    firstName = "View",
-                    lastName = "Customer2"
+                    firstName = FirstName("View"),
+                    lastName = LastName("Customer2")
                 ),
                 c
             )
@@ -76,10 +80,10 @@ class ViewTest {
         WithConnection.run { c ->
             customersRepo.insert(
                 CustomersRowUnsaved(
-                    email = "summary@example.com",
+                    email = Email("summary@example.com"),
                     passwordHash = "hash".toByteArray(),
-                    firstName = "Summary",
-                    lastName = "Test",
+                    firstName = FirstName("Summary"),
+                    lastName = LastName("Test"),
                     status = Provided(CustomerStatusId("suspended")),
                     tier = Provided("gold")
                 ),
@@ -90,7 +94,7 @@ class ViewTest {
             assertEquals(1, summaries.size)
 
             val summary = summaries[0]
-            assertEquals("summary@example.com", summary.email)
+            assertEquals(Email("summary@example.com"), summary.email)
             assertEquals("Summary Test", summary.fullName)
             assertEquals("gold", summary.tier)
             assertEquals("suspended", summary.status.value)
@@ -104,10 +108,10 @@ class ViewTest {
         WithConnection.run { c ->
             val customer = customersRepo.insert(
                 CustomersRowUnsaved(
-                    email = "orders@example.com",
+                    email = Email("orders@example.com"),
                     passwordHash = "hash".toByteArray(),
-                    firstName = "With",
-                    lastName = "Orders"
+                    firstName = FirstName("With"),
+                    lastName = LastName("Orders")
                 ),
                 c
             )
@@ -265,10 +269,10 @@ class ViewTest {
         WithConnection.run { c ->
             val customer = customersRepo.insert(
                 CustomersRowUnsaved(
-                    email = "reviewer@example.com",
+                    email = Email("reviewer@example.com"),
                     passwordHash = "hash".toByteArray(),
-                    firstName = "Reviewer",
-                    lastName = "User"
+                    firstName = FirstName("Reviewer"),
+                    lastName = LastName("User")
                 ),
                 c
             )
@@ -288,7 +292,7 @@ class ViewTest {
                     productId = product.productId,
                     customerId = customer.customerId,
                     rating = Uint1.of(5),
-                    isApproved = Provided(true)
+                    isApproved = Provided(IsApproved(true))
                 ),
                 c
             )
@@ -297,7 +301,7 @@ class ViewTest {
                     productId = product.productId,
                     customerId = customer.customerId,
                     rating = Uint1.of(4),
-                    isApproved = Provided(true)
+                    isApproved = Provided(IsApproved(true))
                 ),
                 c
             )
@@ -314,30 +318,30 @@ class ViewTest {
         WithConnection.run { c ->
             customersRepo.insert(
                 CustomersRowUnsaved(
-                    email = "dsl1@example.com",
+                    email = Email("dsl1@example.com"),
                     passwordHash = "hash1".toByteArray(),
-                    firstName = "DSL",
-                    lastName = "Bronze",
+                    firstName = FirstName("DSL"),
+                    lastName = LastName("Bronze"),
                     tier = Provided("bronze")
                 ),
                 c
             )
             customersRepo.insert(
                 CustomersRowUnsaved(
-                    email = "dsl2@example.com",
+                    email = Email("dsl2@example.com"),
                     passwordHash = "hash2".toByteArray(),
-                    firstName = "DSL",
-                    lastName = "Gold",
+                    firstName = FirstName("DSL"),
+                    lastName = LastName("Gold"),
                     tier = Provided("gold")
                 ),
                 c
             )
             customersRepo.insert(
                 CustomersRowUnsaved(
-                    email = "dsl3@example.com",
+                    email = Email("dsl3@example.com"),
                     passwordHash = "hash3".toByteArray(),
-                    firstName = "DSL",
-                    lastName = "Gold2",
+                    firstName = FirstName("DSL"),
+                    lastName = LastName("Gold2"),
                     tier = Provided("gold")
                 ),
                 c
@@ -349,7 +353,7 @@ class ViewTest {
             assertEquals(2, goldCustomers.size)
 
             val specificCustomer = customerSummaryRepo.select()
-                .where { f -> f.email().isEqual("dsl1@example.com") }
+                .where { f -> f.email().isEqual(Email("dsl1@example.com")) }
                 .toList(c)
             assertEquals(1, specificCustomer.size)
             assertEquals("bronze", specificCustomer[0].tier)

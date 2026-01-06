@@ -97,7 +97,7 @@ data class ProductFields(val _path: List<Path>) : TupleExpr25<ProductId, Name, S
 
   fun discontinueddate(): OptField<LocalDateTime, ProductRow> = OptField<LocalDateTime, ProductRow>(_path, "discontinueddate", ProductRow::discontinueddate, null, "timestamp", { row, value -> row.copy(discontinueddate = value) }, PgTypes.timestamp)
 
-  fun finishedgoodsflag(): Field<Flag, ProductRow> = Field<Flag, ProductRow>(_path, "finishedgoodsflag", ProductRow::finishedgoodsflag, null, "bool", { row, value -> row.copy(finishedgoodsflag = value) }, Flag.dbType)
+  fun finishedgoodsflag(): Field<Flag, ProductRow> = Field<Flag, ProductRow>(_path, "finishedgoodsflag", ProductRow::finishedgoodsflag, null, "bool", { row, value -> row.copy(finishedgoodsflag = value) }, Flag.pgType)
 
   fun fkProductmodel(): ForeignKey<ProductmodelFields, ProductmodelRow> = ForeignKey.of<ProductmodelFields, ProductmodelRow>("production.FK_Product_ProductModel_ProductModelID").withColumnPair<ProductmodelId>(productmodelid(), ProductmodelFields::productmodelid)
 
@@ -109,21 +109,21 @@ data class ProductFields(val _path: List<Path>) : TupleExpr25<ProductId, Name, S
 
   fun listprice(): Field<BigDecimal, ProductRow> = Field<BigDecimal, ProductRow>(_path, "listprice", ProductRow::listprice, null, "numeric", { row, value -> row.copy(listprice = value) }, PgTypes.numeric)
 
-  fun makeflag(): Field<Flag, ProductRow> = Field<Flag, ProductRow>(_path, "makeflag", ProductRow::makeflag, null, "bool", { row, value -> row.copy(makeflag = value) }, Flag.dbType)
+  fun makeflag(): Field<Flag, ProductRow> = Field<Flag, ProductRow>(_path, "makeflag", ProductRow::makeflag, null, "bool", { row, value -> row.copy(makeflag = value) }, Flag.pgType)
 
   fun modifieddate(): Field<LocalDateTime, ProductRow> = Field<LocalDateTime, ProductRow>(_path, "modifieddate", ProductRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, ProductRow> = Field<Name, ProductRow>(_path, "name", ProductRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, ProductRow> = Field<Name, ProductRow>(_path, "name", ProductRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
-  fun productid(): IdField<ProductId, ProductRow> = IdField<ProductId, ProductRow>(_path, "productid", ProductRow::productid, null, "int4", { row, value -> row.copy(productid = value) }, ProductId.dbType)
+  fun productid(): IdField<ProductId, ProductRow> = IdField<ProductId, ProductRow>(_path, "productid", ProductRow::productid, null, "int4", { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
   fun productline(): OptField<String, ProductRow> = OptField<String, ProductRow>(_path, "productline", ProductRow::productline, null, "bpchar", { row, value -> row.copy(productline = value) }, PgTypes.bpchar)
 
-  fun productmodelid(): OptField<ProductmodelId, ProductRow> = OptField<ProductmodelId, ProductRow>(_path, "productmodelid", ProductRow::productmodelid, null, "int4", { row, value -> row.copy(productmodelid = value) }, ProductmodelId.dbType)
+  fun productmodelid(): OptField<ProductmodelId, ProductRow> = OptField<ProductmodelId, ProductRow>(_path, "productmodelid", ProductRow::productmodelid, null, "int4", { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
 
   fun productnumber(): Field<String, ProductRow> = Field<String, ProductRow>(_path, "productnumber", ProductRow::productnumber, null, null, { row, value -> row.copy(productnumber = value) }, PgTypes.text)
 
-  fun productsubcategoryid(): OptField<ProductsubcategoryId, ProductRow> = OptField<ProductsubcategoryId, ProductRow>(_path, "productsubcategoryid", ProductRow::productsubcategoryid, null, "int4", { row, value -> row.copy(productsubcategoryid = value) }, ProductsubcategoryId.dbType)
+  fun productsubcategoryid(): OptField<ProductsubcategoryId, ProductRow> = OptField<ProductsubcategoryId, ProductRow>(_path, "productsubcategoryid", ProductRow::productsubcategoryid, null, "int4", { row, value -> row.copy(productsubcategoryid = value) }, ProductsubcategoryId.pgType)
 
   fun reorderpoint(): Field<Short, ProductRow> = Field<Short, ProductRow>(_path, "reorderpoint", ProductRow::reorderpoint, null, "int2", { row, value -> row.copy(reorderpoint = value) }, KotlinDbTypes.PgTypes.int2)
 
@@ -139,7 +139,7 @@ data class ProductFields(val _path: List<Path>) : TupleExpr25<ProductId, Name, S
 
   fun size(): OptField<String, ProductRow> = OptField<String, ProductRow>(_path, "size", ProductRow::size, null, null, { row, value -> row.copy(size = value) }, PgTypes.text)
 
-  fun sizeunitmeasurecode(): OptField<UnitmeasureId, ProductRow> = OptField<UnitmeasureId, ProductRow>(_path, "sizeunitmeasurecode", ProductRow::sizeunitmeasurecode, null, "bpchar", { row, value -> row.copy(sizeunitmeasurecode = value) }, UnitmeasureId.dbType)
+  fun sizeunitmeasurecode(): OptField<UnitmeasureId, ProductRow> = OptField<UnitmeasureId, ProductRow>(_path, "sizeunitmeasurecode", ProductRow::sizeunitmeasurecode, null, "bpchar", { row, value -> row.copy(sizeunitmeasurecode = value) }, UnitmeasureId.pgType)
 
   fun standardcost(): Field<BigDecimal, ProductRow> = Field<BigDecimal, ProductRow>(_path, "standardcost", ProductRow::standardcost, null, "numeric", { row, value -> row.copy(standardcost = value) }, PgTypes.numeric)
 
@@ -147,7 +147,7 @@ data class ProductFields(val _path: List<Path>) : TupleExpr25<ProductId, Name, S
 
   fun weight(): OptField<BigDecimal, ProductRow> = OptField<BigDecimal, ProductRow>(_path, "weight", ProductRow::weight, null, "numeric", { row, value -> row.copy(weight = value) }, PgTypes.numeric)
 
-  fun weightunitmeasurecode(): OptField<UnitmeasureId, ProductRow> = OptField<UnitmeasureId, ProductRow>(_path, "weightunitmeasurecode", ProductRow::weightunitmeasurecode, null, "bpchar", { row, value -> row.copy(weightunitmeasurecode = value) }, UnitmeasureId.dbType)
+  fun weightunitmeasurecode(): OptField<UnitmeasureId, ProductRow> = OptField<UnitmeasureId, ProductRow>(_path, "weightunitmeasurecode", ProductRow::weightunitmeasurecode, null, "bpchar", { row, value -> row.copy(weightunitmeasurecode = value) }, UnitmeasureId.pgType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductFields, ProductRow> = ProductFields(_path)
 

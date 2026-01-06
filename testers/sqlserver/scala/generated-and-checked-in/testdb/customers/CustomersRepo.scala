@@ -9,6 +9,7 @@ import dev.typr.foundations.scala.DeleteBuilder
 import dev.typr.foundations.scala.SelectBuilder
 import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
+import testdb.userdefined.Email
 
 trait CustomersRepo {
   def delete: DeleteBuilder[CustomersFields, CustomersRow]
@@ -31,7 +32,7 @@ trait CustomersRepo {
 
   def selectByIdsTracked(customerIds: Array[CustomersId])(using c: Connection): Map[CustomersId, CustomersRow]
 
-  def selectByUniqueEmail(email: String)(using c: Connection): Option[CustomersRow]
+  def selectByUniqueEmail(email: /* user-picked */ Email)(using c: Connection): Option[CustomersRow]
 
   def update: UpdateBuilder[CustomersFields, CustomersRow]
 

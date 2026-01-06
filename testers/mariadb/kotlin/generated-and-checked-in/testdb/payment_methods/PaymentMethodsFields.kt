@@ -19,8 +19,9 @@ import dev.typr.foundations.kotlin.SqlExpr.IdField
 import dev.typr.foundations.kotlin.SqlExpr.OptField
 import dev.typr.foundations.kotlin.TupleExpr7
 import kotlin.collections.List
+import testdb.userdefined.IsActive
 
-data class PaymentMethodsFields(val _path: List<Path>) : TupleExpr7<PaymentMethodsId, String, String, String, Json, Boolean, Byte>, RelationStructure<PaymentMethodsFields, PaymentMethodsRow>, FieldsBase<PaymentMethodsRow> {
+data class PaymentMethodsFields(val _path: List<Path>) : TupleExpr7<PaymentMethodsId, String, String, String, Json, /* user-picked */ IsActive, Byte>, RelationStructure<PaymentMethodsFields, PaymentMethodsRow>, FieldsBase<PaymentMethodsRow> {
   override fun _1(): SqlExpr<PaymentMethodsId> = methodId()
 
   override fun _2(): SqlExpr<String> = code()
@@ -31,7 +32,7 @@ data class PaymentMethodsFields(val _path: List<Path>) : TupleExpr7<PaymentMetho
 
   override fun _5(): SqlExpr<Json> = processorConfig()
 
-  override fun _6(): SqlExpr<Boolean> = isActive()
+  override fun _6(): SqlExpr</* user-picked */ IsActive> = isActive()
 
   override fun _7(): SqlExpr<Byte> = sortOrder()
 
@@ -41,9 +42,9 @@ data class PaymentMethodsFields(val _path: List<Path>) : TupleExpr7<PaymentMetho
 
   override fun columns(): List<FieldLike<*, PaymentMethodsRow>> = listOf(this.methodId().underlying, this.code().underlying, this.name().underlying, this.methodType().underlying, this.processorConfig().underlying, this.isActive().underlying, this.sortOrder().underlying)
 
-  fun isActive(): Field<Boolean, PaymentMethodsRow> = Field<Boolean, PaymentMethodsRow>(_path, "is_active", PaymentMethodsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isActive(): Field</* user-picked */ IsActive, PaymentMethodsRow> = Field</* user-picked */ IsActive, PaymentMethodsRow>(_path, "is_active", PaymentMethodsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
 
-  fun methodId(): IdField<PaymentMethodsId, PaymentMethodsRow> = IdField<PaymentMethodsId, PaymentMethodsRow>(_path, "method_id", PaymentMethodsRow::methodId, null, null, { row, value -> row.copy(methodId = value) }, PaymentMethodsId.dbType)
+  fun methodId(): IdField<PaymentMethodsId, PaymentMethodsRow> = IdField<PaymentMethodsId, PaymentMethodsRow>(_path, "method_id", PaymentMethodsRow::methodId, null, null, { row, value -> row.copy(methodId = value) }, PaymentMethodsId.mariaType)
 
   fun methodType(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "method_type", PaymentMethodsRow::methodType, null, null, { row, value -> row.copy(methodType = value) }, MariaTypes.text)
 

@@ -14,6 +14,7 @@ import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
 import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: payment_methods
  * Primary key: method_id
@@ -36,17 +37,17 @@ case class PaymentMethodsRow(
   /** 
    * Default: 1
    */
-  @JsonProperty("is_active") isActive: Boolean,
+  @JsonProperty("is_active") isActive: /* user-picked */ IsActive,
   /** 
    * Default: 0
    */
   @JsonProperty("sort_order") sortOrder: Byte
-) extends Tuple7[PaymentMethodsId, String, String, String, Option[Json], Boolean, Byte] {
+) extends Tuple7[PaymentMethodsId, String, String, String, Option[Json], /* user-picked */ IsActive, Byte] {
   def id: PaymentMethodsId = methodId
 
   def toUnsavedRow(
     processorConfig: Defaulted[Option[Json]] = Defaulted.Provided(this.processorConfig),
-    isActive: Defaulted[Boolean] = Defaulted.Provided(this.isActive),
+    isActive: Defaulted[/* user-picked */ IsActive] = Defaulted.Provided(this.isActive),
     sortOrder: Defaulted[Byte] = Defaulted.Provided(this.sortOrder)
   ): PaymentMethodsRowUnsaved = {
     new PaymentMethodsRowUnsaved(
@@ -69,11 +70,11 @@ case class PaymentMethodsRow(
 
   override def `_5`: Option[Json] = processorConfig
 
-  override def `_6`: Boolean = isActive
+  override def `_6`: /* user-picked */ IsActive = isActive
 
   override def `_7`: Byte = sortOrder
 }
 
 object PaymentMethodsRow {
-  val `_rowParser`: RowParser[PaymentMethodsRow] = RowParsers.of(PaymentMethodsId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable, ScalaDbTypes.MariaTypes.bool, ScalaDbTypes.MariaTypes.tinyint)(PaymentMethodsRow.apply)(row => Array[Any](row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder))
+  val `_rowParser`: RowParser[PaymentMethodsRow] = RowParsers.of(PaymentMethodsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable, IsActive.mariaType, ScalaDbTypes.MariaTypes.tinyint)(PaymentMethodsRow.apply)(row => Array[Any](row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder))
 }

@@ -131,6 +131,57 @@ object TypoType {
     def withJvmType(newJvmType: jvm.Type): OffsetDateTimeN = copy(jvmType = newJvmType)
   }
 
+  /** How to transform from a source type to the canonical type. */
+  sealed trait AlignmentTransform
+
+  object AlignmentTransform {
+
+    /** Direct mapping - source type already matches canonical type */
+    case object Direct extends AlignmentTransform
+
+    /** Unpack through the source type via bimap.
+      *
+      * Example: PostgreSQL Name domain wraps String. To align FirstName(String) with a Name column, we unpack through Name: `Name.pgType.bimap(n -> new FirstName(n.value()), fn -> new
+      * Name(fn.value()))`
+      */
+    case object Unpack extends AlignmentTransform
+  }
+
+  /** Represents a type aligned across multiple sources (databases, OpenAPI).
+    *
+    * Used when generating unified shared types. Each source may have a different underlying type (e.g., PostgreSQL uses Name domain, MariaDB uses varchar directly), but they all align to the same
+    * canonical JVM type.
+    *
+    * @param jvmType
+    *   The canonical JVM type all sources align to (e.g., String)
+    * @param sourceType
+    *   The source's TypoType for this generation (e.g., Generated(Name, DomainRef, Name) or Standard(String, VarChar))
+    * @param transform
+    *   How to transform: Direct if sourceType matches canonical, Unpack if bimap needed
+    * @param alignments
+    *   All source alignments for documentation (shows where type was matched across all sources)
+    */
+  case class Aligned(jvmType: jvm.Type, sourceType: TypoType, transform: AlignmentTransform, alignments: List[TypeAlignment]) extends TypoType {
+    def underlyingDbType: db.Type = sourceType.underlyingDbType
+    def innerJvmType: jvm.Type = jvmType
+    def withJvmType(newJvmType: jvm.Type): Aligned = copy(jvmType = newJvmType)
+  }
+
+  /** Information about how a type aligns from a specific source (for documentation).
+    *
+    * @param sourceKind
+    *   The kind of source (Database or OpenApi)
+    * @param dbType
+    *   The source's database type (e.g., DomainRef(Name), VarChar, Text)
+    * @param locations
+    *   Where this type was matched (e.g., "person.firstname", "Employee.firstName")
+    */
+  case class TypeAlignment(
+      sourceKind: TypeAligner.SourceKind,
+      dbType: db.Type,
+      locations: List[String]
+  )
+
   /** Compute TypoType from JVM type and database type */
   def fromJvmAndDb(jvmType: jvm.Type, dbType: db.Type, pkg: jvm.QIdent, lang: Lang): TypoType = {
     def compute(jvmType: jvm.Type, dbType: db.Type): TypoType = jvmType match {

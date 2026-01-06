@@ -14,6 +14,8 @@ import java.util.Optional;
 import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.Email;
+import testdb.userdefined.IsActive;
 
 /** Table: warehouses Primary key: warehouse_id */
 public record WarehousesRow(
@@ -32,9 +34,9 @@ public record WarehousesRow(
     /** Default: 'UTC' */
     String timezone,
     /** Default: 1 */
-    @JsonProperty("is_active") Boolean isActive,
+    @JsonProperty("is_active") /* user-picked */ IsActive isActive,
     /** Default: NULL */
-    @JsonProperty("contact_email") Optional<String> contactEmail,
+    @JsonProperty("contact_email") Optional</* user-picked */ Email> contactEmail,
     /** Default: NULL */
     @JsonProperty("contact_phone") Optional<String> contactPhone)
     implements Tuple10<
@@ -44,9 +46,9 @@ public record WarehousesRow(
         String,
         Point,
         Optional<Polygon>,
-        String,
-        Boolean,
-        Optional<String>,
+        String, /* user-picked */
+        IsActive,
+        Optional</* user-picked */ Email>,
         Optional<String>> {
   /** AUTO_INCREMENT */
   public WarehousesRow withWarehouseId(WarehousesId warehouseId) {
@@ -161,7 +163,7 @@ public record WarehousesRow(
   ;
 
   /** Default: 1 */
-  public WarehousesRow withIsActive(Boolean isActive) {
+  public WarehousesRow withIsActive(/* user-picked */ IsActive isActive) {
     return new WarehousesRow(
         warehouseId,
         code,
@@ -177,7 +179,7 @@ public record WarehousesRow(
   ;
 
   /** Default: NULL */
-  public WarehousesRow withContactEmail(Optional<String> contactEmail) {
+  public WarehousesRow withContactEmail(Optional</* user-picked */ Email> contactEmail) {
     return new WarehousesRow(
         warehouseId,
         code,
@@ -210,15 +212,15 @@ public record WarehousesRow(
 
   public static RowParser<WarehousesRow> _rowParser =
       RowParsers.of(
-          WarehousesId.dbType,
+          WarehousesId.mariaType,
           MariaTypes.char_,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.point,
           MariaTypes.polygon.opt(),
           MariaTypes.varchar,
-          MariaTypes.bool,
-          MariaTypes.varchar.opt(),
+          IsActive.mariaType,
+          Email.mariaType.opt(),
           MariaTypes.varchar.opt(),
           WarehousesRow::new,
           row ->
@@ -285,13 +287,13 @@ public record WarehousesRow(
   ;
 
   @Override
-  public Boolean _8() {
+  public /* user-picked */ IsActive _8() {
     return isActive;
   }
   ;
 
   @Override
-  public Optional<String> _9() {
+  public Optional</* user-picked */ Email> _9() {
     return contactEmail;
   }
   ;
@@ -304,8 +306,8 @@ public record WarehousesRow(
   public WarehousesRowUnsaved toUnsavedRow(
       Defaulted<Optional<Polygon>> serviceArea,
       Defaulted<String> timezone,
-      Defaulted<Boolean> isActive,
-      Defaulted<Optional<String>> contactEmail,
+      Defaulted</* user-picked */ IsActive> isActive,
+      Defaulted<Optional</* user-picked */ Email>> contactEmail,
       Defaulted<Optional<String>> contactPhone) {
     return new WarehousesRowUnsaved(
         code, name, address, location, serviceArea, timezone, isActive, contactEmail, contactPhone);

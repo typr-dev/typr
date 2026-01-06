@@ -11,7 +11,6 @@ import dev.typr.foundations.Tuple.Tuple18
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
@@ -20,6 +19,8 @@ import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
 import testdb.order_items.OrderItemsId
 import testdb.products.ProductsId
+import testdb.userdefined.IsApproved
+import testdb.userdefined.IsVerifiedPurchase
 
 /** Table: reviews
   * Primary key: review_id
@@ -67,11 +68,11 @@ data class ReviewsRow(
   /** 
     * Default: 0
     */
-  @field:JsonProperty("is_verified_purchase") val isVerifiedPurchase: Boolean,
+  @field:JsonProperty("is_verified_purchase") val isVerifiedPurchase: /* user-picked */ IsVerifiedPurchase,
   /** 
     * Default: 0
     */
-  @field:JsonProperty("is_approved") val isApproved: Boolean,
+  @field:JsonProperty("is_approved") val isApproved: /* user-picked */ IsApproved,
   /** 
     * Default: 0
     */
@@ -96,14 +97,14 @@ data class ReviewsRow(
     * Default: current_timestamp(6)
     */
   @field:JsonProperty("updated_at") val updatedAt: LocalDateTime
-) : Tuple18<ReviewsId, ProductsId, CustomersId, OrderItemsId?, Uint1, String?, String?, Json?, Json?, Json?, Boolean, Boolean, Uint4, Uint4, String?, LocalDateTime?, LocalDateTime, LocalDateTime> {
+) : Tuple18<ReviewsId, ProductsId, CustomersId, OrderItemsId?, Uint1, String?, String?, Json?, Json?, Json?, /* user-picked */ IsVerifiedPurchase, /* user-picked */ IsApproved, Uint4, Uint4, String?, LocalDateTime?, LocalDateTime, LocalDateTime> {
   override fun _1(): ReviewsId = reviewId
 
   override fun _10(): Json? = images
 
-  override fun _11(): Boolean = isVerifiedPurchase
+  override fun _11(): /* user-picked */ IsVerifiedPurchase = isVerifiedPurchase
 
-  override fun _12(): Boolean = isApproved
+  override fun _12(): /* user-picked */ IsApproved = isApproved
 
   override fun _13(): Uint4 = helpfulVotes
 
@@ -142,8 +143,8 @@ data class ReviewsRow(
     pros: Defaulted<Json?> = Defaulted.Provided(this.pros),
     cons: Defaulted<Json?> = Defaulted.Provided(this.cons),
     images: Defaulted<Json?> = Defaulted.Provided(this.images),
-    isVerifiedPurchase: Defaulted<Boolean> = Defaulted.Provided(this.isVerifiedPurchase),
-    isApproved: Defaulted<Boolean> = Defaulted.Provided(this.isApproved),
+    isVerifiedPurchase: Defaulted</* user-picked */ IsVerifiedPurchase> = Defaulted.Provided(this.isVerifiedPurchase),
+    isApproved: Defaulted</* user-picked */ IsApproved> = Defaulted.Provided(this.isApproved),
     helpfulVotes: Defaulted<Uint4> = Defaulted.Provided(this.helpfulVotes),
     unhelpfulVotes: Defaulted<Uint4> = Defaulted.Provided(this.unhelpfulVotes),
     adminResponse: Defaulted<String?> = Defaulted.Provided(this.adminResponse),
@@ -153,6 +154,6 @@ data class ReviewsRow(
   ): ReviewsRowUnsaved = ReviewsRowUnsaved(productId, customerId, rating, orderItemId, title, content, pros, cons, images, isVerifiedPurchase, isApproved, helpfulVotes, unhelpfulVotes, adminResponse, respondedAt, createdAt, updatedAt)
 
   companion object {
-    val _rowParser: RowParser<ReviewsRow> = RowParsers.of(ReviewsId.dbType, ProductsId.dbType, CustomersId.dbType, OrderItemsId.dbType.nullable(), MariaTypes.tinyintUnsigned, MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), MariaTypes.json.nullable(), MariaTypes.json.nullable(), MariaTypes.json.nullable(), KotlinDbTypes.MariaTypes.bool, KotlinDbTypes.MariaTypes.bool, MariaTypes.intUnsigned, MariaTypes.intUnsigned, MariaTypes.text.nullable(), MariaTypes.datetime.nullable(), MariaTypes.datetime, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17 -> ReviewsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row -> arrayOf<Any?>(row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt) })
+    val _rowParser: RowParser<ReviewsRow> = RowParsers.of(ReviewsId.mariaType, ProductsId.mariaType, CustomersId.mariaType, OrderItemsId.mariaType.nullable(), MariaTypes.tinyintUnsigned, MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), MariaTypes.json.nullable(), MariaTypes.json.nullable(), MariaTypes.json.nullable(), IsVerifiedPurchase.mariaType, IsApproved.mariaType, MariaTypes.intUnsigned, MariaTypes.intUnsigned, MariaTypes.text.nullable(), MariaTypes.datetime.nullable(), MariaTypes.datetime, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17 -> ReviewsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row -> arrayOf<Any?>(row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt) })
   }
 }

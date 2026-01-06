@@ -16,5 +16,5 @@ case class Db2testId(@JsonValue value: Int) extends scala.AnyVal
 object Db2testId {
   given bijection: Bijection[Db2testId, Int] = Bijection.apply[Db2testId, Int](_.value)(Db2testId.apply)
 
-  given dbType: Db2Type[Db2testId] = ScalaDbTypes.Db2Types.integer.bimap(Db2testId.apply, _.value)
+  given db2Type: Db2Type[Db2testId] = ScalaDbTypes.Db2Types.integer.bimap(Db2testId.apply, _.value)
 }

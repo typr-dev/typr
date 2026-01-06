@@ -45,7 +45,7 @@ data class PriceTiersFields(val _path: List<Path>) : TupleExpr5<PriceTiersId, St
 
   override fun rowParser(): RowParser<PriceTiersRow> = PriceTiersRow._rowParser.underlying
 
-  fun tierId(): IdField<PriceTiersId, PriceTiersRow> = IdField<PriceTiersId, PriceTiersRow>(_path, "tier_id", PriceTiersRow::tierId, null, null, { row, value -> row.copy(tierId = value) }, PriceTiersId.dbType)
+  fun tierId(): IdField<PriceTiersId, PriceTiersRow> = IdField<PriceTiersId, PriceTiersRow>(_path, "tier_id", PriceTiersRow::tierId, null, null, { row, value -> row.copy(tierId = value) }, PriceTiersId.mariaType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<PriceTiersFields, PriceTiersRow> = PriceTiersFields(_path)
 

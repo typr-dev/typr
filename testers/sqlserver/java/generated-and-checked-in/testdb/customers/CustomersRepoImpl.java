@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.Email;
 
 public class CustomersRepoImpl implements CustomersRepo {
   @Override
@@ -63,7 +64,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                     + "values ("),
             Fragment.encode(SqlServerTypes.nvarchar, unsaved.name()),
             Fragment.lit(", "),
-            Fragment.encode(SqlServerTypes.nvarchar, unsaved.email()),
+            Fragment.encode(Email.sqlServerType, unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(SqlServerTypes.datetime2.opt(), unsaved.createdAt()),
             Fragment.lit(")\n"))
@@ -82,7 +83,7 @@ public class CustomersRepoImpl implements CustomersRepo {
         interpolate(Fragment.encode(SqlServerTypes.nvarchar, unsaved.name()), Fragment.lit("")));
     columns.add(Fragment.lit("[email]"));
     values.add(
-        interpolate(Fragment.encode(SqlServerTypes.nvarchar, unsaved.email()), Fragment.lit("")));
+        interpolate(Fragment.encode(Email.sqlServerType, unsaved.email()), Fragment.lit("")));
     unsaved
         .createdAt()
         .visit(
@@ -162,13 +163,13 @@ public class CustomersRepoImpl implements CustomersRepo {
   }
 
   @Override
-  public Optional<CustomersRow> selectByUniqueEmail(String email, Connection c) {
+  public Optional<CustomersRow> selectByUniqueEmail(/* user-picked */ Email email, Connection c) {
     return interpolate(
             Fragment.lit(
                 "select [customer_id], [name], [email], [created_at]\n"
                     + "from [customers]\n"
                     + "where [email] = "),
-            Fragment.encode(SqlServerTypes.nvarchar, email),
+            Fragment.encode(Email.sqlServerType, email),
             Fragment.lit("\n"))
         .query(CustomersRow._rowParser.first())
         .runUnchecked(c);
@@ -188,7 +189,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                 Fragment.lit("update [customers]\nset [name] = "),
                 Fragment.encode(SqlServerTypes.nvarchar, row.name()),
                 Fragment.lit(",\n[email] = "),
-                Fragment.encode(SqlServerTypes.nvarchar, row.email()),
+                Fragment.encode(Email.sqlServerType, row.email()),
                 Fragment.lit(",\n[created_at] = "),
                 Fragment.encode(SqlServerTypes.datetime2.opt(), row.createdAt()),
                 Fragment.lit("\nwhere [customer_id] = "),
@@ -207,7 +208,7 @@ public class CustomersRepoImpl implements CustomersRepo {
             Fragment.lit(", "),
             Fragment.encode(SqlServerTypes.nvarchar, unsaved.name()),
             Fragment.lit(", "),
-            Fragment.encode(SqlServerTypes.nvarchar, unsaved.email()),
+            Fragment.encode(Email.sqlServerType, unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(SqlServerTypes.datetime2.opt(), unsaved.createdAt()),
             Fragment.lit(
@@ -222,7 +223,7 @@ public class CustomersRepoImpl implements CustomersRepo {
             Fragment.lit(", "),
             Fragment.encode(SqlServerTypes.nvarchar, unsaved.name()),
             Fragment.lit(", "),
-            Fragment.encode(SqlServerTypes.nvarchar, unsaved.email()),
+            Fragment.encode(Email.sqlServerType, unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(SqlServerTypes.datetime2.opt(), unsaved.createdAt()),
             Fragment.lit(

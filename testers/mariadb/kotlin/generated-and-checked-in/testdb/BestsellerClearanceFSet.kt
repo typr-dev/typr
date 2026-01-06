@@ -25,9 +25,6 @@ data class BestsellerClearanceFSet(val members: Set<BestsellerClearanceFSetMembe
   override fun toString(): String = toCommaSeparated()
 
   companion object {
-    val dbType: MariaType<BestsellerClearanceFSet> =
-      MariaTypes.set.bimap({ ms: MariaSet -> BestsellerClearanceFSet.fromString(ms.toCommaSeparated()) }, { s: BestsellerClearanceFSet -> MariaSet.fromString(s.toCommaSeparated()) })
-
     fun empty(): BestsellerClearanceFSet = BestsellerClearanceFSet(EnumSet.noneOf(BestsellerClearanceFSetMember::class.java).toSet())
 
     fun fromString(str: String): BestsellerClearanceFSet = run {
@@ -40,6 +37,9 @@ data class BestsellerClearanceFSet(val members: Set<BestsellerClearanceFSetMembe
         BestsellerClearanceFSet(set.toSet())
       }
     }
+
+    val mariaType: MariaType<BestsellerClearanceFSet> =
+      MariaTypes.set.bimap({ ms: MariaSet -> BestsellerClearanceFSet.fromString(ms.toCommaSeparated()) }, { s: BestsellerClearanceFSet -> MariaSet.fromString(s.toCommaSeparated()) })
 
     fun of(members: List<BestsellerClearanceFSetMember>): BestsellerClearanceFSet = run {
       if (members.isEmpty()) BestsellerClearanceFSet(EnumSet.noneOf(BestsellerClearanceFSetMember::class.java).toSet())

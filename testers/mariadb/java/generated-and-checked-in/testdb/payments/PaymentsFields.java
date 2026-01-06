@@ -61,7 +61,7 @@ public class PaymentsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withPaymentId(value),
-        PaymentsId.dbType);
+        PaymentsId.mariaType);
   }
 
   public Field<OrdersId, PaymentsRow> orderId() {
@@ -72,7 +72,7 @@ public class PaymentsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderId(value),
-        OrdersId.dbType);
+        OrdersId.mariaType);
   }
 
   public Field<PaymentMethodsId, PaymentsRow> methodId() {
@@ -83,7 +83,7 @@ public class PaymentsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withMethodId(value),
-        PaymentMethodsId.dbType);
+        PaymentMethodsId.mariaType);
   }
 
   public OptField<String, PaymentsRow> transactionId() {

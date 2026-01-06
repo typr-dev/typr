@@ -53,7 +53,7 @@ public class AddressFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withAddressid(value),
-        AddressId.dbType);
+        AddressId.pgType);
   }
 
   public Field<String, AddressRow> addressline1() {
@@ -97,7 +97,7 @@ public class AddressFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withStateprovinceid(value),
-        StateprovinceId.dbType);
+        StateprovinceId.pgType);
   }
 
   public Field<String, AddressRow> postalcode() {

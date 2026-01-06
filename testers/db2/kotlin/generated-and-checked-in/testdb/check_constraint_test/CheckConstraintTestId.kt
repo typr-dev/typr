@@ -20,7 +20,7 @@ data class CheckConstraintTestId(@field:JsonValue val value: Int) {
     val bijection: Bijection<CheckConstraintTestId, Int> =
       Bijection.of(CheckConstraintTestId::value, ::CheckConstraintTestId)
 
-    val dbType: Db2Type<CheckConstraintTestId> =
+    val db2Type: Db2Type<CheckConstraintTestId> =
       KotlinDbTypes.Db2Types.integer.bimap(::CheckConstraintTestId, CheckConstraintTestId::value)
   }
 }

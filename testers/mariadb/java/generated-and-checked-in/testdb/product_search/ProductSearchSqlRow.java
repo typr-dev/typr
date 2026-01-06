@@ -83,7 +83,7 @@ public record ProductSearchSqlRow(
 
   public static RowParser<ProductSearchSqlRow> _rowParser =
       RowParsers.of(
-          ProductsId.dbType,
+          ProductsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.varchar.opt(),

@@ -27,5 +27,5 @@ case class Db2testIdentityAlwaysRow(
 }
 
 object Db2testIdentityAlwaysRow {
-  val `_rowParser`: RowParser[Db2testIdentityAlwaysRow] = RowParsers.of(Db2testIdentityAlwaysId.dbType, Db2Types.varchar)(Db2testIdentityAlwaysRow.apply)(row => Array[Any](row.id, row.name))
+  val `_rowParser`: RowParser[Db2testIdentityAlwaysRow] = RowParsers.of(Db2testIdentityAlwaysId.db2Type, Db2Types.varchar)(Db2testIdentityAlwaysRow.apply)(row => Array[Any](row.id, row.name))
 }

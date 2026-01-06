@@ -26,6 +26,6 @@ data class IdentityParamsTestRow(
   fun toUnsavedRow(): IdentityParamsTestRowUnsaved = IdentityParamsTestRowUnsaved(name)
 
   companion object {
-    val _rowParser: RowParser<IdentityParamsTestRow> = RowParsers.of(IdentityParamsTestId.dbType, Db2Types.varchar, { t0, t1 -> IdentityParamsTestRow(t0, t1) }, { row -> arrayOf<Any?>(row.id, row.name) })
+    val _rowParser: RowParser<IdentityParamsTestRow> = RowParsers.of(IdentityParamsTestId.db2Type, Db2Types.varchar, { t0, t1 -> IdentityParamsTestRow(t0, t1) }, { row -> arrayOf<Any?>(row.id, row.name) })
   }
 }

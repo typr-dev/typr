@@ -16,5 +16,5 @@ case class Db2testIdentityDefaultId(@JsonValue value: Int) extends scala.AnyVal
 object Db2testIdentityDefaultId {
   given bijection: Bijection[Db2testIdentityDefaultId, Int] = Bijection.apply[Db2testIdentityDefaultId, Int](_.value)(Db2testIdentityDefaultId.apply)
 
-  given dbType: Db2Type[Db2testIdentityDefaultId] = ScalaDbTypes.Db2Types.integer.bimap(Db2testIdentityDefaultId.apply, _.value)
+  given db2Type: Db2Type[Db2testIdentityDefaultId] = ScalaDbTypes.Db2Types.integer.bimap(Db2testIdentityDefaultId.apply, _.value)
 }

@@ -39,7 +39,7 @@ public class UnitmeasureFields extends TupleExpr3<UnitmeasureId, Name, LocalDate
         Optional.empty(),
         Optional.of("bpchar"),
         (row, value) -> row.withUnitmeasurecode(value),
-        UnitmeasureId.dbType);
+        UnitmeasureId.pgType);
   }
 
   public Field<Name, UnitmeasureRow> name() {
@@ -50,7 +50,7 @@ public class UnitmeasureFields extends TupleExpr3<UnitmeasureId, Name, LocalDate
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<LocalDateTime, UnitmeasureRow> modifieddate() {

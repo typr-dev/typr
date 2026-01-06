@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple8
 import dev.typr.foundations.data.Uint1
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
+import testdb.userdefined.IsPrimary
 
 /** Table: product_images
   * Primary key: image_id
@@ -45,12 +45,12 @@ data class ProductImagesRow(
   /** 
     * Default: 0
     */
-  @field:JsonProperty("is_primary") val isPrimary: Boolean,
+  @field:JsonProperty("is_primary") val isPrimary: /* user-picked */ IsPrimary,
   /** Optional embedded image data
     * Default: NULL
     */
   @field:JsonProperty("image_data") val imageData: ByteArray?
-) : Tuple8<ProductImagesId, ProductsId, String, String?, String?, Uint1, Boolean, ByteArray?> {
+) : Tuple8<ProductImagesId, ProductsId, String, String?, String?, Uint1, /* user-picked */ IsPrimary, ByteArray?> {
   override fun _1(): ProductImagesId = imageId
 
   override fun _2(): ProductsId = productId
@@ -63,7 +63,7 @@ data class ProductImagesRow(
 
   override fun _6(): Uint1 = sortOrder
 
-  override fun _7(): Boolean = isPrimary
+  override fun _7(): /* user-picked */ IsPrimary = isPrimary
 
   override fun _8(): ByteArray? = imageData
 
@@ -73,11 +73,11 @@ data class ProductImagesRow(
     thumbnailUrl: Defaulted<String?> = Defaulted.Provided(this.thumbnailUrl),
     altText: Defaulted<String?> = Defaulted.Provided(this.altText),
     sortOrder: Defaulted<Uint1> = Defaulted.Provided(this.sortOrder),
-    isPrimary: Defaulted<Boolean> = Defaulted.Provided(this.isPrimary),
+    isPrimary: Defaulted</* user-picked */ IsPrimary> = Defaulted.Provided(this.isPrimary),
     imageData: Defaulted<ByteArray?> = Defaulted.Provided(this.imageData)
   ): ProductImagesRowUnsaved = ProductImagesRowUnsaved(productId, imageUrl, thumbnailUrl, altText, sortOrder, isPrimary, imageData)
 
   companion object {
-    val _rowParser: RowParser<ProductImagesRow> = RowParsers.of(ProductImagesId.dbType, ProductsId.dbType, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.varchar.nullable(), MariaTypes.tinyintUnsigned, KotlinDbTypes.MariaTypes.bool, MariaTypes.longblob.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7 -> ProductImagesRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData) })
+    val _rowParser: RowParser<ProductImagesRow> = RowParsers.of(ProductImagesId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.varchar.nullable(), MariaTypes.tinyintUnsigned, IsPrimary.mariaType, MariaTypes.longblob.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7 -> ProductImagesRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData) })
   }
 }

@@ -26,9 +26,9 @@ public record ShiftId(@JsonValue Integer value) {
 
   public static Bijection<ShiftId, Integer> bijection = Bijection.of(ShiftId::value, ShiftId::new);
 
-  public static PgType<ShiftId> dbType = PgTypes.int4.bimap(ShiftId::new, ShiftId::value);
+  public static PgType<ShiftId> pgType = PgTypes.int4.bimap(ShiftId::new, ShiftId::value);
 
-  public static PgType<ShiftId[]> dbTypeArray =
+  public static PgType<ShiftId[]> pgTypeArray =
       PgTypes.int4Array.bimap(
           xs -> arrayMap.map(xs, ShiftId::new, ShiftId.class),
           xs -> arrayMap.map(xs, ShiftId::value, Integer.class));

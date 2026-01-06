@@ -6,8 +6,9 @@
 package adventureworks.person_detail
 
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.RowParser
 import dev.typr.foundations.RowParsers
@@ -24,9 +25,9 @@ case class PersonDetailSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Optional[Name],
+  middlename: Optional[/* user-picked */ MiddleName],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
   jobtitle: String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
@@ -37,16 +38,16 @@ case class PersonDetailSqlRow(
   postalcode: Optional[String],
   /** Points to [[adventureworks.person.address.AddressRow.rowguid]] */
   rowguid: Optional[UUID]
-) extends Tuple10[BusinessentityId, Optional[/* max 8 chars */ String], /* user-picked */ FirstName, Optional[Name], Name, String, Optional[String], Optional[String], Optional[String], Optional[UUID]] {
+) extends Tuple10[BusinessentityId, Optional[/* max 8 chars */ String], /* user-picked */ FirstName, Optional[/* user-picked */ MiddleName], /* user-picked */ LastName, String, Optional[String], Optional[String], Optional[String], Optional[UUID]] {
   override def `_1`: BusinessentityId = businessentityid
 
   override def `_2`: Optional[/* max 8 chars */ String] = title
 
   override def `_3`: /* user-picked */ FirstName = firstname
 
-  override def `_4`: Optional[Name] = middlename
+  override def `_4`: Optional[/* user-picked */ MiddleName] = middlename
 
-  override def `_5`: Name = lastname
+  override def `_5`: /* user-picked */ LastName = lastname
 
   override def `_6`: String = jobtitle
 
@@ -60,5 +61,5 @@ case class PersonDetailSqlRow(
 }
 
 object PersonDetailSqlRow {
-  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.dbType, PgTypes.text.opt(), FirstName.dbType, Name.dbType.opt(), Name.dbType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.uuid.opt(), PersonDetailSqlRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
+  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, MiddleName.pgType.opt(), LastName.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.uuid.opt(), PersonDetailSqlRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
 }

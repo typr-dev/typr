@@ -20,7 +20,7 @@ data class PrecisionTypesNullId(@field:JsonValue val value: Int) {
     val bijection: Bijection<PrecisionTypesNullId, Int> =
       Bijection.of(PrecisionTypesNullId::value, ::PrecisionTypesNullId)
 
-    val dbType: MariaType<PrecisionTypesNullId> =
+    val mariaType: MariaType<PrecisionTypesNullId> =
       KotlinDbTypes.MariaTypes.int_.bimap(::PrecisionTypesNullId, PrecisionTypesNullId::value)
   }
 }

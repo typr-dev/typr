@@ -77,7 +77,7 @@ public class Db2testFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIntCol(value),
-        Db2testId.dbType);
+        Db2testId.db2Type);
   }
 
   public Field<Long, Db2testRow> bigintCol() {

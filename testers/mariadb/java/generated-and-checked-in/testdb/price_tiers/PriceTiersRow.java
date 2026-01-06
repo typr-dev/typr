@@ -59,7 +59,7 @@ public record PriceTiersRow(
 
   public static RowParser<PriceTiersRow> _rowParser =
       RowParsers.of(
-          PriceTiersId.dbType,
+          PriceTiersId.mariaType,
           MariaTypes.varchar,
           MariaTypes.intUnsigned,
           MariaTypes.text,

@@ -39,7 +39,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
                 Fragment.lit(
                     "delete from \"production\".\"productsubcategory\" where"
                         + " \"productsubcategoryid\" = "),
-                Fragment.encode(ProductsubcategoryId.dbType, productsubcategoryid),
+                Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -53,7 +53,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
                 "delete\n"
                     + "from \"production\".\"productsubcategory\"\n"
                     + "where \"productsubcategoryid\" = ANY("),
-            Fragment.encode(ProductsubcategoryId.dbTypeArray, productsubcategoryids),
+            Fragment.encode(ProductsubcategoryId.pgTypeArray, productsubcategoryids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -66,11 +66,11 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
                 "insert into \"production\".\"productsubcategory\"(\"productsubcategoryid\","
                     + " \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(ProductsubcategoryId.dbType, unsaved.productsubcategoryid()),
+            Fragment.encode(ProductsubcategoryId.pgType, unsaved.productsubcategoryid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(ProductcategoryId.dbType, unsaved.productcategoryid()),
+            Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),
@@ -92,11 +92,11 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
     columns.add(Fragment.lit("\"productcategoryid\""));
     values.add(
         interpolate(
-            Fragment.encode(ProductcategoryId.dbType, unsaved.productcategoryid()),
+            Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.name()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.name()), Fragment.lit("::varchar")));
     unsaved
         .productsubcategoryid()
         .visit(
@@ -105,7 +105,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
               columns.add(Fragment.lit("\"productsubcategoryid\""));
               values.add(
                   interpolate(
-                      Fragment.encode(ProductsubcategoryId.dbType, value), Fragment.lit("::int4")));
+                      Fragment.encode(ProductsubcategoryId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     unsaved
@@ -197,7 +197,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
                     + " \"modifieddate\"\n"
                     + "from \"production\".\"productsubcategory\"\n"
                     + "where \"productsubcategoryid\" = "),
-            Fragment.encode(ProductsubcategoryId.dbType, productsubcategoryid),
+            Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid),
             Fragment.lit(""))
         .query(ProductsubcategoryRow._rowParser.first())
         .runUnchecked(c);
@@ -212,7 +212,7 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
                     + " \"modifieddate\"\n"
                     + "from \"production\".\"productsubcategory\"\n"
                     + "where \"productsubcategoryid\" = ANY("),
-            Fragment.encode(ProductsubcategoryId.dbTypeArray, productsubcategoryids),
+            Fragment.encode(ProductsubcategoryId.pgTypeArray, productsubcategoryids),
             Fragment.lit(")"))
         .query(ProductsubcategoryRow._rowParser.all())
         .runUnchecked(c);
@@ -243,15 +243,15 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
     return interpolate(
                 Fragment.lit(
                     "update \"production\".\"productsubcategory\"\nset \"productcategoryid\" = "),
-                Fragment.encode(ProductcategoryId.dbType, row.productcategoryid()),
+                Fragment.encode(ProductcategoryId.pgType, row.productcategoryid()),
                 Fragment.lit("::int4,\n\"name\" = "),
-                Fragment.encode(Name.dbType, row.name()),
+                Fragment.encode(Name.pgType, row.name()),
                 Fragment.lit("::varchar,\n\"rowguid\" = "),
                 Fragment.encode(PgTypes.uuid, row.rowguid()),
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"productsubcategoryid\" = "),
-                Fragment.encode(ProductsubcategoryId.dbType, productsubcategoryid),
+                Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -265,11 +265,11 @@ public class ProductsubcategoryRepoImpl implements ProductsubcategoryRepo {
                 "insert into \"production\".\"productsubcategory\"(\"productsubcategoryid\","
                     + " \"productcategoryid\", \"name\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(ProductsubcategoryId.dbType, unsaved.productsubcategoryid()),
+            Fragment.encode(ProductsubcategoryId.pgType, unsaved.productsubcategoryid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(ProductcategoryId.dbType, unsaved.productcategoryid()),
+            Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),

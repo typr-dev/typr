@@ -24,21 +24,21 @@ class Db2testIdentityDefaultRepoImpl() : Db2testIdentityDefaultRepo {
   override fun deleteById(
     id: Db2testIdentityDefaultId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_IDENTITY_DEFAULT\" where \"ID\" = "), Fragment.encode(Db2testIdentityDefaultId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_IDENTITY_DEFAULT\" where \"ID\" = "), Fragment.encode(Db2testIdentityDefaultId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     ids: Array<Db2testIdentityDefaultId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in ids) { fragments.add(Fragment.encode(Db2testIdentityDefaultId.dbType, id)) }
+    for (id in ids) { fragments.add(Fragment.encode(Db2testIdentityDefaultId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_IDENTITY_DEFAULT\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: Db2testIdentityDefaultRow,
     c: Connection
-  ): Db2testIdentityDefaultRow = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_IDENTITY_DEFAULT\"(\"ID\", \"NAME\")\nVALUES ("), Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit("))\n"))
+  ): Db2testIdentityDefaultRow = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_IDENTITY_DEFAULT\"(\"ID\", \"NAME\")\nVALUES ("), Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit("))\n"))
     .updateReturning(Db2testIdentityDefaultRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -52,7 +52,7 @@ class Db2testIdentityDefaultRepoImpl() : Db2testIdentityDefaultRepo {
     unsaved.id.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"ID\""))
-      values.add(Fragment.interpolate(Fragment.encode(Db2testIdentityDefaultId.dbType, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(Db2testIdentityDefaultId.db2Type, value), Fragment.lit(""))) }
     );
     val q: Fragment = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_IDENTITY_DEFAULT\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.lit("))\n"))
     return q.updateReturning(Db2testIdentityDefaultRow._rowParser.exactlyOne()).runUnchecked(c)
@@ -65,14 +65,14 @@ class Db2testIdentityDefaultRepoImpl() : Db2testIdentityDefaultRepo {
   override fun selectById(
     id: Db2testIdentityDefaultId,
     c: Connection
-  ): Db2testIdentityDefaultRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\"\nfrom \"DB2TEST_IDENTITY_DEFAULT\"\nwhere \"ID\" = "), Fragment.encode(Db2testIdentityDefaultId.dbType, id), Fragment.lit("")).query(Db2testIdentityDefaultRow._rowParser.first()).runUnchecked(c)
+  ): Db2testIdentityDefaultRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\"\nfrom \"DB2TEST_IDENTITY_DEFAULT\"\nwhere \"ID\" = "), Fragment.encode(Db2testIdentityDefaultId.db2Type, id), Fragment.lit("")).query(Db2testIdentityDefaultRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     ids: Array<Db2testIdentityDefaultId>,
     c: Connection
   ): List<Db2testIdentityDefaultRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in ids) { fragments.add(Fragment.encode(Db2testIdentityDefaultId.dbType, id)) }
+    for (id in ids) { fragments.add(Fragment.encode(Db2testIdentityDefaultId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\" from \"DB2TEST_IDENTITY_DEFAULT\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(Db2testIdentityDefaultRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -92,14 +92,14 @@ class Db2testIdentityDefaultRepoImpl() : Db2testIdentityDefaultRepo {
     c: Connection
   ): Boolean {
     val id: Db2testIdentityDefaultId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"DB2TEST_IDENTITY_DEFAULT\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(Db2testIdentityDefaultId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"DB2TEST_IDENTITY_DEFAULT\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(Db2testIdentityDefaultId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: Db2testIdentityDefaultRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"DB2TEST_IDENTITY_DEFAULT\" AS t\nUSING (VALUES ("), Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("), Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")"))
+    Fragment.interpolate(Fragment.lit("MERGE INTO \"DB2TEST_IDENTITY_DEFAULT\" AS t\nUSING (VALUES ("), Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("), Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }

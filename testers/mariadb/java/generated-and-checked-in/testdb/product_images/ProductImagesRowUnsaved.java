@@ -11,6 +11,7 @@ import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsPrimary;
 
 /** This class corresponds to a row in table `product_images` which has not been persisted yet */
 public record ProductImagesRowUnsaved(
@@ -25,7 +26,7 @@ public record ProductImagesRowUnsaved(
     /** Default: 0 */
     @JsonProperty("sort_order") Defaulted<Uint1> sortOrder,
     /** Default: 0 */
-    @JsonProperty("is_primary") Defaulted<Boolean> isPrimary,
+    @JsonProperty("is_primary") Defaulted</* user-picked */ IsPrimary> isPrimary,
     /** Default: NULL Optional embedded image data */
     @JsonProperty("image_data") Defaulted<Optional<byte[]>> imageData) {
   public ProductImagesRowUnsaved(
@@ -80,7 +81,7 @@ public record ProductImagesRowUnsaved(
   ;
 
   /** Default: 0 */
-  public ProductImagesRowUnsaved withIsPrimary(Defaulted<Boolean> isPrimary) {
+  public ProductImagesRowUnsaved withIsPrimary(Defaulted</* user-picked */ IsPrimary> isPrimary) {
     return new ProductImagesRowUnsaved(
         productId, imageUrl, thumbnailUrl, altText, sortOrder, isPrimary, imageData);
   }
@@ -97,7 +98,7 @@ public record ProductImagesRowUnsaved(
       java.util.function.Supplier<Optional<String>> thumbnailUrlDefault,
       java.util.function.Supplier<Optional<String>> altTextDefault,
       java.util.function.Supplier<Uint1> sortOrderDefault,
-      java.util.function.Supplier<Boolean> isPrimaryDefault,
+      java.util.function.Supplier</* user-picked */ IsPrimary> isPrimaryDefault,
       java.util.function.Supplier<Optional<byte[]>> imageDataDefault,
       java.util.function.Supplier<ProductImagesId> imageIdDefault) {
     return new ProductImagesRow(

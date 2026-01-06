@@ -32,13 +32,13 @@ data class DepartmentFields(val _path: List<Path>) : TupleExpr4<DepartmentId, Na
 
   override fun columns(): List<FieldLike<*, DepartmentRow>> = listOf(this.departmentid().underlying, this.name().underlying, this.groupname().underlying, this.modifieddate().underlying)
 
-  fun departmentid(): IdField<DepartmentId, DepartmentRow> = IdField<DepartmentId, DepartmentRow>(_path, "departmentid", DepartmentRow::departmentid, null, "int4", { row, value -> row.copy(departmentid = value) }, DepartmentId.dbType)
+  fun departmentid(): IdField<DepartmentId, DepartmentRow> = IdField<DepartmentId, DepartmentRow>(_path, "departmentid", DepartmentRow::departmentid, null, "int4", { row, value -> row.copy(departmentid = value) }, DepartmentId.pgType)
 
-  fun groupname(): Field<Name, DepartmentRow> = Field<Name, DepartmentRow>(_path, "groupname", DepartmentRow::groupname, null, "varchar", { row, value -> row.copy(groupname = value) }, Name.dbType)
+  fun groupname(): Field<Name, DepartmentRow> = Field<Name, DepartmentRow>(_path, "groupname", DepartmentRow::groupname, null, "varchar", { row, value -> row.copy(groupname = value) }, Name.pgType)
 
   fun modifieddate(): Field<LocalDateTime, DepartmentRow> = Field<LocalDateTime, DepartmentRow>(_path, "modifieddate", DepartmentRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, DepartmentRow> = Field<Name, DepartmentRow>(_path, "name", DepartmentRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, DepartmentRow> = Field<Name, DepartmentRow>(_path, "name", DepartmentRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
   override fun rowParser(): RowParser<DepartmentRow> = DepartmentRow._rowParser.underlying
 

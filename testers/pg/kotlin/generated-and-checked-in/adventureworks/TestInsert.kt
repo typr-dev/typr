@@ -133,7 +133,11 @@ import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRepoImpl
 import adventureworks.sales.salesterritory.SalesterritoryRow
 import adventureworks.sales.salesterritory.SalesterritoryRowUnsaved
+import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
 import dev.typr.foundations.data.Json
@@ -185,10 +189,10 @@ data class TestInsert(
     maritalstatus: String,
     gender: String,
     hiredate: LocalDate,
-    salariedflag: Defaulted<Flag> = UseDefault(),
+    salariedflag: Defaulted</* user-picked */ SalariedFlag> = UseDefault(),
     vacationhours: Defaulted<Short> = UseDefault(),
     sickleavehours: Defaulted<Short> = UseDefault(),
-    currentflag: Defaulted<Flag> = UseDefault(),
+    currentflag: Defaulted</* user-picked */ CurrentFlag> = UseDefault(),
     rowguid: Defaulted<UUID> = UseDefault(),
     modifieddate: Defaulted<LocalDateTime> = UseDefault(),
     organizationnode: Defaulted<String?> = UseDefault(),
@@ -279,10 +283,10 @@ data class TestInsert(
   fun personPerson(
     businessentityid: BusinessentityId,
     persontype: String,
-    firstname: /* user-picked */ FirstName,
     title: /* max 8 chars */ String? = null,
-    middlename: Name? = if (random.nextBoolean()) null else domainInsert.publicName(random),
-    lastname: Name = domainInsert.publicName(random),
+    firstname: /* user-picked */ FirstName = FirstName(domainInsert.publicName(random)),
+    middlename: /* user-picked */ MiddleName? = if (random.nextBoolean()) null else MiddleName(domainInsert.publicName(random)),
+    lastname: /* user-picked */ LastName = LastName(domainInsert.publicName(random)),
     suffix: /* max 10 chars */ String? = null,
     additionalcontactinfo: Xml? = if (random.nextBoolean()) null else Xml("<root/>"),
     demographics: Xml? = if (random.nextBoolean()) null else Xml("<root/>"),

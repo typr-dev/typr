@@ -46,7 +46,7 @@ public class OrderHistoryFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withHistoryId(value),
-        OrderHistoryId.dbType);
+        OrderHistoryId.mariaType);
   }
 
   public Field<OrdersId, OrderHistoryRow> orderId() {
@@ -57,7 +57,7 @@ public class OrderHistoryFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderId(value),
-        OrdersId.dbType);
+        OrdersId.mariaType);
   }
 
   public OptField<String, OrderHistoryRow> previousStatus() {

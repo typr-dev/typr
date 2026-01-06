@@ -35,5 +35,5 @@ case class CheckConstraintTestRow(
 }
 
 object CheckConstraintTestRow {
-  val `_rowParser`: RowParser[CheckConstraintTestRow] = RowParsers.of(CheckConstraintTestId.dbType, ScalaDbTypes.Db2Types.integer, Db2Types.varchar, ScalaDbTypes.Db2Types.decimal.nullable)(CheckConstraintTestRow.apply)(row => Array[Any](row.id, row.age, row.status, row.price))
+  val `_rowParser`: RowParser[CheckConstraintTestRow] = RowParsers.of(CheckConstraintTestId.db2Type, ScalaDbTypes.Db2Types.integer, Db2Types.varchar, ScalaDbTypes.Db2Types.decimal.nullable)(CheckConstraintTestRow.apply)(row => Array[Any](row.id, row.age, row.status, row.price))
 }

@@ -32,17 +32,17 @@ public record String50(@JsonValue String value) implements StringN {
   public static Bijection<String50, String> bijection =
       Bijection.of(String50::value, String50::new);
 
-  public static PgType<String50> dbType = PgTypes.text.bimap(String50::new, String50::value);
-
-  public static PgType<String50[]> dbTypeArray =
-      PgTypes.textArray.bimap(
-          xs -> arrayMap.map(xs, String50::new, String50.class),
-          xs -> arrayMap.map(xs, String50::value, String.class));
-
   public static Optional<String50> of(String value) {
     return (value.length() <= 50 ? Optional.of(new String50(value)) : Optional.empty());
   }
   ;
+
+  public static PgType<String50> pgType = PgTypes.text.bimap(String50::new, String50::value);
+
+  public static PgType<String50[]> pgTypeArray =
+      PgTypes.textArray.bimap(
+          xs -> arrayMap.map(xs, String50::new, String50.class),
+          xs -> arrayMap.map(xs, String50::value, String.class));
 
   public static String50 truncate(String value) {
     return new String50((value.length() <= 50 ? value : value.substring(0, 50)));

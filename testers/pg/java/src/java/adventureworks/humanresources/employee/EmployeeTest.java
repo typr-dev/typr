@@ -12,7 +12,11 @@ import adventureworks.person.person.PersonRepoImpl;
 import adventureworks.person.person.PersonRowUnsaved;
 import adventureworks.public_.Flag;
 import adventureworks.public_.Name;
+import adventureworks.userdefined.CurrentFlag;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
+import adventureworks.userdefined.SalariedFlag;
 import dev.typr.foundations.data.Xml;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -43,9 +47,9 @@ public class EmployeeTest {
                   new PersonRowUnsaved(
                           businessentityRow.businessentityid(),
                           "SC",
-                          new FirstName("firstname"),
-                          new Name("lastname"))
-                      .withMiddlename(Optional.of(new Name("middlename")))
+                          new FirstName(new Name("firstname")),
+                          new LastName(new Name("lastname")))
+                      .withMiddlename(Optional.of(new MiddleName(new Name("middlename"))))
                       .withSuffix(Optional.of("suffix"))
                       .withAdditionalcontactinfo(Optional.of(new Xml("<additionalcontactinfo/>"))),
                   c);
@@ -61,10 +65,10 @@ public class EmployeeTest {
                       "M",
                       "F",
                       LocalDate.now().minusYears(1))
-                  .withSalariedflag(new Defaulted.Provided<>(new Flag(true)))
+                  .withSalariedflag(new Defaulted.Provided<>(new SalariedFlag(new Flag(true))))
                   .withVacationhours(new Defaulted.Provided<>((short) 1))
                   .withSickleavehours(new Defaulted.Provided<>((short) 2))
-                  .withCurrentflag(new Defaulted.Provided<>(new Flag(true)))
+                  .withCurrentflag(new Defaulted.Provided<>(new CurrentFlag(new Flag(true))))
                   .withRowguid(new Defaulted.Provided<>(UUID.randomUUID()))
                   .withModifieddate(new Defaulted.Provided<>(DbNow.localDateTime()))
                   .withOrganizationnode(new Defaulted.Provided<>(Optional.of("/")));
@@ -109,10 +113,10 @@ public class EmployeeTest {
           var withDefaults = employeeRepo.insert(minimalUnsaved, c);
 
           // Verify the static default values from the database schema
-          assertEquals(new Flag(true), withDefaults.salariedflag());
+          assertEquals(new SalariedFlag(new Flag(true)), withDefaults.salariedflag());
           assertEquals(Short.valueOf((short) 0), withDefaults.vacationhours());
           assertEquals(Short.valueOf((short) 0), withDefaults.sickleavehours());
-          assertEquals(new Flag(true), withDefaults.currentflag());
+          assertEquals(new CurrentFlag(new Flag(true)), withDefaults.currentflag());
           assertEquals(Optional.of("/"), withDefaults.organizationnode());
         });
   }

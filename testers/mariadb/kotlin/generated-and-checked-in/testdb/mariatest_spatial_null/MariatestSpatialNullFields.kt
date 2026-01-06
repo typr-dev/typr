@@ -52,7 +52,7 @@ data class MariatestSpatialNullFields(val _path: List<Path>) : TupleExpr9<Mariat
 
   fun geometrycollectionCol(): OptField<GeometryCollection, MariatestSpatialNullRow> = OptField<GeometryCollection, MariatestSpatialNullRow>(_path, "geometrycollection_col", MariatestSpatialNullRow::geometrycollectionCol, null, null, { row, value -> row.copy(geometrycollectionCol = value) }, MariaTypes.geometrycollection)
 
-  fun id(): IdField<MariatestSpatialNullId, MariatestSpatialNullRow> = IdField<MariatestSpatialNullId, MariatestSpatialNullRow>(_path, "id", MariatestSpatialNullRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestSpatialNullId.dbType)
+  fun id(): IdField<MariatestSpatialNullId, MariatestSpatialNullRow> = IdField<MariatestSpatialNullId, MariatestSpatialNullRow>(_path, "id", MariatestSpatialNullRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestSpatialNullId.mariaType)
 
   fun linestringCol(): OptField<LineString, MariatestSpatialNullRow> = OptField<LineString, MariatestSpatialNullRow>(_path, "linestring_col", MariatestSpatialNullRow::linestringCol, null, null, { row, value -> row.copy(linestringCol = value) }, MariaTypes.linestring)
 

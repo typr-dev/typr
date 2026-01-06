@@ -11,12 +11,13 @@ import java.util.Optional;
 import testdb.Priority;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.Email;
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 public record CustomersRowUnsaved(
     @JsonProperty("customer_id") CustomersId customerId,
     String name,
-    Optional<String> email,
+    Optional</* user-picked */ Email> email,
     /** Default: current_timestamp */
     @JsonProperty("created_at") Defaulted<LocalDateTime> createdAt,
     /** Default: 'medium' */
@@ -36,7 +37,7 @@ public record CustomersRowUnsaved(
   }
   ;
 
-  public CustomersRowUnsaved withEmail(Optional<String> email) {
+  public CustomersRowUnsaved withEmail(Optional</* user-picked */ Email> email) {
     return new CustomersRowUnsaved(customerId, name, email, createdAt, priority);
   }
   ;

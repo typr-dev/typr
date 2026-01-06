@@ -27,7 +27,7 @@ class BusinessentityFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 

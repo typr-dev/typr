@@ -69,7 +69,7 @@ public record UsersRowUnsaved(
   public static PgText<UsersRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            UsersId.dbType.text().unsafeEncode(row.userId, sb);
+            UsersId.pgType.text().unsafeEncode(row.userId, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.text.text().unsafeEncode(row.name, sb);
             sb.append(PgText.DELIMETER);

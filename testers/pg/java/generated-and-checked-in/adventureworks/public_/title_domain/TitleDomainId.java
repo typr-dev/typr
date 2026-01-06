@@ -43,12 +43,12 @@ public sealed interface TitleDomainId permits TitleDomainId.Unknown, TitleDomain
     }
   }
 
-  public static PgType<TitleDomainId[]> dbTypeArray =
-      ShortText.dbTypeArray.bimap(
+  public static PgType<TitleDomainId[]> pgTypeArray =
+      ShortText.pgTypeArray.bimap(
           xs -> arrayMap.map(xs, TitleDomainId::apply, TitleDomainId.class),
           xs -> arrayMap.map(xs, TitleDomainId::value, ShortText.class));
-  public static PgType<TitleDomainId> dbType =
-      ShortText.dbType.bimap(TitleDomainId::apply, TitleDomainId::value);
+  public static PgType<TitleDomainId> pgType =
+      ShortText.pgType.bimap(TitleDomainId::apply, TitleDomainId::value);
 
   public static TitleDomainId shortText(String value) {
     return apply(new ShortText(value));

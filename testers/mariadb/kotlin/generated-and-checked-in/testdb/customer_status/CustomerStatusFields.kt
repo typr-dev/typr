@@ -10,20 +10,20 @@ import dev.typr.foundations.RowParser
 import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RelationStructure
 import dev.typr.foundations.kotlin.SqlExpr
 import dev.typr.foundations.kotlin.SqlExpr.Field
 import dev.typr.foundations.kotlin.SqlExpr.IdField
 import dev.typr.foundations.kotlin.TupleExpr3
 import kotlin.collections.List
+import testdb.userdefined.IsActive
 
-data class CustomerStatusFields(val _path: List<Path>) : TupleExpr3<CustomerStatusId, String, Boolean>, RelationStructure<CustomerStatusFields, CustomerStatusRow>, FieldsBase<CustomerStatusRow> {
+data class CustomerStatusFields(val _path: List<Path>) : TupleExpr3<CustomerStatusId, String, /* user-picked */ IsActive>, RelationStructure<CustomerStatusFields, CustomerStatusRow>, FieldsBase<CustomerStatusRow> {
   override fun _1(): SqlExpr<CustomerStatusId> = statusCode()
 
   override fun _2(): SqlExpr<String> = description()
 
-  override fun _3(): SqlExpr<Boolean> = isActive()
+  override fun _3(): SqlExpr</* user-picked */ IsActive> = isActive()
 
   override fun _path(): List<Path> = _path
 
@@ -31,11 +31,11 @@ data class CustomerStatusFields(val _path: List<Path>) : TupleExpr3<CustomerStat
 
   fun description(): Field<String, CustomerStatusRow> = Field<String, CustomerStatusRow>(_path, "description", CustomerStatusRow::description, null, null, { row, value -> row.copy(description = value) }, MariaTypes.varchar)
 
-  fun isActive(): Field<Boolean, CustomerStatusRow> = Field<Boolean, CustomerStatusRow>(_path, "is_active", CustomerStatusRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isActive(): Field</* user-picked */ IsActive, CustomerStatusRow> = Field</* user-picked */ IsActive, CustomerStatusRow>(_path, "is_active", CustomerStatusRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
 
   override fun rowParser(): RowParser<CustomerStatusRow> = CustomerStatusRow._rowParser.underlying
 
-  fun statusCode(): IdField<CustomerStatusId, CustomerStatusRow> = IdField<CustomerStatusId, CustomerStatusRow>(_path, "status_code", CustomerStatusRow::statusCode, null, null, { row, value -> row.copy(statusCode = value) }, CustomerStatusId.dbType)
+  fun statusCode(): IdField<CustomerStatusId, CustomerStatusRow> = IdField<CustomerStatusId, CustomerStatusRow>(_path, "status_code", CustomerStatusRow::statusCode, null, null, { row, value -> row.copy(statusCode = value) }, CustomerStatusId.mariaType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<CustomerStatusFields, CustomerStatusRow> = CustomerStatusFields(_path)
 

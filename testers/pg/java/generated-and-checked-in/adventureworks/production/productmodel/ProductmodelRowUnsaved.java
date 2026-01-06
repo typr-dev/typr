@@ -97,13 +97,13 @@ public record ProductmodelRowUnsaved(
   public static PgText<ProductmodelRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            Name.dbType.text().unsafeEncode(row.name, sb);
+            Name.pgType.text().unsafeEncode(row.name, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.xml.opt().text().unsafeEncode(row.catalogdescription, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.xml.opt().text().unsafeEncode(row.instructions, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(ProductmodelId.dbType.text()).unsafeEncode(row.productmodelid, sb);
+            Defaulted.pgText(ProductmodelId.pgType.text()).unsafeEncode(row.productmodelid, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb);
             sb.append(PgText.DELIMETER);

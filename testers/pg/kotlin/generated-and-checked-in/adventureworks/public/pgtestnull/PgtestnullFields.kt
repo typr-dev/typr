@@ -265,13 +265,13 @@ data class PgtestnullFields(val _path: List<Path>) : TupleExpr70<Boolean, PGbox,
 
   fun moneyes(): OptField<Array<Money>, PgtestnullRow> = OptField<Array<Money>, PgtestnullRow>(_path, "moneyes", PgtestnullRow::moneyes, "numeric[]", "money[]", { row, value -> row.copy(moneyes = value) }, PgTypes.moneyArray)
 
-  fun mydomain(): OptField<Mydomain, PgtestnullRow> = OptField<Mydomain, PgtestnullRow>(_path, "mydomain", PgtestnullRow::mydomain, null, "text", { row, value -> row.copy(mydomain = value) }, Mydomain.dbType)
+  fun mydomain(): OptField<Mydomain, PgtestnullRow> = OptField<Mydomain, PgtestnullRow>(_path, "mydomain", PgtestnullRow::mydomain, null, "text", { row, value -> row.copy(mydomain = value) }, Mydomain.pgType)
 
-  fun mydomaines(): OptField<Array<Mydomain>, PgtestnullRow> = OptField<Array<Mydomain>, PgtestnullRow>(_path, "mydomaines", PgtestnullRow::mydomaines, "text[]", "mydomain[]", { row, value -> row.copy(mydomaines = value) }, Mydomain.dbTypeArray)
+  fun mydomaines(): OptField<Array<Mydomain>, PgtestnullRow> = OptField<Array<Mydomain>, PgtestnullRow>(_path, "mydomaines", PgtestnullRow::mydomaines, "text[]", "mydomain[]", { row, value -> row.copy(mydomaines = value) }, Mydomain.pgTypeArray)
 
-  fun myenum(): OptField<Myenum, PgtestnullRow> = OptField<Myenum, PgtestnullRow>(_path, "myenum", PgtestnullRow::myenum, null, "public.myenum", { row, value -> row.copy(myenum = value) }, Myenum.dbType)
+  fun myenum(): OptField<Myenum, PgtestnullRow> = OptField<Myenum, PgtestnullRow>(_path, "myenum", PgtestnullRow::myenum, null, "public.myenum", { row, value -> row.copy(myenum = value) }, Myenum.pgType)
 
-  fun myenumes(): OptField<Array<Myenum>, PgtestnullRow> = OptField<Array<Myenum>, PgtestnullRow>(_path, "myenumes", PgtestnullRow::myenumes, null, "myenum[]", { row, value -> row.copy(myenumes = value) }, Myenum.dbTypeArray)
+  fun myenumes(): OptField<Array<Myenum>, PgtestnullRow> = OptField<Array<Myenum>, PgtestnullRow>(_path, "myenumes", PgtestnullRow::myenumes, null, "myenum[]", { row, value -> row.copy(myenumes = value) }, Myenum.pgTypeArray)
 
   fun name(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "name", PgtestnullRow::name, null, "name", { row, value -> row.copy(name = value) }, PgTypes.name)
 

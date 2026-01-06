@@ -15,6 +15,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
 /** View: v_customer_summary
  * VIEW
@@ -28,7 +29,7 @@ case class VCustomerSummaryViewRow(
   /** 
    * Points to [[testdb.customers.CustomersRow.email]]
    */
-  email: String,
+  email: /* user-picked */ Email,
   /** 
    * Default: NULL
    */
@@ -65,10 +66,10 @@ case class VCustomerSummaryViewRow(
    * Default: current_timestamp(6)
    */
   @JsonProperty("last_order_date") lastOrderDate: Option[LocalDateTime]
-) extends Tuple10[CustomersId, String, Option[String], String, CustomerStatusId, LocalDateTime, Option[LocalDateTime], Long, BigDecimal, Option[LocalDateTime]] {
+) extends Tuple10[CustomersId, /* user-picked */ Email, Option[String], String, CustomerStatusId, LocalDateTime, Option[LocalDateTime], Long, BigDecimal, Option[LocalDateTime]] {
   override def `_1`: CustomersId = customerId
 
-  override def `_2`: String = email
+  override def `_2`: /* user-picked */ Email = email
 
   override def `_3`: Option[String] = fullName
 
@@ -88,5 +89,5 @@ case class VCustomerSummaryViewRow(
 }
 
 object VCustomerSummaryViewRow {
-  val `_rowParser`: RowParser[VCustomerSummaryViewRow] = RowParsers.of(CustomersId.dbType, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.text, CustomerStatusId.dbType, MariaTypes.datetime, MariaTypes.datetime.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.datetime.nullable)(VCustomerSummaryViewRow.apply)(row => Array[Any](row.customerId, row.email, row.fullName, row.tier, row.status, row.createdAt, row.lastLoginAt, row.totalOrders, row.lifetimeValue, row.lastOrderDate))
+  val `_rowParser`: RowParser[VCustomerSummaryViewRow] = RowParsers.of(CustomersId.mariaType, Email.mariaType, MariaTypes.varchar.nullable, MariaTypes.text, CustomerStatusId.mariaType, MariaTypes.datetime, MariaTypes.datetime.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.datetime.nullable)(VCustomerSummaryViewRow.apply)(row => Array[Any](row.customerId, row.email, row.fullName, row.tier, row.status, row.createdAt, row.lastLoginAt, row.totalOrders, row.lifetimeValue, row.lastOrderDate))
 }

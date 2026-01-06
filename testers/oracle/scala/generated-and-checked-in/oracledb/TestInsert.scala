@@ -60,6 +60,7 @@ import oracledb.precision_types_null.PrecisionTypesNullRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
+import oracledb.userdefined.Email
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 case class TestInsert(random: Random) {
@@ -99,7 +100,7 @@ case class TestInsert(random: Random) {
 
   def Contacts(
     name: String = RandomHelper.alphanumeric(random, 20),
-    emails: Optional[EmailTableT] = Optional.empty(),
+    emails: Optional[/* user-picked */ Email] = Optional.empty(),
     tags: Optional[TagVarrayT] = Optional.empty(),
     contactId: Defaulted[ContactsId] = new UseDefault()
   )(using c: Connection): ContactsId = {

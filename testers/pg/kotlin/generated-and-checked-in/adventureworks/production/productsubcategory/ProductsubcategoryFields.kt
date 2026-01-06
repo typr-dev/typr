@@ -43,11 +43,11 @@ data class ProductsubcategoryFields(val _path: List<Path>) : TupleExpr5<Products
 
   fun modifieddate(): Field<LocalDateTime, ProductsubcategoryRow> = Field<LocalDateTime, ProductsubcategoryRow>(_path, "modifieddate", ProductsubcategoryRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, ProductsubcategoryRow> = Field<Name, ProductsubcategoryRow>(_path, "name", ProductsubcategoryRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, ProductsubcategoryRow> = Field<Name, ProductsubcategoryRow>(_path, "name", ProductsubcategoryRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
-  fun productcategoryid(): Field<ProductcategoryId, ProductsubcategoryRow> = Field<ProductcategoryId, ProductsubcategoryRow>(_path, "productcategoryid", ProductsubcategoryRow::productcategoryid, null, "int4", { row, value -> row.copy(productcategoryid = value) }, ProductcategoryId.dbType)
+  fun productcategoryid(): Field<ProductcategoryId, ProductsubcategoryRow> = Field<ProductcategoryId, ProductsubcategoryRow>(_path, "productcategoryid", ProductsubcategoryRow::productcategoryid, null, "int4", { row, value -> row.copy(productcategoryid = value) }, ProductcategoryId.pgType)
 
-  fun productsubcategoryid(): IdField<ProductsubcategoryId, ProductsubcategoryRow> = IdField<ProductsubcategoryId, ProductsubcategoryRow>(_path, "productsubcategoryid", ProductsubcategoryRow::productsubcategoryid, null, "int4", { row, value -> row.copy(productsubcategoryid = value) }, ProductsubcategoryId.dbType)
+  fun productsubcategoryid(): IdField<ProductsubcategoryId, ProductsubcategoryRow> = IdField<ProductsubcategoryId, ProductsubcategoryRow>(_path, "productsubcategoryid", ProductsubcategoryRow::productsubcategoryid, null, "int4", { row, value -> row.copy(productsubcategoryid = value) }, ProductsubcategoryId.pgType)
 
   override fun rowParser(): RowParser<ProductsubcategoryRow> = ProductsubcategoryRow._rowParser.underlying
 

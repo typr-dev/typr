@@ -19,6 +19,8 @@ import testdb.customers.CustomersId;
 import testdb.customtypes.Defaulted;
 import testdb.order_items.OrderItemsId;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsApproved;
+import testdb.userdefined.IsVerifiedPurchase;
 
 /** Table: reviews Primary key: review_id */
 public record ReviewsRow(
@@ -43,9 +45,9 @@ public record ReviewsRow(
     /** Array of image URLs Default: NULL */
     Optional<Json> images,
     /** Default: 0 */
-    @JsonProperty("is_verified_purchase") Boolean isVerifiedPurchase,
+    @JsonProperty("is_verified_purchase") /* user-picked */ IsVerifiedPurchase isVerifiedPurchase,
     /** Default: 0 */
-    @JsonProperty("is_approved") Boolean isApproved,
+    @JsonProperty("is_approved") /* user-picked */ IsApproved isApproved,
     /** Default: 0 */
     @JsonProperty("helpful_votes") Uint4 helpfulVotes,
     /** Default: 0 */
@@ -68,9 +70,9 @@ public record ReviewsRow(
         Optional<String>,
         Optional<Json>,
         Optional<Json>,
-        Optional<Json>,
-        Boolean,
-        Boolean,
+        Optional<Json>, /* user-picked */
+        IsVerifiedPurchase, /* user-picked */
+        IsApproved,
         Uint4,
         Uint4,
         Optional<String>,
@@ -318,7 +320,8 @@ public record ReviewsRow(
   ;
 
   /** Default: 0 */
-  public ReviewsRow withIsVerifiedPurchase(Boolean isVerifiedPurchase) {
+  public ReviewsRow withIsVerifiedPurchase(
+      /* user-picked */ IsVerifiedPurchase isVerifiedPurchase) {
     return new ReviewsRow(
         reviewId,
         productId,
@@ -342,7 +345,7 @@ public record ReviewsRow(
   ;
 
   /** Default: 0 */
-  public ReviewsRow withIsApproved(Boolean isApproved) {
+  public ReviewsRow withIsApproved(/* user-picked */ IsApproved isApproved) {
     return new ReviewsRow(
         reviewId,
         productId,
@@ -511,18 +514,18 @@ public record ReviewsRow(
 
   public static RowParser<ReviewsRow> _rowParser =
       RowParsers.of(
-          ReviewsId.dbType,
-          ProductsId.dbType,
-          CustomersId.dbType,
-          OrderItemsId.dbType.opt(),
+          ReviewsId.mariaType,
+          ProductsId.mariaType,
+          CustomersId.mariaType,
+          OrderItemsId.mariaType.opt(),
           MariaTypes.tinyintUnsigned,
           MariaTypes.varchar.opt(),
           MariaTypes.text.opt(),
           MariaTypes.json.opt(),
           MariaTypes.json.opt(),
           MariaTypes.json.opt(),
-          MariaTypes.bool,
-          MariaTypes.bool,
+          IsVerifiedPurchase.mariaType,
+          IsApproved.mariaType,
           MariaTypes.intUnsigned,
           MariaTypes.intUnsigned,
           MariaTypes.text.opt(),
@@ -566,13 +569,13 @@ public record ReviewsRow(
   ;
 
   @Override
-  public Boolean _11() {
+  public /* user-picked */ IsVerifiedPurchase _11() {
     return isVerifiedPurchase;
   }
   ;
 
   @Override
-  public Boolean _12() {
+  public /* user-picked */ IsApproved _12() {
     return isApproved;
   }
   ;
@@ -673,8 +676,8 @@ public record ReviewsRow(
       Defaulted<Optional<Json>> pros,
       Defaulted<Optional<Json>> cons,
       Defaulted<Optional<Json>> images,
-      Defaulted<Boolean> isVerifiedPurchase,
-      Defaulted<Boolean> isApproved,
+      Defaulted</* user-picked */ IsVerifiedPurchase> isVerifiedPurchase,
+      Defaulted</* user-picked */ IsApproved> isApproved,
       Defaulted<Uint4> helpfulVotes,
       Defaulted<Uint4> unhelpfulVotes,
       Defaulted<Optional<String>> adminResponse,

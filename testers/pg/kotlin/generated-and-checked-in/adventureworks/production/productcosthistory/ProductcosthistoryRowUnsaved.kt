@@ -39,7 +39,7 @@ data class ProductcosthistoryRowUnsaved(
 
   companion object {
     val pgText: PgText<ProductcosthistoryRowUnsaved> =
-      PgText.instance({ row, sb -> ProductId.dbType.text().unsafeEncode(row.productid, sb)
+      PgText.instance({ row, sb -> ProductId.pgType.text().unsafeEncode(row.productid, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.timestamp.text().unsafeEncode(row.startdate, sb)
       sb.append(PgText.DELIMETER)

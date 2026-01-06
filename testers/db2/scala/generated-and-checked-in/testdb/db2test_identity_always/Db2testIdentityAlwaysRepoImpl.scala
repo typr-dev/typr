@@ -18,11 +18,11 @@ import dev.typr.foundations.scala.Fragment.sql
 class Db2testIdentityAlwaysRepoImpl extends Db2testIdentityAlwaysRepo {
   override def delete: DeleteBuilder[Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow] = DeleteBuilder.of(""""DB2TEST_IDENTITY_ALWAYS"""", Db2testIdentityAlwaysFields.structure, Dialect.DB2)
 
-  override def deleteById(id: Db2testIdentityAlwaysId)(using c: Connection): Boolean = sql"""delete from "DB2TEST_IDENTITY_ALWAYS" where "ID" = ${Fragment.encode(Db2testIdentityAlwaysId.dbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: Db2testIdentityAlwaysId)(using c: Connection): Boolean = sql"""delete from "DB2TEST_IDENTITY_ALWAYS" where "ID" = ${Fragment.encode(Db2testIdentityAlwaysId.db2Type, id)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[Db2testIdentityAlwaysId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testIdentityAlwaysId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testIdentityAlwaysId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""delete from "DB2TEST_IDENTITY_ALWAYS" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -57,12 +57,12 @@ class Db2testIdentityAlwaysRepoImpl extends Db2testIdentityAlwaysRepo {
   override def selectById(id: Db2testIdentityAlwaysId)(using c: Connection): Option[Db2testIdentityAlwaysRow] = {
     sql"""select "ID", "NAME"
     from "DB2TEST_IDENTITY_ALWAYS"
-    where "ID" = ${Fragment.encode(Db2testIdentityAlwaysId.dbType, id)}""".query(Db2testIdentityAlwaysRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(Db2testIdentityAlwaysId.db2Type, id)}""".query(Db2testIdentityAlwaysRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[Db2testIdentityAlwaysId])(using c: Connection): List[Db2testIdentityAlwaysRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testIdentityAlwaysId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testIdentityAlwaysId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""select "ID", "NAME" from "DB2TEST_IDENTITY_ALWAYS" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(Db2testIdentityAlwaysRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -78,15 +78,15 @@ class Db2testIdentityAlwaysRepoImpl extends Db2testIdentityAlwaysRepo {
     val id: Db2testIdentityAlwaysId = row.id
     return sql"""update "DB2TEST_IDENTITY_ALWAYS"
     set "NAME" = ${Fragment.encode(Db2Types.varchar, row.name)}
-    where "ID" = ${Fragment.encode(Db2testIdentityAlwaysId.dbType, id)}""".update().runUnchecked(c) > 0
+    where "ID" = ${Fragment.encode(Db2testIdentityAlwaysId.db2Type, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: Db2testIdentityAlwaysRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "DB2TEST_IDENTITY_ALWAYS" AS t
-    USING (VALUES (${Fragment.encode(Db2testIdentityAlwaysId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})) AS s("ID", "NAME")
+    USING (VALUES (${Fragment.encode(Db2testIdentityAlwaysId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})) AS s("ID", "NAME")
     ON t."ID" = s."ID"
     WHEN MATCHED THEN UPDATE SET "NAME" = s."NAME"
-    WHEN NOT MATCHED THEN INSERT ("ID", "NAME") VALUES (${Fragment.encode(Db2testIdentityAlwaysId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})"""
+    WHEN NOT MATCHED THEN INSERT ("ID", "NAME") VALUES (${Fragment.encode(Db2testIdentityAlwaysId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})"""
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

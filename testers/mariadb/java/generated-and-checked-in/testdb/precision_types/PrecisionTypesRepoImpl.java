@@ -49,7 +49,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
   public Boolean deleteById(PrecisionTypesId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `precision_types` where `id` = "),
-                Fragment.encode(PrecisionTypesId.dbType, id),
+                Fragment.encode(PrecisionTypesId.mariaType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -60,7 +60,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
   public Integer deleteByIds(PrecisionTypesId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(PrecisionTypesId.dbType, id));
+      fragments.add(Fragment.encode(PrecisionTypesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -81,51 +81,51 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                     + " `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`,"
                     + " `ts6`)\n"
                     + "values ("),
-            Fragment.encode(String10.dbType, unsaved.string10()),
+            Fragment.encode(String10.mariaType, unsaved.string10()),
             Fragment.lit(", "),
-            Fragment.encode(String20.dbType, unsaved.string20()),
+            Fragment.encode(String20.mariaType, unsaved.string20()),
             Fragment.lit(", "),
-            Fragment.encode(String50.dbType, unsaved.string50()),
+            Fragment.encode(String50.mariaType, unsaved.string50()),
             Fragment.lit(", "),
-            Fragment.encode(String100.dbType, unsaved.string100()),
+            Fragment.encode(String100.mariaType, unsaved.string100()),
             Fragment.lit(", "),
-            Fragment.encode(String255.dbType, unsaved.string255()),
+            Fragment.encode(String255.mariaType, unsaved.string255()),
             Fragment.lit(", "),
-            Fragment.encode(PaddedString10.dbType, unsaved.char10()),
+            Fragment.encode(PaddedString10.mariaType, unsaved.char10()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal5_2.dbType, unsaved.decimal52()),
+            Fragment.encode(Decimal5_2.mariaType, unsaved.decimal52()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal10_2.dbType, unsaved.decimal102()),
+            Fragment.encode(Decimal10_2.mariaType, unsaved.decimal102()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal18_4.dbType, unsaved.decimal184()),
+            Fragment.encode(Decimal18_4.mariaType, unsaved.decimal184()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal8_2.dbType, unsaved.numeric82()),
+            Fragment.encode(Decimal8_2.mariaType, unsaved.numeric82()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal12_4.dbType, unsaved.numeric124()),
+            Fragment.encode(Decimal12_4.mariaType, unsaved.numeric124()),
             Fragment.lit(", "),
-            Fragment.encode(Binary16.dbType, unsaved.binary16()),
+            Fragment.encode(Binary16.mariaType, unsaved.binary16()),
             Fragment.lit(", "),
-            Fragment.encode(Binary32.dbType, unsaved.binary32()),
+            Fragment.encode(Binary32.mariaType, unsaved.binary32()),
             Fragment.lit(", "),
-            Fragment.encode(Binary64.dbType, unsaved.binary64()),
+            Fragment.encode(Binary64.mariaType, unsaved.binary64()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.time, unsaved.time0()),
             Fragment.lit(", "),
-            Fragment.encode(LocalTime3.dbType, unsaved.time3()),
+            Fragment.encode(LocalTime3.mariaType, unsaved.time3()),
             Fragment.lit(", "),
-            Fragment.encode(LocalTime6.dbType, unsaved.time6()),
+            Fragment.encode(LocalTime6.mariaType, unsaved.time6()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.datetime, unsaved.datetime0()),
             Fragment.lit(", "),
-            Fragment.encode(LocalDateTime3.dbType, unsaved.datetime3()),
+            Fragment.encode(LocalDateTime3.mariaType, unsaved.datetime3()),
             Fragment.lit(", "),
-            Fragment.encode(LocalDateTime6.dbType, unsaved.datetime6()),
+            Fragment.encode(LocalDateTime6.mariaType, unsaved.datetime6()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.timestamp, unsaved.ts0()),
             Fragment.lit(", "),
-            Fragment.encode(LocalDateTime3.dbType, unsaved.ts3()),
+            Fragment.encode(LocalDateTime3.mariaType, unsaved.ts3()),
             Fragment.lit(", "),
-            Fragment.encode(LocalDateTime6.dbType, unsaved.ts6()),
+            Fragment.encode(LocalDateTime6.mariaType, unsaved.ts6()),
             Fragment.lit(
                 ")\n"
                     + "RETURNING `id`, `string10`, `string20`, `string50`, `string100`,"
@@ -144,56 +144,69 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
     ArrayList<Fragment> values = new ArrayList<>();
     ;
     columns.add(Fragment.lit("`string10`"));
-    values.add(interpolate(Fragment.encode(String10.dbType, unsaved.string10()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(String10.mariaType, unsaved.string10()), Fragment.lit("")));
     columns.add(Fragment.lit("`string20`"));
-    values.add(interpolate(Fragment.encode(String20.dbType, unsaved.string20()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(String20.mariaType, unsaved.string20()), Fragment.lit("")));
     columns.add(Fragment.lit("`string50`"));
-    values.add(interpolate(Fragment.encode(String50.dbType, unsaved.string50()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(String50.mariaType, unsaved.string50()), Fragment.lit("")));
     columns.add(Fragment.lit("`string100`"));
     values.add(
-        interpolate(Fragment.encode(String100.dbType, unsaved.string100()), Fragment.lit("")));
+        interpolate(Fragment.encode(String100.mariaType, unsaved.string100()), Fragment.lit("")));
     columns.add(Fragment.lit("`string255`"));
     values.add(
-        interpolate(Fragment.encode(String255.dbType, unsaved.string255()), Fragment.lit("")));
+        interpolate(Fragment.encode(String255.mariaType, unsaved.string255()), Fragment.lit("")));
     columns.add(Fragment.lit("`char10`"));
     values.add(
-        interpolate(Fragment.encode(PaddedString10.dbType, unsaved.char10()), Fragment.lit("")));
+        interpolate(Fragment.encode(PaddedString10.mariaType, unsaved.char10()), Fragment.lit("")));
     columns.add(Fragment.lit("`decimal5_2`"));
     values.add(
-        interpolate(Fragment.encode(Decimal5_2.dbType, unsaved.decimal52()), Fragment.lit("")));
+        interpolate(Fragment.encode(Decimal5_2.mariaType, unsaved.decimal52()), Fragment.lit("")));
     columns.add(Fragment.lit("`decimal10_2`"));
     values.add(
-        interpolate(Fragment.encode(Decimal10_2.dbType, unsaved.decimal102()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(Decimal10_2.mariaType, unsaved.decimal102()), Fragment.lit("")));
     columns.add(Fragment.lit("`decimal18_4`"));
     values.add(
-        interpolate(Fragment.encode(Decimal18_4.dbType, unsaved.decimal184()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(Decimal18_4.mariaType, unsaved.decimal184()), Fragment.lit("")));
     columns.add(Fragment.lit("`numeric8_2`"));
     values.add(
-        interpolate(Fragment.encode(Decimal8_2.dbType, unsaved.numeric82()), Fragment.lit("")));
+        interpolate(Fragment.encode(Decimal8_2.mariaType, unsaved.numeric82()), Fragment.lit("")));
     columns.add(Fragment.lit("`numeric12_4`"));
     values.add(
-        interpolate(Fragment.encode(Decimal12_4.dbType, unsaved.numeric124()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(Decimal12_4.mariaType, unsaved.numeric124()), Fragment.lit("")));
     columns.add(Fragment.lit("`binary16`"));
-    values.add(interpolate(Fragment.encode(Binary16.dbType, unsaved.binary16()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(Binary16.mariaType, unsaved.binary16()), Fragment.lit("")));
     columns.add(Fragment.lit("`binary32`"));
-    values.add(interpolate(Fragment.encode(Binary32.dbType, unsaved.binary32()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(Binary32.mariaType, unsaved.binary32()), Fragment.lit("")));
     columns.add(Fragment.lit("`binary64`"));
-    values.add(interpolate(Fragment.encode(Binary64.dbType, unsaved.binary64()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(Binary64.mariaType, unsaved.binary64()), Fragment.lit("")));
     columns.add(Fragment.lit("`time0`"));
     values.add(interpolate(Fragment.encode(MariaTypes.time, unsaved.time0()), Fragment.lit("")));
     columns.add(Fragment.lit("`time3`"));
-    values.add(interpolate(Fragment.encode(LocalTime3.dbType, unsaved.time3()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(LocalTime3.mariaType, unsaved.time3()), Fragment.lit("")));
     columns.add(Fragment.lit("`time6`"));
-    values.add(interpolate(Fragment.encode(LocalTime6.dbType, unsaved.time6()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(LocalTime6.mariaType, unsaved.time6()), Fragment.lit("")));
     columns.add(Fragment.lit("`datetime0`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.datetime, unsaved.datetime0()), Fragment.lit("")));
     columns.add(Fragment.lit("`datetime3`"));
     values.add(
-        interpolate(Fragment.encode(LocalDateTime3.dbType, unsaved.datetime3()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(LocalDateTime3.mariaType, unsaved.datetime3()), Fragment.lit("")));
     columns.add(Fragment.lit("`datetime6`"));
     values.add(
-        interpolate(Fragment.encode(LocalDateTime6.dbType, unsaved.datetime6()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(LocalDateTime6.mariaType, unsaved.datetime6()), Fragment.lit("")));
     unsaved
         .ts0()
         .visit(
@@ -211,7 +224,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
             value -> {
               columns.add(Fragment.lit("`ts3`"));
               values.add(
-                  interpolate(Fragment.encode(LocalDateTime3.dbType, value), Fragment.lit("")));
+                  interpolate(Fragment.encode(LocalDateTime3.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -221,7 +234,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
             value -> {
               columns.add(Fragment.lit("`ts6`"));
               values.add(
-                  interpolate(Fragment.encode(LocalDateTime6.dbType, value), Fragment.lit("")));
+                  interpolate(Fragment.encode(LocalDateTime6.mariaType, value), Fragment.lit("")));
             });
     ;
     Fragment q =
@@ -273,7 +286,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                     + " `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\n"
                     + "from `precision_types`\n"
                     + "where `id` = "),
-            Fragment.encode(PrecisionTypesId.dbType, id),
+            Fragment.encode(PrecisionTypesId.mariaType, id),
             Fragment.lit(""))
         .query(PrecisionTypesRow._rowParser.first())
         .runUnchecked(c);
@@ -283,7 +296,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
   public List<PrecisionTypesRow> selectByIds(PrecisionTypesId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(PrecisionTypesId.dbType, id));
+      fragments.add(Fragment.encode(PrecisionTypesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -323,53 +336,53 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
     ;
     return interpolate(
                 Fragment.lit("update `precision_types`\nset `string10` = "),
-                Fragment.encode(String10.dbType, row.string10()),
+                Fragment.encode(String10.mariaType, row.string10()),
                 Fragment.lit(",\n`string20` = "),
-                Fragment.encode(String20.dbType, row.string20()),
+                Fragment.encode(String20.mariaType, row.string20()),
                 Fragment.lit(",\n`string50` = "),
-                Fragment.encode(String50.dbType, row.string50()),
+                Fragment.encode(String50.mariaType, row.string50()),
                 Fragment.lit(",\n`string100` = "),
-                Fragment.encode(String100.dbType, row.string100()),
+                Fragment.encode(String100.mariaType, row.string100()),
                 Fragment.lit(",\n`string255` = "),
-                Fragment.encode(String255.dbType, row.string255()),
+                Fragment.encode(String255.mariaType, row.string255()),
                 Fragment.lit(",\n`char10` = "),
-                Fragment.encode(PaddedString10.dbType, row.char10()),
+                Fragment.encode(PaddedString10.mariaType, row.char10()),
                 Fragment.lit(",\n`decimal5_2` = "),
-                Fragment.encode(Decimal5_2.dbType, row.decimal52()),
+                Fragment.encode(Decimal5_2.mariaType, row.decimal52()),
                 Fragment.lit(",\n`decimal10_2` = "),
-                Fragment.encode(Decimal10_2.dbType, row.decimal102()),
+                Fragment.encode(Decimal10_2.mariaType, row.decimal102()),
                 Fragment.lit(",\n`decimal18_4` = "),
-                Fragment.encode(Decimal18_4.dbType, row.decimal184()),
+                Fragment.encode(Decimal18_4.mariaType, row.decimal184()),
                 Fragment.lit(",\n`numeric8_2` = "),
-                Fragment.encode(Decimal8_2.dbType, row.numeric82()),
+                Fragment.encode(Decimal8_2.mariaType, row.numeric82()),
                 Fragment.lit(",\n`numeric12_4` = "),
-                Fragment.encode(Decimal12_4.dbType, row.numeric124()),
+                Fragment.encode(Decimal12_4.mariaType, row.numeric124()),
                 Fragment.lit(",\n`binary16` = "),
-                Fragment.encode(Binary16.dbType, row.binary16()),
+                Fragment.encode(Binary16.mariaType, row.binary16()),
                 Fragment.lit(",\n`binary32` = "),
-                Fragment.encode(Binary32.dbType, row.binary32()),
+                Fragment.encode(Binary32.mariaType, row.binary32()),
                 Fragment.lit(",\n`binary64` = "),
-                Fragment.encode(Binary64.dbType, row.binary64()),
+                Fragment.encode(Binary64.mariaType, row.binary64()),
                 Fragment.lit(",\n`time0` = "),
                 Fragment.encode(MariaTypes.time, row.time0()),
                 Fragment.lit(",\n`time3` = "),
-                Fragment.encode(LocalTime3.dbType, row.time3()),
+                Fragment.encode(LocalTime3.mariaType, row.time3()),
                 Fragment.lit(",\n`time6` = "),
-                Fragment.encode(LocalTime6.dbType, row.time6()),
+                Fragment.encode(LocalTime6.mariaType, row.time6()),
                 Fragment.lit(",\n`datetime0` = "),
                 Fragment.encode(MariaTypes.datetime, row.datetime0()),
                 Fragment.lit(",\n`datetime3` = "),
-                Fragment.encode(LocalDateTime3.dbType, row.datetime3()),
+                Fragment.encode(LocalDateTime3.mariaType, row.datetime3()),
                 Fragment.lit(",\n`datetime6` = "),
-                Fragment.encode(LocalDateTime6.dbType, row.datetime6()),
+                Fragment.encode(LocalDateTime6.mariaType, row.datetime6()),
                 Fragment.lit(",\n`ts0` = "),
                 Fragment.encode(MariaTypes.timestamp, row.ts0()),
                 Fragment.lit(",\n`ts3` = "),
-                Fragment.encode(LocalDateTime3.dbType, row.ts3()),
+                Fragment.encode(LocalDateTime3.mariaType, row.ts3()),
                 Fragment.lit(",\n`ts6` = "),
-                Fragment.encode(LocalDateTime6.dbType, row.ts6()),
+                Fragment.encode(LocalDateTime6.mariaType, row.ts6()),
                 Fragment.lit("\nwhere `id` = "),
-                Fragment.encode(PrecisionTypesId.dbType, id),
+                Fragment.encode(PrecisionTypesId.mariaType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -386,53 +399,53 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                     + " `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`,"
                     + " `datetime6`, `ts0`, `ts3`, `ts6`)\n"
                     + "VALUES ("),
-            Fragment.encode(PrecisionTypesId.dbType, unsaved.id()),
+            Fragment.encode(PrecisionTypesId.mariaType, unsaved.id()),
             Fragment.lit(", "),
-            Fragment.encode(String10.dbType, unsaved.string10()),
+            Fragment.encode(String10.mariaType, unsaved.string10()),
             Fragment.lit(", "),
-            Fragment.encode(String20.dbType, unsaved.string20()),
+            Fragment.encode(String20.mariaType, unsaved.string20()),
             Fragment.lit(", "),
-            Fragment.encode(String50.dbType, unsaved.string50()),
+            Fragment.encode(String50.mariaType, unsaved.string50()),
             Fragment.lit(", "),
-            Fragment.encode(String100.dbType, unsaved.string100()),
+            Fragment.encode(String100.mariaType, unsaved.string100()),
             Fragment.lit(", "),
-            Fragment.encode(String255.dbType, unsaved.string255()),
+            Fragment.encode(String255.mariaType, unsaved.string255()),
             Fragment.lit(", "),
-            Fragment.encode(PaddedString10.dbType, unsaved.char10()),
+            Fragment.encode(PaddedString10.mariaType, unsaved.char10()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal5_2.dbType, unsaved.decimal52()),
+            Fragment.encode(Decimal5_2.mariaType, unsaved.decimal52()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal10_2.dbType, unsaved.decimal102()),
+            Fragment.encode(Decimal10_2.mariaType, unsaved.decimal102()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal18_4.dbType, unsaved.decimal184()),
+            Fragment.encode(Decimal18_4.mariaType, unsaved.decimal184()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal8_2.dbType, unsaved.numeric82()),
+            Fragment.encode(Decimal8_2.mariaType, unsaved.numeric82()),
             Fragment.lit(", "),
-            Fragment.encode(Decimal12_4.dbType, unsaved.numeric124()),
+            Fragment.encode(Decimal12_4.mariaType, unsaved.numeric124()),
             Fragment.lit(", "),
-            Fragment.encode(Binary16.dbType, unsaved.binary16()),
+            Fragment.encode(Binary16.mariaType, unsaved.binary16()),
             Fragment.lit(", "),
-            Fragment.encode(Binary32.dbType, unsaved.binary32()),
+            Fragment.encode(Binary32.mariaType, unsaved.binary32()),
             Fragment.lit(", "),
-            Fragment.encode(Binary64.dbType, unsaved.binary64()),
+            Fragment.encode(Binary64.mariaType, unsaved.binary64()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.time, unsaved.time0()),
             Fragment.lit(", "),
-            Fragment.encode(LocalTime3.dbType, unsaved.time3()),
+            Fragment.encode(LocalTime3.mariaType, unsaved.time3()),
             Fragment.lit(", "),
-            Fragment.encode(LocalTime6.dbType, unsaved.time6()),
+            Fragment.encode(LocalTime6.mariaType, unsaved.time6()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.datetime, unsaved.datetime0()),
             Fragment.lit(", "),
-            Fragment.encode(LocalDateTime3.dbType, unsaved.datetime3()),
+            Fragment.encode(LocalDateTime3.mariaType, unsaved.datetime3()),
             Fragment.lit(", "),
-            Fragment.encode(LocalDateTime6.dbType, unsaved.datetime6()),
+            Fragment.encode(LocalDateTime6.mariaType, unsaved.datetime6()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.timestamp, unsaved.ts0()),
             Fragment.lit(", "),
-            Fragment.encode(LocalDateTime3.dbType, unsaved.ts3()),
+            Fragment.encode(LocalDateTime3.mariaType, unsaved.ts3()),
             Fragment.lit(", "),
-            Fragment.encode(LocalDateTime6.dbType, unsaved.ts6()),
+            Fragment.encode(LocalDateTime6.mariaType, unsaved.ts6()),
             Fragment.lit(
                 ")\n"
                     + "ON DUPLICATE KEY UPDATE `string10` = VALUES(`string10`),\n"

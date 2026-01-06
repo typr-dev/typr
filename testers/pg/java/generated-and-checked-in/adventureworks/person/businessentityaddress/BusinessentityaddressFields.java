@@ -52,7 +52,7 @@ public class BusinessentityaddressFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public IdField<AddressId, BusinessentityaddressRow> addressid() {
@@ -63,7 +63,7 @@ public class BusinessentityaddressFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withAddressid(value),
-        AddressId.dbType);
+        AddressId.pgType);
   }
 
   public IdField<AddresstypeId, BusinessentityaddressRow> addresstypeid() {
@@ -74,7 +74,7 @@ public class BusinessentityaddressFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withAddresstypeid(value),
-        AddresstypeId.dbType);
+        AddresstypeId.pgType);
   }
 
   public Field<UUID, BusinessentityaddressRow> rowguid() {

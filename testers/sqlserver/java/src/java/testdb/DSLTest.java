@@ -9,6 +9,7 @@ import org.junit.Test;
 import testdb.customers.*;
 import testdb.orders.*;
 import testdb.products.*;
+import testdb.userdefined.Email;
 
 /**
  * Tests for the DSL query builder functionality. Tests type-safe query building with where,
@@ -118,7 +119,7 @@ public class DSLTest {
         c -> {
           testInsert
               .Customers()
-              .with(r -> r.withName("ProjectionTest").withEmail("projection@test.com"))
+              .with(r -> r.withName("ProjectionTest").withEmail(new Email("projection@test.com")))
               .insert(c);
 
           var results =
@@ -130,7 +131,7 @@ public class DSLTest {
 
           assertEquals(1, results.size());
           assertEquals("ProjectionTest", results.get(0)._1());
-          assertEquals("projection@test.com", results.get(0)._2());
+          assertEquals(new Email("projection@test.com"), results.get(0)._2());
         });
   }
 
@@ -194,15 +195,15 @@ public class DSLTest {
         c -> {
           testInsert
               .Customers()
-              .with(r -> r.withName("Complex A").withEmail("complex-a@test.com"))
+              .with(r -> r.withName("Complex A").withEmail(new Email("complex-a@test.com")))
               .insert(c);
           testInsert
               .Customers()
-              .with(r -> r.withName("Complex B").withEmail("complex-b@test.com"))
+              .with(r -> r.withName("Complex B").withEmail(new Email("complex-b@test.com")))
               .insert(c);
           testInsert
               .Customers()
-              .with(r -> r.withName("Other").withEmail("other@test.com"))
+              .with(r -> r.withName("Other").withEmail(new Email("other@test.com")))
               .insert(c);
 
           var results =
@@ -213,7 +214,7 @@ public class DSLTest {
                           cust.name()
                               .like("Complex%", Bijection.asString())
                               .and(
-                                  cust.email().like("%@test.com", Bijection.asString()),
+                                  cust.email().like("%@test.com", Email.bijection),
                                   Bijection.asBool()))
                   .toList(c);
 

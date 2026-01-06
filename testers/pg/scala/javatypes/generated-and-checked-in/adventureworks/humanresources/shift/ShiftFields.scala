@@ -29,7 +29,7 @@ class ShiftFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShiftId,
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(shiftid = value),
-      ShiftId.dbType
+      ShiftId.pgType
     )
   }
 
@@ -41,7 +41,7 @@ class ShiftFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShiftId,
       Optional.empty(),
       Optional.of("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

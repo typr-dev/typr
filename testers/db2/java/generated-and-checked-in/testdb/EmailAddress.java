@@ -20,6 +20,6 @@ public record EmailAddress(@JsonValue String value) {
   public static Bijection<EmailAddress, String> bijection =
       Bijection.of(EmailAddress::value, EmailAddress::new);
 
-  public static Db2Type<EmailAddress> dbType =
+  public static Db2Type<EmailAddress> db2Type =
       Db2Types.varchar.bimap(EmailAddress::new, EmailAddress::value).renamed("\"EMAIL_ADDRESS\"");
 }

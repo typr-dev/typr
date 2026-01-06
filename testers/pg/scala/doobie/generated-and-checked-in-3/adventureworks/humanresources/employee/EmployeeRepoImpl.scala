@@ -11,7 +11,8 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoShort
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import cats.instances.list.catsStdInstancesForList
 import doobie.free.connection.ConnectionIO
 import doobie.postgres.syntax.FragmentOps
@@ -35,7 +36,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
 
   override def insert(unsaved: EmployeeRow): ConnectionIO[EmployeeRow] = {
     sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values (${fromWrite(unsaved.businessentityid)(using new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.nationalidnumber)(using new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.loginid)(using new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.jobtitle)(using new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.birthdate)(using new Write.Single(TypoLocalDate.put))}::date, ${fromWrite(unsaved.maritalstatus)(using new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.gender)(using new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.hiredate)(using new Write.Single(TypoLocalDate.put))}::date, ${fromWrite(unsaved.salariedflag)(using new Write.Single(Flag.put))}::bool, ${fromWrite(unsaved.vacationhours)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.sickleavehours)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.currentflag)(using new Write.Single(Flag.put))}::bool, ${fromWrite(unsaved.rowguid)(using new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.organizationnode)(using new Write.SingleOpt(Meta.StringMeta.put))})
+    values (${fromWrite(unsaved.businessentityid)(using new Write.Single(BusinessentityId.put))}::int4, ${fromWrite(unsaved.nationalidnumber)(using new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.loginid)(using new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.jobtitle)(using new Write.Single(Meta.StringMeta.put))}, ${fromWrite(unsaved.birthdate)(using new Write.Single(TypoLocalDate.put))}::date, ${fromWrite(unsaved.maritalstatus)(using new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.gender)(using new Write.Single(Meta.StringMeta.put))}::bpchar, ${fromWrite(unsaved.hiredate)(using new Write.Single(TypoLocalDate.put))}::date, ${fromWrite(unsaved.salariedflag)(using new Write.Single(/* user-picked */ SalariedFlag.put))}::bool, ${fromWrite(unsaved.vacationhours)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.sickleavehours)(using new Write.Single(TypoShort.put))}::int2, ${fromWrite(unsaved.currentflag)(using new Write.Single(/* user-picked */ CurrentFlag.put))}::bool, ${fromWrite(unsaved.rowguid)(using new Write.Single(TypoUUID.put))}::uuid, ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp, ${fromWrite(unsaved.organizationnode)(using new Write.SingleOpt(Meta.StringMeta.put))})
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
     """.query(using EmployeeRow.read).unique
   }
@@ -52,7 +53,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
       Some((Fragment.const0(s""""hiredate""""), fr"${fromWrite(unsaved.hiredate)(using new Write.Single(TypoLocalDate.put))}::date")),
       unsaved.salariedflag match {
         case Defaulted.UseDefault() => None
-        case Defaulted.Provided(value) => Some((Fragment.const0(s""""salariedflag""""), fr"${fromWrite(value: Flag)(using new Write.Single(Flag.put))}::bool"))
+        case Defaulted.Provided(value) => Some((Fragment.const0(s""""salariedflag""""), fr"${fromWrite(value: /* user-picked */ SalariedFlag)(using new Write.Single(/* user-picked */ SalariedFlag.put))}::bool"))
       },
       unsaved.vacationhours match {
         case Defaulted.UseDefault() => None
@@ -64,7 +65,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
       },
       unsaved.currentflag match {
         case Defaulted.UseDefault() => None
-        case Defaulted.Provided(value) => Some((Fragment.const0(s""""currentflag""""), fr"${fromWrite(value: Flag)(using new Write.Single(Flag.put))}::bool"))
+        case Defaulted.Provided(value) => Some((Fragment.const0(s""""currentflag""""), fr"${fromWrite(value: /* user-picked */ CurrentFlag)(using new Write.Single(/* user-picked */ CurrentFlag.put))}::bool"))
       },
       unsaved.rowguid match {
         case Defaulted.UseDefault() => None
@@ -131,10 +132,10 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "maritalstatus" = ${fromWrite(row.maritalstatus)(using new Write.Single(Meta.StringMeta.put))}::bpchar,
     "gender" = ${fromWrite(row.gender)(using new Write.Single(Meta.StringMeta.put))}::bpchar,
     "hiredate" = ${fromWrite(row.hiredate)(using new Write.Single(TypoLocalDate.put))}::date,
-    "salariedflag" = ${fromWrite(row.salariedflag)(using new Write.Single(Flag.put))}::bool,
+    "salariedflag" = ${fromWrite(row.salariedflag)(using new Write.Single(/* user-picked */ SalariedFlag.put))}::bool,
     "vacationhours" = ${fromWrite(row.vacationhours)(using new Write.Single(TypoShort.put))}::int2,
     "sickleavehours" = ${fromWrite(row.sickleavehours)(using new Write.Single(TypoShort.put))}::int2,
-    "currentflag" = ${fromWrite(row.currentflag)(using new Write.Single(Flag.put))}::bool,
+    "currentflag" = ${fromWrite(row.currentflag)(using new Write.Single(/* user-picked */ CurrentFlag.put))}::bool,
     "rowguid" = ${fromWrite(row.rowguid)(using new Write.Single(TypoUUID.put))}::uuid,
     "modifieddate" = ${fromWrite(row.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp,
     "organizationnode" = ${fromWrite(row.organizationnode)(using new Write.SingleOpt(Meta.StringMeta.put))}
@@ -153,10 +154,10 @@ class EmployeeRepoImpl extends EmployeeRepo {
     ${fromWrite(unsaved.maritalstatus)(using new Write.Single(Meta.StringMeta.put))}::bpchar,
     ${fromWrite(unsaved.gender)(using new Write.Single(Meta.StringMeta.put))}::bpchar,
     ${fromWrite(unsaved.hiredate)(using new Write.Single(TypoLocalDate.put))}::date,
-    ${fromWrite(unsaved.salariedflag)(using new Write.Single(Flag.put))}::bool,
+    ${fromWrite(unsaved.salariedflag)(using new Write.Single(/* user-picked */ SalariedFlag.put))}::bool,
     ${fromWrite(unsaved.vacationhours)(using new Write.Single(TypoShort.put))}::int2,
     ${fromWrite(unsaved.sickleavehours)(using new Write.Single(TypoShort.put))}::int2,
-    ${fromWrite(unsaved.currentflag)(using new Write.Single(Flag.put))}::bool,
+    ${fromWrite(unsaved.currentflag)(using new Write.Single(/* user-picked */ CurrentFlag.put))}::bool,
     ${fromWrite(unsaved.rowguid)(using new Write.Single(TypoUUID.put))}::uuid,
     ${fromWrite(unsaved.modifieddate)(using new Write.Single(TypoLocalDateTime.put))}::timestamp,
     ${fromWrite(unsaved.organizationnode)(using new Write.SingleOpt(Meta.StringMeta.put))}

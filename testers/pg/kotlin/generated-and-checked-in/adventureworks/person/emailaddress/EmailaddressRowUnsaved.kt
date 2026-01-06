@@ -40,7 +40,7 @@ data class EmailaddressRowUnsaved(
 
   companion object {
     val pgText: PgText<EmailaddressRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.text.nullable().text().unsafeEncode(row.emailaddress, sb)
       sb.append(PgText.DELIMETER)

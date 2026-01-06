@@ -112,10 +112,20 @@ object GeneratedPostgres {
               lang = lang,
               dbLib = Some(dbLib),
               jsonLibs = List(jsonLib),
-              typeOverride = TypeOverride.relation {
-                case (_, "firstname")                     => "adventureworks.userdefined.FirstName"
-                case ("sales.creditcard", "creditcardid") => "adventureworks.userdefined.CustomCreditcardId"
+              typeOverride = TypeOverride.relation { case ("sales.creditcard", "creditcardid") =>
+                "adventureworks.userdefined.CustomCreditcardId"
               },
+              typeDefinitions = TypeDefinitions(
+                // Name types - shared across person-related tables
+                TypeEntry.db("FirstName", DbMatch.column("firstname")),
+                TypeEntry.db("LastName", DbMatch.column("lastname")),
+                TypeEntry.db("MiddleName", DbMatch.column("middlename")),
+                // Boolean flags with semantic meaning
+                TypeEntry.db("CurrentFlag", DbMatch.column("currentflag")),
+                TypeEntry.db("SalariedFlag", DbMatch.column("salariedflag")),
+                TypeEntry.db("OnlineOrderFlag", DbMatch.column("onlineorderflag")),
+                TypeEntry.db("ActiveFlag", DbMatch.column("activeflag"))
+              ),
               openEnums = openEnumSelector,
               generateMockRepos = !Selector.relationNames("purchaseorderdetail"),
               enablePrimaryKeyType = !Selector.relationNames("billofmaterials"),
@@ -128,7 +138,7 @@ object GeneratedPostgres {
             val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in$suffix")
 
             val newFiles: Generated =
-              generate(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), relationNameToOpenEnum).head
+              generate.orThrow(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), relationNameToOpenEnum).head
 
             newFiles
               .overwriteFolder(softWrite = FileSync.SoftWrite.Yes(Set.empty))

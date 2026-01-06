@@ -43,7 +43,7 @@ public class PasswordFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public Field<String, PasswordRow> passwordhash() {

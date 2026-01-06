@@ -32,7 +32,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
   public Boolean deleteById(OrderItemsId compositeId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"ORDER_ITEMS\" where \"ORDER_ID\" = "),
-                Fragment.encode(OrdersId.dbType, compositeId.orderId()),
+                Fragment.encode(OrdersId.db2Type, compositeId.orderId()),
                 Fragment.lit(" AND \"ITEM_NUMBER\" = "),
                 Fragment.encode(Db2Types.integer, compositeId.itemNumber()),
                 Fragment.lit(""))
@@ -48,7 +48,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
       fragments.add(
           Fragment.interpolate(
               Fragment.lit("("),
-              Fragment.encode(OrdersId.dbType, id.orderId()),
+              Fragment.encode(OrdersId.db2Type, id.orderId()),
               Fragment.lit(", "),
               Fragment.encode(Db2Types.integer, id.itemNumber()),
               Fragment.lit(")")));
@@ -70,7 +70,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
                     + " \"UNIT_PRICE\" FROM FINAL TABLE (INSERT INTO \"ORDER_ITEMS\"(\"ORDER_ID\","
                     + " \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\")\n"
                     + "VALUES ("),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.db2Type, unsaved.orderId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.integer, unsaved.itemNumber()),
             Fragment.lit(", "),
@@ -109,7 +109,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
                     + " \"UNIT_PRICE\"\n"
                     + "from \"ORDER_ITEMS\"\n"
                     + "where \"ORDER_ID\" = "),
-            Fragment.encode(OrdersId.dbType, compositeId.orderId()),
+            Fragment.encode(OrdersId.db2Type, compositeId.orderId()),
             Fragment.lit(" AND \"ITEM_NUMBER\" = "),
             Fragment.encode(Db2Types.integer, compositeId.itemNumber()),
             Fragment.lit(""))
@@ -124,7 +124,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
       fragments.add(
           Fragment.interpolate(
               Fragment.lit("("),
-              Fragment.encode(OrdersId.dbType, id.orderId()),
+              Fragment.encode(OrdersId.db2Type, id.orderId()),
               Fragment.lit(", "),
               Fragment.encode(Db2Types.integer, id.itemNumber()),
               Fragment.lit(")")));
@@ -167,7 +167,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
                 Fragment.lit(",\n\"UNIT_PRICE\" = "),
                 Fragment.encode(Db2Types.decimal, row.unitPrice()),
                 Fragment.lit("\nwhere \"ORDER_ID\" = "),
-                Fragment.encode(OrdersId.dbType, compositeId.orderId()),
+                Fragment.encode(OrdersId.db2Type, compositeId.orderId()),
                 Fragment.lit(" AND \"ITEM_NUMBER\" = "),
                 Fragment.encode(Db2Types.integer, compositeId.itemNumber()),
                 Fragment.lit(""))
@@ -180,7 +180,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
   public void upsert(OrderItemsRow unsaved, Connection c) {
     interpolate(
             Fragment.lit("MERGE INTO \"ORDER_ITEMS\" AS t\nUSING (VALUES ("),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.db2Type, unsaved.orderId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.integer, unsaved.itemNumber()),
             Fragment.lit(", "),
@@ -199,7 +199,7 @@ public class OrderItemsRepoImpl implements OrderItemsRepo {
                     + "\"UNIT_PRICE\" = s.\"UNIT_PRICE\"\n"
                     + "WHEN NOT MATCHED THEN INSERT (\"ORDER_ID\", \"ITEM_NUMBER\","
                     + " \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\") VALUES ("),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.db2Type, unsaved.orderId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.integer, unsaved.itemNumber()),
             Fragment.lit(", "),

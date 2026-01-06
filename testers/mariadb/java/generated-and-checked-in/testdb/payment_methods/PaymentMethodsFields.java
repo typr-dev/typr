@@ -19,9 +19,11 @@ import dev.typr.foundations.dsl.SqlExpr.OptField;
 import dev.typr.foundations.dsl.TupleExpr.TupleExpr7;
 import java.util.List;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 
 public class PaymentMethodsFields
-    extends TupleExpr7<PaymentMethodsId, String, String, String, Json, Boolean, Byte>
+    extends TupleExpr7<
+        PaymentMethodsId, String, String, String, Json, /* user-picked */ IsActive, Byte>
     implements RelationStructure<PaymentMethodsFields, PaymentMethodsRow>,
         FieldsBase<PaymentMethodsRow> {
   List<Path> _path;
@@ -41,7 +43,7 @@ public class PaymentMethodsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withMethodId(value),
-        PaymentMethodsId.dbType);
+        PaymentMethodsId.mariaType);
   }
 
   public Field<String, PaymentMethodsRow> code() {
@@ -88,15 +90,15 @@ public class PaymentMethodsFields
         MariaTypes.json);
   }
 
-  public Field<Boolean, PaymentMethodsRow> isActive() {
-    return new Field<Boolean, PaymentMethodsRow>(
+  public Field</* user-picked */ IsActive, PaymentMethodsRow> isActive() {
+    return new Field</* user-picked */ IsActive, PaymentMethodsRow>(
         _path,
         "is_active",
         PaymentMethodsRow::isActive,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsActive(value),
-        MariaTypes.bool);
+        IsActive.mariaType);
   }
 
   public Field<Byte, PaymentMethodsRow> sortOrder() {
@@ -163,7 +165,7 @@ public class PaymentMethodsFields
   }
 
   @Override
-  public SqlExpr<Boolean> _6() {
+  public SqlExpr</* user-picked */ IsActive> _6() {
     return isActive();
   }
 

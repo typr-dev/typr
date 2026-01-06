@@ -25,9 +25,6 @@ data class EmailMailPushSmsSet(val members: Set<EmailMailPushSmsSetMember>) {
   override fun toString(): String = toCommaSeparated()
 
   companion object {
-    val dbType: MariaType<EmailMailPushSmsSet> =
-      MariaTypes.set.bimap({ ms: MariaSet -> EmailMailPushSmsSet.fromString(ms.toCommaSeparated()) }, { s: EmailMailPushSmsSet -> MariaSet.fromString(s.toCommaSeparated()) })
-
     fun empty(): EmailMailPushSmsSet = EmailMailPushSmsSet(EnumSet.noneOf(EmailMailPushSmsSetMember::class.java).toSet())
 
     fun fromString(str: String): EmailMailPushSmsSet = run {
@@ -40,6 +37,9 @@ data class EmailMailPushSmsSet(val members: Set<EmailMailPushSmsSetMember>) {
         EmailMailPushSmsSet(set.toSet())
       }
     }
+
+    val mariaType: MariaType<EmailMailPushSmsSet> =
+      MariaTypes.set.bimap({ ms: MariaSet -> EmailMailPushSmsSet.fromString(ms.toCommaSeparated()) }, { s: EmailMailPushSmsSet -> MariaSet.fromString(s.toCommaSeparated()) })
 
     fun of(members: List<EmailMailPushSmsSetMember>): EmailMailPushSmsSet = run {
       if (members.isEmpty()) EmailMailPushSmsSet(EnumSet.noneOf(EmailMailPushSmsSetMember::class.java).toSet())

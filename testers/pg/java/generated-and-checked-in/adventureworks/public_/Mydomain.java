@@ -21,10 +21,10 @@ public record Mydomain(@JsonValue String value) {
   public static Bijection<Mydomain, String> bijection =
       Bijection.of(Mydomain::value, Mydomain::new);
 
-  public static PgType<Mydomain> dbType =
+  public static PgType<Mydomain> pgType =
       PgTypes.text.bimap(Mydomain::new, Mydomain::value).renamed("\"public\".\"mydomain\"");
 
-  public static PgType<Mydomain[]> dbTypeArray =
+  public static PgType<Mydomain[]> pgTypeArray =
       PgTypes.textArray
           .bimap(
               xs -> arrayMap.map(xs, Mydomain::new, Mydomain.class),

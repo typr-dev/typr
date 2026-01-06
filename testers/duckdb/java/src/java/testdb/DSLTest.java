@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.Test;
 import testdb.customers.*;
+import testdb.userdefined.Email;
 
 /** Tests for DSL query building in DuckDB. */
 public class DSLTest {
@@ -21,7 +22,7 @@ public class DSLTest {
               new CustomersRow(
                   new CustomersId(5001),
                   "DSL Test User",
-                  Optional.of("dsl@test.com"),
+                  Optional.of(new Email("dsl@test.com")),
                   LocalDateTime.now(),
                   Optional.of(Priority.high)),
               c);
@@ -364,7 +365,7 @@ public class DSLTest {
               new CustomersRow(
                   new CustomersId(5700),
                   "ProjectionTest",
-                  Optional.of("projection@test.com"),
+                  Optional.of(new Email("projection@test.com")),
                   LocalDateTime.now(),
                   Optional.empty()),
               c);
@@ -378,7 +379,7 @@ public class DSLTest {
 
           assertEquals(1, results.size());
           assertEquals("ProjectionTest", results.get(0)._1());
-          assertEquals("projection@test.com", results.get(0)._2());
+          assertEquals(new Email("projection@test.com"), results.get(0)._2());
         });
   }
 }

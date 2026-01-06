@@ -20,10 +20,10 @@ data class CardinalNumber(@field:JsonValue val value: Int) {
     val bijection: Bijection<CardinalNumber, Int> =
       Bijection.of(CardinalNumber::value, ::CardinalNumber)
 
-    val dbType: PgType<CardinalNumber> =
+    val pgType: PgType<CardinalNumber> =
       KotlinDbTypes.PgTypes.int4.bimap(::CardinalNumber, CardinalNumber::value).renamed("\"information_schema\".\"cardinal_number\"")
 
-    val dbTypeArray: PgType<Array<CardinalNumber>> =
+    val pgTypeArray: PgType<Array<CardinalNumber>> =
       PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::CardinalNumber, CardinalNumber::class.java) }, { xs -> arrayMap.map(xs, CardinalNumber::value, Int::class.javaObjectType) }).renamed("\"information_schema\".\"cardinal_number\"[]")
   }
 }

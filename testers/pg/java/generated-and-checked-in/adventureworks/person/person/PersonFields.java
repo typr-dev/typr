@@ -8,9 +8,10 @@ package adventureworks.person.person;
 import adventureworks.person.businessentity.BusinessentityFields;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.person.businessentity.BusinessentityRow;
-import adventureworks.public_.Name;
 import adventureworks.public_.NameStyle;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.RowParser;
 import dev.typr.foundations.data.Xml;
@@ -35,9 +36,9 @@ public class PersonFields
         String,
         NameStyle, /* max 8 chars */
         String, /* user-picked */
-        FirstName,
-        Name,
-        Name, /* max 10 chars */
+        FirstName, /* user-picked */
+        MiddleName, /* user-picked */
+        LastName, /* max 10 chars */
         String,
         Integer,
         Xml,
@@ -61,7 +62,7 @@ public class PersonFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public Field<String, PersonRow> persontype() {
@@ -83,7 +84,7 @@ public class PersonFields
         Optional.empty(),
         Optional.of("bool"),
         (row, value) -> row.withNamestyle(value),
-        NameStyle.dbType);
+        NameStyle.pgType);
   }
 
   public OptField<String, PersonRow> title() {
@@ -105,29 +106,29 @@ public class PersonFields
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withFirstname(value),
-        FirstName.dbType);
+        FirstName.pgType);
   }
 
-  public OptField<Name, PersonRow> middlename() {
-    return new OptField<Name, PersonRow>(
+  public OptField</* user-picked */ MiddleName, PersonRow> middlename() {
+    return new OptField</* user-picked */ MiddleName, PersonRow>(
         _path,
         "middlename",
         PersonRow::middlename,
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withMiddlename(value),
-        Name.dbType);
+        MiddleName.pgType);
   }
 
-  public Field<Name, PersonRow> lastname() {
-    return new Field<Name, PersonRow>(
+  public Field</* user-picked */ LastName, PersonRow> lastname() {
+    return new Field</* user-picked */ LastName, PersonRow>(
         _path,
         "lastname",
         PersonRow::lastname,
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withLastname(value),
-        Name.dbType);
+        LastName.pgType);
   }
 
   public OptField<String, PersonRow> suffix() {
@@ -262,12 +263,12 @@ public class PersonFields
   }
 
   @Override
-  public SqlExpr<Name> _6() {
+  public SqlExpr</* user-picked */ MiddleName> _6() {
     return middlename();
   }
 
   @Override
-  public SqlExpr<Name> _7() {
+  public SqlExpr</* user-picked */ LastName> _7() {
     return lastname();
   }
 

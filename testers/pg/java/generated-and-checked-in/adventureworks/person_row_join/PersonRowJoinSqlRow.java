@@ -36,7 +36,7 @@ public record PersonRowJoinSqlRow(
 
   public static RowParser<PersonRowJoinSqlRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.recordArray.opt(),
           PgTypes.recordArray.opt(),
           PersonRowJoinSqlRow::new,

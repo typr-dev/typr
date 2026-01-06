@@ -13,7 +13,6 @@ import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.scala.ForeignKey
 import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
 import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
@@ -22,8 +21,9 @@ import dev.typr.foundations.scala.TupleExpr8
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import testdb.userdefined.IsPrimary
 
-class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[ProductImagesId, ProductsId, String, String, String, Uint1, Boolean, Array[Byte]] with RelationStructure[ProductImagesFields, ProductImagesRow]  with FieldsBase[ProductImagesRow] {
+class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[ProductImagesId, ProductsId, String, String, String, Uint1, /* user-picked */ IsPrimary, Array[Byte]] with RelationStructure[ProductImagesFields, ProductImagesRow]  with FieldsBase[ProductImagesRow] {
   def imageId: IdField[ProductImagesId, ProductImagesRow] = {
     new IdField[ProductImagesId, ProductImagesRow](
       _path,
@@ -32,7 +32,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(imageId = value),
-      ProductImagesId.dbType
+      ProductImagesId.mariaType
     )
   }
 
@@ -44,7 +44,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -96,15 +96,15 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
     )
   }
 
-  def isPrimary: Field[Boolean, ProductImagesRow] = {
-    new Field[Boolean, ProductImagesRow](
+  def isPrimary: Field[/* user-picked */ IsPrimary, ProductImagesRow] = {
+    new Field[/* user-picked */ IsPrimary, ProductImagesRow](
       _path,
       "is_primary",
       _.isPrimary,
       None,
       None,
       (row, value) => row.copy(isPrimary = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsPrimary.mariaType
     )
   }
 
@@ -140,7 +140,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
 
   override def `_6`: SqlExpr[Uint1] = sortOrder
 
-  override def `_7`: SqlExpr[Boolean] = isPrimary
+  override def `_7`: SqlExpr[/* user-picked */ IsPrimary] = isPrimary
 
   override def `_8`: SqlExpr[Array[Byte]] = imageData
 }

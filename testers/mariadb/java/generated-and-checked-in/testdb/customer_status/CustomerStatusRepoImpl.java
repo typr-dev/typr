@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 
 public class CustomerStatusRepoImpl implements CustomerStatusRepo {
   @Override
@@ -31,7 +32,7 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
   public Boolean deleteById(CustomerStatusId statusCode, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `customer_status` where `status_code` = "),
-                Fragment.encode(CustomerStatusId.dbType, statusCode),
+                Fragment.encode(CustomerStatusId.mariaType, statusCode),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +43,7 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
   public Integer deleteByIds(CustomerStatusId[] statusCodes, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : statusCodes) {
-      fragments.add(Fragment.encode(CustomerStatusId.dbType, id));
+      fragments.add(Fragment.encode(CustomerStatusId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -59,11 +60,11 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
             Fragment.lit(
                 "insert into `customer_status`(`status_code`, `description`, `is_active`)\n"
                     + "values ("),
-            Fragment.encode(CustomerStatusId.dbType, unsaved.statusCode()),
+            Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.description()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(")\nRETURNING `status_code`, `description`, `is_active`\n"))
         .updateReturning(CustomerStatusRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -78,7 +79,7 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
     columns.add(Fragment.lit("`status_code`"));
     values.add(
         interpolate(
-            Fragment.encode(CustomerStatusId.dbType, unsaved.statusCode()), Fragment.lit("")));
+            Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode()), Fragment.lit("")));
     columns.add(Fragment.lit("`description`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.varchar, unsaved.description()), Fragment.lit("")));
@@ -88,7 +89,7 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_active`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(interpolate(Fragment.encode(IsActive.mariaType, value), Fragment.lit("")));
             });
     ;
     Fragment q =
@@ -127,7 +128,7 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
                 "select `status_code`, `description`, `is_active`\n"
                     + "from `customer_status`\n"
                     + "where `status_code` = "),
-            Fragment.encode(CustomerStatusId.dbType, statusCode),
+            Fragment.encode(CustomerStatusId.mariaType, statusCode),
             Fragment.lit(""))
         .query(CustomerStatusRow._rowParser.first())
         .runUnchecked(c);
@@ -137,7 +138,7 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
   public List<CustomerStatusRow> selectByIds(CustomerStatusId[] statusCodes, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : statusCodes) {
-      fragments.add(Fragment.encode(CustomerStatusId.dbType, id));
+      fragments.add(Fragment.encode(CustomerStatusId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -176,9 +177,9 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
                 Fragment.lit("update `customer_status`\nset `description` = "),
                 Fragment.encode(MariaTypes.varchar, row.description()),
                 Fragment.lit(",\n`is_active` = "),
-                Fragment.encode(MariaTypes.bool, row.isActive()),
+                Fragment.encode(IsActive.mariaType, row.isActive()),
                 Fragment.lit("\nwhere `status_code` = "),
-                Fragment.encode(CustomerStatusId.dbType, statusCode),
+                Fragment.encode(CustomerStatusId.mariaType, statusCode),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -191,11 +192,11 @@ public class CustomerStatusRepoImpl implements CustomerStatusRepo {
             Fragment.lit(
                 "INSERT INTO `customer_status`(`status_code`, `description`, `is_active`)\n"
                     + "VALUES ("),
-            Fragment.encode(CustomerStatusId.dbType, unsaved.statusCode()),
+            Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.description()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(
                 ")\n"
                     + "ON DUPLICATE KEY UPDATE `description` = VALUES(`description`),\n"

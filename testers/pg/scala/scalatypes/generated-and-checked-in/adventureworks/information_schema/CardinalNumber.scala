@@ -19,7 +19,7 @@ case class CardinalNumber(@JsonValue value: Int)
 object CardinalNumber {
   given bijection: Bijection[CardinalNumber, Int] = Bijection.apply[CardinalNumber, Int](_.value)(CardinalNumber.apply)
 
-  given dbType: PgType[CardinalNumber] = ScalaDbTypes.PgTypes.int4.bimap(CardinalNumber.apply, _.value).renamed(""""information_schema"."cardinal_number"""")
+  given pgType: PgType[CardinalNumber] = ScalaDbTypes.PgTypes.int4.bimap(CardinalNumber.apply, _.value).renamed(""""information_schema"."cardinal_number"""")
 
-  given dbTypeArray: PgType[Array[CardinalNumber]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(CardinalNumber.apply), xs => xs.map(_.value)).renamed(""""information_schema"."cardinal_number"[]""")
+  given pgTypeArray: PgType[Array[CardinalNumber]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(CardinalNumber.apply), xs => xs.map(_.value)).renamed(""""information_schema"."cardinal_number"[]""")
 }

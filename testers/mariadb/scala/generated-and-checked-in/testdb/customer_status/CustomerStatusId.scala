@@ -16,5 +16,5 @@ case class CustomerStatusId(@JsonValue value: String) extends scala.AnyVal
 object CustomerStatusId {
   given bijection: Bijection[CustomerStatusId, String] = Bijection.apply[CustomerStatusId, String](_.value)(CustomerStatusId.apply)
 
-  given dbType: MariaType[CustomerStatusId] = MariaTypes.varchar.bimap(CustomerStatusId.apply, _.value)
+  given mariaType: MariaType[CustomerStatusId] = MariaTypes.varchar.bimap(CustomerStatusId.apply, _.value)
 }

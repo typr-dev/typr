@@ -18,8 +18,9 @@ import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
 import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr7
+import testdb.userdefined.IsActive
 
-class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[PaymentMethodsId, String, String, String, Json, Boolean, Byte] with RelationStructure[PaymentMethodsFields, PaymentMethodsRow]  with FieldsBase[PaymentMethodsRow] {
+class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[PaymentMethodsId, String, String, String, Json, /* user-picked */ IsActive, Byte] with RelationStructure[PaymentMethodsFields, PaymentMethodsRow]  with FieldsBase[PaymentMethodsRow] {
   def methodId: IdField[PaymentMethodsId, PaymentMethodsRow] = {
     new IdField[PaymentMethodsId, PaymentMethodsRow](
       _path,
@@ -28,7 +29,7 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(methodId = value),
-      PaymentMethodsId.dbType
+      PaymentMethodsId.mariaType
     )
   }
 
@@ -80,15 +81,15 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
     )
   }
 
-  def isActive: Field[Boolean, PaymentMethodsRow] = {
-    new Field[Boolean, PaymentMethodsRow](
+  def isActive: Field[/* user-picked */ IsActive, PaymentMethodsRow] = {
+    new Field[/* user-picked */ IsActive, PaymentMethodsRow](
       _path,
       "is_active",
       _.isActive,
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsActive.mariaType
     )
   }
 
@@ -120,7 +121,7 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
 
   override def `_5`: SqlExpr[Json] = processorConfig
 
-  override def `_6`: SqlExpr[Boolean] = isActive
+  override def `_6`: SqlExpr[/* user-picked */ IsActive] = isActive
 
   override def `_7`: SqlExpr[Byte] = sortOrder
 }

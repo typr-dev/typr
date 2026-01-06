@@ -18,11 +18,11 @@ import dev.typr.foundations.scala.Fragment.sql
 class Db2testUniqueRepoImpl extends Db2testUniqueRepo {
   override def delete: DeleteBuilder[Db2testUniqueFields, Db2testUniqueRow] = DeleteBuilder.of(""""DB2TEST_UNIQUE"""", Db2testUniqueFields.structure, Dialect.DB2)
 
-  override def deleteById(id: Db2testUniqueId)(using c: Connection): Boolean = sql"""delete from "DB2TEST_UNIQUE" where "ID" = ${Fragment.encode(Db2testUniqueId.dbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: Db2testUniqueId)(using c: Connection): Boolean = sql"""delete from "DB2TEST_UNIQUE" where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[Db2testUniqueId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testUniqueId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testUniqueId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""delete from "DB2TEST_UNIQUE" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -61,12 +61,12 @@ class Db2testUniqueRepoImpl extends Db2testUniqueRepo {
   override def selectById(id: Db2testUniqueId)(using c: Connection): Option[Db2testUniqueRow] = {
     sql"""select "ID", "EMAIL", "CODE", "CATEGORY"
     from "DB2TEST_UNIQUE"
-    where "ID" = ${Fragment.encode(Db2testUniqueId.dbType, id)}""".query(Db2testUniqueRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".query(Db2testUniqueRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[Db2testUniqueId])(using c: Connection): List[Db2testUniqueRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testUniqueId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testUniqueId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""select "ID", "EMAIL", "CODE", "CATEGORY" from "DB2TEST_UNIQUE" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(Db2testUniqueRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -101,17 +101,17 @@ class Db2testUniqueRepoImpl extends Db2testUniqueRepo {
     set "EMAIL" = ${Fragment.encode(Db2Types.varchar, row.email)},
     "CODE" = ${Fragment.encode(Db2Types.varchar, row.code)},
     "CATEGORY" = ${Fragment.encode(Db2Types.varchar, row.category)}
-    where "ID" = ${Fragment.encode(Db2testUniqueId.dbType, id)}""".update().runUnchecked(c) > 0
+    where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: Db2testUniqueRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "DB2TEST_UNIQUE" AS t
-    USING (VALUES (${Fragment.encode(Db2testUniqueId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.varchar, unsaved.code)}, ${Fragment.encode(Db2Types.varchar, unsaved.category)})) AS s("ID", "EMAIL", "CODE", "CATEGORY")
+    USING (VALUES (${Fragment.encode(Db2testUniqueId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.varchar, unsaved.code)}, ${Fragment.encode(Db2Types.varchar, unsaved.category)})) AS s("ID", "EMAIL", "CODE", "CATEGORY")
     ON t."ID" = s."ID"
     WHEN MATCHED THEN UPDATE SET "EMAIL" = s."EMAIL",
     "CODE" = s."CODE",
     "CATEGORY" = s."CATEGORY"
-    WHEN NOT MATCHED THEN INSERT ("ID", "EMAIL", "CODE", "CATEGORY") VALUES (${Fragment.encode(Db2testUniqueId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.varchar, unsaved.code)}, ${Fragment.encode(Db2Types.varchar, unsaved.category)})"""
+    WHEN NOT MATCHED THEN INSERT ("ID", "EMAIL", "CODE", "CATEGORY") VALUES (${Fragment.encode(Db2testUniqueId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.varchar, unsaved.code)}, ${Fragment.encode(Db2Types.varchar, unsaved.category)})"""
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

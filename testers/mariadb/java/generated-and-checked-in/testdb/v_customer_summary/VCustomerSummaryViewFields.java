@@ -21,11 +21,12 @@ import java.util.List;
 import java.util.Optional;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customers.CustomersId;
+import testdb.userdefined.Email;
 
 public class VCustomerSummaryViewFields
     extends TupleExpr10<
-        CustomersId,
-        String,
+        CustomersId, /* user-picked */
+        Email,
         String,
         String,
         CustomerStatusId,
@@ -53,18 +54,18 @@ public class VCustomerSummaryViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCustomerId(value),
-        CustomersId.dbType);
+        CustomersId.mariaType);
   }
 
-  public Field<String, VCustomerSummaryViewRow> email() {
-    return new Field<String, VCustomerSummaryViewRow>(
+  public Field</* user-picked */ Email, VCustomerSummaryViewRow> email() {
+    return new Field</* user-picked */ Email, VCustomerSummaryViewRow>(
         _path,
         "email",
         VCustomerSummaryViewRow::email,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withEmail(value),
-        MariaTypes.varchar);
+        Email.mariaType);
   }
 
   public OptField<String, VCustomerSummaryViewRow> fullName() {
@@ -97,7 +98,7 @@ public class VCustomerSummaryViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withStatus(value),
-        CustomerStatusId.dbType);
+        CustomerStatusId.mariaType);
   }
 
   public Field<LocalDateTime, VCustomerSummaryViewRow> createdAt() {
@@ -192,7 +193,7 @@ public class VCustomerSummaryViewFields
   }
 
   @Override
-  public SqlExpr<String> _2() {
+  public SqlExpr</* user-picked */ Email> _2() {
     return email();
   }
 

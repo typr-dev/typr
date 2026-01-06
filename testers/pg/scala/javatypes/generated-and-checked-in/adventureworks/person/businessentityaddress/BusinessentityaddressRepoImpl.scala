@@ -24,7 +24,7 @@ import dev.typr.foundations.Fragment.interpolate
 class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
   override def delete: DeleteBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = DeleteBuilder.of(""""person"."businessentityaddress"""", BusinessentityaddressFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: BusinessentityaddressId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."businessentityaddress" where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid), Fragment.lit(""" AND "addressid" = """), Fragment.encode(AddressId.dbType, compositeId.addressid), Fragment.lit(""" AND "addresstypeid" = """), Fragment.encode(AddresstypeId.dbType, compositeId.addresstypeid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(compositeId: BusinessentityaddressId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."businessentityaddress" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "addressid" = """), Fragment.encode(AddressId.pgType, compositeId.addressid), Fragment.lit(""" AND "addresstypeid" = """), Fragment.encode(AddresstypeId.pgType, compositeId.addresstypeid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Integer = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
@@ -33,13 +33,13 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     return interpolate(Fragment.lit("""delete
     from "person"."businessentityaddress"
     where ("businessentityid", "addressid", "addresstypeid")
-    in (select * from unnest("""), Fragment.encode(BusinessentityId.dbTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(AddressId.dbTypeArray, addressid), Fragment.lit(", "), Fragment.encode(AddresstypeId.dbTypeArray, addresstypeid), Fragment.lit("""))
+    in (select * from unnest("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(AddressId.pgTypeArray, addressid), Fragment.lit(", "), Fragment.encode(AddresstypeId.pgTypeArray, addresstypeid), Fragment.lit("""))
     """)).update().runUnchecked(c)
   }
 
   override def insert(unsaved: BusinessentityaddressRow)(using c: Connection): BusinessentityaddressRow = {
   interpolate(Fragment.lit("""insert into "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(AddressId.dbType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     RETURNING "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"
     """))
     .updateReturning(BusinessentityaddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -49,11 +49,11 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""addressid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(AddressId.dbType, unsaved.addressid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.lit("::int4"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""addresstypeid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid), Fragment.lit("::int4"))): @scala.annotation.nowarn
     unsaved.rowguid.visit(
       {  },
       value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
@@ -93,7 +93,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
   override def selectById(compositeId: BusinessentityaddressId)(using c: Connection): Optional[BusinessentityaddressRow] = {
     interpolate(Fragment.lit("""select "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"
     from "person"."businessentityaddress"
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid), Fragment.lit(""" AND "addressid" = """), Fragment.encode(AddressId.dbType, compositeId.addressid), Fragment.lit(""" AND "addresstypeid" = """), Fragment.encode(AddresstypeId.dbType, compositeId.addresstypeid), Fragment.lit("")).query(BusinessentityaddressRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "addressid" = """), Fragment.encode(AddressId.pgType, compositeId.addressid), Fragment.lit(""" AND "addresstypeid" = """), Fragment.encode(AddresstypeId.pgType, compositeId.addresstypeid), Fragment.lit("")).query(BusinessentityaddressRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): java.util.List[BusinessentityaddressRow] = {
@@ -103,7 +103,7 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     return interpolate(Fragment.lit("""select "businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate"
     from "person"."businessentityaddress"
     where ("businessentityid", "addressid", "addresstypeid")
-    in (select * from unnest("""), Fragment.encode(BusinessentityId.dbTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(AddressId.dbTypeArray, addressid), Fragment.lit(", "), Fragment.encode(AddresstypeId.dbTypeArray, addresstypeid), Fragment.lit("""))
+    in (select * from unnest("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(AddressId.pgTypeArray, addressid), Fragment.lit(", "), Fragment.encode(AddresstypeId.pgTypeArray, addresstypeid), Fragment.lit("""))
     """)).query(BusinessentityaddressRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -120,12 +120,12 @@ class BusinessentityaddressRepoImpl extends BusinessentityaddressRepo {
     return interpolate(Fragment.lit("""update "person"."businessentityaddress"
     set "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid), Fragment.lit(""" AND "addressid" = """), Fragment.encode(AddressId.dbType, compositeId.addressid), Fragment.lit(""" AND "addresstypeid" = """), Fragment.encode(AddresstypeId.dbType, compositeId.addresstypeid), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "addressid" = """), Fragment.encode(AddressId.pgType, compositeId.addressid), Fragment.lit(""" AND "addresstypeid" = """), Fragment.encode(AddresstypeId.pgType, compositeId.addresstypeid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: BusinessentityaddressRow)(using c: Connection): BusinessentityaddressRow = {
   interpolate(Fragment.lit("""insert into "person"."businessentityaddress"("businessentityid", "addressid", "addresstypeid", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(AddressId.dbType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     on conflict ("businessentityid", "addressid", "addresstypeid")
     do update set
       "rowguid" = EXCLUDED."rowguid",

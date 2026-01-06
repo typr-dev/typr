@@ -47,7 +47,7 @@ public class ProductcosthistoryFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withProductid(value),
-        ProductId.dbType);
+        ProductId.pgType);
   }
 
   public IdField<LocalDateTime, ProductcosthistoryRow> startdate() {

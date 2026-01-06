@@ -29,6 +29,6 @@ data class FlaffId(
   override fun _4(): ShortText = specifier
 
   companion object {
-    val _rowParser: RowParser<FlaffId> = RowParsers.of(ShortText.dbType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ShortText.dbType, { t0, t1, t2, t3 -> FlaffId(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.code, row.anotherCode, row.someNumber, row.specifier) })
+    val _rowParser: RowParser<FlaffId> = RowParsers.of(ShortText.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ShortText.pgType, { t0, t1, t2, t3 -> FlaffId(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.code, row.anotherCode, row.someNumber, row.specifier) })
   }
 }

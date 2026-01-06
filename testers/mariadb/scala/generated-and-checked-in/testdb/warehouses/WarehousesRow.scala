@@ -11,10 +11,11 @@ import dev.typr.foundations.Tuple.Tuple10
 import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
+import testdb.userdefined.IsActive
 
 /** Table: warehouses
  * Primary key: warehouse_id
@@ -43,23 +44,23 @@ case class WarehousesRow(
   /** 
    * Default: 1
    */
-  @JsonProperty("is_active") isActive: Boolean,
+  @JsonProperty("is_active") isActive: /* user-picked */ IsActive,
   /** 
    * Default: NULL
    */
-  @JsonProperty("contact_email") contactEmail: Option[String],
+  @JsonProperty("contact_email") contactEmail: Option[/* user-picked */ Email],
   /** 
    * Default: NULL
    */
   @JsonProperty("contact_phone") contactPhone: Option[String]
-) extends Tuple10[WarehousesId, String, String, String, Point, Option[Polygon], String, Boolean, Option[String], Option[String]] {
+) extends Tuple10[WarehousesId, String, String, String, Point, Option[Polygon], String, /* user-picked */ IsActive, Option[/* user-picked */ Email], Option[String]] {
   def id: WarehousesId = warehouseId
 
   def toUnsavedRow(
     serviceArea: Defaulted[Option[Polygon]] = Defaulted.Provided(this.serviceArea),
     timezone: Defaulted[String] = Defaulted.Provided(this.timezone),
-    isActive: Defaulted[Boolean] = Defaulted.Provided(this.isActive),
-    contactEmail: Defaulted[Option[String]] = Defaulted.Provided(this.contactEmail),
+    isActive: Defaulted[/* user-picked */ IsActive] = Defaulted.Provided(this.isActive),
+    contactEmail: Defaulted[Option[/* user-picked */ Email]] = Defaulted.Provided(this.contactEmail),
     contactPhone: Defaulted[Option[String]] = Defaulted.Provided(this.contactPhone)
   ): WarehousesRowUnsaved = {
     new WarehousesRowUnsaved(
@@ -89,13 +90,13 @@ case class WarehousesRow(
 
   override def `_7`: String = timezone
 
-  override def `_8`: Boolean = isActive
+  override def `_8`: /* user-picked */ IsActive = isActive
 
-  override def `_9`: Option[String] = contactEmail
+  override def `_9`: Option[/* user-picked */ Email] = contactEmail
 
   override def `_10`: Option[String] = contactPhone
 }
 
 object WarehousesRow {
-  val `_rowParser`: RowParser[WarehousesRow] = RowParsers.of(WarehousesId.dbType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.nullable, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bool, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable)(WarehousesRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone))
+  val `_rowParser`: RowParser[WarehousesRow] = RowParsers.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.nullable, MariaTypes.varchar, IsActive.mariaType, Email.mariaType.nullable, MariaTypes.varchar.nullable)(WarehousesRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone))
 }

@@ -9,18 +9,19 @@ import dev.typr.foundations.MariaTypes;
 import dev.typr.foundations.RowParser;
 import dev.typr.foundations.RowParsers;
 import dev.typr.foundations.Tuple.Tuple4;
+import testdb.userdefined.Email;
 
 /** Table: mariatest_unique Primary key: id */
 public record MariatestUniqueRow(
     /** AUTO_INCREMENT */
     MariatestUniqueId id,
     /** */
-    String email,
+    /* user-picked */ Email email,
     /** */
     String code,
     /** */
     String category)
-    implements Tuple4<MariatestUniqueId, String, String, String> {
+    implements Tuple4<MariatestUniqueId, /* user-picked */ Email, String, String> {
   /** AUTO_INCREMENT */
   public MariatestUniqueRow withId(MariatestUniqueId id) {
     return new MariatestUniqueRow(id, email, code, category);
@@ -28,7 +29,7 @@ public record MariatestUniqueRow(
   ;
 
   /** */
-  public MariatestUniqueRow withEmail(String email) {
+  public MariatestUniqueRow withEmail(/* user-picked */ Email email) {
     return new MariatestUniqueRow(id, email, code, category);
   }
   ;
@@ -47,8 +48,8 @@ public record MariatestUniqueRow(
 
   public static RowParser<MariatestUniqueRow> _rowParser =
       RowParsers.of(
-          MariatestUniqueId.dbType,
-          MariaTypes.varchar,
+          MariatestUniqueId.mariaType,
+          Email.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariatestUniqueRow::new,
@@ -62,7 +63,7 @@ public record MariatestUniqueRow(
   ;
 
   @Override
-  public String _2() {
+  public /* user-picked */ Email _2() {
     return email;
   }
   ;

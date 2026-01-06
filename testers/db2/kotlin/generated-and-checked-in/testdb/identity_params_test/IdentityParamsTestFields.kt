@@ -26,7 +26,7 @@ data class IdentityParamsTestFields(val _path: List<Path>) : TupleExpr2<Identity
 
   override fun columns(): List<FieldLike<*, IdentityParamsTestRow>> = listOf(this.id().underlying, this.name().underlying)
 
-  fun id(): IdField<IdentityParamsTestId, IdentityParamsTestRow> = IdField<IdentityParamsTestId, IdentityParamsTestRow>(_path, "ID", IdentityParamsTestRow::id, null, null, { row, value -> row.copy(id = value) }, IdentityParamsTestId.dbType)
+  fun id(): IdField<IdentityParamsTestId, IdentityParamsTestRow> = IdField<IdentityParamsTestId, IdentityParamsTestRow>(_path, "ID", IdentityParamsTestRow::id, null, null, { row, value -> row.copy(id = value) }, IdentityParamsTestId.db2Type)
 
   fun name(): Field<String, IdentityParamsTestRow> = Field<String, IdentityParamsTestRow>(_path, "NAME", IdentityParamsTestRow::name, null, null, { row, value -> row.copy(name = value) }, Db2Types.varchar)
 

@@ -43,9 +43,9 @@ public sealed interface TitleId permits TitleId.Unknown, TitleId.Known {
     }
   }
 
-  public static PgType<TitleId[]> dbTypeArray =
+  public static PgType<TitleId[]> pgTypeArray =
       PgTypes.textArray.bimap(
           xs -> arrayMap.map(xs, TitleId::apply, TitleId.class),
           xs -> arrayMap.map(xs, TitleId::value, String.class));
-  public static PgType<TitleId> dbType = PgTypes.text.bimap(TitleId::apply, TitleId::value);
+  public static PgType<TitleId> pgType = PgTypes.text.bimap(TitleId::apply, TitleId::value);
 }

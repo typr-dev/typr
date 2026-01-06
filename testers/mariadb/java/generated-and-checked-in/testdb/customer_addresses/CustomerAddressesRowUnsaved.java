@@ -12,6 +12,7 @@ import org.mariadb.jdbc.type.Point;
 import testdb.customers.CustomersId;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.IsDefault;
 
 /**
  * This class corresponds to a row in table `customer_addresses` which has not been persisted yet
@@ -32,7 +33,7 @@ public record CustomerAddressesRowUnsaved(
     /** */
     @JsonProperty("country_code") String countryCode,
     /** Default: 0 */
-    @JsonProperty("is_default") Defaulted<Boolean> isDefault,
+    @JsonProperty("is_default") Defaulted</* user-picked */ IsDefault> isDefault,
     /** Default: NULL */
     @JsonProperty("street_line2") Defaulted<Optional<String>> streetLine2,
     /** Default: NULL */
@@ -209,7 +210,8 @@ public record CustomerAddressesRowUnsaved(
   ;
 
   /** Default: 0 */
-  public CustomerAddressesRowUnsaved withIsDefault(Defaulted<Boolean> isDefault) {
+  public CustomerAddressesRowUnsaved withIsDefault(
+      Defaulted</* user-picked */ IsDefault> isDefault) {
     return new CustomerAddressesRowUnsaved(
         customerId,
         addressType,
@@ -323,7 +325,7 @@ public record CustomerAddressesRowUnsaved(
   ;
 
   public CustomerAddressesRow toRow(
-      java.util.function.Supplier<Boolean> isDefaultDefault,
+      java.util.function.Supplier</* user-picked */ IsDefault> isDefaultDefault,
       java.util.function.Supplier<Optional<String>> streetLine2Default,
       java.util.function.Supplier<Optional<String>> stateProvinceDefault,
       java.util.function.Supplier<Optional<Point>> locationDefault,

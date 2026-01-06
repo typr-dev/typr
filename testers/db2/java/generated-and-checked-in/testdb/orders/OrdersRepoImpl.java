@@ -32,7 +32,7 @@ public class OrdersRepoImpl implements OrdersRepo {
   public Boolean deleteById(OrdersId orderId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"ORDERS\" where \"ORDER_ID\" = "),
-                Fragment.encode(OrdersId.dbType, orderId),
+                Fragment.encode(OrdersId.db2Type, orderId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +43,7 @@ public class OrdersRepoImpl implements OrdersRepo {
   public Integer deleteByIds(OrdersId[] orderIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : orderIds) {
-      fragments.add(Fragment.encode(OrdersId.dbType, id));
+      fragments.add(Fragment.encode(OrdersId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -62,7 +62,7 @@ public class OrdersRepoImpl implements OrdersRepo {
                     + " FROM FINAL TABLE (INSERT INTO \"ORDERS\"(\"CUSTOMER_ID\", \"ORDER_DATE\","
                     + " \"TOTAL_AMOUNT\", \"STATUS\")\n"
                     + "VALUES ("),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.db2Type, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.date, unsaved.orderDate()),
             Fragment.lit(", "),
@@ -82,7 +82,7 @@ public class OrdersRepoImpl implements OrdersRepo {
     ;
     columns.add(Fragment.lit("\"CUSTOMER_ID\""));
     values.add(
-        interpolate(Fragment.encode(CustomersId.dbType, unsaved.customerId()), Fragment.lit("")));
+        interpolate(Fragment.encode(CustomersId.db2Type, unsaved.customerId()), Fragment.lit("")));
     columns.add(Fragment.lit("\"TOTAL_AMOUNT\""));
     values.add(
         interpolate(
@@ -144,7 +144,7 @@ public class OrdersRepoImpl implements OrdersRepo {
                     + " \"STATUS\"\n"
                     + "from \"ORDERS\"\n"
                     + "where \"ORDER_ID\" = "),
-            Fragment.encode(OrdersId.dbType, orderId),
+            Fragment.encode(OrdersId.db2Type, orderId),
             Fragment.lit(""))
         .query(OrdersRow._rowParser.first())
         .runUnchecked(c);
@@ -154,7 +154,7 @@ public class OrdersRepoImpl implements OrdersRepo {
   public List<OrdersRow> selectByIds(OrdersId[] orderIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : orderIds) {
-      fragments.add(Fragment.encode(OrdersId.dbType, id));
+      fragments.add(Fragment.encode(OrdersId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -186,7 +186,7 @@ public class OrdersRepoImpl implements OrdersRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"ORDERS\"\nset \"CUSTOMER_ID\" = "),
-                Fragment.encode(CustomersId.dbType, row.customerId()),
+                Fragment.encode(CustomersId.db2Type, row.customerId()),
                 Fragment.lit(",\n\"ORDER_DATE\" = "),
                 Fragment.encode(Db2Types.date, row.orderDate()),
                 Fragment.lit(",\n\"TOTAL_AMOUNT\" = "),
@@ -194,7 +194,7 @@ public class OrdersRepoImpl implements OrdersRepo {
                 Fragment.lit(",\n\"STATUS\" = "),
                 Fragment.encode(Db2Types.varchar.opt(), row.status()),
                 Fragment.lit("\nwhere \"ORDER_ID\" = "),
-                Fragment.encode(OrdersId.dbType, orderId),
+                Fragment.encode(OrdersId.db2Type, orderId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -205,9 +205,9 @@ public class OrdersRepoImpl implements OrdersRepo {
   public void upsert(OrdersRow unsaved, Connection c) {
     interpolate(
             Fragment.lit("MERGE INTO \"ORDERS\" AS t\nUSING (VALUES ("),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.db2Type, unsaved.orderId()),
             Fragment.lit(", "),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.db2Type, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.date, unsaved.orderDate()),
             Fragment.lit(", "),
@@ -224,9 +224,9 @@ public class OrdersRepoImpl implements OrdersRepo {
                     + "\"STATUS\" = s.\"STATUS\"\n"
                     + "WHEN NOT MATCHED THEN INSERT (\"ORDER_ID\", \"CUSTOMER_ID\", \"ORDER_DATE\","
                     + " \"TOTAL_AMOUNT\", \"STATUS\") VALUES ("),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.db2Type, unsaved.orderId()),
             Fragment.lit(", "),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.db2Type, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.date, unsaved.orderDate()),
             Fragment.lit(", "),

@@ -28,7 +28,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -100,7 +100,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(tags = value),
-      BestsellerClearanceFSet.dbType
+      BestsellerClearanceFSet.mariaType
     )
   }
 

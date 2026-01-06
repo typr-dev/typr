@@ -13,6 +13,7 @@ import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
+import testdb.userdefined.IsActive
 import testdb.warehouses.WarehousesId
 
 /** View: v_warehouse_coverage
@@ -53,7 +54,7 @@ data class VWarehouseCoverageViewRow(
     * Default: 1
     * Points to [testdb.warehouses.WarehousesRow.isActive]
     */
-  @field:JsonProperty("is_active") val isActive: Boolean,
+  @field:JsonProperty("is_active") val isActive: /* user-picked */ IsActive,
   /** 
     * Default: 0
     */
@@ -62,7 +63,7 @@ data class VWarehouseCoverageViewRow(
     * Default: NULL
     */
   @field:JsonProperty("total_inventory") val totalInventory: BigDecimal?
-) : Tuple10<WarehousesId, String, String, String, String?, String?, String, Boolean, Long, BigDecimal?> {
+) : Tuple10<WarehousesId, String, String, String, String?, String?, String, /* user-picked */ IsActive, Long, BigDecimal?> {
   override fun _1(): WarehousesId = warehouseId
 
   override fun _10(): BigDecimal? = totalInventory
@@ -79,11 +80,11 @@ data class VWarehouseCoverageViewRow(
 
   override fun _7(): String = timezone
 
-  override fun _8(): Boolean = isActive
+  override fun _8(): /* user-picked */ IsActive = isActive
 
   override fun _9(): Long = productsStocked
 
   companion object {
-    val _rowParser: RowParser<VWarehouseCoverageViewRow> = RowParsers.of(WarehousesId.dbType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.longtext.nullable(), MariaTypes.longtext.nullable(), MariaTypes.varchar, KotlinDbTypes.MariaTypes.bool, KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> VWarehouseCoverageViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.warehouseId, row.code, row.name, row.address, row.locationWkt, row.serviceAreaWkt, row.timezone, row.isActive, row.productsStocked, row.totalInventory) })
+    val _rowParser: RowParser<VWarehouseCoverageViewRow> = RowParsers.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.longtext.nullable(), MariaTypes.longtext.nullable(), MariaTypes.varchar, IsActive.mariaType, KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> VWarehouseCoverageViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.warehouseId, row.code, row.name, row.address, row.locationWkt, row.serviceAreaWkt, row.timezone, row.isActive, row.productsStocked, row.totalInventory) })
   }
 }

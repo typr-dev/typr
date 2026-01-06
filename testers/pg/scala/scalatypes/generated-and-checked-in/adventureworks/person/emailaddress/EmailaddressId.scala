@@ -22,5 +22,5 @@ case class EmailaddressId(
 }
 
 object EmailaddressId {
-  val `_rowParser`: RowParser[EmailaddressId] = RowParsers.of(BusinessentityId.dbType, ScalaDbTypes.PgTypes.int4)(EmailaddressId.apply)(row => Array[Any](row.businessentityid, row.emailaddressid))
+  val `_rowParser`: RowParser[EmailaddressId] = RowParsers.of(BusinessentityId.pgType, ScalaDbTypes.PgTypes.int4)(EmailaddressId.apply)(row => Array[Any](row.businessentityid, row.emailaddressid))
 }

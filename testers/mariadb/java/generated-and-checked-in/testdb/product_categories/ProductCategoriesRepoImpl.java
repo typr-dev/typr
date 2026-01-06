@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import testdb.categories.CategoriesId;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsPrimary;
 
 public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
   @Override
@@ -34,9 +35,9 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
   public Boolean deleteById(ProductCategoriesId compositeId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `product_categories` where `product_id` = "),
-                Fragment.encode(ProductsId.dbType, compositeId.productId()),
+                Fragment.encode(ProductsId.mariaType, compositeId.productId()),
                 Fragment.lit(" AND `category_id` = "),
-                Fragment.encode(CategoriesId.dbType, compositeId.categoryId()),
+                Fragment.encode(CategoriesId.mariaType, compositeId.categoryId()),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -50,9 +51,9 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
       fragments.add(
           Fragment.interpolate(
               Fragment.lit("("),
-              Fragment.encode(ProductsId.dbType, id.productId()),
+              Fragment.encode(ProductsId.mariaType, id.productId()),
               Fragment.lit(", "),
-              Fragment.encode(CategoriesId.dbType, id.categoryId()),
+              Fragment.encode(CategoriesId.mariaType, id.categoryId()),
               Fragment.lit(")")));
     }
     ;
@@ -72,11 +73,11 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
                 "insert into `product_categories`(`product_id`, `category_id`, `is_primary`,"
                     + " `sort_order`)\n"
                     + "values ("),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
-            Fragment.encode(CategoriesId.dbType, unsaved.categoryId()),
+            Fragment.encode(CategoriesId.mariaType, unsaved.categoryId()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isPrimary()),
+            Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.smallint, unsaved.sortOrder()),
             Fragment.lit(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
@@ -92,17 +93,19 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
     ;
     columns.add(Fragment.lit("`product_id`"));
     values.add(
-        interpolate(Fragment.encode(ProductsId.dbType, unsaved.productId()), Fragment.lit("")));
+        interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId()), Fragment.lit("")));
     columns.add(Fragment.lit("`category_id`"));
     values.add(
-        interpolate(Fragment.encode(CategoriesId.dbType, unsaved.categoryId()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(CategoriesId.mariaType, unsaved.categoryId()), Fragment.lit("")));
     unsaved
         .isPrimary()
         .visit(
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_primary`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(
+                  interpolate(Fragment.encode(IsPrimary.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -152,9 +155,9 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
                 "select `product_id`, `category_id`, `is_primary`, `sort_order`\n"
                     + "from `product_categories`\n"
                     + "where `product_id` = "),
-            Fragment.encode(ProductsId.dbType, compositeId.productId()),
+            Fragment.encode(ProductsId.mariaType, compositeId.productId()),
             Fragment.lit(" AND `category_id` = "),
-            Fragment.encode(CategoriesId.dbType, compositeId.categoryId()),
+            Fragment.encode(CategoriesId.mariaType, compositeId.categoryId()),
             Fragment.lit(""))
         .query(ProductCategoriesRow._rowParser.first())
         .runUnchecked(c);
@@ -167,9 +170,9 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
       fragments.add(
           Fragment.interpolate(
               Fragment.lit("("),
-              Fragment.encode(ProductsId.dbType, id.productId()),
+              Fragment.encode(ProductsId.mariaType, id.productId()),
               Fragment.lit(", "),
-              Fragment.encode(CategoriesId.dbType, id.categoryId()),
+              Fragment.encode(CategoriesId.mariaType, id.categoryId()),
               Fragment.lit(")")));
     }
     ;
@@ -207,13 +210,13 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
     ;
     return interpolate(
                 Fragment.lit("update `product_categories`\nset `is_primary` = "),
-                Fragment.encode(MariaTypes.bool, row.isPrimary()),
+                Fragment.encode(IsPrimary.mariaType, row.isPrimary()),
                 Fragment.lit(",\n`sort_order` = "),
                 Fragment.encode(MariaTypes.smallint, row.sortOrder()),
                 Fragment.lit("\nwhere `product_id` = "),
-                Fragment.encode(ProductsId.dbType, compositeId.productId()),
+                Fragment.encode(ProductsId.mariaType, compositeId.productId()),
                 Fragment.lit(" AND `category_id` = "),
-                Fragment.encode(CategoriesId.dbType, compositeId.categoryId()),
+                Fragment.encode(CategoriesId.mariaType, compositeId.categoryId()),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -227,11 +230,11 @@ public class ProductCategoriesRepoImpl implements ProductCategoriesRepo {
                 "INSERT INTO `product_categories`(`product_id`, `category_id`, `is_primary`,"
                     + " `sort_order`)\n"
                     + "VALUES ("),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
-            Fragment.encode(CategoriesId.dbType, unsaved.categoryId()),
+            Fragment.encode(CategoriesId.mariaType, unsaved.categoryId()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isPrimary()),
+            Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.smallint, unsaved.sortOrder()),
             Fragment.lit(

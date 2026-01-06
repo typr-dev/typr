@@ -67,6 +67,7 @@ import testdb.products.ProductsRowUnsaved
 import testdb.test_connection.TestConnectionRepoImpl
 import testdb.test_connection.TestConnectionRow
 import testdb.test_connection.TestConnectionRowUnsaved
+import testdb.userdefined.Email
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 case class TestInsert(random: Random) {
@@ -150,7 +151,7 @@ case class TestInsert(random: Random) {
 
   def Customers(
     name: String = random.alphanumeric.take(20).mkString,
-    email: String = random.alphanumeric.take(20).mkString,
+    email: /* user-picked */ Email = new Email(random.alphanumeric.take(20).mkString),
     createdAt: Defaulted[Option[LocalDateTime]] = new UseDefault()
   )(using c: Connection): CustomersRow = (new CustomersRepoImpl()).insert(new CustomersRowUnsaved(name = name, email = email, createdAt = createdAt))(using c)
 

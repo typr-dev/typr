@@ -18,19 +18,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class Issue142RepoImpl extends Issue142Repo {
   override def delete: DeleteBuilder[Issue142Fields, Issue142Row] = DeleteBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(tabellkode: Issue142Id)(using c: Connection): Boolean = sql"""delete from "public"."issue142" where "tabellkode" = ${Fragment.encode(Issue142Id.dbType, tabellkode)}""".update().runUnchecked(c) > 0
+  override def deleteById(tabellkode: Issue142Id)(using c: Connection): Boolean = sql"""delete from "public"."issue142" where "tabellkode" = ${Fragment.encode(Issue142Id.pgType, tabellkode)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Int = {
     sql"""delete
     from "public"."issue142"
-    where "tabellkode" = ANY(${Fragment.encode(Issue142Id.dbTypeArray, tabellkodes)})"""
+    where "tabellkode" = ANY(${Fragment.encode(Issue142Id.pgTypeArray, tabellkodes)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
   sql"""insert into "public"."issue142"("tabellkode")
-    values (${Fragment.encode(Issue142Id.dbType, unsaved.tabellkode)})
+    values (${Fragment.encode(Issue142Id.pgType, unsaved.tabellkode)})
     RETURNING "tabellkode"
     """
     .updateReturning(Issue142Row.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -52,13 +52,13 @@ class Issue142RepoImpl extends Issue142Repo {
   override def selectById(tabellkode: Issue142Id)(using c: Connection): Option[Issue142Row] = {
     sql"""select "tabellkode"
     from "public"."issue142"
-    where "tabellkode" = ${Fragment.encode(Issue142Id.dbType, tabellkode)}""".query(Issue142Row.`_rowParser`.first()).runUnchecked(c)
+    where "tabellkode" = ${Fragment.encode(Issue142Id.pgType, tabellkode)}""".query(Issue142Row.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): List[Issue142Row] = {
     sql"""select "tabellkode"
     from "public"."issue142"
-    where "tabellkode" = ANY(${Fragment.encode(Issue142Id.dbTypeArray, tabellkodes)})""".query(Issue142Row.`_rowParser`.all()).runUnchecked(c)
+    where "tabellkode" = ANY(${Fragment.encode(Issue142Id.pgTypeArray, tabellkodes)})""".query(Issue142Row.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): Map[Issue142Id, Issue142Row] = {
@@ -71,7 +71,7 @@ class Issue142RepoImpl extends Issue142Repo {
 
   override def upsert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
   sql"""insert into "public"."issue142"("tabellkode")
-    values (${Fragment.encode(Issue142Id.dbType, unsaved.tabellkode)})
+    values (${Fragment.encode(Issue142Id.pgType, unsaved.tabellkode)})
     on conflict ("tabellkode")
     do update set "tabellkode" = EXCLUDED."tabellkode"
     returning "tabellkode""""

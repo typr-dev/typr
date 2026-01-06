@@ -29,7 +29,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(logId = value),
-      AuditLogId.dbType
+      AuditLogId.mariaType
     )
   }
 

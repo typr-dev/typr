@@ -42,7 +42,7 @@ public class AuditLogFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withLogId(value),
-        AuditLogId.dbType);
+        AuditLogId.mariaType);
   }
 
   public Field<String, AuditLogRow> tableName() {

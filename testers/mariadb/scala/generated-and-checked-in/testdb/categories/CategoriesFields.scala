@@ -29,7 +29,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(categoryId = value),
-      CategoriesId.dbType
+      CategoriesId.mariaType
     )
   }
 
@@ -41,7 +41,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(parentId = value),
-      CategoriesId.dbType
+      CategoriesId.mariaType
     )
   }
 

@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.junit.Test;
 import testdb.customers.*;
 import testdb.departments.*;
+import testdb.userdefined.Email;
 
 /** Tests for mock repository implementations in DuckDB. */
 public class MockRepoTest {
@@ -27,7 +28,7 @@ public class MockRepoTest {
         new CustomersRow(
             new CustomersId(1),
             "Mock User",
-            Optional.of("mock@test.com"),
+            Optional.of(new Email("mock@test.com")),
             LocalDateTime.now(),
             Optional.of(Priority.medium));
 

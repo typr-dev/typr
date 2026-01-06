@@ -20,7 +20,7 @@ data class MariatestSpatialId(@field:JsonValue val value: Int) {
     val bijection: Bijection<MariatestSpatialId, Int> =
       Bijection.of(MariatestSpatialId::value, ::MariatestSpatialId)
 
-    val dbType: MariaType<MariatestSpatialId> =
+    val mariaType: MariaType<MariatestSpatialId> =
       KotlinDbTypes.MariaTypes.int_.bimap(::MariatestSpatialId, MariatestSpatialId::value)
   }
 }

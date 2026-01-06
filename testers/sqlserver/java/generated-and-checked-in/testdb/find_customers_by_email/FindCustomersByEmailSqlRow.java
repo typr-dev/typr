@@ -13,6 +13,7 @@ import dev.typr.foundations.Tuple.Tuple4;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customers.CustomersId;
+import testdb.userdefined.Email;
 
 /** SQL file: find-customers-by-email.sql */
 public record FindCustomersByEmailSqlRow(
@@ -21,10 +22,10 @@ public record FindCustomersByEmailSqlRow(
     /** Points to {@link testdb.customers.CustomersRow#name()} */
     @JsonProperty("customer_name") String customerName,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    @JsonProperty("customer_email") String customerEmail,
+    @JsonProperty("customer_email") /* user-picked */ Email customerEmail,
     /** Points to {@link testdb.customers.CustomersRow#createdAt()} */
     @JsonProperty("created_at") Optional<LocalDateTime> createdAt)
-    implements Tuple4<CustomersId, String, String, Optional<LocalDateTime>> {
+    implements Tuple4<CustomersId, String, /* user-picked */ Email, Optional<LocalDateTime>> {
   /** Points to {@link testdb.customers.CustomersRow#customerId()} */
   public FindCustomersByEmailSqlRow withCustomerId(CustomersId customerId) {
     return new FindCustomersByEmailSqlRow(customerId, customerName, customerEmail, createdAt);
@@ -38,7 +39,7 @@ public record FindCustomersByEmailSqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public FindCustomersByEmailSqlRow withCustomerEmail(String customerEmail) {
+  public FindCustomersByEmailSqlRow withCustomerEmail(/* user-picked */ Email customerEmail) {
     return new FindCustomersByEmailSqlRow(customerId, customerName, customerEmail, createdAt);
   }
   ;
@@ -53,7 +54,7 @@ public record FindCustomersByEmailSqlRow(
       RowParsers.of(
           CustomersId.sqlServerType,
           SqlServerTypes.nvarchar,
-          SqlServerTypes.nvarchar,
+          Email.sqlServerType,
           SqlServerTypes.datetime2.opt(),
           FindCustomersByEmailSqlRow::new,
           row ->
@@ -75,7 +76,7 @@ public record FindCustomersByEmailSqlRow(
   ;
 
   @Override
-  public String _3() {
+  public /* user-picked */ Email _3() {
     return customerEmail;
   }
   ;

@@ -13,6 +13,7 @@ import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
 /** SQL file: find-customers-by-email.sql */
 case class FindCustomersByEmailSqlRow(
@@ -21,19 +22,19 @@ case class FindCustomersByEmailSqlRow(
   /** Points to [[testdb.customers.CustomersRow.name]] */
   @JsonProperty("customer_name") customerName: String,
   /** Points to [[testdb.customers.CustomersRow.email]] */
-  @JsonProperty("customer_email") customerEmail: String,
+  @JsonProperty("customer_email") customerEmail: /* user-picked */ Email,
   /** Points to [[testdb.customers.CustomersRow.createdAt]] */
   @JsonProperty("created_at") createdAt: Option[LocalDateTime]
-) extends Tuple4[CustomersId, String, String, Option[LocalDateTime]] {
+) extends Tuple4[CustomersId, String, /* user-picked */ Email, Option[LocalDateTime]] {
   override def `_1`: CustomersId = customerId
 
   override def `_2`: String = customerName
 
-  override def `_3`: String = customerEmail
+  override def `_3`: /* user-picked */ Email = customerEmail
 
   override def `_4`: Option[LocalDateTime] = createdAt
 }
 
 object FindCustomersByEmailSqlRow {
-  val `_rowParser`: RowParser[FindCustomersByEmailSqlRow] = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar, SqlServerTypes.datetime2.nullable)(FindCustomersByEmailSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.customerEmail, row.createdAt))
+  val `_rowParser`: RowParser[FindCustomersByEmailSqlRow] = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.nullable)(FindCustomersByEmailSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.customerEmail, row.createdAt))
 }

@@ -499,7 +499,7 @@ public class MariatestnullFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withSetCol(value),
-        XYZSet.dbType);
+        XYZSet.mariaType);
   }
 
   public OptField<Json, MariatestnullRow> jsonCol() {
