@@ -53,6 +53,13 @@ import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRepoImpl
 import adventureworks.person.stateprovince.StateprovinceRow
 import adventureworks.person.stateprovince.StateprovinceRowUnsaved
+import adventureworks.precisetypes.PaddedString10
+import adventureworks.precisetypes.PaddedString3
+import adventureworks.precisetypes.String10
+import adventureworks.precisetypes.String100
+import adventureworks.precisetypes.String20
+import adventureworks.precisetypes.String255
+import adventureworks.precisetypes.String50
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRepoImpl
 import adventureworks.production.product.ProductRow
@@ -99,6 +106,14 @@ import adventureworks.public.pgtest.PgtestRepoImpl
 import adventureworks.public.pgtest.PgtestRow
 import adventureworks.public.pgtestnull.PgtestnullRepoImpl
 import adventureworks.public.pgtestnull.PgtestnullRow
+import adventureworks.public.precision_types.PrecisionTypesId
+import adventureworks.public.precision_types.PrecisionTypesRepoImpl
+import adventureworks.public.precision_types.PrecisionTypesRow
+import adventureworks.public.precision_types.PrecisionTypesRowUnsaved
+import adventureworks.public.precision_types_null.PrecisionTypesNullId
+import adventureworks.public.precision_types_null.PrecisionTypesNullRepoImpl
+import adventureworks.public.precision_types_null.PrecisionTypesNullRow
+import adventureworks.public.precision_types_null.PrecisionTypesNullRowUnsaved
 import adventureworks.public.title.TitleId
 import adventureworks.public.title.TitleRepoImpl
 import adventureworks.public.title.TitleRow
@@ -540,6 +555,64 @@ data class TestInsert(
     xmles: Array<Xml>? = if (random.nextBoolean()) null else Array(random.nextInt(3)) { Xml("<root/>") },
     c: Connection
   ): PgtestnullRow = (PgtestnullRepoImpl()).insert(PgtestnullRow(bool = bool, box = box, bpchar = bpchar, bytea = bytea, char = char, circle = circle, date = date, float4 = float4, float8 = float8, hstore = hstore, inet = inet, int2 = int2, int2vector = int2vector, int4 = int4, int8 = int8, interval = interval, json = json, jsonb = jsonb, line = line, lseg = lseg, money = money, mydomain = mydomain, myenum = myenum, name = name, numeric = numeric, path = path, point = point, polygon = polygon, text = text, time = time, timestamp = timestamp, timestampz = timestampz, timez = timez, uuid = uuid, varchar = varchar, vector = vector, xml = xml, boxes = boxes, bpchares = bpchares, chares = chares, circlees = circlees, datees = datees, float4es = float4es, float8es = float8es, inetes = inetes, int2es = int2es, int2vectores = int2vectores, int4es = int4es, int8es = int8es, intervales = intervales, jsones = jsones, jsonbes = jsonbes, linees = linees, lseges = lseges, moneyes = moneyes, mydomaines = mydomaines, myenumes = myenumes, namees = namees, numerices = numerices, pathes = pathes, pointes = pointes, polygones = polygones, textes = textes, timees = timees, timestampes = timestampes, timestampzes = timestampzes, timezes = timezes, uuides = uuides, varchares = varchares, xmles = xmles), c)
+
+  fun publicPrecisionTypes(
+    bpchar3: PaddedString3,
+    bpchar10: PaddedString10,
+    string10: String10 = String10.truncate(RandomHelper.alphanumeric(random, 10)),
+    string20: String20 = String20.truncate(RandomHelper.alphanumeric(random, 20)),
+    string50: String50 = String50.truncate(RandomHelper.alphanumeric(random, 20)),
+    string100: String100 = String100.truncate(RandomHelper.alphanumeric(random, 20)),
+    string255: String255 = String255.truncate(RandomHelper.alphanumeric(random, 20)),
+    decimal52: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
+    decimal102: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
+    decimal184: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
+    numeric82: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
+    numeric124: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
+    timestamp0: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    timestamp3: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    timestamp6: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    timestamptz0: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timestamptz3: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timestamptz6: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    time0: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    time3: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    time6: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    timetz0: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    timetz3: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    timetz6: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    id: Defaulted<PrecisionTypesId> = UseDefault(),
+    c: Connection
+  ): PrecisionTypesRow = (PrecisionTypesRepoImpl()).insert(PrecisionTypesRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, bpchar3 = bpchar3, bpchar10 = bpchar10, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, numeric82 = numeric82, numeric124 = numeric124, timestamp0 = timestamp0, timestamp3 = timestamp3, timestamp6 = timestamp6, timestamptz0 = timestamptz0, timestamptz3 = timestamptz3, timestamptz6 = timestamptz6, time0 = time0, time3 = time3, time6 = time6, timetz0 = timetz0, timetz3 = timetz3, timetz6 = timetz6, id = id), c)
+
+  fun publicPrecisionTypesNull(
+    string10: String10? = if (random.nextBoolean()) null else String10.truncate(RandomHelper.alphanumeric(random, 10)),
+    string20: String20? = if (random.nextBoolean()) null else String20.truncate(RandomHelper.alphanumeric(random, 20)),
+    string50: String50? = if (random.nextBoolean()) null else String50.truncate(RandomHelper.alphanumeric(random, 20)),
+    string100: String100? = if (random.nextBoolean()) null else String100.truncate(RandomHelper.alphanumeric(random, 20)),
+    string255: String255? = if (random.nextBoolean()) null else String255.truncate(RandomHelper.alphanumeric(random, 20)),
+    bpchar3: PaddedString3? = null,
+    bpchar10: PaddedString10? = null,
+    decimal52: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
+    decimal102: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
+    decimal184: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
+    numeric82: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
+    numeric124: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
+    timestamp0: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    timestamp3: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    timestamp6: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    timestamptz0: Instant? = if (random.nextBoolean()) null else Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timestamptz3: Instant? = if (random.nextBoolean()) null else Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timestamptz6: Instant? = if (random.nextBoolean()) null else Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    time0: LocalTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    time3: LocalTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    time6: LocalTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    timetz0: OffsetTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    timetz3: OffsetTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    timetz6: OffsetTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    id: Defaulted<PrecisionTypesNullId> = UseDefault(),
+    c: Connection
+  ): PrecisionTypesNullRow = (PrecisionTypesNullRepoImpl()).insert(PrecisionTypesNullRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, bpchar3 = bpchar3, bpchar10 = bpchar10, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, numeric82 = numeric82, numeric124 = numeric124, timestamp0 = timestamp0, timestamp3 = timestamp3, timestamp6 = timestamp6, timestamptz0 = timestamptz0, timestamptz3 = timestamptz3, timestamptz6 = timestamptz6, time0 = time0, time3 = time3, time6 = time6, timetz0 = timetz0, timetz3 = timetz3, timetz6 = timetz6, id = id), c)
 
   fun publicTitle(
     code: TitleId,

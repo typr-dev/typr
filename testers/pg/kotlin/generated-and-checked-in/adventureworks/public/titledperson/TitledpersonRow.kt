@@ -17,7 +17,7 @@ import dev.typr.foundations.kotlin.RowParsers
 /** Table: public.titledperson */
 data class TitledpersonRow(
   /** Points to [adventureworks.public.title_domain.TitleDomainRow.code] */
-  @JsonProperty("title_short") val titleShort: TitleDomainId,
+  @field:JsonProperty("title_short") val titleShort: TitleDomainId,
   /** Points to [adventureworks.public.title.TitleRow.code] */
   val title: TitleId,
   val name: String

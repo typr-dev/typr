@@ -79,7 +79,7 @@ data class WarehousesRepoMock(
     for (id in warehouseIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

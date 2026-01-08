@@ -25,15 +25,15 @@ data class OrdersRow(
   /** Unique order identifier
     * Identity ALWAYS
     */
-  @JsonProperty("ORDER_ID") val orderId: OrdersId,
+  @field:JsonProperty("ORDER_ID") val orderId: OrdersId,
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
+  @field:JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
   /** Default: CURRENT DATE */
-  @JsonProperty("ORDER_DATE") val orderDate: LocalDate,
+  @field:JsonProperty("ORDER_DATE") val orderDate: LocalDate,
   /** Total monetary value of the order */
-  @JsonProperty("TOTAL_AMOUNT") val totalAmount: BigDecimal?,
+  @field:JsonProperty("TOTAL_AMOUNT") val totalAmount: BigDecimal?,
   /** Default: 'pending' */
-  @JsonProperty("STATUS") val status: String?
+  @field:JsonProperty("STATUS") val status: String?
 ) : Tuple5<OrdersId, CustomersId, LocalDate, BigDecimal?, String?> {
   override fun _1(): OrdersId = orderId
 

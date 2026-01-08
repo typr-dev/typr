@@ -284,6 +284,7 @@ object addPackageAndImports {
       annotations = x.annotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
       constructorAnnotations = x.constructorAnnotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
       isWrapper = x.isWrapper,
+      privateConstructor = x.privateConstructor,
       comments = x.comments,
       name = x.name,
       tparams = x.tparams,

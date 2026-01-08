@@ -25,7 +25,7 @@ data class VCustomerSummaryViewRow(
     * Default: 0
     * Points to [testdb.customers.CustomersRow.customerId]
     */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** 
     * Points to [testdb.customers.CustomersRow.email]
     */
@@ -33,7 +33,7 @@ data class VCustomerSummaryViewRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("full_name") val fullName: String?,
+  @field:JsonProperty("full_name") val fullName: String?,
   /** 
     * Default: 'bronze'
     * Points to [testdb.customers.CustomersRow.tier]
@@ -48,24 +48,24 @@ data class VCustomerSummaryViewRow(
     * Default: current_timestamp(6)
     * Points to [testdb.customers.CustomersRow.createdAt]
     */
-  @JsonProperty("created_at") val createdAt: LocalDateTime,
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** 
     * Default: NULL
     * Points to [testdb.customers.CustomersRow.lastLoginAt]
     */
-  @JsonProperty("last_login_at") val lastLoginAt: LocalDateTime?,
+  @field:JsonProperty("last_login_at") val lastLoginAt: LocalDateTime?,
   /** 
     * Default: 0
     */
-  @JsonProperty("total_orders") val totalOrders: Long,
+  @field:JsonProperty("total_orders") val totalOrders: Long,
   /** 
     * Default: 0.0000
     */
-  @JsonProperty("lifetime_value") val lifetimeValue: BigDecimal,
+  @field:JsonProperty("lifetime_value") val lifetimeValue: BigDecimal,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("last_order_date") val lastOrderDate: LocalDateTime?
+  @field:JsonProperty("last_order_date") val lastOrderDate: LocalDateTime?
 ) : Tuple10<CustomersId, String, String?, String, CustomerStatusId, LocalDateTime, LocalDateTime?, Long, BigDecimal, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 

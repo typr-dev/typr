@@ -26,42 +26,42 @@ data class OrderItemsRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("item_id") val itemId: OrderItemsId,
+  @field:JsonProperty("item_id") val itemId: OrderItemsId,
   /** 
     * Points to [testdb.orders.OrdersRow.orderId]
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
   val sku: String,
   /**  */
-  @JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: String,
   /**  */
   val quantity: Uint2,
   /**  */
-  @JsonProperty("unit_price") val unitPrice: BigDecimal,
+  @field:JsonProperty("unit_price") val unitPrice: BigDecimal,
   /** 
     * Default: 0.0000
     */
-  @JsonProperty("discount_amount") val discountAmount: BigDecimal,
+  @field:JsonProperty("discount_amount") val discountAmount: BigDecimal,
   /** 
     * Default: 0.0000
     */
-  @JsonProperty("tax_amount") val taxAmount: BigDecimal,
+  @field:JsonProperty("tax_amount") val taxAmount: BigDecimal,
   /**  */
-  @JsonProperty("line_total") val lineTotal: BigDecimal,
+  @field:JsonProperty("line_total") val lineTotal: BigDecimal,
   /** 
     * Default: 'pending'
     */
-  @JsonProperty("fulfillment_status") val fulfillmentStatus: String,
+  @field:JsonProperty("fulfillment_status") val fulfillmentStatus: String,
   /** 
     * Default: NULL
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
     */
-  @JsonProperty("warehouse_id") val warehouseId: WarehousesId?,
+  @field:JsonProperty("warehouse_id") val warehouseId: WarehousesId?,
   /** 
     * Default: NULL
     */

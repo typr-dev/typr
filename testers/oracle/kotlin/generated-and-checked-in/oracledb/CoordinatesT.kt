@@ -13,8 +13,8 @@ import java.math.BigDecimal
 
 /** Oracle Object Type: COORDINATES_T */
 data class CoordinatesT(
-  @JsonProperty("LATITUDE") val latitude: BigDecimal,
-  @JsonProperty("LONGITUDE") val longitude: BigDecimal
+  @field:JsonProperty("LATITUDE") val latitude: BigDecimal,
+  @field:JsonProperty("LONGITUDE") val longitude: BigDecimal
 ) {
   companion object {
     val oracleType: OracleType<CoordinatesT> = OracleObject.builder<CoordinatesT>("COORDINATES_T").addAttribute("LATITUDE", KotlinDbTypes.OracleTypes.number, CoordinatesT::latitude).addAttribute("LONGITUDE", KotlinDbTypes.OracleTypes.number, CoordinatesT::longitude).build({ attrs -> CoordinatesT((attrs[0] as BigDecimal), (attrs[1] as BigDecimal)) }).asType()

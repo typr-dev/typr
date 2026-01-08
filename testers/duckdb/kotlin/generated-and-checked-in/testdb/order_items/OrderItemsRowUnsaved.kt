@@ -12,9 +12,9 @@ import testdb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `order_items` which has not been persisted yet */
 data class OrderItemsRowUnsaved(
-  @JsonProperty("order_id") val orderId: Int,
-  @JsonProperty("product_id") val productId: Int,
-  @JsonProperty("unit_price") val unitPrice: BigDecimal,
+  @field:JsonProperty("order_id") val orderId: Int,
+  @field:JsonProperty("product_id") val productId: Int,
+  @field:JsonProperty("unit_price") val unitPrice: BigDecimal,
   /** Default: 1 */
   val quantity: Defaulted<Int> = UseDefault()
 ) {

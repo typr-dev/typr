@@ -20,13 +20,13 @@ import oracledb.customtypes.Defaulted
   * Primary key: CUSTOMER_ID
   */
 data class CustomersRow(
-  /** Default: "TYPR"."ISEQ$$_72843".nextval */
-  @JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
-  @JsonProperty("NAME") val name: String,
-  @JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT,
-  @JsonProperty("CREDIT_LIMIT") val creditLimit: MoneyT?,
+  /** Default: "TYPR"."ISEQ$$_72850".nextval */
+  @field:JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
+  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT,
+  @field:JsonProperty("CREDIT_LIMIT") val creditLimit: MoneyT?,
   /** Default: SYSTIMESTAMP  */
-  @JsonProperty("CREATED_AT") val createdAt: LocalDateTime
+  @field:JsonProperty("CREATED_AT") val createdAt: LocalDateTime
 ) : Tuple5<CustomersId, String, AddressT, MoneyT?, LocalDateTime> {
   override fun _1(): CustomersId = customerId
 

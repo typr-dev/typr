@@ -15,35 +15,35 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `audit_log` which has not been persisted yet */
 data class AuditLogRowUnsaved(
   /**  */
-  @JsonProperty("table_name") val tableName: String,
+  @field:JsonProperty("table_name") val tableName: String,
   /**  */
-  @JsonProperty("record_id") val recordId: String,
+  @field:JsonProperty("record_id") val recordId: String,
   /**  */
   val action: String,
   /** Default: NULL
 
     */
-  @JsonProperty("old_values") val oldValues: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("old_values") val oldValues: Defaulted<Json?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("new_values") val newValues: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("new_values") val newValues: Defaulted<Json?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("changed_by") val changedBy: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("changed_by") val changedBy: Defaulted<String?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("changed_at") val changedAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("changed_at") val changedAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("client_ip") val clientIp: Defaulted<Inet6?> = UseDefault(),
+  @field:JsonProperty("client_ip") val clientIp: Defaulted<Inet6?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("session_id") val sessionId: Defaulted<ByteArray?> = UseDefault()
+  @field:JsonProperty("session_id") val sessionId: Defaulted<ByteArray?> = UseDefault()
 ) {
   fun toRow(
     oldValuesDefault: () -> Json?,

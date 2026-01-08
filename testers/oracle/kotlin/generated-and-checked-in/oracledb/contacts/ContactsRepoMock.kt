@@ -79,7 +79,7 @@ data class ContactsRepoMock(
     for (id in contactIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

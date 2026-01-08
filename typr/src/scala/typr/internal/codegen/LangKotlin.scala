@@ -88,6 +88,10 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
   override def newByteArray(size: jvm.Code): jvm.Code =
     code"ByteArray($size)"
 
+  // Kotlin: arr.size (property access)
+  override def byteArrayLength(arr: jvm.Code): jvm.Code =
+    code"$arr.size"
+
   // Kotlin: ByteArray (distinct primitive array type, not Array<Byte>)
   override val ByteArrayType: jvm.Type = TypesKotlin.ByteArray
 
@@ -138,6 +142,8 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
 
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"($left != $right)"
+
+  override def needsExplicitNullCheck: Boolean = false
 
   override def toShort(expr: jvm.Code): jvm.Code = code"$expr.toShort()"
 
@@ -513,12 +519,22 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
           val allBody = body ++ toStringMethod.toList ++ companionBody.toList
 
           // Constructor annotations render as: data class Name @Annotation constructor(params)
+          // Private constructor renders as: data class Name private constructor(params)
+          val constructorModifier = if (cls.privateConstructor) " private constructor" else ""
           val constructorAnnotationsCode = if (cls.constructorAnnotations.nonEmpty) {
-            Some(code" ${cls.constructorAnnotations.map(renderAnnotation).mkCode(" ")} constructor")
+            Some(code" ${cls.constructorAnnotations.map(renderAnnotation).mkCode(" ")}$constructorModifier")
+          } else if (cls.privateConstructor) {
+            Some(code"$constructorModifier")
           } else None
 
+          // Add @ConsistentCopyVisibility when privateConstructor is true to avoid Kotlin 2.2+ error
+          val allAnnotations = if (cls.privateConstructor) {
+            val consistentCopyVisibility = jvm.Annotation(jvm.Type.Qualified("kotlin.ConsistentCopyVisibility"), Nil)
+            consistentCopyVisibility :: cls.annotations
+          } else cls.annotations
+
           List[Option[jvm.Code]](
-            Some(renderAnnotations(cls.annotations)),
+            Some(renderAnnotations(allAnnotations)),
             renderComments(cls.comments),
             Some(code"data class "),
             Some(cls.name.name.value),
@@ -775,7 +791,12 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
 
   def renderDataClassParams(params: List[jvm.Param[jvm.Type]], @annotation.nowarn ctx: Ctx, addVal: Boolean = true): jvm.Code = {
     val withVal = params.map { p =>
-      val annotationsCode = renderAnnotationsInline(p.annotations)
+      // For data class params, add @field: target for annotations without useTarget (Kotlin 2.3+ requirement)
+      val annotationsWithTarget = p.annotations.map { ann =>
+        if (ann.useTarget.isEmpty) ann.copy(useTarget = Some(jvm.Annotation.UseTarget.Field))
+        else ann
+      }
+      val annotationsCode = renderAnnotationsInline(annotationsWithTarget)
       val commentCode = renderComments(p.comments).getOrElse(jvm.Code.Empty)
       val defaultCode = p.default.map(d => code" = $d").getOrElse(jvm.Code.Empty)
       // When extending a Java class, don't add val - just pass params to super constructor

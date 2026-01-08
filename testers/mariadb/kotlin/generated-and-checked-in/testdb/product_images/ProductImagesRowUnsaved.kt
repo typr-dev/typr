@@ -16,29 +16,29 @@ data class ProductImagesRowUnsaved(
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
-  @JsonProperty("image_url") val imageUrl: String,
+  @field:JsonProperty("image_url") val imageUrl: String,
   /** Default: NULL
 
     */
-  @JsonProperty("thumbnail_url") val thumbnailUrl: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("thumbnail_url") val thumbnailUrl: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("alt_text") val altText: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("alt_text") val altText: Defaulted<String?> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("sort_order") val sortOrder: Defaulted<Uint1> = UseDefault(),
+  @field:JsonProperty("sort_order") val sortOrder: Defaulted<Uint1> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("is_primary") val isPrimary: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_primary") val isPrimary: Defaulted<Boolean> = UseDefault(),
   /** Default: NULL
     * Optional embedded image data
     */
-  @JsonProperty("image_data") val imageData: Defaulted<ByteArray?> = UseDefault()
+  @field:JsonProperty("image_data") val imageData: Defaulted<ByteArray?> = UseDefault()
 ) {
   fun toRow(
     thumbnailUrlDefault: () -> String?,

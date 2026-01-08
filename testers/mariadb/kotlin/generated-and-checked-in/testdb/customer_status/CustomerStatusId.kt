@@ -11,7 +11,7 @@ import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.kotlin.Bijection
 
 /** Type for the primary key of table `customer_status` */
-data class CustomerStatusId(@JsonValue val value: String) {
+data class CustomerStatusId(@field:JsonValue val value: String) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

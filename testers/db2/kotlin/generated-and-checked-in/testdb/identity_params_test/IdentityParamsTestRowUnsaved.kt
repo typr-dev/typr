@@ -8,6 +8,6 @@ package testdb.identity_params_test
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /** This class corresponds to a row in table `IDENTITY_PARAMS_TEST` which has not been persisted yet */
-data class IdentityParamsTestRowUnsaved(@JsonProperty("NAME") val name: String) {
+data class IdentityParamsTestRowUnsaved(@field:JsonProperty("NAME") val name: String) {
   fun toRow(idDefault: () -> IdentityParamsTestId): IdentityParamsTestRow = IdentityParamsTestRow(id = idDefault(), name = name)
 }

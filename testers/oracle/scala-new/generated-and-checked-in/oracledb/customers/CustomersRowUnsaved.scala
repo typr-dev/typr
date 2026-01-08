@@ -17,7 +17,7 @@ case class CustomersRowUnsaved(
   @JsonProperty("NAME") name: String,
   @JsonProperty("BILLING_ADDRESS") billingAddress: AddressT,
   @JsonProperty("CREDIT_LIMIT") creditLimit: Option[MoneyT] = None,
-  /** Default: "TYPR"."ISEQ$$_72843".nextval */
+  /** Default: "TYPR"."ISEQ$$_72850".nextval */
   @JsonProperty("CUSTOMER_ID") customerId: Defaulted[CustomersId] = new UseDefault(),
   /** Default: SYSTIMESTAMP  */
   @JsonProperty("CREATED_AT") createdAt: Defaulted[LocalDateTime] = new UseDefault()

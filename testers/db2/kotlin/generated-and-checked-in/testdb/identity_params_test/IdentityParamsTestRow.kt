@@ -16,8 +16,8 @@ import dev.typr.foundations.kotlin.RowParsers
   */
 data class IdentityParamsTestRow(
   /** Identity ALWAYS */
-  @JsonProperty("ID") val id: IdentityParamsTestId,
-  @JsonProperty("NAME") val name: String
+  @field:JsonProperty("ID") val id: IdentityParamsTestId,
+  @field:JsonProperty("NAME") val name: String
 ) : Tuple2<IdentityParamsTestId, String> {
   override fun _1(): IdentityParamsTestId = id
 

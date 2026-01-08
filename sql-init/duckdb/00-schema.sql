@@ -186,3 +186,47 @@ INSERT INTO employees (emp_number, emp_suffix, dept_code, dept_region, emp_name,
 
 -- INSERT INTO map_types (id, string_to_int, int_to_string) VALUES
 -- (1, MAP {'one': 1, 'two': 2, 'three': 3}, MAP {1: 'one', 2: 'two'});
+
+-- ============================================================================
+-- PRECISION TYPES TEST TABLES
+-- These tables are used to test precision wrapper type generation.
+-- The enablePreciseTypes selector should only include these tables.
+-- ============================================================================
+
+-- Precision types test table with all NOT NULL columns
+CREATE TABLE precision_types (
+    id                INTEGER           PRIMARY KEY,
+    -- String precision types
+    string10          VARCHAR(10)       NOT NULL,
+    string20          VARCHAR(20)       NOT NULL,
+    string50          VARCHAR(50)       NOT NULL,
+    string100         VARCHAR(100)      NOT NULL,
+    string255         VARCHAR(255)      NOT NULL,
+    -- Decimal precision types
+    decimal5_2        DECIMAL(5,2)      NOT NULL,
+    decimal10_2       DECIMAL(10,2)     NOT NULL,
+    decimal18_4       DECIMAL(18,4)     NOT NULL,
+    -- Decimal with scale 0 (integers)
+    decimal5_0        DECIMAL(5)        NOT NULL,
+    decimal10_0       DECIMAL(10)       NOT NULL,
+    decimal18_0       DECIMAL(18)       NOT NULL
+);
+
+-- Precision types test table with all NULLABLE columns
+CREATE TABLE precision_types_null (
+    id                INTEGER           PRIMARY KEY,
+    -- String precision types
+    string10          VARCHAR(10),
+    string20          VARCHAR(20),
+    string50          VARCHAR(50),
+    string100         VARCHAR(100),
+    string255         VARCHAR(255),
+    -- Decimal precision types
+    decimal5_2        DECIMAL(5,2),
+    decimal10_2       DECIMAL(10,2),
+    decimal18_4       DECIMAL(18,4),
+    -- Decimal with scale 0 (integers)
+    decimal5_0        DECIMAL(5),
+    decimal10_0       DECIMAL(10),
+    decimal18_0       DECIMAL(18)
+);

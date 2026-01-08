@@ -16,14 +16,14 @@ import java.time.Instant
 
 /** This class corresponds to a row in table `public.users` which has not been persisted yet */
 data class UsersRowUnsaved(
-  @JsonProperty("user_id") val userId: UsersId,
+  @field:JsonProperty("user_id") val userId: UsersId,
   val name: String,
-  @JsonProperty("last_name") val lastName: String? = null,
+  @field:JsonProperty("last_name") val lastName: String? = null,
   val email: Unknown,
   val password: String,
-  @JsonProperty("verified_on") val verifiedOn: Instant? = null,
+  @field:JsonProperty("verified_on") val verifiedOn: Instant? = null,
   /** Default: now() */
-  @JsonProperty("created_at") val createdAt: Defaulted<Instant> = UseDefault()
+  @field:JsonProperty("created_at") val createdAt: Defaulted<Instant> = UseDefault()
 ) {
   fun toRow(createdAtDefault: () -> Instant): UsersRow = UsersRow(userId = userId, name = name, lastName = lastName, email = email, password = password, createdAt = createdAt.getOrElse(createdAtDefault), verifiedOn = verifiedOn)
 

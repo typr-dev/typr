@@ -12,7 +12,7 @@ import dev.typr.foundations.data.Uint8
 import dev.typr.foundations.kotlin.Bijection
 
 /** Type for the primary key of table `products` */
-data class ProductsId(@JsonValue val value: Uint8) {
+data class ProductsId(@field:JsonValue val value: Uint8) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

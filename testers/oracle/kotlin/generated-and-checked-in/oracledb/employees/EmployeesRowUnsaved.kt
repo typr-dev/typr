@@ -14,16 +14,16 @@ import oracledb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `EMPLOYEES` which has not been persisted yet */
 data class EmployeesRowUnsaved(
-  @JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
-  @JsonProperty("EMP_SUFFIX") val empSuffix: String,
+  @field:JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
+  @field:JsonProperty("EMP_SUFFIX") val empSuffix: String,
   /** Points to [oracledb.departments.DepartmentsRow.deptCode] */
-  @JsonProperty("DEPT_CODE") val deptCode: String,
+  @field:JsonProperty("DEPT_CODE") val deptCode: String,
   /** Points to [oracledb.departments.DepartmentsRow.deptRegion] */
-  @JsonProperty("DEPT_REGION") val deptRegion: String,
-  @JsonProperty("EMP_NAME") val empName: String,
-  @JsonProperty("SALARY") val salary: MoneyT? = null,
+  @field:JsonProperty("DEPT_REGION") val deptRegion: String,
+  @field:JsonProperty("EMP_NAME") val empName: String,
+  @field:JsonProperty("SALARY") val salary: MoneyT? = null,
   /** Default: SYSDATE  */
-  @JsonProperty("HIRE_DATE") val hireDate: Defaulted<LocalDateTime> = UseDefault()
+  @field:JsonProperty("HIRE_DATE") val hireDate: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(hireDateDefault: () -> LocalDateTime): EmployeesRow = EmployeesRow(empNumber = empNumber, empSuffix = empSuffix, deptCode = deptCode, deptRegion = deptRegion, empName = empName, salary = salary, hireDate = hireDate.getOrElse(hireDateDefault))
 }

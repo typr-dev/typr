@@ -18,21 +18,21 @@ import org.mariadb.jdbc.type.Polygon
 /** This class corresponds to a row in table `mariatest_spatial` which has not been persisted yet */
 data class MariatestSpatialRowUnsaved(
   /**  */
-  @JsonProperty("geometry_col") val geometryCol: Geometry,
+  @field:JsonProperty("geometry_col") val geometryCol: Geometry,
   /**  */
-  @JsonProperty("point_col") val pointCol: Point,
+  @field:JsonProperty("point_col") val pointCol: Point,
   /**  */
-  @JsonProperty("linestring_col") val linestringCol: LineString,
+  @field:JsonProperty("linestring_col") val linestringCol: LineString,
   /**  */
-  @JsonProperty("polygon_col") val polygonCol: Polygon,
+  @field:JsonProperty("polygon_col") val polygonCol: Polygon,
   /**  */
-  @JsonProperty("multipoint_col") val multipointCol: MultiPoint,
+  @field:JsonProperty("multipoint_col") val multipointCol: MultiPoint,
   /**  */
-  @JsonProperty("multilinestring_col") val multilinestringCol: MultiLineString,
+  @field:JsonProperty("multilinestring_col") val multilinestringCol: MultiLineString,
   /**  */
-  @JsonProperty("multipolygon_col") val multipolygonCol: MultiPolygon,
+  @field:JsonProperty("multipolygon_col") val multipolygonCol: MultiPolygon,
   /**  */
-  @JsonProperty("geometrycollection_col") val geometrycollectionCol: GeometryCollection
+  @field:JsonProperty("geometrycollection_col") val geometrycollectionCol: GeometryCollection
 ) {
   fun toRow(idDefault: () -> MariatestSpatialId): MariatestSpatialRow = MariatestSpatialRow(id = idDefault(), geometryCol = geometryCol, pointCol = pointCol, linestringCol = linestringCol, polygonCol = polygonCol, multipointCol = multipointCol, multilinestringCol = multilinestringCol, multipolygonCol = multipolygonCol, geometrycollectionCol = geometrycollectionCol)
 }

@@ -17,8 +17,8 @@ import testdb.customtypes.Defaulted
   */
 data class Db2testIdentityDefaultRow(
   /** Identity BY DEFAULT */
-  @JsonProperty("ID") val id: Db2testIdentityDefaultId,
-  @JsonProperty("NAME") val name: String
+  @field:JsonProperty("ID") val id: Db2testIdentityDefaultId,
+  @field:JsonProperty("NAME") val name: String
 ) : Tuple2<Db2testIdentityDefaultId, String> {
   override fun _1(): Db2testIdentityDefaultId = id
 

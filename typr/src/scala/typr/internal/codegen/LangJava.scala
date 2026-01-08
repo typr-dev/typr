@@ -401,6 +401,9 @@ case object LangJava extends Lang {
             )
           } else None
 
+        val annotationsCode = if (cls.annotations.isEmpty) None else Some(renderAnnotations(cls.annotations))
+
+        // Generate a standard record
         // Params with defaults can be omitted from the short constructor
         val requiredParams = cls.params.filter(_.default.isEmpty)
         val hasDefaultableParams = cls.params.exists(_.default.isDefined)
@@ -418,7 +421,18 @@ case object LangJava extends Lang {
                         |}""".stripMargin)
           } else None
 
-        val annotationsCode = if (cls.annotations.isEmpty) None else Some(renderAnnotations(cls.annotations))
+        // Generate compact constructor with @Deprecated annotation if privateConstructor is true
+        // This discourages direct instantiation while still using a record
+        val compactConstructor: Option[jvm.Code] = {
+          val deprecatedAnn = jvm.Annotation(jvm.Type.Qualified("java.lang.Deprecated"), Nil)
+          val allAnnotations = if (cls.privateConstructor) deprecatedAnn :: cls.constructorAnnotations else cls.constructorAnnotations
+          if (allAnnotations.nonEmpty) {
+            val annotations = allAnnotations.map(renderAnnotation).mkCode(" ")
+            Some(code"""$annotations
+                      |  public ${cls.name.name.value} {
+                      |  }""".stripMargin)
+          } else None
+        }
 
         List[Option[jvm.Code]](
           renderComments(cls.comments),
@@ -435,7 +449,7 @@ case object LangJava extends Lang {
             case nonEmpty => Some(code" implements ${nonEmpty.map(x => code"$x").mkCode(", ")}")
           },
           Some(code"""| {
-                      |  ${(shortConstructor.toList ++ withers ++ toStringMethod.toList ++ body).map(_ ++ code";").mkCode("\n\n")}
+                      |  ${(compactConstructor.toList ++ shortConstructor.toList ++ withers ++ toStringMethod.toList ++ body).map(_ ++ code";").mkCode("\n\n")}
                       |}""".stripMargin)
         ).flatten.mkCode("")
       case sum: jvm.Adt.Sum =>
@@ -727,6 +741,10 @@ case object LangJava extends Lang {
   override def newByteArray(size: jvm.Code): jvm.Code =
     code"new byte[$size]"
 
+  // Java: arr.length (field access, not method)
+  override def byteArrayLength(arr: jvm.Code): jvm.Code =
+    code"$arr.length"
+
   // Java: byte[]
   override val ByteArrayType: jvm.Type = jvm.Type.ArrayOf(TypesJava.BytePrimitive)
 
@@ -768,6 +786,8 @@ case object LangJava extends Lang {
 
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"!$left.equals($right)"
+
+  override def needsExplicitNullCheck: Boolean = true
 
   override def toShort(expr: jvm.Code): jvm.Code = code"(short) ($expr)"
 

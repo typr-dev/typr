@@ -5,6 +5,7 @@ import typr.internal.codegen.*
 /** Type support using Java's standard library types */
 object TypeSupportJava extends TypeSupport {
   override val BigDecimal: jvm.Type.Qualified = TypesJava.BigDecimal
+  override val BigInteger: jvm.Type.Qualified = TypesJava.BigInteger
   override val Boolean: jvm.Type.Qualified = TypesJava.Boolean
   override val Byte: jvm.Type.Qualified = TypesJava.Byte
   override val Double: jvm.Type.Qualified = TypesJava.Double
@@ -16,6 +17,8 @@ object TypeSupportJava extends TypeSupport {
   override val String: jvm.Type.Qualified = TypesJava.String
   override val ByteArray: jvm.Type = jvm.Type.ArrayOf(TypesJava.BytePrimitive)
   override val FloatArray: jvm.Type = jvm.Type.ArrayOf(TypesJava.FloatPrimitive)
+  override val primitiveInt: jvm.Type = TypesJava.IntPrimitive
+  override val primitiveBoolean: jvm.Type = TypesJava.BooleanPrimitive
 
   override def bigDecimalFromDouble(d: jvm.Code): jvm.Code =
     code"${TypesJava.BigDecimal}.valueOf($d)"
@@ -49,6 +52,7 @@ object TypeSupportJava extends TypeSupport {
     def nextDouble(random: jvm.Code): jvm.Code = code"$random.nextDouble()"
     def nextBoolean(random: jvm.Code): jvm.Code = code"$random.nextBoolean()"
     def nextBytes(random: jvm.Code, bytes: jvm.Code): jvm.Code = code"$random.nextBytes($bytes)"
+    def randomBytes(random: jvm.Code, length: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.randomBytes($random, $length)"
     def alphanumeric(random: jvm.Code, length: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.alphanumeric($random, $length)"
     def nextPrintableChar(random: jvm.Code): jvm.Code = code"(char)(33 + $random.nextInt(94))"
     def randomUUID(random: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.randomUUID($random)"

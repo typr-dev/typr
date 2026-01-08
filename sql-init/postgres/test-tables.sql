@@ -284,3 +284,83 @@ create table only_pk_columns(
     key_column_2 int not null,
     constraint only_pk_columns_pk primary key (key_column_1, key_column_2)
 );
+
+-- ============================================================================
+-- PRECISION TYPES TEST TABLES
+-- These tables are used to test precision wrapper type generation.
+-- The enablePreciseTypes selector should only include these tables.
+-- ============================================================================
+
+-- Precision types test table with all NOT NULL columns
+create table precision_types (
+    id                serial            primary key,
+    -- String precision types
+    string10          varchar(10)       not null,
+    string20          varchar(20)       not null,
+    string50          varchar(50)       not null,
+    string100         varchar(100)      not null,
+    string255         varchar(255)      not null,
+    -- Fixed char
+    bpchar3           bpchar(3)         not null,
+    bpchar10          bpchar(10)        not null,
+    -- Decimal precision types
+    decimal5_2        decimal(5,2)      not null,
+    decimal10_2       decimal(10,2)     not null,
+    decimal18_4       decimal(18,4)     not null,
+    -- Numeric precision types
+    numeric8_2        numeric(8,2)      not null,
+    numeric12_4       numeric(12,4)     not null,
+    -- Timestamp precision types
+    timestamp0        timestamp(0)      not null,
+    timestamp3        timestamp(3)      not null,
+    timestamp6        timestamp(6)      not null,
+    -- Timestamptz precision types
+    timestamptz0      timestamptz(0)    not null,
+    timestamptz3      timestamptz(3)    not null,
+    timestamptz6      timestamptz(6)    not null,
+    -- Time precision types
+    time0             time(0)           not null,
+    time3             time(3)           not null,
+    time6             time(6)           not null,
+    -- Timetz precision types
+    timetz0           timetz(0)         not null,
+    timetz3           timetz(3)         not null,
+    timetz6           timetz(6)         not null
+);
+
+-- Precision types test table with all NULLABLE columns
+create table precision_types_null (
+    id                serial            primary key,
+    -- String precision types
+    string10          varchar(10),
+    string20          varchar(20),
+    string50          varchar(50),
+    string100         varchar(100),
+    string255         varchar(255),
+    -- Fixed char
+    bpchar3           bpchar(3),
+    bpchar10          bpchar(10),
+    -- Decimal precision types
+    decimal5_2        decimal(5,2),
+    decimal10_2       decimal(10,2),
+    decimal18_4       decimal(18,4),
+    -- Numeric precision types
+    numeric8_2        numeric(8,2),
+    numeric12_4       numeric(12,4),
+    -- Timestamp precision types
+    timestamp0        timestamp(0),
+    timestamp3        timestamp(3),
+    timestamp6        timestamp(6),
+    -- Timestamptz precision types
+    timestamptz0      timestamptz(0),
+    timestamptz3      timestamptz(3),
+    timestamptz6      timestamptz(6),
+    -- Time precision types
+    time0             time(0),
+    time3             time(3),
+    time6             time(6),
+    -- Timetz precision types
+    timetz0           timetz(0),
+    timetz3           timetz(3),
+    timetz6           timetz(6)
+);

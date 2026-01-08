@@ -17,13 +17,13 @@ import java.time.LocalDate
 
 /** View: order_details */
 data class OrderDetailsViewRow(
-  @JsonProperty("order_id") val orderId: Int?,
-  @JsonProperty("order_date") val orderDate: LocalDate?,
-  @JsonProperty("customer_name") val customerName: String?,
-  @JsonProperty("product_name") val productName: String?,
+  @field:JsonProperty("order_id") val orderId: Int?,
+  @field:JsonProperty("order_date") val orderDate: LocalDate?,
+  @field:JsonProperty("customer_name") val customerName: String?,
+  @field:JsonProperty("product_name") val productName: String?,
   val quantity: Int?,
-  @JsonProperty("unit_price") val unitPrice: BigDecimal?,
-  @JsonProperty("line_total") val lineTotal: BigDecimal?
+  @field:JsonProperty("unit_price") val unitPrice: BigDecimal?,
+  @field:JsonProperty("line_total") val lineTotal: BigDecimal?
 ) : Tuple7<Int?, LocalDate?, String?, String?, Int?, BigDecimal?, BigDecimal?> {
   override fun _1(): Int? = orderId
 

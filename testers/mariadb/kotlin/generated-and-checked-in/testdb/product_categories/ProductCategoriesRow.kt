@@ -21,19 +21,19 @@ data class ProductCategoriesRow(
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** 
     * Points to [testdb.categories.CategoriesRow.categoryId]
     */
-  @JsonProperty("category_id") val categoryId: CategoriesId,
+  @field:JsonProperty("category_id") val categoryId: CategoriesId,
   /** 
     * Default: 0
     */
-  @JsonProperty("is_primary") val isPrimary: Boolean,
+  @field:JsonProperty("is_primary") val isPrimary: Boolean,
   /** 
     * Default: 0
     */
-  @JsonProperty("sort_order") val sortOrder: Short
+  @field:JsonProperty("sort_order") val sortOrder: Short
 ) : Tuple4<ProductsId, CategoriesId, Boolean, Short> {
   override fun _1(): ProductsId = productId
 

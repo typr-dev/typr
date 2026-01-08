@@ -22,43 +22,43 @@ data class VDailySalesViewRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("order_date") val orderDate: LocalDate?,
+  @field:JsonProperty("order_date") val orderDate: LocalDate?,
   /** 
     * Default: 0
     */
-  @JsonProperty("order_count") val orderCount: Long,
+  @field:JsonProperty("order_count") val orderCount: Long,
   /** 
     * Default: 0
     */
-  @JsonProperty("unique_customers") val uniqueCustomers: Long,
+  @field:JsonProperty("unique_customers") val uniqueCustomers: Long,
   /** 
     * Default: NULL
     */
-  @JsonProperty("items_sold") val itemsSold: BigDecimal?,
+  @field:JsonProperty("items_sold") val itemsSold: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("gross_sales") val grossSales: BigDecimal?,
+  @field:JsonProperty("gross_sales") val grossSales: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("total_discounts") val totalDiscounts: BigDecimal?,
+  @field:JsonProperty("total_discounts") val totalDiscounts: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("total_shipping") val totalShipping: BigDecimal?,
+  @field:JsonProperty("total_shipping") val totalShipping: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("total_tax") val totalTax: BigDecimal?,
+  @field:JsonProperty("total_tax") val totalTax: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("net_sales") val netSales: BigDecimal?,
+  @field:JsonProperty("net_sales") val netSales: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("avg_order_value") val avgOrderValue: BigDecimal?
+  @field:JsonProperty("avg_order_value") val avgOrderValue: BigDecimal?
 ) : Tuple10<LocalDate?, Long, Long, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?> {
   override fun _1(): LocalDate? = orderDate
 

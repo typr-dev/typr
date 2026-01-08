@@ -28,20 +28,20 @@ data class ReviewsRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("review_id") val reviewId: ReviewsId,
+  @field:JsonProperty("review_id") val reviewId: ReviewsId,
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** 
     * Points to [testdb.customers.CustomersRow.customerId]
     */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** 
     * Default: NULL
     * Points to [testdb.order_items.OrderItemsRow.itemId]
     */
-  @JsonProperty("order_item_id") val orderItemId: OrderItemsId?,
+  @field:JsonProperty("order_item_id") val orderItemId: OrderItemsId?,
   /**  */
   val rating: Uint1,
   /** 
@@ -67,35 +67,35 @@ data class ReviewsRow(
   /** 
     * Default: 0
     */
-  @JsonProperty("is_verified_purchase") val isVerifiedPurchase: Boolean,
+  @field:JsonProperty("is_verified_purchase") val isVerifiedPurchase: Boolean,
   /** 
     * Default: 0
     */
-  @JsonProperty("is_approved") val isApproved: Boolean,
+  @field:JsonProperty("is_approved") val isApproved: Boolean,
   /** 
     * Default: 0
     */
-  @JsonProperty("helpful_votes") val helpfulVotes: Uint4,
+  @field:JsonProperty("helpful_votes") val helpfulVotes: Uint4,
   /** 
     * Default: 0
     */
-  @JsonProperty("unhelpful_votes") val unhelpfulVotes: Uint4,
+  @field:JsonProperty("unhelpful_votes") val unhelpfulVotes: Uint4,
   /** 
     * Default: NULL
     */
-  @JsonProperty("admin_response") val adminResponse: String?,
+  @field:JsonProperty("admin_response") val adminResponse: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("responded_at") val respondedAt: LocalDateTime?,
+  @field:JsonProperty("responded_at") val respondedAt: LocalDateTime?,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("created_at") val createdAt: LocalDateTime,
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("updated_at") val updatedAt: LocalDateTime
+  @field:JsonProperty("updated_at") val updatedAt: LocalDateTime
 ) : Tuple18<ReviewsId, ProductsId, CustomersId, OrderItemsId?, Uint1, String?, String?, Json?, Json?, Json?, Boolean, Boolean, Uint4, Uint4, String?, LocalDateTime?, LocalDateTime, LocalDateTime> {
   override fun _1(): ReviewsId = reviewId
 

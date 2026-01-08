@@ -40,9 +40,9 @@ data class OrderItemsFields(val _path: List<Path>) : TupleExpr5<OrderItemsId, Or
 
   override fun columns(): List<FieldLike<*, OrderItemsRow>> = listOf(this.orderItemId().underlying, this.orderId().underlying, this.productId().underlying, this.quantity().underlying, this.price().underlying)
 
-  fun fkOrders(): ForeignKey<OrdersFields, OrdersRow> = ForeignKey.of<OrdersFields, OrdersRow>("FK__order_ite__order__44FF419A").withColumnPair<OrdersId>(orderId(), OrdersFields::orderId)
+  fun fkOrders(): ForeignKey<OrdersFields, OrdersRow> = ForeignKey.of<OrdersFields, OrdersRow>("FK__order_ite__order__47DBAE45").withColumnPair<OrdersId>(orderId(), OrdersFields::orderId)
 
-  fun fkProducts(): ForeignKey<ProductsFields, ProductsRow> = ForeignKey.of<ProductsFields, ProductsRow>("FK__order_ite__produ__45F365D3").withColumnPair<ProductsId>(productId(), ProductsFields::productId)
+  fun fkProducts(): ForeignKey<ProductsFields, ProductsRow> = ForeignKey.of<ProductsFields, ProductsRow>("FK__order_ite__produ__48CFD27E").withColumnPair<ProductsId>(productId(), ProductsFields::productId)
 
   fun orderId(): Field<OrdersId, OrderItemsRow> = Field<OrdersId, OrderItemsRow>(_path, "order_id", OrderItemsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.sqlServerType)
 

@@ -13,7 +13,7 @@ import dev.typr.foundations.kotlin.Bijection
 import java.util.UUID
 
 /** Type for the primary key of table `public.users` */
-data class UsersId(@JsonValue val value: UUID) {
+data class UsersId(@field:JsonValue val value: UUID) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

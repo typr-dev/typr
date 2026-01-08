@@ -15,7 +15,7 @@ import dev.typr.foundations.kotlin.KotlinDbTypes
 /** Domain `public.Flag`
   * No constraint
   */
-data class Flag(@JsonValue val value: Boolean) {
+data class Flag(@field:JsonValue val value: Boolean) {
   companion object {
     val bijection: Bijection<Flag, Boolean> =
       Bijection.of(Flag::value, ::Flag)

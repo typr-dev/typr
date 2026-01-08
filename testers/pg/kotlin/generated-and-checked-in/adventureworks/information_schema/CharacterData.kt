@@ -14,7 +14,7 @@ import dev.typr.foundations.kotlin.Bijection
 /** Domain `information_schema.character_data`
   * No constraint
   */
-data class CharacterData(@JsonValue val value: String) {
+data class CharacterData(@field:JsonValue val value: String) {
   companion object {
     val bijection: Bijection<CharacterData, String> =
       Bijection.of(CharacterData::value, ::CharacterData)

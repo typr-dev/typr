@@ -71,7 +71,7 @@ data class Db2testRepoMock(val map: MutableMap<Db2testId, Db2testRow> = mutableM
     for (id in intCols) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

@@ -19,19 +19,19 @@ import oracledb.MoneyT
 /** SQL file: employees_by_department.sql */
 data class EmployeesByDepartmentSqlRow(
   /** Points to [oracledb.employees.EmployeesRow.empNumber] */
-  @JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
+  @field:JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
   /** Points to [oracledb.employees.EmployeesRow.empSuffix] */
-  @JsonProperty("EMP_SUFFIX") val empSuffix: String,
+  @field:JsonProperty("EMP_SUFFIX") val empSuffix: String,
   /** Points to [oracledb.employees.EmployeesRow.empName] */
-  @JsonProperty("EMP_NAME") val empName: String,
+  @field:JsonProperty("EMP_NAME") val empName: String,
   /** Points to [oracledb.employees.EmployeesRow.salary] */
-  @JsonProperty("SALARY") val salary: MoneyT?,
+  @field:JsonProperty("SALARY") val salary: MoneyT?,
   /** Points to [oracledb.employees.EmployeesRow.hireDate] */
-  @JsonProperty("HIRE_DATE") val hireDate: LocalDateTime,
+  @field:JsonProperty("HIRE_DATE") val hireDate: LocalDateTime,
   /** Points to [oracledb.departments.DepartmentsRow.deptName] */
-  @JsonProperty("DEPT_NAME") val deptName: String,
+  @field:JsonProperty("DEPT_NAME") val deptName: String,
   /** Points to [oracledb.departments.DepartmentsRow.budget] */
-  @JsonProperty("BUDGET") val budget: MoneyT?
+  @field:JsonProperty("BUDGET") val budget: MoneyT?
 ) : Tuple7<BigDecimal, String, String, MoneyT?, LocalDateTime, String, MoneyT?> {
   override fun _1(): BigDecimal = empNumber
 

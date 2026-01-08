@@ -101,6 +101,17 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
     case TypoType.Generated(_, _, qualifiedType) =>
       code"$qualifiedType.$typeFieldName"
 
+    // Precise types - wrapper types with constraints, all have their own dbType field
+    case TypoType.StringN(_, _, _, qualifiedType)         => code"$qualifiedType.$typeFieldName"
+    case TypoType.NonEmptyString(_, _, qualifiedType)     => code"$qualifiedType.$typeFieldName"
+    case TypoType.NonEmptyStringN(_, _, _, qualifiedType) => code"$qualifiedType.$typeFieldName"
+    case TypoType.BinaryN(_, _, _, qualifiedType)         => code"$qualifiedType.$typeFieldName"
+    case TypoType.DecimalN(_, _, _, _, qualifiedType)     => code"$qualifiedType.$typeFieldName"
+    case TypoType.LocalDateTimeN(_, _, _, qualifiedType)  => code"$qualifiedType.$typeFieldName"
+    case TypoType.InstantN(_, _, _, qualifiedType)        => code"$qualifiedType.$typeFieldName"
+    case TypoType.LocalTimeN(_, _, _, qualifiedType)      => code"$qualifiedType.$typeFieldName"
+    case TypoType.OffsetDateTimeN(_, _, _, qualifiedType) => code"$qualifiedType.$typeFieldName"
+
     case TypoType.UserDefined(_, _, userType) =>
       userType match {
         case Left(qualifiedType) =>

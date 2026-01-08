@@ -19,7 +19,7 @@ data class CategoriesRowUnsaved(
   /** Default: NULL
     * Points to [testdb.categories.CategoriesRow.categoryId]
     */
-  @JsonProperty("parent_id") val parentId: Defaulted<CategoriesId?> = UseDefault(),
+  @field:JsonProperty("parent_id") val parentId: Defaulted<CategoriesId?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -27,15 +27,15 @@ data class CategoriesRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("image_url") val imageUrl: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("image_url") val imageUrl: Defaulted<String?> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("sort_order") val sortOrder: Defaulted<Short> = UseDefault(),
+  @field:JsonProperty("sort_order") val sortOrder: Defaulted<Short> = UseDefault(),
   /** Default: 1
 
     */
-  @JsonProperty("is_visible") val isVisible: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_visible") val isVisible: Defaulted<Boolean> = UseDefault(),
   /** Default: NULL
 
     */

@@ -14,7 +14,7 @@ import testdb.customtypes.Defaulted.UseDefault
 data class TestConnectionRowUnsaved(
   val message: String,
   /** Default: (getdate()) */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime?> = UseDefault()
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
     createdAtDefault: () -> LocalDateTime?,

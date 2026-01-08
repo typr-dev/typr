@@ -17,8 +17,8 @@ import dev.typr.foundations.kotlin.RowParsers
   * Composite primary key: key_column_1, key_column_2
   */
 data class OnlyPkColumnsRow(
-  @JsonProperty("key_column_1") val keyColumn1: String,
-  @JsonProperty("key_column_2") val keyColumn2: Int
+  @field:JsonProperty("key_column_1") val keyColumn1: String,
+  @field:JsonProperty("key_column_2") val keyColumn2: Int
 ) : Tuple2<String, Int> {
   override fun _1(): String = keyColumn1
 

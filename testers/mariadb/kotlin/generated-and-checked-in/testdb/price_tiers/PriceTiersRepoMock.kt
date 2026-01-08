@@ -79,7 +79,7 @@ data class PriceTiersRepoMock(
     for (id in tierIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

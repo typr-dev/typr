@@ -14,7 +14,7 @@ import java.math.BigDecimal
 /** Domain `MONEY_AMOUNT`
   * No constraint
   */
-data class MoneyAmount(@JsonValue val value: BigDecimal) {
+data class MoneyAmount(@field:JsonValue val value: BigDecimal) {
   companion object {
     val bijection: Bijection<MoneyAmount, BigDecimal> =
       Bijection.of(MoneyAmount::value, ::MoneyAmount)

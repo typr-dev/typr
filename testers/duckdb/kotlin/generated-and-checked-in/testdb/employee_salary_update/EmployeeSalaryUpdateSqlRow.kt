@@ -18,19 +18,19 @@ import java.time.LocalDate
 /** SQL file: employee_salary_update.sql */
 data class EmployeeSalaryUpdateSqlRow(
   /** Points to [testdb.employees.EmployeesRow.empNumber] */
-  @JsonProperty("emp_number") val empNumber: Int,
+  @field:JsonProperty("emp_number") val empNumber: Int,
   /** Points to [testdb.employees.EmployeesRow.empSuffix] */
-  @JsonProperty("emp_suffix") val empSuffix: String,
+  @field:JsonProperty("emp_suffix") val empSuffix: String,
   /** Points to [testdb.employees.EmployeesRow.deptCode] */
-  @JsonProperty("dept_code") val deptCode: String,
+  @field:JsonProperty("dept_code") val deptCode: String,
   /** Points to [testdb.employees.EmployeesRow.deptRegion] */
-  @JsonProperty("dept_region") val deptRegion: String,
+  @field:JsonProperty("dept_region") val deptRegion: String,
   /** Points to [testdb.employees.EmployeesRow.empName] */
-  @JsonProperty("emp_name") val empName: String,
+  @field:JsonProperty("emp_name") val empName: String,
   /** Points to [testdb.employees.EmployeesRow.salary] */
   val salary: BigDecimal?,
   /** Points to [testdb.employees.EmployeesRow.hireDate] */
-  @JsonProperty("hire_date") val hireDate: LocalDate
+  @field:JsonProperty("hire_date") val hireDate: LocalDate
 ) : Tuple7<Int, String, String, String, String, BigDecimal?, LocalDate> {
   override fun _1(): Int = empNumber
 

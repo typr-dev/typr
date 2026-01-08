@@ -33,6 +33,8 @@ object GeneratedMariaDb {
         )
         val scriptsPath = buildDir.resolve("sql-scripts/mariadb")
         val selector = Selector.All
+        // Only enable precision types for the dedicated precision test tables
+        val precisionTypesSelector = Selector.relationNames("precision_types", "precision_types_null")
         val typoLogger = TypoLogger.Console
 
         val externalTools = ExternalTools.init(typoLogger, ExternalToolsConfig.default)
@@ -56,7 +58,8 @@ object GeneratedMariaDb {
               generateMockRepos = Selector.All,
               enablePrimaryKeyType = Selector.All,
               enableTestInserts = Selector.All,
-              enableDsl = true
+              enableDsl = true,
+              enablePreciseTypes = precisionTypesSelector
             )
             val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in$suffix")
 

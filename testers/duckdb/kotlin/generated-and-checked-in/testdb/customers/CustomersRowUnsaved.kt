@@ -13,11 +13,11 @@ import testdb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 data class CustomersRowUnsaved(
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   val name: String,
   val email: String? = null,
   /** Default: current_timestamp */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: 'medium' */
   val priority: Defaulted<Priority?> = UseDefault()
 ) {

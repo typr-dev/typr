@@ -83,6 +83,18 @@ trait DbAdapter {
     */
   def textType: db.Type
 
+  /** Get the code reference for the database-specific numeric/decimal type.
+    *   - PostgreSQL: Types.numeric
+    *   - Oracle: Types.number
+    *   - MariaDB: Types.decimal
+    *   - DuckDB: Types.decimal
+    *   - SqlServer: Types.decimal
+    */
+  def numericTypeCode: jvm.Code = code"$Types.${jvm.Ident(numericTypeName)}"
+
+  /** The field name for the numeric/decimal type (e.g., "numeric" for PostgreSQL, "number" for Oracle) */
+  def numericTypeName: String = "numeric"
+
   // ═══════════════════════════════════════════════════════════════════════════
   // LAYER 3: Capabilities
   // ═══════════════════════════════════════════════════════════════════════════

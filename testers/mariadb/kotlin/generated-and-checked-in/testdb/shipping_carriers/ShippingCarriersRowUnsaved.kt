@@ -19,15 +19,15 @@ data class ShippingCarriersRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("tracking_url_template") val trackingUrlTemplate: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("tracking_url_template") val trackingUrlTemplate: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("api_config") val apiConfig: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("api_config") val apiConfig: Defaulted<Json?> = UseDefault(),
   /** Default: 1
 
     */
-  @JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
+  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
 ) {
   fun toRow(
     trackingUrlTemplateDefault: () -> String?,

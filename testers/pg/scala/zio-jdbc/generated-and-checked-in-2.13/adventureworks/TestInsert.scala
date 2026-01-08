@@ -124,6 +124,14 @@ import adventureworks.public.pgtest.PgtestRepoImpl
 import adventureworks.public.pgtest.PgtestRow
 import adventureworks.public.pgtestnull.PgtestnullRepoImpl
 import adventureworks.public.pgtestnull.PgtestnullRow
+import adventureworks.public.precision_types.PrecisionTypesId
+import adventureworks.public.precision_types.PrecisionTypesRepoImpl
+import adventureworks.public.precision_types.PrecisionTypesRow
+import adventureworks.public.precision_types.PrecisionTypesRowUnsaved
+import adventureworks.public.precision_types_null.PrecisionTypesNullId
+import adventureworks.public.precision_types_null.PrecisionTypesNullRepoImpl
+import adventureworks.public.precision_types_null.PrecisionTypesNullRow
+import adventureworks.public.precision_types_null.PrecisionTypesNullRowUnsaved
 import adventureworks.public.title.TitleId
 import adventureworks.public.title.TitleRepoImpl
 import adventureworks.public.title.TitleRow
@@ -515,6 +523,62 @@ case class TestInsert(
     varchares: Option[Array[String]] = (if (random.nextBoolean()) None else Some(Array.fill(random.nextInt(3))(random.alphanumeric.take(20).mkString))),
     xmles: Option[Array[TypoXml]] = None
   ): ZIO[ZConnection, Throwable, PgtestnullRow] = (new PgtestnullRepoImpl).insert(new PgtestnullRow(bool = bool, box = box, bpchar = bpchar, bytea = bytea, char = char, circle = circle, date = date, float4 = float4, float8 = float8, hstore = hstore, inet = inet, int2 = int2, int2vector = int2vector, int4 = int4, int8 = int8, interval = interval, json = json, jsonb = jsonb, line = line, lseg = lseg, money = money, mydomain = mydomain, myenum = myenum, name = name, numeric = numeric, path = path, point = point, polygon = polygon, text = text, time = time, timestamp = timestamp, timestampz = timestampz, timez = timez, uuid = uuid, varchar = varchar, vector = vector, xml = xml, boxes = boxes, bpchares = bpchares, chares = chares, circlees = circlees, datees = datees, float4es = float4es, float8es = float8es, inetes = inetes, int2es = int2es, int2vectores = int2vectores, int4es = int4es, int8es = int8es, intervales = intervales, jsones = jsones, jsonbes = jsonbes, linees = linees, lseges = lseges, moneyes = moneyes, mydomaines = mydomaines, myenumes = myenumes, namees = namees, numerices = numerices, pathes = pathes, pointes = pointes, polygones = polygones, textes = textes, timees = timees, timestampes = timestampes, timestampzes = timestampzes, timezes = timezes, uuides = uuides, varchares = varchares, xmles = xmles))
+
+  def publicPrecisionTypes(
+    string10: String = random.alphanumeric.take(10).mkString,
+    string20: String = random.alphanumeric.take(20).mkString,
+    string50: String = random.alphanumeric.take(20).mkString,
+    string100: String = random.alphanumeric.take(20).mkString,
+    string255: String = random.alphanumeric.take(20).mkString,
+    bpchar3: String = random.alphanumeric.take(3).mkString,
+    bpchar10: String = random.alphanumeric.take(10).mkString,
+    decimal52: BigDecimal = BigDecimal.decimal(random.nextDouble()),
+    decimal102: BigDecimal = BigDecimal.decimal(random.nextDouble()),
+    decimal184: BigDecimal = BigDecimal.decimal(random.nextDouble()),
+    numeric82: BigDecimal = BigDecimal.decimal(random.nextDouble()),
+    numeric124: BigDecimal = BigDecimal.decimal(random.nextDouble()),
+    timestamp0: TypoLocalDateTime = TypoLocalDateTime(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    timestamp3: TypoLocalDateTime = TypoLocalDateTime(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    timestamp6: TypoLocalDateTime = TypoLocalDateTime(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    timestamptz0: TypoInstant = TypoInstant(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))),
+    timestamptz3: TypoInstant = TypoInstant(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))),
+    timestamptz6: TypoInstant = TypoInstant(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))),
+    time0: TypoLocalTime = TypoLocalTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    time3: TypoLocalTime = TypoLocalTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    time6: TypoLocalTime = TypoLocalTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    timetz0: TypoOffsetTime = TypoOffsetTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    timetz3: TypoOffsetTime = TypoOffsetTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    timetz6: TypoOffsetTime = TypoOffsetTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    id: Defaulted[PrecisionTypesId] = new UseDefault()
+  ): ZIO[ZConnection, Throwable, PrecisionTypesRow] = (new PrecisionTypesRepoImpl).insert(new PrecisionTypesRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, bpchar3 = bpchar3, bpchar10 = bpchar10, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, numeric82 = numeric82, numeric124 = numeric124, timestamp0 = timestamp0, timestamp3 = timestamp3, timestamp6 = timestamp6, timestamptz0 = timestamptz0, timestamptz3 = timestamptz3, timestamptz6 = timestamptz6, time0 = time0, time3 = time3, time6 = time6, timetz0 = timetz0, timetz3 = timetz3, timetz6 = timetz6, id = id))
+
+  def publicPrecisionTypesNull(
+    string10: Option[/* max 10 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(10).mkString)),
+    string20: Option[/* max 20 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    string50: Option[/* max 50 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    string100: Option[/* max 100 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    string255: Option[/* max 255 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    bpchar3: Option[/* bpchar, max 3 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(3).mkString)),
+    bpchar10: Option[/* bpchar, max 10 chars */ String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(10).mkString)),
+    decimal52: Option[BigDecimal] = (if (random.nextBoolean()) None else Some(BigDecimal.decimal(random.nextDouble()))),
+    decimal102: Option[BigDecimal] = (if (random.nextBoolean()) None else Some(BigDecimal.decimal(random.nextDouble()))),
+    decimal184: Option[BigDecimal] = (if (random.nextBoolean()) None else Some(BigDecimal.decimal(random.nextDouble()))),
+    numeric82: Option[BigDecimal] = (if (random.nextBoolean()) None else Some(BigDecimal.decimal(random.nextDouble()))),
+    numeric124: Option[BigDecimal] = (if (random.nextBoolean()) None else Some(BigDecimal.decimal(random.nextDouble()))),
+    timestamp0: Option[TypoLocalDateTime] = (if (random.nextBoolean()) None else Some(TypoLocalDateTime(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    timestamp3: Option[TypoLocalDateTime] = (if (random.nextBoolean()) None else Some(TypoLocalDateTime(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    timestamp6: Option[TypoLocalDateTime] = (if (random.nextBoolean()) None else Some(TypoLocalDateTime(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    timestamptz0: Option[TypoInstant] = (if (random.nextBoolean()) None else Some(TypoInstant(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))))),
+    timestamptz3: Option[TypoInstant] = (if (random.nextBoolean()) None else Some(TypoInstant(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))))),
+    timestamptz6: Option[TypoInstant] = (if (random.nextBoolean()) None else Some(TypoInstant(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))))),
+    time0: Option[TypoLocalTime] = (if (random.nextBoolean()) None else Some(TypoLocalTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    time3: Option[TypoLocalTime] = (if (random.nextBoolean()) None else Some(TypoLocalTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    time6: Option[TypoLocalTime] = (if (random.nextBoolean()) None else Some(TypoLocalTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    timetz0: Option[TypoOffsetTime] = (if (random.nextBoolean()) None else Some(TypoOffsetTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))))),
+    timetz3: Option[TypoOffsetTime] = (if (random.nextBoolean()) None else Some(TypoOffsetTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))))),
+    timetz6: Option[TypoOffsetTime] = (if (random.nextBoolean()) None else Some(TypoOffsetTime(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))))),
+    id: Defaulted[PrecisionTypesNullId] = new UseDefault()
+  ): ZIO[ZConnection, Throwable, PrecisionTypesNullRow] = (new PrecisionTypesNullRepoImpl).insert(new PrecisionTypesNullRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, bpchar3 = bpchar3, bpchar10 = bpchar10, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, numeric82 = numeric82, numeric124 = numeric124, timestamp0 = timestamp0, timestamp3 = timestamp3, timestamp6 = timestamp6, timestamptz0 = timestamptz0, timestamptz3 = timestamptz3, timestamptz6 = timestamptz6, time0 = time0, time3 = time3, time6 = time6, timetz0 = timetz0, timetz3 = timetz3, timetz6 = timetz6, id = id))
 
   def publicTitle(code: TitleId = TitleId.apply(random.alphanumeric.take(20).mkString)): ZIO[ZConnection, Throwable, TitleRow] = (new TitleRepoImpl).insert(new TitleRow(code = code))
 

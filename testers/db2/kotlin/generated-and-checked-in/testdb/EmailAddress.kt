@@ -13,7 +13,7 @@ import dev.typr.foundations.kotlin.Bijection
 /** Domain `EMAIL_ADDRESS`
   * No constraint
   */
-data class EmailAddress(@JsonValue val value: String) {
+data class EmailAddress(@field:JsonValue val value: String) {
   companion object {
     val bijection: Bijection<EmailAddress, String> =
       Bijection.of(EmailAddress::value, ::EmailAddress)

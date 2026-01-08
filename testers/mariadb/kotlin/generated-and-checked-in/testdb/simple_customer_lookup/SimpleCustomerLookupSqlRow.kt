@@ -17,19 +17,19 @@ import testdb.customers.CustomersId
 /** SQL file: simple_customer_lookup.sql */
 data class SimpleCustomerLookupSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.email] */
   val email: String,
   /** Points to [testdb.customers.CustomersRow.firstName] */
-  @JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("first_name") val firstName: String,
   /** Points to [testdb.customers.CustomersRow.lastName] */
-  @JsonProperty("last_name") val lastName: String,
+  @field:JsonProperty("last_name") val lastName: String,
   /** Points to [testdb.customers.CustomersRow.tier] */
   val tier: String,
   /** Points to [testdb.customers.CustomersRow.status] */
   val status: CustomerStatusId,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
-  @JsonProperty("created_at") val createdAt: LocalDateTime
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime
 ) : Tuple7<CustomersId, String, String, String, String, CustomerStatusId, LocalDateTime> {
   override fun _1(): CustomersId = customerId
 

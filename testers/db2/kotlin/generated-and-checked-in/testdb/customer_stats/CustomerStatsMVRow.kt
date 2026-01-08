@@ -15,10 +15,10 @@ import java.math.BigDecimal
 
 /** Materialized View: CUSTOMER_STATS */
 data class CustomerStatsMVRow(
-  @JsonProperty("CUSTOMER_ID") val customerId: Int,
-  @JsonProperty("CUSTOMER_NAME") val customerName: String,
-  @JsonProperty("TOTAL_ORDERS") val totalOrders: Int,
-  @JsonProperty("TOTAL_REVENUE") val totalRevenue: BigDecimal
+  @field:JsonProperty("CUSTOMER_ID") val customerId: Int,
+  @field:JsonProperty("CUSTOMER_NAME") val customerName: String,
+  @field:JsonProperty("TOTAL_ORDERS") val totalOrders: Int,
+  @field:JsonProperty("TOTAL_REVENUE") val totalRevenue: BigDecimal
 ) : Tuple4<Int, String, Int, BigDecimal> {
   override fun _1(): Int = customerId
 

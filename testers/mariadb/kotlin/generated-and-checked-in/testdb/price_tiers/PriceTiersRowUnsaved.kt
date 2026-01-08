@@ -16,13 +16,13 @@ data class PriceTiersRowUnsaved(
   /**  */
   val name: String,
   /**  */
-  @JsonProperty("discount_type") val discountType: String,
+  @field:JsonProperty("discount_type") val discountType: String,
   /**  */
-  @JsonProperty("discount_value") val discountValue: BigDecimal,
+  @field:JsonProperty("discount_value") val discountValue: BigDecimal,
   /** Default: 1
 
     */
-  @JsonProperty("min_quantity") val minQuantity: Defaulted<Uint4> = UseDefault()
+  @field:JsonProperty("min_quantity") val minQuantity: Defaulted<Uint4> = UseDefault()
 ) {
   fun toRow(
     minQuantityDefault: () -> Uint4,

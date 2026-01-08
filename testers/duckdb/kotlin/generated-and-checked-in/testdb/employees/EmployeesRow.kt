@@ -20,14 +20,14 @@ import testdb.customtypes.Defaulted
   * Composite primary key: emp_number, emp_suffix
   */
 data class EmployeesRow(
-  @JsonProperty("emp_number") val empNumber: Int,
-  @JsonProperty("emp_suffix") val empSuffix: String,
-  @JsonProperty("dept_code") val deptCode: String,
-  @JsonProperty("dept_region") val deptRegion: String,
-  @JsonProperty("emp_name") val empName: String,
+  @field:JsonProperty("emp_number") val empNumber: Int,
+  @field:JsonProperty("emp_suffix") val empSuffix: String,
+  @field:JsonProperty("dept_code") val deptCode: String,
+  @field:JsonProperty("dept_region") val deptRegion: String,
+  @field:JsonProperty("emp_name") val empName: String,
   val salary: BigDecimal?,
   /** Default: current_date */
-  @JsonProperty("hire_date") val hireDate: LocalDate
+  @field:JsonProperty("hire_date") val hireDate: LocalDate
 ) : Tuple7<Int, String, String, String, String, BigDecimal?, LocalDate> {
   override fun _1(): Int = empNumber
 

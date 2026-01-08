@@ -13,7 +13,7 @@ import dev.typr.foundations.kotlin.Bijection
 import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** Type for the primary key of table `production.productsubcategory` */
-data class ProductsubcategoryId(@JsonValue val value: Int) {
+data class ProductsubcategoryId(@field:JsonValue val value: Int) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

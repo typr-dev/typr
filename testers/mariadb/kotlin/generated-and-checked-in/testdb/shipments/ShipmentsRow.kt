@@ -28,33 +28,33 @@ data class ShipmentsRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("shipment_id") val shipmentId: ShipmentsId,
+  @field:JsonProperty("shipment_id") val shipmentId: ShipmentsId,
   /** 
     * Points to [testdb.orders.OrdersRow.orderId]
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** 
     * Points to [testdb.shipping_carriers.ShippingCarriersRow.carrierId]
     */
-  @JsonProperty("carrier_id") val carrierId: ShippingCarriersId,
+  @field:JsonProperty("carrier_id") val carrierId: ShippingCarriersId,
   /** 
     * Default: NULL
     */
-  @JsonProperty("tracking_number") val trackingNumber: String?,
+  @field:JsonProperty("tracking_number") val trackingNumber: String?,
   /**  */
-  @JsonProperty("shipping_method") val shippingMethod: String,
+  @field:JsonProperty("shipping_method") val shippingMethod: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("weight_kg") val weightKg: BigDecimal?,
+  @field:JsonProperty("weight_kg") val weightKg: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("dimensions_json") val dimensionsJson: Json?,
+  @field:JsonProperty("dimensions_json") val dimensionsJson: Json?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("label_data") val labelData: ByteArray?,
+  @field:JsonProperty("label_data") val labelData: ByteArray?,
   /** 
     * Default: 'pending'
     */
@@ -62,34 +62,34 @@ data class ShipmentsRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("estimated_delivery_date") val estimatedDeliveryDate: LocalDate?,
+  @field:JsonProperty("estimated_delivery_date") val estimatedDeliveryDate: LocalDate?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("actual_delivery_at") val actualDeliveryAt: LocalDateTime?,
+  @field:JsonProperty("actual_delivery_at") val actualDeliveryAt: LocalDateTime?,
   /**  */
-  @JsonProperty("shipping_cost") val shippingCost: BigDecimal,
+  @field:JsonProperty("shipping_cost") val shippingCost: BigDecimal,
   /** 
     * Default: NULL
     */
-  @JsonProperty("insurance_amount") val insuranceAmount: BigDecimal?,
+  @field:JsonProperty("insurance_amount") val insuranceAmount: BigDecimal?,
   /** 
     * Default: NULL
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
     */
-  @JsonProperty("origin_warehouse_id") val originWarehouseId: WarehousesId?,
+  @field:JsonProperty("origin_warehouse_id") val originWarehouseId: WarehousesId?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("shipped_at") val shippedAt: LocalDateTime?,
+  @field:JsonProperty("shipped_at") val shippedAt: LocalDateTime?,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("created_at") val createdAt: LocalDateTime,
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("updated_at") val updatedAt: LocalDateTime
+  @field:JsonProperty("updated_at") val updatedAt: LocalDateTime
 ) : Tuple17<ShipmentsId, OrdersId, ShippingCarriersId, String?, String, BigDecimal?, Json?, ByteArray?, String, LocalDate?, LocalDateTime?, BigDecimal, BigDecimal?, WarehousesId?, LocalDateTime?, LocalDateTime, LocalDateTime> {
   override fun _1(): ShipmentsId = shipmentId
 

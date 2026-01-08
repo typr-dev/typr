@@ -13,11 +13,11 @@ import oracledb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `CONTACTS` which has not been persisted yet */
 data class ContactsRowUnsaved(
-  @JsonProperty("NAME") val name: String,
-  @JsonProperty("EMAILS") val emails: EmailTableT? = null,
-  @JsonProperty("TAGS") val tags: TagVarrayT? = null,
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
-  @JsonProperty("CONTACT_ID") val contactId: Defaulted<ContactsId> = UseDefault()
+  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("EMAILS") val emails: EmailTableT? = null,
+  @field:JsonProperty("TAGS") val tags: TagVarrayT? = null,
+  /** Default: "TYPR"."ISEQ$$_72857".nextval */
+  @field:JsonProperty("CONTACT_ID") val contactId: Defaulted<ContactsId> = UseDefault()
 ) {
   fun toRow(contactIdDefault: () -> ContactsId): ContactsRow = ContactsRow(contactId = contactId.getOrElse(contactIdDefault), name = name, emails = emails, tags = tags)
 }

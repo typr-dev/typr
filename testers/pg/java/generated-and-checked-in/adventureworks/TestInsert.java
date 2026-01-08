@@ -52,6 +52,13 @@ import adventureworks.person.stateprovince.StateprovinceId;
 import adventureworks.person.stateprovince.StateprovinceRepoImpl;
 import adventureworks.person.stateprovince.StateprovinceRow;
 import adventureworks.person.stateprovince.StateprovinceRowUnsaved;
+import adventureworks.precisetypes.PaddedString10;
+import adventureworks.precisetypes.PaddedString3;
+import adventureworks.precisetypes.String10;
+import adventureworks.precisetypes.String100;
+import adventureworks.precisetypes.String20;
+import adventureworks.precisetypes.String255;
+import adventureworks.precisetypes.String50;
 import adventureworks.production.product.ProductId;
 import adventureworks.production.product.ProductRepoImpl;
 import adventureworks.production.product.ProductRow;
@@ -92,6 +99,12 @@ import adventureworks.public_.pgtest.PgtestRepoImpl;
 import adventureworks.public_.pgtest.PgtestRow;
 import adventureworks.public_.pgtestnull.PgtestnullRepoImpl;
 import adventureworks.public_.pgtestnull.PgtestnullRow;
+import adventureworks.public_.precision_types.PrecisionTypesRepoImpl;
+import adventureworks.public_.precision_types.PrecisionTypesRow;
+import adventureworks.public_.precision_types.PrecisionTypesRowUnsaved;
+import adventureworks.public_.precision_types_null.PrecisionTypesNullRepoImpl;
+import adventureworks.public_.precision_types_null.PrecisionTypesNullRow;
+import adventureworks.public_.precision_types_null.PrecisionTypesNullRowUnsaved;
 import adventureworks.public_.title.TitleId;
 import adventureworks.public_.title.TitleRepoImpl;
 import adventureworks.public_.title.TitleRow;
@@ -1080,6 +1093,144 @@ public record TestInsert(Random random, TestDomainInsert domainInsert) {
                         .limit(random.nextInt(3))
                         .toArray(Xml[]::new)))),
         (PgtestnullRow row, Connection c) -> (new PgtestnullRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<PrecisionTypesRowUnsaved, PrecisionTypesRow> publicPrecisionTypes(
+      PaddedString3 bpchar3, PaddedString10 bpchar10) {
+    return Inserter.of(
+        new PrecisionTypesRowUnsaved(
+            String10.truncate(RandomHelper.alphanumeric(random, 10)),
+            String20.truncate(RandomHelper.alphanumeric(random, 20)),
+            String50.truncate(RandomHelper.alphanumeric(random, 20)),
+            String100.truncate(RandomHelper.alphanumeric(random, 20)),
+            String255.truncate(RandomHelper.alphanumeric(random, 20)),
+            bpchar3,
+            bpchar10,
+            BigDecimal.valueOf(random.nextDouble()),
+            BigDecimal.valueOf(random.nextDouble()),
+            BigDecimal.valueOf(random.nextDouble()),
+            BigDecimal.valueOf(random.nextDouble()),
+            BigDecimal.valueOf(random.nextDouble()),
+            LocalDateTime.of(
+                LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))),
+            LocalDateTime.of(
+                LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))),
+            LocalDateTime.of(
+                LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))),
+            Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+            Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+            Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))),
+            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))),
+            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))),
+            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))
+                .atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))
+                .atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))
+                .atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+            new UseDefault()),
+        (PrecisionTypesRowUnsaved row, Connection c) ->
+            (new PrecisionTypesRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<PrecisionTypesNullRowUnsaved, PrecisionTypesNullRow> publicPrecisionTypesNull() {
+    return Inserter.of(
+        new PrecisionTypesNullRowUnsaved(
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(String10.truncate(RandomHelper.alphanumeric(random, 10)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(String20.truncate(RandomHelper.alphanumeric(random, 20)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(String50.truncate(RandomHelper.alphanumeric(random, 20)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(String100.truncate(RandomHelper.alphanumeric(random, 20)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(String255.truncate(RandomHelper.alphanumeric(random, 20)))),
+            Optional.empty(),
+            Optional.empty(),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(BigDecimal.valueOf(random.nextDouble()))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(BigDecimal.valueOf(random.nextDouble()))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(BigDecimal.valueOf(random.nextDouble()))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(BigDecimal.valueOf(random.nextDouble()))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(BigDecimal.valueOf(random.nextDouble()))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalDateTime.of(
+                        LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                        LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalDateTime.of(
+                        LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                        LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalDateTime.of(
+                        LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                        LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))
+                        .atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))
+                        .atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))
+                        .atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+            new UseDefault()),
+        (PrecisionTypesNullRowUnsaved row, Connection c) ->
+            (new PrecisionTypesNullRepoImpl()).insert(row, c));
   }
   ;
 

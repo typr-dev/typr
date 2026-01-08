@@ -5,7 +5,9 @@
  */
 package oracledb
 
+import dev.typr.foundations.internal.RandomHelper
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -15,6 +17,9 @@ import oracledb.all_scalar_types.AllScalarTypesId
 import oracledb.all_scalar_types.AllScalarTypesRepoImpl
 import oracledb.all_scalar_types.AllScalarTypesRow
 import oracledb.all_scalar_types.AllScalarTypesRowUnsaved
+import oracledb.all_types_test.AllTypesTestId
+import oracledb.all_types_test.AllTypesTestRepoImpl
+import oracledb.all_types_test.AllTypesTestRowUnsaved
 import oracledb.contacts.ContactsId
 import oracledb.contacts.ContactsRepoImpl
 import oracledb.contacts.ContactsRowUnsaved
@@ -29,6 +34,29 @@ import oracledb.departments.DepartmentsRow
 import oracledb.employees.EmployeesId
 import oracledb.employees.EmployeesRepoImpl
 import oracledb.employees.EmployeesRowUnsaved
+import oracledb.precisetypes.Decimal10_2
+import oracledb.precisetypes.Decimal18_4
+import oracledb.precisetypes.Decimal5_2
+import oracledb.precisetypes.Int10
+import oracledb.precisetypes.Int18
+import oracledb.precisetypes.Int5
+import oracledb.precisetypes.LocalDateTime3
+import oracledb.precisetypes.LocalDateTime6
+import oracledb.precisetypes.LocalDateTime9
+import oracledb.precisetypes.NonEmptyPaddedString10
+import oracledb.precisetypes.NonEmptyString10
+import oracledb.precisetypes.NonEmptyString100
+import oracledb.precisetypes.NonEmptyString20
+import oracledb.precisetypes.NonEmptyString255
+import oracledb.precisetypes.NonEmptyString50
+import oracledb.precision_types.PrecisionTypesId
+import oracledb.precision_types.PrecisionTypesRepoImpl
+import oracledb.precision_types.PrecisionTypesRow
+import oracledb.precision_types.PrecisionTypesRowUnsaved
+import oracledb.precision_types_null.PrecisionTypesNullId
+import oracledb.precision_types_null.PrecisionTypesNullRepoImpl
+import oracledb.precision_types_null.PrecisionTypesNullRow
+import oracledb.precision_types_null.PrecisionTypesNullRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
@@ -45,6 +73,14 @@ data class TestInsert(val random: Random) {
     id: Defaulted<AllScalarTypesId> = UseDefault(),
     c: Connection
   ): AllScalarTypesRow = (AllScalarTypesRepoImpl()).insert(AllScalarTypesRowUnsaved(colVarchar2 = colVarchar2, colNumber = colNumber, colDate = colDate, colTimestamp = colTimestamp, colClob = colClob, colNotNull = colNotNull, id = id), c)
+
+  fun AllTypesTest(
+    name: String,
+    data: AllTypesStructNoLobs? = null,
+    dataArray: AllTypesStructNoLobsArray? = null,
+    id: Defaulted<AllTypesTestId> = UseDefault(),
+    c: Connection
+  ): AllTypesTestId = (AllTypesTestRepoImpl()).insert(AllTypesTestRowUnsaved(name = name, data = data, dataArray = dataArray, id = id), c)
 
   fun Contacts(
     name: String,
@@ -80,6 +116,48 @@ data class TestInsert(val random: Random) {
     hireDate: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): EmployeesId = (EmployeesRepoImpl()).insert(EmployeesRowUnsaved(empNumber = empNumber, empSuffix = empSuffix, deptCode = DepartmentsId.deptCode, deptRegion = DepartmentsId.deptRegion, empName = empName, salary = salary, hireDate = hireDate), c)
+
+  fun PrecisionTypes(
+    char10: NonEmptyPaddedString10,
+    string10: NonEmptyString10 = NonEmptyString10.truncate(RandomHelper.alphanumeric(random, 10)),
+    string20: NonEmptyString20 = NonEmptyString20.truncate(RandomHelper.alphanumeric(random, 20)),
+    string50: NonEmptyString50 = NonEmptyString50.truncate(RandomHelper.alphanumeric(random, 20)),
+    string100: NonEmptyString100 = NonEmptyString100.truncate(RandomHelper.alphanumeric(random, 20)),
+    string255: NonEmptyString255 = NonEmptyString255.truncate(RandomHelper.alphanumeric(random, 20)),
+    number52: Decimal5_2 = Decimal5_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    number102: Decimal10_2 = Decimal10_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    number184: Decimal18_4 = Decimal18_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
+    number50: Int5 = Int5.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 100000.toLong())),
+    number100: Int10 = Int10.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong())),
+    number180: Int18 = Int18.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong())),
+    ts0: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    ts3: LocalDateTime3 = LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    ts6: LocalDateTime6 = LocalDateTime6.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    ts9: LocalDateTime9 = LocalDateTime9.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    id: Defaulted<PrecisionTypesId> = UseDefault(),
+    c: Connection
+  ): PrecisionTypesRow = (PrecisionTypesRepoImpl()).insert(PrecisionTypesRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, char10 = char10, number52 = number52, number102 = number102, number184 = number184, number50 = number50, number100 = number100, number180 = number180, ts0 = ts0, ts3 = ts3, ts6 = ts6, ts9 = ts9, id = id), c)
+
+  fun PrecisionTypesNull(
+    string10: NonEmptyString10? = if (random.nextBoolean()) null else NonEmptyString10.truncate(RandomHelper.alphanumeric(random, 10)),
+    string20: NonEmptyString20? = if (random.nextBoolean()) null else NonEmptyString20.truncate(RandomHelper.alphanumeric(random, 20)),
+    string50: NonEmptyString50? = if (random.nextBoolean()) null else NonEmptyString50.truncate(RandomHelper.alphanumeric(random, 20)),
+    string100: NonEmptyString100? = if (random.nextBoolean()) null else NonEmptyString100.truncate(RandomHelper.alphanumeric(random, 20)),
+    string255: NonEmptyString255? = if (random.nextBoolean()) null else NonEmptyString255.truncate(RandomHelper.alphanumeric(random, 20)),
+    char10: NonEmptyPaddedString10? = null,
+    number52: Decimal5_2? = if (random.nextBoolean()) null else Decimal5_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    number102: Decimal10_2? = if (random.nextBoolean()) null else Decimal10_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    number184: Decimal18_4? = if (random.nextBoolean()) null else Decimal18_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
+    number50: Int5? = if (random.nextBoolean()) null else Int5.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 100000.toLong())),
+    number100: Int10? = if (random.nextBoolean()) null else Int10.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong())),
+    number180: Int18? = if (random.nextBoolean()) null else Int18.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong())),
+    ts0: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    ts3: LocalDateTime3? = if (random.nextBoolean()) null else LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    ts6: LocalDateTime6? = if (random.nextBoolean()) null else LocalDateTime6.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    ts9: LocalDateTime9? = if (random.nextBoolean()) null else LocalDateTime9.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    id: Defaulted<PrecisionTypesNullId> = UseDefault(),
+    c: Connection
+  ): PrecisionTypesNullRow = (PrecisionTypesNullRepoImpl()).insert(PrecisionTypesNullRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, char10 = char10, number52 = number52, number102 = number102, number184 = number184, number50 = number50, number100 = number100, number180 = number180, ts0 = ts0, ts3 = ts3, ts6 = ts6, ts9 = ts9, id = id), c)
 
   fun Products(
     sku: String,

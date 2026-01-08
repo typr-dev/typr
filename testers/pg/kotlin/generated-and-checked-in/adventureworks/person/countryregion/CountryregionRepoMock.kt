@@ -109,7 +109,7 @@ data class CountryregionRepoMock(
     for (id in countryregioncodes) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

@@ -13,8 +13,8 @@ import dev.typr.foundations.kotlin.RowParsers
 
 /** Type for the composite primary key of table `order_items` */
 data class OrderItemsId(
-  @JsonProperty("order_id") val orderId: Int,
-  @JsonProperty("product_id") val productId: Int
+  @field:JsonProperty("order_id") val orderId: Int,
+  @field:JsonProperty("product_id") val productId: Int
 ) : Tuple2<Int, Int> {
   override fun _1(): Int = orderId
 

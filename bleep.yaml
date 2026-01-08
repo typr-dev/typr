@@ -81,7 +81,7 @@ projects:
     - org.duckdb:duckdb_jdbc:1.1.3
     - org.mariadb.jdbc:mariadb-java-client:3.5.1
     - org.postgresql:postgresql:42.7.3
-    dependsOn: foundations-jdbc
+    dependsOn: foundations-jdbc-hikari
     isTestProject: true
     java:
       options: -proc:none
@@ -290,7 +290,7 @@ projects:
     - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     - com.novocode:junit-interface:0.11
-    - com.oracle.database.jdbc:ojdbc11:23.5.0.24.07
+    - com.oracle.database.jdbc:ojdbc11:23.6.0.24.10
     - junit:junit:4.13.2
     dependsOn: foundations-jdbc-dsl
     isTestProject: true
@@ -305,7 +305,7 @@ projects:
     - com.fasterxml.jackson.core:jackson-databind:2.17.2
     - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
-    - com.oracle.database.jdbc:ojdbc11:23.5.0.24.07
+    - com.oracle.database.jdbc:ojdbc11:23.6.0.24.10
     - org.scalatest::scalatest:3.2.18
     dependsOn: foundations-jdbc-dsl-scala
     extends: template-scala-3
@@ -318,7 +318,7 @@ projects:
     - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
     - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
     - com.novocode:junit-interface:0.11
-    - com.oracle.database.jdbc:ojdbc11:23.5.0.24.07
+    - com.oracle.database.jdbc:ojdbc11:23.6.0.24.10
     - junit:junit:4.13.2
     - org.scalatest::scalatest:3.2.18
     dependsOn: foundations-jdbc-dsl-scala

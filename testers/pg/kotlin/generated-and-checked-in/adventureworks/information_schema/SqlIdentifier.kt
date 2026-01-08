@@ -14,7 +14,7 @@ import dev.typr.foundations.kotlin.Bijection
 /** Domain `information_schema.sql_identifier`
   * No constraint
   */
-data class SqlIdentifier(@JsonValue val value: String) {
+data class SqlIdentifier(@field:JsonValue val value: String) {
   companion object {
     val bijection: Bijection<SqlIdentifier, String> =
       Bijection.of(SqlIdentifier::value, ::SqlIdentifier)

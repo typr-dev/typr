@@ -163,5 +163,93 @@ FROM customers c
 INNER JOIN orders o ON c.customer_id = o.customer_id;
 GO
 
+-- ============================================================================
+-- PRECISION TYPES TEST TABLES
+-- These tables are used to test precision wrapper type generation.
+-- The enablePreciseTypes selector should only include these tables.
+-- ============================================================================
+
+-- Precision types test table with all NOT NULL columns
+CREATE TABLE precision_types (
+    id                INT IDENTITY(1,1) PRIMARY KEY,
+    -- String precision types (non-unicode)
+    string10          VARCHAR(10)       NOT NULL,
+    string20          VARCHAR(20)       NOT NULL,
+    string50          VARCHAR(50)       NOT NULL,
+    string100         VARCHAR(100)      NOT NULL,
+    string255         VARCHAR(255)      NOT NULL,
+    -- String precision types (unicode)
+    nstring10         NVARCHAR(10)      NOT NULL,
+    nstring50         NVARCHAR(50)      NOT NULL,
+    nstring255        NVARCHAR(255)     NOT NULL,
+    -- Fixed char
+    char10            CHAR(10)          NOT NULL,
+    nchar10           NCHAR(10)         NOT NULL,
+    -- Decimal precision types
+    decimal5_2        DECIMAL(5,2)      NOT NULL,
+    decimal10_2       DECIMAL(10,2)     NOT NULL,
+    decimal18_4       DECIMAL(18,4)     NOT NULL,
+    -- Numeric precision types
+    numeric8_2        NUMERIC(8,2)      NOT NULL,
+    numeric12_4       NUMERIC(12,4)     NOT NULL,
+    -- Binary precision types
+    binary10          BINARY(10)        NOT NULL,
+    binary32          BINARY(32)        NOT NULL,
+    -- Time precision types
+    time0             TIME(0)           NOT NULL,
+    time3             TIME(3)           NOT NULL,
+    time7             TIME(7)           NOT NULL,
+    -- Datetime2 precision types
+    datetime2_0       DATETIME2(0)      NOT NULL,
+    datetime2_3       DATETIME2(3)      NOT NULL,
+    datetime2_7       DATETIME2(7)      NOT NULL,
+    -- DatetimeOffset precision types
+    dto0              DATETIMEOFFSET(0) NOT NULL,
+    dto3              DATETIMEOFFSET(3) NOT NULL,
+    dto7              DATETIMEOFFSET(7) NOT NULL
+);
+GO
+
+-- Precision types test table with all NULLABLE columns
+CREATE TABLE precision_types_null (
+    id                INT IDENTITY(1,1) PRIMARY KEY,
+    -- String precision types (non-unicode)
+    string10          VARCHAR(10)       NULL,
+    string20          VARCHAR(20)       NULL,
+    string50          VARCHAR(50)       NULL,
+    string100         VARCHAR(100)      NULL,
+    string255         VARCHAR(255)      NULL,
+    -- String precision types (unicode)
+    nstring10         NVARCHAR(10)      NULL,
+    nstring50         NVARCHAR(50)      NULL,
+    nstring255        NVARCHAR(255)     NULL,
+    -- Fixed char
+    char10            CHAR(10)          NULL,
+    nchar10           NCHAR(10)         NULL,
+    -- Decimal precision types
+    decimal5_2        DECIMAL(5,2)      NULL,
+    decimal10_2       DECIMAL(10,2)     NULL,
+    decimal18_4       DECIMAL(18,4)     NULL,
+    -- Numeric precision types
+    numeric8_2        NUMERIC(8,2)      NULL,
+    numeric12_4       NUMERIC(12,4)     NULL,
+    -- Binary precision types
+    binary10          BINARY(10)        NULL,
+    binary32          BINARY(32)        NULL,
+    -- Time precision types
+    time0             TIME(0)           NULL,
+    time3             TIME(3)           NULL,
+    time7             TIME(7)           NULL,
+    -- Datetime2 precision types
+    datetime2_0       DATETIME2(0)      NULL,
+    datetime2_3       DATETIME2(3)      NULL,
+    datetime2_7       DATETIME2(7)      NULL,
+    -- DatetimeOffset precision types
+    dto0              DATETIMEOFFSET(0) NULL,
+    dto3              DATETIMEOFFSET(3) NULL,
+    dto7              DATETIMEOFFSET(7) NULL
+);
+GO
+
 PRINT 'SQL Server test schema created successfully!';
 GO

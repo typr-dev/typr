@@ -17,14 +17,14 @@ import java.time.LocalDate
 
 /** SQL file: orders_by_customer.sql */
 data class OrdersByCustomerSqlRow(
-  @JsonProperty("order_id") val orderId: Int,
-  @JsonProperty("order_date") val orderDate: LocalDate,
-  @JsonProperty("total_amount") val totalAmount: BigDecimal?,
+  @field:JsonProperty("order_id") val orderId: Int,
+  @field:JsonProperty("order_date") val orderDate: LocalDate,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   val status: String?,
-  @JsonProperty("item_number") val itemNumber: Int,
-  @JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("item_number") val itemNumber: Int,
+  @field:JsonProperty("product_name") val productName: String,
   val quantity: Int,
-  @JsonProperty("unit_price") val unitPrice: BigDecimal
+  @field:JsonProperty("unit_price") val unitPrice: BigDecimal
 ) : Tuple8<Int, LocalDate, BigDecimal?, String?, Int, String, Int, BigDecimal> {
   override fun _1(): Int = orderId
 

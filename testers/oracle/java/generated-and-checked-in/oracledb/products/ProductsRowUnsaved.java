@@ -18,7 +18,7 @@ public record ProductsRowUnsaved(
     @JsonProperty("NAME") String name,
     @JsonProperty("PRICE") MoneyT price,
     @JsonProperty("TAGS") Optional<TagVarrayT> tags,
-    /** Default: "TYPR"."ISEQ$$_72846".nextval */
+    /** Default: "TYPR"."ISEQ$$_72853".nextval */
     @JsonProperty("PRODUCT_ID") Defaulted<ProductsId> productId) {
   public ProductsRowUnsaved(
       @JsonProperty("SKU") String sku,
@@ -48,7 +48,7 @@ public record ProductsRowUnsaved(
   }
   ;
 
-  /** Default: "TYPR"."ISEQ$$_72846".nextval */
+  /** Default: "TYPR"."ISEQ$$_72853".nextval */
   public ProductsRowUnsaved withProductId(Defaulted<ProductsId> productId) {
     return new ProductsRowUnsaved(sku, name, price, tags, productId);
   }

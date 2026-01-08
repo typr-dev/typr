@@ -82,6 +82,42 @@ class Naming(val pkg: jvm.QIdent, lang: Lang) {
     pkg / jvm.Ident(name + "Set")
   }
 
+  private val preciseTypesPackage: jvm.QIdent = pkg / jvm.Ident("precisetypes")
+
+  def preciseStringNName(maxLength: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"String$maxLength")
+
+  def precisePaddedStringNName(length: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"PaddedString$length")
+
+  def preciseNonEmptyPaddedStringNName(length: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"NonEmptyPaddedString$length")
+
+  def preciseNonEmptyStringName: jvm.QIdent =
+    preciseTypesPackage / jvm.Ident("NonEmptyString")
+
+  def preciseNonEmptyStringNName(maxLength: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"NonEmptyString$maxLength")
+
+  def preciseBinaryNName(maxLength: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"Binary$maxLength")
+
+  def preciseDecimalNName(precision: Int, scale: Int): jvm.QIdent =
+    if (scale == 0) preciseTypesPackage / jvm.Ident(s"Int$precision")
+    else preciseTypesPackage / jvm.Ident(s"Decimal${precision}_$scale")
+
+  def preciseLocalDateTimeNName(fsp: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"LocalDateTime$fsp")
+
+  def preciseInstantNName(fsp: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"Instant$fsp")
+
+  def preciseLocalTimeNName(fsp: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"LocalTime$fsp")
+
+  def preciseOffsetDateTimeNName(fsp: Int): jvm.QIdent =
+    preciseTypesPackage / jvm.Ident(s"OffsetDateTime$fsp")
+
   def enumValue(name: String): jvm.Ident = jvm.Ident(name)
 
   // field names

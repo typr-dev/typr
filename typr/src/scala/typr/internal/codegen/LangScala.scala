@@ -367,12 +367,13 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
         ).flatten.mkCode("")
       case cls: jvm.Adt.Record =>
         val (extends_, implements) = (cls.isWrapper, cls.`extends`.toList ++ cls.implements) match {
-          case (true, types) => (Some(TypesScala.AnyVal), types)
-          case (_, types)    => (types.headOption, types.drop(1))
+          case (true, Nil) => (Some(TypesScala.AnyVal), Nil)
+          case (_, types)  => (types.headOption, types.drop(1))
         }
         // Combine class annotations and constructor annotations (for Scala, put them before case class)
         val allAnnotations = cls.annotations ++ cls.constructorAnnotations
         val annotationsCode = if (allAnnotations.isEmpty) None else Some(renderAnnotations(allAnnotations))
+        val privateModifier = if (cls.privateConstructor) " private" else ""
         val prefix = List[Option[jvm.Code]](
           annotationsCode,
           renderComments(cls.comments),
@@ -381,7 +382,8 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
           cls.tparams match {
             case Nil      => None
             case nonEmpty => Some(renderTparams(nonEmpty, ctx))
-          }
+          },
+          Some(code"$privateModifier")
         ).flatten.mkCode("")
 
         List[Option[jvm.Code]](
@@ -691,6 +693,10 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
   override def newByteArray(size: jvm.Code): jvm.Code =
     code"${TypesScala.Array}.ofDim[${TypesScala.Byte}]($size)"
 
+  // Scala: arr.length
+  override def byteArrayLength(arr: jvm.Code): jvm.Code =
+    code"$arr.length"
+
   // Scala: Array[Byte]
   override val ByteArrayType: jvm.Type = jvm.Type.ArrayOf(TypesScala.Byte)
 
@@ -733,6 +739,8 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
 
   override def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code =
     code"($left != $right)"
+
+  override def needsExplicitNullCheck: Boolean = false
 
   override def toShort(expr: jvm.Code): jvm.Code = code"$expr.toShort"
 

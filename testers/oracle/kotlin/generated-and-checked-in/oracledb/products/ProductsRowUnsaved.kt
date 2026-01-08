@@ -13,12 +13,12 @@ import oracledb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `PRODUCTS` which has not been persisted yet */
 data class ProductsRowUnsaved(
-  @JsonProperty("SKU") val sku: String,
-  @JsonProperty("NAME") val name: String,
-  @JsonProperty("PRICE") val price: MoneyT,
-  @JsonProperty("TAGS") val tags: TagVarrayT? = null,
-  /** Default: "TYPR"."ISEQ$$_72846".nextval */
-  @JsonProperty("PRODUCT_ID") val productId: Defaulted<ProductsId> = UseDefault()
+  @field:JsonProperty("SKU") val sku: String,
+  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("PRICE") val price: MoneyT,
+  @field:JsonProperty("TAGS") val tags: TagVarrayT? = null,
+  /** Default: "TYPR"."ISEQ$$_72853".nextval */
+  @field:JsonProperty("PRODUCT_ID") val productId: Defaulted<ProductsId> = UseDefault()
 ) {
   fun toRow(productIdDefault: () -> ProductsId): ProductsRow = ProductsRow(productId = productId.getOrElse(productIdDefault), sku = sku, name = name, price = price, tags = tags)
 }

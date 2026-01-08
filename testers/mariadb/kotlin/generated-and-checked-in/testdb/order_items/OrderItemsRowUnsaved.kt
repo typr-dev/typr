@@ -19,37 +19,37 @@ data class OrderItemsRowUnsaved(
   /** 
     * Points to [testdb.orders.OrdersRow.orderId]
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
   val sku: String,
   /**  */
-  @JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: String,
   /**  */
   val quantity: Uint2,
   /**  */
-  @JsonProperty("unit_price") val unitPrice: BigDecimal,
+  @field:JsonProperty("unit_price") val unitPrice: BigDecimal,
   /**  */
-  @JsonProperty("line_total") val lineTotal: BigDecimal,
+  @field:JsonProperty("line_total") val lineTotal: BigDecimal,
   /** Default: 0.0000
 
     */
-  @JsonProperty("discount_amount") val discountAmount: Defaulted<BigDecimal> = UseDefault(),
+  @field:JsonProperty("discount_amount") val discountAmount: Defaulted<BigDecimal> = UseDefault(),
   /** Default: 0.0000
 
     */
-  @JsonProperty("tax_amount") val taxAmount: Defaulted<BigDecimal> = UseDefault(),
+  @field:JsonProperty("tax_amount") val taxAmount: Defaulted<BigDecimal> = UseDefault(),
   /** Default: 'pending'
 
     */
-  @JsonProperty("fulfillment_status") val fulfillmentStatus: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("fulfillment_status") val fulfillmentStatus: Defaulted<String> = UseDefault(),
   /** Default: NULL
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
     */
-  @JsonProperty("warehouse_id") val warehouseId: Defaulted<WarehousesId?> = UseDefault(),
+  @field:JsonProperty("warehouse_id") val warehouseId: Defaulted<WarehousesId?> = UseDefault(),
   /** Default: NULL
 
     */

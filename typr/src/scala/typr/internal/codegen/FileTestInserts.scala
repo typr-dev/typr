@@ -13,6 +13,7 @@ object FileTestInserts {
       annotations = Nil,
       constructorAnnotations = Nil,
       isWrapper = false,
+      privateConstructor = false,
       comments = scaladoc(List(s"Methods to generate random data for `${x.tpe.name}`")),
       name = x.tpe,
       tparams = Nil,

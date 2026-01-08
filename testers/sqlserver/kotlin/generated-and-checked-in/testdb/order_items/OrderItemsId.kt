@@ -11,7 +11,7 @@ import dev.typr.foundations.kotlin.Bijection
 import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** Type for the primary key of table `order_items` */
-data class OrderItemsId(@JsonValue val value: Int) {
+data class OrderItemsId(@field:JsonValue val value: Int) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

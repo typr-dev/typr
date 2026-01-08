@@ -17,14 +17,14 @@ import oracledb.customtypes.Defaulted;
 
 /** Table: PRODUCTS Primary key: PRODUCT_ID */
 public record ProductsRow(
-    /** Default: "TYPR"."ISEQ$$_72846".nextval */
+    /** Default: "TYPR"."ISEQ$$_72853".nextval */
     @JsonProperty("PRODUCT_ID") ProductsId productId,
     @JsonProperty("SKU") String sku,
     @JsonProperty("NAME") String name,
     @JsonProperty("PRICE") MoneyT price,
     @JsonProperty("TAGS") Optional<TagVarrayT> tags)
     implements Tuple5<ProductsId, String, String, MoneyT, Optional<TagVarrayT>> {
-  /** Default: "TYPR"."ISEQ$$_72846".nextval */
+  /** Default: "TYPR"."ISEQ$$_72853".nextval */
   public ProductsRow withProductId(ProductsId productId) {
     return new ProductsRow(productId, sku, name, price, tags);
   }

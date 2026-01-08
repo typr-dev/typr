@@ -19,7 +19,7 @@ import testdb.products.ProductsId
 /** SQL file: product_details_with_sales.sql */
 data class ProductDetailsWithSalesSqlRow(
   /** Points to [testdb.products.ProductsRow.productId] */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.products.ProductsRow.sku] */
   val sku: String,
   /** Points to [testdb.products.ProductsRow.name] */
@@ -29,11 +29,11 @@ data class ProductDetailsWithSalesSqlRow(
   /** Points to [testdb.products.ProductsRow.metadata] */
   val metadata: Json?,
   /** Points to [testdb.order_items.OrderItemsRow.orderId] */
-  @JsonProperty("times_ordered") val timesOrdered: Long?,
+  @field:JsonProperty("times_ordered") val timesOrdered: Long?,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
-  @JsonProperty("total_quantity_sold") val totalQuantitySold: Long?,
+  @field:JsonProperty("total_quantity_sold") val totalQuantitySold: Long?,
   /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
-  @JsonProperty("total_revenue") val totalRevenue: Double?,
+  @field:JsonProperty("total_revenue") val totalRevenue: Double?,
   /** Points to [testdb.order_items.OrderItemsRow.orderId] */
   val popularity: String?
 ) : Tuple9<ProductsId, String, String, BigDecimal, Json?, Long?, Long?, Double?, String?> {

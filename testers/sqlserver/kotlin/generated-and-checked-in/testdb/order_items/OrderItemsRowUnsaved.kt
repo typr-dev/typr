@@ -13,9 +13,9 @@ import testdb.products.ProductsId
 /** This class corresponds to a row in table `order_items` which has not been persisted yet */
 data class OrderItemsRowUnsaved(
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** Points to [testdb.products.ProductsRow.productId] */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   val quantity: Int,
   val price: BigDecimal
 ) {

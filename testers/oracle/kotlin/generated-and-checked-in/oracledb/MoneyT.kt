@@ -14,8 +14,8 @@ import java.math.BigDecimal
 
 /** Oracle Object Type: MONEY_T */
 data class MoneyT(
-  @JsonProperty("AMOUNT") val amount: BigDecimal,
-  @JsonProperty("CURRENCY") val currency: String
+  @field:JsonProperty("AMOUNT") val amount: BigDecimal,
+  @field:JsonProperty("CURRENCY") val currency: String
 ) {
   companion object {
     val oracleType: OracleType<MoneyT> = OracleObject.builder<MoneyT>("MONEY_T").addAttribute("AMOUNT", KotlinDbTypes.OracleTypes.number, MoneyT::amount).addAttribute("CURRENCY", OracleTypes.char_, MoneyT::currency).build({ attrs -> MoneyT((attrs[0] as BigDecimal), (attrs[1] as String)) }).asType()

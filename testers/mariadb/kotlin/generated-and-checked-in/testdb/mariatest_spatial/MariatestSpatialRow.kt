@@ -28,21 +28,21 @@ data class MariatestSpatialRow(
     */
   val id: MariatestSpatialId,
   /**  */
-  @JsonProperty("geometry_col") val geometryCol: Geometry,
+  @field:JsonProperty("geometry_col") val geometryCol: Geometry,
   /**  */
-  @JsonProperty("point_col") val pointCol: Point,
+  @field:JsonProperty("point_col") val pointCol: Point,
   /**  */
-  @JsonProperty("linestring_col") val linestringCol: LineString,
+  @field:JsonProperty("linestring_col") val linestringCol: LineString,
   /**  */
-  @JsonProperty("polygon_col") val polygonCol: Polygon,
+  @field:JsonProperty("polygon_col") val polygonCol: Polygon,
   /**  */
-  @JsonProperty("multipoint_col") val multipointCol: MultiPoint,
+  @field:JsonProperty("multipoint_col") val multipointCol: MultiPoint,
   /**  */
-  @JsonProperty("multilinestring_col") val multilinestringCol: MultiLineString,
+  @field:JsonProperty("multilinestring_col") val multilinestringCol: MultiLineString,
   /**  */
-  @JsonProperty("multipolygon_col") val multipolygonCol: MultiPolygon,
+  @field:JsonProperty("multipolygon_col") val multipolygonCol: MultiPolygon,
   /**  */
-  @JsonProperty("geometrycollection_col") val geometrycollectionCol: GeometryCollection
+  @field:JsonProperty("geometrycollection_col") val geometrycollectionCol: GeometryCollection
 ) : Tuple9<MariatestSpatialId, Geometry, Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection> {
   override fun _1(): MariatestSpatialId = id
 

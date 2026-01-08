@@ -71,7 +71,7 @@ data class OrderItemsRepoMock(val map: MutableMap<OrderItemsId, OrderItemsRow> =
     for (id in compositeIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

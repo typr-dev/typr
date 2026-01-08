@@ -13,7 +13,7 @@ import dev.typr.foundations.kotlin.Bijection
 import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** Type for the primary key of table `person.addresstype` */
-data class AddresstypeId(@JsonValue val value: Int) {
+data class AddresstypeId(@field:JsonValue val value: Int) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

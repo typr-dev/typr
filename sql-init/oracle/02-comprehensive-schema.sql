@@ -35,6 +35,105 @@ CREATE OR REPLACE TYPE tag_varray_t AS VARRAY(10) OF VARCHAR2(50);
 CREATE OR REPLACE TYPE email_table_t AS TABLE OF VARCHAR2(100);
 /
 
+-- Phone list VARRAY for testing nested collections in object types
+CREATE OR REPLACE TYPE phone_list AS VARRAY(5) OF VARCHAR2(20);
+/
+
+-- Comprehensive object type that includes all supported Oracle types (except LOBs)
+-- Used for testing object type code generation with various data types
+CREATE OR REPLACE TYPE all_types_struct AS OBJECT (
+    varchar_field VARCHAR2(100),
+    nvarchar_field NVARCHAR2(100),
+    char_field CHAR(10),
+    nchar_field NCHAR(10),
+    number_field NUMBER,
+    number_int_field NUMBER(10),
+    number_long_field NUMBER(19),
+    binary_float_field BINARY_FLOAT,
+    binary_double_field BINARY_DOUBLE,
+    date_field DATE,
+    timestamp_field TIMESTAMP,
+    timestamp_tz_field TIMESTAMP WITH TIME ZONE,
+    timestamp_ltz_field TIMESTAMP WITH LOCAL TIME ZONE,
+    interval_ym_field INTERVAL YEAR TO MONTH,
+    interval_ds_field INTERVAL DAY TO SECOND,
+    nested_object_field address_t,
+    varray_field phone_list
+);
+/
+
+-- Same as all_types_struct but explicitly named for no-LOB scenarios
+CREATE OR REPLACE TYPE all_types_struct_no_lobs AS OBJECT (
+    varchar_field VARCHAR2(100),
+    nvarchar_field NVARCHAR2(100),
+    char_field CHAR(10),
+    nchar_field NCHAR(10),
+    number_field NUMBER,
+    number_int_field NUMBER(10),
+    number_long_field NUMBER(19),
+    binary_float_field BINARY_FLOAT,
+    binary_double_field BINARY_DOUBLE,
+    date_field DATE,
+    timestamp_field TIMESTAMP,
+    timestamp_tz_field TIMESTAMP WITH TIME ZONE,
+    timestamp_ltz_field TIMESTAMP WITH LOCAL TIME ZONE,
+    interval_ym_field INTERVAL YEAR TO MONTH,
+    interval_ds_field INTERVAL DAY TO SECOND,
+    nested_object_field address_t,
+    varray_field phone_list
+);
+/
+
+-- Optional variant (all fields nullable - same structure)
+CREATE OR REPLACE TYPE all_types_struct_optional AS OBJECT (
+    varchar_field VARCHAR2(100),
+    nvarchar_field NVARCHAR2(100),
+    char_field CHAR(10),
+    nchar_field NCHAR(10),
+    number_field NUMBER,
+    number_int_field NUMBER(10),
+    number_long_field NUMBER(19),
+    binary_float_field BINARY_FLOAT,
+    binary_double_field BINARY_DOUBLE,
+    date_field DATE,
+    timestamp_field TIMESTAMP,
+    timestamp_tz_field TIMESTAMP WITH TIME ZONE,
+    timestamp_ltz_field TIMESTAMP WITH LOCAL TIME ZONE,
+    interval_ym_field INTERVAL YEAR TO MONTH,
+    interval_ds_field INTERVAL DAY TO SECOND,
+    nested_object_field address_t,
+    varray_field phone_list
+);
+/
+
+CREATE OR REPLACE TYPE all_types_struct_no_lobs_optional AS OBJECT (
+    varchar_field VARCHAR2(100),
+    nvarchar_field NVARCHAR2(100),
+    char_field CHAR(10),
+    nchar_field NCHAR(10),
+    number_field NUMBER,
+    number_int_field NUMBER(10),
+    number_long_field NUMBER(19),
+    binary_float_field BINARY_FLOAT,
+    binary_double_field BINARY_DOUBLE,
+    date_field DATE,
+    timestamp_field TIMESTAMP,
+    timestamp_tz_field TIMESTAMP WITH TIME ZONE,
+    timestamp_ltz_field TIMESTAMP WITH LOCAL TIME ZONE,
+    interval_ym_field INTERVAL YEAR TO MONTH,
+    interval_ds_field INTERVAL DAY TO SECOND,
+    nested_object_field address_t,
+    varray_field phone_list
+);
+/
+
+-- Array types for collection testing
+CREATE OR REPLACE TYPE all_types_struct_no_lobs_array AS VARRAY(10) OF all_types_struct_no_lobs;
+/
+
+CREATE OR REPLACE TYPE all_types_struct_no_lobs_optional_array AS VARRAY(10) OF all_types_struct_no_lobs_optional;
+/
+
 -- Create tables
 CREATE TABLE all_scalar_types (
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -151,6 +250,83 @@ INSERT INTO employees (emp_number, emp_suffix, dept_code, dept_region, emp_name,
     'US-EAST',
     'Bob Smith',
     money_t(75000, 'USD')
+);
+
+COMMIT;
+
+-- ============================================================================
+-- ALL_TYPES_STRUCT TEST TABLE
+-- Tests comprehensive Oracle object type with all supported data types
+-- ============================================================================
+
+BEGIN EXECUTE IMMEDIATE 'DROP TABLE all_types_test CASCADE CONSTRAINTS'; EXCEPTION WHEN OTHERS THEN NULL; END;
+/
+
+CREATE TABLE all_types_test (
+    id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR2(100) NOT NULL,
+    data all_types_struct_no_lobs,
+    data_array all_types_struct_no_lobs_array
+);
+
+COMMIT;
+
+-- ============================================================================
+-- PRECISION TYPES TEST TABLES
+-- These tables are used to test precision wrapper type generation.
+-- The enablePreciseTypes selector should only include these tables.
+-- ============================================================================
+
+-- Precision types test table with all NOT NULL columns
+CREATE TABLE precision_types (
+    id                NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    -- String precision types
+    string10          VARCHAR2(10)      NOT NULL,
+    string20          VARCHAR2(20)      NOT NULL,
+    string50          VARCHAR2(50)      NOT NULL,
+    string100         VARCHAR2(100)     NOT NULL,
+    string255         VARCHAR2(255)     NOT NULL,
+    -- Fixed char
+    char10            CHAR(10)          NOT NULL,
+    -- Number precision types
+    number5_2         NUMBER(5,2)       NOT NULL,
+    number10_2        NUMBER(10,2)      NOT NULL,
+    number18_4        NUMBER(18,4)      NOT NULL,
+    -- Number with scale 0 (integers)
+    number5_0         NUMBER(5)         NOT NULL,
+    number10_0        NUMBER(10)        NOT NULL,
+    number18_0        NUMBER(18)        NOT NULL,
+    -- Timestamp precision types
+    ts0               TIMESTAMP(0)      NOT NULL,
+    ts3               TIMESTAMP(3)      NOT NULL,
+    ts6               TIMESTAMP(6)      NOT NULL,
+    ts9               TIMESTAMP(9)      NOT NULL
+);
+
+-- Precision types test table with all NULLABLE columns
+CREATE TABLE precision_types_null (
+    id                NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    -- String precision types
+    string10          VARCHAR2(10),
+    string20          VARCHAR2(20),
+    string50          VARCHAR2(50),
+    string100         VARCHAR2(100),
+    string255         VARCHAR2(255),
+    -- Fixed char
+    char10            CHAR(10),
+    -- Number precision types
+    number5_2         NUMBER(5,2),
+    number10_2        NUMBER(10,2),
+    number18_4        NUMBER(18,4),
+    -- Number with scale 0 (integers)
+    number5_0         NUMBER(5),
+    number10_0        NUMBER(10),
+    number18_0        NUMBER(18),
+    -- Timestamp precision types
+    ts0               TIMESTAMP(0),
+    ts3               TIMESTAMP(3),
+    ts6               TIMESTAMP(6),
+    ts9               TIMESTAMP(9)
 );
 
 COMMIT;

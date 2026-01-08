@@ -7,10 +7,113 @@ case class TypeMapperJvmNew(
     nullabilityOverride: NullabilityOverride,
     naming: Naming,
     duckDbStructLookup: Map[db.DuckDbType.StructType, String],
-    mariaSetLookup: Map[List[String], ComputedMariaSet] = Map.empty
+    mariaSetLookup: Map[List[String], ComputedMariaSet] = Map.empty,
+    enablePreciseTypes: Selector = Selector.None
 ) extends TypeMapperJvm(lang, typeOverride, nullabilityOverride) {
 
   override def needsTimestampCasts: Boolean = false
+
+  override def col(relation: db.RelationName, col: db.Col, typeFromFK: Option[jvm.Type]): jvm.Type = {
+    val base = super.col(relation, col, typeFromFK)
+
+    if (!enablePreciseTypes.include(relation)) return base
+    if (typeFromFK.isDefined) return base
+    if (typeOverride(relation, col.name).isDefined) return base
+
+    val maybePrecise = col.tpe match {
+      case db.PgType.VarChar(Some(n)) if n != 2147483647 =>
+        Some(jvm.Type.Qualified(naming.preciseStringNName(n)))
+      case db.PgType.Bpchar(Some(n)) if n != 2147483647 =>
+        Some(jvm.Type.Qualified(naming.precisePaddedStringNName(n)))
+      case db.PgType.Numeric =>
+        None
+      case db.MariaType.VarChar(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseStringNName(n)))
+      case db.MariaType.Char(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.precisePaddedStringNName(n)))
+      case db.MariaType.Decimal(Some(precision), scale) =>
+        Some(jvm.Type.Qualified(naming.preciseDecimalNName(precision, scale.getOrElse(0))))
+      case db.MariaType.DateTime(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseLocalDateTimeNName(fsp)))
+      case db.MariaType.Timestamp(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseLocalDateTimeNName(fsp)))
+      case db.MariaType.Time(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseLocalTimeNName(fsp)))
+      case db.MariaType.Binary(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
+      case db.MariaType.VarBinary(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
+      case db.DuckDbType.VarChar(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseStringNName(n)))
+      case db.DuckDbType.Char(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.precisePaddedStringNName(n)))
+      case db.DuckDbType.Decimal(Some(precision), Some(scale)) =>
+        Some(jvm.Type.Qualified(naming.preciseDecimalNName(precision, scale)))
+      case db.OracleType.Varchar2(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseNonEmptyStringNName(n)))
+      case db.OracleType.NVarchar2(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseNonEmptyStringNName(n)))
+      case db.OracleType.Char(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseNonEmptyPaddedStringNName(n)))
+      case db.OracleType.NChar(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseNonEmptyPaddedStringNName(n)))
+      case db.OracleType.Number(Some(precision), scale) if scale.getOrElse(0) == 0 && precision <= 38 =>
+        Some(jvm.Type.Qualified(naming.preciseDecimalNName(precision, 0)))
+      case db.OracleType.Number(Some(precision), Some(scale)) if scale > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseDecimalNName(precision, scale)))
+      case db.OracleType.Timestamp(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseLocalDateTimeNName(fsp)))
+      case db.OracleType.TimestampWithTimeZone(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseOffsetDateTimeNName(fsp)))
+      case db.OracleType.TimestampWithLocalTimeZone(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseOffsetDateTimeNName(fsp)))
+      case db.OracleType.Raw(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
+      case db.SqlServerType.VarChar(Some(n)) if n != -1 =>
+        Some(jvm.Type.Qualified(naming.preciseStringNName(n)))
+      case db.SqlServerType.Char(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.precisePaddedStringNName(n)))
+      case db.SqlServerType.NVarChar(Some(n)) if n != -1 =>
+        Some(jvm.Type.Qualified(naming.preciseStringNName(n)))
+      case db.SqlServerType.NChar(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.precisePaddedStringNName(n)))
+      case db.SqlServerType.Decimal(Some(precision), Some(scale)) =>
+        Some(jvm.Type.Qualified(naming.preciseDecimalNName(precision, scale)))
+      case db.SqlServerType.Numeric(Some(precision), Some(scale)) =>
+        Some(jvm.Type.Qualified(naming.preciseDecimalNName(precision, scale)))
+      case db.SqlServerType.DateTime2(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseLocalDateTimeNName(fsp)))
+      case db.SqlServerType.DateTimeOffset(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseOffsetDateTimeNName(fsp)))
+      case db.SqlServerType.Time(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseLocalTimeNName(fsp)))
+      case db.SqlServerType.Binary(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
+      case db.SqlServerType.VarBinary(Some(n)) if n != -1 =>
+        Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
+      case db.DB2Type.VarChar(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseStringNName(n)))
+      case db.DB2Type.Char(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.precisePaddedStringNName(n)))
+      case db.DB2Type.Decimal(Some(precision), Some(scale)) =>
+        Some(jvm.Type.Qualified(naming.preciseDecimalNName(precision, scale)))
+      case db.DB2Type.Timestamp(Some(fsp)) if fsp > 0 =>
+        Some(jvm.Type.Qualified(naming.preciseLocalDateTimeNName(fsp)))
+      case db.DB2Type.Binary(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
+      case db.DB2Type.VarBinary(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
+      case _ =>
+        None
+    }
+
+    maybePrecise match {
+      case Some(preciseType) =>
+        withNullability(preciseType, nullabilityOverride.apply(relation, col.name).getOrElse(col.nullability))
+      case None =>
+        base
+    }
+  }
 
   override def baseType(tpe: db.Type): jvm.Type = {
     tpe match {

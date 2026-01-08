@@ -20,23 +20,23 @@ import testdb.customers.CustomersId
 /** SQL file: order_summary_by_customer.sql */
 data class OrderSummaryByCustomerSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  @JsonProperty("customer_name") val customerName: String,
+  @field:JsonProperty("customer_name") val customerName: String,
   /** Points to [testdb.customers.CustomersRow.email] */
   val email: String?,
   /** Points to [testdb.customers.CustomersRow.priority] */
   val priority: Priority?,
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @JsonProperty("order_count") val orderCount: Long?,
+  @field:JsonProperty("order_count") val orderCount: Long?,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
-  @JsonProperty("total_spent") val totalSpent: BigDecimal?,
+  @field:JsonProperty("total_spent") val totalSpent: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.orderDate] */
-  @JsonProperty("last_order_date") val lastOrderDate: LocalDate?,
+  @field:JsonProperty("last_order_date") val lastOrderDate: LocalDate?,
   /** Points to [testdb.orders.OrdersRow.orderDate] */
-  @JsonProperty("first_order_date") val firstOrderDate: LocalDate?,
+  @field:JsonProperty("first_order_date") val firstOrderDate: LocalDate?,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
-  @JsonProperty("avg_order_amount") val avgOrderAmount: Double?
+  @field:JsonProperty("avg_order_amount") val avgOrderAmount: Double?
 ) : Tuple9<CustomersId, String, String?, Priority?, Long?, BigDecimal?, LocalDate?, LocalDate?, Double?> {
   override fun _1(): CustomersId = customerId
 

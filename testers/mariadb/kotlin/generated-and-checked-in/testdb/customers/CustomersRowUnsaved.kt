@@ -18,11 +18,11 @@ data class CustomersRowUnsaved(
   /**  */
   val email: String,
   /**  */
-  @JsonProperty("password_hash") val passwordHash: ByteArray,
+  @field:JsonProperty("password_hash") val passwordHash: ByteArray,
   /**  */
-  @JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("first_name") val firstName: String,
   /**  */
-  @JsonProperty("last_name") val lastName: String,
+  @field:JsonProperty("last_name") val lastName: String,
   /** Default: NULL
 
     */
@@ -42,7 +42,7 @@ data class CustomersRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("marketing_flags") val marketingFlags: Defaulted<EmailMailPushSmsSet?> = UseDefault(),
+  @field:JsonProperty("marketing_flags") val marketingFlags: Defaulted<EmailMailPushSmsSet?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -50,15 +50,15 @@ data class CustomersRowUnsaved(
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("last_login_at") val lastLoginAt: Defaulted<LocalDateTime?> = UseDefault()
+  @field:JsonProperty("last_login_at") val lastLoginAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
     phoneDefault: () -> String?,

@@ -85,7 +85,7 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
     for (id in codes) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

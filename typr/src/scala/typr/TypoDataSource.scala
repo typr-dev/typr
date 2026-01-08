@@ -49,7 +49,7 @@ object TypoDataSource {
 
   /** Create a TypoDataSource for Oracle */
   def hikariOracle(server: String, port: Int, serviceName: String, username: String, password: String): TypoDataSource = {
-    val config = OracleConfig.builder(server, port, serviceName, username, password).build()
+    val config = OracleConfig.builder(server, port, serviceName, username, password).serviceName(serviceName).build()
     val pooled = HikariDataSourceFactory.create(config)
     TypoDataSource(pooled.unwrap(), DbType.Oracle)
   }

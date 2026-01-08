@@ -13,14 +13,14 @@ import testdb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `employees` which has not been persisted yet */
 data class EmployeesRowUnsaved(
-  @JsonProperty("emp_number") val empNumber: Int,
-  @JsonProperty("emp_suffix") val empSuffix: String,
-  @JsonProperty("dept_code") val deptCode: String,
-  @JsonProperty("dept_region") val deptRegion: String,
-  @JsonProperty("emp_name") val empName: String,
+  @field:JsonProperty("emp_number") val empNumber: Int,
+  @field:JsonProperty("emp_suffix") val empSuffix: String,
+  @field:JsonProperty("dept_code") val deptCode: String,
+  @field:JsonProperty("dept_region") val deptRegion: String,
+  @field:JsonProperty("emp_name") val empName: String,
   val salary: BigDecimal? = null,
   /** Default: current_date */
-  @JsonProperty("hire_date") val hireDate: Defaulted<LocalDate> = UseDefault()
+  @field:JsonProperty("hire_date") val hireDate: Defaulted<LocalDate> = UseDefault()
 ) {
   fun toRow(hireDateDefault: () -> LocalDate): EmployeesRow = EmployeesRow(empNumber = empNumber, empSuffix = empSuffix, deptCode = deptCode, deptRegion = deptRegion, empName = empName, salary = salary, hireDate = hireDate.getOrElse(hireDateDefault))
 }

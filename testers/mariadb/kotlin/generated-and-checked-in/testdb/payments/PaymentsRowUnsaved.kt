@@ -20,21 +20,21 @@ data class PaymentsRowUnsaved(
   /** 
     * Points to [testdb.orders.OrdersRow.orderId]
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** 
     * Points to [testdb.payment_methods.PaymentMethodsRow.methodId]
     */
-  @JsonProperty("method_id") val methodId: PaymentMethodsId,
+  @field:JsonProperty("method_id") val methodId: PaymentMethodsId,
   /**  */
   val amount: BigDecimal,
   /** Default: NULL
 
     */
-  @JsonProperty("transaction_id") val transactionId: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("transaction_id") val transactionId: Defaulted<String?> = UseDefault(),
   /** Default: 'USD'
 
     */
-  @JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
   /** Default: 'pending'
 
     */
@@ -42,23 +42,23 @@ data class PaymentsRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("processor_response") val processorResponse: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("processor_response") val processorResponse: Defaulted<Json?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("error_message") val errorMessage: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("error_message") val errorMessage: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("ip_address") val ipAddress: Defaulted<Inet6?> = UseDefault(),
+  @field:JsonProperty("ip_address") val ipAddress: Defaulted<Inet6?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("processed_at") val processedAt: Defaulted<LocalDateTime?> = UseDefault()
+  @field:JsonProperty("processed_at") val processedAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
     transactionIdDefault: () -> String?,

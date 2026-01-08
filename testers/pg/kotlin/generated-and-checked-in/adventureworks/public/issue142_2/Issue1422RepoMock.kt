@@ -86,7 +86,7 @@ data class Issue1422RepoMock(val map: MutableMap<Issue142Id, Issue1422Row> = mut
     for (id in tabellkodes) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

@@ -18,15 +18,15 @@ import testdb.customers.CustomersId
 /** SQL file: subquery_test.sql */
 data class SubqueryTestSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.email] */
   val email: String,
   /** Points to [testdb.customers.CustomersRow.firstName] */
-  @JsonProperty("first_name") val firstName: String,
-  @JsonProperty("order_count") val orderCount: Long,
-  @JsonProperty("total_spent") val totalSpent: BigDecimal,
+  @field:JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("order_count") val orderCount: Long,
+  @field:JsonProperty("total_spent") val totalSpent: BigDecimal,
   /** Points to [testdb.brands.BrandsRow.name] */
-  @JsonProperty("favorite_brand") val favoriteBrand: String?
+  @field:JsonProperty("favorite_brand") val favoriteBrand: String?
 ) : Tuple6<CustomersId, String, String, Long, BigDecimal, String?> {
   override fun _1(): CustomersId = customerId
 

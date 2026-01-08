@@ -23,33 +23,33 @@ data class ProductImagesRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("image_id") val imageId: ProductImagesId,
+  @field:JsonProperty("image_id") val imageId: ProductImagesId,
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
-  @JsonProperty("image_url") val imageUrl: String,
+  @field:JsonProperty("image_url") val imageUrl: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("thumbnail_url") val thumbnailUrl: String?,
+  @field:JsonProperty("thumbnail_url") val thumbnailUrl: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("alt_text") val altText: String?,
+  @field:JsonProperty("alt_text") val altText: String?,
   /** 
     * Default: 0
     */
-  @JsonProperty("sort_order") val sortOrder: Uint1,
+  @field:JsonProperty("sort_order") val sortOrder: Uint1,
   /** 
     * Default: 0
     */
-  @JsonProperty("is_primary") val isPrimary: Boolean,
+  @field:JsonProperty("is_primary") val isPrimary: Boolean,
   /** Optional embedded image data
     * Default: NULL
     */
-  @JsonProperty("image_data") val imageData: ByteArray?
+  @field:JsonProperty("image_data") val imageData: ByteArray?
 ) : Tuple8<ProductImagesId, ProductsId, String, String?, String?, Uint1, Boolean, ByteArray?> {
   override fun _1(): ProductImagesId = imageId
 

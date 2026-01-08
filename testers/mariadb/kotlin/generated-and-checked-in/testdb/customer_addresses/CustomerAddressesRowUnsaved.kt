@@ -17,31 +17,31 @@ data class CustomerAddressesRowUnsaved(
   /** 
     * Points to [testdb.customers.CustomersRow.customerId]
     */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /**  */
-  @JsonProperty("address_type") val addressType: String,
+  @field:JsonProperty("address_type") val addressType: String,
   /**  */
-  @JsonProperty("recipient_name") val recipientName: String,
+  @field:JsonProperty("recipient_name") val recipientName: String,
   /**  */
-  @JsonProperty("street_line1") val streetLine1: String,
+  @field:JsonProperty("street_line1") val streetLine1: String,
   /**  */
   val city: String,
   /**  */
-  @JsonProperty("postal_code") val postalCode: String,
+  @field:JsonProperty("postal_code") val postalCode: String,
   /**  */
-  @JsonProperty("country_code") val countryCode: String,
+  @field:JsonProperty("country_code") val countryCode: String,
   /** Default: 0
 
     */
-  @JsonProperty("is_default") val isDefault: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_default") val isDefault: Defaulted<Boolean> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("street_line2") val streetLine2: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("street_line2") val streetLine2: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("state_province") val stateProvince: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("state_province") val stateProvince: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -49,11 +49,11 @@ data class CustomerAddressesRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("delivery_notes") val deliveryNotes: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("delivery_notes") val deliveryNotes: Defaulted<String?> = UseDefault(),
   /** Default: current_timestamp()
 
     */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
     isDefaultDefault: () -> Boolean,

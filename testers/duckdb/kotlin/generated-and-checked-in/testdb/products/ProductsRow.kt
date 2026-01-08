@@ -18,7 +18,7 @@ import java.math.BigDecimal
   * Primary key: product_id
   */
 data class ProductsRow(
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   val sku: String,
   val name: String,
   val price: BigDecimal,

@@ -19,7 +19,7 @@ import oracledb.customtypes.Defaulted
  * Primary key: ID
  */
 case class AllScalarTypesRow(
-  /** Default: "TYPR"."ISEQ$$_72838".nextval */
+  /** Default: "TYPR"."ISEQ$$_72845".nextval */
   @JsonProperty("ID") id: AllScalarTypesId,
   @JsonProperty("COL_VARCHAR2") colVarchar2: Option[String],
   @JsonProperty("COL_NUMBER") colNumber: Option[BigDecimal],

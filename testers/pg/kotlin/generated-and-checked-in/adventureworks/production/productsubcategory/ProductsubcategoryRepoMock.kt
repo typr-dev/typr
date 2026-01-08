@@ -109,7 +109,7 @@ data class ProductsubcategoryRepoMock(
     for (id in productsubcategoryids) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

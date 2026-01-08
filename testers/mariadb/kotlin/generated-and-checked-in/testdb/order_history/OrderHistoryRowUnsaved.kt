@@ -17,21 +17,21 @@ data class OrderHistoryRowUnsaved(
   /** 
     * Points to [testdb.orders.OrdersRow.orderId]
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /**  */
-  @JsonProperty("new_status") val newStatus: String,
+  @field:JsonProperty("new_status") val newStatus: String,
   /** Default: NULL
 
     */
-  @JsonProperty("previous_status") val previousStatus: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("previous_status") val previousStatus: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("changed_by") val changedBy: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("changed_by") val changedBy: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("change_reason") val changeReason: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("change_reason") val changeReason: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -39,7 +39,7 @@ data class OrderHistoryRowUnsaved(
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
     previousStatusDefault: () -> String?,

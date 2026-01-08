@@ -17,12 +17,12 @@ import java.time.LocalDate
 
 /** View: customer_orders */
 data class CustomerOrdersViewRow(
-  @JsonProperty("customer_id") val customerId: Int?,
-  @JsonProperty("customer_name") val customerName: String?,
+  @field:JsonProperty("customer_id") val customerId: Int?,
+  @field:JsonProperty("customer_name") val customerName: String?,
   val email: String?,
-  @JsonProperty("order_id") val orderId: Int?,
-  @JsonProperty("order_date") val orderDate: LocalDate?,
-  @JsonProperty("total_amount") val totalAmount: BigDecimal?,
+  @field:JsonProperty("order_id") val orderId: Int?,
+  @field:JsonProperty("order_date") val orderDate: LocalDate?,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   val status: String?
 ) : Tuple7<Int?, String?, String?, Int?, LocalDate?, BigDecimal?, String?> {
   override fun _1(): Int? = customerId

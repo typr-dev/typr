@@ -79,7 +79,7 @@ data class CustomerAddressesRepoMock(
     for (id in addressIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

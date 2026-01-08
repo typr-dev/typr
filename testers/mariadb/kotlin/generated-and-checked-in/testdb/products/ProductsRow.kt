@@ -26,38 +26,38 @@ data class ProductsRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
   val sku: String,
   /** 
     * Default: NULL
     * Points to [testdb.brands.BrandsRow.brandId]
     */
-  @JsonProperty("brand_id") val brandId: BrandsId?,
+  @field:JsonProperty("brand_id") val brandId: BrandsId?,
   /**  */
   val name: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("short_description") val shortDescription: String?,
+  @field:JsonProperty("short_description") val shortDescription: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("full_description") val fullDescription: String?,
+  @field:JsonProperty("full_description") val fullDescription: String?,
   /**  */
-  @JsonProperty("base_price") val basePrice: BigDecimal,
+  @field:JsonProperty("base_price") val basePrice: BigDecimal,
   /** 
     * Default: NULL
     */
-  @JsonProperty("cost_price") val costPrice: BigDecimal?,
+  @field:JsonProperty("cost_price") val costPrice: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("weight_kg") val weightKg: BigDecimal?,
+  @field:JsonProperty("weight_kg") val weightKg: BigDecimal?,
   /** length, width, height in cm
     * Default: NULL
     */
-  @JsonProperty("dimensions_json") val dimensionsJson: Json?,
+  @field:JsonProperty("dimensions_json") val dimensionsJson: Json?,
   /** 
     * Default: 'draft'
     */
@@ -65,7 +65,7 @@ data class ProductsRow(
   /** 
     * Default: 'standard'
     */
-  @JsonProperty("tax_class") val taxClass: String,
+  @field:JsonProperty("tax_class") val taxClass: String,
   /** 
     * Default: NULL
     */
@@ -77,19 +77,19 @@ data class ProductsRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("seo_metadata") val seoMetadata: Json?,
+  @field:JsonProperty("seo_metadata") val seoMetadata: Json?,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("created_at") val createdAt: LocalDateTime,
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("updated_at") val updatedAt: LocalDateTime,
+  @field:JsonProperty("updated_at") val updatedAt: LocalDateTime,
   /** 
     * Default: NULL
     */
-  @JsonProperty("published_at") val publishedAt: LocalDateTime?
+  @field:JsonProperty("published_at") val publishedAt: LocalDateTime?
 ) : Tuple18<ProductsId, String, BrandsId?, String, String?, String?, BigDecimal, BigDecimal?, BigDecimal?, Json?, String, String, BestsellerClearanceFSet?, Json?, Json?, LocalDateTime, LocalDateTime, LocalDateTime?> {
   override fun _1(): ProductsId = productId
 

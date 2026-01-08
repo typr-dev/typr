@@ -13,11 +13,11 @@ import testdb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 data class OrdersRowUnsaved(
-  @JsonProperty("order_id") val orderId: OrdersId,
-  @JsonProperty("customer_id") val customerId: Int,
-  @JsonProperty("total_amount") val totalAmount: BigDecimal? = null,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("customer_id") val customerId: Int,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal? = null,
   /** Default: current_date */
-  @JsonProperty("order_date") val orderDate: Defaulted<LocalDate> = UseDefault(),
+  @field:JsonProperty("order_date") val orderDate: Defaulted<LocalDate> = UseDefault(),
   /** Default: 'pending' */
   val status: Defaulted<String?> = UseDefault()
 ) {

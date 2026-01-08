@@ -14,8 +14,8 @@ import testdb.orders.OrdersId
 
 /** Type for the composite primary key of table `ORDER_ITEMS` */
 data class OrderItemsId(
-  @JsonProperty("ORDER_ID") val orderId: OrdersId,
-  @JsonProperty("ITEM_NUMBER") val itemNumber: Int
+  @field:JsonProperty("ORDER_ID") val orderId: OrdersId,
+  @field:JsonProperty("ITEM_NUMBER") val itemNumber: Int
 ) : Tuple2<OrdersId, Int> {
   override fun _1(): OrdersId = orderId
 

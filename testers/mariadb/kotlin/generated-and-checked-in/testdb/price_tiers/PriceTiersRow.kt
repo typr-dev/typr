@@ -22,17 +22,17 @@ data class PriceTiersRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("tier_id") val tierId: PriceTiersId,
+  @field:JsonProperty("tier_id") val tierId: PriceTiersId,
   /**  */
   val name: String,
   /** 
     * Default: 1
     */
-  @JsonProperty("min_quantity") val minQuantity: Uint4,
+  @field:JsonProperty("min_quantity") val minQuantity: Uint4,
   /**  */
-  @JsonProperty("discount_type") val discountType: String,
+  @field:JsonProperty("discount_type") val discountType: String,
   /**  */
-  @JsonProperty("discount_value") val discountValue: BigDecimal
+  @field:JsonProperty("discount_value") val discountValue: BigDecimal
 ) : Tuple5<PriceTiersId, String, Uint4, String, BigDecimal> {
   override fun _1(): PriceTiersId = tierId
 

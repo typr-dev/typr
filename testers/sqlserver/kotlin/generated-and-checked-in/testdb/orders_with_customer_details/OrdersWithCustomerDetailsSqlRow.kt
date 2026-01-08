@@ -20,17 +20,17 @@ import testdb.orders.OrdersId
 /** SQL file: orders-with-customer-details.sql */
 data class OrdersWithCustomerDetailsSqlRow(
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** Points to [testdb.orders.OrdersRow.orderDate] */
-  @JsonProperty("order_date") val orderDate: LocalDateTime?,
+  @field:JsonProperty("order_date") val orderDate: LocalDateTime?,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
-  @JsonProperty("total_amount") val totalAmount: BigDecimal,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal,
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  @JsonProperty("customer_name") val customerName: String,
+  @field:JsonProperty("customer_name") val customerName: String,
   /** Points to [testdb.customers.CustomersRow.email] */
-  @JsonProperty("customer_email") val customerEmail: String
+  @field:JsonProperty("customer_email") val customerEmail: String
 ) : Tuple6<OrdersId, LocalDateTime?, BigDecimal, CustomersId, String, String> {
   override fun _1(): OrdersId = orderId
 

@@ -14,7 +14,7 @@ import dev.typr.foundations.kotlin.RowParsers
 import java.math.BigDecimal
 
 /** Type for the primary key of table `ALL_SCALAR_TYPES` */
-data class AllScalarTypesId(@JsonValue val value: BigDecimal) {
+data class AllScalarTypesId(@field:JsonValue val value: BigDecimal) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

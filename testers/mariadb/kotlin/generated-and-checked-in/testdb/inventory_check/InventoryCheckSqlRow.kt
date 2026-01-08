@@ -19,29 +19,29 @@ import testdb.warehouses.WarehousesId
 /** SQL file: inventory_check.sql */
 data class InventoryCheckSqlRow(
   /** Points to [testdb.inventory.InventoryRow.inventoryId] */
-  @JsonProperty("inventory_id") val inventoryId: InventoryId,
+  @field:JsonProperty("inventory_id") val inventoryId: InventoryId,
   /** Points to [testdb.products.ProductsRow.productId] */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.products.ProductsRow.sku] */
   val sku: String,
   /** Points to [testdb.products.ProductsRow.name] */
-  @JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: String,
   /** Points to [testdb.warehouses.WarehousesRow.warehouseId] */
-  @JsonProperty("warehouse_id") val warehouseId: WarehousesId,
+  @field:JsonProperty("warehouse_id") val warehouseId: WarehousesId,
   /** Points to [testdb.warehouses.WarehousesRow.code] */
-  @JsonProperty("warehouse_code") val warehouseCode: String,
+  @field:JsonProperty("warehouse_code") val warehouseCode: String,
   /** Points to [testdb.warehouses.WarehousesRow.name] */
-  @JsonProperty("warehouse_name") val warehouseName: String,
+  @field:JsonProperty("warehouse_name") val warehouseName: String,
   /** Points to [testdb.inventory.InventoryRow.quantityOnHand] */
-  @JsonProperty("quantity_on_hand") val quantityOnHand: Int,
+  @field:JsonProperty("quantity_on_hand") val quantityOnHand: Int,
   /** Points to [testdb.inventory.InventoryRow.quantityReserved] */
-  @JsonProperty("quantity_reserved") val quantityReserved: Int,
-  /** Points to [testdb.inventory.InventoryRow.quantityReserved] */
+  @field:JsonProperty("quantity_reserved") val quantityReserved: Int,
+  /** Points to [testdb.inventory.InventoryRow.quantityOnHand] */
   val available: Int,
   /** Points to [testdb.inventory.InventoryRow.reorderPoint] */
-  @JsonProperty("reorder_point") val reorderPoint: Int,
+  @field:JsonProperty("reorder_point") val reorderPoint: Int,
   /** Points to [testdb.inventory.InventoryRow.binLocation] */
-  @JsonProperty("bin_location") val binLocation: String?
+  @field:JsonProperty("bin_location") val binLocation: String?
 ) : Tuple12<InventoryId, ProductsId, String, String, WarehousesId, String, String, Int, Int, Int, Int, String?> {
   override fun _1(): InventoryId = inventoryId
 

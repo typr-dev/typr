@@ -19,11 +19,11 @@ import oracledb.customtypes.Defaulted
   * Primary key: CONTACT_ID
   */
 data class ContactsRow(
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
-  @JsonProperty("CONTACT_ID") val contactId: ContactsId,
-  @JsonProperty("NAME") val name: String,
-  @JsonProperty("EMAILS") val emails: EmailTableT?,
-  @JsonProperty("TAGS") val tags: TagVarrayT?
+  /** Default: "TYPR"."ISEQ$$_72857".nextval */
+  @field:JsonProperty("CONTACT_ID") val contactId: ContactsId,
+  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("EMAILS") val emails: EmailTableT?,
+  @field:JsonProperty("TAGS") val tags: TagVarrayT?
 ) : Tuple4<ContactsId, String, EmailTableT?, TagVarrayT?> {
   override fun _1(): ContactsId = contactId
 

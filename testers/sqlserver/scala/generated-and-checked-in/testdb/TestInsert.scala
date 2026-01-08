@@ -35,6 +35,31 @@ import testdb.orders.OrdersId
 import testdb.orders.OrdersRepoImpl
 import testdb.orders.OrdersRow
 import testdb.orders.OrdersRowUnsaved
+import testdb.precisetypes.Binary10
+import testdb.precisetypes.Binary32
+import testdb.precisetypes.Decimal10_2
+import testdb.precisetypes.Decimal12_4
+import testdb.precisetypes.Decimal18_4
+import testdb.precisetypes.Decimal5_2
+import testdb.precisetypes.Decimal8_2
+import testdb.precisetypes.LocalDateTime3
+import testdb.precisetypes.LocalDateTime7
+import testdb.precisetypes.LocalTime3
+import testdb.precisetypes.LocalTime7
+import testdb.precisetypes.OffsetDateTime3
+import testdb.precisetypes.OffsetDateTime7
+import testdb.precisetypes.PaddedString10
+import testdb.precisetypes.String10
+import testdb.precisetypes.String100
+import testdb.precisetypes.String20
+import testdb.precisetypes.String255
+import testdb.precisetypes.String50
+import testdb.precision_types.PrecisionTypesRepoImpl
+import testdb.precision_types.PrecisionTypesRow
+import testdb.precision_types.PrecisionTypesRowUnsaved
+import testdb.precision_types_null.PrecisionTypesNullRepoImpl
+import testdb.precision_types_null.PrecisionTypesNullRow
+import testdb.precision_types_null.PrecisionTypesNullRowUnsaved
 import testdb.products.ProductsId
 import testdb.products.ProductsRepoImpl
 import testdb.products.ProductsRow
@@ -148,6 +173,122 @@ case class TestInsert(random: Random) {
     totalAmount: BigDecimal = BigDecimal.decimal(random.nextDouble()),
     orderDate: Defaulted[Option[LocalDateTime]] = new UseDefault()
   )(using c: Connection): OrdersRow = (new OrdersRepoImpl()).insert(new OrdersRowUnsaved(customerId = customerId, totalAmount = totalAmount, orderDate = orderDate))(using c)
+
+  def PrecisionTypes(
+    char10: PaddedString10,
+    nchar10: PaddedString10,
+    string10: String10 = String10.truncate(random.alphanumeric.take(10).mkString),
+    string20: String20 = String20.truncate(random.alphanumeric.take(20).mkString),
+    string50: String50 = String50.truncate(random.alphanumeric.take(20).mkString),
+    string100: String100 = String100.truncate(random.alphanumeric.take(20).mkString),
+    string255: String255 = String255.truncate(random.alphanumeric.take(20).mkString),
+    nstring10: String10 = String10.truncate(random.alphanumeric.take(10).mkString),
+    nstring50: String50 = String50.truncate(random.alphanumeric.take(20).mkString),
+    nstring255: String255 = String255.truncate(random.alphanumeric.take(20).mkString),
+    decimal52: Decimal5_2 = Decimal5_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    decimal102: Decimal10_2 = Decimal10_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    decimal184: Decimal18_4 = Decimal18_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))),
+    numeric82: Decimal8_2 = Decimal8_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    numeric124: Decimal12_4 = Decimal12_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))),
+    binary10: Binary10 = Binary10.unsafeForce({val bs = Array.ofDim[Byte](10); random.nextBytes(bs); bs}),
+    binary32: Binary32 = Binary32.unsafeForce({val bs = Array.ofDim[Byte](32); random.nextBytes(bs); bs}),
+    time0: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    time3: LocalTime3 = LocalTime3.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    time7: LocalTime7 = LocalTime7.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    datetime20: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    datetime23: LocalDateTime3 = LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    datetime27: LocalDateTime7 = LocalDateTime7.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    dto0: OffsetDateTime = OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)), ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    dto3: OffsetDateTime3 = OffsetDateTime3.of(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)), ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    dto7: OffsetDateTime7 = OffsetDateTime7.of(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)), ZoneOffset.ofHours(random.nextInt(24) - 12)))
+  )(using c: Connection): PrecisionTypesRow = {
+    (new PrecisionTypesRepoImpl()).insert(new PrecisionTypesRowUnsaved(
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      nstring10 = nstring10,
+      nstring50 = nstring50,
+      nstring255 = nstring255,
+      char10 = char10,
+      nchar10 = nchar10,
+      decimal52 = decimal52,
+      decimal102 = decimal102,
+      decimal184 = decimal184,
+      numeric82 = numeric82,
+      numeric124 = numeric124,
+      binary10 = binary10,
+      binary32 = binary32,
+      time0 = time0,
+      time3 = time3,
+      time7 = time7,
+      datetime20 = datetime20,
+      datetime23 = datetime23,
+      datetime27 = datetime27,
+      dto0 = dto0,
+      dto3 = dto3,
+      dto7 = dto7
+    ))(using c)
+  }
+
+  def PrecisionTypesNull(
+    string10: Option[String10] = (if (random.nextBoolean()) None else Some(String10.truncate(random.alphanumeric.take(10).mkString))),
+    string20: Option[String20] = (if (random.nextBoolean()) None else Some(String20.truncate(random.alphanumeric.take(20).mkString))),
+    string50: Option[String50] = (if (random.nextBoolean()) None else Some(String50.truncate(random.alphanumeric.take(20).mkString))),
+    string100: Option[String100] = (if (random.nextBoolean()) None else Some(String100.truncate(random.alphanumeric.take(20).mkString))),
+    string255: Option[String255] = (if (random.nextBoolean()) None else Some(String255.truncate(random.alphanumeric.take(20).mkString))),
+    nstring10: Option[String10] = (if (random.nextBoolean()) None else Some(String10.truncate(random.alphanumeric.take(10).mkString))),
+    nstring50: Option[String50] = (if (random.nextBoolean()) None else Some(String50.truncate(random.alphanumeric.take(20).mkString))),
+    nstring255: Option[String255] = (if (random.nextBoolean()) None else Some(String255.truncate(random.alphanumeric.take(20).mkString))),
+    char10: Option[PaddedString10] = None,
+    nchar10: Option[PaddedString10] = None,
+    decimal52: Option[Decimal5_2] = (if (random.nextBoolean()) None else Some(Decimal5_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))))),
+    decimal102: Option[Decimal10_2] = (if (random.nextBoolean()) None else Some(Decimal10_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))))),
+    decimal184: Option[Decimal18_4] = (if (random.nextBoolean()) None else Some(Decimal18_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))))),
+    numeric82: Option[Decimal8_2] = (if (random.nextBoolean()) None else Some(Decimal8_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))))),
+    numeric124: Option[Decimal12_4] = (if (random.nextBoolean()) None else Some(Decimal12_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))))),
+    binary10: Option[Binary10] = (if (random.nextBoolean()) None else Some(Binary10.unsafeForce({val bs = Array.ofDim[Byte](10); random.nextBytes(bs); bs}))),
+    binary32: Option[Binary32] = (if (random.nextBoolean()) None else Some(Binary32.unsafeForce({val bs = Array.ofDim[Byte](32); random.nextBytes(bs); bs}))),
+    time0: Option[LocalTime] = (if (random.nextBoolean()) None else Some(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    time3: Option[LocalTime3] = (if (random.nextBoolean()) None else Some(LocalTime3.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    time7: Option[LocalTime7] = (if (random.nextBoolean()) None else Some(LocalTime7.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    datetime20: Option[LocalDateTime] = (if (random.nextBoolean()) None else Some(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    datetime23: Option[LocalDateTime3] = (if (random.nextBoolean()) None else Some(LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    datetime27: Option[LocalDateTime7] = (if (random.nextBoolean()) None else Some(LocalDateTime7.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    dto0: Option[OffsetDateTime] = (if (random.nextBoolean()) None else Some(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)), ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+    dto3: Option[OffsetDateTime3] = (if (random.nextBoolean()) None else Some(OffsetDateTime3.of(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)), ZoneOffset.ofHours(random.nextInt(24) - 12))))),
+    dto7: Option[OffsetDateTime7] = (if (random.nextBoolean()) None else Some(OffsetDateTime7.of(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)), ZoneOffset.ofHours(random.nextInt(24) - 12)))))
+  )(using c: Connection): PrecisionTypesNullRow = {
+    (new PrecisionTypesNullRepoImpl()).insert(new PrecisionTypesNullRowUnsaved(
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      nstring10 = nstring10,
+      nstring50 = nstring50,
+      nstring255 = nstring255,
+      char10 = char10,
+      nchar10 = nchar10,
+      decimal52 = decimal52,
+      decimal102 = decimal102,
+      decimal184 = decimal184,
+      numeric82 = numeric82,
+      numeric124 = numeric124,
+      binary10 = binary10,
+      binary32 = binary32,
+      time0 = time0,
+      time3 = time3,
+      time7 = time7,
+      datetime20 = datetime20,
+      datetime23 = datetime23,
+      datetime27 = datetime27,
+      dto0 = dto0,
+      dto3 = dto3,
+      dto7 = dto7
+    ))(using c)
+  }
 
   def Products(
     name: String = random.alphanumeric.take(20).mkString,

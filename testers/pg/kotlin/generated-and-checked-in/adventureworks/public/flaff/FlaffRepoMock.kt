@@ -85,7 +85,7 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
     for (id in compositeIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

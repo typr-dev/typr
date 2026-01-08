@@ -24,65 +24,65 @@ data class VOrderDetailsViewRow(
     * Default: 0
     * Points to [testdb.orders.OrdersRow.orderId]
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** 
     * Points to [testdb.orders.OrdersRow.orderNumber]
     */
-  @JsonProperty("order_number") val orderNumber: String,
+  @field:JsonProperty("order_number") val orderNumber: String,
   /** 
     * Default: 'pending'
     * Points to [testdb.orders.OrdersRow.orderStatus]
     */
-  @JsonProperty("order_status") val orderStatus: String,
+  @field:JsonProperty("order_status") val orderStatus: String,
   /** 
     * Default: 'pending'
     * Points to [testdb.orders.OrdersRow.paymentStatus]
     */
-  @JsonProperty("payment_status") val paymentStatus: String,
+  @field:JsonProperty("payment_status") val paymentStatus: String,
   /** 
     * Points to [testdb.orders.OrdersRow.totalAmount]
     */
-  @JsonProperty("total_amount") val totalAmount: BigDecimal,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal,
   /** 
     * Default: 'USD'
     * Points to [testdb.orders.OrdersRow.currencyCode]
     */
-  @JsonProperty("currency_code") val currencyCode: String,
+  @field:JsonProperty("currency_code") val currencyCode: String,
   /** 
     * Default: current_timestamp(6)
     * Points to [testdb.orders.OrdersRow.orderedAt]
     */
-  @JsonProperty("ordered_at") val orderedAt: LocalDateTime,
+  @field:JsonProperty("ordered_at") val orderedAt: LocalDateTime,
   /** 
     * Points to [testdb.customers.CustomersRow.email]
     */
-  @JsonProperty("customer_email") val customerEmail: String,
+  @field:JsonProperty("customer_email") val customerEmail: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("customer_name") val customerName: String?,
+  @field:JsonProperty("customer_name") val customerName: String?,
   /** 
     * Default: 0
     */
-  @JsonProperty("item_count") val itemCount: Long,
+  @field:JsonProperty("item_count") val itemCount: Long,
   /** 
     * Default: NULL
     */
-  @JsonProperty("total_quantity") val totalQuantity: BigDecimal?,
+  @field:JsonProperty("total_quantity") val totalQuantity: BigDecimal?,
   /** 
     * Default: NULL
     * Points to [testdb.shipments.ShipmentsRow.trackingNumber]
     */
-  @JsonProperty("tracking_number") val trackingNumber: String?,
+  @field:JsonProperty("tracking_number") val trackingNumber: String?,
   /** 
     * Default: 'pending'
     * Points to [testdb.shipments.ShipmentsRow.status]
     */
-  @JsonProperty("shipping_status") val shippingStatus: String?,
+  @field:JsonProperty("shipping_status") val shippingStatus: String?,
   /** 
     * Points to [testdb.shipping_carriers.ShippingCarriersRow.name]
     */
-  @JsonProperty("carrier_name") val carrierName: String?
+  @field:JsonProperty("carrier_name") val carrierName: String?
 ) : Tuple14<OrdersId, String, String, String, BigDecimal, String, LocalDateTime, String, String?, Long, BigDecimal?, String?, String?, String?> {
   override fun _1(): OrdersId = orderId
 

@@ -21,17 +21,17 @@ data class ReviewsRowUnsaved(
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** 
     * Points to [testdb.customers.CustomersRow.customerId]
     */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /**  */
   val rating: Uint1,
   /** Default: NULL
     * Points to [testdb.order_items.OrderItemsRow.itemId]
     */
-  @JsonProperty("order_item_id") val orderItemId: Defaulted<OrderItemsId?> = UseDefault(),
+  @field:JsonProperty("order_item_id") val orderItemId: Defaulted<OrderItemsId?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -55,35 +55,35 @@ data class ReviewsRowUnsaved(
   /** Default: 0
 
     */
-  @JsonProperty("is_verified_purchase") val isVerifiedPurchase: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_verified_purchase") val isVerifiedPurchase: Defaulted<Boolean> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("is_approved") val isApproved: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_approved") val isApproved: Defaulted<Boolean> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("helpful_votes") val helpfulVotes: Defaulted<Uint4> = UseDefault(),
+  @field:JsonProperty("helpful_votes") val helpfulVotes: Defaulted<Uint4> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("unhelpful_votes") val unhelpfulVotes: Defaulted<Uint4> = UseDefault(),
+  @field:JsonProperty("unhelpful_votes") val unhelpfulVotes: Defaulted<Uint4> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("admin_response") val adminResponse: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("admin_response") val adminResponse: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("responded_at") val respondedAt: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("responded_at") val respondedAt: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault()
+  @field:JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
     orderItemIdDefault: () -> OrderItemsId?,

@@ -10,6 +10,7 @@ trait TypeSupport {
 
   // Primitive type mappings
   val BigDecimal: jvm.Type.Qualified
+  val BigInteger: jvm.Type.Qualified
   val Boolean: jvm.Type.Qualified
   val Byte: jvm.Type.Qualified
   val Double: jvm.Type.Qualified
@@ -23,6 +24,12 @@ trait TypeSupport {
   // Primitive array types
   val ByteArray: jvm.Type
   val FloatArray: jvm.Type
+
+  /** Primitive int type for interface implementations. Java: int, Kotlin: Int, Scala: Int */
+  val primitiveInt: jvm.Type
+
+  /** Primitive boolean type for interface implementations. Java: boolean, Kotlin: Boolean, Scala: Boolean */
+  val primitiveBoolean: jvm.Type
 
   // Support traits for common patterns
   val Optional: OptionalSupport

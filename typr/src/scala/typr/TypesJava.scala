@@ -26,8 +26,10 @@ object TypesJava {
   val BigInteger: Qualified = Qualified("java.math.BigInteger")
   val Boolean: Qualified = Qualified("java.lang.Boolean")
   val Byte: Qualified = Qualified("java.lang.Byte")
+  val BooleanPrimitive: jvm.Type.Primitive = jvm.Type.Primitive("boolean")
   val BytePrimitive: jvm.Type.Primitive = jvm.Type.Primitive("byte")
   val FloatPrimitive: jvm.Type.Primitive = jvm.Type.Primitive("float")
+  val IntPrimitive: jvm.Type.Primitive = jvm.Type.Primitive("int")
   val ByteArrays: Qualified = FoundationsTypes.internal.ByteArrays
   val Character: Qualified = Qualified("java.lang.Character")
   val ChronoField: Qualified = jvm.Type.Qualified("java.time.temporal.ChronoField")
@@ -42,6 +44,7 @@ object TypesJava {
   val Duration: Qualified = Qualified("java.time.Duration")
   val Float: Qualified = Qualified("java.lang.Float")
   val Function: Qualified = Qualified("java.util.function.Function")
+  val IllegalArgumentException: Qualified = Qualified("java.lang.IllegalArgumentException")
   val Instant: Qualified = Qualified("java.time.Instant")
   val Integer: Qualified = Qualified("java.lang.Integer")
   val Iterator: Qualified = Qualified("java.util.Iterator")
@@ -72,9 +75,11 @@ object TypesJava {
   val RandomHelper: Qualified = FoundationsTypes.internal.RandomHelper
   val TypoPGObjectHelper: Qualified = FoundationsTypes.internal.TypoPGObjectHelper
   val ResultSet: Qualified = jvm.Type.Qualified("java.sql.ResultSet")
+  val RoundingMode: Qualified = Qualified("java.math.RoundingMode")
   val Runnable: Qualified = jvm.Type.Qualified("java.lang.Runnable")
   val RuntimeException: Qualified = Qualified("java.lang.RuntimeException")
   val Object: Qualified = Qualified("java.lang.Object")
+  val Objects: Qualified = Qualified("java.util.Objects")
   val Override: Qualified = Qualified("java.lang.Override")
   val Short: Qualified = Qualified("java.lang.Short")
   val SqlTypes: Qualified = Qualified("java.sql.Types")

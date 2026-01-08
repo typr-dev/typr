@@ -13,14 +13,14 @@ import oracledb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `ALL_SCALAR_TYPES` which has not been persisted yet */
 data class AllScalarTypesRowUnsaved(
-  @JsonProperty("COL_VARCHAR2") val colVarchar2: String? = null,
-  @JsonProperty("COL_NUMBER") val colNumber: BigDecimal? = null,
-  @JsonProperty("COL_DATE") val colDate: LocalDateTime? = null,
-  @JsonProperty("COL_TIMESTAMP") val colTimestamp: LocalDateTime? = null,
-  @JsonProperty("COL_CLOB") val colClob: String? = null,
-  @JsonProperty("COL_NOT_NULL") val colNotNull: String,
-  /** Default: "TYPR"."ISEQ$$_72838".nextval */
-  @JsonProperty("ID") val id: Defaulted<AllScalarTypesId> = UseDefault()
+  @field:JsonProperty("COL_VARCHAR2") val colVarchar2: String? = null,
+  @field:JsonProperty("COL_NUMBER") val colNumber: BigDecimal? = null,
+  @field:JsonProperty("COL_DATE") val colDate: LocalDateTime? = null,
+  @field:JsonProperty("COL_TIMESTAMP") val colTimestamp: LocalDateTime? = null,
+  @field:JsonProperty("COL_CLOB") val colClob: String? = null,
+  @field:JsonProperty("COL_NOT_NULL") val colNotNull: String,
+  /** Default: "TYPR"."ISEQ$$_72845".nextval */
+  @field:JsonProperty("ID") val id: Defaulted<AllScalarTypesId> = UseDefault()
 ) {
   fun toRow(idDefault: () -> AllScalarTypesId): AllScalarTypesRow = AllScalarTypesRow(id = id.getOrElse(idDefault), colVarchar2 = colVarchar2, colNumber = colNumber, colDate = colDate, colTimestamp = colTimestamp, colClob = colClob, colNotNull = colNotNull)
 }

@@ -365,6 +365,7 @@ object jvm {
         annotations: List[Annotation],
         constructorAnnotations: List[Annotation],
         isWrapper: Boolean,
+        privateConstructor: Boolean,
         comments: Comments,
         name: Type.Qualified,
         tparams: List[Type.Abstract],

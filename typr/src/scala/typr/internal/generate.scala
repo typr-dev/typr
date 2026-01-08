@@ -35,6 +35,13 @@ object generate {
       case _            => sys.error(s"You have chosen to generate code for ${lib}, which is a scala library. You need to pick scala as language")
     }
 
+    // Validate: precise types only supported with DbLibName.Typo
+    publicOptions.dbLib match {
+      case Some(DbLibName.Anorm) | Some(DbLibName.Doobie) | Some(DbLibName.ZioJdbc) if publicOptions.enablePreciseTypes != Selector.None =>
+        sys.error("enablePreciseTypes is only supported with DbLibName.Typo. Legacy database libraries (Anorm, Doobie, ZioJdbc) do not support precise types.")
+      case _ => // ok
+    }
+
     val options = InternalOptions(
       dbLib = publicOptions.dbLib.map {
         case DbLibName.Anorm =>
@@ -57,6 +64,7 @@ object generate {
       debugTypes = publicOptions.debugTypes,
       enableDsl = publicOptions.enableDsl,
       enableFieldValue = publicOptions.enableFieldValue,
+      enablePreciseTypes = publicOptions.enablePreciseTypes,
       enableStreamingInserts = publicOptions.enableStreamingInserts,
       enableTestInserts = publicOptions.enableTestInserts,
       fileHeader = publicOptions.fileHeader,
@@ -80,7 +88,7 @@ object generate {
     val mariaSetTypes = metaDb.mariaSetTypes.map(ComputedMariaSet(naming))
     val mariaSetLookup = mariaSetTypes.map(s => s.sortedValues.toList -> s).toMap
     val scalaTypeMapper = publicOptions.dbLib match {
-      case Some(DbLibName.Typo) => TypeMapperJvmNew(language, options.typeOverride, publicOptions.nullabilityOverride, naming, duckDbStructLookup, mariaSetLookup)
+      case Some(DbLibName.Typo) => TypeMapperJvmNew(language, options.typeOverride, publicOptions.nullabilityOverride, naming, duckDbStructLookup, mariaSetLookup, publicOptions.enablePreciseTypes)
       case _                    => TypeMapperJvmOld(language, options.typeOverride, publicOptions.nullabilityOverride, naming, customTypes)
     }
     val enums = metaDb.enums.map(ComputedStringEnum(naming))
@@ -147,6 +155,100 @@ object generate {
         val duckDbStructTypeFiles = duckDbStructTypes.map(FileDuckDbStruct(_, options, adapter, duckDbStructLookup, naming))
         val pgCompositeTypeFiles = pgCompositeTypes.map(FilePgCompositeType(_, options, adapter, pgCompositeLookup, naming))
         val mariaSetTypeFiles = mariaSetTypes.flatMap(FileMariaSet(options, _, adapter))
+
+        val preciseTypeFiles: List[jvm.File] = {
+          if (options.enablePreciseTypes == Selector.None) Nil
+          else {
+            val allCols = computedRelations.flatMap {
+              case t: ComputedTable => t.cols.toList.map(c => (t.dbTable.name, c.dbCol))
+              case v: ComputedView  => v.cols.toList.map(c => (v.view.name, c.dbCol))
+              case _                => Nil
+            }
+
+            val preciseConstraints = allCols.flatMap { case (relName, dbCol) =>
+              if (!options.enablePreciseTypes.include(relName)) None
+              else
+                dbCol.tpe match {
+                  case db.PgType.VarChar(Some(n)) if n != 2147483647                      => Some(PreciseConstraint.StringN(n, dbCol.tpe))
+                  case db.PgType.Bpchar(Some(n)) if n != 2147483647                       => Some(PreciseConstraint.PaddedStringN(n, dbCol.tpe))
+                  case db.MariaType.VarChar(Some(n))                                      => Some(PreciseConstraint.StringN(n, dbCol.tpe))
+                  case db.MariaType.Char(Some(n))                                         => Some(PreciseConstraint.PaddedStringN(n, dbCol.tpe))
+                  case db.MariaType.Decimal(Some(p), s)                                   => Some(PreciseConstraint.DecimalN(p, s.getOrElse(0), dbCol.tpe))
+                  case db.MariaType.DateTime(Some(fsp)) if fsp > 0                        => Some(PreciseConstraint.LocalDateTimeN(fsp, dbCol.tpe))
+                  case db.MariaType.Timestamp(Some(fsp)) if fsp > 0                       => Some(PreciseConstraint.LocalDateTimeN(fsp, dbCol.tpe))
+                  case db.MariaType.Time(Some(fsp)) if fsp > 0                            => Some(PreciseConstraint.LocalTimeN(fsp, dbCol.tpe))
+                  case db.MariaType.Binary(Some(n))                                       => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
+                  case db.MariaType.VarBinary(Some(n))                                    => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
+                  case db.DuckDbType.VarChar(Some(n))                                     => Some(PreciseConstraint.StringN(n, dbCol.tpe))
+                  case db.DuckDbType.Char(Some(n))                                        => Some(PreciseConstraint.PaddedStringN(n, dbCol.tpe))
+                  case db.DuckDbType.Decimal(Some(p), Some(s))                            => Some(PreciseConstraint.DecimalN(p, s, dbCol.tpe))
+                  case db.OracleType.Varchar2(Some(n))                                    => Some(PreciseConstraint.NonEmptyStringN(n, dbCol.tpe))
+                  case db.OracleType.NVarchar2(Some(n))                                   => Some(PreciseConstraint.NonEmptyStringN(n, dbCol.tpe))
+                  case db.OracleType.Char(Some(n))                                        => Some(PreciseConstraint.NonEmptyPaddedStringN(n, dbCol.tpe))
+                  case db.OracleType.NChar(Some(n))                                       => Some(PreciseConstraint.NonEmptyPaddedStringN(n, dbCol.tpe))
+                  case db.OracleType.Number(Some(p), s) if s.getOrElse(0) == 0 && p <= 38 => Some(PreciseConstraint.DecimalN(p, 0, dbCol.tpe))
+                  case db.OracleType.Number(Some(p), Some(s)) if s > 0                    => Some(PreciseConstraint.DecimalN(p, s, dbCol.tpe))
+                  case db.OracleType.Timestamp(Some(fsp)) if fsp > 0                      => Some(PreciseConstraint.LocalDateTimeN(fsp, dbCol.tpe))
+                  case db.OracleType.TimestampWithTimeZone(Some(fsp)) if fsp > 0          => Some(PreciseConstraint.OffsetDateTimeN(fsp, dbCol.tpe))
+                  case db.OracleType.TimestampWithLocalTimeZone(Some(fsp)) if fsp > 0     => Some(PreciseConstraint.OffsetDateTimeN(fsp, dbCol.tpe))
+                  case db.OracleType.Raw(Some(n))                                         => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
+                  case db.SqlServerType.VarChar(Some(n)) if n != -1                       => Some(PreciseConstraint.StringN(n, dbCol.tpe))
+                  case db.SqlServerType.Char(Some(n))                                     => Some(PreciseConstraint.PaddedStringN(n, dbCol.tpe))
+                  case db.SqlServerType.NVarChar(Some(n)) if n != -1                      => Some(PreciseConstraint.StringN(n, dbCol.tpe))
+                  case db.SqlServerType.NChar(Some(n))                                    => Some(PreciseConstraint.PaddedStringN(n, dbCol.tpe))
+                  case db.SqlServerType.Decimal(Some(p), Some(s))                         => Some(PreciseConstraint.DecimalN(p, s, dbCol.tpe))
+                  case db.SqlServerType.Numeric(Some(p), Some(s))                         => Some(PreciseConstraint.DecimalN(p, s, dbCol.tpe))
+                  case db.SqlServerType.DateTime2(Some(fsp)) if fsp > 0                   => Some(PreciseConstraint.LocalDateTimeN(fsp, dbCol.tpe))
+                  case db.SqlServerType.DateTimeOffset(Some(fsp)) if fsp > 0              => Some(PreciseConstraint.OffsetDateTimeN(fsp, dbCol.tpe))
+                  case db.SqlServerType.Time(Some(fsp)) if fsp > 0                        => Some(PreciseConstraint.LocalTimeN(fsp, dbCol.tpe))
+                  case db.SqlServerType.Binary(Some(n))                                   => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
+                  case db.SqlServerType.VarBinary(Some(n)) if n != -1                     => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
+                  case db.DB2Type.VarChar(Some(n))                                        => Some(PreciseConstraint.StringN(n, dbCol.tpe))
+                  case db.DB2Type.Char(Some(n))                                           => Some(PreciseConstraint.PaddedStringN(n, dbCol.tpe))
+                  case db.DB2Type.Decimal(Some(p), Some(s))                               => Some(PreciseConstraint.DecimalN(p, s, dbCol.tpe))
+                  case db.DB2Type.Timestamp(Some(fsp)) if fsp > 0                         => Some(PreciseConstraint.LocalDateTimeN(fsp, dbCol.tpe))
+                  case db.DB2Type.Binary(Some(n))                                         => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
+                  case db.DB2Type.VarBinary(Some(n))                                      => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
+                  case _                                                                  => None
+                }
+            }.toSet
+
+            preciseConstraints.toList.flatMap { constraint =>
+              constraint match {
+                case PreciseConstraint.StringN(maxLength, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseStringNName(maxLength))
+                  List(FilePreciseType.forStringN(tpe, maxLength, dbType, options, language))
+                case PreciseConstraint.NonEmptyStringN(maxLength, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseNonEmptyStringNName(maxLength))
+                  List(FilePreciseType.forNonEmptyStringN(tpe, maxLength, dbType, options, language))
+                case PreciseConstraint.PaddedStringN(length, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.precisePaddedStringNName(length))
+                  List(FilePreciseType.forPaddedStringN(tpe, length, dbType, options, language))
+                case PreciseConstraint.NonEmptyPaddedStringN(length, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseNonEmptyPaddedStringNName(length))
+                  List(FilePreciseType.forNonEmptyPaddedStringN(tpe, length, dbType, options, language))
+                case PreciseConstraint.BinaryN(maxLength, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseBinaryNName(maxLength))
+                  List(FilePreciseType.forBinaryN(tpe, maxLength, dbType, options, language))
+                case PreciseConstraint.DecimalN(precision, scale, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseDecimalNName(precision, scale))
+                  List(FilePreciseType.forDecimalN(tpe, precision, scale, dbType, options, language))
+                case PreciseConstraint.LocalDateTimeN(fsp, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseLocalDateTimeNName(fsp))
+                  List(FilePreciseType.forLocalDateTimeN(tpe, fsp, dbType, options, language))
+                case PreciseConstraint.LocalTimeN(fsp, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseLocalTimeNName(fsp))
+                  List(FilePreciseType.forLocalTimeN(tpe, fsp, dbType, options, language))
+                case PreciseConstraint.OffsetDateTimeN(fsp, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseOffsetDateTimeNName(fsp))
+                  List(FilePreciseType.forOffsetDateTimeN(tpe, fsp, dbType, options, language))
+                case PreciseConstraint.InstantN(fsp, dbType) =>
+                  val tpe = jvm.Type.Qualified(naming.preciseInstantNName(fsp))
+                  List(FilePreciseType.forInstantN(tpe, fsp, dbType, options, language))
+              }
+            }
+          }
+        }
         val defaultFile = FileDefault(default, options.jsonLibs, options.dbLib, language)
         val mostFiles: List[jvm.File] =
           List(
@@ -159,6 +261,7 @@ object generate {
             duckDbStructTypeFiles,
             pgCompositeTypeFiles,
             mariaSetTypeFiles,
+            preciseTypeFiles,
             customTypes.All.values.map(FileCustomType(options, language)),
             relationFilesByName.map { case (_, f) => f },
             sqlFileFiles

@@ -27,167 +27,167 @@ data class MariatestnullRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("tinyint_col") val tinyintCol: Defaulted<Byte?> = UseDefault(),
+  @field:JsonProperty("tinyint_col") val tinyintCol: Defaulted<Byte?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("smallint_col") val smallintCol: Defaulted<Short?> = UseDefault(),
+  @field:JsonProperty("smallint_col") val smallintCol: Defaulted<Short?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("mediumint_col") val mediumintCol: Defaulted<Int?> = UseDefault(),
+  @field:JsonProperty("mediumint_col") val mediumintCol: Defaulted<Int?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("int_col") val intCol: Defaulted<Int?> = UseDefault(),
+  @field:JsonProperty("int_col") val intCol: Defaulted<Int?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("bigint_col") val bigintCol: Defaulted<Long?> = UseDefault(),
+  @field:JsonProperty("bigint_col") val bigintCol: Defaulted<Long?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("tinyint_u_col") val tinyintUCol: Defaulted<Uint1?> = UseDefault(),
+  @field:JsonProperty("tinyint_u_col") val tinyintUCol: Defaulted<Uint1?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("smallint_u_col") val smallintUCol: Defaulted<Uint2?> = UseDefault(),
+  @field:JsonProperty("smallint_u_col") val smallintUCol: Defaulted<Uint2?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("mediumint_u_col") val mediumintUCol: Defaulted<Uint4?> = UseDefault(),
+  @field:JsonProperty("mediumint_u_col") val mediumintUCol: Defaulted<Uint4?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("int_u_col") val intUCol: Defaulted<Uint4?> = UseDefault(),
+  @field:JsonProperty("int_u_col") val intUCol: Defaulted<Uint4?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("bigint_u_col") val bigintUCol: Defaulted<Uint8?> = UseDefault(),
+  @field:JsonProperty("bigint_u_col") val bigintUCol: Defaulted<Uint8?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("decimal_col") val decimalCol: Defaulted<BigDecimal?> = UseDefault(),
+  @field:JsonProperty("decimal_col") val decimalCol: Defaulted<BigDecimal?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("numeric_col") val numericCol: Defaulted<BigDecimal?> = UseDefault(),
+  @field:JsonProperty("numeric_col") val numericCol: Defaulted<BigDecimal?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("float_col") val floatCol: Defaulted<Float?> = UseDefault(),
+  @field:JsonProperty("float_col") val floatCol: Defaulted<Float?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("double_col") val doubleCol: Defaulted<Double?> = UseDefault(),
+  @field:JsonProperty("double_col") val doubleCol: Defaulted<Double?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("bool_col") val boolCol: Defaulted<Boolean?> = UseDefault(),
+  @field:JsonProperty("bool_col") val boolCol: Defaulted<Boolean?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("bit_col") val bitCol: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("bit_col") val bitCol: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("bit1_col") val bit1Col: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("bit1_col") val bit1Col: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("char_col") val charCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("char_col") val charCol: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("varchar_col") val varcharCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("varchar_col") val varcharCol: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("tinytext_col") val tinytextCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("tinytext_col") val tinytextCol: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("text_col") val textCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("text_col") val textCol: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("mediumtext_col") val mediumtextCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("mediumtext_col") val mediumtextCol: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("longtext_col") val longtextCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("longtext_col") val longtextCol: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("binary_col") val binaryCol: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("binary_col") val binaryCol: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("varbinary_col") val varbinaryCol: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("varbinary_col") val varbinaryCol: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("tinyblob_col") val tinyblobCol: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("tinyblob_col") val tinyblobCol: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("blob_col") val blobCol: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("blob_col") val blobCol: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("mediumblob_col") val mediumblobCol: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("mediumblob_col") val mediumblobCol: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("longblob_col") val longblobCol: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("longblob_col") val longblobCol: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("date_col") val dateCol: Defaulted<LocalDate?> = UseDefault(),
+  @field:JsonProperty("date_col") val dateCol: Defaulted<LocalDate?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("time_col") val timeCol: Defaulted<LocalTime?> = UseDefault(),
+  @field:JsonProperty("time_col") val timeCol: Defaulted<LocalTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("time_fsp_col") val timeFspCol: Defaulted<LocalTime?> = UseDefault(),
+  @field:JsonProperty("time_fsp_col") val timeFspCol: Defaulted<LocalTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("datetime_col") val datetimeCol: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("datetime_col") val datetimeCol: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("datetime_fsp_col") val datetimeFspCol: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("datetime_fsp_col") val datetimeFspCol: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("timestamp_col") val timestampCol: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("timestamp_col") val timestampCol: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("timestamp_fsp_col") val timestampFspCol: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("timestamp_fsp_col") val timestampFspCol: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("year_col") val yearCol: Defaulted<Year?> = UseDefault(),
+  @field:JsonProperty("year_col") val yearCol: Defaulted<Year?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("set_col") val setCol: Defaulted<XYZSet?> = UseDefault(),
+  @field:JsonProperty("set_col") val setCol: Defaulted<XYZSet?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("json_col") val jsonCol: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("json_col") val jsonCol: Defaulted<Json?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("inet4_col") val inet4Col: Defaulted<Inet4?> = UseDefault(),
+  @field:JsonProperty("inet4_col") val inet4Col: Defaulted<Inet4?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("inet6_col") val inet6Col: Defaulted<Inet6?> = UseDefault()
+  @field:JsonProperty("inet6_col") val inet6Col: Defaulted<Inet6?> = UseDefault()
 ) {
   fun toRow(
     tinyintColDefault: () -> Byte?,

@@ -25,28 +25,28 @@ data class ProductPricesRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("price_id") val priceId: ProductPricesId,
+  @field:JsonProperty("price_id") val priceId: ProductPricesId,
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** 
     * Default: NULL
     * Points to [testdb.price_tiers.PriceTiersRow.tierId]
     */
-  @JsonProperty("tier_id") val tierId: PriceTiersId?,
+  @field:JsonProperty("tier_id") val tierId: PriceTiersId?,
   /**  */
   val price: BigDecimal,
   /** 
     * Default: 'USD'
     */
-  @JsonProperty("currency_code") val currencyCode: String,
+  @field:JsonProperty("currency_code") val currencyCode: String,
   /**  */
-  @JsonProperty("valid_from") val validFrom: LocalDate,
+  @field:JsonProperty("valid_from") val validFrom: LocalDate,
   /** 
     * Default: NULL
     */
-  @JsonProperty("valid_to") val validTo: LocalDate?
+  @field:JsonProperty("valid_to") val validTo: LocalDate?
 ) : Tuple7<ProductPricesId, ProductsId, PriceTiersId?, BigDecimal, String, LocalDate, LocalDate?> {
   override fun _1(): ProductPricesId = priceId
 

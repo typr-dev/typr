@@ -18,13 +18,13 @@ import java.math.BigDecimal
   * Primary key: ID
   */
 data class CheckConstraintTestRow(
-  @JsonProperty("ID") val id: CheckConstraintTestId,
+  @field:JsonProperty("ID") val id: CheckConstraintTestId,
   /** Constraint CHK_AGE affecting columns AGE: AGE >= 0 AND AGE <= 150 */
-  @JsonProperty("AGE") val age: Int,
+  @field:JsonProperty("AGE") val age: Int,
   /** Constraint CHK_STATUS affecting columns STATUS: STATUS IN ('active', 'inactive', 'pending') */
-  @JsonProperty("STATUS") val status: String,
+  @field:JsonProperty("STATUS") val status: String,
   /** Constraint CHK_PRICE affecting columns PRICE: PRICE >= 0 */
-  @JsonProperty("PRICE") val price: BigDecimal?
+  @field:JsonProperty("PRICE") val price: BigDecimal?
 ) : Tuple4<CheckConstraintTestId, Int, String, BigDecimal?> {
   override fun _1(): CheckConstraintTestId = id
 

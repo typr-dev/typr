@@ -18,9 +18,9 @@ import dev.typr.foundations.kotlin.RowParsers
   */
 data class IdentityTestRow(
   /** Identity ALWAYS, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  @JsonProperty("always_generated") val alwaysGenerated: Int,
+  @field:JsonProperty("always_generated") val alwaysGenerated: Int,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  @JsonProperty("default_generated") val defaultGenerated: Int,
+  @field:JsonProperty("default_generated") val defaultGenerated: Int,
   val name: IdentityTestId
 ) : Tuple3<Int, Int, IdentityTestId> {
   override fun _1(): Int = alwaysGenerated

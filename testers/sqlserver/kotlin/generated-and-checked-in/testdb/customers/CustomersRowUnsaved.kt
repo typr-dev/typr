@@ -15,7 +15,7 @@ data class CustomersRowUnsaved(
   val name: String,
   val email: String,
   /** Default: (getdate()) */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime?> = UseDefault()
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
     createdAtDefault: () -> LocalDateTime?,

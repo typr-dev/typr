@@ -9,6 +9,7 @@ case class InternalOptions(
     debugTypes: Boolean,
     enableDsl: Boolean,
     enableFieldValue: Selector,
+    enablePreciseTypes: Selector,
     enableStreamingInserts: Boolean,
     enableTestInserts: Selector,
     fileHeader: String,

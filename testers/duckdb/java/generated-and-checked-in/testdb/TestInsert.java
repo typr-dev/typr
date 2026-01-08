@@ -13,6 +13,7 @@ import dev.typr.foundations.data.Uint4;
 import dev.typr.foundations.data.Uint8;
 import dev.typr.foundations.internal.RandomHelper;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,6 +43,18 @@ import testdb.orders.OrdersId;
 import testdb.orders.OrdersRepoImpl;
 import testdb.orders.OrdersRow;
 import testdb.orders.OrdersRowUnsaved;
+import testdb.precisetypes.Decimal10_2;
+import testdb.precisetypes.Decimal18_4;
+import testdb.precisetypes.Decimal5_2;
+import testdb.precisetypes.Int10;
+import testdb.precisetypes.Int18;
+import testdb.precisetypes.Int5;
+import testdb.precision_types.PrecisionTypesId;
+import testdb.precision_types.PrecisionTypesRepoImpl;
+import testdb.precision_types.PrecisionTypesRow;
+import testdb.precision_types_null.PrecisionTypesNullId;
+import testdb.precision_types_null.PrecisionTypesNullRepoImpl;
+import testdb.precision_types_null.PrecisionTypesNullRow;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRepoImpl;
 import testdb.products.ProductsRow;
@@ -189,6 +202,101 @@ public record TestInsert(Random random) {
             new UseDefault(),
             new UseDefault()),
         (OrdersRowUnsaved row, Connection c) -> (new OrdersRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<PrecisionTypesRow, PrecisionTypesRow> PrecisionTypes() {
+    return Inserter.of(
+        new PrecisionTypesRow(
+            new PrecisionTypesId(random.nextInt()),
+            RandomHelper.alphanumeric(random, 20),
+            RandomHelper.alphanumeric(random, 20),
+            RandomHelper.alphanumeric(random, 20),
+            RandomHelper.alphanumeric(random, 20),
+            RandomHelper.alphanumeric(random, 20),
+            Decimal5_2.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                            .movePointLeft(2))),
+            Decimal10_2.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                            .movePointLeft(2))),
+            Decimal18_4.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 10000))
+                            .movePointLeft(4))),
+            Int5.unsafeForce(BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 100000))),
+            Int10.unsafeForce(BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000))),
+            Int18.unsafeForce(
+                BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000)))),
+        (PrecisionTypesRow row, Connection c) -> (new PrecisionTypesRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<PrecisionTypesNullRow, PrecisionTypesNullRow> PrecisionTypesNull() {
+    return Inserter.of(
+        new PrecisionTypesNullRow(
+            new PrecisionTypesNullId(random.nextInt()),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(RandomHelper.alphanumeric(random, 20))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(RandomHelper.alphanumeric(random, 20))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(RandomHelper.alphanumeric(random, 20))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(RandomHelper.alphanumeric(random, 20))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(RandomHelper.alphanumeric(random, 20))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Decimal5_2.unsafeForce(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000))
+                            .add(
+                                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                                    .movePointLeft(2))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Decimal10_2.unsafeForce(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                            .add(
+                                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                                    .movePointLeft(2))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Decimal18_4.unsafeForce(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                            .add(
+                                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 10000))
+                                    .movePointLeft(4))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Int5.unsafeForce(
+                        BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 100000))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Int10.unsafeForce(
+                        BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Int18.unsafeForce(
+                        BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000)))))),
+        (PrecisionTypesNullRow row, Connection c) ->
+            (new PrecisionTypesNullRepoImpl()).insert(row, c));
   }
   ;
 

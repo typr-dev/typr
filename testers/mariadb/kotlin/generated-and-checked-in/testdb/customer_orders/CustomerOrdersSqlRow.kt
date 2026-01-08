@@ -20,25 +20,25 @@ import testdb.orders.OrdersId
 /** SQL file: customer_orders.sql */
 data class CustomerOrdersSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.email] */
   val email: String,
   /** Points to [testdb.customers.CustomersRow.firstName] */
-  @JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("first_name") val firstName: String,
   /** Points to [testdb.customers.CustomersRow.lastName] */
-  @JsonProperty("last_name") val lastName: String,
+  @field:JsonProperty("last_name") val lastName: String,
   /** Points to [testdb.customers.CustomersRow.tier] */
   val tier: String,
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @JsonProperty("order_id") val orderId: OrdersId?,
+  @field:JsonProperty("order_id") val orderId: OrdersId?,
   /** Points to [testdb.orders.OrdersRow.orderNumber] */
-  @JsonProperty("order_number") val orderNumber: String?,
+  @field:JsonProperty("order_number") val orderNumber: String?,
   /** Points to [testdb.orders.OrdersRow.orderStatus] */
-  @JsonProperty("order_status") val orderStatus: String?,
+  @field:JsonProperty("order_status") val orderStatus: String?,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
-  @JsonProperty("total_amount") val totalAmount: BigDecimal?,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.orderedAt] */
-  @JsonProperty("ordered_at") val orderedAt: LocalDateTime?
+  @field:JsonProperty("ordered_at") val orderedAt: LocalDateTime?
 ) : Tuple10<CustomersId, String, String, String, String, OrdersId?, String?, String?, BigDecimal?, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 

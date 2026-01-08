@@ -16,10 +16,10 @@ import dev.typr.foundations.kotlin.RowParsers
   */
 data class Db2testUniqueRow(
   /** Identity ALWAYS */
-  @JsonProperty("ID") val id: Db2testUniqueId,
-  @JsonProperty("EMAIL") val email: String,
-  @JsonProperty("CODE") val code: String,
-  @JsonProperty("CATEGORY") val category: String
+  @field:JsonProperty("ID") val id: Db2testUniqueId,
+  @field:JsonProperty("EMAIL") val email: String,
+  @field:JsonProperty("CODE") val code: String,
+  @field:JsonProperty("CATEGORY") val category: String
 ) : Tuple4<Db2testUniqueId, String, String, String> {
   override fun _1(): Db2testUniqueId = id
 

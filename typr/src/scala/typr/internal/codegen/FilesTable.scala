@@ -86,6 +86,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         annotations = typeAnnotations,
         constructorAnnotations = Nil,
         isWrapper = false,
+        privateConstructor = false,
         comments = comments,
         name = unsaved.tpe,
         tparams = Nil,
@@ -157,13 +158,21 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
           }
         }
 
+        // In Scala, value classes (AnyVal) can't wrap other value classes.
+        // Precision types are generated as value classes, so ID types wrapping them can't be value classes.
+        val isWrapper = lang match {
+          case _: LangScala => !id.col.typoType.isPreciseType
+          case _            => true
+        }
+
         Some(
           jvm.File(
             id.tpe,
             jvm.Adt.Record(
               annotations = typeAnnotations,
               constructorAnnotations = Nil,
-              isWrapper = true,
+              isWrapper = isWrapper,
+              privateConstructor = false,
               comments = comments,
               name = id.tpe,
               tparams = Nil,
@@ -314,6 +323,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
               annotations = typeAnnotations,
               constructorAnnotations = Nil,
               isWrapper = false,
+              privateConstructor = false,
               comments = scaladoc(List(s"Type for the composite primary key of table `${table.dbTable.name.value}`")),
               name = tpe,
               tparams = Nil,

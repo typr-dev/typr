@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm")
 }
 
 kotlin {
@@ -37,11 +37,6 @@ sourceSets {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    compilerOptions {
-        allWarningsAsErrors.set(false)
-    }
-}
 
 tasks.test {
     // Set working directory to project root

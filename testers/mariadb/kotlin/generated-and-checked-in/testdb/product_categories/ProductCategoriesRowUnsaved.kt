@@ -16,19 +16,19 @@ data class ProductCategoriesRowUnsaved(
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** 
     * Points to [testdb.categories.CategoriesRow.categoryId]
     */
-  @JsonProperty("category_id") val categoryId: CategoriesId,
+  @field:JsonProperty("category_id") val categoryId: CategoriesId,
   /** Default: 0
 
     */
-  @JsonProperty("is_primary") val isPrimary: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_primary") val isPrimary: Defaulted<Boolean> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("sort_order") val sortOrder: Defaulted<Short> = UseDefault()
+  @field:JsonProperty("sort_order") val sortOrder: Defaulted<Short> = UseDefault()
 ) {
   fun toRow(
     isPrimaryDefault: () -> Boolean,

@@ -22,25 +22,25 @@ data class PaymentMethodsRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("method_id") val methodId: PaymentMethodsId,
+  @field:JsonProperty("method_id") val methodId: PaymentMethodsId,
   /**  */
   val code: String,
   /**  */
   val name: String,
   /**  */
-  @JsonProperty("method_type") val methodType: String,
+  @field:JsonProperty("method_type") val methodType: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("processor_config") val processorConfig: Json?,
+  @field:JsonProperty("processor_config") val processorConfig: Json?,
   /** 
     * Default: 1
     */
-  @JsonProperty("is_active") val isActive: Boolean,
+  @field:JsonProperty("is_active") val isActive: Boolean,
   /** 
     * Default: 0
     */
-  @JsonProperty("sort_order") val sortOrder: Byte
+  @field:JsonProperty("sort_order") val sortOrder: Byte
 ) : Tuple7<PaymentMethodsId, String, String, String, Json?, Boolean, Byte> {
   override fun _1(): PaymentMethodsId = methodId
 

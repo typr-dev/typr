@@ -17,7 +17,7 @@ import oracledb.customtypes.Defaulted;
 
 /** Table: ALL_SCALAR_TYPES Primary key: ID */
 public record AllScalarTypesRow(
-    /** Default: "TYPR"."ISEQ$$_72838".nextval */
+    /** Default: "TYPR"."ISEQ$$_72845".nextval */
     @JsonProperty("ID") AllScalarTypesId id,
     @JsonProperty("COL_VARCHAR2") Optional<String> colVarchar2,
     @JsonProperty("COL_NUMBER") Optional<BigDecimal> colNumber,
@@ -33,7 +33,7 @@ public record AllScalarTypesRow(
         Optional<LocalDateTime>,
         Optional<String>,
         String> {
-  /** Default: "TYPR"."ISEQ$$_72838".nextval */
+  /** Default: "TYPR"."ISEQ$$_72845".nextval */
   public AllScalarTypesRow withId(AllScalarTypesId id) {
     return new AllScalarTypesRow(
         id, colVarchar2, colNumber, colDate, colTimestamp, colClob, colNotNull);

@@ -91,6 +91,30 @@ import testdb.payment_methods.PaymentMethodsRowUnsaved;
 import testdb.payments.PaymentsRepoImpl;
 import testdb.payments.PaymentsRow;
 import testdb.payments.PaymentsRowUnsaved;
+import testdb.precisetypes.Binary16;
+import testdb.precisetypes.Binary32;
+import testdb.precisetypes.Binary64;
+import testdb.precisetypes.Decimal10_2;
+import testdb.precisetypes.Decimal12_4;
+import testdb.precisetypes.Decimal18_4;
+import testdb.precisetypes.Decimal5_2;
+import testdb.precisetypes.Decimal8_2;
+import testdb.precisetypes.LocalDateTime3;
+import testdb.precisetypes.LocalDateTime6;
+import testdb.precisetypes.LocalTime3;
+import testdb.precisetypes.LocalTime6;
+import testdb.precisetypes.PaddedString10;
+import testdb.precisetypes.String10;
+import testdb.precisetypes.String100;
+import testdb.precisetypes.String20;
+import testdb.precisetypes.String255;
+import testdb.precisetypes.String50;
+import testdb.precision_types.PrecisionTypesRepoImpl;
+import testdb.precision_types.PrecisionTypesRow;
+import testdb.precision_types.PrecisionTypesRowUnsaved;
+import testdb.precision_types_null.PrecisionTypesNullRepoImpl;
+import testdb.precision_types_null.PrecisionTypesNullRow;
+import testdb.precision_types_null.PrecisionTypesNullRowUnsaved;
 import testdb.price_tiers.PriceTiersRepoImpl;
 import testdb.price_tiers.PriceTiersRow;
 import testdb.price_tiers.PriceTiersRowUnsaved;
@@ -510,6 +534,97 @@ public record TestInsert(Random random) {
             new UseDefault(),
             new UseDefault()),
         (PaymentsRowUnsaved row, Connection c) -> (new PaymentsRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<PrecisionTypesRowUnsaved, PrecisionTypesRow> PrecisionTypes(
+      PaddedString10 char10) {
+    return Inserter.of(
+        new PrecisionTypesRowUnsaved(
+            String10.truncate(RandomHelper.alphanumeric(random, 10)),
+            String20.truncate(RandomHelper.alphanumeric(random, 20)),
+            String50.truncate(RandomHelper.alphanumeric(random, 20)),
+            String100.truncate(RandomHelper.alphanumeric(random, 20)),
+            String255.truncate(RandomHelper.alphanumeric(random, 20)),
+            char10,
+            Decimal5_2.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                            .movePointLeft(2))),
+            Decimal10_2.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                            .movePointLeft(2))),
+            Decimal18_4.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 10000))
+                            .movePointLeft(4))),
+            Decimal8_2.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                            .movePointLeft(2))),
+            Decimal12_4.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 10000))
+                            .movePointLeft(4))),
+            Binary16.unsafeForce(RandomHelper.randomBytes(random, 16)),
+            Binary32.unsafeForce(RandomHelper.randomBytes(random, 32)),
+            Binary64.unsafeForce(RandomHelper.randomBytes(random, 64)),
+            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))),
+            LocalTime3.of(LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))),
+            LocalTime6.of(LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))),
+            LocalDateTime.of(
+                LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))),
+            LocalDateTime3.of(
+                LocalDateTime.of(
+                    LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                    LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))),
+            LocalDateTime6.of(
+                LocalDateTime.of(
+                    LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                    LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault()),
+        (PrecisionTypesRowUnsaved row, Connection c) ->
+            (new PrecisionTypesRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<PrecisionTypesNullRowUnsaved, PrecisionTypesNullRow> PrecisionTypesNull() {
+    return Inserter.of(
+        new PrecisionTypesNullRowUnsaved(
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault(),
+            new UseDefault()),
+        (PrecisionTypesNullRowUnsaved row, Connection c) ->
+            (new PrecisionTypesNullRepoImpl()).insert(row, c));
   }
   ;
 

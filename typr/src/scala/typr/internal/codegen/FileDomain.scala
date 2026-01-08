@@ -51,6 +51,7 @@ object FileDomain {
       annotations = typeAnnotations,
       constructorAnnotations = Nil,
       isWrapper = false,
+      privateConstructor = false,
       comments = comments,
       name = domain.tpe,
       tparams = Nil,

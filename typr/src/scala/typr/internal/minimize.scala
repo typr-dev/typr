@@ -169,7 +169,7 @@ object minimize {
               params.foreach(goTree)
               implements.foreach(goTree)
               members.foreach(goTree)
-            case jvm.Adt.Record(_, _, _, _, _, tparams, params, implicitParams, extends_, implements, members, staticMembers) =>
+            case jvm.Adt.Record(_, _, _, _, _, _, tparams, params, implicitParams, extends_, implements, members, staticMembers) =>
               tparams.foreach(goTree)
               params.foreach(goTree)
               implicitParams.foreach(goTree)

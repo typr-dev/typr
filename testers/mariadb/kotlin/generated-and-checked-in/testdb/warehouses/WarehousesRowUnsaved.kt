@@ -24,7 +24,7 @@ data class WarehousesRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("service_area") val serviceArea: Defaulted<Polygon?> = UseDefault(),
+  @field:JsonProperty("service_area") val serviceArea: Defaulted<Polygon?> = UseDefault(),
   /** Default: 'UTC'
 
     */
@@ -32,15 +32,15 @@ data class WarehousesRowUnsaved(
   /** Default: 1
 
     */
-  @JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("contact_email") val contactEmail: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("contact_email") val contactEmail: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("contact_phone") val contactPhone: Defaulted<String?> = UseDefault()
+  @field:JsonProperty("contact_phone") val contactPhone: Defaulted<String?> = UseDefault()
 ) {
   fun toRow(
     serviceAreaDefault: () -> Polygon?,

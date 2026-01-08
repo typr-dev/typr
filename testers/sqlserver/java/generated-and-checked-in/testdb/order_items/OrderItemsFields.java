@@ -99,12 +99,12 @@ public class OrderItemsFields
   }
 
   public ForeignKey<OrdersFields, OrdersRow> fkOrders() {
-    return ForeignKey.<OrdersFields, OrdersRow>of("FK__order_ite__order__44FF419A")
+    return ForeignKey.<OrdersFields, OrdersRow>of("FK__order_ite__order__47DBAE45")
         .<OrdersId>withColumnPair(orderId(), OrdersFields::orderId);
   }
 
   public ForeignKey<ProductsFields, ProductsRow> fkProducts() {
-    return ForeignKey.<ProductsFields, ProductsRow>of("FK__order_ite__produ__45F365D3")
+    return ForeignKey.<ProductsFields, ProductsRow>of("FK__order_ite__produ__48CFD27E")
         .<ProductsId>withColumnPair(productId(), ProductsFields::productId);
   }
 

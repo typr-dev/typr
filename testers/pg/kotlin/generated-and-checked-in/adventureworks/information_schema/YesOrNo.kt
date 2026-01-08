@@ -14,7 +14,7 @@ import dev.typr.foundations.kotlin.Bijection
 /** Domain `information_schema.yes_or_no`
   * Constraint: CHECK (((VALUE)::text = ANY ((ARRAY['YES'::character varying, 'NO'::character varying])::text[])))
   */
-data class YesOrNo(@JsonValue val value: String) {
+data class YesOrNo(@field:JsonValue val value: String) {
   companion object {
     val bijection: Bijection<YesOrNo, String> =
       Bijection.of(YesOrNo::value, ::YesOrNo)

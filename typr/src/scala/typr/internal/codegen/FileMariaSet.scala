@@ -61,6 +61,7 @@ object FileMariaSet {
       annotations = Nil,
       constructorAnnotations = Nil,
       isWrapper = false,
+      privateConstructor = false,
       comments = comments,
       name = setType.tpe,
       tparams = Nil,

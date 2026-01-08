@@ -24,7 +24,7 @@ data class VProductCatalogViewRow(
     * Default: 0
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** 
     * Points to [testdb.products.ProductsRow.sku]
     */
@@ -37,11 +37,11 @@ data class VProductCatalogViewRow(
     * Default: NULL
     * Points to [testdb.products.ProductsRow.shortDescription]
     */
-  @JsonProperty("short_description") val shortDescription: String?,
+  @field:JsonProperty("short_description") val shortDescription: String?,
   /** 
     * Points to [testdb.products.ProductsRow.basePrice]
     */
-  @JsonProperty("base_price") val basePrice: BigDecimal,
+  @field:JsonProperty("base_price") val basePrice: BigDecimal,
   /** 
     * Default: 'draft'
     * Points to [testdb.products.ProductsRow.status]
@@ -55,19 +55,19 @@ data class VProductCatalogViewRow(
   /** 
     * Points to [testdb.brands.BrandsRow.name]
     */
-  @JsonProperty("brand_name") val brandName: String?,
+  @field:JsonProperty("brand_name") val brandName: String?,
   /** 
     * Default: 0
     */
-  @JsonProperty("available_quantity") val availableQuantity: BigDecimal,
+  @field:JsonProperty("available_quantity") val availableQuantity: BigDecimal,
   /** 
     * Default: 0.0000
     */
-  @JsonProperty("avg_rating") val avgRating: BigDecimal,
+  @field:JsonProperty("avg_rating") val avgRating: BigDecimal,
   /** 
     * Default: 0
     */
-  @JsonProperty("review_count") val reviewCount: Long
+  @field:JsonProperty("review_count") val reviewCount: Long
 ) : Tuple11<ProductsId, String, String, String?, BigDecimal, String, BestsellerClearanceFSet?, String?, BigDecimal, BigDecimal, Long> {
   override fun _1(): ProductsId = productId
 

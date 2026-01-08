@@ -109,7 +109,7 @@ data class DepartmentRepoMock(
     for (id in departmentids) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

@@ -23,37 +23,37 @@ data class AuditLogRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("log_id") val logId: AuditLogId,
+  @field:JsonProperty("log_id") val logId: AuditLogId,
   /**  */
-  @JsonProperty("table_name") val tableName: String,
+  @field:JsonProperty("table_name") val tableName: String,
   /**  */
-  @JsonProperty("record_id") val recordId: String,
+  @field:JsonProperty("record_id") val recordId: String,
   /**  */
   val action: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("old_values") val oldValues: Json?,
+  @field:JsonProperty("old_values") val oldValues: Json?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("new_values") val newValues: Json?,
+  @field:JsonProperty("new_values") val newValues: Json?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("changed_by") val changedBy: String?,
+  @field:JsonProperty("changed_by") val changedBy: String?,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("changed_at") val changedAt: LocalDateTime,
+  @field:JsonProperty("changed_at") val changedAt: LocalDateTime,
   /** 
     * Default: NULL
     */
-  @JsonProperty("client_ip") val clientIp: Inet6?,
+  @field:JsonProperty("client_ip") val clientIp: Inet6?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("session_id") val sessionId: ByteArray?
+  @field:JsonProperty("session_id") val sessionId: ByteArray?
 ) : Tuple10<AuditLogId, String, String, String, Json?, Json?, String?, LocalDateTime, Inet6?, ByteArray?> {
   override fun _1(): AuditLogId = logId
 

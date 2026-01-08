@@ -15,8 +15,8 @@ import java.math.BigDecimal
 
 /** Type for the composite primary key of table `EMPLOYEES` */
 data class EmployeesId(
-  @JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
-  @JsonProperty("EMP_SUFFIX") val empSuffix: String
+  @field:JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
+  @field:JsonProperty("EMP_SUFFIX") val empSuffix: String
 ) : Tuple2<BigDecimal, String> {
   override fun _1(): BigDecimal = empNumber
 

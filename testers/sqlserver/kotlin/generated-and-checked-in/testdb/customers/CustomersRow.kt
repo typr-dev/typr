@@ -19,11 +19,11 @@ import testdb.customtypes.Defaulted
   */
 data class CustomersRow(
   /** IDENTITY(1, 1) */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   val name: String,
   val email: String,
   /** Default: (getdate()) */
-  @JsonProperty("created_at") val createdAt: LocalDateTime?
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime?
 ) : Tuple4<CustomersId, String, String, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 

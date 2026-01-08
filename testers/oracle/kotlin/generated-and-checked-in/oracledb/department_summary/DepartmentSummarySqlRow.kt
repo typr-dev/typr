@@ -17,15 +17,15 @@ import oracledb.MoneyT
 /** SQL file: department_summary.sql */
 data class DepartmentSummarySqlRow(
   /** Points to [oracledb.departments.DepartmentsRow.deptCode] */
-  @JsonProperty("DEPT_CODE") val deptCode: String,
+  @field:JsonProperty("DEPT_CODE") val deptCode: String,
   /** Points to [oracledb.departments.DepartmentsRow.deptRegion] */
-  @JsonProperty("DEPT_REGION") val deptRegion: String,
+  @field:JsonProperty("DEPT_REGION") val deptRegion: String,
   /** Points to [oracledb.departments.DepartmentsRow.deptName] */
-  @JsonProperty("DEPT_NAME") val deptName: String,
+  @field:JsonProperty("DEPT_NAME") val deptName: String,
   /** Points to [oracledb.departments.DepartmentsRow.budget] */
-  @JsonProperty("BUDGET") val budget: MoneyT?,
+  @field:JsonProperty("BUDGET") val budget: MoneyT?,
   /** Points to [oracledb.employees.EmployeesRow.empNumber] */
-  @JsonProperty("EMPLOYEE_COUNT") val employeeCount: Unknown?
+  @field:JsonProperty("EMPLOYEE_COUNT") val employeeCount: Unknown?
 ) : Tuple5<String, String, String, MoneyT?, Unknown?> {
   override fun _1(): String = deptCode
 

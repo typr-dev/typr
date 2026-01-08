@@ -16,11 +16,11 @@ import java.math.BigDecimal
 
 /** SQL file: customer_summary.sql */
 data class CustomerSummarySqlRow(
-  @JsonProperty("customer_id") val customerId: Int,
+  @field:JsonProperty("customer_id") val customerId: Int,
   val name: String,
   val email: String,
-  @JsonProperty("order_count") val orderCount: Int?,
-  @JsonProperty("total_spent") val totalSpent: BigDecimal?
+  @field:JsonProperty("order_count") val orderCount: Int?,
+  @field:JsonProperty("total_spent") val totalSpent: BigDecimal?
 ) : Tuple5<Int, String, String, Int?, BigDecimal?> {
   override fun _1(): Int = customerId
 

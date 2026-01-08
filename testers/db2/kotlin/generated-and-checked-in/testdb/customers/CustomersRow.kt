@@ -22,13 +22,13 @@ data class CustomersRow(
   /** Unique identifier for the customer
     * Identity BY DEFAULT
     */
-  @JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
+  @field:JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
   /** Full name of the customer */
-  @JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: String,
   /** Email address used for contact and login */
-  @JsonProperty("EMAIL") val email: String,
+  @field:JsonProperty("EMAIL") val email: String,
   /** Default: CURRENT TIMESTAMP */
-  @JsonProperty("CREATED_AT") val createdAt: LocalDateTime?
+  @field:JsonProperty("CREATED_AT") val createdAt: LocalDateTime?
 ) : Tuple4<CustomersId, String, String, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 

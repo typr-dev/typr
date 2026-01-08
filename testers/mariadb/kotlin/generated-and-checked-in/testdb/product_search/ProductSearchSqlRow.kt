@@ -18,19 +18,19 @@ import testdb.products.ProductsId
 /** SQL file: product_search.sql */
 data class ProductSearchSqlRow(
   /** Points to [testdb.products.ProductsRow.productId] */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.products.ProductsRow.sku] */
   val sku: String,
   /** Points to [testdb.products.ProductsRow.name] */
   val name: String,
   /** Points to [testdb.products.ProductsRow.shortDescription] */
-  @JsonProperty("short_description") val shortDescription: String?,
+  @field:JsonProperty("short_description") val shortDescription: String?,
   /** Points to [testdb.products.ProductsRow.basePrice] */
-  @JsonProperty("base_price") val basePrice: BigDecimal,
+  @field:JsonProperty("base_price") val basePrice: BigDecimal,
   /** Points to [testdb.products.ProductsRow.status] */
   val status: String,
   /** Points to [testdb.brands.BrandsRow.name] */
-  @JsonProperty("brand_name") val brandName: String?
+  @field:JsonProperty("brand_name") val brandName: String?
 ) : Tuple7<ProductsId, String, String, String?, BigDecimal, String, String?> {
   override fun _1(): ProductsId = productId
 

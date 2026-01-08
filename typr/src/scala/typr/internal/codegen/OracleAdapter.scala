@@ -31,6 +31,9 @@ object OracleAdapter extends DbAdapter {
   val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.OracleType")
   // Oracle doesn't support text-based streaming inserts (COPY), so TextClass throws if accessed
   def TextClass: jvm.Type.Qualified = sys.error("Oracle doesn't support text-based streaming inserts")
+
+  // Oracle uses NUMBER, not NUMERIC
+  override def numericTypeName: String = "number"
   val KotlinDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.kotlin.KotlinDbTypes")
   val ScalaDbTypes: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.scala.ScalaDbTypes")
 
@@ -48,6 +51,17 @@ object OracleAdapter extends DbAdapter {
 
     case TypoType.Generated(_, _, qualifiedType) =>
       code"$qualifiedType.$typeFieldName"
+
+    // Precise types - wrapper types with constraints, all have their own oracleType field
+    case TypoType.StringN(_, _, _, qualifiedType)         => code"$qualifiedType.$typeFieldName"
+    case TypoType.NonEmptyString(_, _, qualifiedType)     => code"$qualifiedType.$typeFieldName"
+    case TypoType.NonEmptyStringN(_, _, _, qualifiedType) => code"$qualifiedType.$typeFieldName"
+    case TypoType.BinaryN(_, _, _, qualifiedType)         => code"$qualifiedType.$typeFieldName"
+    case TypoType.DecimalN(_, _, _, _, qualifiedType)     => code"$qualifiedType.$typeFieldName"
+    case TypoType.LocalDateTimeN(_, _, _, qualifiedType)  => code"$qualifiedType.$typeFieldName"
+    case TypoType.InstantN(_, _, _, qualifiedType)        => code"$qualifiedType.$typeFieldName"
+    case TypoType.LocalTimeN(_, _, _, qualifiedType)      => code"$qualifiedType.$typeFieldName"
+    case TypoType.OffsetDateTimeN(_, _, _, qualifiedType) => code"$qualifiedType.$typeFieldName"
 
     case TypoType.UserDefined(_, _, userType) =>
       userType match {

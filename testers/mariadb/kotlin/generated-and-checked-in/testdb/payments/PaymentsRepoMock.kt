@@ -79,7 +79,7 @@ data class PaymentsRepoMock(
     for (id in paymentIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

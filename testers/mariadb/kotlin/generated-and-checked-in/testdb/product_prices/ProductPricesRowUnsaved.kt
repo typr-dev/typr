@@ -18,23 +18,23 @@ data class ProductPricesRowUnsaved(
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
   val price: BigDecimal,
   /**  */
-  @JsonProperty("valid_from") val validFrom: LocalDate,
+  @field:JsonProperty("valid_from") val validFrom: LocalDate,
   /** Default: NULL
     * Points to [testdb.price_tiers.PriceTiersRow.tierId]
     */
-  @JsonProperty("tier_id") val tierId: Defaulted<PriceTiersId?> = UseDefault(),
+  @field:JsonProperty("tier_id") val tierId: Defaulted<PriceTiersId?> = UseDefault(),
   /** Default: 'USD'
 
     */
-  @JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("valid_to") val validTo: Defaulted<LocalDate?> = UseDefault()
+  @field:JsonProperty("valid_to") val validTo: Defaulted<LocalDate?> = UseDefault()
 ) {
   fun toRow(
     tierIdDefault: () -> PriceTiersId?,

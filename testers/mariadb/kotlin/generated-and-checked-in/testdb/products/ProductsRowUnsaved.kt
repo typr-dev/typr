@@ -21,31 +21,31 @@ data class ProductsRowUnsaved(
   /**  */
   val name: String,
   /**  */
-  @JsonProperty("base_price") val basePrice: BigDecimal,
+  @field:JsonProperty("base_price") val basePrice: BigDecimal,
   /** Default: NULL
     * Points to [testdb.brands.BrandsRow.brandId]
     */
-  @JsonProperty("brand_id") val brandId: Defaulted<BrandsId?> = UseDefault(),
+  @field:JsonProperty("brand_id") val brandId: Defaulted<BrandsId?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("short_description") val shortDescription: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("short_description") val shortDescription: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("full_description") val fullDescription: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("full_description") val fullDescription: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("cost_price") val costPrice: Defaulted<BigDecimal?> = UseDefault(),
+  @field:JsonProperty("cost_price") val costPrice: Defaulted<BigDecimal?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("weight_kg") val weightKg: Defaulted<BigDecimal?> = UseDefault(),
+  @field:JsonProperty("weight_kg") val weightKg: Defaulted<BigDecimal?> = UseDefault(),
   /** Default: NULL
     * length, width, height in cm
     */
-  @JsonProperty("dimensions_json") val dimensionsJson: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("dimensions_json") val dimensionsJson: Defaulted<Json?> = UseDefault(),
   /** Default: 'draft'
 
     */
@@ -53,7 +53,7 @@ data class ProductsRowUnsaved(
   /** Default: 'standard'
 
     */
-  @JsonProperty("tax_class") val taxClass: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("tax_class") val taxClass: Defaulted<String> = UseDefault(),
   /** Default: NULL
 
     */
@@ -65,19 +65,19 @@ data class ProductsRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("seo_metadata") val seoMetadata: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("seo_metadata") val seoMetadata: Defaulted<Json?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("published_at") val publishedAt: Defaulted<LocalDateTime?> = UseDefault()
+  @field:JsonProperty("published_at") val publishedAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
     brandIdDefault: () -> BrandsId?,

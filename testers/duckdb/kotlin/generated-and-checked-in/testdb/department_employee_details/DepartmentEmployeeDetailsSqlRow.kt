@@ -18,25 +18,25 @@ import java.time.LocalDate
 /** SQL file: department_employee_details.sql */
 data class DepartmentEmployeeDetailsSqlRow(
   /** Points to [testdb.departments.DepartmentsRow.deptCode] */
-  @JsonProperty("dept_code") val deptCode: String,
+  @field:JsonProperty("dept_code") val deptCode: String,
   /** Points to [testdb.departments.DepartmentsRow.deptRegion] */
-  @JsonProperty("dept_region") val deptRegion: String,
+  @field:JsonProperty("dept_region") val deptRegion: String,
   /** Points to [testdb.departments.DepartmentsRow.deptName] */
-  @JsonProperty("dept_name") val deptName: String,
+  @field:JsonProperty("dept_name") val deptName: String,
   /** Points to [testdb.departments.DepartmentsRow.budget] */
   val budget: BigDecimal?,
   /** Points to [testdb.employees.EmployeesRow.empNumber] */
-  @JsonProperty("emp_number") val empNumber: Int?,
+  @field:JsonProperty("emp_number") val empNumber: Int?,
   /** Points to [testdb.employees.EmployeesRow.empSuffix] */
-  @JsonProperty("emp_suffix") val empSuffix: String?,
+  @field:JsonProperty("emp_suffix") val empSuffix: String?,
   /** Points to [testdb.employees.EmployeesRow.empName] */
-  @JsonProperty("emp_name") val empName: String?,
+  @field:JsonProperty("emp_name") val empName: String?,
   /** Points to [testdb.employees.EmployeesRow.salary] */
   val salary: BigDecimal?,
   /** Points to [testdb.employees.EmployeesRow.hireDate] */
-  @JsonProperty("hire_date") val hireDate: LocalDate?,
+  @field:JsonProperty("hire_date") val hireDate: LocalDate?,
   /** Points to [testdb.employees.EmployeesRow.hireDate] */
-  @JsonProperty("years_of_service") val yearsOfService: Int?
+  @field:JsonProperty("years_of_service") val yearsOfService: Int?
 ) : Tuple10<String, String, String, BigDecimal?, Int?, String?, String?, BigDecimal?, LocalDate?, Int?> {
   override fun _1(): String = deptCode
 

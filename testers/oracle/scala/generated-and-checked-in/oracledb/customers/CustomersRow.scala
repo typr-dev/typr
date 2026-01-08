@@ -20,7 +20,7 @@ import oracledb.customtypes.Defaulted
  * Primary key: CUSTOMER_ID
  */
 case class CustomersRow(
-  /** Default: "TYPR"."ISEQ$$_72843".nextval */
+  /** Default: "TYPR"."ISEQ$$_72850".nextval */
   @JsonProperty("CUSTOMER_ID") customerId: CustomersId,
   @JsonProperty("NAME") name: String,
   @JsonProperty("BILLING_ADDRESS") billingAddress: AddressT,

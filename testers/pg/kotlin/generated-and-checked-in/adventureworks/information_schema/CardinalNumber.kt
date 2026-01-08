@@ -15,7 +15,7 @@ import dev.typr.foundations.kotlin.KotlinDbTypes
 /** Domain `information_schema.cardinal_number`
   * Constraint: CHECK ((VALUE >= 0))
   */
-data class CardinalNumber(@JsonValue val value: Int) {
+data class CardinalNumber(@field:JsonValue val value: Int) {
   companion object {
     val bijection: Bijection<CardinalNumber, Int> =
       Bijection.of(CardinalNumber::value, ::CardinalNumber)

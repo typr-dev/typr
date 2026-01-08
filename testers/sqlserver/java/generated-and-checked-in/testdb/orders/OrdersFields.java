@@ -85,7 +85,7 @@ public class OrdersFields extends TupleExpr4<OrdersId, CustomersId, LocalDateTim
   }
 
   public ForeignKey<CustomersFields, CustomersRow> fkCustomers() {
-    return ForeignKey.<CustomersFields, CustomersRow>of("FK__orders__customer__412EB0B6")
+    return ForeignKey.<CustomersFields, CustomersRow>of("FK__orders__customer__440B1D61")
         .<CustomersId>withColumnPair(customerId(), CustomersFields::customerId);
   }
 

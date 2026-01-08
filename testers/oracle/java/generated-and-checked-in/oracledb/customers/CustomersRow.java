@@ -18,7 +18,7 @@ import oracledb.customtypes.Defaulted;
 
 /** Table: CUSTOMERS Primary key: CUSTOMER_ID */
 public record CustomersRow(
-    /** Default: "TYPR"."ISEQ$$_72843".nextval */
+    /** Default: "TYPR"."ISEQ$$_72850".nextval */
     @JsonProperty("CUSTOMER_ID") CustomersId customerId,
     @JsonProperty("NAME") String name,
     @JsonProperty("BILLING_ADDRESS") AddressT billingAddress,
@@ -26,7 +26,7 @@ public record CustomersRow(
     /** Default: SYSTIMESTAMP */
     @JsonProperty("CREATED_AT") LocalDateTime createdAt)
     implements Tuple5<CustomersId, String, AddressT, Optional<MoneyT>, LocalDateTime> {
-  /** Default: "TYPR"."ISEQ$$_72843".nextval */
+  /** Default: "TYPR"."ISEQ$$_72850".nextval */
   public CustomersRow withCustomerId(CustomersId customerId) {
     return new CustomersRow(customerId, name, billingAddress, creditLimit, createdAt);
   }

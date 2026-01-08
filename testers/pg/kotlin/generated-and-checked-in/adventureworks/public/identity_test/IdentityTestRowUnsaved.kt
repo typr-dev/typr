@@ -15,7 +15,7 @@ import dev.typr.foundations.kotlin.KotlinDbTypes
 data class IdentityTestRowUnsaved(
   val name: IdentityTestId,
   /** Identity BY DEFAULT, identityStart: 1, identityIncrement: 1, identityMaximum: 2147483647, identityMinimum: 1 */
-  @JsonProperty("default_generated") val defaultGenerated: Defaulted<Int> = UseDefault()
+  @field:JsonProperty("default_generated") val defaultGenerated: Defaulted<Int> = UseDefault()
 ) {
   fun toRow(
     defaultGeneratedDefault: () -> Int,

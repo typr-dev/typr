@@ -14,7 +14,7 @@ import dev.typr.foundations.kotlin.Bijection
 /** Domain `public.short_text`
   * Constraint: CHECK ((length(VALUE) <= 55))
   */
-data class ShortText(@JsonValue val value: String) {
+data class ShortText(@field:JsonValue val value: String) {
   companion object {
     val bijection: Bijection<ShortText, String> =
       Bijection.of(ShortText::value, ::ShortText)

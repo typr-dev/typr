@@ -16,11 +16,11 @@ import testdb.customtypes.Defaulted
 
 /** Table: NULLABILITY_TEST */
 data class NullabilityTestRow(
-  @JsonProperty("ID") val id: Int,
-  @JsonProperty("REQUIRED_COL") val requiredCol: String,
-  @JsonProperty("OPTIONAL_COL") val optionalCol: String?,
+  @field:JsonProperty("ID") val id: Int,
+  @field:JsonProperty("REQUIRED_COL") val requiredCol: String,
+  @field:JsonProperty("OPTIONAL_COL") val optionalCol: String?,
   /** Default: 'default_value' */
-  @JsonProperty("DEFAULTED_COL") val defaultedCol: String?
+  @field:JsonProperty("DEFAULTED_COL") val defaultedCol: String?
 ) : Tuple4<Int, String, String?, String?> {
   override fun _1(): Int = id
 

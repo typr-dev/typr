@@ -18,18 +18,18 @@ import testdb.products.ProductsId
 /** SQL file: product_summary.sql */
 data class ProductSummarySqlRow(
   /** Points to [testdb.products.ProductsRow.productId] */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.products.ProductsRow.name] */
-  @JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: String,
   /** Points to [testdb.products.ProductsRow.sku] */
   val sku: String,
   /** Points to [testdb.products.ProductsRow.price] */
   val price: BigDecimal,
-  @JsonProperty("order_count") val orderCount: Long,
+  @field:JsonProperty("order_count") val orderCount: Long,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
-  @JsonProperty("total_quantity") val totalQuantity: Long?,
-  /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
-  @JsonProperty("total_revenue") val totalRevenue: BigDecimal?
+  @field:JsonProperty("total_quantity") val totalQuantity: Long?,
+  /** Points to [testdb.order_items.OrderItemsRow.quantity] */
+  @field:JsonProperty("total_revenue") val totalRevenue: BigDecimal?
 ) : Tuple7<ProductsId, String, String, BigDecimal, Long, Long?, BigDecimal?> {
   override fun _1(): ProductsId = productId
 

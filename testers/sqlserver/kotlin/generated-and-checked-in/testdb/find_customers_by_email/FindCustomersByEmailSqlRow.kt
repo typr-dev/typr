@@ -17,13 +17,13 @@ import testdb.customers.CustomersId
 /** SQL file: find-customers-by-email.sql */
 data class FindCustomersByEmailSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  @JsonProperty("customer_name") val customerName: String,
+  @field:JsonProperty("customer_name") val customerName: String,
   /** Points to [testdb.customers.CustomersRow.email] */
-  @JsonProperty("customer_email") val customerEmail: String,
+  @field:JsonProperty("customer_email") val customerEmail: String,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
-  @JsonProperty("created_at") val createdAt: LocalDateTime?
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime?
 ) : Tuple4<CustomersId, String, String, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 

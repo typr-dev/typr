@@ -16,8 +16,8 @@ import dev.typr.foundations.kotlin.RowParsers
 /** Type for the composite primary key of table `public.flaff` */
 data class FlaffId(
   val code: ShortText,
-  @JsonProperty("another_code") val anotherCode: String,
-  @JsonProperty("some_number") val someNumber: Int,
+  @field:JsonProperty("another_code") val anotherCode: String,
+  @field:JsonProperty("some_number") val someNumber: Int,
   val specifier: ShortText
 ) : Tuple4<ShortText, String, Int, ShortText> {
   override fun _1(): ShortText = code

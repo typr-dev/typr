@@ -32,35 +32,35 @@ data class MariatestSpatialNullRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("geometry_col") val geometryCol: Geometry?,
+  @field:JsonProperty("geometry_col") val geometryCol: Geometry?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("point_col") val pointCol: Point?,
+  @field:JsonProperty("point_col") val pointCol: Point?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("linestring_col") val linestringCol: LineString?,
+  @field:JsonProperty("linestring_col") val linestringCol: LineString?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("polygon_col") val polygonCol: Polygon?,
+  @field:JsonProperty("polygon_col") val polygonCol: Polygon?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("multipoint_col") val multipointCol: MultiPoint?,
+  @field:JsonProperty("multipoint_col") val multipointCol: MultiPoint?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("multilinestring_col") val multilinestringCol: MultiLineString?,
+  @field:JsonProperty("multilinestring_col") val multilinestringCol: MultiLineString?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("multipolygon_col") val multipolygonCol: MultiPolygon?,
+  @field:JsonProperty("multipolygon_col") val multipolygonCol: MultiPolygon?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("geometrycollection_col") val geometrycollectionCol: GeometryCollection?
+  @field:JsonProperty("geometrycollection_col") val geometrycollectionCol: GeometryCollection?
 ) : Tuple9<MariatestSpatialNullId, Geometry?, Point?, LineString?, Polygon?, MultiPoint?, MultiLineString?, MultiPolygon?, GeometryCollection?> {
   override fun _1(): MariatestSpatialNullId = id
 

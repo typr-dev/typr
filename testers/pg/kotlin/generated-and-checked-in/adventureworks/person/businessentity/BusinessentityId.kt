@@ -13,7 +13,7 @@ import dev.typr.foundations.kotlin.Bijection
 import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** Type for the primary key of table `person.businessentity` */
-data class BusinessentityId(@JsonValue val value: Int) {
+data class BusinessentityId(@field:JsonValue val value: Int) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

@@ -16,13 +16,13 @@ import java.math.BigDecimal
 /** SQL file: order_items_bulk_insert.sql */
 data class OrderItemsBulkInsertSqlRow(
   /** Points to [testdb.order_items.OrderItemsRow.orderId] */
-  @JsonProperty("order_id") val orderId: Int,
+  @field:JsonProperty("order_id") val orderId: Int,
   /** Points to [testdb.order_items.OrderItemsRow.productId] */
-  @JsonProperty("product_id") val productId: Int,
+  @field:JsonProperty("product_id") val productId: Int,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
   val quantity: Int,
   /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
-  @JsonProperty("unit_price") val unitPrice: BigDecimal
+  @field:JsonProperty("unit_price") val unitPrice: BigDecimal
 ) : Tuple4<Int, Int, Int, BigDecimal> {
   override fun _1(): Int = orderId
 

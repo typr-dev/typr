@@ -109,7 +109,7 @@ data class StateprovinceRepoMock(
     for (id in stateprovinceids) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

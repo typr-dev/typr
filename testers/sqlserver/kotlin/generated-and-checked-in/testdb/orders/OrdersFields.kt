@@ -40,7 +40,7 @@ data class OrdersFields(val _path: List<Path>) : TupleExpr4<OrdersId, CustomersI
 
   fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "customer_id", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.sqlServerType)
 
-  fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("FK__orders__customer__412EB0B6").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
+  fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("FK__orders__customer__440B1D61").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
 
   fun orderDate(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "order_date", OrdersRow::orderDate, null, null, { row, value -> row.copy(orderDate = value) }, SqlServerTypes.datetime2)
 

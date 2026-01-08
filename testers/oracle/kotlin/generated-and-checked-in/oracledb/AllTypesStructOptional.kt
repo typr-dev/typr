@@ -18,23 +18,23 @@ import java.time.OffsetDateTime
 
 /** Oracle Object Type: ALL_TYPES_STRUCT_OPTIONAL */
 data class AllTypesStructOptional(
-  @JsonProperty("VARCHAR_FIELD") val varcharField: String,
-  @JsonProperty("NVARCHAR_FIELD") val nvarcharField: String,
-  @JsonProperty("CHAR_FIELD") val charField: String,
-  @JsonProperty("NCHAR_FIELD") val ncharField: String,
-  @JsonProperty("NUMBER_FIELD") val numberField: BigDecimal,
-  @JsonProperty("NUMBER_INT_FIELD") val numberIntField: BigDecimal,
-  @JsonProperty("NUMBER_LONG_FIELD") val numberLongField: BigDecimal,
-  @JsonProperty("BINARY_FLOAT_FIELD") val binaryFloatField: Float,
-  @JsonProperty("BINARY_DOUBLE_FIELD") val binaryDoubleField: Double,
-  @JsonProperty("DATE_FIELD") val dateField: LocalDateTime,
-  @JsonProperty("TIMESTAMP_FIELD") val timestampField: LocalDateTime,
-  @JsonProperty("TIMESTAMP_TZ_FIELD") val timestampTzField: OffsetDateTime,
-  @JsonProperty("TIMESTAMP_LTZ_FIELD") val timestampLtzField: OffsetDateTime,
-  @JsonProperty("INTERVAL_YM_FIELD") val intervalYmField: OracleIntervalYM,
-  @JsonProperty("INTERVAL_DS_FIELD") val intervalDsField: OracleIntervalDS,
-  @JsonProperty("NESTED_OBJECT_FIELD") val nestedObjectField: AddressT,
-  @JsonProperty("VARRAY_FIELD") val varrayField: PhoneList
+  @field:JsonProperty("VARCHAR_FIELD") val varcharField: String,
+  @field:JsonProperty("NVARCHAR_FIELD") val nvarcharField: String,
+  @field:JsonProperty("CHAR_FIELD") val charField: String,
+  @field:JsonProperty("NCHAR_FIELD") val ncharField: String,
+  @field:JsonProperty("NUMBER_FIELD") val numberField: BigDecimal,
+  @field:JsonProperty("NUMBER_INT_FIELD") val numberIntField: BigDecimal,
+  @field:JsonProperty("NUMBER_LONG_FIELD") val numberLongField: BigDecimal,
+  @field:JsonProperty("BINARY_FLOAT_FIELD") val binaryFloatField: Float,
+  @field:JsonProperty("BINARY_DOUBLE_FIELD") val binaryDoubleField: Double,
+  @field:JsonProperty("DATE_FIELD") val dateField: LocalDateTime,
+  @field:JsonProperty("TIMESTAMP_FIELD") val timestampField: LocalDateTime,
+  @field:JsonProperty("TIMESTAMP_TZ_FIELD") val timestampTzField: OffsetDateTime,
+  @field:JsonProperty("TIMESTAMP_LTZ_FIELD") val timestampLtzField: OffsetDateTime,
+  @field:JsonProperty("INTERVAL_YM_FIELD") val intervalYmField: OracleIntervalYM,
+  @field:JsonProperty("INTERVAL_DS_FIELD") val intervalDsField: OracleIntervalDS,
+  @field:JsonProperty("NESTED_OBJECT_FIELD") val nestedObjectField: AddressT,
+  @field:JsonProperty("VARRAY_FIELD") val varrayField: PhoneList
 ) {
   companion object {
     val oracleType: OracleType<AllTypesStructOptional> = OracleObject.builder<AllTypesStructOptional>("ALL_TYPES_STRUCT_OPTIONAL").addAttribute("VARCHAR_FIELD", OracleTypes.varchar2, AllTypesStructOptional::varcharField).addAttribute("NVARCHAR_FIELD", OracleTypes.nvarchar2, AllTypesStructOptional::nvarcharField).addAttribute("CHAR_FIELD", OracleTypes.char_, AllTypesStructOptional::charField).addAttribute("NCHAR_FIELD", OracleTypes.nchar, AllTypesStructOptional::ncharField).addAttribute("NUMBER_FIELD", KotlinDbTypes.OracleTypes.number, AllTypesStructOptional::numberField).addAttribute("NUMBER_INT_FIELD", KotlinDbTypes.OracleTypes.number, AllTypesStructOptional::numberIntField).addAttribute("NUMBER_LONG_FIELD", KotlinDbTypes.OracleTypes.number, AllTypesStructOptional::numberLongField).addAttribute("BINARY_FLOAT_FIELD", KotlinDbTypes.OracleTypes.binaryFloat, AllTypesStructOptional::binaryFloatField).addAttribute("BINARY_DOUBLE_FIELD", KotlinDbTypes.OracleTypes.binaryDouble, AllTypesStructOptional::binaryDoubleField).addAttribute("DATE_FIELD", OracleTypes.date, AllTypesStructOptional::dateField).addAttribute("TIMESTAMP_FIELD", OracleTypes.timestamp, AllTypesStructOptional::timestampField).addAttribute("TIMESTAMP_TZ_FIELD", OracleTypes.timestampWithTimeZone, AllTypesStructOptional::timestampTzField).addAttribute("TIMESTAMP_LTZ_FIELD", OracleTypes.timestampWithLocalTimeZone, AllTypesStructOptional::timestampLtzField).addAttribute("INTERVAL_YM_FIELD", OracleTypes.intervalYearToMonth, AllTypesStructOptional::intervalYmField).addAttribute("INTERVAL_DS_FIELD", OracleTypes.intervalDayToSecond, AllTypesStructOptional::intervalDsField).addAttribute("NESTED_OBJECT_FIELD", oracledb.AddressT.oracleType, AllTypesStructOptional::nestedObjectField).addAttribute("VARRAY_FIELD", oracledb.PhoneList.oracleType, AllTypesStructOptional::varrayField).build({ attrs -> AllTypesStructOptional((attrs[0] as String), (attrs[1] as String), (attrs[2] as String), (attrs[3] as String), (attrs[4] as BigDecimal), (attrs[5] as BigDecimal), (attrs[6] as BigDecimal), (attrs[7] as Float), (attrs[8] as Double), (attrs[9] as LocalDateTime), (attrs[10] as LocalDateTime), (attrs[11] as OffsetDateTime), (attrs[12] as OffsetDateTime), (attrs[13] as OracleIntervalYM), (attrs[14] as OracleIntervalDS), (attrs[15] as AddressT), (attrs[16] as PhoneList)) }).asType()

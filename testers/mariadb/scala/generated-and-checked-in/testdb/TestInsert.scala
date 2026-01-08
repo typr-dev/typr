@@ -92,6 +92,30 @@ import testdb.payment_methods.PaymentMethodsRowUnsaved
 import testdb.payments.PaymentsRepoImpl
 import testdb.payments.PaymentsRow
 import testdb.payments.PaymentsRowUnsaved
+import testdb.precisetypes.Binary16
+import testdb.precisetypes.Binary32
+import testdb.precisetypes.Binary64
+import testdb.precisetypes.Decimal10_2
+import testdb.precisetypes.Decimal12_4
+import testdb.precisetypes.Decimal18_4
+import testdb.precisetypes.Decimal5_2
+import testdb.precisetypes.Decimal8_2
+import testdb.precisetypes.LocalDateTime3
+import testdb.precisetypes.LocalDateTime6
+import testdb.precisetypes.LocalTime3
+import testdb.precisetypes.LocalTime6
+import testdb.precisetypes.PaddedString10
+import testdb.precisetypes.String10
+import testdb.precisetypes.String100
+import testdb.precisetypes.String20
+import testdb.precisetypes.String255
+import testdb.precisetypes.String50
+import testdb.precision_types.PrecisionTypesRepoImpl
+import testdb.precision_types.PrecisionTypesRow
+import testdb.precision_types.PrecisionTypesRowUnsaved
+import testdb.precision_types_null.PrecisionTypesNullRepoImpl
+import testdb.precision_types_null.PrecisionTypesNullRow
+import testdb.precision_types_null.PrecisionTypesNullRowUnsaved
 import testdb.price_tiers.PriceTiersId
 import testdb.price_tiers.PriceTiersRepoImpl
 import testdb.price_tiers.PriceTiersRow
@@ -659,6 +683,110 @@ case class TestInsert(random: Random) {
       ipAddress = ipAddress,
       createdAt = createdAt,
       processedAt = processedAt
+    ))(using c)
+  }
+
+  def PrecisionTypes(
+    char10: PaddedString10,
+    string10: String10 = String10.truncate(random.alphanumeric.take(10).mkString),
+    string20: String20 = String20.truncate(random.alphanumeric.take(20).mkString),
+    string50: String50 = String50.truncate(random.alphanumeric.take(20).mkString),
+    string100: String100 = String100.truncate(random.alphanumeric.take(20).mkString),
+    string255: String255 = String255.truncate(random.alphanumeric.take(20).mkString),
+    decimal52: Decimal5_2 = Decimal5_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    decimal102: Decimal10_2 = Decimal10_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    decimal184: Decimal18_4 = Decimal18_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))),
+    numeric82: Decimal8_2 = Decimal8_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    numeric124: Decimal12_4 = Decimal12_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))),
+    binary16: Binary16 = Binary16.unsafeForce({val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs}),
+    binary32: Binary32 = Binary32.unsafeForce({val bs = Array.ofDim[Byte](32); random.nextBytes(bs); bs}),
+    binary64: Binary64 = Binary64.unsafeForce({val bs = Array.ofDim[Byte](64); random.nextBytes(bs); bs}),
+    time0: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    time3: LocalTime3 = LocalTime3.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    time6: LocalTime6 = LocalTime6.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    datetime0: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    datetime3: LocalDateTime3 = LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    datetime6: LocalDateTime6 = LocalDateTime6.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    ts0: Defaulted[LocalDateTime] = new UseDefault(),
+    ts3: Defaulted[LocalDateTime3] = new UseDefault(),
+    ts6: Defaulted[LocalDateTime6] = new UseDefault()
+  )(using c: Connection): PrecisionTypesRow = {
+    (new PrecisionTypesRepoImpl()).insert(new PrecisionTypesRowUnsaved(
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      char10 = char10,
+      decimal52 = decimal52,
+      decimal102 = decimal102,
+      decimal184 = decimal184,
+      numeric82 = numeric82,
+      numeric124 = numeric124,
+      binary16 = binary16,
+      binary32 = binary32,
+      binary64 = binary64,
+      time0 = time0,
+      time3 = time3,
+      time6 = time6,
+      datetime0 = datetime0,
+      datetime3 = datetime3,
+      datetime6 = datetime6,
+      ts0 = ts0,
+      ts3 = ts3,
+      ts6 = ts6
+    ))(using c)
+  }
+
+  def PrecisionTypesNull(
+    string10: Defaulted[Option[String10]] = new UseDefault(),
+    string20: Defaulted[Option[String20]] = new UseDefault(),
+    string50: Defaulted[Option[String50]] = new UseDefault(),
+    string100: Defaulted[Option[String100]] = new UseDefault(),
+    string255: Defaulted[Option[String255]] = new UseDefault(),
+    char10: Defaulted[Option[PaddedString10]] = new UseDefault(),
+    decimal52: Defaulted[Option[Decimal5_2]] = new UseDefault(),
+    decimal102: Defaulted[Option[Decimal10_2]] = new UseDefault(),
+    decimal184: Defaulted[Option[Decimal18_4]] = new UseDefault(),
+    numeric82: Defaulted[Option[Decimal8_2]] = new UseDefault(),
+    numeric124: Defaulted[Option[Decimal12_4]] = new UseDefault(),
+    binary16: Defaulted[Option[Binary16]] = new UseDefault(),
+    binary32: Defaulted[Option[Binary32]] = new UseDefault(),
+    binary64: Defaulted[Option[Binary64]] = new UseDefault(),
+    time0: Defaulted[Option[LocalTime]] = new UseDefault(),
+    time3: Defaulted[Option[LocalTime3]] = new UseDefault(),
+    time6: Defaulted[Option[LocalTime6]] = new UseDefault(),
+    datetime0: Defaulted[Option[LocalDateTime]] = new UseDefault(),
+    datetime3: Defaulted[Option[LocalDateTime3]] = new UseDefault(),
+    datetime6: Defaulted[Option[LocalDateTime6]] = new UseDefault(),
+    ts0: Defaulted[Option[LocalDateTime]] = new UseDefault(),
+    ts3: Defaulted[Option[LocalDateTime3]] = new UseDefault(),
+    ts6: Defaulted[Option[LocalDateTime6]] = new UseDefault()
+  )(using c: Connection): PrecisionTypesNullRow = {
+    (new PrecisionTypesNullRepoImpl()).insert(new PrecisionTypesNullRowUnsaved(
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      char10 = char10,
+      decimal52 = decimal52,
+      decimal102 = decimal102,
+      decimal184 = decimal184,
+      numeric82 = numeric82,
+      numeric124 = numeric124,
+      binary16 = binary16,
+      binary32 = binary32,
+      binary64 = binary64,
+      time0 = time0,
+      time3 = time3,
+      time6 = time6,
+      datetime0 = datetime0,
+      datetime3 = datetime3,
+      datetime6 = datetime6,
+      ts0 = ts0,
+      ts3 = ts3,
+      ts6 = ts6
     ))(using c)
   }
 

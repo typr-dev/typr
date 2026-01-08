@@ -22,7 +22,7 @@ data class TestConnectionRow(
   val id: TestConnectionId,
   val message: String,
   /** Default: (getdate()) */
-  @JsonProperty("created_at") val createdAt: LocalDateTime?
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime?
 ) : Tuple3<TestConnectionId, String, LocalDateTime?> {
   override fun _1(): TestConnectionId = id
 

@@ -53,6 +53,13 @@ import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRepoImpl
 import adventureworks.person.stateprovince.StateprovinceRow
 import adventureworks.person.stateprovince.StateprovinceRowUnsaved
+import adventureworks.precisetypes.PaddedString10
+import adventureworks.precisetypes.PaddedString3
+import adventureworks.precisetypes.String10
+import adventureworks.precisetypes.String100
+import adventureworks.precisetypes.String20
+import adventureworks.precisetypes.String255
+import adventureworks.precisetypes.String50
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRepoImpl
 import adventureworks.production.product.ProductRow
@@ -99,6 +106,14 @@ import adventureworks.public.pgtest.PgtestRepoImpl
 import adventureworks.public.pgtest.PgtestRow
 import adventureworks.public.pgtestnull.PgtestnullRepoImpl
 import adventureworks.public.pgtestnull.PgtestnullRow
+import adventureworks.public.precision_types.PrecisionTypesId
+import adventureworks.public.precision_types.PrecisionTypesRepoImpl
+import adventureworks.public.precision_types.PrecisionTypesRow
+import adventureworks.public.precision_types.PrecisionTypesRowUnsaved
+import adventureworks.public.precision_types_null.PrecisionTypesNullId
+import adventureworks.public.precision_types_null.PrecisionTypesNullRepoImpl
+import adventureworks.public.precision_types_null.PrecisionTypesNullRow
+import adventureworks.public.precision_types_null.PrecisionTypesNullRowUnsaved
 import adventureworks.public.title.TitleId
 import adventureworks.public.title.TitleRepoImpl
 import adventureworks.public.title.TitleRow
@@ -901,6 +916,118 @@ case class TestInsert(
       uuides = uuides,
       varchares = varchares,
       xmles = xmles
+    ))(using c)
+  }
+
+  def publicPrecisionTypes(
+    bpchar3: PaddedString3,
+    bpchar10: PaddedString10,
+    string10: String10 = String10.truncate(RandomHelper.alphanumeric(random, 10)),
+    string20: String20 = String20.truncate(RandomHelper.alphanumeric(random, 20)),
+    string50: String50 = String50.truncate(RandomHelper.alphanumeric(random, 20)),
+    string100: String100 = String100.truncate(RandomHelper.alphanumeric(random, 20)),
+    string255: String255 = String255.truncate(RandomHelper.alphanumeric(random, 20)),
+    decimal52: java.math.BigDecimal = java.math.BigDecimal.valueOf(random.nextDouble()),
+    decimal102: java.math.BigDecimal = java.math.BigDecimal.valueOf(random.nextDouble()),
+    decimal184: java.math.BigDecimal = java.math.BigDecimal.valueOf(random.nextDouble()),
+    numeric82: java.math.BigDecimal = java.math.BigDecimal.valueOf(random.nextDouble()),
+    numeric124: java.math.BigDecimal = java.math.BigDecimal.valueOf(random.nextDouble()),
+    timestamp0: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    timestamp3: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    timestamp6: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    timestamptz0: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timestamptz3: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    timestamptz6: Instant = Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)),
+    time0: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    time3: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    time6: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong),
+    timetz0: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    timetz3: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    timetz6: OffsetTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    id: Defaulted[PrecisionTypesId] = new UseDefault()
+  )(using c: Connection): PrecisionTypesRow = {
+    (new PrecisionTypesRepoImpl()).insert(new PrecisionTypesRowUnsaved(
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      bpchar3 = bpchar3,
+      bpchar10 = bpchar10,
+      decimal52 = decimal52,
+      decimal102 = decimal102,
+      decimal184 = decimal184,
+      numeric82 = numeric82,
+      numeric124 = numeric124,
+      timestamp0 = timestamp0,
+      timestamp3 = timestamp3,
+      timestamp6 = timestamp6,
+      timestamptz0 = timestamptz0,
+      timestamptz3 = timestamptz3,
+      timestamptz6 = timestamptz6,
+      time0 = time0,
+      time3 = time3,
+      time6 = time6,
+      timetz0 = timetz0,
+      timetz3 = timetz3,
+      timetz6 = timetz6,
+      id = id
+    ))(using c)
+  }
+
+  def publicPrecisionTypesNull(
+    string10: Optional[String10] = (if (random.nextBoolean()) Optional.empty() else Optional.of(String10.truncate(RandomHelper.alphanumeric(random, 10)))),
+    string20: Optional[String20] = (if (random.nextBoolean()) Optional.empty() else Optional.of(String20.truncate(RandomHelper.alphanumeric(random, 20)))),
+    string50: Optional[String50] = (if (random.nextBoolean()) Optional.empty() else Optional.of(String50.truncate(RandomHelper.alphanumeric(random, 20)))),
+    string100: Optional[String100] = (if (random.nextBoolean()) Optional.empty() else Optional.of(String100.truncate(RandomHelper.alphanumeric(random, 20)))),
+    string255: Optional[String255] = (if (random.nextBoolean()) Optional.empty() else Optional.of(String255.truncate(RandomHelper.alphanumeric(random, 20)))),
+    bpchar3: Optional[PaddedString3] = Optional.empty(),
+    bpchar10: Optional[PaddedString10] = Optional.empty(),
+    decimal52: Optional[java.math.BigDecimal] = (if (random.nextBoolean()) Optional.empty() else Optional.of(java.math.BigDecimal.valueOf(random.nextDouble()))),
+    decimal102: Optional[java.math.BigDecimal] = (if (random.nextBoolean()) Optional.empty() else Optional.of(java.math.BigDecimal.valueOf(random.nextDouble()))),
+    decimal184: Optional[java.math.BigDecimal] = (if (random.nextBoolean()) Optional.empty() else Optional.of(java.math.BigDecimal.valueOf(random.nextDouble()))),
+    numeric82: Optional[java.math.BigDecimal] = (if (random.nextBoolean()) Optional.empty() else Optional.of(java.math.BigDecimal.valueOf(random.nextDouble()))),
+    numeric124: Optional[java.math.BigDecimal] = (if (random.nextBoolean()) Optional.empty() else Optional.of(java.math.BigDecimal.valueOf(random.nextDouble()))),
+    timestamp0: Optional[LocalDateTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    timestamp3: Optional[LocalDateTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    timestamp6: Optional[LocalDateTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    timestamptz0: Optional[Instant] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+    timestamptz3: Optional[Instant] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+    timestamptz6: Optional[Instant] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
+    time0: Optional[LocalTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    time3: Optional[LocalTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    time6: Optional[LocalTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    timetz0: Optional[OffsetTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+    timetz3: Optional[OffsetTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+    timetz6: Optional[OffsetTime] = (if (random.nextBoolean()) Optional.empty() else Optional.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+    id: Defaulted[PrecisionTypesNullId] = new UseDefault()
+  )(using c: Connection): PrecisionTypesNullRow = {
+    (new PrecisionTypesNullRepoImpl()).insert(new PrecisionTypesNullRowUnsaved(
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      bpchar3 = bpchar3,
+      bpchar10 = bpchar10,
+      decimal52 = decimal52,
+      decimal102 = decimal102,
+      decimal184 = decimal184,
+      numeric82 = numeric82,
+      numeric124 = numeric124,
+      timestamp0 = timestamp0,
+      timestamp3 = timestamp3,
+      timestamp6 = timestamp6,
+      timestamptz0 = timestamptz0,
+      timestamptz3 = timestamptz3,
+      timestamptz6 = timestamptz6,
+      time0 = time0,
+      time3 = time3,
+      time6 = time6,
+      timetz0 = timetz0,
+      timetz3 = timetz3,
+      timetz6 = timetz6,
+      id = id
     ))(using c)
   }
 

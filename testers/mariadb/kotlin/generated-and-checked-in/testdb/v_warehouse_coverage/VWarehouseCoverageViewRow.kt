@@ -23,7 +23,7 @@ data class VWarehouseCoverageViewRow(
     * Default: 0
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
     */
-  @JsonProperty("warehouse_id") val warehouseId: WarehousesId,
+  @field:JsonProperty("warehouse_id") val warehouseId: WarehousesId,
   /** 
     * Points to [testdb.warehouses.WarehousesRow.code]
     */
@@ -39,11 +39,11 @@ data class VWarehouseCoverageViewRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("location_wkt") val locationWkt: String?,
+  @field:JsonProperty("location_wkt") val locationWkt: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("service_area_wkt") val serviceAreaWkt: String?,
+  @field:JsonProperty("service_area_wkt") val serviceAreaWkt: String?,
   /** 
     * Default: 'UTC'
     * Points to [testdb.warehouses.WarehousesRow.timezone]
@@ -53,15 +53,15 @@ data class VWarehouseCoverageViewRow(
     * Default: 1
     * Points to [testdb.warehouses.WarehousesRow.isActive]
     */
-  @JsonProperty("is_active") val isActive: Boolean,
+  @field:JsonProperty("is_active") val isActive: Boolean,
   /** 
     * Default: 0
     */
-  @JsonProperty("products_stocked") val productsStocked: Long,
+  @field:JsonProperty("products_stocked") val productsStocked: Long,
   /** 
     * Default: NULL
     */
-  @JsonProperty("total_inventory") val totalInventory: BigDecimal?
+  @field:JsonProperty("total_inventory") val totalInventory: BigDecimal?
 ) : Tuple10<WarehousesId, String, String, String, String?, String?, String, Boolean, Long, BigDecimal?> {
   override fun _1(): WarehousesId = warehouseId
 

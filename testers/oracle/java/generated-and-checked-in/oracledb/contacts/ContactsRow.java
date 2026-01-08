@@ -17,13 +17,13 @@ import oracledb.customtypes.Defaulted;
 
 /** Table: CONTACTS Primary key: CONTACT_ID */
 public record ContactsRow(
-    /** Default: "TYPR"."ISEQ$$_72850".nextval */
+    /** Default: "TYPR"."ISEQ$$_72857".nextval */
     @JsonProperty("CONTACT_ID") ContactsId contactId,
     @JsonProperty("NAME") String name,
     @JsonProperty("EMAILS") Optional<EmailTableT> emails,
     @JsonProperty("TAGS") Optional<TagVarrayT> tags)
     implements Tuple4<ContactsId, String, Optional<EmailTableT>, Optional<TagVarrayT>> {
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
+  /** Default: "TYPR"."ISEQ$$_72857".nextval */
   public ContactsRow withContactId(ContactsId contactId) {
     return new ContactsRow(contactId, name, emails, tags);
   }

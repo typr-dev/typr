@@ -31,91 +31,91 @@ import testdb.customtypes.Defaulted
   */
 data class MariatestRow(
   /**  */
-  @JsonProperty("tinyint_col") val tinyintCol: Byte,
+  @field:JsonProperty("tinyint_col") val tinyintCol: Byte,
   /**  */
-  @JsonProperty("smallint_col") val smallintCol: Short,
+  @field:JsonProperty("smallint_col") val smallintCol: Short,
   /**  */
-  @JsonProperty("mediumint_col") val mediumintCol: Int,
+  @field:JsonProperty("mediumint_col") val mediumintCol: Int,
   /**  */
-  @JsonProperty("int_col") val intCol: MariatestId,
+  @field:JsonProperty("int_col") val intCol: MariatestId,
   /**  */
-  @JsonProperty("bigint_col") val bigintCol: Long,
+  @field:JsonProperty("bigint_col") val bigintCol: Long,
   /**  */
-  @JsonProperty("tinyint_u_col") val tinyintUCol: Uint1,
+  @field:JsonProperty("tinyint_u_col") val tinyintUCol: Uint1,
   /**  */
-  @JsonProperty("smallint_u_col") val smallintUCol: Uint2,
+  @field:JsonProperty("smallint_u_col") val smallintUCol: Uint2,
   /**  */
-  @JsonProperty("mediumint_u_col") val mediumintUCol: Uint4,
+  @field:JsonProperty("mediumint_u_col") val mediumintUCol: Uint4,
   /**  */
-  @JsonProperty("int_u_col") val intUCol: Uint4,
+  @field:JsonProperty("int_u_col") val intUCol: Uint4,
   /**  */
-  @JsonProperty("bigint_u_col") val bigintUCol: Uint8,
+  @field:JsonProperty("bigint_u_col") val bigintUCol: Uint8,
   /**  */
-  @JsonProperty("decimal_col") val decimalCol: BigDecimal,
+  @field:JsonProperty("decimal_col") val decimalCol: BigDecimal,
   /**  */
-  @JsonProperty("numeric_col") val numericCol: BigDecimal,
+  @field:JsonProperty("numeric_col") val numericCol: BigDecimal,
   /**  */
-  @JsonProperty("float_col") val floatCol: Float,
+  @field:JsonProperty("float_col") val floatCol: Float,
   /**  */
-  @JsonProperty("double_col") val doubleCol: Double,
+  @field:JsonProperty("double_col") val doubleCol: Double,
   /**  */
-  @JsonProperty("bool_col") val boolCol: Boolean,
+  @field:JsonProperty("bool_col") val boolCol: Boolean,
   /**  */
-  @JsonProperty("bit_col") val bitCol: ByteArray,
+  @field:JsonProperty("bit_col") val bitCol: ByteArray,
   /**  */
-  @JsonProperty("bit1_col") val bit1Col: ByteArray,
+  @field:JsonProperty("bit1_col") val bit1Col: ByteArray,
   /**  */
-  @JsonProperty("char_col") val charCol: String,
+  @field:JsonProperty("char_col") val charCol: String,
   /**  */
-  @JsonProperty("varchar_col") val varcharCol: String,
+  @field:JsonProperty("varchar_col") val varcharCol: String,
   /**  */
-  @JsonProperty("tinytext_col") val tinytextCol: String,
+  @field:JsonProperty("tinytext_col") val tinytextCol: String,
   /**  */
-  @JsonProperty("text_col") val textCol: String,
+  @field:JsonProperty("text_col") val textCol: String,
   /**  */
-  @JsonProperty("mediumtext_col") val mediumtextCol: String,
+  @field:JsonProperty("mediumtext_col") val mediumtextCol: String,
   /**  */
-  @JsonProperty("longtext_col") val longtextCol: String,
+  @field:JsonProperty("longtext_col") val longtextCol: String,
   /**  */
-  @JsonProperty("binary_col") val binaryCol: ByteArray,
+  @field:JsonProperty("binary_col") val binaryCol: ByteArray,
   /**  */
-  @JsonProperty("varbinary_col") val varbinaryCol: ByteArray,
+  @field:JsonProperty("varbinary_col") val varbinaryCol: ByteArray,
   /**  */
-  @JsonProperty("tinyblob_col") val tinyblobCol: ByteArray,
+  @field:JsonProperty("tinyblob_col") val tinyblobCol: ByteArray,
   /**  */
-  @JsonProperty("blob_col") val blobCol: ByteArray,
+  @field:JsonProperty("blob_col") val blobCol: ByteArray,
   /**  */
-  @JsonProperty("mediumblob_col") val mediumblobCol: ByteArray,
+  @field:JsonProperty("mediumblob_col") val mediumblobCol: ByteArray,
   /**  */
-  @JsonProperty("longblob_col") val longblobCol: ByteArray,
+  @field:JsonProperty("longblob_col") val longblobCol: ByteArray,
   /**  */
-  @JsonProperty("date_col") val dateCol: LocalDate,
+  @field:JsonProperty("date_col") val dateCol: LocalDate,
   /**  */
-  @JsonProperty("time_col") val timeCol: LocalTime,
+  @field:JsonProperty("time_col") val timeCol: LocalTime,
   /**  */
-  @JsonProperty("time_fsp_col") val timeFspCol: LocalTime,
+  @field:JsonProperty("time_fsp_col") val timeFspCol: LocalTime,
   /**  */
-  @JsonProperty("datetime_col") val datetimeCol: LocalDateTime,
+  @field:JsonProperty("datetime_col") val datetimeCol: LocalDateTime,
   /**  */
-  @JsonProperty("datetime_fsp_col") val datetimeFspCol: LocalDateTime,
+  @field:JsonProperty("datetime_fsp_col") val datetimeFspCol: LocalDateTime,
   /** 
     * Default: current_timestamp()
     */
-  @JsonProperty("timestamp_col") val timestampCol: LocalDateTime,
+  @field:JsonProperty("timestamp_col") val timestampCol: LocalDateTime,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("timestamp_fsp_col") val timestampFspCol: LocalDateTime,
+  @field:JsonProperty("timestamp_fsp_col") val timestampFspCol: LocalDateTime,
   /**  */
-  @JsonProperty("year_col") val yearCol: Year,
+  @field:JsonProperty("year_col") val yearCol: Year,
   /**  */
-  @JsonProperty("set_col") val setCol: XYZSet,
+  @field:JsonProperty("set_col") val setCol: XYZSet,
   /**  */
-  @JsonProperty("json_col") val jsonCol: Json,
+  @field:JsonProperty("json_col") val jsonCol: Json,
   /**  */
-  @JsonProperty("inet4_col") val inet4Col: Inet4,
+  @field:JsonProperty("inet4_col") val inet4Col: Inet4,
   /**  */
-  @JsonProperty("inet6_col") val inet6Col: Inet6
+  @field:JsonProperty("inet6_col") val inet6Col: Inet6
 ) : Tuple41<Byte, Short, Int, MariatestId, Long, Uint1, Uint2, Uint4, Uint4, Uint8, BigDecimal, BigDecimal, Float, Double, Boolean, ByteArray, ByteArray, String, String, String, String, String, String, ByteArray, ByteArray, ByteArray, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, LocalDateTime, Year, XYZSet, Json, Inet4, Inet6> {
   override fun _1(): Byte = tinyintCol
 

@@ -5,6 +5,7 @@
  */
 package oracledb
 
+import java.math.BigInteger
 import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -13,6 +14,9 @@ import oracledb.all_scalar_types.AllScalarTypesId
 import oracledb.all_scalar_types.AllScalarTypesRepoImpl
 import oracledb.all_scalar_types.AllScalarTypesRow
 import oracledb.all_scalar_types.AllScalarTypesRowUnsaved
+import oracledb.all_types_test.AllTypesTestId
+import oracledb.all_types_test.AllTypesTestRepoImpl
+import oracledb.all_types_test.AllTypesTestRowUnsaved
 import oracledb.contacts.ContactsId
 import oracledb.contacts.ContactsRepoImpl
 import oracledb.contacts.ContactsRowUnsaved
@@ -27,6 +31,29 @@ import oracledb.departments.DepartmentsRow
 import oracledb.employees.EmployeesId
 import oracledb.employees.EmployeesRepoImpl
 import oracledb.employees.EmployeesRowUnsaved
+import oracledb.precisetypes.Decimal10_2
+import oracledb.precisetypes.Decimal18_4
+import oracledb.precisetypes.Decimal5_2
+import oracledb.precisetypes.Int10
+import oracledb.precisetypes.Int18
+import oracledb.precisetypes.Int5
+import oracledb.precisetypes.LocalDateTime3
+import oracledb.precisetypes.LocalDateTime6
+import oracledb.precisetypes.LocalDateTime9
+import oracledb.precisetypes.NonEmptyPaddedString10
+import oracledb.precisetypes.NonEmptyString10
+import oracledb.precisetypes.NonEmptyString100
+import oracledb.precisetypes.NonEmptyString20
+import oracledb.precisetypes.NonEmptyString255
+import oracledb.precisetypes.NonEmptyString50
+import oracledb.precision_types.PrecisionTypesId
+import oracledb.precision_types.PrecisionTypesRepoImpl
+import oracledb.precision_types.PrecisionTypesRow
+import oracledb.precision_types.PrecisionTypesRowUnsaved
+import oracledb.precision_types_null.PrecisionTypesNullId
+import oracledb.precision_types_null.PrecisionTypesNullRepoImpl
+import oracledb.precision_types_null.PrecisionTypesNullRow
+import oracledb.precision_types_null.PrecisionTypesNullRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
@@ -50,6 +77,20 @@ case class TestInsert(random: Random) {
       colTimestamp = colTimestamp,
       colClob = colClob,
       colNotNull = colNotNull,
+      id = id
+    ))(using c)
+  }
+
+  def AllTypesTest(
+    name: String = random.alphanumeric.take(20).mkString,
+    data: Option[AllTypesStructNoLobs] = None,
+    dataArray: Option[AllTypesStructNoLobsArray] = None,
+    id: Defaulted[AllTypesTestId] = new UseDefault()
+  )(using c: Connection): AllTypesTestId = {
+    (new AllTypesTestRepoImpl()).insert(new AllTypesTestRowUnsaved(
+      name = name,
+      data = data,
+      dataArray = dataArray,
       id = id
     ))(using c)
   }
@@ -114,6 +155,86 @@ case class TestInsert(random: Random) {
       empName = empName,
       salary = salary,
       hireDate = hireDate
+    ))(using c)
+  }
+
+  def PrecisionTypes(
+    char10: NonEmptyPaddedString10,
+    string10: NonEmptyString10 = NonEmptyString10.truncate(random.alphanumeric.take(10).mkString),
+    string20: NonEmptyString20 = NonEmptyString20.truncate(random.alphanumeric.take(20).mkString),
+    string50: NonEmptyString50 = NonEmptyString50.truncate(random.alphanumeric.take(20).mkString),
+    string100: NonEmptyString100 = NonEmptyString100.truncate(random.alphanumeric.take(20).mkString),
+    string255: NonEmptyString255 = NonEmptyString255.truncate(random.alphanumeric.take(20).mkString),
+    number52: Decimal5_2 = Decimal5_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    number102: Decimal10_2 = Decimal10_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    number184: Decimal18_4 = Decimal18_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))),
+    number50: Int5 = Int5.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 100000.toLong)),
+    number100: Int10 = Int10.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong)),
+    number180: Int18 = Int18.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong)),
+    ts0: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
+    ts3: LocalDateTime3 = LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    ts6: LocalDateTime6 = LocalDateTime6.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    ts9: LocalDateTime9 = LocalDateTime9.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
+    id: Defaulted[PrecisionTypesId] = new UseDefault()
+  )(using c: Connection): PrecisionTypesRow = {
+    (new PrecisionTypesRepoImpl()).insert(new PrecisionTypesRowUnsaved(
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      char10 = char10,
+      number52 = number52,
+      number102 = number102,
+      number184 = number184,
+      number50 = number50,
+      number100 = number100,
+      number180 = number180,
+      ts0 = ts0,
+      ts3 = ts3,
+      ts6 = ts6,
+      ts9 = ts9,
+      id = id
+    ))(using c)
+  }
+
+  def PrecisionTypesNull(
+    string10: Option[NonEmptyString10] = (if (random.nextBoolean()) None else Some(NonEmptyString10.truncate(random.alphanumeric.take(10).mkString))),
+    string20: Option[NonEmptyString20] = (if (random.nextBoolean()) None else Some(NonEmptyString20.truncate(random.alphanumeric.take(20).mkString))),
+    string50: Option[NonEmptyString50] = (if (random.nextBoolean()) None else Some(NonEmptyString50.truncate(random.alphanumeric.take(20).mkString))),
+    string100: Option[NonEmptyString100] = (if (random.nextBoolean()) None else Some(NonEmptyString100.truncate(random.alphanumeric.take(20).mkString))),
+    string255: Option[NonEmptyString255] = (if (random.nextBoolean()) None else Some(NonEmptyString255.truncate(random.alphanumeric.take(20).mkString))),
+    char10: Option[NonEmptyPaddedString10] = None,
+    number52: Option[Decimal5_2] = (if (random.nextBoolean()) None else Some(Decimal5_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))))),
+    number102: Option[Decimal10_2] = (if (random.nextBoolean()) None else Some(Decimal10_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))))),
+    number184: Option[Decimal18_4] = (if (random.nextBoolean()) None else Some(Decimal18_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))))),
+    number50: Option[Int5] = (if (random.nextBoolean()) None else Some(Int5.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 100000.toLong)))),
+    number100: Option[Int10] = (if (random.nextBoolean()) None else Some(Int10.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong)))),
+    number180: Option[Int18] = (if (random.nextBoolean()) None else Some(Int18.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong)))),
+    ts0: Option[LocalDateTime] = (if (random.nextBoolean()) None else Some(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
+    ts3: Option[LocalDateTime3] = (if (random.nextBoolean()) None else Some(LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    ts6: Option[LocalDateTime6] = (if (random.nextBoolean()) None else Some(LocalDateTime6.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    ts9: Option[LocalDateTime9] = (if (random.nextBoolean()) None else Some(LocalDateTime9.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
+    id: Defaulted[PrecisionTypesNullId] = new UseDefault()
+  )(using c: Connection): PrecisionTypesNullRow = {
+    (new PrecisionTypesNullRepoImpl()).insert(new PrecisionTypesNullRowUnsaved(
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      char10 = char10,
+      number52 = number52,
+      number102 = number102,
+      number184 = number184,
+      number50 = number50,
+      number100 = number100,
+      number180 = number180,
+      ts0 = ts0,
+      ts3 = ts3,
+      ts6 = ts6,
+      ts9 = ts9,
+      id = id
     ))(using c)
   }
 

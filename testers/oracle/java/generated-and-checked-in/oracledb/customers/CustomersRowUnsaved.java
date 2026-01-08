@@ -18,7 +18,7 @@ public record CustomersRowUnsaved(
     @JsonProperty("NAME") String name,
     @JsonProperty("BILLING_ADDRESS") AddressT billingAddress,
     @JsonProperty("CREDIT_LIMIT") Optional<MoneyT> creditLimit,
-    /** Default: "TYPR"."ISEQ$$_72843".nextval */
+    /** Default: "TYPR"."ISEQ$$_72850".nextval */
     @JsonProperty("CUSTOMER_ID") Defaulted<CustomersId> customerId,
     /** Default: SYSTIMESTAMP */
     @JsonProperty("CREATED_AT") Defaulted<LocalDateTime> createdAt) {
@@ -43,7 +43,7 @@ public record CustomersRowUnsaved(
   }
   ;
 
-  /** Default: "TYPR"."ISEQ$$_72843".nextval */
+  /** Default: "TYPR"."ISEQ$$_72850".nextval */
   public CustomersRowUnsaved withCustomerId(Defaulted<CustomersId> customerId) {
     return new CustomersRowUnsaved(name, billingAddress, creditLimit, customerId, createdAt);
   }

@@ -17,13 +17,13 @@ import java.math.BigDecimal
 
 /** SQL file: cte_test.sql */
 data class CteTestSqlRow(
-  @JsonProperty("customer_id") val customerId: Uint8,
+  @field:JsonProperty("customer_id") val customerId: Uint8,
   val email: String,
-  @JsonProperty("first_name") val firstName: String,
-  @JsonProperty("order_count") val orderCount: Long,
-  @JsonProperty("total_spent") val totalSpent: BigDecimal,
+  @field:JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("order_count") val orderCount: Long,
+  @field:JsonProperty("total_spent") val totalSpent: BigDecimal,
   /** Points to [testdb.brands.BrandsRow.name] */
-  @JsonProperty("favorite_brand") val favoriteBrand: String?
+  @field:JsonProperty("favorite_brand") val favoriteBrand: String?
 ) : Tuple6<Uint8, String, String, Long, BigDecimal, String?> {
   override fun _1(): Uint8 = customerId
 

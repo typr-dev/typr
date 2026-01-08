@@ -79,7 +79,7 @@ data class Db2testUniqueRepoMock(
     for (id in ids) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

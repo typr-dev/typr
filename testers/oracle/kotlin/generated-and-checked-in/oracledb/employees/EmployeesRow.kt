@@ -22,16 +22,16 @@ import oracledb.departments.DepartmentsId
   * Composite primary key: EMP_NUMBER, EMP_SUFFIX
   */
 data class EmployeesRow(
-  @JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
-  @JsonProperty("EMP_SUFFIX") val empSuffix: String,
+  @field:JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
+  @field:JsonProperty("EMP_SUFFIX") val empSuffix: String,
   /** Points to [oracledb.departments.DepartmentsRow.deptCode] */
-  @JsonProperty("DEPT_CODE") val deptCode: String,
+  @field:JsonProperty("DEPT_CODE") val deptCode: String,
   /** Points to [oracledb.departments.DepartmentsRow.deptRegion] */
-  @JsonProperty("DEPT_REGION") val deptRegion: String,
-  @JsonProperty("EMP_NAME") val empName: String,
-  @JsonProperty("SALARY") val salary: MoneyT?,
+  @field:JsonProperty("DEPT_REGION") val deptRegion: String,
+  @field:JsonProperty("EMP_NAME") val empName: String,
+  @field:JsonProperty("SALARY") val salary: MoneyT?,
   /** Default: SYSDATE  */
-  @JsonProperty("HIRE_DATE") val hireDate: LocalDateTime
+  @field:JsonProperty("HIRE_DATE") val hireDate: LocalDateTime
 ) : Tuple7<BigDecimal, String, String, String, String, MoneyT?, LocalDateTime> {
   override fun _1(): BigDecimal = empNumber
 

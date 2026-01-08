@@ -20,14 +20,14 @@ import java.time.Instant
   * Primary key: user_id
   */
 data class UsersRow(
-  @JsonProperty("user_id") val userId: UsersId,
+  @field:JsonProperty("user_id") val userId: UsersId,
   val name: String,
-  @JsonProperty("last_name") val lastName: String?,
+  @field:JsonProperty("last_name") val lastName: String?,
   val email: Unknown,
   val password: String,
   /** Default: now() */
-  @JsonProperty("created_at") val createdAt: Instant,
-  @JsonProperty("verified_on") val verifiedOn: Instant?
+  @field:JsonProperty("created_at") val createdAt: Instant,
+  @field:JsonProperty("verified_on") val verifiedOn: Instant?
 ) : Tuple7<UsersId, String, String?, Unknown, String, Instant, Instant?> {
   override fun _1(): UsersId = userId
 

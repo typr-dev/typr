@@ -22,12 +22,12 @@ data class CategoriesRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("category_id") val categoryId: CategoriesId,
+  @field:JsonProperty("category_id") val categoryId: CategoriesId,
   /** 
     * Default: NULL
     * Points to [testdb.categories.CategoriesRow.categoryId]
     */
-  @JsonProperty("parent_id") val parentId: CategoriesId?,
+  @field:JsonProperty("parent_id") val parentId: CategoriesId?,
   /**  */
   val name: String,
   /**  */
@@ -39,15 +39,15 @@ data class CategoriesRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("image_url") val imageUrl: String?,
+  @field:JsonProperty("image_url") val imageUrl: String?,
   /** 
     * Default: 0
     */
-  @JsonProperty("sort_order") val sortOrder: Short,
+  @field:JsonProperty("sort_order") val sortOrder: Short,
   /** 
     * Default: 1
     */
-  @JsonProperty("is_visible") val isVisible: Boolean,
+  @field:JsonProperty("is_visible") val isVisible: Boolean,
   /** 
     * Default: NULL
     */

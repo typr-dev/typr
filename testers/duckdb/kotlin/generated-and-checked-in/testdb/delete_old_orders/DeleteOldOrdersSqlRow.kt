@@ -19,13 +19,13 @@ import testdb.orders.OrdersId
 /** SQL file: delete_old_orders.sql */
 data class DeleteOldOrdersSqlRow(
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** Points to [testdb.orders.OrdersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: Int,
+  @field:JsonProperty("customer_id") val customerId: Int,
   /** Points to [testdb.orders.OrdersRow.orderDate] */
-  @JsonProperty("order_date") val orderDate: LocalDate,
+  @field:JsonProperty("order_date") val orderDate: LocalDate,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
-  @JsonProperty("total_amount") val totalAmount: BigDecimal?,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.status] */
   val status: String?
 ) : Tuple5<OrdersId, Int, LocalDate, BigDecimal?, String?> {

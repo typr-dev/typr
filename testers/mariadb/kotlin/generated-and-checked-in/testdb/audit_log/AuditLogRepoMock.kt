@@ -79,7 +79,7 @@ data class AuditLogRepoMock(
     for (id in logIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

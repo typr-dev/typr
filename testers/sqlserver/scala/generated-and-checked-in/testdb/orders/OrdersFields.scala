@@ -72,7 +72,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[OrdersI
     )
   }
 
-  def fkCustomers: ForeignKey[CustomersFields, CustomersRow] = ForeignKey.of[CustomersFields, CustomersRow]("FK__orders__customer__412EB0B6").withColumnPair[CustomersId](customerId, _.customerId)
+  def fkCustomers: ForeignKey[CustomersFields, CustomersRow] = ForeignKey.of[CustomersFields, CustomersRow]("FK__orders__customer__440B1D61").withColumnPair[CustomersId](customerId, _.customerId)
 
   override def columns: java.util.List[FieldLike[?, OrdersRow]] = java.util.List.of(this.orderId.underlying, this.customerId.underlying, this.orderDate.underlying, this.totalAmount.underlying)
 

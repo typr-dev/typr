@@ -24,15 +24,15 @@ data class CustomersRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /**  */
   val email: String,
   /**  */
-  @JsonProperty("password_hash") val passwordHash: ByteArray,
+  @field:JsonProperty("password_hash") val passwordHash: ByteArray,
   /**  */
-  @JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("first_name") val firstName: String,
   /**  */
-  @JsonProperty("last_name") val lastName: String,
+  @field:JsonProperty("last_name") val lastName: String,
   /** 
     * Default: NULL
     */
@@ -53,7 +53,7 @@ data class CustomersRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("marketing_flags") val marketingFlags: EmailMailPushSmsSet?,
+  @field:JsonProperty("marketing_flags") val marketingFlags: EmailMailPushSmsSet?,
   /** 
     * Default: NULL
     */
@@ -61,15 +61,15 @@ data class CustomersRow(
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("created_at") val createdAt: LocalDateTime,
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("updated_at") val updatedAt: LocalDateTime,
+  @field:JsonProperty("updated_at") val updatedAt: LocalDateTime,
   /** 
     * Default: NULL
     */
-  @JsonProperty("last_login_at") val lastLoginAt: LocalDateTime?
+  @field:JsonProperty("last_login_at") val lastLoginAt: LocalDateTime?
 ) : Tuple14<CustomersId, String, ByteArray, String, String, String?, CustomerStatusId, String, Json?, EmailMailPushSmsSet?, String?, LocalDateTime, LocalDateTime, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 

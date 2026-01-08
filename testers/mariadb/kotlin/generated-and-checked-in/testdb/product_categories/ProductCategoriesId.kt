@@ -14,8 +14,8 @@ import testdb.products.ProductsId
 
 /** Type for the composite primary key of table `product_categories` */
 data class ProductCategoriesId(
-  @JsonProperty("product_id") val productId: ProductsId,
-  @JsonProperty("category_id") val categoryId: CategoriesId
+  @field:JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("category_id") val categoryId: CategoriesId
 ) : Tuple2<ProductsId, CategoriesId> {
   override fun _1(): ProductsId = productId
 

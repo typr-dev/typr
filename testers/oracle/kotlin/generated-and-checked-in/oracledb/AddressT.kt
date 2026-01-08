@@ -12,9 +12,9 @@ import dev.typr.foundations.OracleTypes
 
 /** Oracle Object Type: ADDRESS_T */
 data class AddressT(
-  @JsonProperty("STREET") val street: String,
-  @JsonProperty("CITY") val city: String,
-  @JsonProperty("LOCATION") val location: CoordinatesT
+  @field:JsonProperty("STREET") val street: String,
+  @field:JsonProperty("CITY") val city: String,
+  @field:JsonProperty("LOCATION") val location: CoordinatesT
 ) {
   companion object {
     val oracleType: OracleType<AddressT> = OracleObject.builder<AddressT>("ADDRESS_T").addAttribute("STREET", OracleTypes.varchar2, AddressT::street).addAttribute("CITY", OracleTypes.varchar2, AddressT::city).addAttribute("LOCATION", oracledb.CoordinatesT.oracleType, AddressT::location).build({ attrs -> AddressT((attrs[0] as String), (attrs[1] as String), (attrs[2] as CoordinatesT)) }).asType()

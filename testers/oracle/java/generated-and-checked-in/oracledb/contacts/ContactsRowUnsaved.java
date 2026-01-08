@@ -17,7 +17,7 @@ public record ContactsRowUnsaved(
     @JsonProperty("NAME") String name,
     @JsonProperty("EMAILS") Optional<EmailTableT> emails,
     @JsonProperty("TAGS") Optional<TagVarrayT> tags,
-    /** Default: "TYPR"."ISEQ$$_72850".nextval */
+    /** Default: "TYPR"."ISEQ$$_72857".nextval */
     @JsonProperty("CONTACT_ID") Defaulted<ContactsId> contactId) {
   public ContactsRowUnsaved(@JsonProperty("NAME") String name) {
     this(name, Optional.empty(), Optional.empty(), new UseDefault<>());
@@ -39,7 +39,7 @@ public record ContactsRowUnsaved(
   }
   ;
 
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
+  /** Default: "TYPR"."ISEQ$$_72857".nextval */
   public ContactsRowUnsaved withContactId(Defaulted<ContactsId> contactId) {
     return new ContactsRowUnsaved(name, emails, tags, contactId);
   }

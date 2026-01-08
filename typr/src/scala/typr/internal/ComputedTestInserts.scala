@@ -79,6 +79,56 @@ object ComputedTestInserts {
               case other =>
                 sys.error(s"Unexpected language: $other")
             }
+
+          // Precise types - wrapper types with constraints
+          case q: jvm.Type.Qualified if q.value.idents.exists(_.value == "precisetypes") =>
+            val typeName = q.value.name.value
+            if (typeName.startsWith("NonEmptyString") && typeName != "NonEmptyString") {
+              val maxLength = typeName.stripPrefix("NonEmptyString").toIntOption.getOrElse(20).min(20)
+              val str = lang.Random.alphanumeric(r, code"${math.max(1, maxLength)}")
+              Some(code"$q.truncate($str)")
+            } else if (typeName == "NonEmptyString") {
+              val str = lang.Random.alphanumeric(r, code"10")
+              Some(code"$q.unsafeForce($str)")
+            } else if (typeName.startsWith("String")) {
+              val maxLength = typeName.stripPrefix("String").toIntOption.getOrElse(20).min(20)
+              val str = lang.Random.alphanumeric(r, code"$maxLength")
+              Some(code"$q.truncate($str)")
+            } else if (typeName.startsWith("Binary")) {
+              val maxLength = typeName.stripPrefix("Binary").toIntOption.getOrElse(20).min(100)
+              Some(code"$q.unsafeForce(${lang.Random.randomBytes(r, code"$maxLength")})")
+            } else if (typeName.startsWith("Int")) {
+              // Parse precision from name like Int10, Int18
+              // Generate values that fit within the precision (max digits)
+              val precision = typeName.stripPrefix("Int").toIntOption.getOrElse(10)
+              // Cap at 9 digits to stay within int range for simplicity
+              val maxDigits = math.min(precision, 9)
+              val bound = math.pow(10, maxDigits).toInt
+              Some(code"$q.unsafeForce(${TypesJava.BigInteger}.valueOf(${lang.toLong(code"Math.abs(${lang.Random.nextInt(r)}) % $bound")}))")
+            } else if (typeName.startsWith("Decimal")) {
+              // Parse precision and scale from name like Decimal10_2, Decimal18_4
+              val parts = typeName.stripPrefix("Decimal").split("_")
+              val precision = parts.headOption.flatMap(_.toIntOption).getOrElse(10)
+              val scale = parts.lift(1).flatMap(_.toIntOption).getOrElse(2)
+              // Generate a value that fits: e.g. for Decimal(10,2) generate up to 8 integer digits
+              val maxIntDigits = math.min(precision - scale, 6) // Keep it small for safety
+              val intBound = math.pow(10, maxIntDigits).toInt
+              // Generate integer part + fractional part within scale
+              val scaleBound = math.pow(10, scale).toInt
+              Some(code"$q.unsafeForce(${TypesJava.BigDecimal}.valueOf(${lang.toLong(code"Math.abs(${lang.Random.nextInt(r)}) % $intBound")}).add(${TypesJava.BigDecimal}.valueOf(${lang
+                  .toLong(code"Math.abs(${lang.Random.nextInt(r)}) % $scaleBound")}).movePointLeft($scale)))")
+            } else if (typeName.startsWith("LocalDateTime")) {
+              Some(code"$q.of($defaultLocalDateTime)")
+            } else if (typeName.startsWith("LocalTime")) {
+              Some(code"$q.of($defaultLocalTime)")
+            } else if (typeName.startsWith("OffsetDateTime")) {
+              Some(code"$q.of(${TypesJava.OffsetDateTime}.of($defaultLocalDateTime, $defaultZoneOffset))")
+            } else if (typeName.startsWith("Instant")) {
+              Some(code"$q.of(${TypesJava.Instant}.ofEpochMilli(1000000000000L + ${lang.Random.nextLongBounded(r, code"1000000000000L")}))")
+            } else {
+              None
+            }
+
           case TypesJava.String =>
             val max: Int =
               Option(dbType)

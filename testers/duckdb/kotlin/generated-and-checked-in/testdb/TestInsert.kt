@@ -44,6 +44,18 @@ import testdb.orders.OrdersId
 import testdb.orders.OrdersRepoImpl
 import testdb.orders.OrdersRow
 import testdb.orders.OrdersRowUnsaved
+import testdb.precisetypes.Decimal10_2
+import testdb.precisetypes.Decimal18_4
+import testdb.precisetypes.Decimal5_2
+import testdb.precisetypes.Int10
+import testdb.precisetypes.Int18
+import testdb.precisetypes.Int5
+import testdb.precision_types.PrecisionTypesId
+import testdb.precision_types.PrecisionTypesRepoImpl
+import testdb.precision_types.PrecisionTypesRow
+import testdb.precision_types_null.PrecisionTypesNullId
+import testdb.precision_types_null.PrecisionTypesNullRepoImpl
+import testdb.precision_types_null.PrecisionTypesNullRow
 import testdb.products.ProductsId
 import testdb.products.ProductsRepoImpl
 import testdb.products.ProductsRow
@@ -124,6 +136,38 @@ data class TestInsert(val random: Random) {
     status: Defaulted<String?> = UseDefault(),
     c: Connection
   ): OrdersRow = (OrdersRepoImpl()).insert(OrdersRowUnsaved(orderId = orderId, customerId = customerId, totalAmount = totalAmount, orderDate = orderDate, status = status), c)
+
+  fun PrecisionTypes(
+    string10: String,
+    string20: String,
+    string50: String,
+    string100: String,
+    string255: String,
+    id: PrecisionTypesId = PrecisionTypesId(random.nextInt()),
+    decimal52: Decimal5_2 = Decimal5_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    decimal102: Decimal10_2 = Decimal10_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    decimal184: Decimal18_4 = Decimal18_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
+    decimal50: Int5 = Int5.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 100000.toLong())),
+    decimal100: Int10 = Int10.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong())),
+    decimal180: Int18 = Int18.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong())),
+    c: Connection
+  ): PrecisionTypesRow = (PrecisionTypesRepoImpl()).insert(PrecisionTypesRow(id = id, string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, decimal50 = decimal50, decimal100 = decimal100, decimal180 = decimal180), c)
+
+  fun PrecisionTypesNull(
+    id: PrecisionTypesNullId = PrecisionTypesNullId(random.nextInt()),
+    string10: String? = null,
+    string20: String? = null,
+    string50: String? = null,
+    string100: String? = null,
+    string255: String? = null,
+    decimal52: Decimal5_2? = if (random.nextBoolean()) null else Decimal5_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    decimal102: Decimal10_2? = if (random.nextBoolean()) null else Decimal10_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    decimal184: Decimal18_4? = if (random.nextBoolean()) null else Decimal18_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
+    decimal50: Int5? = if (random.nextBoolean()) null else Int5.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 100000.toLong())),
+    decimal100: Int10? = if (random.nextBoolean()) null else Int10.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong())),
+    decimal180: Int18? = if (random.nextBoolean()) null else Int18.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong())),
+    c: Connection
+  ): PrecisionTypesNullRow = (PrecisionTypesNullRepoImpl()).insert(PrecisionTypesNullRow(id = id, string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, decimal50 = decimal50, decimal100 = decimal100, decimal180 = decimal180), c)
 
   fun Products(
     sku: String,

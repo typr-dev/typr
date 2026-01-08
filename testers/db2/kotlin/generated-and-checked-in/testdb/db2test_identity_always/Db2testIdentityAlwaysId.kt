@@ -11,7 +11,7 @@ import dev.typr.foundations.kotlin.Bijection
 import dev.typr.foundations.kotlin.KotlinDbTypes
 
 /** Type for the primary key of table `DB2TEST_IDENTITY_ALWAYS` */
-data class Db2testIdentityAlwaysId(@JsonValue val value: Int) {
+data class Db2testIdentityAlwaysId(@field:JsonValue val value: Int) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

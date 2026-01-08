@@ -1,9 +1,13 @@
 package dev.typr.foundations;
 
+import dev.typr.foundations.connect.oracle.OracleConfig;
 import dev.typr.foundations.data.Json;
 import dev.typr.foundations.data.JsonValue;
 import dev.typr.foundations.data.OracleIntervalDS;
 import dev.typr.foundations.data.OracleIntervalYM;
+import dev.typr.foundations.hikari.HikariDataSourceFactory;
+import dev.typr.foundations.hikari.PoolConfig;
+import dev.typr.foundations.hikari.PooledDataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,6 +27,19 @@ import org.junit.Test;
 public class OracleTypeTest {
 
   private static final AtomicInteger tableCounter = new AtomicInteger(0);
+
+  // Connection pool with limited size to avoid exhausting Oracle Free's connection limit
+  private static final PooledDataSource POOL;
+
+  static {
+    java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("GMT+03:00"));
+    var config =
+        OracleConfig.builder("localhost", 1521, "FREEPDB1", "typr", "typr_password")
+            .serviceName("FREEPDB1")
+            .build();
+    var poolConfig = PoolConfig.builder().maximumPoolSize(5).build();
+    POOL = HikariDataSourceFactory.create(config, poolConfig);
+  }
 
   private static String uniqueTableName(String prefix) {
     return prefix + "_" + tableCounter.incrementAndGet();
@@ -588,9 +605,9 @@ public class OracleTypeTest {
           // Comprehensive STRUCT Tests - All Oracle Types
           // ═══════════════════════════════════════════════════════════════════════════
 
-          // ALL_TYPES_STRUCT - struct with all Oracle types (NOT NULL fields)
+          // TEST_ALLTYPES - struct with all Oracle types (NOT NULL fields)
           new OracleTypeAndExample<AllTypesStruct>(
-                  OracleObject.<AllTypesStruct>builder("ALL_TYPES_STRUCT")
+                  OracleObject.<AllTypesStruct>builder("TEST_ALLTYPES")
                       .addAttribute("VARCHAR_FIELD", OracleTypes.varchar2(100), s -> s.varcharField)
                       .addAttribute(
                           "NVARCHAR_FIELD", OracleTypes.nvarchar2(100), s -> s.nvarcharField)
@@ -669,10 +686,10 @@ public class OracleTypeTest {
                       new Address("123 Main St", "San Francisco", coords("37.7749", "-122.4194")),
                       List.of("555-1234", "555-5678")),
                   List.of(
-                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE ALL_TYPES_STRUCT FORCE'; EXCEPTION WHEN"
+                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE TEST_ALLTYPES FORCE'; EXCEPTION WHEN"
                           + " OTHERS THEN NULL; END;",
                       """
-                      CREATE OR REPLACE TYPE ALL_TYPES_STRUCT AS OBJECT (
+                      CREATE OR REPLACE TYPE TEST_ALLTYPES AS OBJECT (
                         VARCHAR_FIELD VARCHAR2(100),
                         NVARCHAR_FIELD NVARCHAR2(100),
                         CHAR_FIELD CHAR(10),
@@ -695,9 +712,9 @@ public class OracleTypeTest {
               .noIdentity()
               .noJsonRoundtrip(), // Complex struct - skip identity and JSON tests for now
 
-          // ALL_TYPES_STRUCT_OPTIONAL - comprehensive struct with all nullable fields
+          // TEST_ALLTYPES_OPT - comprehensive struct with all nullable fields
           new OracleTypeAndExample<AllTypesStructOptional>(
-                  OracleObject.<AllTypesStructOptional>builder("ALL_TYPES_STRUCT_OPTIONAL")
+                  OracleObject.<AllTypesStructOptional>builder("TEST_ALLTYPES_OPT")
                       .addAttribute(
                           "VARCHAR_FIELD", OracleTypes.varchar2(100).opt(), s -> s.varcharField)
                       .addAttribute(
@@ -787,10 +804,10 @@ public class OracleTypeTest {
                               "123 Main St", "San Francisco", coords("37.7749", "-122.4194"))),
                       Optional.of(List.of("555-1234", "555-5678"))),
                   List.of(
-                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE ALL_TYPES_STRUCT_OPTIONAL FORCE';"
+                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE TEST_ALLTYPES_OPT FORCE';"
                           + " EXCEPTION WHEN OTHERS THEN NULL; END;",
                       """
-                      CREATE OR REPLACE TYPE ALL_TYPES_STRUCT_OPTIONAL AS OBJECT (
+                      CREATE OR REPLACE TYPE TEST_ALLTYPES_OPT AS OBJECT (
                         VARCHAR_FIELD VARCHAR2(100),
                         NVARCHAR_FIELD NVARCHAR2(100),
                         CHAR_FIELD CHAR(10),
@@ -818,9 +835,9 @@ public class OracleTypeTest {
           // Oracle restriction: VARRAYs cannot contain structs with embedded LOBs
           // ═══════════════════════════════════════════════════════════════════════════
 
-          // ALL_TYPES_STRUCT_NO_LOBS - standalone struct without LOBs
+          // TEST_ALLTYPES_NOLOBS - standalone struct without LOBs
           new OracleTypeAndExample<>(
-                  OracleObject.<AllTypesStructNoLobs>builder("ALL_TYPES_STRUCT_NO_LOBS")
+                  OracleObject.<AllTypesStructNoLobs>builder("TEST_ALLTYPES_NOLOBS")
                       .addAttribute("VARCHAR_FIELD", OracleTypes.varchar2(100), s -> s.varcharField)
                       .addAttribute(
                           "NVARCHAR_FIELD", OracleTypes.nvarchar2(100), s -> s.nvarcharField)
@@ -899,7 +916,7 @@ public class OracleTypeTest {
                       List.of("555-1234", "555-5678")),
                   List.of(
                       """
-                      CREATE OR REPLACE TYPE ALL_TYPES_STRUCT_NO_LOBS AS OBJECT (
+                      CREATE OR REPLACE TYPE TEST_ALLTYPES_NOLOBS AS OBJECT (
                         VARCHAR_FIELD VARCHAR2(100),
                         NVARCHAR_FIELD NVARCHAR2(100),
                         CHAR_FIELD CHAR(10),
@@ -922,10 +939,9 @@ public class OracleTypeTest {
               .noJsonRoundtrip()
               .noIdentity(), // Oracle ORA-22901: cannot compare types with VARRAY attributes
 
-          // ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL - standalone struct without LOBs, optional fields
+          // TEST_ALLTYPES_NOLOBS_OPT - standalone struct without LOBs, optional fields
           new OracleTypeAndExample<>(
-                  OracleObject.<AllTypesStructNoLobsOptional>builder(
-                          "ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL")
+                  OracleObject.<AllTypesStructNoLobsOptional>builder("TEST_ALLTYPES_NOLOBS_OPT")
                       .addAttribute(
                           "VARCHAR_FIELD", OracleTypes.varchar2(100).opt(), s -> s.varcharField)
                       .addAttribute(
@@ -1014,7 +1030,7 @@ public class OracleTypeTest {
                       Optional.of(List.of("555-1234"))),
                   List.of(
                       """
-                      CREATE OR REPLACE TYPE ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL AS OBJECT (
+                      CREATE OR REPLACE TYPE TEST_ALLTYPES_NOLOBS_OPT AS OBJECT (
                         VARCHAR_FIELD VARCHAR2(100),
                         NVARCHAR_FIELD NVARCHAR2(100),
                         CHAR_FIELD CHAR(10),
@@ -1037,12 +1053,12 @@ public class OracleTypeTest {
               .noJsonRoundtrip()
               .noIdentity(), // Oracle ORA-22901: cannot compare types with VARRAY attributes
 
-          // VARRAY of ALL_TYPES_STRUCT_NO_LOBS - array of structs without LOBs
+          // VARRAY of TEST_ALLTYPES_NOLOBS - array of structs without LOBs
           new OracleTypeAndExample<>(
                   OracleVArray.of(
-                      "ALL_TYPES_STRUCT_NO_LOBS_ARRAY",
+                      "TEST_ALLTYPES_NOLOBS_ARR",
                       10,
-                      OracleObject.<AllTypesStructNoLobs>builder("ALL_TYPES_STRUCT_NO_LOBS")
+                      OracleObject.<AllTypesStructNoLobs>builder("TEST_ALLTYPES_NOLOBS")
                           .addAttribute(
                               "VARCHAR_FIELD", OracleTypes.varchar2(100), s -> s.varcharField)
                           .addAttribute(
@@ -1146,12 +1162,12 @@ public class OracleTypeTest {
                           new Address("222 Second St", "City2", coords("34.0522", "-118.2437")),
                           List.of("222-2222", "222-3333"))),
                   List.of(
-                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE ALL_TYPES_STRUCT_NO_LOBS_ARRAY';"
+                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE TEST_ALLTYPES_NOLOBS_ARR';"
                           + " EXCEPTION WHEN OTHERS THEN NULL; END;",
-                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE ALL_TYPES_STRUCT_NO_LOBS FORCE';"
+                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE TEST_ALLTYPES_NOLOBS FORCE';"
                           + " EXCEPTION WHEN OTHERS THEN NULL; END;",
                       """
-                      CREATE OR REPLACE TYPE ALL_TYPES_STRUCT_NO_LOBS AS OBJECT (
+                      CREATE OR REPLACE TYPE TEST_ALLTYPES_NOLOBS AS OBJECT (
                         VARCHAR_FIELD VARCHAR2(100),
                         NVARCHAR_FIELD NVARCHAR2(100),
                         CHAR_FIELD CHAR(10),
@@ -1171,18 +1187,17 @@ public class OracleTypeTest {
                         VARRAY_FIELD PHONE_LIST
                       )
                       """,
-                      "CREATE OR REPLACE TYPE ALL_TYPES_STRUCT_NO_LOBS_ARRAY AS VARRAY(10) OF"
-                          + " ALL_TYPES_STRUCT_NO_LOBS"))
+                      "CREATE OR REPLACE TYPE TEST_ALLTYPES_NOLOBS_ARR AS VARRAY(10) OF"
+                          + " TEST_ALLTYPES_NOLOBS"))
               .noIdentity(), // Complex array of structs - skip identity test
 
-          // VARRAY of ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL - array of structs without LOBs, optional
+          // VARRAY of TEST_ALLTYPES_NOLOBS_OPT - array of structs without LOBs, optional
           // fields
           new OracleTypeAndExample<>(
                   OracleVArray.of(
-                      "ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL_ARRAY",
+                      "TEST_ALLTYPES_NOLOBS_OPT_ARR",
                       10,
-                      OracleObject.<AllTypesStructNoLobsOptional>builder(
-                              "ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL")
+                      OracleObject.<AllTypesStructNoLobsOptional>builder("TEST_ALLTYPES_NOLOBS_OPT")
                           .addAttribute(
                               "VARCHAR_FIELD", OracleTypes.varchar2(100).opt(), s -> s.varcharField)
                           .addAttribute(
@@ -1300,12 +1315,12 @@ public class OracleTypeTest {
                                   "222 Second St", "City2", coords("34.0522", "-118.2437"))),
                           Optional.of(List.of("222-2222", "222-3333")))),
                   List.of(
-                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL_ARRAY';"
+                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE TEST_ALLTYPES_NOLOBS_OPT_ARR';"
                           + " EXCEPTION WHEN OTHERS THEN NULL; END;",
-                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL FORCE';"
+                      "BEGIN EXECUTE IMMEDIATE 'DROP TYPE TEST_ALLTYPES_NOLOBS_OPT FORCE';"
                           + " EXCEPTION WHEN OTHERS THEN NULL; END;",
                       """
-                      CREATE OR REPLACE TYPE ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL AS OBJECT (
+                      CREATE OR REPLACE TYPE TEST_ALLTYPES_NOLOBS_OPT AS OBJECT (
                         VARCHAR_FIELD VARCHAR2(100),
                         NVARCHAR_FIELD NVARCHAR2(100),
                         CHAR_FIELD CHAR(10),
@@ -1325,21 +1340,17 @@ public class OracleTypeTest {
                         VARRAY_FIELD PHONE_LIST
                       )
                       """,
-                      "CREATE OR REPLACE TYPE ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL_ARRAY AS VARRAY(10)"
-                          + " OF ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL"))
+                      "CREATE OR REPLACE TYPE TEST_ALLTYPES_NOLOBS_OPT_ARR AS VARRAY(10)"
+                          + " OF TEST_ALLTYPES_NOLOBS_OPT"))
               .noIdentity() // Complex array of structs - skip identity test
           );
 
-  // Connection helper for Oracle
+  // Connection helper for Oracle - uses HikariCP connection pool
   // Uses Oracle Free 23c on port 1521, connecting to FREEPDB1 pluggable database
   static <T> T withConnection(SqlFunction<Connection, T> f) {
-    // Set JVM timezone for TIMESTAMP WITH LOCAL TIME ZONE handling
-    // JDBC uses JVM timezone when converting these values to OffsetDateTime
-    java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("GMT+03:00"));
-
-    try (var conn =
-        java.sql.DriverManager.getConnection(
-            "jdbc:oracle:thin:@//localhost:1521/FREEPDB1", "typr", "typr_password")) {
+    try (var pooledConn = POOL.unwrap().getConnection()) {
+      // Unwrap to get the underlying OracleConnection for STRUCT/ARRAY creation
+      var conn = pooledConn.unwrap(oracle.jdbc.OracleConnection.class);
       conn.setAutoCommit(false);
       try {
         return f.apply(conn);

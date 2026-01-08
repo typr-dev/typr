@@ -24,35 +24,35 @@ data class CustomerAddressesRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("address_id") val addressId: CustomerAddressesId,
+  @field:JsonProperty("address_id") val addressId: CustomerAddressesId,
   /** 
     * Points to [testdb.customers.CustomersRow.customerId]
     */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /**  */
-  @JsonProperty("address_type") val addressType: String,
+  @field:JsonProperty("address_type") val addressType: String,
   /** 
     * Default: 0
     */
-  @JsonProperty("is_default") val isDefault: Boolean,
+  @field:JsonProperty("is_default") val isDefault: Boolean,
   /**  */
-  @JsonProperty("recipient_name") val recipientName: String,
+  @field:JsonProperty("recipient_name") val recipientName: String,
   /**  */
-  @JsonProperty("street_line1") val streetLine1: String,
+  @field:JsonProperty("street_line1") val streetLine1: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("street_line2") val streetLine2: String?,
+  @field:JsonProperty("street_line2") val streetLine2: String?,
   /**  */
   val city: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("state_province") val stateProvince: String?,
+  @field:JsonProperty("state_province") val stateProvince: String?,
   /**  */
-  @JsonProperty("postal_code") val postalCode: String,
+  @field:JsonProperty("postal_code") val postalCode: String,
   /**  */
-  @JsonProperty("country_code") val countryCode: String,
+  @field:JsonProperty("country_code") val countryCode: String,
   /** 
     * Default: NULL
     */
@@ -60,11 +60,11 @@ data class CustomerAddressesRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("delivery_notes") val deliveryNotes: String?,
+  @field:JsonProperty("delivery_notes") val deliveryNotes: String?,
   /** 
     * Default: current_timestamp()
     */
-  @JsonProperty("created_at") val createdAt: LocalDateTime
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime
 ) : Tuple14<CustomerAddressesId, CustomersId, String, Boolean, String, String, String?, String, String?, String, String, Point?, String?, LocalDateTime> {
   override fun _1(): CustomerAddressesId = addressId
 

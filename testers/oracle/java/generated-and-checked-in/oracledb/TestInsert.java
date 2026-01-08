@@ -8,6 +8,7 @@ package oracledb;
 import dev.typr.foundations.Inserter;
 import dev.typr.foundations.internal.RandomHelper;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +18,9 @@ import java.util.Random;
 import oracledb.all_scalar_types.AllScalarTypesRepoImpl;
 import oracledb.all_scalar_types.AllScalarTypesRow;
 import oracledb.all_scalar_types.AllScalarTypesRowUnsaved;
+import oracledb.all_types_test.AllTypesTestId;
+import oracledb.all_types_test.AllTypesTestRepoImpl;
+import oracledb.all_types_test.AllTypesTestRowUnsaved;
 import oracledb.contacts.ContactsId;
 import oracledb.contacts.ContactsRepoImpl;
 import oracledb.contacts.ContactsRowUnsaved;
@@ -30,6 +34,27 @@ import oracledb.departments.DepartmentsRow;
 import oracledb.employees.EmployeesId;
 import oracledb.employees.EmployeesRepoImpl;
 import oracledb.employees.EmployeesRowUnsaved;
+import oracledb.precisetypes.Decimal10_2;
+import oracledb.precisetypes.Decimal18_4;
+import oracledb.precisetypes.Decimal5_2;
+import oracledb.precisetypes.Int10;
+import oracledb.precisetypes.Int18;
+import oracledb.precisetypes.Int5;
+import oracledb.precisetypes.LocalDateTime3;
+import oracledb.precisetypes.LocalDateTime6;
+import oracledb.precisetypes.LocalDateTime9;
+import oracledb.precisetypes.NonEmptyPaddedString10;
+import oracledb.precisetypes.NonEmptyString10;
+import oracledb.precisetypes.NonEmptyString100;
+import oracledb.precisetypes.NonEmptyString20;
+import oracledb.precisetypes.NonEmptyString255;
+import oracledb.precisetypes.NonEmptyString50;
+import oracledb.precision_types.PrecisionTypesRepoImpl;
+import oracledb.precision_types.PrecisionTypesRow;
+import oracledb.precision_types.PrecisionTypesRowUnsaved;
+import oracledb.precision_types_null.PrecisionTypesNullRepoImpl;
+import oracledb.precision_types_null.PrecisionTypesNullRow;
+import oracledb.precision_types_null.PrecisionTypesNullRowUnsaved;
 import oracledb.products.ProductsId;
 import oracledb.products.ProductsRepoImpl;
 import oracledb.products.ProductsRowUnsaved;
@@ -69,6 +94,17 @@ public record TestInsert(Random random) {
             new UseDefault()),
         (AllScalarTypesRowUnsaved row, Connection c) ->
             (new AllScalarTypesRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<AllTypesTestRowUnsaved, AllTypesTestId> AllTypesTest() {
+    return Inserter.of(
+        new AllTypesTestRowUnsaved(
+            RandomHelper.alphanumeric(random, 20),
+            Optional.empty(),
+            Optional.empty(),
+            new UseDefault()),
+        (AllTypesTestRowUnsaved row, Connection c) -> (new AllTypesTestRepoImpl()).insert(row, c));
   }
   ;
 
@@ -117,6 +153,146 @@ public record TestInsert(Random random) {
             Optional.empty(),
             new UseDefault()),
         (EmployeesRowUnsaved row, Connection c) -> (new EmployeesRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<PrecisionTypesRowUnsaved, PrecisionTypesRow> PrecisionTypes(
+      NonEmptyPaddedString10 char10) {
+    return Inserter.of(
+        new PrecisionTypesRowUnsaved(
+            NonEmptyString10.truncate(RandomHelper.alphanumeric(random, 10)),
+            NonEmptyString20.truncate(RandomHelper.alphanumeric(random, 20)),
+            NonEmptyString50.truncate(RandomHelper.alphanumeric(random, 20)),
+            NonEmptyString100.truncate(RandomHelper.alphanumeric(random, 20)),
+            NonEmptyString255.truncate(RandomHelper.alphanumeric(random, 20)),
+            char10,
+            Decimal5_2.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                            .movePointLeft(2))),
+            Decimal10_2.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                            .movePointLeft(2))),
+            Decimal18_4.unsafeForce(
+                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                    .add(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 10000))
+                            .movePointLeft(4))),
+            Int5.unsafeForce(BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 100000))),
+            Int10.unsafeForce(BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000))),
+            Int18.unsafeForce(BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000))),
+            LocalDateTime.of(
+                LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))),
+            LocalDateTime3.of(
+                LocalDateTime.of(
+                    LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                    LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))),
+            LocalDateTime6.of(
+                LocalDateTime.of(
+                    LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                    LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))),
+            LocalDateTime9.of(
+                LocalDateTime.of(
+                    LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                    LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))),
+            new UseDefault()),
+        (PrecisionTypesRowUnsaved row, Connection c) ->
+            (new PrecisionTypesRepoImpl()).insert(row, c));
+  }
+  ;
+
+  public Inserter<PrecisionTypesNullRowUnsaved, PrecisionTypesNullRow> PrecisionTypesNull() {
+    return Inserter.of(
+        new PrecisionTypesNullRowUnsaved(
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(NonEmptyString10.truncate(RandomHelper.alphanumeric(random, 10)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(NonEmptyString20.truncate(RandomHelper.alphanumeric(random, 20)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(NonEmptyString50.truncate(RandomHelper.alphanumeric(random, 20)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(NonEmptyString100.truncate(RandomHelper.alphanumeric(random, 20)))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(NonEmptyString255.truncate(RandomHelper.alphanumeric(random, 20)))),
+            Optional.empty(),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Decimal5_2.unsafeForce(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000))
+                            .add(
+                                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                                    .movePointLeft(2))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Decimal10_2.unsafeForce(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                            .add(
+                                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 100))
+                                    .movePointLeft(2))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Decimal18_4.unsafeForce(
+                        BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 1000000))
+                            .add(
+                                BigDecimal.valueOf((long) (Math.abs(random.nextInt()) % 10000))
+                                    .movePointLeft(4))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Int5.unsafeForce(
+                        BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 100000))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Int10.unsafeForce(
+                        BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    Int18.unsafeForce(
+                        BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalDateTime.of(
+                        LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                        LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60)))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalDateTime3.of(
+                        LocalDateTime.of(
+                            LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalDateTime6.of(
+                        LocalDateTime.of(
+                            LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))))),
+            (random.nextBoolean()
+                ? Optional.empty()
+                : Optional.of(
+                    LocalDateTime9.of(
+                        LocalDateTime.of(
+                            LocalDate.ofEpochDay((long) (random.nextInt(30000))),
+                            LocalTime.ofSecondOfDay((long) (random.nextInt(24 * 60 * 60))))))),
+            new UseDefault()),
+        (PrecisionTypesNullRowUnsaved row, Connection c) ->
+            (new PrecisionTypesNullRepoImpl()).insert(row, c));
   }
   ;
 

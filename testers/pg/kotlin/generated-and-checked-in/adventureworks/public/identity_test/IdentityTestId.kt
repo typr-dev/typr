@@ -12,7 +12,7 @@ import dev.typr.foundations.internal.arrayMap
 import dev.typr.foundations.kotlin.Bijection
 
 /** Type for the primary key of table `public.identity-test` */
-data class IdentityTestId(@JsonValue val value: String) {
+data class IdentityTestId(@field:JsonValue val value: String) {
   override fun toString(): kotlin.String {
     return value.toString()
   }

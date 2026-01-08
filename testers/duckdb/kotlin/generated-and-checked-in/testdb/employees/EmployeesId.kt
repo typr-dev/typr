@@ -14,8 +14,8 @@ import dev.typr.foundations.kotlin.RowParsers
 
 /** Type for the composite primary key of table `employees` */
 data class EmployeesId(
-  @JsonProperty("emp_number") val empNumber: Int,
-  @JsonProperty("emp_suffix") val empSuffix: String
+  @field:JsonProperty("emp_number") val empNumber: Int,
+  @field:JsonProperty("emp_suffix") val empSuffix: String
 ) : Tuple2<Int, String> {
   override fun _1(): Int = empNumber
 

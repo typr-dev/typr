@@ -15,7 +15,7 @@ import java.time.Instant
 /** Domain `information_schema.time_stamp`
   * No constraint
   */
-data class TimeStamp(@JsonValue val value: Instant) {
+data class TimeStamp(@field:JsonValue val value: Instant) {
   companion object {
     val bijection: Bijection<TimeStamp, Instant> =
       Bijection.of(TimeStamp::value, ::TimeStamp)

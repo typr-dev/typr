@@ -24,47 +24,47 @@ data class InventoryRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("inventory_id") val inventoryId: InventoryId,
+  @field:JsonProperty("inventory_id") val inventoryId: InventoryId,
   /** 
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** 
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
     */
-  @JsonProperty("warehouse_id") val warehouseId: WarehousesId,
+  @field:JsonProperty("warehouse_id") val warehouseId: WarehousesId,
   /** 
     * Default: 0
     */
-  @JsonProperty("quantity_on_hand") val quantityOnHand: Int,
+  @field:JsonProperty("quantity_on_hand") val quantityOnHand: Int,
   /** 
     * Default: 0
     */
-  @JsonProperty("quantity_reserved") val quantityReserved: Int,
+  @field:JsonProperty("quantity_reserved") val quantityReserved: Int,
   /** 
     * Default: 0
     */
-  @JsonProperty("quantity_on_order") val quantityOnOrder: Int,
+  @field:JsonProperty("quantity_on_order") val quantityOnOrder: Int,
   /** 
     * Default: 0
     */
-  @JsonProperty("reorder_point") val reorderPoint: Int,
+  @field:JsonProperty("reorder_point") val reorderPoint: Int,
   /** 
     * Default: 0
     */
-  @JsonProperty("reorder_quantity") val reorderQuantity: Int,
+  @field:JsonProperty("reorder_quantity") val reorderQuantity: Int,
   /** 
     * Default: NULL
     */
-  @JsonProperty("bin_location") val binLocation: String?,
+  @field:JsonProperty("bin_location") val binLocation: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("last_counted_at") val lastCountedAt: LocalDateTime?,
+  @field:JsonProperty("last_counted_at") val lastCountedAt: LocalDateTime?,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("updated_at") val updatedAt: LocalDateTime
+  @field:JsonProperty("updated_at") val updatedAt: LocalDateTime
 ) : Tuple11<InventoryId, ProductsId, WarehousesId, Int, Int, Int, Int, Int, String?, LocalDateTime?, LocalDateTime> {
   override fun _1(): InventoryId = inventoryId
 

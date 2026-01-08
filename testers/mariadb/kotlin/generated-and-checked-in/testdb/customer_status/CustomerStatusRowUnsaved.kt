@@ -12,13 +12,13 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `customer_status` which has not been persisted yet */
 data class CustomerStatusRowUnsaved(
   /**  */
-  @JsonProperty("status_code") val statusCode: CustomerStatusId,
+  @field:JsonProperty("status_code") val statusCode: CustomerStatusId,
   /**  */
   val description: String,
   /** Default: 1
 
     */
-  @JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
+  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
 ) {
   fun toRow(isActiveDefault: () -> Boolean): CustomerStatusRow = CustomerStatusRow(statusCode = statusCode, description = description, isActive = isActive.getOrElse(isActiveDefault))
 }

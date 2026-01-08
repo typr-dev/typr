@@ -9,7 +9,7 @@ class DbLibFoundations(
     override val lang: Lang,
     default: ComputedDefault,
     enableStreamingInserts: Boolean,
-    adapter: DbAdapter,
+    val adapter: DbAdapter,
     naming: Naming
 ) extends DbLib {
 
@@ -1417,7 +1417,7 @@ class DbLibFoundations(
                     jvm.LocalVar(jvm.Ident("opt"), None, lang.MapOps.get(mapCode, idVar.code)),
                     jvm.If(
                       lang.Optional.isDefined(jvm.Ident("opt").code),
-                      jvm.IgnoreResult(code"$resultVar.add(${lang.Optional.get(jvm.Ident("opt").code)})").code
+                      jvm.IgnoreResult(code"$resultVar.add(${lang.Optional.getAfterCheck(jvm.Ident("opt").code)})").code
                     )
                   )
                 )
@@ -1925,6 +1925,30 @@ class DbLibFoundations(
       val sqlTypeLit = jvm.StrLit(sqlType)
       code"$baseCode.renamed($sqlTypeLit)"
     }
+
+    // Check if the underlying JVM type is a precise type (in the precisetypes package)
+    val isPreciseType = underlyingJvmType match {
+      case q: jvm.Type.Qualified => q.value.idents.exists(_.value == "precisetypes")
+      case _                     => false
+    }
+
+    // Get the base db type - use the precise type's dbType if applicable
+    def getBaseDbType: jvm.Code =
+      if (isPreciseType) code"$underlyingJvmType.${adapter.typeFieldName}"
+      else lookupType(underlyingDbType)
+
+    // Get the base db type for arrays - use the precise type's dbTypeArray if applicable
+    def getBaseDbTypeArray: jvm.Code =
+      if (isPreciseType) code"$underlyingJvmType.$dbTypeArrayName"
+      else {
+        val arrayDbType = underlyingDbType match {
+          case pgType: db.PgType         => db.PgType.Array(pgType)
+          case duckDbType: db.DuckDbType => db.DuckDbType.ArrayType(duckDbType, None)
+          case other                     => other
+        }
+        lookupType(arrayDbType)
+      }
+
     List[Option[jvm.Given]](
       // Skip array instance for databases that don't support arrays
       if (!adapter.supportsArrays) None
@@ -1938,12 +1962,7 @@ class DbLibFoundations(
             body = {
               val lambda1 = jvm.Lambda(xs, lang.arrayMap(xs.code, jvm.ConstructorMethodRef(wrapperType).code, jvm.ClassOf(wrapperType).code))
               val lambda2 = jvm.Lambda(xs, lang.arrayMap(xs.code, jvm.FieldGetterRef(wrapperType, jvm.Ident("value")).code, jvm.ClassOf(underlyingJvmType).code))
-              val arrayDbType = underlyingDbType match {
-                case pgType: db.PgType         => db.PgType.Array(pgType)
-                case duckDbType: db.DuckDbType => db.DuckDbType.ArrayType(duckDbType, None)
-                case other                     => other
-              }
-              val base = code"${lookupType(arrayDbType)}.bimap($lambda1, $lambda2)"
+              val base = code"$getBaseDbTypeArray.bimap($lambda1, $lambda2)"
               overrideDbType.fold(base)(t => maybeRename(base, t + "[]"))
             }
           )
@@ -1955,7 +1974,7 @@ class DbLibFoundations(
           implicitParams = Nil,
           tpe = adapter.TypeClass.of(wrapperType),
           body = {
-            val base = code"${lookupType(underlyingDbType)}.bimap(${jvm.ConstructorMethodRef(wrapperType)}, ${jvm.FieldGetterRef(wrapperType, jvm.Ident("value"))})"
+            val base = code"$getBaseDbType.bimap(${jvm.ConstructorMethodRef(wrapperType)}, ${jvm.FieldGetterRef(wrapperType, jvm.Ident("value"))})"
             overrideDbType.fold(base)(maybeRename(base, _))
           }
         )
@@ -1977,7 +1996,7 @@ class DbLibFoundations(
               val id = jvm.Ident("id")
               val encodeLambda = jvm.Lambda(id, lang.arrayOf(List(id.code)))
               // Inline the type with bimap to avoid forward reference to oracleType field
-              val inlineType = code"${lookupType(underlyingDbType)}.bimap(${jvm.ConstructorMethodRef(wrapperType)}, ${jvm.FieldGetterRef(wrapperType, jvm.Ident("value"))})"
+              val inlineType = code"$getBaseDbType.bimap(${jvm.ConstructorMethodRef(wrapperType)}, ${jvm.FieldGetterRef(wrapperType, jvm.Ident("value"))})"
               // For single-column ID where T0 = Row, decode is identity
               // (the DbType.bimap already handles converting the underlying type to the wrapper type)
               val decodeLambda = jvm.Lambda(x, x.code)

@@ -16,7 +16,7 @@ case class ContactsRowUnsaved(
   @JsonProperty("NAME") name: String,
   @JsonProperty("EMAILS") emails: Option[EmailTableT] = None,
   @JsonProperty("TAGS") tags: Option[TagVarrayT] = None,
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
+  /** Default: "TYPR"."ISEQ$$_72857".nextval */
   @JsonProperty("CONTACT_ID") contactId: Defaulted[ContactsId] = new UseDefault()
 ) {
   def toRow(contactIdDefault: => ContactsId): ContactsRow = {

@@ -23,25 +23,25 @@ data class OrderHistoryRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("history_id") val historyId: OrderHistoryId,
+  @field:JsonProperty("history_id") val historyId: OrderHistoryId,
   /** 
     * Points to [testdb.orders.OrdersRow.orderId]
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** 
     * Default: NULL
     */
-  @JsonProperty("previous_status") val previousStatus: String?,
+  @field:JsonProperty("previous_status") val previousStatus: String?,
   /**  */
-  @JsonProperty("new_status") val newStatus: String,
+  @field:JsonProperty("new_status") val newStatus: String,
   /** 
     * Default: NULL
     */
-  @JsonProperty("changed_by") val changedBy: String?,
+  @field:JsonProperty("changed_by") val changedBy: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("change_reason") val changeReason: String?,
+  @field:JsonProperty("change_reason") val changeReason: String?,
   /** 
     * Default: NULL
     */
@@ -49,7 +49,7 @@ data class OrderHistoryRow(
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("created_at") val createdAt: LocalDateTime
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime
 ) : Tuple8<OrderHistoryId, OrdersId, String?, String, String?, String?, Json?, LocalDateTime> {
   override fun _1(): OrderHistoryId = historyId
 

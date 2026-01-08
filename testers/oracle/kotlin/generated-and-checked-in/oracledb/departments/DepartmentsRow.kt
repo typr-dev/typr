@@ -17,10 +17,10 @@ import oracledb.MoneyT
   * Composite primary key: DEPT_CODE, DEPT_REGION
   */
 data class DepartmentsRow(
-  @JsonProperty("DEPT_CODE") val deptCode: String,
-  @JsonProperty("DEPT_REGION") val deptRegion: String,
-  @JsonProperty("DEPT_NAME") val deptName: String,
-  @JsonProperty("BUDGET") val budget: MoneyT?
+  @field:JsonProperty("DEPT_CODE") val deptCode: String,
+  @field:JsonProperty("DEPT_REGION") val deptRegion: String,
+  @field:JsonProperty("DEPT_NAME") val deptName: String,
+  @field:JsonProperty("BUDGET") val budget: MoneyT?
 ) : Tuple4<String, String, String, MoneyT?> {
   override fun _1(): String = deptCode
 

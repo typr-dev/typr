@@ -79,7 +79,7 @@ data class MariatestRepoMock(
     for (id in intCols) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

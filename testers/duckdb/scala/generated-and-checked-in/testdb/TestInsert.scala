@@ -42,6 +42,18 @@ import testdb.orders.OrdersId
 import testdb.orders.OrdersRepoImpl
 import testdb.orders.OrdersRow
 import testdb.orders.OrdersRowUnsaved
+import testdb.precisetypes.Decimal10_2
+import testdb.precisetypes.Decimal18_4
+import testdb.precisetypes.Decimal5_2
+import testdb.precisetypes.Int10
+import testdb.precisetypes.Int18
+import testdb.precisetypes.Int5
+import testdb.precision_types.PrecisionTypesId
+import testdb.precision_types.PrecisionTypesRepoImpl
+import testdb.precision_types.PrecisionTypesRow
+import testdb.precision_types_null.PrecisionTypesNullId
+import testdb.precision_types_null.PrecisionTypesNullRepoImpl
+import testdb.precision_types_null.PrecisionTypesNullRow
 import testdb.products.ProductsId
 import testdb.products.ProductsRepoImpl
 import testdb.products.ProductsRow
@@ -183,6 +195,66 @@ case class TestInsert(random: Random) {
       totalAmount = totalAmount,
       orderDate = orderDate,
       status = status
+    ))(using c)
+  }
+
+  def PrecisionTypes(
+    id: PrecisionTypesId = new PrecisionTypesId(random.nextInt()),
+    string10: String = random.alphanumeric.take(20).mkString,
+    string20: String = random.alphanumeric.take(20).mkString,
+    string50: String = random.alphanumeric.take(20).mkString,
+    string100: String = random.alphanumeric.take(20).mkString,
+    string255: String = random.alphanumeric.take(20).mkString,
+    decimal52: Decimal5_2 = Decimal5_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    decimal102: Decimal10_2 = Decimal10_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))),
+    decimal184: Decimal18_4 = Decimal18_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))),
+    decimal50: Int5 = Int5.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 100000.toLong)),
+    decimal100: Int10 = Int10.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong)),
+    decimal180: Int18 = Int18.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong))
+  )(using c: Connection): PrecisionTypesRow = {
+    (new PrecisionTypesRepoImpl()).insert(new PrecisionTypesRow(
+      id = id,
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      decimal52 = decimal52,
+      decimal102 = decimal102,
+      decimal184 = decimal184,
+      decimal50 = decimal50,
+      decimal100 = decimal100,
+      decimal180 = decimal180
+    ))(using c)
+  }
+
+  def PrecisionTypesNull(
+    id: PrecisionTypesNullId = new PrecisionTypesNullId(random.nextInt()),
+    string10: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    string20: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    string50: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    string100: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    string255: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    decimal52: Option[Decimal5_2] = (if (random.nextBoolean()) None else Some(Decimal5_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))))),
+    decimal102: Option[Decimal10_2] = (if (random.nextBoolean()) None else Some(Decimal10_2.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong).movePointLeft(2))))),
+    decimal184: Option[Decimal18_4] = (if (random.nextBoolean()) None else Some(Decimal18_4.unsafeForce(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong).add(java.math.BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong).movePointLeft(4))))),
+    decimal50: Option[Int5] = (if (random.nextBoolean()) None else Some(Int5.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 100000.toLong)))),
+    decimal100: Option[Int10] = (if (random.nextBoolean()) None else Some(Int10.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong)))),
+    decimal180: Option[Int18] = (if (random.nextBoolean()) None else Some(Int18.unsafeForce(BigInteger.valueOf(Math.abs(random.nextInt()) % 1000000000.toLong))))
+  )(using c: Connection): PrecisionTypesNullRow = {
+    (new PrecisionTypesNullRepoImpl()).insert(new PrecisionTypesNullRow(
+      id = id,
+      string10 = string10,
+      string20 = string20,
+      string50 = string50,
+      string100 = string100,
+      string255 = string255,
+      decimal52 = decimal52,
+      decimal102 = decimal102,
+      decimal184 = decimal184,
+      decimal50 = decimal50,
+      decimal100 = decimal100,
+      decimal180 = decimal180
     ))(using c)
   }
 

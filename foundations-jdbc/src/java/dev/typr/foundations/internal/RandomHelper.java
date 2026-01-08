@@ -20,4 +20,10 @@ public class RandomHelper {
     random.nextBytes(bytes);
     return UUID.nameUUIDFromBytes(bytes);
   }
+
+  public static byte[] randomBytes(Random random, int length) {
+    byte[] bytes = new byte[length];
+    random.nextBytes(bytes);
+    return bytes;
+  }
 }

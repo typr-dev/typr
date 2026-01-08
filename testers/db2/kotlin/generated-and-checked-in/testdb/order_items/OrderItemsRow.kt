@@ -19,11 +19,11 @@ import testdb.orders.OrdersId
   */
 data class OrderItemsRow(
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @JsonProperty("ORDER_ID") val orderId: OrdersId,
-  @JsonProperty("ITEM_NUMBER") val itemNumber: Int,
-  @JsonProperty("PRODUCT_NAME") val productName: String,
-  @JsonProperty("QUANTITY") val quantity: Int,
-  @JsonProperty("UNIT_PRICE") val unitPrice: BigDecimal
+  @field:JsonProperty("ORDER_ID") val orderId: OrdersId,
+  @field:JsonProperty("ITEM_NUMBER") val itemNumber: Int,
+  @field:JsonProperty("PRODUCT_NAME") val productName: String,
+  @field:JsonProperty("QUANTITY") val quantity: Int,
+  @field:JsonProperty("UNIT_PRICE") val unitPrice: BigDecimal
 ) : Tuple5<OrdersId, Int, String, Int, BigDecimal> {
   override fun _1(): OrdersId = orderId
 

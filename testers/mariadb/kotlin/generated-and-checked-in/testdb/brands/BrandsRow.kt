@@ -21,7 +21,7 @@ data class BrandsRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("brand_id") val brandId: BrandsId,
+  @field:JsonProperty("brand_id") val brandId: BrandsId,
   /**  */
   val name: String,
   /**  */
@@ -29,19 +29,19 @@ data class BrandsRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("logo_blob") val logoBlob: ByteArray?,
+  @field:JsonProperty("logo_blob") val logoBlob: ByteArray?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("website_url") val websiteUrl: String?,
+  @field:JsonProperty("website_url") val websiteUrl: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("country_of_origin") val countryOfOrigin: String?,
+  @field:JsonProperty("country_of_origin") val countryOfOrigin: String?,
   /** 
     * Default: 1
     */
-  @JsonProperty("is_active") val isActive: Boolean
+  @field:JsonProperty("is_active") val isActive: Boolean
 ) : Tuple7<BrandsId, String, String, ByteArray?, String?, String?, Boolean> {
   override fun _1(): BrandsId = brandId
 

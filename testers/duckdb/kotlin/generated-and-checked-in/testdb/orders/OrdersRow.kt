@@ -20,11 +20,11 @@ import testdb.customtypes.Defaulted
   * Primary key: order_id
   */
 data class OrdersRow(
-  @JsonProperty("order_id") val orderId: OrdersId,
-  @JsonProperty("customer_id") val customerId: Int,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("customer_id") val customerId: Int,
   /** Default: current_date */
-  @JsonProperty("order_date") val orderDate: LocalDate,
-  @JsonProperty("total_amount") val totalAmount: BigDecimal?,
+  @field:JsonProperty("order_date") val orderDate: LocalDate,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   /** Default: 'pending' */
   val status: String?
 ) : Tuple5<OrdersId, Int, LocalDate, BigDecimal?, String?> {

@@ -18,11 +18,11 @@ import testdb.customtypes.Defaulted
   * Composite primary key: order_id, product_id
   */
 data class OrderItemsRow(
-  @JsonProperty("order_id") val orderId: Int,
-  @JsonProperty("product_id") val productId: Int,
+  @field:JsonProperty("order_id") val orderId: Int,
+  @field:JsonProperty("product_id") val productId: Int,
   /** Default: 1 */
   val quantity: Int,
-  @JsonProperty("unit_price") val unitPrice: BigDecimal
+  @field:JsonProperty("unit_price") val unitPrice: BigDecimal
 ) : Tuple4<Int, Int, Int, BigDecimal> {
   override fun _1(): Int = orderId
 

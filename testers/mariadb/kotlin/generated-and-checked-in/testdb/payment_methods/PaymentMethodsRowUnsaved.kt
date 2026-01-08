@@ -17,19 +17,19 @@ data class PaymentMethodsRowUnsaved(
   /**  */
   val name: String,
   /**  */
-  @JsonProperty("method_type") val methodType: String,
+  @field:JsonProperty("method_type") val methodType: String,
   /** Default: NULL
 
     */
-  @JsonProperty("processor_config") val processorConfig: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("processor_config") val processorConfig: Defaulted<Json?> = UseDefault(),
   /** Default: 1
 
     */
-  @JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("sort_order") val sortOrder: Defaulted<Byte> = UseDefault()
+  @field:JsonProperty("sort_order") val sortOrder: Defaulted<Byte> = UseDefault()
 ) {
   fun toRow(
     processorConfigDefault: () -> Json?,

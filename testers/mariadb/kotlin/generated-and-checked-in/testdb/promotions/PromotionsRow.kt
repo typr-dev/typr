@@ -27,7 +27,7 @@ data class PromotionsRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("promotion_id") val promotionId: PromotionsId,
+  @field:JsonProperty("promotion_id") val promotionId: PromotionsId,
   /**  */
   val code: String,
   /**  */
@@ -37,45 +37,45 @@ data class PromotionsRow(
     */
   val description: String?,
   /**  */
-  @JsonProperty("discount_type") val discountType: String,
+  @field:JsonProperty("discount_type") val discountType: String,
   /**  */
-  @JsonProperty("discount_value") val discountValue: BigDecimal,
+  @field:JsonProperty("discount_value") val discountValue: BigDecimal,
   /** 
     * Default: NULL
     */
-  @JsonProperty("min_order_amount") val minOrderAmount: BigDecimal?,
+  @field:JsonProperty("min_order_amount") val minOrderAmount: BigDecimal?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("max_uses") val maxUses: Uint4?,
+  @field:JsonProperty("max_uses") val maxUses: Uint4?,
   /** 
     * Default: 0
     */
-  @JsonProperty("uses_count") val usesCount: Uint4,
+  @field:JsonProperty("uses_count") val usesCount: Uint4,
   /** 
     * Default: NULL
     */
-  @JsonProperty("max_uses_per_customer") val maxUsesPerCustomer: Uint1?,
+  @field:JsonProperty("max_uses_per_customer") val maxUsesPerCustomer: Uint1?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("applicable_to") val applicableTo: AllBrandsCategoriesCSet?,
+  @field:JsonProperty("applicable_to") val applicableTo: AllBrandsCategoriesCSet?,
   /** Complex eligibility rules
     * Default: NULL
     */
-  @JsonProperty("rules_json") val rulesJson: Json?,
+  @field:JsonProperty("rules_json") val rulesJson: Json?,
   /**  */
-  @JsonProperty("valid_from") val validFrom: LocalDateTime,
+  @field:JsonProperty("valid_from") val validFrom: LocalDateTime,
   /**  */
-  @JsonProperty("valid_to") val validTo: LocalDateTime,
+  @field:JsonProperty("valid_to") val validTo: LocalDateTime,
   /** 
     * Default: 1
     */
-  @JsonProperty("is_active") val isActive: Boolean,
+  @field:JsonProperty("is_active") val isActive: Boolean,
   /** 
     * Default: current_timestamp()
     */
-  @JsonProperty("created_at") val createdAt: LocalDateTime
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime
 ) : Tuple16<PromotionsId, String, String, String?, String, BigDecimal, BigDecimal?, Uint4?, Uint4, Uint1?, AllBrandsCategoriesCSet?, Json?, LocalDateTime, LocalDateTime, Boolean, LocalDateTime> {
   override fun _1(): PromotionsId = promotionId
 

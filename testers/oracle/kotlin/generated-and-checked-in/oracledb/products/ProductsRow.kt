@@ -19,12 +19,12 @@ import oracledb.customtypes.Defaulted
   * Primary key: PRODUCT_ID
   */
 data class ProductsRow(
-  /** Default: "TYPR"."ISEQ$$_72846".nextval */
-  @JsonProperty("PRODUCT_ID") val productId: ProductsId,
-  @JsonProperty("SKU") val sku: String,
-  @JsonProperty("NAME") val name: String,
-  @JsonProperty("PRICE") val price: MoneyT,
-  @JsonProperty("TAGS") val tags: TagVarrayT?
+  /** Default: "TYPR"."ISEQ$$_72853".nextval */
+  @field:JsonProperty("PRODUCT_ID") val productId: ProductsId,
+  @field:JsonProperty("SKU") val sku: String,
+  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("PRICE") val price: MoneyT,
+  @field:JsonProperty("TAGS") val tags: TagVarrayT?
 ) : Tuple5<ProductsId, String, String, MoneyT, TagVarrayT?> {
   override fun _1(): ProductsId = productId
 

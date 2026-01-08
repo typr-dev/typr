@@ -67,10 +67,15 @@ object GeneratedPostgres {
           "users",
           // sales
           "salesperson",
-          "salesterritory"
+          "salesterritory",
+          // precision types test tables
+          "precision_types",
+          "precision_types_null"
         )
         val usedSchemas = Selector.schemas("humanresources", "person", "production", "public", "sales")
         val selector = Selector.ExcludePostgresInternal and usedSchemas and usedTables
+        // Only enable precision types for the dedicated precision test tables
+        val precisionTypesSelector = Selector.relationNames("precision_types", "precision_types_null")
         val typoLogger = TypoLogger.Console
         val externalTools = ExternalTools.init(typoLogger, ExternalToolsConfig.default)
         val metadb = Await.result(MetaDb.fromDb(typoLogger, ds, selector, schemaMode = SchemaMode.MultiSchema, externalTools), Duration.Inf)
@@ -116,7 +121,9 @@ object GeneratedPostgres {
               enablePrimaryKeyType = !Selector.relationNames("billofmaterials"),
               enableTestInserts = Selector.All,
               readonlyRepo = Selector.relationNames("purchaseorderdetail"),
-              enableDsl = true
+              enableDsl = true,
+              // Only enable precision types for Typo DSL (not supported by legacy libraries)
+              enablePreciseTypes = if (dbLib == DbLibName.Typo) precisionTypesSelector else Selector.None
             )
             val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in$suffix")
 

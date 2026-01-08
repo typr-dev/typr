@@ -43,7 +43,16 @@ object GeneratedOracle {
           password = "typr_password"
         )
         val scriptsPath = buildDir.resolve("sql-scripts/oracle")
-        val selector = Selector.All
+        // Exclude temporary test tables created during development
+        val excludedTables = Set(
+          "test_genkeys_1767399918202",
+          "test_genkeys_1767491891912",
+          "test_json_rt_1767496451381",
+          "test_table_1767489875539"
+        )
+        val selector = Selector(rel => !excludedTables.contains(rel.name.toLowerCase))
+        // Only enable precision types for the dedicated precision test tables (Oracle uses uppercase)
+        val precisionTypesSelector = Selector.relationNames("PRECISION_TYPES", "PRECISION_TYPES_NULL")
         val typoLogger = TypoLogger.Console
         val externalTools = ExternalTools.init(typoLogger, ExternalToolsConfig.default)
 
@@ -75,7 +84,8 @@ object GeneratedOracle {
               generateMockRepos = Selector.All,
               enablePrimaryKeyType = Selector.All, // Generate type-safe ID types
               enableTestInserts = Selector.All, // Generate test data factories
-              enableDsl = true // Generate type-safe SQL DSL
+              enableDsl = true, // Generate type-safe SQL DSL
+              enablePreciseTypes = precisionTypesSelector // Only generate precise types for precision_types tables
             )
             val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in$suffix")
 

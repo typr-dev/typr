@@ -19,15 +19,15 @@ import oracledb.customers.CustomersId
 /** SQL file: customer_search.sql */
 data class CustomerSearchSqlRow(
   /** Points to [oracledb.customers.CustomersRow.customerId] */
-  @JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
+  @field:JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
   /** Points to [oracledb.customers.CustomersRow.name] */
-  @JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: String,
   /** Points to [oracledb.customers.CustomersRow.billingAddress] */
-  @JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT,
+  @field:JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT,
   /** Points to [oracledb.customers.CustomersRow.creditLimit] */
-  @JsonProperty("CREDIT_LIMIT") val creditLimit: MoneyT?,
+  @field:JsonProperty("CREDIT_LIMIT") val creditLimit: MoneyT?,
   /** Points to [oracledb.customers.CustomersRow.createdAt] */
-  @JsonProperty("CREATED_AT") val createdAt: LocalDateTime
+  @field:JsonProperty("CREATED_AT") val createdAt: LocalDateTime
 ) : Tuple5<CustomersId, String, AddressT, MoneyT?, LocalDateTime> {
   override fun _1(): CustomersId = customerId
 

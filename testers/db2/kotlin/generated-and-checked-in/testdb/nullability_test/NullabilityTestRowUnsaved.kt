@@ -11,11 +11,11 @@ import testdb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `NULLABILITY_TEST` which has not been persisted yet */
 data class NullabilityTestRowUnsaved(
-  @JsonProperty("ID") val id: Int,
-  @JsonProperty("REQUIRED_COL") val requiredCol: String,
-  @JsonProperty("OPTIONAL_COL") val optionalCol: String? = null,
+  @field:JsonProperty("ID") val id: Int,
+  @field:JsonProperty("REQUIRED_COL") val requiredCol: String,
+  @field:JsonProperty("OPTIONAL_COL") val optionalCol: String? = null,
   /** Default: 'default_value' */
-  @JsonProperty("DEFAULTED_COL") val defaultedCol: Defaulted<String?> = UseDefault()
+  @field:JsonProperty("DEFAULTED_COL") val defaultedCol: Defaulted<String?> = UseDefault()
 ) {
   fun toRow(defaultedColDefault: () -> String?): NullabilityTestRow = NullabilityTestRow(id = id, requiredCol = requiredCol, optionalCol = optionalCol, defaultedCol = defaultedCol.getOrElse(defaultedColDefault))
 }

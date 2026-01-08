@@ -6,6 +6,7 @@ import typr.internal.codegen.*
 /** Type support using Scala's standard library types */
 object TypeSupportScala extends TypeSupport {
   override val BigDecimal: jvm.Type.Qualified = TypesScala.BigDecimal
+  override val BigInteger: jvm.Type.Qualified = TypesScala.BigInt
   override val Boolean: jvm.Type.Qualified = TypesScala.Boolean
   override val Byte: jvm.Type.Qualified = TypesScala.Byte
   override val Double: jvm.Type.Qualified = TypesScala.Double
@@ -17,6 +18,8 @@ object TypeSupportScala extends TypeSupport {
   override val String: jvm.Type.Qualified = TypesJava.String
   override val ByteArray: jvm.Type = jvm.Type.ArrayOf(TypesScala.Byte)
   override val FloatArray: jvm.Type = jvm.Type.ArrayOf(TypesScala.Float)
+  override val primitiveInt: jvm.Type = TypesScala.Int
+  override val primitiveBoolean: jvm.Type = TypesScala.Boolean
 
   override def bigDecimalFromDouble(d: jvm.Code): jvm.Code =
     code"${TypesScala.BigDecimal}.decimal($d)"
@@ -50,6 +53,7 @@ object TypeSupportScala extends TypeSupport {
     def nextDouble(random: jvm.Code): jvm.Code = code"$random.nextDouble()"
     def nextBoolean(random: jvm.Code): jvm.Code = code"$random.nextBoolean()"
     def nextBytes(random: jvm.Code, bytes: jvm.Code): jvm.Code = code"$random.nextBytes($bytes)"
+    def randomBytes(random: jvm.Code, length: jvm.Code): jvm.Code = code"{val bs = ${TypesScala.Array}.ofDim[${TypesScala.Byte}]($length); $random.nextBytes(bs); bs}"
     def alphanumeric(random: jvm.Code, length: jvm.Code): jvm.Code = code"$random.alphanumeric.take($length).mkString"
     def nextPrintableChar(random: jvm.Code): jvm.Code = code"$random.nextPrintableChar()"
     // Scala uses scala.util.Random, so we use block expression directly (works with Scala Random)

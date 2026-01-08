@@ -84,9 +84,9 @@ class OrderItemsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Ord
     )
   }
 
-  def fkOrders: ForeignKey[OrdersFields, OrdersRow] = ForeignKey.of[OrdersFields, OrdersRow]("FK__order_ite__order__44FF419A").withColumnPair[OrdersId](orderId, _.orderId)
+  def fkOrders: ForeignKey[OrdersFields, OrdersRow] = ForeignKey.of[OrdersFields, OrdersRow]("FK__order_ite__order__47DBAE45").withColumnPair[OrdersId](orderId, _.orderId)
 
-  def fkProducts: ForeignKey[ProductsFields, ProductsRow] = ForeignKey.of[ProductsFields, ProductsRow]("FK__order_ite__produ__45F365D3").withColumnPair[ProductsId](productId, _.productId)
+  def fkProducts: ForeignKey[ProductsFields, ProductsRow] = ForeignKey.of[ProductsFields, ProductsRow]("FK__order_ite__produ__48CFD27E").withColumnPair[ProductsId](productId, _.productId)
 
   override def columns: java.util.List[FieldLike[?, OrderItemsRow]] = java.util.List.of(this.orderItemId.underlying, this.orderId.underlying, this.productId.underlying, this.quantity.underlying, this.price.underlying)
 

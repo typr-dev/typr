@@ -22,7 +22,7 @@ data class ShippingCarriersRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("carrier_id") val carrierId: ShippingCarriersId,
+  @field:JsonProperty("carrier_id") val carrierId: ShippingCarriersId,
   /**  */
   val code: String,
   /**  */
@@ -30,15 +30,15 @@ data class ShippingCarriersRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("tracking_url_template") val trackingUrlTemplate: String?,
+  @field:JsonProperty("tracking_url_template") val trackingUrlTemplate: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("api_config") val apiConfig: Json?,
+  @field:JsonProperty("api_config") val apiConfig: Json?,
   /** 
     * Default: 1
     */
-  @JsonProperty("is_active") val isActive: Boolean
+  @field:JsonProperty("is_active") val isActive: Boolean
 ) : Tuple6<ShippingCarriersId, String, String, String?, Json?, Boolean> {
   override fun _1(): ShippingCarriersId = carrierId
 

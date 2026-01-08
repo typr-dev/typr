@@ -19,7 +19,7 @@ import java.math.BigDecimal
   */
 data class ProductsRow(
   /** IDENTITY(1, 1) */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   val name: String,
   val price: BigDecimal,
   val description: String?

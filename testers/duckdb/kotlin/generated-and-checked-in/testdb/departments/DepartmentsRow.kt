@@ -17,9 +17,9 @@ import java.math.BigDecimal
   * Composite primary key: dept_code, dept_region
   */
 data class DepartmentsRow(
-  @JsonProperty("dept_code") val deptCode: String,
-  @JsonProperty("dept_region") val deptRegion: String,
-  @JsonProperty("dept_name") val deptName: String,
+  @field:JsonProperty("dept_code") val deptCode: String,
+  @field:JsonProperty("dept_region") val deptRegion: String,
+  @field:JsonProperty("dept_name") val deptName: String,
   val budget: BigDecimal?
 ) : Tuple4<String, String, String, BigDecimal?> {
   override fun _1(): String = deptCode

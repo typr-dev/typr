@@ -18,19 +18,19 @@ data class BrandsRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("logo_blob") val logoBlob: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("logo_blob") val logoBlob: Defaulted<ByteArray?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("website_url") val websiteUrl: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("website_url") val websiteUrl: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("country_of_origin") val countryOfOrigin: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("country_of_origin") val countryOfOrigin: Defaulted<String?> = UseDefault(),
   /** Default: 1
 
     */
-  @JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
+  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
 ) {
   fun toRow(
     logoBlobDefault: () -> ByteArray?,

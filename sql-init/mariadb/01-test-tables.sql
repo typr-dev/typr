@@ -163,3 +163,83 @@ CREATE TABLE mariatest_unique (
     UNIQUE KEY uk_email (email),
     UNIQUE KEY uk_code_category (code, category)
 ) ENGINE=InnoDB;
+
+-- ============================================================================
+-- PRECISION TYPES TEST TABLES
+-- These tables are used to test precision wrapper type generation.
+-- The enablePreciseTypes selector should only include these tables.
+-- ============================================================================
+
+-- Precision types test table with all NOT NULL columns
+CREATE TABLE precision_types (
+    id                INT               NOT NULL AUTO_INCREMENT,
+    -- String precision types
+    string10          VARCHAR(10)       NOT NULL,
+    string20          VARCHAR(20)       NOT NULL,
+    string50          VARCHAR(50)       NOT NULL,
+    string100         VARCHAR(100)      NOT NULL,
+    string255         VARCHAR(255)      NOT NULL,
+    -- Fixed char
+    char10            CHAR(10)          NOT NULL,
+    -- Decimal precision types
+    decimal5_2        DECIMAL(5,2)      NOT NULL,
+    decimal10_2       DECIMAL(10,2)     NOT NULL,
+    decimal18_4       DECIMAL(18,4)     NOT NULL,
+    -- Numeric precision types
+    numeric8_2        NUMERIC(8,2)      NOT NULL,
+    numeric12_4       NUMERIC(12,4)     NOT NULL,
+    -- Binary precision types
+    binary16          BINARY(16)        NOT NULL,
+    binary32          BINARY(32)        NOT NULL,
+    binary64          BINARY(64)        NOT NULL,
+    -- Time precision types
+    time0             TIME(0)           NOT NULL,
+    time3             TIME(3)           NOT NULL,
+    time6             TIME(6)           NOT NULL,
+    -- Datetime precision types
+    datetime0         DATETIME(0)       NOT NULL,
+    datetime3         DATETIME(3)       NOT NULL,
+    datetime6         DATETIME(6)       NOT NULL,
+    -- Timestamp precision types (need defaults)
+    ts0               TIMESTAMP(0)      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ts3               TIMESTAMP(3)      NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ts6               TIMESTAMP(6)      NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+-- Precision types test table with all NULLABLE columns
+CREATE TABLE precision_types_null (
+    id                INT               NOT NULL AUTO_INCREMENT,
+    -- String precision types
+    string10          VARCHAR(10),
+    string20          VARCHAR(20),
+    string50          VARCHAR(50),
+    string100         VARCHAR(100),
+    string255         VARCHAR(255),
+    -- Fixed char
+    char10            CHAR(10),
+    -- Decimal precision types
+    decimal5_2        DECIMAL(5,2),
+    decimal10_2       DECIMAL(10,2),
+    decimal18_4       DECIMAL(18,4),
+    -- Numeric precision types
+    numeric8_2        NUMERIC(8,2),
+    numeric12_4       NUMERIC(12,4),
+    -- Binary precision types
+    binary16          BINARY(16),
+    binary32          BINARY(32),
+    binary64          BINARY(64),
+    -- Time precision types
+    time0             TIME(0),
+    time3             TIME(3),
+    time6             TIME(6),
+    -- Datetime precision types
+    datetime0         DATETIME(0),
+    datetime3         DATETIME(3),
+    datetime6         DATETIME(6),
+    -- Timestamp precision types
+    ts0               TIMESTAMP(0)      NULL,
+    ts3               TIMESTAMP(3)      NULL,
+    ts6               TIMESTAMP(6)      NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;

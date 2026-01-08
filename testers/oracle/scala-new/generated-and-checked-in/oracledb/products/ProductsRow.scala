@@ -19,7 +19,7 @@ import oracledb.customtypes.Defaulted
  * Primary key: PRODUCT_ID
  */
 case class ProductsRow(
-  /** Default: "TYPR"."ISEQ$$_72846".nextval */
+  /** Default: "TYPR"."ISEQ$$_72853".nextval */
   @JsonProperty("PRODUCT_ID") productId: ProductsId,
   @JsonProperty("SKU") sku: String,
   @JsonProperty("NAME") name: String,

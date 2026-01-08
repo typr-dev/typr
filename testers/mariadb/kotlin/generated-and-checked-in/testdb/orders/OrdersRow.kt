@@ -27,56 +27,56 @@ data class OrdersRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /**  */
-  @JsonProperty("order_number") val orderNumber: String,
+  @field:JsonProperty("order_number") val orderNumber: String,
   /** 
     * Points to [testdb.customers.CustomersRow.customerId]
     */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** 
     * Default: 'pending'
     */
-  @JsonProperty("order_status") val orderStatus: String,
+  @field:JsonProperty("order_status") val orderStatus: String,
   /** 
     * Default: 'pending'
     */
-  @JsonProperty("payment_status") val paymentStatus: String,
+  @field:JsonProperty("payment_status") val paymentStatus: String,
   /** 
     * Default: NULL
     * Points to [testdb.customer_addresses.CustomerAddressesRow.addressId]
     */
-  @JsonProperty("shipping_address_id") val shippingAddressId: CustomerAddressesId?,
+  @field:JsonProperty("shipping_address_id") val shippingAddressId: CustomerAddressesId?,
   /** 
     * Default: NULL
     * Points to [testdb.customer_addresses.CustomerAddressesRow.addressId]
     */
-  @JsonProperty("billing_address_id") val billingAddressId: CustomerAddressesId?,
+  @field:JsonProperty("billing_address_id") val billingAddressId: CustomerAddressesId?,
   /**  */
   val subtotal: BigDecimal,
   /** 
     * Default: 0.0000
     */
-  @JsonProperty("shipping_cost") val shippingCost: BigDecimal,
+  @field:JsonProperty("shipping_cost") val shippingCost: BigDecimal,
   /** 
     * Default: 0.0000
     */
-  @JsonProperty("tax_amount") val taxAmount: BigDecimal,
+  @field:JsonProperty("tax_amount") val taxAmount: BigDecimal,
   /** 
     * Default: 0.0000
     */
-  @JsonProperty("discount_amount") val discountAmount: BigDecimal,
+  @field:JsonProperty("discount_amount") val discountAmount: BigDecimal,
   /**  */
-  @JsonProperty("total_amount") val totalAmount: BigDecimal,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal,
   /** 
     * Default: 'USD'
     */
-  @JsonProperty("currency_code") val currencyCode: String,
+  @field:JsonProperty("currency_code") val currencyCode: String,
   /** 
     * Default: NULL
     * Points to [testdb.promotions.PromotionsRow.promotionId]
     */
-  @JsonProperty("promotion_id") val promotionId: PromotionsId?,
+  @field:JsonProperty("promotion_id") val promotionId: PromotionsId?,
   /** 
     * Default: NULL
     */
@@ -84,31 +84,31 @@ data class OrdersRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("internal_notes") val internalNotes: String?,
+  @field:JsonProperty("internal_notes") val internalNotes: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("ip_address") val ipAddress: Inet6?,
+  @field:JsonProperty("ip_address") val ipAddress: Inet6?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("user_agent") val userAgent: String?,
+  @field:JsonProperty("user_agent") val userAgent: String?,
   /** 
     * Default: current_timestamp(6)
     */
-  @JsonProperty("ordered_at") val orderedAt: LocalDateTime,
+  @field:JsonProperty("ordered_at") val orderedAt: LocalDateTime,
   /** 
     * Default: NULL
     */
-  @JsonProperty("confirmed_at") val confirmedAt: LocalDateTime?,
+  @field:JsonProperty("confirmed_at") val confirmedAt: LocalDateTime?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("shipped_at") val shippedAt: LocalDateTime?,
+  @field:JsonProperty("shipped_at") val shippedAt: LocalDateTime?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("delivered_at") val deliveredAt: LocalDateTime?
+  @field:JsonProperty("delivered_at") val deliveredAt: LocalDateTime?
 ) : Tuple22<OrdersId, String, CustomersId, String, String, CustomerAddressesId?, CustomerAddressesId?, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String, PromotionsId?, String?, String?, Inet6?, String?, LocalDateTime, LocalDateTime?, LocalDateTime?, LocalDateTime?> {
   override fun _1(): OrdersId = orderId
 

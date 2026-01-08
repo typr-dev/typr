@@ -14,7 +14,7 @@ import dev.typr.foundations.kotlin.Bijection
 /** Domain `public.Name`
   * No constraint
   */
-data class Name(@JsonValue val value: String) {
+data class Name(@field:JsonValue val value: String) {
   companion object {
     val bijection: Bijection<Name, String> =
       Bijection.of(Name::value, ::Name)

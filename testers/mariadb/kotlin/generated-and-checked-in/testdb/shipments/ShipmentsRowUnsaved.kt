@@ -21,31 +21,31 @@ data class ShipmentsRowUnsaved(
   /** 
     * Points to [testdb.orders.OrdersRow.orderId]
     */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** 
     * Points to [testdb.shipping_carriers.ShippingCarriersRow.carrierId]
     */
-  @JsonProperty("carrier_id") val carrierId: ShippingCarriersId,
+  @field:JsonProperty("carrier_id") val carrierId: ShippingCarriersId,
   /**  */
-  @JsonProperty("shipping_method") val shippingMethod: String,
+  @field:JsonProperty("shipping_method") val shippingMethod: String,
   /**  */
-  @JsonProperty("shipping_cost") val shippingCost: BigDecimal,
+  @field:JsonProperty("shipping_cost") val shippingCost: BigDecimal,
   /** Default: NULL
 
     */
-  @JsonProperty("tracking_number") val trackingNumber: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("tracking_number") val trackingNumber: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("weight_kg") val weightKg: Defaulted<BigDecimal?> = UseDefault(),
+  @field:JsonProperty("weight_kg") val weightKg: Defaulted<BigDecimal?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("dimensions_json") val dimensionsJson: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("dimensions_json") val dimensionsJson: Defaulted<Json?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("label_data") val labelData: Defaulted<ByteArray?> = UseDefault(),
+  @field:JsonProperty("label_data") val labelData: Defaulted<ByteArray?> = UseDefault(),
   /** Default: 'pending'
 
     */
@@ -53,31 +53,31 @@ data class ShipmentsRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("estimated_delivery_date") val estimatedDeliveryDate: Defaulted<LocalDate?> = UseDefault(),
+  @field:JsonProperty("estimated_delivery_date") val estimatedDeliveryDate: Defaulted<LocalDate?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("actual_delivery_at") val actualDeliveryAt: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("actual_delivery_at") val actualDeliveryAt: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("insurance_amount") val insuranceAmount: Defaulted<BigDecimal?> = UseDefault(),
+  @field:JsonProperty("insurance_amount") val insuranceAmount: Defaulted<BigDecimal?> = UseDefault(),
   /** Default: NULL
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
     */
-  @JsonProperty("origin_warehouse_id") val originWarehouseId: Defaulted<WarehousesId?> = UseDefault(),
+  @field:JsonProperty("origin_warehouse_id") val originWarehouseId: Defaulted<WarehousesId?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("shipped_at") val shippedAt: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("shipped_at") val shippedAt: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault()
+  @field:JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
     trackingNumberDefault: () -> String?,

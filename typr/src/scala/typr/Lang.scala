@@ -20,6 +20,8 @@ trait Lang {
   final lazy val String: jvm.Type.Qualified = typeSupport.String
   final lazy val ByteArray: jvm.Type = typeSupport.ByteArray
   final lazy val FloatArray: jvm.Type = typeSupport.FloatArray
+  final lazy val primitiveInt: jvm.Type = typeSupport.primitiveInt
+  final lazy val primitiveBoolean: jvm.Type = typeSupport.primitiveBoolean
   final lazy val Optional: OptionalSupport = typeSupport.Optional
   final lazy val ListType: ListSupport = typeSupport.ListType
   final lazy val Random: RandomSupport = typeSupport.Random
@@ -76,6 +78,9 @@ trait Lang {
   /** Byte array creation: Kotlin: `ByteArray(size)`, Scala: `Array.ofDim[Byte](size)`, Java: `new byte[size]` */
   def newByteArray(size: jvm.Code): jvm.Code
 
+  /** Get length of byte array. Java/Scala: `arr.length`, Kotlin: `arr.size` */
+  def byteArrayLength(arr: jvm.Code): jvm.Code
+
   /** The byte array type. Different in Kotlin (ByteArray) vs Scala/Java (Array[Byte]/byte[]).
     *   - Scala: Array[Byte]
     *   - Java: byte[]
@@ -125,6 +130,10 @@ trait Lang {
 
   /** Structural inequality check */
   def notEquals(left: jvm.Code, right: jvm.Code): jvm.Code
+
+  /** Whether this language needs explicit null checks for non-nullable String parameters. Java: true (String can be null), Kotlin/Scala: false (type system guarantees non-null)
+    */
+  def needsExplicitNullCheck: Boolean
 
   /** Convert Int to Short. Scala: `.toShort`, Kotlin: `.toShort()`, Java: `(short)` */
   def toShort(expr: jvm.Code): jvm.Code
@@ -196,6 +205,10 @@ trait OptionalSupport {
   def map(opt: jvm.Code, f: jvm.Code): jvm.Code
   def filter(opt: jvm.Code, predicate: jvm.Code): jvm.Code
   def get(opt: jvm.Code): jvm.Code
+
+  /** Get value after null check - for Kotlin this just returns opt (smart-casting handles it), for Java/Scala same as get */
+  def getAfterCheck(opt: jvm.Code): jvm.Code = get(opt)
+
   def getOrElse(opt: jvm.Code, default: jvm.Code): jvm.Code
   def isEmpty(opt: jvm.Code): jvm.Code
   def isDefined(opt: jvm.Code): jvm.Code
@@ -244,6 +257,7 @@ trait RandomSupport {
   def nextDouble(random: jvm.Code): jvm.Code
   def nextBoolean(random: jvm.Code): jvm.Code
   def nextBytes(random: jvm.Code, bytes: jvm.Code): jvm.Code
+  def randomBytes(random: jvm.Code, length: jvm.Code): jvm.Code
   def alphanumeric(random: jvm.Code, length: jvm.Code): jvm.Code
   def nextPrintableChar(random: jvm.Code): jvm.Code
   def randomUUID(random: jvm.Code): jvm.Code

@@ -8,6 +8,6 @@ package testdb.db2test_identity_always
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /** This class corresponds to a row in table `DB2TEST_IDENTITY_ALWAYS` which has not been persisted yet */
-data class Db2testIdentityAlwaysRowUnsaved(@JsonProperty("NAME") val name: String) {
+data class Db2testIdentityAlwaysRowUnsaved(@field:JsonProperty("NAME") val name: String) {
   fun toRow(idDefault: () -> Db2testIdentityAlwaysId): Db2testIdentityAlwaysRow = Db2testIdentityAlwaysRow(id = idDefault(), name = name)
 }

@@ -18,12 +18,12 @@ import oracledb.MoneyT
 
 /** View: CUSTOMER_PRODUCTS */
 data class CustomerProductsViewRow(
-  @JsonProperty("CUSTOMER_ID") val customerId: BigDecimal,
-  @JsonProperty("CUSTOMER_NAME") val customerName: String,
-  @JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT?,
-  @JsonProperty("PRODUCT_ID") val productId: BigDecimal,
-  @JsonProperty("PRODUCT_NAME") val productName: String,
-  @JsonProperty("PRICE") val price: MoneyT?
+  @field:JsonProperty("CUSTOMER_ID") val customerId: BigDecimal,
+  @field:JsonProperty("CUSTOMER_NAME") val customerName: String,
+  @field:JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT?,
+  @field:JsonProperty("PRODUCT_ID") val productId: BigDecimal,
+  @field:JsonProperty("PRODUCT_NAME") val productName: String,
+  @field:JsonProperty("PRICE") val price: MoneyT?
 ) : Tuple6<BigDecimal, String, AddressT?, BigDecimal, String, MoneyT?> {
   override fun _1(): BigDecimal = customerId
 

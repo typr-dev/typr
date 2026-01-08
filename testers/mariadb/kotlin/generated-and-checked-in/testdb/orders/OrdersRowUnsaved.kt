@@ -18,51 +18,51 @@ import testdb.promotions.PromotionsId
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 data class OrdersRowUnsaved(
   /**  */
-  @JsonProperty("order_number") val orderNumber: String,
+  @field:JsonProperty("order_number") val orderNumber: String,
   /** 
     * Points to [testdb.customers.CustomersRow.customerId]
     */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /**  */
   val subtotal: BigDecimal,
   /**  */
-  @JsonProperty("total_amount") val totalAmount: BigDecimal,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal,
   /** Default: 'pending'
 
     */
-  @JsonProperty("order_status") val orderStatus: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("order_status") val orderStatus: Defaulted<String> = UseDefault(),
   /** Default: 'pending'
 
     */
-  @JsonProperty("payment_status") val paymentStatus: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("payment_status") val paymentStatus: Defaulted<String> = UseDefault(),
   /** Default: NULL
     * Points to [testdb.customer_addresses.CustomerAddressesRow.addressId]
     */
-  @JsonProperty("shipping_address_id") val shippingAddressId: Defaulted<CustomerAddressesId?> = UseDefault(),
+  @field:JsonProperty("shipping_address_id") val shippingAddressId: Defaulted<CustomerAddressesId?> = UseDefault(),
   /** Default: NULL
     * Points to [testdb.customer_addresses.CustomerAddressesRow.addressId]
     */
-  @JsonProperty("billing_address_id") val billingAddressId: Defaulted<CustomerAddressesId?> = UseDefault(),
+  @field:JsonProperty("billing_address_id") val billingAddressId: Defaulted<CustomerAddressesId?> = UseDefault(),
   /** Default: 0.0000
 
     */
-  @JsonProperty("shipping_cost") val shippingCost: Defaulted<BigDecimal> = UseDefault(),
+  @field:JsonProperty("shipping_cost") val shippingCost: Defaulted<BigDecimal> = UseDefault(),
   /** Default: 0.0000
 
     */
-  @JsonProperty("tax_amount") val taxAmount: Defaulted<BigDecimal> = UseDefault(),
+  @field:JsonProperty("tax_amount") val taxAmount: Defaulted<BigDecimal> = UseDefault(),
   /** Default: 0.0000
 
     */
-  @JsonProperty("discount_amount") val discountAmount: Defaulted<BigDecimal> = UseDefault(),
+  @field:JsonProperty("discount_amount") val discountAmount: Defaulted<BigDecimal> = UseDefault(),
   /** Default: 'USD'
 
     */
-  @JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
   /** Default: NULL
     * Points to [testdb.promotions.PromotionsRow.promotionId]
     */
-  @JsonProperty("promotion_id") val promotionId: Defaulted<PromotionsId?> = UseDefault(),
+  @field:JsonProperty("promotion_id") val promotionId: Defaulted<PromotionsId?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -70,31 +70,31 @@ data class OrdersRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("internal_notes") val internalNotes: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("internal_notes") val internalNotes: Defaulted<String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("ip_address") val ipAddress: Defaulted<Inet6?> = UseDefault(),
+  @field:JsonProperty("ip_address") val ipAddress: Defaulted<Inet6?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("user_agent") val userAgent: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("user_agent") val userAgent: Defaulted<String?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
-  @JsonProperty("ordered_at") val orderedAt: Defaulted<LocalDateTime> = UseDefault(),
+  @field:JsonProperty("ordered_at") val orderedAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("confirmed_at") val confirmedAt: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("confirmed_at") val confirmedAt: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("shipped_at") val shippedAt: Defaulted<LocalDateTime?> = UseDefault(),
+  @field:JsonProperty("shipped_at") val shippedAt: Defaulted<LocalDateTime?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("delivered_at") val deliveredAt: Defaulted<LocalDateTime?> = UseDefault()
+  @field:JsonProperty("delivered_at") val deliveredAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
     orderStatusDefault: () -> String,

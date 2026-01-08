@@ -109,7 +109,7 @@ data class ProductRepoMock(
     for (id in productids) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

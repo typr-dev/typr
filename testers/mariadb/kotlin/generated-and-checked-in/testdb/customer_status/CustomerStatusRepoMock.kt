@@ -79,7 +79,7 @@ data class CustomerStatusRepoMock(
     for (id in statusCodes) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

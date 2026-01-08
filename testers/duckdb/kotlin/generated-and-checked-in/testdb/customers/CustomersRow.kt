@@ -19,11 +19,11 @@ import testdb.customtypes.Defaulted
   * Primary key: customer_id
   */
 data class CustomersRow(
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   val name: String,
   val email: String?,
   /** Default: current_timestamp */
-  @JsonProperty("created_at") val createdAt: LocalDateTime,
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** Default: 'medium' */
   val priority: Priority?
 ) : Tuple5<CustomersId, String, String?, LocalDateTime, Priority?> {

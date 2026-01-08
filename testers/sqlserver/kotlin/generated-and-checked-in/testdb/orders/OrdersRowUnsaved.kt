@@ -15,10 +15,10 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 data class OrdersRowUnsaved(
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
-  @JsonProperty("total_amount") val totalAmount: BigDecimal,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal,
   /** Default: (getdate()) */
-  @JsonProperty("order_date") val orderDate: Defaulted<LocalDateTime?> = UseDefault()
+  @field:JsonProperty("order_date") val orderDate: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
     orderDateDefault: () -> LocalDateTime?,

@@ -19,7 +19,7 @@ case class AllScalarTypesRowUnsaved(
   @JsonProperty("COL_TIMESTAMP") colTimestamp: Optional[LocalDateTime] = Optional.empty(),
   @JsonProperty("COL_CLOB") colClob: Optional[String] = Optional.empty(),
   @JsonProperty("COL_NOT_NULL") colNotNull: String,
-  /** Default: "TYPR"."ISEQ$$_72838".nextval */
+  /** Default: "TYPR"."ISEQ$$_72845".nextval */
   @JsonProperty("ID") id: Defaulted[AllScalarTypesId] = new UseDefault()
 ) {
   def toRow(idDefault: => AllScalarTypesId): AllScalarTypesRow = {

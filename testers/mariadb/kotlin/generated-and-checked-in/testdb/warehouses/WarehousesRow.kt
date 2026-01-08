@@ -23,7 +23,7 @@ data class WarehousesRow(
   /** 
     * AUTO_INCREMENT
     */
-  @JsonProperty("warehouse_id") val warehouseId: WarehousesId,
+  @field:JsonProperty("warehouse_id") val warehouseId: WarehousesId,
   /**  */
   val code: String,
   /**  */
@@ -35,7 +35,7 @@ data class WarehousesRow(
   /** 
     * Default: NULL
     */
-  @JsonProperty("service_area") val serviceArea: Polygon?,
+  @field:JsonProperty("service_area") val serviceArea: Polygon?,
   /** 
     * Default: 'UTC'
     */
@@ -43,15 +43,15 @@ data class WarehousesRow(
   /** 
     * Default: 1
     */
-  @JsonProperty("is_active") val isActive: Boolean,
+  @field:JsonProperty("is_active") val isActive: Boolean,
   /** 
     * Default: NULL
     */
-  @JsonProperty("contact_email") val contactEmail: String?,
+  @field:JsonProperty("contact_email") val contactEmail: String?,
   /** 
     * Default: NULL
     */
-  @JsonProperty("contact_phone") val contactPhone: String?
+  @field:JsonProperty("contact_phone") val contactPhone: String?
 ) : Tuple10<WarehousesId, String, String, String, Point, Polygon?, String, Boolean, String?, String?> {
   override fun _1(): WarehousesId = warehouseId
 

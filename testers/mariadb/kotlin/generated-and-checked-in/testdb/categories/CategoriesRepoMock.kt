@@ -79,7 +79,7 @@ data class CategoriesRepoMock(
     for (id in categoryIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

@@ -13,8 +13,8 @@ import dev.typr.foundations.kotlin.RowParsers
 
 /** Type for the composite primary key of table `departments` */
 data class DepartmentsId(
-  @JsonProperty("dept_code") val deptCode: String,
-  @JsonProperty("dept_region") val deptRegion: String
+  @field:JsonProperty("dept_code") val deptCode: String,
+  @field:JsonProperty("dept_region") val deptRegion: String
 ) : Tuple2<String, String> {
   override fun _1(): String = deptCode
 

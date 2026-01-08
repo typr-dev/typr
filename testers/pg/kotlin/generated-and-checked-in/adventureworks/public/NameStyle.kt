@@ -15,7 +15,7 @@ import dev.typr.foundations.kotlin.KotlinDbTypes
 /** Domain `public.NameStyle`
   * No constraint
   */
-data class NameStyle(@JsonValue val value: Boolean) {
+data class NameStyle(@field:JsonValue val value: Boolean) {
   companion object {
     val bijection: Bijection<NameStyle, Boolean> =
       Bijection.of(NameStyle::value, ::NameStyle)

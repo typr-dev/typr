@@ -17,6 +17,23 @@ sealed trait TypoType {
 
   /** Create a copy of this TypoType with a new jvmType. Used for wrapping with Defaulted[_] etc. */
   def withJvmType(newJvmType: jvm.Type): TypoType
+
+  /** Whether this type is a precision type (generated as a value class in Scala). These types cannot be wrapped by other value classes.
+    */
+  def isPreciseType: Boolean = this match {
+    case _: TypoType.StringN         => true
+    case _: TypoType.NonEmptyString  => true
+    case _: TypoType.NonEmptyStringN => true
+    case _: TypoType.BinaryN         => true
+    case _: TypoType.DecimalN        => true
+    case _: TypoType.LocalDateTimeN  => true
+    case _: TypoType.InstantN        => true
+    case _: TypoType.LocalTimeN      => true
+    case _: TypoType.OffsetDateTimeN => true
+    case TypoType.Nullable(_, inner) => inner.isPreciseType
+    case TypoType.Generated(_, _, q) => q.value.idents.exists(_.value == "precisetypes")
+    case _                           => false
+  }
 }
 
 object TypoType {
@@ -58,6 +75,60 @@ object TypoType {
     }
     def innerJvmType: jvm.Type = element.innerJvmType
     def withJvmType(newJvmType: jvm.Type): Array = copy(jvmType = newJvmType)
+  }
+
+  /** String with max length constraint */
+  case class StringN(jvmType: jvm.Type, underlyingDbType: db.Type, maxLength: Int, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): StringN = copy(jvmType = newJvmType)
+  }
+
+  /** Non-empty string (Oracle - empty string is NULL) */
+  case class NonEmptyString(jvmType: jvm.Type, underlyingDbType: db.Type, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): NonEmptyString = copy(jvmType = newJvmType)
+  }
+
+  /** Non-empty string with max length (Oracle) */
+  case class NonEmptyStringN(jvmType: jvm.Type, underlyingDbType: db.Type, maxLength: Int, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): NonEmptyStringN = copy(jvmType = newJvmType)
+  }
+
+  /** Binary with max length constraint */
+  case class BinaryN(jvmType: jvm.Type, underlyingDbType: db.Type, maxLength: Int, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): BinaryN = copy(jvmType = newJvmType)
+  }
+
+  /** Decimal with precision and scale */
+  case class DecimalN(jvmType: jvm.Type, underlyingDbType: db.Type, precision: Int, scale: Int, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): DecimalN = copy(jvmType = newJvmType)
+  }
+
+  /** LocalDateTime with fractional seconds precision */
+  case class LocalDateTimeN(jvmType: jvm.Type, underlyingDbType: db.Type, fsp: Int, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): LocalDateTimeN = copy(jvmType = newJvmType)
+  }
+
+  /** Instant with fractional seconds precision */
+  case class InstantN(jvmType: jvm.Type, underlyingDbType: db.Type, fsp: Int, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): InstantN = copy(jvmType = newJvmType)
+  }
+
+  /** LocalTime with fractional seconds precision */
+  case class LocalTimeN(jvmType: jvm.Type, underlyingDbType: db.Type, fsp: Int, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): LocalTimeN = copy(jvmType = newJvmType)
+  }
+
+  /** OffsetDateTime with fractional seconds precision */
+  case class OffsetDateTimeN(jvmType: jvm.Type, underlyingDbType: db.Type, fsp: Int, qualifiedType: jvm.Type.Qualified) extends TypoType {
+    def innerJvmType: jvm.Type = qualifiedType
+    def withJvmType(newJvmType: jvm.Type): OffsetDateTimeN = copy(jvmType = newJvmType)
   }
 
   /** Compute TypoType from JVM type and database type */

@@ -20,7 +20,7 @@ public record AllScalarTypesRowUnsaved(
     @JsonProperty("COL_TIMESTAMP") Optional<LocalDateTime> colTimestamp,
     @JsonProperty("COL_CLOB") Optional<String> colClob,
     @JsonProperty("COL_NOT_NULL") String colNotNull,
-    /** Default: "TYPR"."ISEQ$$_72838".nextval */
+    /** Default: "TYPR"."ISEQ$$_72845".nextval */
     @JsonProperty("ID") Defaulted<AllScalarTypesId> id) {
   public AllScalarTypesRowUnsaved(@JsonProperty("COL_NOT_NULL") String colNotNull) {
     this(
@@ -70,7 +70,7 @@ public record AllScalarTypesRowUnsaved(
   }
   ;
 
-  /** Default: "TYPR"."ISEQ$$_72838".nextval */
+  /** Default: "TYPR"."ISEQ$$_72845".nextval */
   public AllScalarTypesRowUnsaved withId(Defaulted<AllScalarTypesId> id) {
     return new AllScalarTypesRowUnsaved(
         colVarchar2, colNumber, colDate, colTimestamp, colClob, colNotNull, id);

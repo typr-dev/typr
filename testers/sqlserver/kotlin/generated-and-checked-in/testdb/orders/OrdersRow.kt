@@ -22,12 +22,12 @@ import testdb.customtypes.Defaulted
   */
 data class OrdersRow(
   /** IDENTITY(1, 1) */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Default: (getdate()) */
-  @JsonProperty("order_date") val orderDate: LocalDateTime?,
-  @JsonProperty("total_amount") val totalAmount: BigDecimal
+  @field:JsonProperty("order_date") val orderDate: LocalDateTime?,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal
 ) : Tuple4<OrdersId, CustomersId, LocalDateTime?, BigDecimal> {
   override fun _1(): OrdersId = orderId
 

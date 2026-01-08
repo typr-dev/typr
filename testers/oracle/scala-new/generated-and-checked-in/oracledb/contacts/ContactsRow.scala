@@ -19,7 +19,7 @@ import oracledb.customtypes.Defaulted
  * Primary key: CONTACT_ID
  */
 case class ContactsRow(
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
+  /** Default: "TYPR"."ISEQ$$_72857".nextval */
   @JsonProperty("CONTACT_ID") contactId: ContactsId,
   @JsonProperty("NAME") name: String,
   @JsonProperty("EMAILS") emails: Option[EmailTableT],

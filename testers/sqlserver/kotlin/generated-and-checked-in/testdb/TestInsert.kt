@@ -37,6 +37,31 @@ import testdb.orders.OrdersId
 import testdb.orders.OrdersRepoImpl
 import testdb.orders.OrdersRow
 import testdb.orders.OrdersRowUnsaved
+import testdb.precisetypes.Binary10
+import testdb.precisetypes.Binary32
+import testdb.precisetypes.Decimal10_2
+import testdb.precisetypes.Decimal12_4
+import testdb.precisetypes.Decimal18_4
+import testdb.precisetypes.Decimal5_2
+import testdb.precisetypes.Decimal8_2
+import testdb.precisetypes.LocalDateTime3
+import testdb.precisetypes.LocalDateTime7
+import testdb.precisetypes.LocalTime3
+import testdb.precisetypes.LocalTime7
+import testdb.precisetypes.OffsetDateTime3
+import testdb.precisetypes.OffsetDateTime7
+import testdb.precisetypes.PaddedString10
+import testdb.precisetypes.String10
+import testdb.precisetypes.String100
+import testdb.precisetypes.String20
+import testdb.precisetypes.String255
+import testdb.precisetypes.String50
+import testdb.precision_types.PrecisionTypesRepoImpl
+import testdb.precision_types.PrecisionTypesRow
+import testdb.precision_types.PrecisionTypesRowUnsaved
+import testdb.precision_types_null.PrecisionTypesNullRepoImpl
+import testdb.precision_types_null.PrecisionTypesNullRow
+import testdb.precision_types_null.PrecisionTypesNullRowUnsaved
 import testdb.products.ProductsId
 import testdb.products.ProductsRepoImpl
 import testdb.products.ProductsRow
@@ -108,6 +133,66 @@ data class TestInsert(val random: Random) {
     orderDate: Defaulted<LocalDateTime?> = UseDefault(),
     c: Connection
   ): OrdersRow = (OrdersRepoImpl()).insert(OrdersRowUnsaved(customerId = customerId, totalAmount = totalAmount, orderDate = orderDate), c)
+
+  fun PrecisionTypes(
+    char10: PaddedString10,
+    nchar10: PaddedString10,
+    string10: String10 = String10.truncate(RandomHelper.alphanumeric(random, 10)),
+    string20: String20 = String20.truncate(RandomHelper.alphanumeric(random, 20)),
+    string50: String50 = String50.truncate(RandomHelper.alphanumeric(random, 20)),
+    string100: String100 = String100.truncate(RandomHelper.alphanumeric(random, 20)),
+    string255: String255 = String255.truncate(RandomHelper.alphanumeric(random, 20)),
+    nstring10: String10 = String10.truncate(RandomHelper.alphanumeric(random, 10)),
+    nstring50: String50 = String50.truncate(RandomHelper.alphanumeric(random, 20)),
+    nstring255: String255 = String255.truncate(RandomHelper.alphanumeric(random, 20)),
+    decimal52: Decimal5_2 = Decimal5_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    decimal102: Decimal10_2 = Decimal10_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    decimal184: Decimal18_4 = Decimal18_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
+    numeric82: Decimal8_2 = Decimal8_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    numeric124: Decimal12_4 = Decimal12_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
+    binary10: Binary10 = Binary10.unsafeForce(RandomHelper.randomBytes(random, 10)),
+    binary32: Binary32 = Binary32.unsafeForce(RandomHelper.randomBytes(random, 32)),
+    time0: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    time3: LocalTime3 = LocalTime3.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    time7: LocalTime7 = LocalTime7.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    datetime20: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    datetime23: LocalDateTime3 = LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    datetime27: LocalDateTime7 = LocalDateTime7.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    dto0: OffsetDateTime = OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())), ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    dto3: OffsetDateTime3 = OffsetDateTime3.of(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())), ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    dto7: OffsetDateTime7 = OffsetDateTime7.of(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())), ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    c: Connection
+  ): PrecisionTypesRow = (PrecisionTypesRepoImpl()).insert(PrecisionTypesRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, nstring10 = nstring10, nstring50 = nstring50, nstring255 = nstring255, char10 = char10, nchar10 = nchar10, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, numeric82 = numeric82, numeric124 = numeric124, binary10 = binary10, binary32 = binary32, time0 = time0, time3 = time3, time7 = time7, datetime20 = datetime20, datetime23 = datetime23, datetime27 = datetime27, dto0 = dto0, dto3 = dto3, dto7 = dto7), c)
+
+  fun PrecisionTypesNull(
+    string10: String10? = if (random.nextBoolean()) null else String10.truncate(RandomHelper.alphanumeric(random, 10)),
+    string20: String20? = if (random.nextBoolean()) null else String20.truncate(RandomHelper.alphanumeric(random, 20)),
+    string50: String50? = if (random.nextBoolean()) null else String50.truncate(RandomHelper.alphanumeric(random, 20)),
+    string100: String100? = if (random.nextBoolean()) null else String100.truncate(RandomHelper.alphanumeric(random, 20)),
+    string255: String255? = if (random.nextBoolean()) null else String255.truncate(RandomHelper.alphanumeric(random, 20)),
+    nstring10: String10? = if (random.nextBoolean()) null else String10.truncate(RandomHelper.alphanumeric(random, 10)),
+    nstring50: String50? = if (random.nextBoolean()) null else String50.truncate(RandomHelper.alphanumeric(random, 20)),
+    nstring255: String255? = if (random.nextBoolean()) null else String255.truncate(RandomHelper.alphanumeric(random, 20)),
+    char10: PaddedString10? = null,
+    nchar10: PaddedString10? = null,
+    decimal52: Decimal5_2? = if (random.nextBoolean()) null else Decimal5_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    decimal102: Decimal10_2? = if (random.nextBoolean()) null else Decimal10_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    decimal184: Decimal18_4? = if (random.nextBoolean()) null else Decimal18_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
+    numeric82: Decimal8_2? = if (random.nextBoolean()) null else Decimal8_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
+    numeric124: Decimal12_4? = if (random.nextBoolean()) null else Decimal12_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
+    binary10: Binary10? = if (random.nextBoolean()) null else Binary10.unsafeForce(RandomHelper.randomBytes(random, 10)),
+    binary32: Binary32? = if (random.nextBoolean()) null else Binary32.unsafeForce(RandomHelper.randomBytes(random, 32)),
+    time0: LocalTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
+    time3: LocalTime3? = if (random.nextBoolean()) null else LocalTime3.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    time7: LocalTime7? = if (random.nextBoolean()) null else LocalTime7.of(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    datetime20: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
+    datetime23: LocalDateTime3? = if (random.nextBoolean()) null else LocalDateTime3.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    datetime27: LocalDateTime7? = if (random.nextBoolean()) null else LocalDateTime7.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()))),
+    dto0: OffsetDateTime? = if (random.nextBoolean()) null else OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())), ZoneOffset.ofHours(random.nextInt(24) - 12)),
+    dto3: OffsetDateTime3? = if (random.nextBoolean()) null else OffsetDateTime3.of(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())), ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    dto7: OffsetDateTime7? = if (random.nextBoolean()) null else OffsetDateTime7.of(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())), ZoneOffset.ofHours(random.nextInt(24) - 12))),
+    c: Connection
+  ): PrecisionTypesNullRow = (PrecisionTypesNullRepoImpl()).insert(PrecisionTypesNullRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, nstring10 = nstring10, nstring50 = nstring50, nstring255 = nstring255, char10 = char10, nchar10 = nchar10, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, numeric82 = numeric82, numeric124 = numeric124, binary10 = binary10, binary32 = binary32, time0 = time0, time3 = time3, time7 = time7, datetime20 = datetime20, datetime23 = datetime23, datetime27 = datetime27, dto0 = dto0, dto3 = dto3, dto7 = dto7), c)
 
   fun Products(
     name: String,

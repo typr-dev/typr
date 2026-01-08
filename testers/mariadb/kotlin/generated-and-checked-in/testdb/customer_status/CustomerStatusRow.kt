@@ -18,13 +18,13 @@ import testdb.customtypes.Defaulted
   */
 data class CustomerStatusRow(
   /**  */
-  @JsonProperty("status_code") val statusCode: CustomerStatusId,
+  @field:JsonProperty("status_code") val statusCode: CustomerStatusId,
   /**  */
   val description: String,
   /** 
     * Default: 1
     */
-  @JsonProperty("is_active") val isActive: Boolean
+  @field:JsonProperty("is_active") val isActive: Boolean
 ) : Tuple3<CustomerStatusId, String, Boolean> {
   override fun _1(): CustomerStatusId = statusCode
 

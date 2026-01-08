@@ -11,9 +11,9 @@ import testdb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `DB2TEST_IDENTITY_DEFAULT` which has not been persisted yet */
 data class Db2testIdentityDefaultRowUnsaved(
-  @JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: String,
   /** Identity BY DEFAULT */
-  @JsonProperty("ID") val id: Defaulted<Db2testIdentityDefaultId> = UseDefault()
+  @field:JsonProperty("ID") val id: Defaulted<Db2testIdentityDefaultId> = UseDefault()
 ) {
   fun toRow(idDefault: () -> Db2testIdentityDefaultId): Db2testIdentityDefaultRow = Db2testIdentityDefaultRow(id = id.getOrElse(idDefault), name = name)
 }

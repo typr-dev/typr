@@ -18,15 +18,15 @@ import oracledb.products.ProductsId
 /** SQL file: product_by_sku.sql */
 data class ProductBySkuSqlRow(
   /** Points to [oracledb.products.ProductsRow.productId] */
-  @JsonProperty("PRODUCT_ID") val productId: ProductsId,
+  @field:JsonProperty("PRODUCT_ID") val productId: ProductsId,
   /** Points to [oracledb.products.ProductsRow.sku] */
-  @JsonProperty("SKU") val sku: String,
+  @field:JsonProperty("SKU") val sku: String,
   /** Points to [oracledb.products.ProductsRow.name] */
-  @JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: String,
   /** Points to [oracledb.products.ProductsRow.price] */
-  @JsonProperty("PRICE") val price: MoneyT,
+  @field:JsonProperty("PRICE") val price: MoneyT,
   /** Points to [oracledb.products.ProductsRow.tags] */
-  @JsonProperty("TAGS") val tags: TagVarrayT?
+  @field:JsonProperty("TAGS") val tags: TagVarrayT?
 ) : Tuple5<ProductsId, String, String, MoneyT, TagVarrayT?> {
   override fun _1(): ProductsId = productId
 

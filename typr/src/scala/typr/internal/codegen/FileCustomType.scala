@@ -35,6 +35,7 @@ object FileCustomType {
       annotations = typeAnnotations,
       constructorAnnotations = Nil,
       isWrapper = false,
+      privateConstructor = false,
       comments = scaladoc(List(ct.comment)),
       name = ct.typoType,
       tparams = Nil,

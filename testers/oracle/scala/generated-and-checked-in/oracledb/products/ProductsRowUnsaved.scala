@@ -18,7 +18,7 @@ case class ProductsRowUnsaved(
   @JsonProperty("NAME") name: String,
   @JsonProperty("PRICE") price: MoneyT,
   @JsonProperty("TAGS") tags: Optional[TagVarrayT] = Optional.empty(),
-  /** Default: "TYPR"."ISEQ$$_72846".nextval */
+  /** Default: "TYPR"."ISEQ$$_72853".nextval */
   @JsonProperty("PRODUCT_ID") productId: Defaulted[ProductsId] = new UseDefault()
 ) {
   def toRow(productIdDefault: => ProductsId): ProductsRow = {

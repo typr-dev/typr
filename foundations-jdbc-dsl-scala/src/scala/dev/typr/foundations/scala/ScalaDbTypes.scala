@@ -51,6 +51,13 @@ object ScalaDbTypes {
       arr => arr.map(_.doubleValue()),
       arr => arr.map(java.lang.Double.valueOf)
     )
+
+    // BigDecimal array - convert Java BigDecimal array to Scala BigDecimal array
+    val decimalArray: DuckDbType[Array[BigDecimal]] = dev.typr.foundations.DuckDbTypes.decimalArray.bimap(
+      arr => arr.map(BigDecimal(_)),
+      arr => arr.map(_.bigDecimal)
+    )
+    val numericArray: DuckDbType[Array[BigDecimal]] = decimalArray
   }
 
   object PgTypes {

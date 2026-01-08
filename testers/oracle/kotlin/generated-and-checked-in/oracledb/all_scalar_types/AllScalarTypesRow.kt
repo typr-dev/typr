@@ -20,14 +20,14 @@ import oracledb.customtypes.Defaulted
   * Primary key: ID
   */
 data class AllScalarTypesRow(
-  /** Default: "TYPR"."ISEQ$$_72838".nextval */
-  @JsonProperty("ID") val id: AllScalarTypesId,
-  @JsonProperty("COL_VARCHAR2") val colVarchar2: String?,
-  @JsonProperty("COL_NUMBER") val colNumber: BigDecimal?,
-  @JsonProperty("COL_DATE") val colDate: LocalDateTime?,
-  @JsonProperty("COL_TIMESTAMP") val colTimestamp: LocalDateTime?,
-  @JsonProperty("COL_CLOB") val colClob: String?,
-  @JsonProperty("COL_NOT_NULL") val colNotNull: String
+  /** Default: "TYPR"."ISEQ$$_72845".nextval */
+  @field:JsonProperty("ID") val id: AllScalarTypesId,
+  @field:JsonProperty("COL_VARCHAR2") val colVarchar2: String?,
+  @field:JsonProperty("COL_NUMBER") val colNumber: BigDecimal?,
+  @field:JsonProperty("COL_DATE") val colDate: LocalDateTime?,
+  @field:JsonProperty("COL_TIMESTAMP") val colTimestamp: LocalDateTime?,
+  @field:JsonProperty("COL_CLOB") val colClob: String?,
+  @field:JsonProperty("COL_NOT_NULL") val colNotNull: String
 ) : Tuple7<AllScalarTypesId, String?, BigDecimal?, LocalDateTime?, LocalDateTime?, String?, String> {
   override fun _1(): AllScalarTypesId = id
 

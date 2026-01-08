@@ -22,9 +22,9 @@ data class FlaffRow(
   /** Points to [adventureworks.public.flaff.FlaffRow.code] */
   val code: ShortText,
   /** Points to [adventureworks.public.flaff.FlaffRow.anotherCode] */
-  @JsonProperty("another_code") val anotherCode: String,
+  @field:JsonProperty("another_code") val anotherCode: String,
   /** Points to [adventureworks.public.flaff.FlaffRow.someNumber] */
-  @JsonProperty("some_number") val someNumber: Int,
+  @field:JsonProperty("some_number") val someNumber: Int,
   val specifier: ShortText,
   /** Points to [adventureworks.public.flaff.FlaffRow.specifier] */
   val parentspecifier: ShortText?

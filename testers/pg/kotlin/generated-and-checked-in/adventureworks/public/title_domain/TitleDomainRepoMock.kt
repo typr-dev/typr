@@ -85,7 +85,7 @@ data class TitleDomainRepoMock(val map: MutableMap<TitleDomainId, TitleDomainRow
     for (id in codes) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

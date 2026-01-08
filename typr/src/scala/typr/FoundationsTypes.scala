@@ -96,4 +96,18 @@ object FoundationsTypes {
     val DuckDbType: Qualified = Qualified("dev.typr.foundations.DuckDbType")
     val DuckDbTypes: Qualified = Qualified("dev.typr.foundations.DuckDbTypes")
   }
+
+  object precise {
+    private val precisePackage = s"$dataPackage.precise"
+    val StringN: Qualified = Qualified(s"$precisePackage.StringN")
+    val PaddedStringN: Qualified = Qualified(s"$precisePackage.PaddedStringN")
+    val NonEmptyStringN: Qualified = Qualified(s"$precisePackage.NonEmptyStringN")
+    val NonEmptyPaddedStringN: Qualified = Qualified(s"$precisePackage.NonEmptyPaddedStringN")
+    val BinaryN: Qualified = Qualified(s"$precisePackage.BinaryN")
+    val DecimalN: Qualified = Qualified(s"$precisePackage.DecimalN")
+    val LocalDateTimeN: Qualified = Qualified(s"$precisePackage.LocalDateTimeN")
+    val LocalTimeN: Qualified = Qualified(s"$precisePackage.LocalTimeN")
+    val OffsetDateTimeN: Qualified = Qualified(s"$precisePackage.OffsetDateTimeN")
+    val InstantN: Qualified = Qualified(s"$precisePackage.InstantN")
+  }
 }

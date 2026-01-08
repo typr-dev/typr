@@ -22,35 +22,35 @@ data class MariatestSpatialNullRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("geometry_col") val geometryCol: Defaulted<Geometry?> = UseDefault(),
+  @field:JsonProperty("geometry_col") val geometryCol: Defaulted<Geometry?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("point_col") val pointCol: Defaulted<Point?> = UseDefault(),
+  @field:JsonProperty("point_col") val pointCol: Defaulted<Point?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("linestring_col") val linestringCol: Defaulted<LineString?> = UseDefault(),
+  @field:JsonProperty("linestring_col") val linestringCol: Defaulted<LineString?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("polygon_col") val polygonCol: Defaulted<Polygon?> = UseDefault(),
+  @field:JsonProperty("polygon_col") val polygonCol: Defaulted<Polygon?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("multipoint_col") val multipointCol: Defaulted<MultiPoint?> = UseDefault(),
+  @field:JsonProperty("multipoint_col") val multipointCol: Defaulted<MultiPoint?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("multilinestring_col") val multilinestringCol: Defaulted<MultiLineString?> = UseDefault(),
+  @field:JsonProperty("multilinestring_col") val multilinestringCol: Defaulted<MultiLineString?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("multipolygon_col") val multipolygonCol: Defaulted<MultiPolygon?> = UseDefault(),
+  @field:JsonProperty("multipolygon_col") val multipolygonCol: Defaulted<MultiPolygon?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("geometrycollection_col") val geometrycollectionCol: Defaulted<GeometryCollection?> = UseDefault()
+  @field:JsonProperty("geometrycollection_col") val geometrycollectionCol: Defaulted<GeometryCollection?> = UseDefault()
 ) {
   fun toRow(
     geometryColDefault: () -> Geometry?,

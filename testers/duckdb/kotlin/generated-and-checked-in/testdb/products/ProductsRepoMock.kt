@@ -71,7 +71,7 @@ data class ProductsRepoMock(val map: MutableMap<ProductsId, ProductsRow> = mutab
     for (id in productIds) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

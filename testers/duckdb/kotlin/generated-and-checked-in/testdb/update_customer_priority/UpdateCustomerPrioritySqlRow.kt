@@ -18,13 +18,13 @@ import testdb.customers.CustomersId
 /** SQL file: update_customer_priority.sql */
 data class UpdateCustomerPrioritySqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
-  @JsonProperty("customer_id") val customerId: CustomersId,
+  @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
   val name: String,
   /** Points to [testdb.customers.CustomersRow.email] */
   val email: String?,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
-  @JsonProperty("created_at") val createdAt: LocalDateTime,
+  @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** Points to [testdb.customers.CustomersRow.priority] */
   val priority: Priority?
 ) : Tuple5<CustomersId, String, String?, LocalDateTime, Priority?> {

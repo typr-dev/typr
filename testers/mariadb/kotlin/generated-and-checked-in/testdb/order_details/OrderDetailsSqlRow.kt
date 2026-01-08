@@ -21,39 +21,39 @@ import testdb.products.ProductsId
 /** SQL file: order_details.sql */
 data class OrderDetailsSqlRow(
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** Points to [testdb.orders.OrdersRow.orderNumber] */
-  @JsonProperty("order_number") val orderNumber: String,
+  @field:JsonProperty("order_number") val orderNumber: String,
   /** Points to [testdb.orders.OrdersRow.orderStatus] */
-  @JsonProperty("order_status") val orderStatus: String,
+  @field:JsonProperty("order_status") val orderStatus: String,
   /** Points to [testdb.orders.OrdersRow.paymentStatus] */
-  @JsonProperty("payment_status") val paymentStatus: String,
+  @field:JsonProperty("payment_status") val paymentStatus: String,
   /** Points to [testdb.orders.OrdersRow.subtotal] */
   val subtotal: BigDecimal,
   /** Points to [testdb.orders.OrdersRow.shippingCost] */
-  @JsonProperty("shipping_cost") val shippingCost: BigDecimal,
+  @field:JsonProperty("shipping_cost") val shippingCost: BigDecimal,
   /** Points to [testdb.orders.OrdersRow.taxAmount] */
-  @JsonProperty("tax_amount") val taxAmount: BigDecimal,
+  @field:JsonProperty("tax_amount") val taxAmount: BigDecimal,
   /** Points to [testdb.orders.OrdersRow.discountAmount] */
-  @JsonProperty("discount_amount") val discountAmount: BigDecimal,
+  @field:JsonProperty("discount_amount") val discountAmount: BigDecimal,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
-  @JsonProperty("total_amount") val totalAmount: BigDecimal,
+  @field:JsonProperty("total_amount") val totalAmount: BigDecimal,
   /** Points to [testdb.orders.OrdersRow.orderedAt] */
-  @JsonProperty("ordered_at") val orderedAt: LocalDateTime,
+  @field:JsonProperty("ordered_at") val orderedAt: LocalDateTime,
   /** Points to [testdb.order_items.OrderItemsRow.itemId] */
-  @JsonProperty("item_id") val itemId: OrderItemsId,
+  @field:JsonProperty("item_id") val itemId: OrderItemsId,
   /** Points to [testdb.order_items.OrderItemsRow.productId] */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.order_items.OrderItemsRow.sku] */
   val sku: String,
   /** Points to [testdb.order_items.OrderItemsRow.productName] */
-  @JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: String,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
   val quantity: Uint2,
   /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
-  @JsonProperty("unit_price") val unitPrice: BigDecimal,
+  @field:JsonProperty("unit_price") val unitPrice: BigDecimal,
   /** Points to [testdb.order_items.OrderItemsRow.lineTotal] */
-  @JsonProperty("line_total") val lineTotal: BigDecimal
+  @field:JsonProperty("line_total") val lineTotal: BigDecimal
 ) : Tuple17<OrdersId, String, String, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, LocalDateTime, OrderItemsId, ProductsId, String, String, Uint2, BigDecimal, BigDecimal> {
   override fun _1(): OrdersId = orderId
 

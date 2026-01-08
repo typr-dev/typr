@@ -109,7 +109,7 @@ data class IdentityTestRepoMock(
     for (id in names) {
       val opt = map[id]
       if (opt != null) {
-      result.add(opt!!)
+      result.add(opt)
     }
     }
     return result

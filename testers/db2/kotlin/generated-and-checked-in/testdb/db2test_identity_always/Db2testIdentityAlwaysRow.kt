@@ -16,8 +16,8 @@ import dev.typr.foundations.kotlin.RowParsers
   */
 data class Db2testIdentityAlwaysRow(
   /** Identity ALWAYS */
-  @JsonProperty("ID") val id: Db2testIdentityAlwaysId,
-  @JsonProperty("NAME") val name: String
+  @field:JsonProperty("ID") val id: Db2testIdentityAlwaysId,
+  @field:JsonProperty("NAME") val name: String
 ) : Tuple2<Db2testIdentityAlwaysId, String> {
   override fun _1(): Db2testIdentityAlwaysId = id
 

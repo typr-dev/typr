@@ -11,8 +11,8 @@ import testdb.MoneyAmount
 
 /** This class corresponds to a row in table `DISTINCT_TYPE_TEST` which has not been persisted yet */
 data class DistinctTypeTestRowUnsaved(
-  @JsonProperty("EMAIL") val email: EmailAddress,
-  @JsonProperty("BALANCE") val balance: MoneyAmount? = null
+  @field:JsonProperty("EMAIL") val email: EmailAddress,
+  @field:JsonProperty("BALANCE") val balance: MoneyAmount? = null
 ) {
   fun toRow(idDefault: () -> DistinctTypeTestId): DistinctTypeTestRow = DistinctTypeTestRow(id = idDefault(), email = email, balance = balance)
 }

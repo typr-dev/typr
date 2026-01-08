@@ -24,7 +24,7 @@ data class VInventoryStatusViewRow(
     * Default: 0
     * Points to [testdb.products.ProductsRow.productId]
     */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   /** 
     * Points to [testdb.products.ProductsRow.sku]
     */
@@ -32,35 +32,35 @@ data class VInventoryStatusViewRow(
   /** 
     * Points to [testdb.products.ProductsRow.name]
     */
-  @JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: String,
   /** 
     * Default: 0
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
     */
-  @JsonProperty("warehouse_id") val warehouseId: WarehousesId,
+  @field:JsonProperty("warehouse_id") val warehouseId: WarehousesId,
   /** 
     * Points to [testdb.warehouses.WarehousesRow.code]
     */
-  @JsonProperty("warehouse_code") val warehouseCode: String,
+  @field:JsonProperty("warehouse_code") val warehouseCode: String,
   /** 
     * Points to [testdb.warehouses.WarehousesRow.name]
     */
-  @JsonProperty("warehouse_name") val warehouseName: String,
+  @field:JsonProperty("warehouse_name") val warehouseName: String,
   /** 
     * Default: 0
     * Points to [testdb.inventory.InventoryRow.quantityOnHand]
     */
-  @JsonProperty("quantity_on_hand") val quantityOnHand: Int,
+  @field:JsonProperty("quantity_on_hand") val quantityOnHand: Int,
   /** 
     * Default: 0
     * Points to [testdb.inventory.InventoryRow.quantityReserved]
     */
-  @JsonProperty("quantity_reserved") val quantityReserved: Int,
+  @field:JsonProperty("quantity_reserved") val quantityReserved: Int,
   /** 
     * Default: 0
     * Points to [testdb.inventory.InventoryRow.quantityOnOrder]
     */
-  @JsonProperty("quantity_on_order") val quantityOnOrder: Int,
+  @field:JsonProperty("quantity_on_order") val quantityOnOrder: Int,
   /** 
     * Default: 0
     */
@@ -69,21 +69,21 @@ data class VInventoryStatusViewRow(
     * Default: 0
     * Points to [testdb.inventory.InventoryRow.reorderPoint]
     */
-  @JsonProperty("reorder_point") val reorderPoint: Int,
+  @field:JsonProperty("reorder_point") val reorderPoint: Int,
   /** 
     * Default: ''
     */
-  @JsonProperty("stock_status") val stockStatus: String,
+  @field:JsonProperty("stock_status") val stockStatus: String,
   /** 
     * Default: NULL
     * Points to [testdb.inventory.InventoryRow.binLocation]
     */
-  @JsonProperty("bin_location") val binLocation: String?,
+  @field:JsonProperty("bin_location") val binLocation: String?,
   /** 
     * Default: NULL
     * Points to [testdb.inventory.InventoryRow.lastCountedAt]
     */
-  @JsonProperty("last_counted_at") val lastCountedAt: LocalDateTime?
+  @field:JsonProperty("last_counted_at") val lastCountedAt: LocalDateTime?
 ) : Tuple14<ProductsId, String, String, WarehousesId, String, String, Int, Int, Int, Long, Int, String, String?, LocalDateTime?> {
   override fun _1(): ProductsId = productId
 

@@ -19,11 +19,11 @@ import testdb.products.ProductsId
   */
 data class OrderItemsRow(
   /** IDENTITY(1, 1) */
-  @JsonProperty("order_item_id") val orderItemId: OrderItemsId,
+  @field:JsonProperty("order_item_id") val orderItemId: OrderItemsId,
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @JsonProperty("order_id") val orderId: OrdersId,
+  @field:JsonProperty("order_id") val orderId: OrdersId,
   /** Points to [testdb.products.ProductsRow.productId] */
-  @JsonProperty("product_id") val productId: ProductsId,
+  @field:JsonProperty("product_id") val productId: ProductsId,
   val quantity: Int,
   val price: BigDecimal
 ) : Tuple5<OrderItemsId, OrdersId, ProductsId, Int, BigDecimal> {

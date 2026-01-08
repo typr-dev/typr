@@ -18,9 +18,9 @@ import testdb.MoneyAmount
   */
 data class DistinctTypeTestRow(
   /** Identity ALWAYS */
-  @JsonProperty("ID") val id: DistinctTypeTestId,
-  @JsonProperty("EMAIL") val email: EmailAddress,
-  @JsonProperty("BALANCE") val balance: MoneyAmount?
+  @field:JsonProperty("ID") val id: DistinctTypeTestId,
+  @field:JsonProperty("EMAIL") val email: EmailAddress,
+  @field:JsonProperty("BALANCE") val balance: MoneyAmount?
 ) : Tuple3<DistinctTypeTestId, EmailAddress, MoneyAmount?> {
   override fun _1(): DistinctTypeTestId = id
 

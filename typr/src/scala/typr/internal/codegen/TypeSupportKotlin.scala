@@ -5,6 +5,7 @@ import typr.*
 
 object TypeSupportKotlin extends TypeSupport {
   override val BigDecimal: jvm.Type.Qualified = TypesJava.BigDecimal
+  override val BigInteger: jvm.Type.Qualified = TypesJava.BigInteger
   override val Boolean: jvm.Type.Qualified = TypesKotlin.Boolean
   override val Byte: jvm.Type.Qualified = TypesKotlin.Byte
   override val Double: jvm.Type.Qualified = TypesKotlin.Double
@@ -16,6 +17,8 @@ object TypeSupportKotlin extends TypeSupport {
   override val String: jvm.Type.Qualified = TypesKotlin.String
   override val ByteArray: jvm.Type = TypesKotlin.ByteArray
   override val FloatArray: jvm.Type = TypesKotlin.FloatArray
+  override val primitiveInt: jvm.Type = TypesKotlin.Int
+  override val primitiveBoolean: jvm.Type = TypesKotlin.Boolean
 
   override def bigDecimalFromDouble(d: jvm.Code): jvm.Code =
     code"${TypesJava.BigDecimal}.valueOf($d)"
@@ -38,6 +41,7 @@ object TypeSupportKotlin extends TypeSupport {
     def map(opt: jvm.Code, f: jvm.Code): jvm.Code = code"$opt?.let($f)"
     def filter(opt: jvm.Code, predicate: jvm.Code): jvm.Code = code"$opt?.takeIf($predicate)"
     def get(opt: jvm.Code): jvm.Code = code"$opt!!" // Force unwrap (throws if null)
+    override def getAfterCheck(opt: jvm.Code): jvm.Code = opt // Kotlin smart-casts after null check, no !! needed
     def getOrElse(opt: jvm.Code, default: jvm.Code): jvm.Code = code"$opt ?: $default" // Elvis operator
     def isEmpty(opt: jvm.Code): jvm.Code = code"$opt == null"
     def isDefined(opt: jvm.Code): jvm.Code = code"$opt != null"
@@ -101,6 +105,7 @@ object TypeSupportKotlin extends TypeSupport {
     def nextDouble(random: jvm.Code): jvm.Code = code"$random.nextDouble()"
     def nextBoolean(random: jvm.Code): jvm.Code = code"$random.nextBoolean()"
     def nextBytes(random: jvm.Code, bytes: jvm.Code): jvm.Code = code"$random.nextBytes($bytes)"
+    def randomBytes(random: jvm.Code, length: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.randomBytes($random, $length)"
     def alphanumeric(random: jvm.Code, length: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.alphanumeric($random, $length)"
     def nextPrintableChar(random: jvm.Code): jvm.Code = code"(33 + $random.nextInt(94)).toChar()"
     def randomUUID(random: jvm.Code): jvm.Code = code"${TypesJava.RandomHelper}.randomUUID($random)"

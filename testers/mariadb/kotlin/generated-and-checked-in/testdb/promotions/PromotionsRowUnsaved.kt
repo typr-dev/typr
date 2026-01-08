@@ -22,13 +22,13 @@ data class PromotionsRowUnsaved(
   /**  */
   val name: String,
   /**  */
-  @JsonProperty("discount_type") val discountType: String,
+  @field:JsonProperty("discount_type") val discountType: String,
   /**  */
-  @JsonProperty("discount_value") val discountValue: BigDecimal,
+  @field:JsonProperty("discount_value") val discountValue: BigDecimal,
   /**  */
-  @JsonProperty("valid_from") val validFrom: LocalDateTime,
+  @field:JsonProperty("valid_from") val validFrom: LocalDateTime,
   /**  */
-  @JsonProperty("valid_to") val validTo: LocalDateTime,
+  @field:JsonProperty("valid_to") val validTo: LocalDateTime,
   /** Default: NULL
 
     */
@@ -36,35 +36,35 @@ data class PromotionsRowUnsaved(
   /** Default: NULL
 
     */
-  @JsonProperty("min_order_amount") val minOrderAmount: Defaulted<BigDecimal?> = UseDefault(),
+  @field:JsonProperty("min_order_amount") val minOrderAmount: Defaulted<BigDecimal?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("max_uses") val maxUses: Defaulted<Uint4?> = UseDefault(),
+  @field:JsonProperty("max_uses") val maxUses: Defaulted<Uint4?> = UseDefault(),
   /** Default: 0
 
     */
-  @JsonProperty("uses_count") val usesCount: Defaulted<Uint4> = UseDefault(),
+  @field:JsonProperty("uses_count") val usesCount: Defaulted<Uint4> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("max_uses_per_customer") val maxUsesPerCustomer: Defaulted<Uint1?> = UseDefault(),
+  @field:JsonProperty("max_uses_per_customer") val maxUsesPerCustomer: Defaulted<Uint1?> = UseDefault(),
   /** Default: NULL
 
     */
-  @JsonProperty("applicable_to") val applicableTo: Defaulted<AllBrandsCategoriesCSet?> = UseDefault(),
+  @field:JsonProperty("applicable_to") val applicableTo: Defaulted<AllBrandsCategoriesCSet?> = UseDefault(),
   /** Default: NULL
     * Complex eligibility rules
     */
-  @JsonProperty("rules_json") val rulesJson: Defaulted<Json?> = UseDefault(),
+  @field:JsonProperty("rules_json") val rulesJson: Defaulted<Json?> = UseDefault(),
   /** Default: 1
 
     */
-  @JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault(),
   /** Default: current_timestamp()
 
     */
-  @JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
+  @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
     descriptionDefault: () -> String?,

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm")
 }
 
 kotlin {
@@ -20,7 +20,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
-    implementation("com.oracle.database.jdbc:ojdbc11:23.5.0.24.07")
+    implementation("com.oracle.database.jdbc:ojdbc11:23.6.0.24.10")
     testImplementation("junit:junit:4.13.2")
 }
 
@@ -37,11 +37,6 @@ sourceSets {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    compilerOptions {
-        allWarningsAsErrors.set(false)
-    }
-}
 
 tasks.test {
     // Set working directory to project root so paths resolve correctly

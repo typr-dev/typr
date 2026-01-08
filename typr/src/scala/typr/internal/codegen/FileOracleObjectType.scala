@@ -53,6 +53,7 @@ object FileOracleObjectType {
       annotations = typeAnnotations,
       constructorAnnotations = Nil,
       isWrapper = false,
+      privateConstructor = false,
       comments = comments,
       name = computed.tpe,
       tparams = Nil,
