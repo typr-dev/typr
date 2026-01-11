@@ -45,7 +45,7 @@ data class AddressFields(val _path: List<Path>) : TupleExpr9<AddressId, String, 
 
   override fun _path(): List<Path> = _path
 
-  fun addressid(): IdField<AddressId, AddressRow> = IdField<AddressId, AddressRow>(_path, "addressid", AddressRow::addressid, null, "int4", { row, value -> row.copy(addressid = value) }, AddressId.dbType)
+  fun addressid(): IdField<AddressId, AddressRow> = IdField<AddressId, AddressRow>(_path, "addressid", AddressRow::addressid, null, "int4", { row, value -> row.copy(addressid = value) }, AddressId.pgType)
 
   fun addressline1(): Field<String, AddressRow> = Field<String, AddressRow>(_path, "addressline1", AddressRow::addressline1, null, null, { row, value -> row.copy(addressline1 = value) }, PgTypes.text)
 
@@ -67,7 +67,7 @@ data class AddressFields(val _path: List<Path>) : TupleExpr9<AddressId, String, 
 
   fun spatiallocation(): OptField<ByteArray, AddressRow> = OptField<ByteArray, AddressRow>(_path, "spatiallocation", AddressRow::spatiallocation, null, "bytea", { row, value -> row.copy(spatiallocation = value) }, PgTypes.bytea)
 
-  fun stateprovinceid(): Field<StateprovinceId, AddressRow> = Field<StateprovinceId, AddressRow>(_path, "stateprovinceid", AddressRow::stateprovinceid, null, "int4", { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.dbType)
+  fun stateprovinceid(): Field<StateprovinceId, AddressRow> = Field<StateprovinceId, AddressRow>(_path, "stateprovinceid", AddressRow::stateprovinceid, null, "int4", { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<AddressFields, AddressRow> = AddressFields(_path)
 

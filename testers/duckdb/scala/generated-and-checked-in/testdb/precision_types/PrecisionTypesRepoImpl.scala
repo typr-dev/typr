@@ -28,7 +28,7 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def deleteByIds(ids: Array[PrecisionTypesId])(using c: Connection): Int = {
     sql"""delete
     from "precision_types"
-    where "id" = ANY(${Fragment.encode(PrecisionTypesId.dbTypeArray, ids)})"""
+    where "id" = ANY(${Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids)})"""
       .update()
       .runUnchecked(c)
   }
@@ -58,7 +58,7 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def selectByIds(ids: Array[PrecisionTypesId])(using c: Connection): List[PrecisionTypesRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     from "precision_types"
-    where "id" = ANY(${Fragment.encode(PrecisionTypesId.dbTypeArray, ids)})""".query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids)})""".query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(ids: Array[PrecisionTypesId])(using c: Connection): Map[PrecisionTypesId, PrecisionTypesRow] = {

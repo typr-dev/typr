@@ -31,6 +31,6 @@ data class DistinctTypeTestRow(
   fun toUnsavedRow(): DistinctTypeTestRowUnsaved = DistinctTypeTestRowUnsaved(email, balance)
 
   companion object {
-    val _rowParser: RowParser<DistinctTypeTestRow> = RowParsers.of(DistinctTypeTestId.dbType, EmailAddress.dbType, MoneyAmount.dbType.nullable(), { t0, t1, t2 -> DistinctTypeTestRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.id, row.email, row.balance) })
+    val _rowParser: RowParser<DistinctTypeTestRow> = RowParsers.of(DistinctTypeTestId.db2Type, EmailAddress.db2Type, MoneyAmount.db2Type.nullable(), { t0, t1, t2 -> DistinctTypeTestRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.id, row.email, row.balance) })
   }
 }

@@ -236,9 +236,9 @@ public record SalespersonRowUnsaved(
   public static PgText<SalespersonRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb);
+            BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb);
             sb.append(PgText.DELIMETER);
-            SalesterritoryId.dbType.opt().text().unsafeEncode(row.territoryid, sb);
+            SalesterritoryId.pgType.opt().text().unsafeEncode(row.territoryid, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.numeric.opt().text().unsafeEncode(row.salesquota, sb);
             sb.append(PgText.DELIMETER);

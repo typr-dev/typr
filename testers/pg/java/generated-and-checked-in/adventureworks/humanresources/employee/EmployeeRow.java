@@ -7,7 +7,8 @@ package adventureworks.humanresources.employee;
 
 import adventureworks.customtypes.Defaulted;
 import adventureworks.person.businessentity.BusinessentityId;
-import adventureworks.public_.Flag;
+import adventureworks.userdefined.CurrentFlag;
+import adventureworks.userdefined.SalariedFlag;
 import dev.typr.foundations.PgText;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.RowParser;
@@ -58,7 +59,7 @@ public record EmployeeRow(
      * Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt
      * from collective bargaining. Default: true
      */
-    Flag salariedflag,
+    /* user-picked */ SalariedFlag salariedflag,
     /**
      * Number of available vacation hours. Default: 0 Constraint CK_Employee_VacationHours affecting
      * columns vacationhours: (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -70,7 +71,7 @@ public record EmployeeRow(
      */
     Short sickleavehours,
     /** 0 = Inactive, 1 = Active Default: true */
-    Flag currentflag,
+    /* user-picked */ CurrentFlag currentflag,
     /** Default: uuid_generate_v1() */
     UUID rowguid,
     /** Default: now() */
@@ -85,11 +86,11 @@ public record EmployeeRow(
         LocalDate,
         String,
         String,
-        LocalDate,
-        Flag,
+        LocalDate, /* user-picked */
+        SalariedFlag,
         Short,
-        Short,
-        Flag,
+        Short, /* user-picked */
+        CurrentFlag,
         UUID,
         LocalDateTime,
         Optional<String>> {
@@ -280,7 +281,7 @@ public record EmployeeRow(
    * Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt
    * from collective bargaining. Default: true
    */
-  public EmployeeRow withSalariedflag(Flag salariedflag) {
+  public EmployeeRow withSalariedflag(/* user-picked */ SalariedFlag salariedflag) {
     return new EmployeeRow(
         businessentityid,
         nationalidnumber,
@@ -349,7 +350,7 @@ public record EmployeeRow(
   ;
 
   /** 0 = Inactive, 1 = Active Default: true */
-  public EmployeeRow withCurrentflag(Flag currentflag) {
+  public EmployeeRow withCurrentflag(/* user-picked */ CurrentFlag currentflag) {
     return new EmployeeRow(
         businessentityid,
         nationalidnumber,
@@ -434,7 +435,7 @@ public record EmployeeRow(
 
   public static RowParser<EmployeeRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.text,
           PgTypes.text,
           PgTypes.text,
@@ -442,10 +443,10 @@ public record EmployeeRow(
           PgTypes.bpchar,
           PgTypes.bpchar,
           PgTypes.date,
-          Flag.dbType,
+          SalariedFlag.pgType,
           PgTypes.int2,
           PgTypes.int2,
-          Flag.dbType,
+          CurrentFlag.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
           PgTypes.text.opt(),
@@ -491,7 +492,7 @@ public record EmployeeRow(
   ;
 
   @Override
-  public Flag _12() {
+  public /* user-picked */ CurrentFlag _12() {
     return currentflag;
   }
   ;
@@ -557,7 +558,7 @@ public record EmployeeRow(
   ;
 
   @Override
-  public Flag _9() {
+  public /* user-picked */ SalariedFlag _9() {
     return salariedflag;
   }
   ;
@@ -568,10 +569,10 @@ public record EmployeeRow(
   ;
 
   public EmployeeRowUnsaved toUnsavedRow(
-      Defaulted<Flag> salariedflag,
+      Defaulted</* user-picked */ SalariedFlag> salariedflag,
       Defaulted<Short> vacationhours,
       Defaulted<Short> sickleavehours,
-      Defaulted<Flag> currentflag,
+      Defaulted</* user-picked */ CurrentFlag> currentflag,
       Defaulted<UUID> rowguid,
       Defaulted<LocalDateTime> modifieddate,
       Defaulted<Optional<String>> organizationnode) {

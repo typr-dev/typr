@@ -12,6 +12,7 @@ import dev.typr.foundations.RowParsers;
 import dev.typr.foundations.Tuple.Tuple10;
 import java.math.BigDecimal;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 import testdb.warehouses.WarehousesId;
 
 /** View: v_warehouse_coverage VIEW */
@@ -31,7 +32,7 @@ public record VWarehouseCoverageViewRow(
     /** Default: 'UTC' Points to {@link testdb.warehouses.WarehousesRow#timezone()} */
     String timezone,
     /** Default: 1 Points to {@link testdb.warehouses.WarehousesRow#isActive()} */
-    @JsonProperty("is_active") Boolean isActive,
+    @JsonProperty("is_active") /* user-picked */ IsActive isActive,
     /** Default: 0 */
     @JsonProperty("products_stocked") Long productsStocked,
     /** Default: NULL */
@@ -43,8 +44,8 @@ public record VWarehouseCoverageViewRow(
         String,
         Optional<String>,
         Optional<String>,
-        String,
-        Boolean,
+        String, /* user-picked */
+        IsActive,
         Long,
         Optional<BigDecimal>> {
   /** Default: 0 Points to {@link testdb.warehouses.WarehousesRow#warehouseId()} */
@@ -160,7 +161,7 @@ public record VWarehouseCoverageViewRow(
   ;
 
   /** Default: 1 Points to {@link testdb.warehouses.WarehousesRow#isActive()} */
-  public VWarehouseCoverageViewRow withIsActive(Boolean isActive) {
+  public VWarehouseCoverageViewRow withIsActive(/* user-picked */ IsActive isActive) {
     return new VWarehouseCoverageViewRow(
         warehouseId,
         code,
@@ -209,14 +210,14 @@ public record VWarehouseCoverageViewRow(
 
   public static RowParser<VWarehouseCoverageViewRow> _rowParser =
       RowParsers.of(
-          WarehousesId.dbType,
+          WarehousesId.mariaType,
           MariaTypes.char_,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.longtext.opt(),
           MariaTypes.longtext.opt(),
           MariaTypes.varchar,
-          MariaTypes.bool,
+          IsActive.mariaType,
           MariaTypes.bigint,
           MariaTypes.numeric.opt(),
           VWarehouseCoverageViewRow::new,
@@ -284,7 +285,7 @@ public record VWarehouseCoverageViewRow(
   ;
 
   @Override
-  public Boolean _8() {
+  public /* user-picked */ IsActive _8() {
     return isActive;
   }
   ;

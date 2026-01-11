@@ -29,5 +29,5 @@ case class MariatestIdentityRow(
 }
 
 object MariatestIdentityRow {
-  val `_rowParser`: RowParser[MariatestIdentityRow] = RowParsers.of(MariatestIdentityId.dbType, MariaTypes.varchar)(MariatestIdentityRow.apply)(row => Array[Any](row.id, row.name))
+  val `_rowParser`: RowParser[MariatestIdentityRow] = RowParsers.of(MariatestIdentityId.mariaType, MariaTypes.varchar)(MariatestIdentityRow.apply)(row => Array[Any](row.id, row.name))
 }

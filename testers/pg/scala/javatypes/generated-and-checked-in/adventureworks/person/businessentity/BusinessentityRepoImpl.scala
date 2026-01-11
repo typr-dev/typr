@@ -21,19 +21,19 @@ import dev.typr.foundations.Fragment.interpolate
 class BusinessentityRepoImpl extends BusinessentityRepo {
   override def delete: DeleteBuilder[BusinessentityFields, BusinessentityRow] = DeleteBuilder.of(""""person"."businessentity"""", BusinessentityFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."businessentity" where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."businessentity" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "person"."businessentity"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.dbTypeArray, businessentityids), Fragment.lit(")"))
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: BusinessentityRow)(using c: Connection): BusinessentityRow = {
   interpolate(Fragment.lit("""insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     RETURNING "businessentityid", "rowguid", "modifieddate"
     """))
     .updateReturning(BusinessentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -44,7 +44,7 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
     val values: ArrayList[Fragment] = new ArrayList()
     unsaved.businessentityid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(BusinessentityId.dbType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(BusinessentityId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -87,13 +87,13 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
   override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[BusinessentityRow] = {
     interpolate(Fragment.lit("""select "businessentityid", "rowguid", "modifieddate"
     from "person"."businessentity"
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).query(BusinessentityRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(BusinessentityRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[BusinessentityRow] = {
     interpolate(Fragment.lit("""select "businessentityid", "rowguid", "modifieddate"
     from "person"."businessentity"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.dbTypeArray, businessentityids), Fragment.lit(")")).query(BusinessentityRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(BusinessentityRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, BusinessentityRow] = {
@@ -109,12 +109,12 @@ class BusinessentityRepoImpl extends BusinessentityRepo {
     return interpolate(Fragment.lit("""update "person"."businessentity"
     set "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: BusinessentityRow)(using c: Connection): BusinessentityRow = {
   interpolate(Fragment.lit("""insert into "person"."businessentity"("businessentityid", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     on conflict ("businessentityid")
     do update set
       "rowguid" = EXCLUDED."rowguid",

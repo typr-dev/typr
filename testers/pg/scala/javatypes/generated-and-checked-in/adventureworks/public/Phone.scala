@@ -18,7 +18,7 @@ case class Phone(@JsonValue value: String)
 object Phone {
   given bijection: Bijection[Phone, String] = Bijection.apply[Phone, String](_.value)(Phone.apply)
 
-  given dbType: PgType[Phone] = PgTypes.text.bimap(Phone.apply, _.value).renamed(""""public"."Phone"""")
+  given pgType: PgType[Phone] = PgTypes.text.bimap(Phone.apply, _.value).renamed(""""public"."Phone"""")
 
-  given dbTypeArray: PgType[Array[Phone]] = PgTypes.textArray.bimap(xs => xs.map(Phone.apply), xs => xs.map(_.value)).renamed(""""public"."Phone"[]""")
+  given pgTypeArray: PgType[Array[Phone]] = PgTypes.textArray.bimap(xs => xs.map(Phone.apply), xs => xs.map(_.value)).renamed(""""public"."Phone"[]""")
 }

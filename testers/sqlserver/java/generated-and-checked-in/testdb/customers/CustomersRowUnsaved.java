@@ -10,14 +10,15 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.Email;
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 public record CustomersRowUnsaved(
     String name,
-    String email,
+    /* user-picked */ Email email,
     /** Default: (getdate()) */
     @JsonProperty("created_at") Defaulted<Optional<LocalDateTime>> createdAt) {
-  public CustomersRowUnsaved(String name, String email) {
+  public CustomersRowUnsaved(String name, /* user-picked */ Email email) {
     this(name, email, new UseDefault<>());
   }
   ;
@@ -27,7 +28,7 @@ public record CustomersRowUnsaved(
   }
   ;
 
-  public CustomersRowUnsaved withEmail(String email) {
+  public CustomersRowUnsaved withEmail(/* user-picked */ Email email) {
     return new CustomersRowUnsaved(name, email, createdAt);
   }
   ;

@@ -27,10 +27,10 @@ public record PrecisionTypesId(@JsonValue Integer value) {
   public static Bijection<PrecisionTypesId, Integer> bijection =
       Bijection.of(PrecisionTypesId::value, PrecisionTypesId::new);
 
-  public static PgType<PrecisionTypesId> dbType =
+  public static PgType<PrecisionTypesId> pgType =
       PgTypes.int4.bimap(PrecisionTypesId::new, PrecisionTypesId::value);
 
-  public static PgType<PrecisionTypesId[]> dbTypeArray =
+  public static PgType<PrecisionTypesId[]> pgTypeArray =
       PgTypes.int4Array.bimap(
           xs -> arrayMap.map(xs, PrecisionTypesId::new, PrecisionTypesId.class),
           xs -> arrayMap.map(xs, PrecisionTypesId::value, Integer.class));

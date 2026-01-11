@@ -39,7 +39,7 @@ data class LocalTime3 private constructor(@field:JsonValue val value: LocalTime)
     val bijection: Bijection<LocalTime3, LocalTime> =
       Bijection.of(LocalTime3::value, ::LocalTime3)
 
-    val dbType: MariaType<LocalTime3> =
+    val mariaType: MariaType<LocalTime3> =
       MariaTypes.time.bimap(::LocalTime3, LocalTime3::value)
 
     fun now(): LocalTime3 = LocalTime3(LocalTime.now().truncatedTo(ChronoUnit.MILLIS))

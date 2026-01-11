@@ -43,7 +43,7 @@ public class OrdersFields extends TupleExpr5<OrdersId, CustomersId, LocalDate, B
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderId(value),
-        OrdersId.dbType);
+        OrdersId.db2Type);
   }
 
   public Field<CustomersId, OrdersRow> customerId() {
@@ -54,7 +54,7 @@ public class OrdersFields extends TupleExpr5<OrdersId, CustomersId, LocalDate, B
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCustomerId(value),
-        CustomersId.dbType);
+        CustomersId.db2Type);
   }
 
   public Field<LocalDate, OrdersRow> orderDate() {

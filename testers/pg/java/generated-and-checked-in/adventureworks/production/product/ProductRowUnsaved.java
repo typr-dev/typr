@@ -1012,7 +1012,7 @@ public record ProductRowUnsaved(
   public static PgText<ProductRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            Name.dbType.text().unsafeEncode(row.name, sb);
+            Name.pgType.text().unsafeEncode(row.name, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.text.text().unsafeEncode(row.productnumber, sb);
             sb.append(PgText.DELIMETER);
@@ -1028,9 +1028,9 @@ public record ProductRowUnsaved(
             sb.append(PgText.DELIMETER);
             PgTypes.text.opt().text().unsafeEncode(row.size, sb);
             sb.append(PgText.DELIMETER);
-            UnitmeasureId.dbType.opt().text().unsafeEncode(row.sizeunitmeasurecode, sb);
+            UnitmeasureId.pgType.opt().text().unsafeEncode(row.sizeunitmeasurecode, sb);
             sb.append(PgText.DELIMETER);
-            UnitmeasureId.dbType.opt().text().unsafeEncode(row.weightunitmeasurecode, sb);
+            UnitmeasureId.pgType.opt().text().unsafeEncode(row.weightunitmeasurecode, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.numeric.opt().text().unsafeEncode(row.weight, sb);
             sb.append(PgText.DELIMETER);
@@ -1042,9 +1042,9 @@ public record ProductRowUnsaved(
             sb.append(PgText.DELIMETER);
             PgTypes.bpchar.opt().text().unsafeEncode(row.style, sb);
             sb.append(PgText.DELIMETER);
-            ProductsubcategoryId.dbType.opt().text().unsafeEncode(row.productsubcategoryid, sb);
+            ProductsubcategoryId.pgType.opt().text().unsafeEncode(row.productsubcategoryid, sb);
             sb.append(PgText.DELIMETER);
-            ProductmodelId.dbType.opt().text().unsafeEncode(row.productmodelid, sb);
+            ProductmodelId.pgType.opt().text().unsafeEncode(row.productmodelid, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.timestamp.text().unsafeEncode(row.sellstartdate, sb);
             sb.append(PgText.DELIMETER);
@@ -1052,11 +1052,11 @@ public record ProductRowUnsaved(
             sb.append(PgText.DELIMETER);
             PgTypes.timestamp.opt().text().unsafeEncode(row.discontinueddate, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(ProductId.dbType.text()).unsafeEncode(row.productid, sb);
+            Defaulted.pgText(ProductId.pgType.text()).unsafeEncode(row.productid, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(Flag.dbType.text()).unsafeEncode(row.makeflag, sb);
+            Defaulted.pgText(Flag.pgType.text()).unsafeEncode(row.makeflag, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(Flag.dbType.text()).unsafeEncode(row.finishedgoodsflag, sb);
+            Defaulted.pgText(Flag.pgType.text()).unsafeEncode(row.finishedgoodsflag, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb);
             sb.append(PgText.DELIMETER);

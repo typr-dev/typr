@@ -6,6 +6,7 @@ import testdb.customers._
 import testdb.order_items._
 import testdb.orders._
 import testdb.products._
+import testdb.userdefined.Email
 
 import scala.util.Random
 
@@ -22,7 +23,7 @@ class ForeignKeyTest {
   def testOrderReferencesCustomer(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers()
+    val customer = testInsert.Customers(email = Email("order-ref@example.com"))
     val order = testInsert.Orders(customerId = customer.customerId, totalAmount = BigDecimal("99.99"))
 
     assertNotNull(order)
@@ -37,7 +38,7 @@ class ForeignKeyTest {
   def testOrderItemsReferencesOrderAndProduct(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers()
+    val customer = testInsert.Customers(email = Email("item-refs@example.com"))
     val product = testInsert.Products()
     val order = testInsert.Orders(customerId = customer.customerId)
 
@@ -63,7 +64,7 @@ class ForeignKeyTest {
   def testMultipleOrdersForCustomer(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers()
+    val customer = testInsert.Customers(email = Email("multi-orders@example.com"))
 
     val order1 = testInsert.Orders(customerId = customer.customerId, totalAmount = BigDecimal("100.00"))
     val order2 = testInsert.Orders(customerId = customer.customerId, totalAmount = BigDecimal("200.00"))
@@ -81,7 +82,7 @@ class ForeignKeyTest {
   def testMultipleItemsForOrder(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers()
+    val customer = testInsert.Customers(email = Email("multi-items@example.com"))
     val product1 = testInsert.Products()
     val product2 = testInsert.Products()
     val order = testInsert.Orders(customerId = customer.customerId)
@@ -109,7 +110,7 @@ class ForeignKeyTest {
   def testCascadingForeignKeys(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers()
+    val customer = testInsert.Customers(email = Email("cascade-fk@example.com"))
     val product = testInsert.Products()
     val order = testInsert.Orders(customerId = customer.customerId)
     val orderItem = testInsert.OrderItems(

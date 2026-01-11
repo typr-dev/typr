@@ -11,6 +11,7 @@ import org.mariadb.jdbc.type.Point
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.IsDefault
 
 /** This class corresponds to a row in table `customer_addresses` which has not been persisted yet */
 data class CustomerAddressesRowUnsaved(
@@ -33,7 +34,7 @@ data class CustomerAddressesRowUnsaved(
   /** Default: 0
 
     */
-  @field:JsonProperty("is_default") val isDefault: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_default") val isDefault: Defaulted</* user-picked */ IsDefault> = UseDefault(),
   /** Default: NULL
 
     */
@@ -56,7 +57,7 @@ data class CustomerAddressesRowUnsaved(
   @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
-    isDefaultDefault: () -> Boolean,
+    isDefaultDefault: () -> /* user-picked */ IsDefault,
     streetLine2Default: () -> String?,
     stateProvinceDefault: () -> String?,
     locationDefault: () -> Point?,

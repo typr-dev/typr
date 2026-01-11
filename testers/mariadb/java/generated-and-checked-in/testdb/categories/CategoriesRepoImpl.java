@@ -31,7 +31,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
   public Boolean deleteById(CategoriesId categoryId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `categories` where `category_id` = "),
-                Fragment.encode(CategoriesId.dbType, categoryId),
+                Fragment.encode(CategoriesId.mariaType, categoryId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +42,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
   public Integer deleteByIds(CategoriesId[] categoryIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : categoryIds) {
-      fragments.add(Fragment.encode(CategoriesId.dbType, id));
+      fragments.add(Fragment.encode(CategoriesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -60,7 +60,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
                 "insert into `categories`(`parent_id`, `name`, `slug`, `description`, `image_url`,"
                     + " `sort_order`, `is_visible`, `metadata`)\n"
                     + "values ("),
-            Fragment.encode(CategoriesId.dbType.opt(), unsaved.parentId()),
+            Fragment.encode(CategoriesId.mariaType.opt(), unsaved.parentId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.name()),
             Fragment.lit(", "),
@@ -100,7 +100,8 @@ public class CategoriesRepoImpl implements CategoriesRepo {
             value -> {
               columns.add(Fragment.lit("`parent_id`"));
               values.add(
-                  interpolate(Fragment.encode(CategoriesId.dbType.opt(), value), Fragment.lit("")));
+                  interpolate(
+                      Fragment.encode(CategoriesId.mariaType.opt(), value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -192,7 +193,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
                     + " `sort_order`, `is_visible`, `metadata`\n"
                     + "from `categories`\n"
                     + "where `category_id` = "),
-            Fragment.encode(CategoriesId.dbType, categoryId),
+            Fragment.encode(CategoriesId.mariaType, categoryId),
             Fragment.lit(""))
         .query(CategoriesRow._rowParser.first())
         .runUnchecked(c);
@@ -202,7 +203,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
   public List<CategoriesRow> selectByIds(CategoriesId[] categoryIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : categoryIds) {
-      fragments.add(Fragment.encode(CategoriesId.dbType, id));
+      fragments.add(Fragment.encode(CategoriesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -250,7 +251,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
     ;
     return interpolate(
                 Fragment.lit("update `categories`\nset `parent_id` = "),
-                Fragment.encode(CategoriesId.dbType.opt(), row.parentId()),
+                Fragment.encode(CategoriesId.mariaType.opt(), row.parentId()),
                 Fragment.lit(",\n`name` = "),
                 Fragment.encode(MariaTypes.varchar, row.name()),
                 Fragment.lit(",\n`slug` = "),
@@ -266,7 +267,7 @@ public class CategoriesRepoImpl implements CategoriesRepo {
                 Fragment.lit(",\n`metadata` = "),
                 Fragment.encode(MariaTypes.json.opt(), row.metadata()),
                 Fragment.lit("\nwhere `category_id` = "),
-                Fragment.encode(CategoriesId.dbType, categoryId),
+                Fragment.encode(CategoriesId.mariaType, categoryId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -280,9 +281,9 @@ public class CategoriesRepoImpl implements CategoriesRepo {
                 "INSERT INTO `categories`(`category_id`, `parent_id`, `name`, `slug`,"
                     + " `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\n"
                     + "VALUES ("),
-            Fragment.encode(CategoriesId.dbType, unsaved.categoryId()),
+            Fragment.encode(CategoriesId.mariaType, unsaved.categoryId()),
             Fragment.lit(", "),
-            Fragment.encode(CategoriesId.dbType.opt(), unsaved.parentId()),
+            Fragment.encode(CategoriesId.mariaType.opt(), unsaved.parentId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.name()),
             Fragment.lit(", "),

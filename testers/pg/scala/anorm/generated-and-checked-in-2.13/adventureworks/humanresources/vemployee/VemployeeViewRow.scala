@@ -10,6 +10,8 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import anorm.Column
 import anorm.RowParser
 import anorm.Success
@@ -31,9 +33,9 @@ case class VemployeeViewRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Name,
+  middlename: /* user-picked */ MiddleName,
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Points to [[adventureworks.person.person.PersonRow.suffix]] */
   suffix: String,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
@@ -70,8 +72,8 @@ object VemployeeViewRow {
             businessentityid = json.\("businessentityid").as(BusinessentityId.reads),
             title = json.\("title").as(Reads.StringReads),
             firstname = json.\("firstname").as(FirstName.reads),
-            middlename = json.\("middlename").as(Name.reads),
-            lastname = json.\("lastname").as(Name.reads),
+            middlename = json.\("middlename").as(MiddleName.reads),
+            lastname = json.\("lastname").as(LastName.reads),
             suffix = json.\("suffix").as(Reads.StringReads),
             jobtitle = json.\("jobtitle").as(Reads.StringReads),
             phonenumber = json.\("phonenumber").as(Phone.reads),
@@ -98,8 +100,8 @@ object VemployeeViewRow {
           businessentityid = row(idx + 0)(BusinessentityId.column),
           title = row(idx + 1)(Column.columnToString),
           firstname = row(idx + 2)(/* user-picked */ FirstName.column),
-          middlename = row(idx + 3)(Name.column),
-          lastname = row(idx + 4)(Name.column),
+          middlename = row(idx + 3)(/* user-picked */ MiddleName.column),
+          lastname = row(idx + 4)(/* user-picked */ LastName.column),
           suffix = row(idx + 5)(Column.columnToString),
           jobtitle = row(idx + 6)(Column.columnToString),
           phonenumber = row(idx + 7)(Phone.column),
@@ -124,8 +126,8 @@ object VemployeeViewRow {
         "businessentityid" -> BusinessentityId.writes.writes(o.businessentityid),
         "title" -> Writes.StringWrites.writes(o.title),
         "firstname" -> FirstName.writes.writes(o.firstname),
-        "middlename" -> Name.writes.writes(o.middlename),
-        "lastname" -> Name.writes.writes(o.lastname),
+        "middlename" -> MiddleName.writes.writes(o.middlename),
+        "lastname" -> LastName.writes.writes(o.lastname),
         "suffix" -> Writes.StringWrites.writes(o.suffix),
         "jobtitle" -> Writes.StringWrites.writes(o.jobtitle),
         "phonenumber" -> Phone.writes.writes(o.phonenumber),

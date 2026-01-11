@@ -32,5 +32,5 @@ case class DistinctTypeTestRow(
 }
 
 object DistinctTypeTestRow {
-  val `_rowParser`: RowParser[DistinctTypeTestRow] = RowParsers.of(DistinctTypeTestId.dbType, EmailAddress.dbType, MoneyAmount.dbType.nullable)(DistinctTypeTestRow.apply)(row => Array[Any](row.id, row.email, row.balance))
+  val `_rowParser`: RowParser[DistinctTypeTestRow] = RowParsers.of(DistinctTypeTestId.db2Type, EmailAddress.db2Type, MoneyAmount.db2Type.nullable)(DistinctTypeTestRow.apply)(row => Array[Any](row.id, row.email, row.balance))
 }

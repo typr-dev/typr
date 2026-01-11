@@ -18,19 +18,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class TitleRepoImpl extends TitleRepo {
   override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(code: TitleId)(using c: Connection): Boolean = sql"""delete from "public"."title" where "code" = ${Fragment.encode(TitleId.dbType, code)}""".update().runUnchecked(c) > 0
+  override def deleteById(code: TitleId)(using c: Connection): Boolean = sql"""delete from "public"."title" where "code" = ${Fragment.encode(TitleId.pgType, code)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(codes: Array[TitleId])(using c: Connection): Int = {
     sql"""delete
     from "public"."title"
-    where "code" = ANY(${Fragment.encode(TitleId.dbTypeArray, codes)})"""
+    where "code" = ANY(${Fragment.encode(TitleId.pgTypeArray, codes)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   sql"""insert into "public"."title"("code")
-    values (${Fragment.encode(TitleId.dbType, unsaved.code)})
+    values (${Fragment.encode(TitleId.pgType, unsaved.code)})
     RETURNING "code"
     """
     .updateReturning(TitleRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -52,13 +52,13 @@ class TitleRepoImpl extends TitleRepo {
   override def selectById(code: TitleId)(using c: Connection): Option[TitleRow] = {
     sql"""select "code"
     from "public"."title"
-    where "code" = ${Fragment.encode(TitleId.dbType, code)}""".query(TitleRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = ${Fragment.encode(TitleId.pgType, code)}""".query(TitleRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(codes: Array[TitleId])(using c: Connection): List[TitleRow] = {
     sql"""select "code"
     from "public"."title"
-    where "code" = ANY(${Fragment.encode(TitleId.dbTypeArray, codes)})""".query(TitleRow.`_rowParser`.all()).runUnchecked(c)
+    where "code" = ANY(${Fragment.encode(TitleId.pgTypeArray, codes)})""".query(TitleRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): Map[TitleId, TitleRow] = {
@@ -71,7 +71,7 @@ class TitleRepoImpl extends TitleRepo {
 
   override def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   sql"""insert into "public"."title"("code")
-    values (${Fragment.encode(TitleId.dbType, unsaved.code)})
+    values (${Fragment.encode(TitleId.pgType, unsaved.code)})
     on conflict ("code")
     do update set "code" = EXCLUDED."code"
     returning "code""""

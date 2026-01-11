@@ -32,7 +32,7 @@ object MariaDbAdapter extends DbAdapter {
   val Types: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.MariaTypes")
   val TypeClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.MariaType")
   val TextClass: jvm.Type.Qualified = jvm.Type.Qualified("dev.typr.foundations.MariaText")
-  val typeFieldName: jvm.Ident = jvm.Ident("dbType")
+  val typeFieldName: jvm.Ident = jvm.Ident("mariaType")
   val textFieldName: jvm.Ident = jvm.Ident("mariaText")
   def dialectRef(lang: Lang): Code = code"${lang.dsl.Dialect}.MARIADB"
 
@@ -70,6 +70,9 @@ object MariaDbAdapter extends DbAdapter {
 
       case TypoType.Array(_, _) =>
         sys.error("MariaDbAdapter.lookupType: MariaDB does not support array types")
+
+      case TypoType.Aligned(_, sourceType, _, _) =>
+        lookupType(sourceType, naming, typeSupport)
     }
 
   def lookupPrimitive(primitive: analysis.WellKnownPrimitive, typeSupport: TypeSupport): Code = {

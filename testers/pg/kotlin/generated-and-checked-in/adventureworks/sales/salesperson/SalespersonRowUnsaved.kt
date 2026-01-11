@@ -66,9 +66,9 @@ data class SalespersonRowUnsaved(
 
   companion object {
     val pgText: PgText<SalespersonRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      SalesterritoryId.dbType.nullable().text().unsafeEncode(row.territoryid, sb)
+      SalesterritoryId.pgType.nullable().text().unsafeEncode(row.territoryid, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.numeric.nullable().text().unsafeEncode(row.salesquota, sb)
       sb.append(PgText.DELIMETER)

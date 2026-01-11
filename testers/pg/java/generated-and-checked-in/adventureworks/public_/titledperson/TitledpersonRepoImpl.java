@@ -33,9 +33,9 @@ public class TitledpersonRepoImpl implements TitledpersonRepo {
             Fragment.lit(
                 "insert into \"public\".\"titledperson\"(\"title_short\", \"title\", \"name\")\n"
                     + "values ("),
-            Fragment.encode(TitleDomainId.dbType, unsaved.titleShort()),
+            Fragment.encode(TitleDomainId.pgType, unsaved.titleShort()),
             Fragment.lit("::text, "),
-            Fragment.encode(TitleId.dbType, unsaved.title()),
+            Fragment.encode(TitleId.pgType, unsaved.title()),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.text, unsaved.name()),
             Fragment.lit(")\nRETURNING \"title_short\", \"title\", \"name\"\n"))

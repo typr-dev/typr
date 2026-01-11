@@ -150,7 +150,7 @@ data class MariatestFields(val _path: List<Path>) : TupleExpr41<Byte, Short, Int
 
   fun inet6Col(): Field<Inet6, MariatestRow> = Field<Inet6, MariatestRow>(_path, "inet6_col", MariatestRow::inet6Col, null, null, { row, value -> row.copy(inet6Col = value) }, MariaTypes.inet6)
 
-  fun intCol(): IdField<MariatestId, MariatestRow> = IdField<MariatestId, MariatestRow>(_path, "int_col", MariatestRow::intCol, null, null, { row, value -> row.copy(intCol = value) }, MariatestId.dbType)
+  fun intCol(): IdField<MariatestId, MariatestRow> = IdField<MariatestId, MariatestRow>(_path, "int_col", MariatestRow::intCol, null, null, { row, value -> row.copy(intCol = value) }, MariatestId.mariaType)
 
   fun intUCol(): Field<Uint4, MariatestRow> = Field<Uint4, MariatestRow>(_path, "int_u_col", MariatestRow::intUCol, null, null, { row, value -> row.copy(intUCol = value) }, MariaTypes.intUnsigned)
 
@@ -172,7 +172,7 @@ data class MariatestFields(val _path: List<Path>) : TupleExpr41<Byte, Short, Int
 
   override fun rowParser(): RowParser<MariatestRow> = MariatestRow._rowParser.underlying
 
-  fun setCol(): Field<XYZSet, MariatestRow> = Field<XYZSet, MariatestRow>(_path, "set_col", MariatestRow::setCol, null, null, { row, value -> row.copy(setCol = value) }, XYZSet.dbType)
+  fun setCol(): Field<XYZSet, MariatestRow> = Field<XYZSet, MariatestRow>(_path, "set_col", MariatestRow::setCol, null, null, { row, value -> row.copy(setCol = value) }, XYZSet.mariaType)
 
   fun smallintCol(): Field<Short, MariatestRow> = Field<Short, MariatestRow>(_path, "smallint_col", MariatestRow::smallintCol, null, null, { row, value -> row.copy(smallintCol = value) }, KotlinDbTypes.MariaTypes.smallint)
 

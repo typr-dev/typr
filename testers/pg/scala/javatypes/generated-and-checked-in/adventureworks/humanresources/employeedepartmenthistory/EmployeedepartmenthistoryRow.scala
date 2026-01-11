@@ -82,7 +82,7 @@ case class EmployeedepartmenthistoryRow(
 }
 
 object EmployeedepartmenthistoryRow {
-  val `_rowParser`: RowParser[EmployeedepartmenthistoryRow] = RowParsers.of(BusinessentityId.dbType, DepartmentId.dbType, ShiftId.dbType, PgTypes.date, PgTypes.date.opt(), PgTypes.timestamp, EmployeedepartmenthistoryRow.apply, row => Array[Any](row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate))
+  val `_rowParser`: RowParser[EmployeedepartmenthistoryRow] = RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, PgTypes.date, PgTypes.date.opt(), PgTypes.timestamp, EmployeedepartmenthistoryRow.apply, row => Array[Any](row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate))
 
   def apply(
     compositeId: EmployeedepartmenthistoryId,

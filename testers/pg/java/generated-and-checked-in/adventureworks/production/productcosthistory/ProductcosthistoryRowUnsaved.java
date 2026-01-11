@@ -111,7 +111,7 @@ public record ProductcosthistoryRowUnsaved(
   public static PgText<ProductcosthistoryRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            ProductId.dbType.text().unsafeEncode(row.productid, sb);
+            ProductId.pgType.text().unsafeEncode(row.productid, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.timestamp.text().unsafeEncode(row.startdate, sb);
             sb.append(PgText.DELIMETER);

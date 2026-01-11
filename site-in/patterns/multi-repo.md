@@ -142,7 +142,7 @@ object DomainInsert extends TestDomainInsert {
 val testInsert = new TestInsert(new Random(1), DomainInsert)
 
 val businessentityRow = testInsert.personBusinessentity()
-val personRow = testInsert.personPerson(businessentityRow.businessentityid, persontype = "SC", FirstName("name"))
+val personRow = testInsert.personPerson(businessentityRow.businessentityid, persontype = "SC", firstname = FirstName(Name("name")))
 val countryregionRow = testInsert.personCountryregion(CountryregionId("NOR"))
 val salesterritoryRow = testInsert.salesSalesterritory(countryregionRow.countryregioncode)
 val stateprovinceRow = testInsert.personStateprovince(countryregionRow.countryregioncode, salesterritoryRow.territoryid)

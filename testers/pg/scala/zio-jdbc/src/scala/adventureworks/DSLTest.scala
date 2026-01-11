@@ -6,6 +6,7 @@ import adventureworks.person.businessentity.BusinessentityRepoImpl
 import adventureworks.person.emailaddress.EmailaddressRepoImpl
 import adventureworks.person.person.PersonRepoImpl
 import adventureworks.sales.salesperson.SalespersonRepoImpl
+import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import zio.ZIO
 
@@ -23,7 +24,7 @@ class DSLTest extends SnapshotTest {
       val testInsert = new TestInsert(new Random(0), DomainInsert)
       for {
         businessentityRow <- testInsert.personBusinessentity()
-        personRow <- testInsert.personPerson(businessentityRow.businessentityid, persontype = "EM", FirstName("a"))
+        personRow <- testInsert.personPerson(businessentityRow.businessentityid, persontype = "EM", firstname = FirstName(Name("a")))
         _ <- testInsert.personEmailaddress(personRow.businessentityid, Some("a@b.c"))
         employeeRow <- testInsert.humanresourcesEmployee(personRow.businessentityid, gender = "M", maritalstatus = "M", birthdate = TypoLocalDate("1998-01-01"), hiredate = TypoLocalDate("1997-01-01"))
         salespersonRow <- testInsert.salesSalesperson(employeeRow.businessentityid)

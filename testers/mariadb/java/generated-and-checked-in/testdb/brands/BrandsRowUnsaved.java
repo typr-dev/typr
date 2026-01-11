@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.IsActive;
 
 /** This class corresponds to a row in table `brands` which has not been persisted yet */
 public record BrandsRowUnsaved(
@@ -23,7 +24,7 @@ public record BrandsRowUnsaved(
     /** Default: NULL */
     @JsonProperty("country_of_origin") Defaulted<Optional<String>> countryOfOrigin,
     /** Default: 1 */
-    @JsonProperty("is_active") Defaulted<Boolean> isActive) {
+    @JsonProperty("is_active") Defaulted</* user-picked */ IsActive> isActive) {
   public BrandsRowUnsaved(
       /** */
       String name,
@@ -65,7 +66,7 @@ public record BrandsRowUnsaved(
   ;
 
   /** Default: 1 */
-  public BrandsRowUnsaved withIsActive(Defaulted<Boolean> isActive) {
+  public BrandsRowUnsaved withIsActive(Defaulted</* user-picked */ IsActive> isActive) {
     return new BrandsRowUnsaved(name, slug, logoBlob, websiteUrl, countryOfOrigin, isActive);
   }
   ;
@@ -74,7 +75,7 @@ public record BrandsRowUnsaved(
       java.util.function.Supplier<Optional<byte[]>> logoBlobDefault,
       java.util.function.Supplier<Optional<String>> websiteUrlDefault,
       java.util.function.Supplier<Optional<String>> countryOfOriginDefault,
-      java.util.function.Supplier<Boolean> isActiveDefault,
+      java.util.function.Supplier</* user-picked */ IsActive> isActiveDefault,
       java.util.function.Supplier<BrandsId> brandIdDefault) {
     return new BrandsRow(
         brandIdDefault.get(),

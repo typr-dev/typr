@@ -35,7 +35,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
   public Boolean deleteById(BusinessentityId businessentityid, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"sales\".\"salesperson\" where \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -47,7 +47,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
     return interpolate(
             Fragment.lit(
                 "delete\nfrom \"sales\".\"salesperson\"\nwhere \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -61,9 +61,9 @@ public class SalespersonRepoImpl implements SalespersonRepo {
                     + " \"salesquota\", \"bonus\", \"commissionpct\", \"salesytd\","
                     + " \"saleslastyear\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(SalesterritoryId.dbType.opt(), unsaved.territoryid()),
+            Fragment.encode(SalesterritoryId.pgType.opt(), unsaved.territoryid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.numeric.opt(), unsaved.salesquota()),
             Fragment.lit("::numeric, "),
@@ -96,12 +96,12 @@ public class SalespersonRepoImpl implements SalespersonRepo {
     columns.add(Fragment.lit("\"businessentityid\""));
     values.add(
         interpolate(
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"territoryid\""));
     values.add(
         interpolate(
-            Fragment.encode(SalesterritoryId.dbType.opt(), unsaved.territoryid()),
+            Fragment.encode(SalesterritoryId.pgType.opt(), unsaved.territoryid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"salesquota\""));
     values.add(
@@ -239,7 +239,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
                     + " \"modifieddate\"\n"
                     + "from \"sales\".\"salesperson\"\n"
                     + "where \"businessentityid\" = "),
-            Fragment.encode(BusinessentityId.dbType, businessentityid),
+            Fragment.encode(BusinessentityId.pgType, businessentityid),
             Fragment.lit(""))
         .query(SalespersonRow._rowParser.first())
         .runUnchecked(c);
@@ -254,7 +254,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
                     + " \"modifieddate\"\n"
                     + "from \"sales\".\"salesperson\"\n"
                     + "where \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .query(SalespersonRow._rowParser.all())
         .runUnchecked(c);
@@ -283,7 +283,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"sales\".\"salesperson\"\nset \"territoryid\" = "),
-                Fragment.encode(SalesterritoryId.dbType.opt(), row.territoryid()),
+                Fragment.encode(SalesterritoryId.pgType.opt(), row.territoryid()),
                 Fragment.lit("::int4,\n\"salesquota\" = "),
                 Fragment.encode(PgTypes.numeric.opt(), row.salesquota()),
                 Fragment.lit("::numeric,\n\"bonus\" = "),
@@ -299,7 +299,7 @@ public class SalespersonRepoImpl implements SalespersonRepo {
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -314,9 +314,9 @@ public class SalespersonRepoImpl implements SalespersonRepo {
                     + " \"salesquota\", \"bonus\", \"commissionpct\", \"salesytd\","
                     + " \"saleslastyear\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(SalesterritoryId.dbType.opt(), unsaved.territoryid()),
+            Fragment.encode(SalesterritoryId.pgType.opt(), unsaved.territoryid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.numeric.opt(), unsaved.salesquota()),
             Fragment.lit("::numeric, "),

@@ -32,7 +32,7 @@ class SeekDbTest {
 
       val rows1 = businessentityRepo.select
         .maybeSeek(f => f.modifieddate.asc, java.util.Optional.empty[LocalDateTime](), (v: LocalDateTime) => new SqlExpr.ConstReq(v, timestampPgType))
-        .maybeSeek(f => f.businessentityid.asc, java.util.Optional.empty[BusinessentityId](), (v: BusinessentityId) => new SqlExpr.ConstReq(v, BusinessentityId.dbType))
+        .maybeSeek(f => f.businessentityid.asc, java.util.Optional.empty[BusinessentityId](), (v: BusinessentityId) => new SqlExpr.ConstReq(v, BusinessentityId.pgType))
         .maybeSeek(f => f.rowguid.asc, java.util.Optional.empty[UUID](), (v: UUID) => new SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
         .toList(summon[Connection])
@@ -44,7 +44,7 @@ class SeekDbTest {
       val lastRow = rows1.last
       val rows2 = businessentityRepo.select
         .maybeSeek(f => f.modifieddate.asc, java.util.Optional.of(lastRow.modifieddate), (v: LocalDateTime) => new SqlExpr.ConstReq(v, timestampPgType))
-        .maybeSeek(f => f.businessentityid.asc, java.util.Optional.of(lastRow.businessentityid), (v: BusinessentityId) => new SqlExpr.ConstReq(v, BusinessentityId.dbType))
+        .maybeSeek(f => f.businessentityid.asc, java.util.Optional.of(lastRow.businessentityid), (v: BusinessentityId) => new SqlExpr.ConstReq(v, BusinessentityId.pgType))
         .maybeSeek(f => f.rowguid.asc, java.util.Optional.of(lastRow.rowguid), (v: UUID) => new SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
         .toList(summon[Connection])
@@ -83,7 +83,7 @@ class SeekDbTest {
 
       val rows1 = businessentityRepo.select
         .maybeSeek(f => f.modifieddate.desc, java.util.Optional.empty[LocalDateTime](), (v: LocalDateTime) => new SqlExpr.ConstReq(v, timestampPgType))
-        .maybeSeek(f => f.businessentityid.asc, java.util.Optional.empty[BusinessentityId](), (v: BusinessentityId) => new SqlExpr.ConstReq(v, BusinessentityId.dbType))
+        .maybeSeek(f => f.businessentityid.asc, java.util.Optional.empty[BusinessentityId](), (v: BusinessentityId) => new SqlExpr.ConstReq(v, BusinessentityId.pgType))
         .maybeSeek(f => f.rowguid.asc, java.util.Optional.empty[UUID](), (v: UUID) => new SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
         .toList(summon[Connection])
@@ -95,7 +95,7 @@ class SeekDbTest {
       val lastRow = rows1.last
       val rows2 = businessentityRepo.select
         .maybeSeek(f => f.modifieddate.desc, java.util.Optional.of(lastRow.modifieddate), (v: LocalDateTime) => new SqlExpr.ConstReq(v, timestampPgType))
-        .maybeSeek(f => f.businessentityid.asc, java.util.Optional.of(lastRow.businessentityid), (v: BusinessentityId) => new SqlExpr.ConstReq(v, BusinessentityId.dbType))
+        .maybeSeek(f => f.businessentityid.asc, java.util.Optional.of(lastRow.businessentityid), (v: BusinessentityId) => new SqlExpr.ConstReq(v, BusinessentityId.pgType))
         .maybeSeek(f => f.rowguid.asc, java.util.Optional.of(lastRow.rowguid), (v: UUID) => new SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
         .toList(summon[Connection])

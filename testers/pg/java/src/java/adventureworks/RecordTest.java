@@ -13,6 +13,7 @@ import adventureworks.public_.Name;
 import adventureworks.sales.salesperson.SalespersonRepoImpl;
 import adventureworks.sales.salesperson.SalespersonRowUnsaved;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.Test;
@@ -40,8 +41,8 @@ public class RecordTest {
                   new PersonRowUnsaved(
                       businessentityRow.businessentityid(),
                       "EM",
-                      new FirstName("a"),
-                      new Name("lastname")),
+                      new FirstName(new Name("a")),
+                      new LastName(new Name("lastname"))),
                   c);
 
           // EmailAddress - use short ctor + wither

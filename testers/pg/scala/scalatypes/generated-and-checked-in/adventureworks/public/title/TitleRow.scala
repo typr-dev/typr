@@ -20,7 +20,7 @@ case class TitleRow(code: TitleId) extends Tuple1[TitleId] {
 }
 
 object TitleRow {
-  val `_rowParser`: RowParser[TitleRow] = RowParsers.of(TitleId.dbType)(TitleRow.apply)(row => Array[Any](row.code))
+  val `_rowParser`: RowParser[TitleRow] = RowParsers.of(TitleId.pgType)(TitleRow.apply)(row => Array[Any](row.code))
 
   given pgText: PgText[TitleRow] = PgText.from(`_rowParser`.underlying)
 }

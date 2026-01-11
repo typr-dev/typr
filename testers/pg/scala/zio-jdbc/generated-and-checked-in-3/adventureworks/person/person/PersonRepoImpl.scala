@@ -10,10 +10,11 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.streamingInsert
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import typr.dsl.DeleteBuilder
 import typr.dsl.SelectBuilder
 import typr.dsl.UpdateBuilder
@@ -35,7 +36,7 @@ class PersonRepoImpl extends PersonRepo {
 
   override def insert(unsaved: PersonRow): ZIO[ZConnection, Throwable, PersonRow] = {
     sql"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
-    values (${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.persontype)(using Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.namestyle)(using NameStyle.setter)}::bool, ${Segment.paramSegment(unsaved.title)(using Setter.optionParamSetter(using Setter.stringSetter))}, ${Segment.paramSegment(unsaved.firstname)(using /* user-picked */ FirstName.setter)}::varchar, ${Segment.paramSegment(unsaved.middlename)(using Setter.optionParamSetter(using Name.setter))}::varchar, ${Segment.paramSegment(unsaved.lastname)(using Name.setter)}::varchar, ${Segment.paramSegment(unsaved.suffix)(using Setter.optionParamSetter(using Setter.stringSetter))}, ${Segment.paramSegment(unsaved.emailpromotion)(using Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.additionalcontactinfo)(using Setter.optionParamSetter(using TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.demographics)(using Setter.optionParamSetter(using TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
+    values (${Segment.paramSegment(unsaved.businessentityid)(using BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.persontype)(using Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.namestyle)(using NameStyle.setter)}::bool, ${Segment.paramSegment(unsaved.title)(using Setter.optionParamSetter(using Setter.stringSetter))}, ${Segment.paramSegment(unsaved.firstname)(using /* user-picked */ FirstName.setter)}::varchar, ${Segment.paramSegment(unsaved.middlename)(using Setter.optionParamSetter(using MiddleName.setter))}::varchar, ${Segment.paramSegment(unsaved.lastname)(using /* user-picked */ LastName.setter)}::varchar, ${Segment.paramSegment(unsaved.suffix)(using Setter.optionParamSetter(using Setter.stringSetter))}, ${Segment.paramSegment(unsaved.emailpromotion)(using Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.additionalcontactinfo)(using Setter.optionParamSetter(using TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.demographics)(using Setter.optionParamSetter(using TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.rowguid)(using TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(using TypoLocalDateTime.setter)}::timestamp)
     returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     """.insertReturning(using PersonRow.jdbcDecoder).map(_.updatedKeys.head)
   }
@@ -46,8 +47,8 @@ class PersonRepoImpl extends PersonRepo {
       Some((sql""""persontype"""", sql"${Segment.paramSegment(unsaved.persontype)(using Setter.stringSetter)}::bpchar")),
       Some((sql""""title"""", sql"${Segment.paramSegment(unsaved.title)(using Setter.optionParamSetter(using Setter.stringSetter))}")),
       Some((sql""""firstname"""", sql"${Segment.paramSegment(unsaved.firstname)(using /* user-picked */ FirstName.setter)}::varchar")),
-      Some((sql""""middlename"""", sql"${Segment.paramSegment(unsaved.middlename)(using Setter.optionParamSetter(using Name.setter))}::varchar")),
-      Some((sql""""lastname"""", sql"${Segment.paramSegment(unsaved.lastname)(using Name.setter)}::varchar")),
+      Some((sql""""middlename"""", sql"${Segment.paramSegment(unsaved.middlename)(using Setter.optionParamSetter(using MiddleName.setter))}::varchar")),
+      Some((sql""""lastname"""", sql"${Segment.paramSegment(unsaved.lastname)(using /* user-picked */ LastName.setter)}::varchar")),
       Some((sql""""suffix"""", sql"${Segment.paramSegment(unsaved.suffix)(using Setter.optionParamSetter(using Setter.stringSetter))}")),
       Some((sql""""additionalcontactinfo"""", sql"${Segment.paramSegment(unsaved.additionalcontactinfo)(using Setter.optionParamSetter(using TypoXml.setter))}::xml")),
       Some((sql""""demographics"""", sql"${Segment.paramSegment(unsaved.demographics)(using Setter.optionParamSetter(using TypoXml.setter))}::xml")),
@@ -115,8 +116,8 @@ class PersonRepoImpl extends PersonRepo {
     "namestyle" = ${Segment.paramSegment(row.namestyle)(using NameStyle.setter)}::bool,
     "title" = ${Segment.paramSegment(row.title)(using Setter.optionParamSetter(using Setter.stringSetter))},
     "firstname" = ${Segment.paramSegment(row.firstname)(using /* user-picked */ FirstName.setter)}::varchar,
-    "middlename" = ${Segment.paramSegment(row.middlename)(using Setter.optionParamSetter(using Name.setter))}::varchar,
-    "lastname" = ${Segment.paramSegment(row.lastname)(using Name.setter)}::varchar,
+    "middlename" = ${Segment.paramSegment(row.middlename)(using Setter.optionParamSetter(using MiddleName.setter))}::varchar,
+    "lastname" = ${Segment.paramSegment(row.lastname)(using /* user-picked */ LastName.setter)}::varchar,
     "suffix" = ${Segment.paramSegment(row.suffix)(using Setter.optionParamSetter(using Setter.stringSetter))},
     "emailpromotion" = ${Segment.paramSegment(row.emailpromotion)(using Setter.intSetter)}::int4,
     "additionalcontactinfo" = ${Segment.paramSegment(row.additionalcontactinfo)(using Setter.optionParamSetter(using TypoXml.setter))}::xml,
@@ -137,8 +138,8 @@ class PersonRepoImpl extends PersonRepo {
     ${Segment.paramSegment(unsaved.namestyle)(using NameStyle.setter)}::bool,
     ${Segment.paramSegment(unsaved.title)(using Setter.optionParamSetter(using Setter.stringSetter))},
     ${Segment.paramSegment(unsaved.firstname)(using /* user-picked */ FirstName.setter)}::varchar,
-    ${Segment.paramSegment(unsaved.middlename)(using Setter.optionParamSetter(using Name.setter))}::varchar,
-    ${Segment.paramSegment(unsaved.lastname)(using Name.setter)}::varchar,
+    ${Segment.paramSegment(unsaved.middlename)(using Setter.optionParamSetter(using MiddleName.setter))}::varchar,
+    ${Segment.paramSegment(unsaved.lastname)(using /* user-picked */ LastName.setter)}::varchar,
     ${Segment.paramSegment(unsaved.suffix)(using Setter.optionParamSetter(using Setter.stringSetter))},
     ${Segment.paramSegment(unsaved.emailpromotion)(using Setter.intSetter)}::int4,
     ${Segment.paramSegment(unsaved.additionalcontactinfo)(using Setter.optionParamSetter(using TypoXml.setter))}::xml,

@@ -16,7 +16,7 @@ case class ProductcategoryId(@JsonValue value: Integer) extends scala.AnyVal
 object ProductcategoryId {
   given bijection: Bijection[ProductcategoryId, Integer] = Bijection.apply[ProductcategoryId, Integer](_.value)(ProductcategoryId.apply)
 
-  given dbType: PgType[ProductcategoryId] = PgTypes.int4.bimap(ProductcategoryId.apply, _.value)
+  given pgType: PgType[ProductcategoryId] = PgTypes.int4.bimap(ProductcategoryId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[ProductcategoryId]] = PgTypes.int4Array.bimap(xs => xs.map(ProductcategoryId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[ProductcategoryId]] = PgTypes.int4Array.bimap(xs => xs.map(ProductcategoryId.apply), xs => xs.map(_.value))
 }

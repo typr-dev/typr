@@ -8,13 +8,14 @@ package testdb.warehouses
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
 import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
+import testdb.userdefined.IsActive
 
 /** Table: warehouses
   * Primary key: warehouse_id
@@ -43,16 +44,16 @@ data class WarehousesRow(
   /** 
     * Default: 1
     */
-  @field:JsonProperty("is_active") val isActive: Boolean,
+  @field:JsonProperty("is_active") val isActive: /* user-picked */ IsActive,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("contact_email") val contactEmail: String?,
+  @field:JsonProperty("contact_email") val contactEmail: /* user-picked */ Email?,
   /** 
     * Default: NULL
     */
   @field:JsonProperty("contact_phone") val contactPhone: String?
-) : Tuple10<WarehousesId, String, String, String, Point, Polygon?, String, Boolean, String?, String?> {
+) : Tuple10<WarehousesId, String, String, String, Point, Polygon?, String, /* user-picked */ IsActive, /* user-picked */ Email?, String?> {
   override fun _1(): WarehousesId = warehouseId
 
   override fun _10(): String? = contactPhone
@@ -69,21 +70,21 @@ data class WarehousesRow(
 
   override fun _7(): String = timezone
 
-  override fun _8(): Boolean = isActive
+  override fun _8(): /* user-picked */ IsActive = isActive
 
-  override fun _9(): String? = contactEmail
+  override fun _9(): /* user-picked */ Email? = contactEmail
 
   fun id(): WarehousesId = warehouseId
 
   fun toUnsavedRow(
     serviceArea: Defaulted<Polygon?> = Defaulted.Provided(this.serviceArea),
     timezone: Defaulted<String> = Defaulted.Provided(this.timezone),
-    isActive: Defaulted<Boolean> = Defaulted.Provided(this.isActive),
-    contactEmail: Defaulted<String?> = Defaulted.Provided(this.contactEmail),
+    isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive),
+    contactEmail: Defaulted</* user-picked */ Email?> = Defaulted.Provided(this.contactEmail),
     contactPhone: Defaulted<String?> = Defaulted.Provided(this.contactPhone)
   ): WarehousesRowUnsaved = WarehousesRowUnsaved(code, name, address, location, serviceArea, timezone, isActive, contactEmail, contactPhone)
 
   companion object {
-    val _rowParser: RowParser<WarehousesRow> = RowParsers.of(WarehousesId.dbType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.nullable(), MariaTypes.varchar, KotlinDbTypes.MariaTypes.bool, MariaTypes.varchar.nullable(), MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> WarehousesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone) })
+    val _rowParser: RowParser<WarehousesRow> = RowParsers.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.nullable(), MariaTypes.varchar, IsActive.mariaType, Email.mariaType.nullable(), MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> WarehousesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone) })
   }
 }

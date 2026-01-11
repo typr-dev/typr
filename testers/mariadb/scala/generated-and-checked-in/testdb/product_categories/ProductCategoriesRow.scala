@@ -13,6 +13,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.categories.CategoriesId
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
+import testdb.userdefined.IsPrimary
 
 /** Table: product_categories
  * Composite primary key: product_id, category_id
@@ -29,18 +30,18 @@ case class ProductCategoriesRow(
   /** 
    * Default: 0
    */
-  @JsonProperty("is_primary") isPrimary: Boolean,
+  @JsonProperty("is_primary") isPrimary: /* user-picked */ IsPrimary,
   /** 
    * Default: 0
    */
   @JsonProperty("sort_order") sortOrder: Short
-) extends Tuple4[ProductsId, CategoriesId, Boolean, Short] {
+) extends Tuple4[ProductsId, CategoriesId, /* user-picked */ IsPrimary, Short] {
   def compositeId: ProductCategoriesId = new ProductCategoriesId(productId, categoryId)
 
   def id: ProductCategoriesId = this.compositeId
 
   def toUnsavedRow(
-    isPrimary: Defaulted[Boolean] = Defaulted.Provided(this.isPrimary),
+    isPrimary: Defaulted[/* user-picked */ IsPrimary] = Defaulted.Provided(this.isPrimary),
     sortOrder: Defaulted[Short] = Defaulted.Provided(this.sortOrder)
   ): ProductCategoriesRowUnsaved = {
     new ProductCategoriesRowUnsaved(
@@ -55,17 +56,17 @@ case class ProductCategoriesRow(
 
   override def `_2`: CategoriesId = categoryId
 
-  override def `_3`: Boolean = isPrimary
+  override def `_3`: /* user-picked */ IsPrimary = isPrimary
 
   override def `_4`: Short = sortOrder
 }
 
 object ProductCategoriesRow {
-  val `_rowParser`: RowParser[ProductCategoriesRow] = RowParsers.of(ProductsId.dbType, CategoriesId.dbType, ScalaDbTypes.MariaTypes.bool, ScalaDbTypes.MariaTypes.smallint)(ProductCategoriesRow.apply)(row => Array[Any](row.productId, row.categoryId, row.isPrimary, row.sortOrder))
+  val `_rowParser`: RowParser[ProductCategoriesRow] = RowParsers.of(ProductsId.mariaType, CategoriesId.mariaType, IsPrimary.mariaType, ScalaDbTypes.MariaTypes.smallint)(ProductCategoriesRow.apply)(row => Array[Any](row.productId, row.categoryId, row.isPrimary, row.sortOrder))
 
   def apply(
     compositeId: ProductCategoriesId,
-    isPrimary: Boolean,
+    isPrimary: /* user-picked */ IsPrimary,
     sortOrder: Short
   ): ProductCategoriesRow = {
     new ProductCategoriesRow(

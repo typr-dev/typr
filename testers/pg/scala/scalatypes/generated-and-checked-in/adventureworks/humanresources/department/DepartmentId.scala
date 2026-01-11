@@ -17,7 +17,7 @@ case class DepartmentId(@JsonValue value: Int) extends scala.AnyVal
 object DepartmentId {
   given bijection: Bijection[DepartmentId, Int] = Bijection.apply[DepartmentId, Int](_.value)(DepartmentId.apply)
 
-  given dbType: PgType[DepartmentId] = ScalaDbTypes.PgTypes.int4.bimap(DepartmentId.apply, _.value)
+  given pgType: PgType[DepartmentId] = ScalaDbTypes.PgTypes.int4.bimap(DepartmentId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[DepartmentId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(DepartmentId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[DepartmentId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(DepartmentId.apply), xs => xs.map(_.value))
 }

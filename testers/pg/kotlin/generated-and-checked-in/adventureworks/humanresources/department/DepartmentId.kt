@@ -22,10 +22,10 @@ data class DepartmentId(@field:JsonValue val value: Int) {
     val bijection: Bijection<DepartmentId, Int> =
       Bijection.of(DepartmentId::value, ::DepartmentId)
 
-    val dbType: PgType<DepartmentId> =
+    val pgType: PgType<DepartmentId> =
       KotlinDbTypes.PgTypes.int4.bimap(::DepartmentId, DepartmentId::value)
 
-    val dbTypeArray: PgType<Array<DepartmentId>> =
+    val pgTypeArray: PgType<Array<DepartmentId>> =
       PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::DepartmentId, DepartmentId::class.java) }, { xs -> arrayMap.map(xs, DepartmentId::value, Int::class.javaObjectType) })
   }
 }

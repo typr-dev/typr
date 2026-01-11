@@ -22,7 +22,7 @@ class UpdateOrderStatusSqlRepoImpl extends UpdateOrderStatusSqlRepo {
         confirmed_at = CASE WHEN ${Fragment.encode(MariaTypes.varchar, newStatus)} = 'confirmed' THEN NOW(6) ELSE confirmed_at END,
         shipped_at = CASE WHEN ${Fragment.encode(MariaTypes.varchar, newStatus)} = 'shipped' THEN NOW(6) ELSE shipped_at END,
         delivered_at = CASE WHEN ${Fragment.encode(MariaTypes.varchar, newStatus)} = 'delivered' THEN NOW(6) ELSE delivered_at END
-    WHERE order_id = ${Fragment.encode(OrdersId.dbType, orderId)}
+    WHERE order_id = ${Fragment.encode(OrdersId.mariaType, orderId)}
     """.update().runUnchecked(c)
   }
 }

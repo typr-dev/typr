@@ -241,9 +241,9 @@ public record InventoryRow(
 
   public static RowParser<InventoryRow> _rowParser =
       RowParsers.of(
-          InventoryId.dbType,
-          ProductsId.dbType,
-          WarehousesId.dbType,
+          InventoryId.mariaType,
+          ProductsId.mariaType,
+          WarehousesId.mariaType,
           MariaTypes.int_,
           MariaTypes.int_,
           MariaTypes.int_,

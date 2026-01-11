@@ -25,14 +25,14 @@ class PriceTiersRepoImpl() : PriceTiersRepo {
   override fun deleteById(
     tierId: PriceTiersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `price_tiers` where `tier_id` = "), Fragment.encode(PriceTiersId.dbType, tierId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `price_tiers` where `tier_id` = "), Fragment.encode(PriceTiersId.mariaType, tierId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     tierIds: Array<PriceTiersId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in tierIds) { fragments.add(Fragment.encode(PriceTiersId.dbType, id)) }
+    for (id in tierIds) { fragments.add(Fragment.encode(PriceTiersId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("delete from `price_tiers` where `tier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -70,14 +70,14 @@ class PriceTiersRepoImpl() : PriceTiersRepo {
   override fun selectById(
     tierId: PriceTiersId,
     c: Connection
-  ): PriceTiersRow? = Fragment.interpolate(Fragment.lit("select `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\nfrom `price_tiers`\nwhere `tier_id` = "), Fragment.encode(PriceTiersId.dbType, tierId), Fragment.lit("")).query(PriceTiersRow._rowParser.first()).runUnchecked(c)
+  ): PriceTiersRow? = Fragment.interpolate(Fragment.lit("select `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\nfrom `price_tiers`\nwhere `tier_id` = "), Fragment.encode(PriceTiersId.mariaType, tierId), Fragment.lit("")).query(PriceTiersRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     tierIds: Array<PriceTiersId>,
     c: Connection
   ): List<PriceTiersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in tierIds) { fragments.add(Fragment.encode(PriceTiersId.dbType, id)) }
+    for (id in tierIds) { fragments.add(Fragment.encode(PriceTiersId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("select `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value` from `price_tiers` where `tier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(PriceTiersRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -97,13 +97,13 @@ class PriceTiersRepoImpl() : PriceTiersRepo {
     c: Connection
   ): Boolean {
     val tierId: PriceTiersId = row.tierId
-    return Fragment.interpolate(Fragment.lit("update `price_tiers`\nset `name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit(",\n`min_quantity` = "), Fragment.encode(MariaTypes.intUnsigned, row.minQuantity), Fragment.lit(",\n`discount_type` = "), Fragment.encode(MariaTypes.text, row.discountType), Fragment.lit(",\n`discount_value` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.discountValue), Fragment.lit("\nwhere `tier_id` = "), Fragment.encode(PriceTiersId.dbType, tierId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `price_tiers`\nset `name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit(",\n`min_quantity` = "), Fragment.encode(MariaTypes.intUnsigned, row.minQuantity), Fragment.lit(",\n`discount_type` = "), Fragment.encode(MariaTypes.text, row.discountType), Fragment.lit(",\n`discount_value` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.discountValue), Fragment.lit("\nwhere `tier_id` = "), Fragment.encode(PriceTiersId.mariaType, tierId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: PriceTiersRow,
     c: Connection
-  ): PriceTiersRow = Fragment.interpolate(Fragment.lit("INSERT INTO `price_tiers`(`tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`)\nVALUES ("), Fragment.encode(PriceTiersId.dbType, unsaved.tierId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.minQuantity), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.discountType), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.discountValue), Fragment.lit(")\nON DUPLICATE KEY UPDATE `name` = VALUES(`name`),\n`min_quantity` = VALUES(`min_quantity`),\n`discount_type` = VALUES(`discount_type`),\n`discount_value` = VALUES(`discount_value`)\nRETURNING `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`"))
+  ): PriceTiersRow = Fragment.interpolate(Fragment.lit("INSERT INTO `price_tiers`(`tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`)\nVALUES ("), Fragment.encode(PriceTiersId.mariaType, unsaved.tierId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.minQuantity), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.discountType), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.discountValue), Fragment.lit(")\nON DUPLICATE KEY UPDATE `name` = VALUES(`name`),\n`min_quantity` = VALUES(`min_quantity`),\n`discount_type` = VALUES(`discount_type`),\n`discount_value` = VALUES(`discount_value`)\nRETURNING `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`"))
     .updateReturning(PriceTiersRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

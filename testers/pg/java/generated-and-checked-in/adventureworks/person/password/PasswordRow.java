@@ -62,7 +62,7 @@ public record PasswordRow(
 
   public static RowParser<PasswordRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.text,
           PgTypes.text,
           PgTypes.uuid,

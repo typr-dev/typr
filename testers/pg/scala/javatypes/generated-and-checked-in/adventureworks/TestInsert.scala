@@ -133,7 +133,11 @@ import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRepoImpl
 import adventureworks.sales.salesterritory.SalesterritoryRow
 import adventureworks.sales.salesterritory.SalesterritoryRowUnsaved
+import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
 import dev.typr.foundations.data.Json
@@ -190,10 +194,10 @@ case class TestInsert(
     nationalidnumber: String = RandomHelper.alphanumeric(random, 15),
     loginid: String = RandomHelper.alphanumeric(random, 20),
     jobtitle: String = RandomHelper.alphanumeric(random, 20),
-    salariedflag: Defaulted[Flag] = new UseDefault(),
+    salariedflag: Defaulted[/* user-picked */ SalariedFlag] = new UseDefault(),
     vacationhours: Defaulted[java.lang.Short] = new UseDefault(),
     sickleavehours: Defaulted[java.lang.Short] = new UseDefault(),
-    currentflag: Defaulted[Flag] = new UseDefault(),
+    currentflag: Defaulted[/* user-picked */ CurrentFlag] = new UseDefault(),
     rowguid: Defaulted[UUID] = new UseDefault(),
     modifieddate: Defaulted[LocalDateTime] = new UseDefault(),
     organizationnode: Defaulted[Optional[String]] = new UseDefault()
@@ -352,10 +356,10 @@ case class TestInsert(
   def personPerson(
     businessentityid: BusinessentityId,
     persontype: String,
-    firstname: /* user-picked */ FirstName,
     title: Optional[/* max 8 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 8))),
-    middlename: Optional[Name] = (if (random.nextBoolean()) Optional.empty() else Optional.of(domainInsert.publicName(random))),
-    lastname: Name = domainInsert.publicName(random),
+    firstname: /* user-picked */ FirstName = new FirstName(domainInsert.publicName(random)),
+    middlename: Optional[/* user-picked */ MiddleName] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new MiddleName(domainInsert.publicName(random)))),
+    lastname: /* user-picked */ LastName = new LastName(domainInsert.publicName(random)),
     suffix: Optional[/* max 10 chars */ String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 10))),
     additionalcontactinfo: Optional[Xml] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Xml("<root/>"))),
     demographics: Optional[Xml] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Xml("<root/>"))),

@@ -32,7 +32,7 @@ public class MariatestRepoImpl implements MariatestRepo {
   public Boolean deleteById(MariatestId intCol, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `mariatest` where `int_col` = "),
-                Fragment.encode(MariatestId.dbType, intCol),
+                Fragment.encode(MariatestId.mariaType, intCol),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +43,7 @@ public class MariatestRepoImpl implements MariatestRepo {
   public Integer deleteByIds(MariatestId[] intCols, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : intCols) {
-      fragments.add(Fragment.encode(MariatestId.dbType, id));
+      fragments.add(Fragment.encode(MariatestId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -74,7 +74,7 @@ public class MariatestRepoImpl implements MariatestRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.mediumint, unsaved.mediumintCol()),
             Fragment.lit(", "),
-            Fragment.encode(MariatestId.dbType, unsaved.intCol()),
+            Fragment.encode(MariatestId.mariaType, unsaved.intCol()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.bigint, unsaved.bigintCol()),
             Fragment.lit(", "),
@@ -142,7 +142,7 @@ public class MariatestRepoImpl implements MariatestRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.year, unsaved.yearCol()),
             Fragment.lit(", "),
-            Fragment.encode(XYZSet.dbType, unsaved.setCol()),
+            Fragment.encode(XYZSet.mariaType, unsaved.setCol()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json, unsaved.jsonCol()),
             Fragment.lit(", "),
@@ -182,7 +182,7 @@ public class MariatestRepoImpl implements MariatestRepo {
             Fragment.encode(MariaTypes.mediumint, unsaved.mediumintCol()), Fragment.lit("")));
     columns.add(Fragment.lit("`int_col`"));
     values.add(
-        interpolate(Fragment.encode(MariatestId.dbType, unsaved.intCol()), Fragment.lit("")));
+        interpolate(Fragment.encode(MariatestId.mariaType, unsaved.intCol()), Fragment.lit("")));
     columns.add(Fragment.lit("`bigint_col`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.bigint, unsaved.bigintCol()), Fragment.lit("")));
@@ -278,7 +278,7 @@ public class MariatestRepoImpl implements MariatestRepo {
     columns.add(Fragment.lit("`year_col`"));
     values.add(interpolate(Fragment.encode(MariaTypes.year, unsaved.yearCol()), Fragment.lit("")));
     columns.add(Fragment.lit("`set_col`"));
-    values.add(interpolate(Fragment.encode(XYZSet.dbType, unsaved.setCol()), Fragment.lit("")));
+    values.add(interpolate(Fragment.encode(XYZSet.mariaType, unsaved.setCol()), Fragment.lit("")));
     columns.add(Fragment.lit("`json_col`"));
     values.add(interpolate(Fragment.encode(MariaTypes.json, unsaved.jsonCol()), Fragment.lit("")));
     columns.add(Fragment.lit("`inet4_col`"));
@@ -367,7 +367,7 @@ public class MariatestRepoImpl implements MariatestRepo {
                     + " `set_col`, `json_col`, `inet4_col`, `inet6_col`\n"
                     + "from `mariatest`\n"
                     + "where `int_col` = "),
-            Fragment.encode(MariatestId.dbType, intCol),
+            Fragment.encode(MariatestId.mariaType, intCol),
             Fragment.lit(""))
         .query(MariatestRow._rowParser.first())
         .runUnchecked(c);
@@ -377,7 +377,7 @@ public class MariatestRepoImpl implements MariatestRepo {
   public List<MariatestRow> selectByIds(MariatestId[] intCols, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : intCols) {
-      fragments.add(Fragment.encode(MariatestId.dbType, id));
+      fragments.add(Fragment.encode(MariatestId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -489,7 +489,7 @@ public class MariatestRepoImpl implements MariatestRepo {
                 Fragment.lit(",\n`year_col` = "),
                 Fragment.encode(MariaTypes.year, row.yearCol()),
                 Fragment.lit(",\n`set_col` = "),
-                Fragment.encode(XYZSet.dbType, row.setCol()),
+                Fragment.encode(XYZSet.mariaType, row.setCol()),
                 Fragment.lit(",\n`json_col` = "),
                 Fragment.encode(MariaTypes.json, row.jsonCol()),
                 Fragment.lit(",\n`inet4_col` = "),
@@ -497,7 +497,7 @@ public class MariatestRepoImpl implements MariatestRepo {
                 Fragment.lit(",\n`inet6_col` = "),
                 Fragment.encode(MariaTypes.inet6, row.inet6Col()),
                 Fragment.lit("\nwhere `int_col` = "),
-                Fragment.encode(MariatestId.dbType, intCol),
+                Fragment.encode(MariatestId.mariaType, intCol),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -524,7 +524,7 @@ public class MariatestRepoImpl implements MariatestRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.mediumint, unsaved.mediumintCol()),
             Fragment.lit(", "),
-            Fragment.encode(MariatestId.dbType, unsaved.intCol()),
+            Fragment.encode(MariatestId.mariaType, unsaved.intCol()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.bigint, unsaved.bigintCol()),
             Fragment.lit(", "),
@@ -592,7 +592,7 @@ public class MariatestRepoImpl implements MariatestRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.year, unsaved.yearCol()),
             Fragment.lit(", "),
-            Fragment.encode(XYZSet.dbType, unsaved.setCol()),
+            Fragment.encode(XYZSet.mariaType, unsaved.setCol()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json, unsaved.jsonCol()),
             Fragment.lit(", "),

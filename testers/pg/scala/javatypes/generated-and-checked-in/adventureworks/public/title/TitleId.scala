@@ -20,12 +20,12 @@ sealed abstract class TitleId(val value: String)
 object TitleId {
   def apply(underlying: String): TitleId =
     ByName.getOrElse(underlying, Unknown(underlying))
-  given dbTypeArray: PgType[Array[TitleId]] = {
+  given pgTypeArray: PgType[Array[TitleId]] = {
     PgTypes.textArray
       .bimap(xs => xs.map(TitleId.apply), xs => xs.map(_.value))
   }
 
-  given dbType: PgType[TitleId] = PgTypes.text.bimap(TitleId.apply, _.value)
+  given pgType: PgType[TitleId] = PgTypes.text.bimap(TitleId.apply, _.value)
 
   case object dr extends TitleId("dr")
 

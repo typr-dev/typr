@@ -39,7 +39,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.dbType
+      OrdersId.mariaType
     )
   }
 
@@ -63,7 +63,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.dbType
+      CustomersId.mariaType
     )
   }
 
@@ -99,7 +99,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(shippingAddressId = value),
-      CustomerAddressesId.dbType
+      CustomerAddressesId.mariaType
     )
   }
 
@@ -111,7 +111,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(billingAddressId = value),
-      CustomerAddressesId.dbType
+      CustomerAddressesId.mariaType
     )
   }
 
@@ -195,7 +195,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(promotionId = value),
-      PromotionsId.dbType
+      PromotionsId.mariaType
     )
   }
 

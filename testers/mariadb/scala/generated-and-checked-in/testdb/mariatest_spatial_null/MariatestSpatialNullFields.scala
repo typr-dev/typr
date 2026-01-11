@@ -33,7 +33,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(id = value),
-      MariatestSpatialNullId.dbType
+      MariatestSpatialNullId.mariaType
     )
   }
 

@@ -33,7 +33,7 @@ class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleE
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(productid = value),
-      ProductId.dbType
+      ProductId.pgType
     )
   }
 

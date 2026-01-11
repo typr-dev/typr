@@ -862,19 +862,19 @@ public record PrecisionTypesRowUnsaved(
   public static PgText<PrecisionTypesRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            String10.dbType.text().unsafeEncode(row.string10, sb);
+            String10.pgType.text().unsafeEncode(row.string10, sb);
             sb.append(PgText.DELIMETER);
-            String20.dbType.text().unsafeEncode(row.string20, sb);
+            String20.pgType.text().unsafeEncode(row.string20, sb);
             sb.append(PgText.DELIMETER);
-            String50.dbType.text().unsafeEncode(row.string50, sb);
+            String50.pgType.text().unsafeEncode(row.string50, sb);
             sb.append(PgText.DELIMETER);
-            String100.dbType.text().unsafeEncode(row.string100, sb);
+            String100.pgType.text().unsafeEncode(row.string100, sb);
             sb.append(PgText.DELIMETER);
-            String255.dbType.text().unsafeEncode(row.string255, sb);
+            String255.pgType.text().unsafeEncode(row.string255, sb);
             sb.append(PgText.DELIMETER);
-            PaddedString3.dbType.text().unsafeEncode(row.bpchar3, sb);
+            PaddedString3.pgType.text().unsafeEncode(row.bpchar3, sb);
             sb.append(PgText.DELIMETER);
-            PaddedString10.dbType.text().unsafeEncode(row.bpchar10, sb);
+            PaddedString10.pgType.text().unsafeEncode(row.bpchar10, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.numeric.text().unsafeEncode(row.decimal52, sb);
             sb.append(PgText.DELIMETER);
@@ -910,7 +910,7 @@ public record PrecisionTypesRowUnsaved(
             sb.append(PgText.DELIMETER);
             PgTypes.timetz.text().unsafeEncode(row.timetz6, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(PrecisionTypesId.dbType.text()).unsafeEncode(row.id, sb);
+            Defaulted.pgText(PrecisionTypesId.pgType.text()).unsafeEncode(row.id, sb);
           });
 
   public PrecisionTypesRow toRow(java.util.function.Supplier<PrecisionTypesId> idDefault) {

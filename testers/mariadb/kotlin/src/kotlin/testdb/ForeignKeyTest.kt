@@ -7,6 +7,9 @@ import testdb.customer_status.*
 import testdb.customers.*
 import testdb.orders.*
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 import java.math.BigDecimal
 import java.util.Random
 
@@ -51,19 +54,19 @@ class ForeignKeyTest {
 
             // Create a customer with FK to the status - use short constructor
             val customer = CustomersRowUnsaved(
-                "test@example.com",
+                Email("test@example.com"),
                 byteArrayOf(1, 2, 3, 4),
-                "John",
-                "Doe"
+                FirstName("John"),
+                LastName("Doe")
             )
 
             val insertedCustomer = customersRepo.insert(customer, c)
 
             assertNotNull(insertedCustomer)
             assertNotNull(insertedCustomer.customerId)
-            assertEquals("test@example.com", insertedCustomer.email)
-            assertEquals("John", insertedCustomer.firstName)
-            assertEquals("Doe", insertedCustomer.lastName)
+            assertEquals(Email("test@example.com"), insertedCustomer.email)
+            assertEquals(FirstName("John"), insertedCustomer.firstName)
+            assertEquals(LastName("Doe"), insertedCustomer.lastName)
         }
     }
 
@@ -79,10 +82,10 @@ class ForeignKeyTest {
 
             // Create a customer
             val customer = testInsert.Customers(
-                email = "test@example.com",
+                email = Email("test@example.com"),
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "Test",
-                lastName = "User",
+                firstName = FirstName("Test"),
+                lastName = LastName("User"),
                 c = c
             )
 
@@ -113,10 +116,10 @@ class ForeignKeyTest {
                 c = c
             )
             val customer = testInsert.Customers(
-                email = "lookup@example.com",
+                email = Email("lookup@example.com"),
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "Lookup",
-                lastName = "User",
+                firstName = FirstName("Lookup"),
+                lastName = LastName("User"),
                 c = c
             )
 
@@ -145,10 +148,10 @@ class ForeignKeyTest {
                 c = c
             )
             val customer = testInsert.Customers(
-                email = "typesafe@example.com",
+                email = Email("typesafe@example.com"),
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "TypeSafe",
-                lastName = "User",
+                firstName = FirstName("TypeSafe"),
+                lastName = LastName("User"),
                 c = c
             )
             val order = testInsert.Orders(orderNumber = "ORD-TS", customerId = customer.customerId, subtotal = BigDecimal("100.00"), totalAmount = BigDecimal("110.00"), c = c)
@@ -178,10 +181,10 @@ class ForeignKeyTest {
                 c = c
             )
             val customer = testInsert.Customers(
-                email = "update_${Random().nextInt(10000)}@example.com",
+                email = Email("update_${Random().nextInt(10000)}@example.com"),
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "Update",
-                lastName = "User",
+                firstName = FirstName("Update"),
+                lastName = LastName("User"),
                 c = c
             )
 
@@ -214,10 +217,10 @@ class ForeignKeyTest {
                 c = c
             )
             val customer = testInsert.Customers(
-                email = "optional_${Random().nextInt(10000)}@example.com",
+                email = Email("optional_${Random().nextInt(10000)}@example.com"),
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "Optional",
-                lastName = "User",
+                firstName = FirstName("Optional"),
+                lastName = LastName("User"),
                 c = c
             )
 

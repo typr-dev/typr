@@ -25,8 +25,10 @@ import testdb.categories.CategoriesRow;
 import testdb.products.ProductsFields;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
+import testdb.userdefined.IsPrimary;
 
-public class ProductCategoriesFields extends TupleExpr4<ProductsId, CategoriesId, Boolean, Short>
+public class ProductCategoriesFields
+    extends TupleExpr4<ProductsId, CategoriesId, /* user-picked */ IsPrimary, Short>
     implements RelationStructure<ProductCategoriesFields, ProductCategoriesRow>,
         FieldsBase<ProductCategoriesRow> {
   List<Path> _path;
@@ -46,7 +48,7 @@ public class ProductCategoriesFields extends TupleExpr4<ProductsId, CategoriesId
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public IdField<CategoriesId, ProductCategoriesRow> categoryId() {
@@ -57,18 +59,18 @@ public class ProductCategoriesFields extends TupleExpr4<ProductsId, CategoriesId
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCategoryId(value),
-        CategoriesId.dbType);
+        CategoriesId.mariaType);
   }
 
-  public Field<Boolean, ProductCategoriesRow> isPrimary() {
-    return new Field<Boolean, ProductCategoriesRow>(
+  public Field</* user-picked */ IsPrimary, ProductCategoriesRow> isPrimary() {
+    return new Field</* user-picked */ IsPrimary, ProductCategoriesRow>(
         _path,
         "is_primary",
         ProductCategoriesRow::isPrimary,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsPrimary(value),
-        MariaTypes.bool);
+        IsPrimary.mariaType);
   }
 
   public Field<Short, ProductCategoriesRow> sortOrder() {
@@ -135,7 +137,7 @@ public class ProductCategoriesFields extends TupleExpr4<ProductsId, CategoriesId
   }
 
   @Override
-  public SqlExpr<Boolean> _3() {
+  public SqlExpr</* user-picked */ IsPrimary> _3() {
     return isPrimary();
   }
 

@@ -54,7 +54,7 @@ data class SalesterritoryFields(val _path: List<Path>) : TupleExpr10<Salesterrit
 
   fun costytd(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "costytd", SalesterritoryRow::costytd, null, "numeric", { row, value -> row.copy(costytd = value) }, PgTypes.numeric)
 
-  fun countryregioncode(): Field<CountryregionId, SalesterritoryRow> = Field<CountryregionId, SalesterritoryRow>(_path, "countryregioncode", SalesterritoryRow::countryregioncode, null, null, { row, value -> row.copy(countryregioncode = value) }, CountryregionId.dbType)
+  fun countryregioncode(): Field<CountryregionId, SalesterritoryRow> = Field<CountryregionId, SalesterritoryRow>(_path, "countryregioncode", SalesterritoryRow::countryregioncode, null, null, { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
 
   fun fkPersonCountryregion(): ForeignKey<CountryregionFields, CountryregionRow> = ForeignKey.of<CountryregionFields, CountryregionRow>("sales.FK_SalesTerritory_CountryRegion_CountryRegionCode").withColumnPair<CountryregionId>(countryregioncode(), CountryregionFields::countryregioncode)
 
@@ -62,7 +62,7 @@ data class SalesterritoryFields(val _path: List<Path>) : TupleExpr10<Salesterrit
 
   fun modifieddate(): Field<LocalDateTime, SalesterritoryRow> = Field<LocalDateTime, SalesterritoryRow>(_path, "modifieddate", SalesterritoryRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, SalesterritoryRow> = Field<Name, SalesterritoryRow>(_path, "name", SalesterritoryRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, SalesterritoryRow> = Field<Name, SalesterritoryRow>(_path, "name", SalesterritoryRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
   override fun rowParser(): RowParser<SalesterritoryRow> = SalesterritoryRow._rowParser.underlying
 
@@ -72,7 +72,7 @@ data class SalesterritoryFields(val _path: List<Path>) : TupleExpr10<Salesterrit
 
   fun salesytd(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "salesytd", SalesterritoryRow::salesytd, null, "numeric", { row, value -> row.copy(salesytd = value) }, PgTypes.numeric)
 
-  fun territoryid(): IdField<SalesterritoryId, SalesterritoryRow> = IdField<SalesterritoryId, SalesterritoryRow>(_path, "territoryid", SalesterritoryRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.dbType)
+  fun territoryid(): IdField<SalesterritoryId, SalesterritoryRow> = IdField<SalesterritoryId, SalesterritoryRow>(_path, "territoryid", SalesterritoryRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<SalesterritoryFields, SalesterritoryRow> = SalesterritoryFields(_path)
 

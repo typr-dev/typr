@@ -14,6 +14,7 @@ import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
 
 /** Table: customers
  * Primary key: customer_id
@@ -21,12 +22,12 @@ import testdb.customtypes.Defaulted
 case class CustomersRow(
   @JsonProperty("customer_id") customerId: CustomersId,
   name: String,
-  email: Option[String],
+  email: Option[/* user-picked */ Email],
   /** Default: current_timestamp */
   @JsonProperty("created_at") createdAt: LocalDateTime,
   /** Default: 'medium' */
   priority: Option[Priority]
-) extends Tuple5[CustomersId, String, Option[String], LocalDateTime, Option[Priority]] {
+) extends Tuple5[CustomersId, String, Option[/* user-picked */ Email], LocalDateTime, Option[Priority]] {
   def id: CustomersId = customerId
 
   def toUnsavedRow(
@@ -46,7 +47,7 @@ case class CustomersRow(
 
   override def `_2`: String = name
 
-  override def `_3`: Option[String] = email
+  override def `_3`: Option[/* user-picked */ Email] = email
 
   override def `_4`: LocalDateTime = createdAt
 
@@ -54,5 +55,5 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
+  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
 }

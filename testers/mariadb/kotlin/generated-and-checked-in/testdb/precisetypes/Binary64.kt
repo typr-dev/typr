@@ -38,7 +38,7 @@ data class Binary64 private constructor(@field:JsonValue val value: ByteArray) :
     val bijection: Bijection<Binary64, ByteArray> =
       Bijection.of(Binary64::value, ::Binary64)
 
-    val dbType: MariaType<Binary64> =
+    val mariaType: MariaType<Binary64> =
       MariaTypes.binary.bimap(::Binary64, Binary64::value)
 
     fun of(value: ByteArray): Binary64? = if (value.size <= 64) Binary64(value) else null

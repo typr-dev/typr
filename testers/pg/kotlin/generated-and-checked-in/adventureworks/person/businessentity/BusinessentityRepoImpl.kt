@@ -25,19 +25,19 @@ class BusinessentityRepoImpl() : BusinessentityRepo {
   override fun deleteById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"businessentity\" where \"businessentityid\" = "), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"businessentity\" where \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     businessentityids: Array<BusinessentityId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"businessentity\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.dbTypeArray, businessentityids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"businessentity\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: BusinessentityRow,
     c: Connection
-  ): BusinessentityRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"(\"businessentityid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"rowguid\", \"modifieddate\"\n"))
+  ): BusinessentityRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"(\"businessentityid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"businessentityid\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(BusinessentityRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,7 +49,7 @@ class BusinessentityRepoImpl() : BusinessentityRepo {
     unsaved.businessentityid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"businessentityid\""))
-      values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.dbType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(BusinessentityId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.rowguid.visit(
       {  },
@@ -85,12 +85,12 @@ class BusinessentityRepoImpl() : BusinessentityRepo {
   override fun selectById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): BusinessentityRow? = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentity\"\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).query(BusinessentityRow._rowParser.first()).runUnchecked(c)
+  ): BusinessentityRow? = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentity\"\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(BusinessentityRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     businessentityids: Array<BusinessentityId>,
     c: Connection
-  ): List<BusinessentityRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentity\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.dbTypeArray, businessentityids), Fragment.lit(")")).query(BusinessentityRow._rowParser.all()).runUnchecked(c)
+  ): List<BusinessentityRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"businessentity\"\nwhere \"businessentityid\" = ANY("), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(BusinessentityRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     businessentityids: Array<BusinessentityId>,
@@ -108,13 +108,13 @@ class BusinessentityRepoImpl() : BusinessentityRepo {
     c: Connection
   ): Boolean {
     val businessentityid: BusinessentityId = row.businessentityid
-    return Fragment.interpolate(Fragment.lit("update \"person\".\"businessentity\"\nset \"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.dbType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"person\".\"businessentity\"\nset \"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"businessentityid\" = "), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: BusinessentityRow,
     c: Connection
-  ): BusinessentityRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"(\"businessentityid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"businessentityid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\""))
+  ): BusinessentityRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"businessentity\"(\"businessentityid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"businessentityid\")\ndo update set\n  \"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"businessentityid\", \"rowguid\", \"modifieddate\""))
     .updateReturning(BusinessentityRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

@@ -31,7 +31,7 @@ public record String10(@JsonValue String value) implements StringN {
   public static Bijection<String10, String> bijection =
       Bijection.of(String10::value, String10::new);
 
-  public static MariaType<String10> dbType =
+  public static MariaType<String10> mariaType =
       MariaTypes.varchar.bimap(String10::new, String10::value);
 
   public static Optional<String10> of(String value) {

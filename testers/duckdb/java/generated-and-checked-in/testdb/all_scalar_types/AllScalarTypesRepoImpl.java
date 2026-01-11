@@ -42,7 +42,7 @@ public class AllScalarTypesRepoImpl implements AllScalarTypesRepo {
   public Integer deleteByIds(AllScalarTypesId[] ids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"all_scalar_types\"\nwhere \"id\" = ANY("),
-            Fragment.encode(AllScalarTypesId.dbTypeArray, ids),
+            Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -178,7 +178,7 @@ public class AllScalarTypesRepoImpl implements AllScalarTypesRepo {
                     + " \"col_uuid\", \"col_json\", \"col_mood\", \"col_not_null\"\n"
                     + "from \"all_scalar_types\"\n"
                     + "where \"id\" = ANY("),
-            Fragment.encode(AllScalarTypesId.dbTypeArray, ids),
+            Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids),
             Fragment.lit(")"))
         .query(AllScalarTypesRow._rowParser.all())
         .runUnchecked(c);

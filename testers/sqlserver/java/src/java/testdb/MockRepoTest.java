@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import testdb.customers.*;
 import testdb.products.*;
+import testdb.userdefined.Email;
 
 /**
  * Tests for mock repository implementations. Mock repos provide in-memory implementations for unit
@@ -38,7 +39,10 @@ public class MockRepoTest {
     var mock = createCustomersMock();
     var customer =
         new CustomersRow(
-            new CustomersId(1), "Mock User", "mock@test.com", Optional.of(LocalDateTime.now()));
+            new CustomersId(1),
+            "Mock User",
+            new Email("mock@test.com"),
+            Optional.of(LocalDateTime.now()));
 
     var inserted = mock.insert(customer, null);
     assertNotNull(inserted);
@@ -56,7 +60,7 @@ public class MockRepoTest {
         new CustomersRow(
             new CustomersId(2),
             "Original Name",
-            "original@test.com",
+            new Email("original@test.com"),
             Optional.of(LocalDateTime.now()));
 
     mock.insert(customer, null);
@@ -73,7 +77,10 @@ public class MockRepoTest {
     var mock = createCustomersMock();
     var customer =
         new CustomersRow(
-            new CustomersId(3), "To Delete", "delete@test.com", Optional.of(LocalDateTime.now()));
+            new CustomersId(3),
+            "To Delete",
+            new Email("delete@test.com"),
+            Optional.of(LocalDateTime.now()));
 
     mock.insert(customer, null);
     assertTrue(mock.selectById(new CustomersId(3), null).isPresent());
@@ -107,15 +114,24 @@ public class MockRepoTest {
 
     mock.insert(
         new CustomersRow(
-            new CustomersId(100), "Alice", "alice@test.com", Optional.of(LocalDateTime.now())),
+            new CustomersId(100),
+            "Alice",
+            new Email("alice@test.com"),
+            Optional.of(LocalDateTime.now())),
         null);
     mock.insert(
         new CustomersRow(
-            new CustomersId(101), "Bob", "bob@test.com", Optional.of(LocalDateTime.now())),
+            new CustomersId(101),
+            "Bob",
+            new Email("bob@test.com"),
+            Optional.of(LocalDateTime.now())),
         null);
     mock.insert(
         new CustomersRow(
-            new CustomersId(102), "Charlie", "charlie@test.com", Optional.of(LocalDateTime.now())),
+            new CustomersId(102),
+            "Charlie",
+            new Email("charlie@test.com"),
+            Optional.of(LocalDateTime.now())),
         null);
 
     var results =
@@ -135,15 +151,24 @@ public class MockRepoTest {
 
     mock.insert(
         new CustomersRow(
-            new CustomersId(200), "Count1", "count1@test.com", Optional.of(LocalDateTime.now())),
+            new CustomersId(200),
+            "Count1",
+            new Email("count1@test.com"),
+            Optional.of(LocalDateTime.now())),
         null);
     mock.insert(
         new CustomersRow(
-            new CustomersId(201), "Count2", "count2@test.com", Optional.of(LocalDateTime.now())),
+            new CustomersId(201),
+            "Count2",
+            new Email("count2@test.com"),
+            Optional.of(LocalDateTime.now())),
         null);
     mock.insert(
         new CustomersRow(
-            new CustomersId(202), "Other", "other@test.com", Optional.of(LocalDateTime.now())),
+            new CustomersId(202),
+            "Other",
+            new Email("other@test.com"),
+            Optional.of(LocalDateTime.now())),
         null);
 
     var count =
@@ -161,7 +186,10 @@ public class MockRepoTest {
 
     mock1.insert(
         new CustomersRow(
-            new CustomersId(400), "Mock1 Only", "mock1@test.com", Optional.of(LocalDateTime.now())),
+            new CustomersId(400),
+            "Mock1 Only",
+            new Email("mock1@test.com"),
+            Optional.of(LocalDateTime.now())),
         null);
 
     assertTrue(mock1.selectById(new CustomersId(400), null).isPresent());

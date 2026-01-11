@@ -12,9 +12,10 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import zio.json.JsonDecoder
 import zio.json.JsonEncoder
 import zio.json.ast.Json
@@ -35,9 +36,9 @@ case class PersonRowUnsaved(
   /** First name of the person. */
   firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  middlename: Option[Name] = None,
+  middlename: Option[/* user-picked */ MiddleName] = None,
   /** Last name of the person. */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   suffix: Option[/* max 10 chars */ String] = None,
   /** Additional contact information about the person stored in xml format. */
@@ -89,8 +90,8 @@ object PersonRowUnsaved {
       val persontype = jsonObj.get("persontype").toRight("Missing field 'persontype'").flatMap(_.as(JsonDecoder.string))
       val title = jsonObj.get("title").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(JsonDecoder.string)))
       val firstname = jsonObj.get("firstname").toRight("Missing field 'firstname'").flatMap(_.as(FirstName.jsonDecoder))
-      val middlename = jsonObj.get("middlename").fold[Either[String, Option[Name]]](Right(None))(_.as(JsonDecoder.option(Name.jsonDecoder)))
-      val lastname = jsonObj.get("lastname").toRight("Missing field 'lastname'").flatMap(_.as(Name.jsonDecoder))
+      val middlename = jsonObj.get("middlename").fold[Either[String, Option[MiddleName]]](Right(None))(_.as(JsonDecoder.option(MiddleName.jsonDecoder)))
+      val lastname = jsonObj.get("lastname").toRight("Missing field 'lastname'").flatMap(_.as(LastName.jsonDecoder))
       val suffix = jsonObj.get("suffix").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(JsonDecoder.string)))
       val additionalcontactinfo = jsonObj.get("additionalcontactinfo").fold[Either[String, Option[TypoXml]]](Right(None))(_.as(JsonDecoder.option(TypoXml.jsonDecoder)))
       val demographics = jsonObj.get("demographics").fold[Either[String, Option[TypoXml]]](Right(None))(_.as(JsonDecoder.option(TypoXml.jsonDecoder)))
@@ -121,10 +122,10 @@ object PersonRowUnsaved {
         FirstName.jsonEncoder.unsafeEncode(a.firstname, indent, out)
         out.write(",")
         out.write(""""middlename":""")
-        JsonEncoder.option(Name.jsonEncoder).unsafeEncode(a.middlename, indent, out)
+        JsonEncoder.option(MiddleName.jsonEncoder).unsafeEncode(a.middlename, indent, out)
         out.write(",")
         out.write(""""lastname":""")
-        Name.jsonEncoder.unsafeEncode(a.lastname, indent, out)
+        LastName.jsonEncoder.unsafeEncode(a.lastname, indent, out)
         out.write(",")
         out.write(""""suffix":""")
         JsonEncoder.option(JsonEncoder.string).unsafeEncode(a.suffix, indent, out)
@@ -161,9 +162,9 @@ object PersonRowUnsaved {
       sb.append(Text.DELIMETER)
       /* user-picked */ FirstName.pgText.unsafeEncode(row.firstname, sb)
       sb.append(Text.DELIMETER)
-      Text.option(Name.pgText).unsafeEncode(row.middlename, sb)
+      Text.option(MiddleName.pgText).unsafeEncode(row.middlename, sb)
       sb.append(Text.DELIMETER)
-      Name.pgText.unsafeEncode(row.lastname, sb)
+      /* user-picked */ LastName.pgText.unsafeEncode(row.lastname, sb)
       sb.append(Text.DELIMETER)
       Text.option(Text.stringInstance).unsafeEncode(row.suffix, sb)
       sb.append(Text.DELIMETER)

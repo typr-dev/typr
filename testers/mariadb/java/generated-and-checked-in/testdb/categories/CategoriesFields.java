@@ -42,7 +42,7 @@ public class CategoriesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCategoryId(value),
-        CategoriesId.dbType);
+        CategoriesId.mariaType);
   }
 
   public OptField<CategoriesId, CategoriesRow> parentId() {
@@ -53,7 +53,7 @@ public class CategoriesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withParentId(value),
-        CategoriesId.dbType);
+        CategoriesId.mariaType);
   }
 
   public Field<String, CategoriesRow> name() {

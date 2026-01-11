@@ -30,7 +30,7 @@ case class Binary16 private(@JsonValue value: Array[Byte]) extends BinaryN {
 object Binary16 {
   given bijection: Bijection[Binary16, Array[Byte]] = Bijection.apply[Binary16, Array[Byte]](_.value)(Binary16.apply)
 
-  given dbType: MariaType[Binary16] = MariaTypes.binary.bimap(Binary16.apply, _.value)
+  given mariaType: MariaType[Binary16] = MariaTypes.binary.bimap(Binary16.apply, _.value)
 
   def of(value: Array[Byte]): Option[Binary16] = (if (value.length <= 16) Some(new Binary16(value)) else None)
 

@@ -69,7 +69,7 @@ public class ShipmentsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withShipmentId(value),
-        ShipmentsId.dbType);
+        ShipmentsId.mariaType);
   }
 
   public Field<OrdersId, ShipmentsRow> orderId() {
@@ -80,7 +80,7 @@ public class ShipmentsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderId(value),
-        OrdersId.dbType);
+        OrdersId.mariaType);
   }
 
   public Field<ShippingCarriersId, ShipmentsRow> carrierId() {
@@ -91,7 +91,7 @@ public class ShipmentsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCarrierId(value),
-        ShippingCarriersId.dbType);
+        ShippingCarriersId.mariaType);
   }
 
   public OptField<String, ShipmentsRow> trackingNumber() {
@@ -212,7 +212,7 @@ public class ShipmentsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOriginWarehouseId(value),
-        WarehousesId.dbType);
+        WarehousesId.mariaType);
   }
 
   public OptField<LocalDateTime, ShipmentsRow> shippedAt() {

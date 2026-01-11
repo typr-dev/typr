@@ -39,7 +39,7 @@ data class EmailaddressFields(val _path: List<Path>) : TupleExpr5<Businessentity
 
   override fun _path(): List<Path> = _path
 
-  fun businessentityid(): IdField<BusinessentityId, EmailaddressRow> = IdField<BusinessentityId, EmailaddressRow>(_path, "businessentityid", EmailaddressRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.dbType)
+  fun businessentityid(): IdField<BusinessentityId, EmailaddressRow> = IdField<BusinessentityId, EmailaddressRow>(_path, "businessentityid", EmailaddressRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
   override fun columns(): List<FieldLike<*, EmailaddressRow>> = listOf(this.businessentityid().underlying, this.emailaddressid().underlying, this.emailaddress().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 

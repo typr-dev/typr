@@ -13,17 +13,20 @@ import testdb.EmailMailPushSmsSet;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 public record CustomersRowUnsaved(
     /** */
-    String email,
+    /* user-picked */ Email email,
     /** */
     @JsonProperty("password_hash") byte[] passwordHash,
     /** */
-    @JsonProperty("first_name") String firstName,
+    @JsonProperty("first_name") /* user-picked */ FirstName firstName,
     /** */
-    @JsonProperty("last_name") String lastName,
+    @JsonProperty("last_name") /* user-picked */ LastName lastName,
     /** Default: NULL */
     Defaulted<Optional<String>> phone,
     /**
@@ -46,13 +49,13 @@ public record CustomersRowUnsaved(
     @JsonProperty("last_login_at") Defaulted<Optional<LocalDateTime>> lastLoginAt) {
   public CustomersRowUnsaved(
       /** */
-      String email,
+      /* user-picked */ Email email,
       /** */
       @JsonProperty("password_hash") byte[] passwordHash,
       /** */
-      @JsonProperty("first_name") String firstName,
+      @JsonProperty("first_name") /* user-picked */ FirstName firstName,
       /** */
-      @JsonProperty("last_name") String lastName) {
+      @JsonProperty("last_name") /* user-picked */ LastName lastName) {
     this(
         email,
         passwordHash,
@@ -71,7 +74,7 @@ public record CustomersRowUnsaved(
   ;
 
   /** */
-  public CustomersRowUnsaved withEmail(String email) {
+  public CustomersRowUnsaved withEmail(/* user-picked */ Email email) {
     return new CustomersRowUnsaved(
         email,
         passwordHash,
@@ -109,7 +112,7 @@ public record CustomersRowUnsaved(
   ;
 
   /** */
-  public CustomersRowUnsaved withFirstName(String firstName) {
+  public CustomersRowUnsaved withFirstName(/* user-picked */ FirstName firstName) {
     return new CustomersRowUnsaved(
         email,
         passwordHash,
@@ -128,7 +131,7 @@ public record CustomersRowUnsaved(
   ;
 
   /** */
-  public CustomersRowUnsaved withLastName(String lastName) {
+  public CustomersRowUnsaved withLastName(/* user-picked */ LastName lastName) {
     return new CustomersRowUnsaved(
         email,
         passwordHash,

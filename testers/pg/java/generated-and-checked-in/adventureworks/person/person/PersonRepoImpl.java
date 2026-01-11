@@ -8,9 +8,10 @@ package adventureworks.person.person;
 import static dev.typr.foundations.Fragment.interpolate;
 
 import adventureworks.person.businessentity.BusinessentityId;
-import adventureworks.public_.Name;
 import adventureworks.public_.NameStyle;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.Fragment;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.dsl.DeleteBuilder;
@@ -36,7 +37,7 @@ public class PersonRepoImpl implements PersonRepo {
   public Boolean deleteById(BusinessentityId businessentityid, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"person\".\"person\" where \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -47,7 +48,7 @@ public class PersonRepoImpl implements PersonRepo {
   public Integer deleteByIds(BusinessentityId[] businessentityids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"person\".\"person\"\nwhere \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -62,19 +63,19 @@ public class PersonRepoImpl implements PersonRepo {
                     + " \"suffix\", \"emailpromotion\", \"additionalcontactinfo\","
                     + " \"demographics\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.bpchar, unsaved.persontype()),
             Fragment.lit("::bpchar, "),
-            Fragment.encode(NameStyle.dbType, unsaved.namestyle()),
+            Fragment.encode(NameStyle.pgType, unsaved.namestyle()),
             Fragment.lit("::bool, "),
             Fragment.encode(PgTypes.text.opt(), unsaved.title()),
             Fragment.lit(", "),
-            Fragment.encode(FirstName.dbType, unsaved.firstname()),
+            Fragment.encode(FirstName.pgType, unsaved.firstname()),
             Fragment.lit("::varchar, "),
-            Fragment.encode(Name.dbType.opt(), unsaved.middlename()),
+            Fragment.encode(MiddleName.pgType.opt(), unsaved.middlename()),
             Fragment.lit("::varchar, "),
-            Fragment.encode(Name.dbType, unsaved.lastname()),
+            Fragment.encode(LastName.pgType, unsaved.lastname()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.text.opt(), unsaved.suffix()),
             Fragment.lit(", "),
@@ -106,7 +107,7 @@ public class PersonRepoImpl implements PersonRepo {
     columns.add(Fragment.lit("\"businessentityid\""));
     values.add(
         interpolate(
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"persontype\""));
     values.add(
@@ -117,14 +118,16 @@ public class PersonRepoImpl implements PersonRepo {
     columns.add(Fragment.lit("\"firstname\""));
     values.add(
         interpolate(
-            Fragment.encode(FirstName.dbType, unsaved.firstname()), Fragment.lit("::varchar")));
+            Fragment.encode(FirstName.pgType, unsaved.firstname()), Fragment.lit("::varchar")));
     columns.add(Fragment.lit("\"middlename\""));
     values.add(
         interpolate(
-            Fragment.encode(Name.dbType.opt(), unsaved.middlename()), Fragment.lit("::varchar")));
+            Fragment.encode(MiddleName.pgType.opt(), unsaved.middlename()),
+            Fragment.lit("::varchar")));
     columns.add(Fragment.lit("\"lastname\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.lastname()), Fragment.lit("::varchar")));
+        interpolate(
+            Fragment.encode(LastName.pgType, unsaved.lastname()), Fragment.lit("::varchar")));
     columns.add(Fragment.lit("\"suffix\""));
     values.add(
         interpolate(Fragment.encode(PgTypes.text.opt(), unsaved.suffix()), Fragment.lit("")));
@@ -144,7 +147,7 @@ public class PersonRepoImpl implements PersonRepo {
             value -> {
               columns.add(Fragment.lit("\"namestyle\""));
               values.add(
-                  interpolate(Fragment.encode(NameStyle.dbType, value), Fragment.lit("::bool")));
+                  interpolate(Fragment.encode(NameStyle.pgType, value), Fragment.lit("::bool")));
             });
     ;
     unsaved
@@ -249,7 +252,7 @@ public class PersonRepoImpl implements PersonRepo {
                     + " \"rowguid\", \"modifieddate\"\n"
                     + "from \"person\".\"person\"\n"
                     + "where \"businessentityid\" = "),
-            Fragment.encode(BusinessentityId.dbType, businessentityid),
+            Fragment.encode(BusinessentityId.pgType, businessentityid),
             Fragment.lit(""))
         .query(PersonRow._rowParser.first())
         .runUnchecked(c);
@@ -265,7 +268,7 @@ public class PersonRepoImpl implements PersonRepo {
                     + " \"rowguid\", \"modifieddate\"\n"
                     + "from \"person\".\"person\"\n"
                     + "where \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .query(PersonRow._rowParser.all())
         .runUnchecked(c);
@@ -293,15 +296,15 @@ public class PersonRepoImpl implements PersonRepo {
                 Fragment.lit("update \"person\".\"person\"\nset \"persontype\" = "),
                 Fragment.encode(PgTypes.bpchar, row.persontype()),
                 Fragment.lit("::bpchar,\n\"namestyle\" = "),
-                Fragment.encode(NameStyle.dbType, row.namestyle()),
+                Fragment.encode(NameStyle.pgType, row.namestyle()),
                 Fragment.lit("::bool,\n\"title\" = "),
                 Fragment.encode(PgTypes.text.opt(), row.title()),
                 Fragment.lit(",\n\"firstname\" = "),
-                Fragment.encode(FirstName.dbType, row.firstname()),
+                Fragment.encode(FirstName.pgType, row.firstname()),
                 Fragment.lit("::varchar,\n\"middlename\" = "),
-                Fragment.encode(Name.dbType.opt(), row.middlename()),
+                Fragment.encode(MiddleName.pgType.opt(), row.middlename()),
                 Fragment.lit("::varchar,\n\"lastname\" = "),
-                Fragment.encode(Name.dbType, row.lastname()),
+                Fragment.encode(LastName.pgType, row.lastname()),
                 Fragment.lit("::varchar,\n\"suffix\" = "),
                 Fragment.encode(PgTypes.text.opt(), row.suffix()),
                 Fragment.lit(",\n\"emailpromotion\" = "),
@@ -315,7 +318,7 @@ public class PersonRepoImpl implements PersonRepo {
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -331,19 +334,19 @@ public class PersonRepoImpl implements PersonRepo {
                     + " \"suffix\", \"emailpromotion\", \"additionalcontactinfo\","
                     + " \"demographics\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.bpchar, unsaved.persontype()),
             Fragment.lit("::bpchar, "),
-            Fragment.encode(NameStyle.dbType, unsaved.namestyle()),
+            Fragment.encode(NameStyle.pgType, unsaved.namestyle()),
             Fragment.lit("::bool, "),
             Fragment.encode(PgTypes.text.opt(), unsaved.title()),
             Fragment.lit(", "),
-            Fragment.encode(FirstName.dbType, unsaved.firstname()),
+            Fragment.encode(FirstName.pgType, unsaved.firstname()),
             Fragment.lit("::varchar, "),
-            Fragment.encode(Name.dbType.opt(), unsaved.middlename()),
+            Fragment.encode(MiddleName.pgType.opt(), unsaved.middlename()),
             Fragment.lit("::varchar, "),
-            Fragment.encode(Name.dbType, unsaved.lastname()),
+            Fragment.encode(LastName.pgType, unsaved.lastname()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.text.opt(), unsaved.suffix()),
             Fragment.lit(", "),

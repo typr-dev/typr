@@ -29,21 +29,21 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   override fun deleteById(
     itemId: OrderItemsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `order_items` where `item_id` = "), Fragment.encode(OrderItemsId.dbType, itemId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `order_items` where `item_id` = "), Fragment.encode(OrderItemsId.mariaType, itemId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     itemIds: Array<OrderItemsId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in itemIds) { fragments.add(Fragment.encode(OrderItemsId.dbType, id)) }
+    for (id in itemIds) { fragments.add(Fragment.encode(OrderItemsId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("delete from `order_items` where `item_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: OrderItemsRow,
     c: Connection
-  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("insert into `order_items`(`order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`)\nvalues ("), Fragment.encode(OrdersId.dbType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ProductsId.dbType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.sku), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.productName), Fragment.lit(", "), Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.unitPrice), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.discountAmount), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.taxAmount), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.lineTotal), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus), Fragment.lit(", "), Fragment.encode(WarehousesId.dbType.nullable(), unsaved.warehouseId), Fragment.lit(", "), Fragment.encode(MariaTypes.tinytext.nullable(), unsaved.notes), Fragment.lit(")\nRETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`\n"))
+  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("insert into `order_items`(`order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`)\nvalues ("), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.sku), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.productName), Fragment.lit(", "), Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.unitPrice), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.discountAmount), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.taxAmount), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.lineTotal), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus), Fragment.lit(", "), Fragment.encode(WarehousesId.mariaType.nullable(), unsaved.warehouseId), Fragment.lit(", "), Fragment.encode(MariaTypes.tinytext.nullable(), unsaved.notes), Fragment.lit(")\nRETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`\n"))
     .updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -53,9 +53,9 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`order_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(OrdersId.dbType, unsaved.orderId), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit("")))
     columns.add(Fragment.lit("`product_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(ProductsId.dbType, unsaved.productId), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit("")))
     columns.add(Fragment.lit("`sku`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.sku), Fragment.lit("")))
     columns.add(Fragment.lit("`product_name`"))
@@ -84,7 +84,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
     unsaved.warehouseId.visit(
       {  },
       { value -> columns.add(Fragment.lit("`warehouse_id`"))
-      values.add(Fragment.interpolate(Fragment.encode(WarehousesId.dbType.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(WarehousesId.mariaType.nullable(), value), Fragment.lit(""))) }
     );
     unsaved.notes.visit(
       {  },
@@ -102,14 +102,14 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   override fun selectById(
     itemId: OrderItemsId,
     c: Connection
-  ): OrderItemsRow? = Fragment.interpolate(Fragment.lit("select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`\nfrom `order_items`\nwhere `item_id` = "), Fragment.encode(OrderItemsId.dbType, itemId), Fragment.lit("")).query(OrderItemsRow._rowParser.first()).runUnchecked(c)
+  ): OrderItemsRow? = Fragment.interpolate(Fragment.lit("select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`\nfrom `order_items`\nwhere `item_id` = "), Fragment.encode(OrderItemsId.mariaType, itemId), Fragment.lit("")).query(OrderItemsRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     itemIds: Array<OrderItemsId>,
     c: Connection
   ): List<OrderItemsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in itemIds) { fragments.add(Fragment.encode(OrderItemsId.dbType, id)) }
+    for (id in itemIds) { fragments.add(Fragment.encode(OrderItemsId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes` from `order_items` where `item_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(OrderItemsRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -129,13 +129,13 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
     c: Connection
   ): Boolean {
     val itemId: OrderItemsId = row.itemId
-    return Fragment.interpolate(Fragment.lit("update `order_items`\nset `order_id` = "), Fragment.encode(OrdersId.dbType, row.orderId), Fragment.lit(",\n`product_id` = "), Fragment.encode(ProductsId.dbType, row.productId), Fragment.lit(",\n`sku` = "), Fragment.encode(MariaTypes.varchar, row.sku), Fragment.lit(",\n`product_name` = "), Fragment.encode(MariaTypes.varchar, row.productName), Fragment.lit(",\n`quantity` = "), Fragment.encode(MariaTypes.smallintUnsigned, row.quantity), Fragment.lit(",\n`unit_price` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.unitPrice), Fragment.lit(",\n`discount_amount` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.discountAmount), Fragment.lit(",\n`tax_amount` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.taxAmount), Fragment.lit(",\n`line_total` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.lineTotal), Fragment.lit(",\n`fulfillment_status` = "), Fragment.encode(MariaTypes.text, row.fulfillmentStatus), Fragment.lit(",\n`warehouse_id` = "), Fragment.encode(WarehousesId.dbType.nullable(), row.warehouseId), Fragment.lit(",\n`notes` = "), Fragment.encode(MariaTypes.tinytext.nullable(), row.notes), Fragment.lit("\nwhere `item_id` = "), Fragment.encode(OrderItemsId.dbType, itemId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `order_items`\nset `order_id` = "), Fragment.encode(OrdersId.mariaType, row.orderId), Fragment.lit(",\n`product_id` = "), Fragment.encode(ProductsId.mariaType, row.productId), Fragment.lit(",\n`sku` = "), Fragment.encode(MariaTypes.varchar, row.sku), Fragment.lit(",\n`product_name` = "), Fragment.encode(MariaTypes.varchar, row.productName), Fragment.lit(",\n`quantity` = "), Fragment.encode(MariaTypes.smallintUnsigned, row.quantity), Fragment.lit(",\n`unit_price` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.unitPrice), Fragment.lit(",\n`discount_amount` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.discountAmount), Fragment.lit(",\n`tax_amount` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.taxAmount), Fragment.lit(",\n`line_total` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.lineTotal), Fragment.lit(",\n`fulfillment_status` = "), Fragment.encode(MariaTypes.text, row.fulfillmentStatus), Fragment.lit(",\n`warehouse_id` = "), Fragment.encode(WarehousesId.mariaType.nullable(), row.warehouseId), Fragment.lit(",\n`notes` = "), Fragment.encode(MariaTypes.tinytext.nullable(), row.notes), Fragment.lit("\nwhere `item_id` = "), Fragment.encode(OrderItemsId.mariaType, itemId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: OrderItemsRow,
     c: Connection
-  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("INSERT INTO `order_items`(`item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`)\nVALUES ("), Fragment.encode(OrderItemsId.dbType, unsaved.itemId), Fragment.lit(", "), Fragment.encode(OrdersId.dbType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ProductsId.dbType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.sku), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.productName), Fragment.lit(", "), Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.unitPrice), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.discountAmount), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.taxAmount), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.lineTotal), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus), Fragment.lit(", "), Fragment.encode(WarehousesId.dbType.nullable(), unsaved.warehouseId), Fragment.lit(", "), Fragment.encode(MariaTypes.tinytext.nullable(), unsaved.notes), Fragment.lit(")\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`product_id` = VALUES(`product_id`),\n`sku` = VALUES(`sku`),\n`product_name` = VALUES(`product_name`),\n`quantity` = VALUES(`quantity`),\n`unit_price` = VALUES(`unit_price`),\n`discount_amount` = VALUES(`discount_amount`),\n`tax_amount` = VALUES(`tax_amount`),\n`line_total` = VALUES(`line_total`),\n`fulfillment_status` = VALUES(`fulfillment_status`),\n`warehouse_id` = VALUES(`warehouse_id`),\n`notes` = VALUES(`notes`)\nRETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`"))
+  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("INSERT INTO `order_items`(`item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`)\nVALUES ("), Fragment.encode(OrderItemsId.mariaType, unsaved.itemId), Fragment.lit(", "), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.sku), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.productName), Fragment.lit(", "), Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.unitPrice), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.discountAmount), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.taxAmount), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.lineTotal), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus), Fragment.lit(", "), Fragment.encode(WarehousesId.mariaType.nullable(), unsaved.warehouseId), Fragment.lit(", "), Fragment.encode(MariaTypes.tinytext.nullable(), unsaved.notes), Fragment.lit(")\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`product_id` = VALUES(`product_id`),\n`sku` = VALUES(`sku`),\n`product_name` = VALUES(`product_name`),\n`quantity` = VALUES(`quantity`),\n`unit_price` = VALUES(`unit_price`),\n`discount_amount` = VALUES(`discount_amount`),\n`tax_amount` = VALUES(`tax_amount`),\n`line_total` = VALUES(`line_total`),\n`fulfillment_status` = VALUES(`fulfillment_status`),\n`warehouse_id` = VALUES(`warehouse_id`),\n`notes` = VALUES(`notes`)\nRETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`"))
     .updateReturning(OrderItemsRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

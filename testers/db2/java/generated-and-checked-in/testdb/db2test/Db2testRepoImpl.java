@@ -31,7 +31,7 @@ public class Db2testRepoImpl implements Db2testRepo {
   public Boolean deleteById(Db2testId intCol, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"DB2TEST\" where \"INT_COL\" = "),
-                Fragment.encode(Db2testId.dbType, intCol),
+                Fragment.encode(Db2testId.db2Type, intCol),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +42,7 @@ public class Db2testRepoImpl implements Db2testRepo {
   public Integer deleteByIds(Db2testId[] intCols, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : intCols) {
-      fragments.add(Fragment.encode(Db2testId.dbType, id));
+      fragments.add(Fragment.encode(Db2testId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -72,7 +72,7 @@ public class Db2testRepoImpl implements Db2testRepo {
                     + "VALUES ("),
             Fragment.encode(Db2Types.smallint, unsaved.smallintCol()),
             Fragment.lit(", "),
-            Fragment.encode(Db2testId.dbType, unsaved.intCol()),
+            Fragment.encode(Db2testId.db2Type, unsaved.intCol()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.bigint, unsaved.bigintCol()),
             Fragment.lit(", "),
@@ -155,7 +155,7 @@ public class Db2testRepoImpl implements Db2testRepo {
                     + " \"TIMESTAMP6_COL\", \"TIMESTAMP12_COL\", \"XML_COL\"\n"
                     + "from \"DB2TEST\"\n"
                     + "where \"INT_COL\" = "),
-            Fragment.encode(Db2testId.dbType, intCol),
+            Fragment.encode(Db2testId.db2Type, intCol),
             Fragment.lit(""))
         .query(Db2testRow._rowParser.first())
         .runUnchecked(c);
@@ -165,7 +165,7 @@ public class Db2testRepoImpl implements Db2testRepo {
   public List<Db2testRow> selectByIds(Db2testId[] intCols, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : intCols) {
-      fragments.add(Fragment.encode(Db2testId.dbType, id));
+      fragments.add(Fragment.encode(Db2testId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -248,7 +248,7 @@ public class Db2testRepoImpl implements Db2testRepo {
                 Fragment.lit(",\n\"XML_COL\" = "),
                 Fragment.encode(Db2Types.xml, row.xmlCol()),
                 Fragment.lit("\nwhere \"INT_COL\" = "),
-                Fragment.encode(Db2testId.dbType, intCol),
+                Fragment.encode(Db2testId.db2Type, intCol),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -261,7 +261,7 @@ public class Db2testRepoImpl implements Db2testRepo {
             Fragment.lit("MERGE INTO \"DB2TEST\" AS t\nUSING (VALUES ("),
             Fragment.encode(Db2Types.smallint, unsaved.smallintCol()),
             Fragment.lit(", "),
-            Fragment.encode(Db2testId.dbType, unsaved.intCol()),
+            Fragment.encode(Db2testId.db2Type, unsaved.intCol()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.bigint, unsaved.bigintCol()),
             Fragment.lit(", "),
@@ -346,7 +346,7 @@ public class Db2testRepoImpl implements Db2testRepo {
                     + " VALUES ("),
             Fragment.encode(Db2Types.smallint, unsaved.smallintCol()),
             Fragment.lit(", "),
-            Fragment.encode(Db2testId.dbType, unsaved.intCol()),
+            Fragment.encode(Db2testId.db2Type, unsaved.intCol()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.bigint, unsaved.bigintCol()),
             Fragment.lit(", "),

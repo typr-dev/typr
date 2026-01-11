@@ -41,10 +41,10 @@ public record FlaffId(
 
   public static RowParser<FlaffId> _rowParser =
       RowParsers.of(
-          ShortText.dbType,
+          ShortText.pgType,
           PgTypes.text,
           PgTypes.int4,
-          ShortText.dbType,
+          ShortText.pgType,
           FlaffId::new,
           row -> new Object[] {row.code(), row.anotherCode(), row.someNumber(), row.specifier()});
   ;

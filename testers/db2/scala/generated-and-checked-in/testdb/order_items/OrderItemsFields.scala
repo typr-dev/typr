@@ -31,7 +31,7 @@ class OrderItemsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Ord
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.dbType
+      OrdersId.db2Type
     )
   }
 

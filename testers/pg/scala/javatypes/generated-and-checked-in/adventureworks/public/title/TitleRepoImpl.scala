@@ -19,19 +19,19 @@ import dev.typr.foundations.Fragment.interpolate
 class TitleRepoImpl extends TitleRepo {
   override def delete: DeleteBuilder[TitleFields, TitleRow] = DeleteBuilder.of(""""public"."title"""", TitleFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(code: TitleId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."title" where "code" = """), Fragment.encode(TitleId.dbType, code), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(code: TitleId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."title" where "code" = """), Fragment.encode(TitleId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(codes: Array[TitleId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "public"."title"
-    where "code" = ANY("""), Fragment.encode(TitleId.dbTypeArray, codes), Fragment.lit(")"))
+    where "code" = ANY("""), Fragment.encode(TitleId.pgTypeArray, codes), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   interpolate(Fragment.lit("""insert into "public"."title"("code")
-    values ("""), Fragment.encode(TitleId.dbType, unsaved.code), Fragment.lit(""")
+    values ("""), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(""")
     RETURNING "code"
     """))
     .updateReturning(TitleRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -53,13 +53,13 @@ class TitleRepoImpl extends TitleRepo {
   override def selectById(code: TitleId)(using c: Connection): Optional[TitleRow] = {
     interpolate(Fragment.lit("""select "code"
     from "public"."title"
-    where "code" = """), Fragment.encode(TitleId.dbType, code), Fragment.lit("")).query(TitleRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = """), Fragment.encode(TitleId.pgType, code), Fragment.lit("")).query(TitleRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(codes: Array[TitleId])(using c: Connection): java.util.List[TitleRow] = {
     interpolate(Fragment.lit("""select "code"
     from "public"."title"
-    where "code" = ANY("""), Fragment.encode(TitleId.dbTypeArray, codes), Fragment.lit(")")).query(TitleRow.`_rowParser`.all()).runUnchecked(c)
+    where "code" = ANY("""), Fragment.encode(TitleId.pgTypeArray, codes), Fragment.lit(")")).query(TitleRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(codes: Array[TitleId])(using c: Connection): java.util.Map[TitleId, TitleRow] = {
@@ -72,7 +72,7 @@ class TitleRepoImpl extends TitleRepo {
 
   override def upsert(unsaved: TitleRow)(using c: Connection): TitleRow = {
   interpolate(Fragment.lit("""insert into "public"."title"("code")
-    values ("""), Fragment.encode(TitleId.dbType, unsaved.code), Fragment.lit(""")
+    values ("""), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(""")
     on conflict ("code")
     do update set "code" = EXCLUDED."code"
     returning "code""""))

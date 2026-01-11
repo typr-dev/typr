@@ -100,7 +100,7 @@ object FileMariaSet {
     List(
       jvm.Given(
         tparams = Nil,
-        name = jvm.Ident("dbType"),
+        name = jvm.Ident("mariaType"),
         implicitParams = Nil,
         tpe = MariaType.of(setType.tpe),
         body = body

@@ -8,7 +8,8 @@ package adventureworks.humanresources.employee
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.RowParser
 import dev.typr.foundations.dsl.FieldsBase
@@ -27,14 +28,14 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
 
-data class EmployeeFields(val _path: List<Path>) : TupleExpr15<BusinessentityId, String, String, String, LocalDate, String, String, LocalDate, Flag, Short, Short, Flag, UUID, LocalDateTime, String>, RelationStructure<EmployeeFields, EmployeeRow>, FieldsBase<EmployeeRow> {
+data class EmployeeFields(val _path: List<Path>) : TupleExpr15<BusinessentityId, String, String, String, LocalDate, String, String, LocalDate, /* user-picked */ SalariedFlag, Short, Short, /* user-picked */ CurrentFlag, UUID, LocalDateTime, String>, RelationStructure<EmployeeFields, EmployeeRow>, FieldsBase<EmployeeRow> {
   override fun _1(): SqlExpr<BusinessentityId> = businessentityid()
 
   override fun _10(): SqlExpr<Short> = vacationhours()
 
   override fun _11(): SqlExpr<Short> = sickleavehours()
 
-  override fun _12(): SqlExpr<Flag> = currentflag()
+  override fun _12(): SqlExpr</* user-picked */ CurrentFlag> = currentflag()
 
   override fun _13(): SqlExpr<UUID> = rowguid()
 
@@ -56,17 +57,17 @@ data class EmployeeFields(val _path: List<Path>) : TupleExpr15<BusinessentityId,
 
   override fun _8(): SqlExpr<LocalDate> = hiredate()
 
-  override fun _9(): SqlExpr<Flag> = salariedflag()
+  override fun _9(): SqlExpr</* user-picked */ SalariedFlag> = salariedflag()
 
   override fun _path(): List<Path> = _path
 
   fun birthdate(): Field<LocalDate, EmployeeRow> = Field<LocalDate, EmployeeRow>(_path, "birthdate", EmployeeRow::birthdate, null, "date", { row, value -> row.copy(birthdate = value) }, PgTypes.date)
 
-  fun businessentityid(): IdField<BusinessentityId, EmployeeRow> = IdField<BusinessentityId, EmployeeRow>(_path, "businessentityid", EmployeeRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.dbType)
+  fun businessentityid(): IdField<BusinessentityId, EmployeeRow> = IdField<BusinessentityId, EmployeeRow>(_path, "businessentityid", EmployeeRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
   override fun columns(): List<FieldLike<*, EmployeeRow>> = listOf(this.businessentityid().underlying, this.nationalidnumber().underlying, this.loginid().underlying, this.jobtitle().underlying, this.birthdate().underlying, this.maritalstatus().underlying, this.gender().underlying, this.hiredate().underlying, this.salariedflag().underlying, this.vacationhours().underlying, this.sickleavehours().underlying, this.currentflag().underlying, this.rowguid().underlying, this.modifieddate().underlying, this.organizationnode().underlying)
 
-  fun currentflag(): Field<Flag, EmployeeRow> = Field<Flag, EmployeeRow>(_path, "currentflag", EmployeeRow::currentflag, null, "bool", { row, value -> row.copy(currentflag = value) }, Flag.dbType)
+  fun currentflag(): Field</* user-picked */ CurrentFlag, EmployeeRow> = Field</* user-picked */ CurrentFlag, EmployeeRow>(_path, "currentflag", EmployeeRow::currentflag, null, "bool", { row, value -> row.copy(currentflag = value) }, CurrentFlag.pgType)
 
   fun fkPersonPerson(): ForeignKey<PersonFields, PersonRow> = ForeignKey.of<PersonFields, PersonRow>("humanresources.FK_Employee_Person_BusinessEntityID").withColumnPair<BusinessentityId>(businessentityid(), PersonFields::businessentityid)
 
@@ -90,7 +91,7 @@ data class EmployeeFields(val _path: List<Path>) : TupleExpr15<BusinessentityId,
 
   fun rowguid(): Field<UUID, EmployeeRow> = Field<UUID, EmployeeRow>(_path, "rowguid", EmployeeRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
 
-  fun salariedflag(): Field<Flag, EmployeeRow> = Field<Flag, EmployeeRow>(_path, "salariedflag", EmployeeRow::salariedflag, null, "bool", { row, value -> row.copy(salariedflag = value) }, Flag.dbType)
+  fun salariedflag(): Field</* user-picked */ SalariedFlag, EmployeeRow> = Field</* user-picked */ SalariedFlag, EmployeeRow>(_path, "salariedflag", EmployeeRow::salariedflag, null, "bool", { row, value -> row.copy(salariedflag = value) }, SalariedFlag.pgType)
 
   fun sickleavehours(): Field<Short, EmployeeRow> = Field<Short, EmployeeRow>(_path, "sickleavehours", EmployeeRow::sickleavehours, null, "int2", { row, value -> row.copy(sickleavehours = value) }, KotlinDbTypes.PgTypes.int2)
 

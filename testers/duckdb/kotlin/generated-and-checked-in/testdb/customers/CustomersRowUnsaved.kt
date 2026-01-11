@@ -10,12 +10,13 @@ import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 data class CustomersRowUnsaved(
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   val name: String,
-  val email: String? = null,
+  val email: /* user-picked */ Email? = null,
   /** Default: current_timestamp */
   @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),
   /** Default: 'medium' */

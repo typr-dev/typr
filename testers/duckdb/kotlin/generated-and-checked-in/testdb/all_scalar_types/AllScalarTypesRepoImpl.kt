@@ -31,7 +31,7 @@ class AllScalarTypesRepoImpl() : AllScalarTypesRepo {
   override fun deleteByIds(
     ids: Array<AllScalarTypesId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"all_scalar_types\"\nwhere \"id\" = ANY("), Fragment.encode(AllScalarTypesId.dbTypeArray, ids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"all_scalar_types\"\nwhere \"id\" = ANY("), Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
@@ -53,7 +53,7 @@ class AllScalarTypesRepoImpl() : AllScalarTypesRepo {
   override fun selectByIds(
     ids: Array<AllScalarTypesId>,
     c: Connection
-  ): List<AllScalarTypesRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"col_tinyint\", \"col_smallint\", \"col_integer\", \"col_bigint\", \"col_hugeint\", \"col_utinyint\", \"col_usmallint\", \"col_uinteger\", \"col_ubigint\", \"col_float\", \"col_double\", \"col_decimal\", \"col_boolean\", \"col_varchar\", \"col_text\", \"col_blob\", \"col_date\", \"col_time\", \"col_timestamp\", \"col_timestamptz\", \"col_interval\", \"col_uuid\", \"col_json\", \"col_mood\", \"col_not_null\"\nfrom \"all_scalar_types\"\nwhere \"id\" = ANY("), Fragment.encode(AllScalarTypesId.dbTypeArray, ids), Fragment.lit(")")).query(AllScalarTypesRow._rowParser.all()).runUnchecked(c)
+  ): List<AllScalarTypesRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"col_tinyint\", \"col_smallint\", \"col_integer\", \"col_bigint\", \"col_hugeint\", \"col_utinyint\", \"col_usmallint\", \"col_uinteger\", \"col_ubigint\", \"col_float\", \"col_double\", \"col_decimal\", \"col_boolean\", \"col_varchar\", \"col_text\", \"col_blob\", \"col_date\", \"col_time\", \"col_timestamp\", \"col_timestamptz\", \"col_interval\", \"col_uuid\", \"col_json\", \"col_mood\", \"col_not_null\"\nfrom \"all_scalar_types\"\nwhere \"id\" = ANY("), Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids), Fragment.lit(")")).query(AllScalarTypesRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     ids: Array<AllScalarTypesId>,

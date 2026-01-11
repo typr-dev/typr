@@ -185,12 +185,12 @@ public record StateprovinceRow(
 
   public static RowParser<StateprovinceRow> _rowParser =
       RowParsers.of(
-          StateprovinceId.dbType,
+          StateprovinceId.pgType,
           PgTypes.bpchar,
-          CountryregionId.dbType,
-          Flag.dbType,
-          Name.dbType,
-          SalesterritoryId.dbType,
+          CountryregionId.pgType,
+          Flag.pgType,
+          Name.pgType,
+          SalesterritoryId.pgType,
           PgTypes.uuid,
           PgTypes.timestamp,
           StateprovinceRow::new,

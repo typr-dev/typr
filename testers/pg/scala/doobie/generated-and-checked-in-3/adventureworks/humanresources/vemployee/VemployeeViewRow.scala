@@ -10,6 +10,8 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import doobie.util.Read
 import doobie.util.meta.Meta
 import io.circe.Decoder
@@ -24,9 +26,9 @@ case class VemployeeViewRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Name,
+  middlename: /* user-picked */ MiddleName,
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Points to [[adventureworks.person.person.PersonRow.suffix]] */
   suffix: String,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
@@ -56,17 +58,17 @@ case class VemployeeViewRow(
 )
 
 object VemployeeViewRow {
-  given decoder: Decoder[VemployeeViewRow] = Decoder.forProduct18[VemployeeViewRow, BusinessentityId, String, /* user-picked */ FirstName, Name, Name, String, String, Phone, Name, String, Int, String, String, String, Name, String, Name, TypoXml]("businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "additionalcontactinfo")(VemployeeViewRow.apply)(using BusinessentityId.decoder, Decoder.decodeString, FirstName.decoder, Name.decoder, Name.decoder, Decoder.decodeString, Decoder.decodeString, Phone.decoder, Name.decoder, Decoder.decodeString, Decoder.decodeInt, Decoder.decodeString, Decoder.decodeString, Decoder.decodeString, Name.decoder, Decoder.decodeString, Name.decoder, TypoXml.decoder)
+  given decoder: Decoder[VemployeeViewRow] = Decoder.forProduct18[VemployeeViewRow, BusinessentityId, String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, String, String, Phone, Name, String, Int, String, String, String, Name, String, Name, TypoXml]("businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "additionalcontactinfo")(VemployeeViewRow.apply)(using BusinessentityId.decoder, Decoder.decodeString, FirstName.decoder, MiddleName.decoder, LastName.decoder, Decoder.decodeString, Decoder.decodeString, Phone.decoder, Name.decoder, Decoder.decodeString, Decoder.decodeInt, Decoder.decodeString, Decoder.decodeString, Decoder.decodeString, Name.decoder, Decoder.decodeString, Name.decoder, TypoXml.decoder)
 
-  given encoder: Encoder[VemployeeViewRow] = Encoder.forProduct18[VemployeeViewRow, BusinessentityId, String, /* user-picked */ FirstName, Name, Name, String, String, Phone, Name, String, Int, String, String, String, Name, String, Name, TypoXml]("businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "additionalcontactinfo")(x => (x.businessentityid, x.title, x.firstname, x.middlename, x.lastname, x.suffix, x.jobtitle, x.phonenumber, x.phonenumbertype, x.emailaddress, x.emailpromotion, x.addressline1, x.addressline2, x.city, x.stateprovincename, x.postalcode, x.countryregionname, x.additionalcontactinfo))(using BusinessentityId.encoder, Encoder.encodeString, FirstName.encoder, Name.encoder, Name.encoder, Encoder.encodeString, Encoder.encodeString, Phone.encoder, Name.encoder, Encoder.encodeString, Encoder.encodeInt, Encoder.encodeString, Encoder.encodeString, Encoder.encodeString, Name.encoder, Encoder.encodeString, Name.encoder, TypoXml.encoder)
+  given encoder: Encoder[VemployeeViewRow] = Encoder.forProduct18[VemployeeViewRow, BusinessentityId, String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, String, String, Phone, Name, String, Int, String, String, String, Name, String, Name, TypoXml]("businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "additionalcontactinfo")(x => (x.businessentityid, x.title, x.firstname, x.middlename, x.lastname, x.suffix, x.jobtitle, x.phonenumber, x.phonenumbertype, x.emailaddress, x.emailpromotion, x.addressline1, x.addressline2, x.city, x.stateprovincename, x.postalcode, x.countryregionname, x.additionalcontactinfo))(using BusinessentityId.encoder, Encoder.encodeString, FirstName.encoder, MiddleName.encoder, LastName.encoder, Encoder.encodeString, Encoder.encodeString, Phone.encoder, Name.encoder, Encoder.encodeString, Encoder.encodeInt, Encoder.encodeString, Encoder.encodeString, Encoder.encodeString, Name.encoder, Encoder.encodeString, Name.encoder, TypoXml.encoder)
 
   given read: Read[VemployeeViewRow] = {
     new Read.CompositeOfInstances(Array(
       new Read.Single(BusinessentityId.get).asInstanceOf[Read[Any]],
         new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.Single(/* user-picked */ FirstName.get).asInstanceOf[Read[Any]],
-        new Read.Single(Name.get).asInstanceOf[Read[Any]],
-        new Read.Single(Name.get).asInstanceOf[Read[Any]],
+        new Read.Single(/* user-picked */ MiddleName.get).asInstanceOf[Read[Any]],
+        new Read.Single(/* user-picked */ LastName.get).asInstanceOf[Read[Any]],
         new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.Single(Meta.StringMeta.get).asInstanceOf[Read[Any]],
         new Read.Single(Phone.get).asInstanceOf[Read[Any]],
@@ -85,8 +87,8 @@ object VemployeeViewRow {
         businessentityid = arr(0).asInstanceOf[BusinessentityId],
             title = arr(1).asInstanceOf[String],
             firstname = arr(2).asInstanceOf[/* user-picked */ FirstName],
-            middlename = arr(3).asInstanceOf[Name],
-            lastname = arr(4).asInstanceOf[Name],
+            middlename = arr(3).asInstanceOf[/* user-picked */ MiddleName],
+            lastname = arr(4).asInstanceOf[/* user-picked */ LastName],
             suffix = arr(5).asInstanceOf[String],
             jobtitle = arr(6).asInstanceOf[String],
             phonenumber = arr(7).asInstanceOf[Phone],

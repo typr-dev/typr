@@ -18,7 +18,7 @@ public record TitleRow(TitleId code) implements Tuple1<TitleId> {
   ;
 
   public static RowParser<TitleRow> _rowParser =
-      RowParsers.of(TitleId.dbType, TitleRow::new, row -> new Object[] {row.code()});
+      RowParsers.of(TitleId.pgType, TitleRow::new, row -> new Object[] {row.code()});
   ;
 
   public static PgText<TitleRow> pgText = PgText.from(_rowParser);

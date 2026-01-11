@@ -35,7 +35,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(priceId = value),
-      ProductPricesId.dbType
+      ProductPricesId.mariaType
     )
   }
 
@@ -47,7 +47,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -59,7 +59,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(tierId = value),
-      PriceTiersId.dbType
+      PriceTiersId.mariaType
     )
   }
 

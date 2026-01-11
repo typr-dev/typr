@@ -16,5 +16,5 @@ case class MariatestSpatialNullId(@JsonValue value: Int) extends scala.AnyVal
 object MariatestSpatialNullId {
   given bijection: Bijection[MariatestSpatialNullId, Int] = Bijection.apply[MariatestSpatialNullId, Int](_.value)(MariatestSpatialNullId.apply)
 
-  given dbType: MariaType[MariatestSpatialNullId] = ScalaDbTypes.MariaTypes.int_.bimap(MariatestSpatialNullId.apply, _.value)
+  given mariaType: MariaType[MariatestSpatialNullId] = ScalaDbTypes.MariaTypes.int_.bimap(MariatestSpatialNullId.apply, _.value)
 }

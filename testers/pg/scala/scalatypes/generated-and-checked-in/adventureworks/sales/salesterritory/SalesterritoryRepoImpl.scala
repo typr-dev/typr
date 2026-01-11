@@ -23,19 +23,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class SalesterritoryRepoImpl extends SalesterritoryRepo {
   override def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = DeleteBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(territoryid: SalesterritoryId)(using c: Connection): Boolean = sql"""delete from "sales"."salesterritory" where "territoryid" = ${Fragment.encode(SalesterritoryId.dbType, territoryid)}""".update().runUnchecked(c) > 0
+  override def deleteById(territoryid: SalesterritoryId)(using c: Connection): Boolean = sql"""delete from "sales"."salesterritory" where "territoryid" = ${Fragment.encode(SalesterritoryId.pgType, territoryid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(territoryids: Array[SalesterritoryId])(using c: Connection): Int = {
     sql"""delete
     from "sales"."salesterritory"
-    where "territoryid" = ANY(${Fragment.encode(SalesterritoryId.dbTypeArray, territoryids)})"""
+    where "territoryid" = ANY(${Fragment.encode(SalesterritoryId.pgTypeArray, territoryids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
   sql"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
-    values (${Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}, ${Fragment.encode(PgTypes.text, unsaved.group)}, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costlastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(PgTypes.text, unsaved.group)}, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costlastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     """
     .updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -45,14 +45,14 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.name)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""group"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.group)}"): @scala.annotation.nowarn
     unsaved.territoryid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SalesterritoryId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SalesterritoryId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.salesytd.visit(
       {  },
@@ -109,13 +109,13 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
   override def selectById(territoryid: SalesterritoryId)(using c: Connection): Option[SalesterritoryRow] = {
     sql"""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     from "sales"."salesterritory"
-    where "territoryid" = ${Fragment.encode(SalesterritoryId.dbType, territoryid)}""".query(SalesterritoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "territoryid" = ${Fragment.encode(SalesterritoryId.pgType, territoryid)}""".query(SalesterritoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(territoryids: Array[SalesterritoryId])(using c: Connection): List[SalesterritoryRow] = {
     sql"""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     from "sales"."salesterritory"
-    where "territoryid" = ANY(${Fragment.encode(SalesterritoryId.dbTypeArray, territoryids)})""".query(SalesterritoryRow.`_rowParser`.all()).runUnchecked(c)
+    where "territoryid" = ANY(${Fragment.encode(SalesterritoryId.pgTypeArray, territoryids)})""".query(SalesterritoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(territoryids: Array[SalesterritoryId])(using c: Connection): Map[SalesterritoryId, SalesterritoryRow] = {
@@ -129,8 +129,8 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
   override def update(row: SalesterritoryRow)(using c: Connection): Boolean = {
     val territoryid: SalesterritoryId = row.territoryid
     return sql"""update "sales"."salesterritory"
-    set "name" = ${Fragment.encode(Name.dbType, row.name)}::varchar,
-    "countryregioncode" = ${Fragment.encode(CountryregionId.dbType, row.countryregioncode)},
+    set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
+    "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, row.countryregioncode)},
     "group" = ${Fragment.encode(PgTypes.text, row.group)},
     "salesytd" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.salesytd)}::numeric,
     "saleslastyear" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.saleslastyear)}::numeric,
@@ -138,12 +138,12 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     "costlastyear" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.costlastyear)}::numeric,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "territoryid" = ${Fragment.encode(SalesterritoryId.dbType, territoryid)}""".update().runUnchecked(c) > 0
+    where "territoryid" = ${Fragment.encode(SalesterritoryId.pgType, territoryid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
   sql"""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
-    values (${Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}, ${Fragment.encode(PgTypes.text, unsaved.group)}, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costlastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(PgTypes.text, unsaved.group)}, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.costlastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("territoryid")
     do update set
       "name" = EXCLUDED."name",

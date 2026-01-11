@@ -16,6 +16,7 @@ import dev.typr.foundations.scala.UpdateBuilderMock
 import dev.typr.foundations.scala.UpdateParams
 import java.lang.RuntimeException
 import java.sql.Connection
+import testdb.userdefined.Email
 
 case class CustomersRepoMock(
   toRow: CustomersRowUnsaved => CustomersRow,
@@ -53,7 +54,7 @@ case class CustomersRepoMock(
 
   override def selectByIdsTracked(customerIds: Array[CustomersId])(using c: Connection): Map[CustomersId, CustomersRow] = selectByIds(customerIds)(using c).map(x => (((row: CustomersRow) => row.customerId).apply(x), x)).toMap
 
-  override def selectByUniqueEmail(email: String)(using c: Connection): Option[CustomersRow] = map.values.toList.find(v => (email == v.email))
+  override def selectByUniqueEmail(email: /* user-picked */ Email)(using c: Connection): Option[CustomersRow] = map.values.toList.find(v => (email == v.email))
 
   override def update: UpdateBuilder[CustomersFields, CustomersRow] = UpdateBuilderMock(CustomersFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

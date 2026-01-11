@@ -56,7 +56,7 @@ case class AddresstypeRow(
 }
 
 object AddresstypeRow {
-  val `_rowParser`: RowParser[AddresstypeRow] = RowParsers.of(AddresstypeId.dbType, Name.dbType, PgTypes.uuid, PgTypes.timestamp)(AddresstypeRow.apply)(row => Array[Any](row.addresstypeid, row.name, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[AddresstypeRow] = RowParsers.of(AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp)(AddresstypeRow.apply)(row => Array[Any](row.addresstypeid, row.name, row.rowguid, row.modifieddate))
 
   given pgText: PgText[AddresstypeRow] = PgText.from(`_rowParser`.underlying)
 }

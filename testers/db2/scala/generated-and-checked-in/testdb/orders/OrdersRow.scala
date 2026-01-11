@@ -60,5 +60,5 @@ case class OrdersRow(
 }
 
 object OrdersRow {
-  val `_rowParser`: RowParser[OrdersRow] = RowParsers.of(OrdersId.dbType, CustomersId.dbType, Db2Types.date, ScalaDbTypes.Db2Types.decimal.nullable, Db2Types.varchar.nullable)(OrdersRow.apply)(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
+  val `_rowParser`: RowParser[OrdersRow] = RowParsers.of(OrdersId.db2Type, CustomersId.db2Type, Db2Types.date, ScalaDbTypes.Db2Types.decimal.nullable, Db2Types.varchar.nullable)(OrdersRow.apply)(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
 }

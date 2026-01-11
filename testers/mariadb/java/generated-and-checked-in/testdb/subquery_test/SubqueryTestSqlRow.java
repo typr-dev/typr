@@ -13,20 +13,28 @@ import dev.typr.foundations.Tuple.Tuple6;
 import java.math.BigDecimal;
 import java.util.Optional;
 import testdb.customers.CustomersId;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
 
 /** SQL file: subquery_test.sql */
 public record SubqueryTestSqlRow(
     /** Points to {@link testdb.customers.CustomersRow#customerId()} */
     @JsonProperty("customer_id") CustomersId customerId,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    String email,
+    /* user-picked */ Email email,
     /** Points to {@link testdb.customers.CustomersRow#firstName()} */
-    @JsonProperty("first_name") String firstName,
+    @JsonProperty("first_name") /* user-picked */ FirstName firstName,
     @JsonProperty("order_count") Long orderCount,
     @JsonProperty("total_spent") BigDecimal totalSpent,
     /** Points to {@link testdb.brands.BrandsRow#name()} */
     @JsonProperty("favorite_brand") Optional<String> favoriteBrand)
-    implements Tuple6<CustomersId, String, String, Long, BigDecimal, Optional<String>> {
+    implements Tuple6<
+        CustomersId, /* user-picked */
+        Email, /* user-picked */
+        FirstName,
+        Long,
+        BigDecimal,
+        Optional<String>> {
   /** Points to {@link testdb.customers.CustomersRow#customerId()} */
   public SubqueryTestSqlRow withCustomerId(CustomersId customerId) {
     return new SubqueryTestSqlRow(
@@ -35,14 +43,14 @@ public record SubqueryTestSqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public SubqueryTestSqlRow withEmail(String email) {
+  public SubqueryTestSqlRow withEmail(/* user-picked */ Email email) {
     return new SubqueryTestSqlRow(
         customerId, email, firstName, orderCount, totalSpent, favoriteBrand);
   }
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#firstName()} */
-  public SubqueryTestSqlRow withFirstName(String firstName) {
+  public SubqueryTestSqlRow withFirstName(/* user-picked */ FirstName firstName) {
     return new SubqueryTestSqlRow(
         customerId, email, firstName, orderCount, totalSpent, favoriteBrand);
   }
@@ -69,9 +77,9 @@ public record SubqueryTestSqlRow(
 
   public static RowParser<SubqueryTestSqlRow> _rowParser =
       RowParsers.of(
-          CustomersId.dbType,
-          MariaTypes.varchar,
-          MariaTypes.varchar,
+          CustomersId.mariaType,
+          Email.mariaType,
+          FirstName.mariaType,
           MariaTypes.bigint,
           MariaTypes.numeric,
           MariaTypes.varchar.opt(),
@@ -94,13 +102,13 @@ public record SubqueryTestSqlRow(
   ;
 
   @Override
-  public String _2() {
+  public /* user-picked */ Email _2() {
     return email;
   }
   ;
 
   @Override
-  public String _3() {
+  public /* user-picked */ FirstName _3() {
     return firstName;
   }
   ;

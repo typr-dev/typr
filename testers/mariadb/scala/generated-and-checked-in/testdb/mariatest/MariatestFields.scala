@@ -74,7 +74,7 @@ class MariatestFields(val `_path`: java.util.List[Path]) extends TupleExpr41[Byt
       None,
       None,
       (row, value) => row.copy(intCol = value),
-      MariatestId.dbType
+      MariatestId.mariaType
     )
   }
 
@@ -482,7 +482,7 @@ class MariatestFields(val `_path`: java.util.List[Path]) extends TupleExpr41[Byt
       None,
       None,
       (row, value) => row.copy(setCol = value),
-      XYZSet.dbType
+      XYZSet.mariaType
     )
   }
 

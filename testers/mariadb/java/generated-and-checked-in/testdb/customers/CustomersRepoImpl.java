@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.Optional;
 import testdb.EmailMailPushSmsSet;
 import testdb.customer_status.CustomerStatusId;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 public class CustomersRepoImpl implements CustomersRepo {
   @Override
@@ -33,7 +36,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   public Boolean deleteById(CustomersId customerId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `customers` where `customer_id` = "),
-                Fragment.encode(CustomersId.dbType, customerId),
+                Fragment.encode(CustomersId.mariaType, customerId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -44,7 +47,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   public Integer deleteByIds(CustomersId[] customerIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : customerIds) {
-      fragments.add(Fragment.encode(CustomersId.dbType, id));
+      fragments.add(Fragment.encode(CustomersId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -63,23 +66,23 @@ public class CustomersRepoImpl implements CustomersRepo {
                     + " `phone`, `status`, `tier`, `preferences`, `marketing_flags`, `notes`,"
                     + " `created_at`, `updated_at`, `last_login_at`)\n"
                     + "values ("),
-            Fragment.encode(MariaTypes.varchar, unsaved.email()),
+            Fragment.encode(Email.mariaType, unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.binary, unsaved.passwordHash()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.varchar, unsaved.firstName()),
+            Fragment.encode(FirstName.mariaType, unsaved.firstName()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.varchar, unsaved.lastName()),
+            Fragment.encode(LastName.mariaType, unsaved.lastName()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar.opt(), unsaved.phone()),
             Fragment.lit(", "),
-            Fragment.encode(CustomerStatusId.dbType, unsaved.status()),
+            Fragment.encode(CustomerStatusId.mariaType, unsaved.status()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.tier()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.preferences()),
             Fragment.lit(", "),
-            Fragment.encode(EmailMailPushSmsSet.dbType.opt(), unsaved.marketingFlags()),
+            Fragment.encode(EmailMailPushSmsSet.mariaType.opt(), unsaved.marketingFlags()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text.opt(), unsaved.notes()),
             Fragment.lit(", "),
@@ -104,16 +107,16 @@ public class CustomersRepoImpl implements CustomersRepo {
     ArrayList<Fragment> values = new ArrayList<>();
     ;
     columns.add(Fragment.lit("`email`"));
-    values.add(interpolate(Fragment.encode(MariaTypes.varchar, unsaved.email()), Fragment.lit("")));
+    values.add(interpolate(Fragment.encode(Email.mariaType, unsaved.email()), Fragment.lit("")));
     columns.add(Fragment.lit("`password_hash`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.binary, unsaved.passwordHash()), Fragment.lit("")));
     columns.add(Fragment.lit("`first_name`"));
     values.add(
-        interpolate(Fragment.encode(MariaTypes.varchar, unsaved.firstName()), Fragment.lit("")));
+        interpolate(Fragment.encode(FirstName.mariaType, unsaved.firstName()), Fragment.lit("")));
     columns.add(Fragment.lit("`last_name`"));
     values.add(
-        interpolate(Fragment.encode(MariaTypes.varchar, unsaved.lastName()), Fragment.lit("")));
+        interpolate(Fragment.encode(LastName.mariaType, unsaved.lastName()), Fragment.lit("")));
     unsaved
         .phone()
         .visit(
@@ -131,7 +134,8 @@ public class CustomersRepoImpl implements CustomersRepo {
             value -> {
               columns.add(Fragment.lit("`status`"));
               values.add(
-                  interpolate(Fragment.encode(CustomerStatusId.dbType, value), Fragment.lit("")));
+                  interpolate(
+                      Fragment.encode(CustomerStatusId.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -161,7 +165,8 @@ public class CustomersRepoImpl implements CustomersRepo {
               columns.add(Fragment.lit("`marketing_flags`"));
               values.add(
                   interpolate(
-                      Fragment.encode(EmailMailPushSmsSet.dbType.opt(), value), Fragment.lit("")));
+                      Fragment.encode(EmailMailPushSmsSet.mariaType.opt(), value),
+                      Fragment.lit("")));
             });
     ;
     unsaved
@@ -246,7 +251,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                     + " `created_at`, `updated_at`, `last_login_at`\n"
                     + "from `customers`\n"
                     + "where `customer_id` = "),
-            Fragment.encode(CustomersId.dbType, customerId),
+            Fragment.encode(CustomersId.mariaType, customerId),
             Fragment.lit(""))
         .query(CustomersRow._rowParser.first())
         .runUnchecked(c);
@@ -256,7 +261,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   public List<CustomersRow> selectByIds(CustomersId[] customerIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : customerIds) {
-      fragments.add(Fragment.encode(CustomersId.dbType, id));
+      fragments.add(Fragment.encode(CustomersId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -280,7 +285,7 @@ public class CustomersRepoImpl implements CustomersRepo {
   }
 
   @Override
-  public Optional<CustomersRow> selectByUniqueEmail(String email, Connection c) {
+  public Optional<CustomersRow> selectByUniqueEmail(/* user-picked */ Email email, Connection c) {
     return interpolate(
             Fragment.lit(
                 "select `customer_id`, `email`, `password_hash`, `first_name`, `last_name`,"
@@ -288,7 +293,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                     + " `created_at`, `updated_at`, `last_login_at`\n"
                     + "from `customers`\n"
                     + "where `email` = "),
-            Fragment.encode(MariaTypes.varchar, email),
+            Fragment.encode(Email.mariaType, email),
             Fragment.lit("\n"))
         .query(CustomersRow._rowParser.first())
         .runUnchecked(c);
@@ -306,23 +311,23 @@ public class CustomersRepoImpl implements CustomersRepo {
     ;
     return interpolate(
                 Fragment.lit("update `customers`\nset `email` = "),
-                Fragment.encode(MariaTypes.varchar, row.email()),
+                Fragment.encode(Email.mariaType, row.email()),
                 Fragment.lit(",\n`password_hash` = "),
                 Fragment.encode(MariaTypes.binary, row.passwordHash()),
                 Fragment.lit(",\n`first_name` = "),
-                Fragment.encode(MariaTypes.varchar, row.firstName()),
+                Fragment.encode(FirstName.mariaType, row.firstName()),
                 Fragment.lit(",\n`last_name` = "),
-                Fragment.encode(MariaTypes.varchar, row.lastName()),
+                Fragment.encode(LastName.mariaType, row.lastName()),
                 Fragment.lit(",\n`phone` = "),
                 Fragment.encode(MariaTypes.varchar.opt(), row.phone()),
                 Fragment.lit(",\n`status` = "),
-                Fragment.encode(CustomerStatusId.dbType, row.status()),
+                Fragment.encode(CustomerStatusId.mariaType, row.status()),
                 Fragment.lit(",\n`tier` = "),
                 Fragment.encode(MariaTypes.text, row.tier()),
                 Fragment.lit(",\n`preferences` = "),
                 Fragment.encode(MariaTypes.json.opt(), row.preferences()),
                 Fragment.lit(",\n`marketing_flags` = "),
-                Fragment.encode(EmailMailPushSmsSet.dbType.opt(), row.marketingFlags()),
+                Fragment.encode(EmailMailPushSmsSet.mariaType.opt(), row.marketingFlags()),
                 Fragment.lit(",\n`notes` = "),
                 Fragment.encode(MariaTypes.text.opt(), row.notes()),
                 Fragment.lit(",\n`created_at` = "),
@@ -332,7 +337,7 @@ public class CustomersRepoImpl implements CustomersRepo {
                 Fragment.lit(",\n`last_login_at` = "),
                 Fragment.encode(MariaTypes.datetime.opt(), row.lastLoginAt()),
                 Fragment.lit("\nwhere `customer_id` = "),
-                Fragment.encode(CustomersId.dbType, customerId),
+                Fragment.encode(CustomersId.mariaType, customerId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -347,25 +352,25 @@ public class CustomersRepoImpl implements CustomersRepo {
                     + " `last_name`, `phone`, `status`, `tier`, `preferences`, `marketing_flags`,"
                     + " `notes`, `created_at`, `updated_at`, `last_login_at`)\n"
                     + "VALUES ("),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.varchar, unsaved.email()),
+            Fragment.encode(Email.mariaType, unsaved.email()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.binary, unsaved.passwordHash()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.varchar, unsaved.firstName()),
+            Fragment.encode(FirstName.mariaType, unsaved.firstName()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.varchar, unsaved.lastName()),
+            Fragment.encode(LastName.mariaType, unsaved.lastName()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar.opt(), unsaved.phone()),
             Fragment.lit(", "),
-            Fragment.encode(CustomerStatusId.dbType, unsaved.status()),
+            Fragment.encode(CustomerStatusId.mariaType, unsaved.status()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.tier()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.preferences()),
             Fragment.lit(", "),
-            Fragment.encode(EmailMailPushSmsSet.dbType.opt(), unsaved.marketingFlags()),
+            Fragment.encode(EmailMailPushSmsSet.mariaType.opt(), unsaved.marketingFlags()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text.opt(), unsaved.notes()),
             Fragment.lit(", "),

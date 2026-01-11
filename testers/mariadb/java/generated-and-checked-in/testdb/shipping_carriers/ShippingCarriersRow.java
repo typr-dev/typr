@@ -13,6 +13,7 @@ import dev.typr.foundations.Tuple.Tuple6;
 import dev.typr.foundations.data.Json;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.IsActive;
 
 /** Table: shipping_carriers Primary key: carrier_id */
 public record ShippingCarriersRow(
@@ -27,9 +28,14 @@ public record ShippingCarriersRow(
     /** Default: NULL */
     @JsonProperty("api_config") Optional<Json> apiConfig,
     /** Default: 1 */
-    @JsonProperty("is_active") Boolean isActive)
+    @JsonProperty("is_active") /* user-picked */ IsActive isActive)
     implements Tuple6<
-        ShippingCarriersId, String, String, Optional<String>, Optional<Json>, Boolean> {
+        ShippingCarriersId,
+        String,
+        String,
+        Optional<String>,
+        Optional<Json>, /* user-picked */
+        IsActive> {
   /** AUTO_INCREMENT */
   public ShippingCarriersRow withCarrierId(ShippingCarriersId carrierId) {
     return new ShippingCarriersRow(carrierId, code, name, trackingUrlTemplate, apiConfig, isActive);
@@ -61,19 +67,19 @@ public record ShippingCarriersRow(
   ;
 
   /** Default: 1 */
-  public ShippingCarriersRow withIsActive(Boolean isActive) {
+  public ShippingCarriersRow withIsActive(/* user-picked */ IsActive isActive) {
     return new ShippingCarriersRow(carrierId, code, name, trackingUrlTemplate, apiConfig, isActive);
   }
   ;
 
   public static RowParser<ShippingCarriersRow> _rowParser =
       RowParsers.of(
-          ShippingCarriersId.dbType,
+          ShippingCarriersId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.varchar.opt(),
           MariaTypes.json.opt(),
-          MariaTypes.bool,
+          IsActive.mariaType,
           ShippingCarriersRow::new,
           row ->
               new Object[] {
@@ -117,7 +123,7 @@ public record ShippingCarriersRow(
   ;
 
   @Override
-  public Boolean _6() {
+  public /* user-picked */ IsActive _6() {
     return isActive;
   }
   ;
@@ -130,7 +136,7 @@ public record ShippingCarriersRow(
   public ShippingCarriersRowUnsaved toUnsavedRow(
       Defaulted<Optional<String>> trackingUrlTemplate,
       Defaulted<Optional<Json>> apiConfig,
-      Defaulted<Boolean> isActive) {
+      Defaulted</* user-picked */ IsActive> isActive) {
     return new ShippingCarriersRowUnsaved(code, name, trackingUrlTemplate, apiConfig, isActive);
   }
   ;

@@ -40,7 +40,7 @@ public class BusinessentityFields extends TupleExpr3<BusinessentityId, UUID, Loc
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public Field<UUID, BusinessentityRow> rowguid() {

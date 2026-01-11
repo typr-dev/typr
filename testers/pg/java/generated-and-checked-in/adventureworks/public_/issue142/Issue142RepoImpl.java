@@ -31,7 +31,7 @@ public class Issue142RepoImpl implements Issue142Repo {
   public Boolean deleteById(Issue142Id tabellkode, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"public\".\"issue142\" where \"tabellkode\" = "),
-                Fragment.encode(Issue142Id.dbType, tabellkode),
+                Fragment.encode(Issue142Id.pgType, tabellkode),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +42,7 @@ public class Issue142RepoImpl implements Issue142Repo {
   public Integer deleteByIds(Issue142Id[] tabellkodes, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = ANY("),
-            Fragment.encode(Issue142Id.dbTypeArray, tabellkodes),
+            Fragment.encode(Issue142Id.pgTypeArray, tabellkodes),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -52,7 +52,7 @@ public class Issue142RepoImpl implements Issue142Repo {
   public Issue142Row insert(Issue142Row unsaved, Connection c) {
     return interpolate(
             Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("),
-            Fragment.encode(Issue142Id.dbType, unsaved.tabellkode()),
+            Fragment.encode(Issue142Id.pgType, unsaved.tabellkode()),
             Fragment.lit(")\nRETURNING \"tabellkode\"\n"))
         .updateReturning(Issue142Row._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -89,7 +89,7 @@ public class Issue142RepoImpl implements Issue142Repo {
     return interpolate(
             Fragment.lit(
                 "select \"tabellkode\"\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = "),
-            Fragment.encode(Issue142Id.dbType, tabellkode),
+            Fragment.encode(Issue142Id.pgType, tabellkode),
             Fragment.lit(""))
         .query(Issue142Row._rowParser.first())
         .runUnchecked(c);
@@ -100,7 +100,7 @@ public class Issue142RepoImpl implements Issue142Repo {
     return interpolate(
             Fragment.lit(
                 "select \"tabellkode\"\nfrom \"public\".\"issue142\"\nwhere \"tabellkode\" = ANY("),
-            Fragment.encode(Issue142Id.dbTypeArray, tabellkodes),
+            Fragment.encode(Issue142Id.pgTypeArray, tabellkodes),
             Fragment.lit(")"))
         .query(Issue142Row._rowParser.all())
         .runUnchecked(c);
@@ -126,7 +126,7 @@ public class Issue142RepoImpl implements Issue142Repo {
   public Issue142Row upsert(Issue142Row unsaved, Connection c) {
     return interpolate(
             Fragment.lit("insert into \"public\".\"issue142\"(\"tabellkode\")\nvalues ("),
-            Fragment.encode(Issue142Id.dbType, unsaved.tabellkode()),
+            Fragment.encode(Issue142Id.pgType, unsaved.tabellkode()),
             Fragment.lit(
                 ")\n"
                     + "on conflict (\"tabellkode\")\n"

@@ -15,17 +15,20 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customers.CustomersId;
 import testdb.orders.OrdersId;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 /** SQL file: customer_orders.sql */
 public record CustomerOrdersSqlRow(
     /** Points to {@link testdb.customers.CustomersRow#customerId()} */
     @JsonProperty("customer_id") CustomersId customerId,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    String email,
+    /* user-picked */ Email email,
     /** Points to {@link testdb.customers.CustomersRow#firstName()} */
-    @JsonProperty("first_name") String firstName,
+    @JsonProperty("first_name") /* user-picked */ FirstName firstName,
     /** Points to {@link testdb.customers.CustomersRow#lastName()} */
-    @JsonProperty("last_name") String lastName,
+    @JsonProperty("last_name") /* user-picked */ LastName lastName,
     /** Points to {@link testdb.customers.CustomersRow#tier()} */
     String tier,
     /** Points to {@link testdb.orders.OrdersRow#orderId()} */
@@ -39,10 +42,10 @@ public record CustomerOrdersSqlRow(
     /** Points to {@link testdb.orders.OrdersRow#orderedAt()} */
     @JsonProperty("ordered_at") Optional<LocalDateTime> orderedAt)
     implements Tuple10<
-        CustomersId,
-        String,
-        String,
-        String,
+        CustomersId, /* user-picked */
+        Email, /* user-picked */
+        FirstName, /* user-picked */
+        LastName,
         String,
         Optional<OrdersId>,
         Optional<String>,
@@ -66,7 +69,7 @@ public record CustomerOrdersSqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public CustomerOrdersSqlRow withEmail(String email) {
+  public CustomerOrdersSqlRow withEmail(/* user-picked */ Email email) {
     return new CustomerOrdersSqlRow(
         customerId,
         email,
@@ -82,7 +85,7 @@ public record CustomerOrdersSqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#firstName()} */
-  public CustomerOrdersSqlRow withFirstName(String firstName) {
+  public CustomerOrdersSqlRow withFirstName(/* user-picked */ FirstName firstName) {
     return new CustomerOrdersSqlRow(
         customerId,
         email,
@@ -98,7 +101,7 @@ public record CustomerOrdersSqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#lastName()} */
-  public CustomerOrdersSqlRow withLastName(String lastName) {
+  public CustomerOrdersSqlRow withLastName(/* user-picked */ LastName lastName) {
     return new CustomerOrdersSqlRow(
         customerId,
         email,
@@ -211,12 +214,12 @@ public record CustomerOrdersSqlRow(
 
   public static RowParser<CustomerOrdersSqlRow> _rowParser =
       RowParsers.of(
-          CustomersId.dbType,
-          MariaTypes.varchar,
-          MariaTypes.varchar,
-          MariaTypes.varchar,
+          CustomersId.mariaType,
+          Email.mariaType,
+          FirstName.mariaType,
+          LastName.mariaType,
           MariaTypes.text,
-          OrdersId.dbType.opt(),
+          OrdersId.mariaType.opt(),
           MariaTypes.varchar.opt(),
           MariaTypes.text.opt(),
           MariaTypes.numeric.opt(),
@@ -250,19 +253,19 @@ public record CustomerOrdersSqlRow(
   ;
 
   @Override
-  public String _2() {
+  public /* user-picked */ Email _2() {
     return email;
   }
   ;
 
   @Override
-  public String _3() {
+  public /* user-picked */ FirstName _3() {
     return firstName;
   }
   ;
 
   @Override
-  public String _4() {
+  public /* user-picked */ LastName _4() {
     return lastName;
   }
   ;

@@ -18,19 +18,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class TitleDomainRepoImpl extends TitleDomainRepo {
   override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(code: TitleDomainId)(using c: Connection): Boolean = sql"""delete from "public"."title_domain" where "code" = ${Fragment.encode(TitleDomainId.dbType, code)}""".update().runUnchecked(c) > 0
+  override def deleteById(code: TitleDomainId)(using c: Connection): Boolean = sql"""delete from "public"."title_domain" where "code" = ${Fragment.encode(TitleDomainId.pgType, code)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Int = {
     sql"""delete
     from "public"."title_domain"
-    where "code" = ANY(${Fragment.encode(TitleDomainId.dbTypeArray, codes)})"""
+    where "code" = ANY(${Fragment.encode(TitleDomainId.pgTypeArray, codes)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
   sql"""insert into "public"."title_domain"("code")
-    values (${Fragment.encode(TitleDomainId.dbType, unsaved.code)}::text)
+    values (${Fragment.encode(TitleDomainId.pgType, unsaved.code)}::text)
     RETURNING "code"
     """
     .updateReturning(TitleDomainRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -52,13 +52,13 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
   override def selectById(code: TitleDomainId)(using c: Connection): Option[TitleDomainRow] = {
     sql"""select "code"
     from "public"."title_domain"
-    where "code" = ${Fragment.encode(TitleDomainId.dbType, code)}""".query(TitleDomainRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = ${Fragment.encode(TitleDomainId.pgType, code)}""".query(TitleDomainRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(codes: Array[TitleDomainId])(using c: Connection): List[TitleDomainRow] = {
     sql"""select "code"
     from "public"."title_domain"
-    where "code" = ANY(${Fragment.encode(TitleDomainId.dbTypeArray, codes)})""".query(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
+    where "code" = ANY(${Fragment.encode(TitleDomainId.pgTypeArray, codes)})""".query(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): Map[TitleDomainId, TitleDomainRow] = {
@@ -71,7 +71,7 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
 
   override def upsert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
   sql"""insert into "public"."title_domain"("code")
-    values (${Fragment.encode(TitleDomainId.dbType, unsaved.code)}::text)
+    values (${Fragment.encode(TitleDomainId.pgType, unsaved.code)}::text)
     on conflict ("code")
     do update set "code" = EXCLUDED."code"
     returning "code""""

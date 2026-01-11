@@ -16,11 +16,12 @@ import dev.typr.foundations.kotlin.SqlExpr.Field
 import dev.typr.foundations.kotlin.SqlExpr.IdField
 import dev.typr.foundations.kotlin.TupleExpr4
 import kotlin.collections.List
+import testdb.userdefined.Email
 
-data class MariatestUniqueFields(val _path: List<Path>) : TupleExpr4<MariatestUniqueId, String, String, String>, RelationStructure<MariatestUniqueFields, MariatestUniqueRow>, FieldsBase<MariatestUniqueRow> {
+data class MariatestUniqueFields(val _path: List<Path>) : TupleExpr4<MariatestUniqueId, /* user-picked */ Email, String, String>, RelationStructure<MariatestUniqueFields, MariatestUniqueRow>, FieldsBase<MariatestUniqueRow> {
   override fun _1(): SqlExpr<MariatestUniqueId> = id()
 
-  override fun _2(): SqlExpr<String> = email()
+  override fun _2(): SqlExpr</* user-picked */ Email> = email()
 
   override fun _3(): SqlExpr<String> = code()
 
@@ -34,9 +35,9 @@ data class MariatestUniqueFields(val _path: List<Path>) : TupleExpr4<MariatestUn
 
   override fun columns(): List<FieldLike<*, MariatestUniqueRow>> = listOf(this.id().underlying, this.email().underlying, this.code().underlying, this.category().underlying)
 
-  fun email(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "email", MariatestUniqueRow::email, null, null, { row, value -> row.copy(email = value) }, MariaTypes.varchar)
+  fun email(): Field</* user-picked */ Email, MariatestUniqueRow> = Field</* user-picked */ Email, MariatestUniqueRow>(_path, "email", MariatestUniqueRow::email, null, null, { row, value -> row.copy(email = value) }, Email.mariaType)
 
-  fun id(): IdField<MariatestUniqueId, MariatestUniqueRow> = IdField<MariatestUniqueId, MariatestUniqueRow>(_path, "id", MariatestUniqueRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestUniqueId.dbType)
+  fun id(): IdField<MariatestUniqueId, MariatestUniqueRow> = IdField<MariatestUniqueId, MariatestUniqueRow>(_path, "id", MariatestUniqueRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestUniqueId.mariaType)
 
   override fun rowParser(): RowParser<MariatestUniqueRow> = MariatestUniqueRow._rowParser.underlying
 

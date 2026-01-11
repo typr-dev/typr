@@ -45,9 +45,9 @@ data class ProductmodelFields(val _path: List<Path>) : TupleExpr6<ProductmodelId
 
   fun modifieddate(): Field<LocalDateTime, ProductmodelRow> = Field<LocalDateTime, ProductmodelRow>(_path, "modifieddate", ProductmodelRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, ProductmodelRow> = Field<Name, ProductmodelRow>(_path, "name", ProductmodelRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, ProductmodelRow> = Field<Name, ProductmodelRow>(_path, "name", ProductmodelRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
-  fun productmodelid(): IdField<ProductmodelId, ProductmodelRow> = IdField<ProductmodelId, ProductmodelRow>(_path, "productmodelid", ProductmodelRow::productmodelid, null, "int4", { row, value -> row.copy(productmodelid = value) }, ProductmodelId.dbType)
+  fun productmodelid(): IdField<ProductmodelId, ProductmodelRow> = IdField<ProductmodelId, ProductmodelRow>(_path, "productmodelid", ProductmodelRow::productmodelid, null, "int4", { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
 
   override fun rowParser(): RowParser<ProductmodelRow> = ProductmodelRow._rowParser.underlying
 

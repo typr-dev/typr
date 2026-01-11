@@ -37,7 +37,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("int4"),
       (row, value) => row.copy(id = value),
-      PrecisionTypesNullId.dbType
+      PrecisionTypesNullId.pgType
     )
   }
 
@@ -49,7 +49,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string10 = value),
-      String10.dbType
+      String10.pgType
     )
   }
 
@@ -61,7 +61,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string20 = value),
-      String20.dbType
+      String20.pgType
     )
   }
 
@@ -73,7 +73,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string50 = value),
-      String50.dbType
+      String50.pgType
     )
   }
 
@@ -85,7 +85,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string100 = value),
-      String100.dbType
+      String100.pgType
     )
   }
 
@@ -97,7 +97,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string255 = value),
-      String255.dbType
+      String255.pgType
     )
   }
 
@@ -109,7 +109,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("bpchar"),
       (row, value) => row.copy(bpchar3 = value),
-      PaddedString3.dbType
+      PaddedString3.pgType
     )
   }
 
@@ -121,7 +121,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("bpchar"),
       (row, value) => row.copy(bpchar10 = value),
-      PaddedString10.dbType
+      PaddedString10.pgType
     )
   }
 

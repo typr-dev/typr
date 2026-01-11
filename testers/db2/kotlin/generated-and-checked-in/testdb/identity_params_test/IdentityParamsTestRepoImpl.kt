@@ -24,14 +24,14 @@ class IdentityParamsTestRepoImpl() : IdentityParamsTestRepo {
   override fun deleteById(
     id: IdentityParamsTestId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"IDENTITY_PARAMS_TEST\" where \"ID\" = "), Fragment.encode(IdentityParamsTestId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"IDENTITY_PARAMS_TEST\" where \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     ids: Array<IdentityParamsTestId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in ids) { fragments.add(Fragment.encode(IdentityParamsTestId.dbType, id)) }
+    for (id in ids) { fragments.add(Fragment.encode(IdentityParamsTestId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("delete from \"IDENTITY_PARAMS_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -60,14 +60,14 @@ class IdentityParamsTestRepoImpl() : IdentityParamsTestRepo {
   override fun selectById(
     id: IdentityParamsTestId,
     c: Connection
-  ): IdentityParamsTestRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\"\nfrom \"IDENTITY_PARAMS_TEST\"\nwhere \"ID\" = "), Fragment.encode(IdentityParamsTestId.dbType, id), Fragment.lit("")).query(IdentityParamsTestRow._rowParser.first()).runUnchecked(c)
+  ): IdentityParamsTestRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\"\nfrom \"IDENTITY_PARAMS_TEST\"\nwhere \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.lit("")).query(IdentityParamsTestRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     ids: Array<IdentityParamsTestId>,
     c: Connection
   ): List<IdentityParamsTestRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in ids) { fragments.add(Fragment.encode(IdentityParamsTestId.dbType, id)) }
+    for (id in ids) { fragments.add(Fragment.encode(IdentityParamsTestId.db2Type, id)) }
     return Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\" from \"IDENTITY_PARAMS_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(IdentityParamsTestRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -87,14 +87,14 @@ class IdentityParamsTestRepoImpl() : IdentityParamsTestRepo {
     c: Connection
   ): Boolean {
     val id: IdentityParamsTestId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"IDENTITY_PARAMS_TEST\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(IdentityParamsTestId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"IDENTITY_PARAMS_TEST\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: IdentityParamsTestRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"IDENTITY_PARAMS_TEST\" AS t\nUSING (VALUES ("), Fragment.encode(IdentityParamsTestId.dbType, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("), Fragment.encode(IdentityParamsTestId.dbType, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")"))
+    Fragment.interpolate(Fragment.lit("MERGE INTO \"IDENTITY_PARAMS_TEST\" AS t\nUSING (VALUES ("), Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("), Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }

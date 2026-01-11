@@ -18,7 +18,7 @@ case class YesOrNo(@JsonValue value: String)
 object YesOrNo {
   given bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)
 
-  given dbType: PgType[YesOrNo] = PgTypes.text.bimap(YesOrNo.apply, _.value).renamed(""""information_schema"."yes_or_no"""")
+  given pgType: PgType[YesOrNo] = PgTypes.text.bimap(YesOrNo.apply, _.value).renamed(""""information_schema"."yes_or_no"""")
 
-  given dbTypeArray: PgType[Array[YesOrNo]] = PgTypes.textArray.bimap(xs => xs.map(YesOrNo.apply), xs => xs.map(_.value)).renamed(""""information_schema"."yes_or_no"[]""")
+  given pgTypeArray: PgType[Array[YesOrNo]] = PgTypes.textArray.bimap(xs => xs.map(YesOrNo.apply), xs => xs.map(_.value)).renamed(""""information_schema"."yes_or_no"[]""")
 }

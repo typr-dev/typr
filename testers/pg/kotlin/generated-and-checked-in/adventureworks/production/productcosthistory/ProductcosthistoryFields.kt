@@ -50,7 +50,7 @@ data class ProductcosthistoryFields(val _path: List<Path>) : TupleExpr5<ProductI
 
   fun modifieddate(): Field<LocalDateTime, ProductcosthistoryRow> = Field<LocalDateTime, ProductcosthistoryRow>(_path, "modifieddate", ProductcosthistoryRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun productid(): IdField<ProductId, ProductcosthistoryRow> = IdField<ProductId, ProductcosthistoryRow>(_path, "productid", ProductcosthistoryRow::productid, null, "int4", { row, value -> row.copy(productid = value) }, ProductId.dbType)
+  fun productid(): IdField<ProductId, ProductcosthistoryRow> = IdField<ProductId, ProductcosthistoryRow>(_path, "productid", ProductcosthistoryRow::productid, null, "int4", { row, value -> row.copy(productid = value) }, ProductId.pgType)
 
   override fun rowParser(): RowParser<ProductcosthistoryRow> = ProductcosthistoryRow._rowParser.underlying
 

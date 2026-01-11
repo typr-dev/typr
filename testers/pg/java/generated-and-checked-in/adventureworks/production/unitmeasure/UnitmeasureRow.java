@@ -43,8 +43,8 @@ public record UnitmeasureRow(
 
   public static RowParser<UnitmeasureRow> _rowParser =
       RowParsers.of(
-          UnitmeasureId.dbType,
-          Name.dbType,
+          UnitmeasureId.pgType,
+          Name.pgType,
           PgTypes.timestamp,
           UnitmeasureRow::new,
           row -> new Object[] {row.unitmeasurecode(), row.name(), row.modifieddate()});

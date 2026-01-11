@@ -116,7 +116,7 @@ class SqlScriptTest extends AnyFunSuite {
       val customer = testInsert.Customers(passwordHash = Array[Byte](1, 2, 3))
 
       // Look up by email
-      val results = simpleCustomerLookupRepo.apply(customer.email)
+      val results = simpleCustomerLookupRepo.apply(customer.email.value)
 
       val _ = assert(results != null)
       val _ = assert(results.size == 1)

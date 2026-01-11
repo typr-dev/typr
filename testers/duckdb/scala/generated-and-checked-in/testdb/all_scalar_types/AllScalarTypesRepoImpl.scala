@@ -25,7 +25,7 @@ class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
   override def deleteByIds(ids: Array[AllScalarTypesId])(using c: Connection): Int = {
     sql"""delete
     from "all_scalar_types"
-    where "id" = ANY(${Fragment.encode(AllScalarTypesId.dbTypeArray, ids)})"""
+    where "id" = ANY(${Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids)})"""
       .update()
       .runUnchecked(c)
   }
@@ -55,7 +55,7 @@ class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
   override def selectByIds(ids: Array[AllScalarTypesId])(using c: Connection): List[AllScalarTypesRow] = {
     sql"""select "id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null"
     from "all_scalar_types"
-    where "id" = ANY(${Fragment.encode(AllScalarTypesId.dbTypeArray, ids)})""".query(AllScalarTypesRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids)})""".query(AllScalarTypesRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(ids: Array[AllScalarTypesId])(using c: Connection): Map[AllScalarTypesId, AllScalarTypesRow] = {

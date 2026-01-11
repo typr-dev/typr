@@ -26,6 +26,6 @@ public record CheckConstraintTestId(@JsonValue Integer value) {
   public static Bijection<CheckConstraintTestId, Integer> bijection =
       Bijection.of(CheckConstraintTestId::value, CheckConstraintTestId::new);
 
-  public static Db2Type<CheckConstraintTestId> dbType =
+  public static Db2Type<CheckConstraintTestId> db2Type =
       Db2Types.integer.bimap(CheckConstraintTestId::new, CheckConstraintTestId::value);
 }

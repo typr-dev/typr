@@ -6,7 +6,8 @@
 package adventureworks.humanresources.employee
 
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.DeleteBuilder
@@ -24,19 +25,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class EmployeeRepoImpl extends EmployeeRepo {
   override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "humanresources"."employee" where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "humanresources"."employee" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
     sql"""delete
     from "humanresources"."employee"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})"""
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
   sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.nationalidnumber)}, ${Fragment.encode(PgTypes.text, unsaved.loginid)}, ${Fragment.encode(PgTypes.text, unsaved.jobtitle)}, ${Fragment.encode(PgTypes.date, unsaved.birthdate)}::date, ${Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus)}::bpchar, ${Fragment.encode(PgTypes.bpchar, unsaved.gender)}::bpchar, ${Fragment.encode(PgTypes.date, unsaved.hiredate)}::date, ${Fragment.encode(Flag.dbType, unsaved.salariedflag)}::bool, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.vacationhours)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.sickleavehours)}::int2, ${Fragment.encode(Flag.dbType, unsaved.currentflag)}::bool, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp, ${Fragment.encode(PgTypes.text.nullable, unsaved.organizationnode)})
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.nationalidnumber)}, ${Fragment.encode(PgTypes.text, unsaved.loginid)}, ${Fragment.encode(PgTypes.text, unsaved.jobtitle)}, ${Fragment.encode(PgTypes.date, unsaved.birthdate)}::date, ${Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus)}::bpchar, ${Fragment.encode(PgTypes.bpchar, unsaved.gender)}::bpchar, ${Fragment.encode(PgTypes.date, unsaved.hiredate)}::date, ${Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag)}::bool, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.vacationhours)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.sickleavehours)}::int2, ${Fragment.encode(CurrentFlag.pgType, unsaved.currentflag)}::bool, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp, ${Fragment.encode(PgTypes.text.nullable, unsaved.organizationnode)})
     RETURNING "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     """
     .updateReturning(EmployeeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -46,7 +47,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""nationalidnumber"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.nationalidnumber)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""loginid"""")): @scala.annotation.nowarn
@@ -63,7 +64,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     values.addOne(sql"${Fragment.encode(PgTypes.date, unsaved.hiredate)}::date"): @scala.annotation.nowarn
     unsaved.salariedflag.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""salariedflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Flag.dbType, value)}::bool"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""salariedflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SalariedFlag.pgType, value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.vacationhours.visit(
       {  },
@@ -75,7 +76,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
     );
     unsaved.currentflag.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""currentflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Flag.dbType, value)}::bool"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""currentflag"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CurrentFlag.pgType, value)}::bool"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -120,13 +121,13 @@ class EmployeeRepoImpl extends EmployeeRepo {
   override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[EmployeeRow] = {
     sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     from "humanresources"."employee"
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".query(EmployeeRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".query(EmployeeRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[EmployeeRow] = {
     sql"""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     from "humanresources"."employee"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})""".query(EmployeeRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})""".query(EmployeeRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, EmployeeRow] = {
@@ -147,19 +148,19 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "maritalstatus" = ${Fragment.encode(PgTypes.bpchar, row.maritalstatus)}::bpchar,
     "gender" = ${Fragment.encode(PgTypes.bpchar, row.gender)}::bpchar,
     "hiredate" = ${Fragment.encode(PgTypes.date, row.hiredate)}::date,
-    "salariedflag" = ${Fragment.encode(Flag.dbType, row.salariedflag)}::bool,
+    "salariedflag" = ${Fragment.encode(SalariedFlag.pgType, row.salariedflag)}::bool,
     "vacationhours" = ${Fragment.encode(ScalaDbTypes.PgTypes.int2, row.vacationhours)}::int2,
     "sickleavehours" = ${Fragment.encode(ScalaDbTypes.PgTypes.int2, row.sickleavehours)}::int2,
-    "currentflag" = ${Fragment.encode(Flag.dbType, row.currentflag)}::bool,
+    "currentflag" = ${Fragment.encode(CurrentFlag.pgType, row.currentflag)}::bool,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp,
     "organizationnode" = ${Fragment.encode(PgTypes.text.nullable, row.organizationnode)}
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
   sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.nationalidnumber)}, ${Fragment.encode(PgTypes.text, unsaved.loginid)}, ${Fragment.encode(PgTypes.text, unsaved.jobtitle)}, ${Fragment.encode(PgTypes.date, unsaved.birthdate)}::date, ${Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus)}::bpchar, ${Fragment.encode(PgTypes.bpchar, unsaved.gender)}::bpchar, ${Fragment.encode(PgTypes.date, unsaved.hiredate)}::date, ${Fragment.encode(Flag.dbType, unsaved.salariedflag)}::bool, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.vacationhours)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.sickleavehours)}::int2, ${Fragment.encode(Flag.dbType, unsaved.currentflag)}::bool, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp, ${Fragment.encode(PgTypes.text.nullable, unsaved.organizationnode)})
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.nationalidnumber)}, ${Fragment.encode(PgTypes.text, unsaved.loginid)}, ${Fragment.encode(PgTypes.text, unsaved.jobtitle)}, ${Fragment.encode(PgTypes.date, unsaved.birthdate)}::date, ${Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus)}::bpchar, ${Fragment.encode(PgTypes.bpchar, unsaved.gender)}::bpchar, ${Fragment.encode(PgTypes.date, unsaved.hiredate)}::date, ${Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag)}::bool, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.vacationhours)}::int2, ${Fragment.encode(ScalaDbTypes.PgTypes.int2, unsaved.sickleavehours)}::int2, ${Fragment.encode(CurrentFlag.pgType, unsaved.currentflag)}::bool, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp, ${Fragment.encode(PgTypes.text.nullable, unsaved.organizationnode)})
     on conflict ("businessentityid")
     do update set
       "nationalidnumber" = EXCLUDED."nationalidnumber",

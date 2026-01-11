@@ -53,7 +53,7 @@ public class EmployeedepartmenthistoryFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public IdField<DepartmentId, EmployeedepartmenthistoryRow> departmentid() {
@@ -64,7 +64,7 @@ public class EmployeedepartmenthistoryFields
         Optional.empty(),
         Optional.of("int2"),
         (row, value) -> row.withDepartmentid(value),
-        DepartmentId.dbType);
+        DepartmentId.pgType);
   }
 
   public IdField<ShiftId, EmployeedepartmenthistoryRow> shiftid() {
@@ -75,7 +75,7 @@ public class EmployeedepartmenthistoryFields
         Optional.empty(),
         Optional.of("int2"),
         (row, value) -> row.withShiftid(value),
-        ShiftId.dbType);
+        ShiftId.pgType);
   }
 
   public IdField<LocalDate, EmployeedepartmenthistoryRow> startdate() {

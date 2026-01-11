@@ -8,6 +8,7 @@ import oracledb.EmailTableT;
 import oracledb.OracleTestHelper;
 import oracledb.TagVarrayT;
 import oracledb.customtypes.Defaulted;
+import oracledb.userdefined.Email;
 import org.junit.Test;
 
 public class ContactsTest {
@@ -17,9 +18,10 @@ public class ContactsTest {
   public void testInsertContactWithNestedTableAndVarray() {
     OracleTestHelper.run(
         c -> {
-          EmailTableT emails =
-              new EmailTableT(
-                  new String[] {"john@example.com", "john.doe@work.com", "jdoe@personal.net"});
+          Email emails =
+              new Email(
+                  new EmailTableT(
+                      new String[] {"john@example.com", "john.doe@work.com", "jdoe@personal.net"}));
           TagVarrayT tags = new TagVarrayT(new String[] {"customer", "vip"});
 
           ContactsRowUnsaved unsaved =
@@ -35,7 +37,7 @@ public class ContactsTest {
           assertTrue(inserted.emails().isPresent());
           assertArrayEquals(
               new String[] {"john@example.com", "john.doe@work.com", "jdoe@personal.net"},
-              inserted.emails().get().value());
+              inserted.emails().get().value().value());
           assertTrue(inserted.tags().isPresent());
           assertArrayEquals(new String[] {"customer", "vip"}, inserted.tags().get().value());
         });
@@ -45,7 +47,7 @@ public class ContactsTest {
   public void testInsertContactWithOnlyEmails() {
     OracleTestHelper.run(
         c -> {
-          EmailTableT emails = new EmailTableT(new String[] {"jane@example.com"});
+          Email emails = new Email(new EmailTableT(new String[] {"jane@example.com"}));
 
           ContactsRowUnsaved unsaved =
               new ContactsRowUnsaved(
@@ -60,7 +62,7 @@ public class ContactsTest {
           ContactsRow inserted = repo.selectById(insertedId, c).orElseThrow();
           assertNotNull(inserted.contactId());
           assertTrue(inserted.emails().isPresent());
-          assertEquals(1, inserted.emails().get().value().length);
+          assertEquals(1, inserted.emails().get().value().value().length);
           assertFalse(inserted.tags().isPresent());
         });
   }
@@ -122,7 +124,7 @@ public class ContactsTest {
                 "email4@test.com",
                 "email5@test.com"
               };
-          EmailTableT emails = new EmailTableT(emailArray);
+          Email emails = new Email(new EmailTableT(emailArray));
 
           ContactsRowUnsaved unsaved =
               new ContactsRowUnsaved(
@@ -136,7 +138,7 @@ public class ContactsTest {
           Optional<ContactsRow> found = repo.selectById(insertedId, c);
           assertTrue(found.isPresent());
           assertTrue(found.get().emails().isPresent());
-          assertArrayEquals(emailArray, found.get().emails().get().value());
+          assertArrayEquals(emailArray, found.get().emails().get().value().value());
         });
   }
 
@@ -144,8 +146,8 @@ public class ContactsTest {
   public void testUpdateEmails() {
     OracleTestHelper.run(
         c -> {
-          EmailTableT originalEmails =
-              new EmailTableT(new String[] {"old1@example.com", "old2@example.com"});
+          Email originalEmails =
+              new Email(new EmailTableT(new String[] {"old1@example.com", "old2@example.com"}));
           ContactsRowUnsaved unsaved =
               new ContactsRowUnsaved(
                   "Update Emails Test",
@@ -156,9 +158,10 @@ public class ContactsTest {
           ContactsId insertedId = repo.insert(unsaved, c);
           ContactsRow inserted = repo.selectById(insertedId, c).orElseThrow();
 
-          EmailTableT newEmails =
-              new EmailTableT(
-                  new String[] {"new1@example.com", "new2@example.com", "new3@example.com"});
+          Email newEmails =
+              new Email(
+                  new EmailTableT(
+                      new String[] {"new1@example.com", "new2@example.com", "new3@example.com"}));
           ContactsRow updatedRow = inserted.withEmails(Optional.of(newEmails));
 
           Boolean wasUpdated = repo.update(updatedRow, c);
@@ -167,7 +170,7 @@ public class ContactsTest {
           assertTrue(fetched.emails().isPresent());
           assertArrayEquals(
               new String[] {"new1@example.com", "new2@example.com", "new3@example.com"},
-              fetched.emails().get().value());
+              fetched.emails().get().value().value());
         });
   }
 
@@ -201,7 +204,7 @@ public class ContactsTest {
   public void testUpdateBothCollections() {
     OracleTestHelper.run(
         c -> {
-          EmailTableT originalEmails = new EmailTableT(new String[] {"original@test.com"});
+          Email originalEmails = new Email(new EmailTableT(new String[] {"original@test.com"}));
           TagVarrayT originalTags = new TagVarrayT(new String[] {"original"});
 
           ContactsRowUnsaved unsaved =
@@ -214,8 +217,8 @@ public class ContactsTest {
           ContactsId insertedId = repo.insert(unsaved, c);
           ContactsRow inserted = repo.selectById(insertedId, c).orElseThrow();
 
-          EmailTableT newEmails =
-              new EmailTableT(new String[] {"updated1@test.com", "updated2@test.com"});
+          Email newEmails =
+              new Email(new EmailTableT(new String[] {"updated1@test.com", "updated2@test.com"}));
           TagVarrayT newTags = new TagVarrayT(new String[] {"updated1", "updated2", "updated3"});
 
           ContactsRow updatedRow =
@@ -226,7 +229,7 @@ public class ContactsTest {
           ContactsRow fetched = repo.selectById(insertedId, c).orElseThrow();
           assertTrue(fetched.emails().isPresent());
           assertTrue(fetched.tags().isPresent());
-          assertEquals(2, fetched.emails().get().value().length);
+          assertEquals(2, fetched.emails().get().value().value().length);
           assertEquals(3, fetched.tags().get().value().length);
         });
   }
@@ -235,7 +238,7 @@ public class ContactsTest {
   public void testClearEmails() {
     OracleTestHelper.run(
         c -> {
-          EmailTableT emails = new EmailTableT(new String[] {"clear@test.com"});
+          Email emails = new Email(new EmailTableT(new String[] {"clear@test.com"}));
           ContactsRowUnsaved unsaved =
               new ContactsRowUnsaved(
                   "Clear Emails Test",
@@ -264,7 +267,7 @@ public class ContactsTest {
           for (int i = 0; i < 20; i++) {
             manyEmails[i] = "email" + i + "@test.com";
           }
-          EmailTableT emails = new EmailTableT(manyEmails);
+          Email emails = new Email(new EmailTableT(manyEmails));
 
           ContactsRowUnsaved unsaved =
               new ContactsRowUnsaved(
@@ -276,7 +279,7 @@ public class ContactsTest {
           ContactsId insertedId = repo.insert(unsaved, c);
           ContactsRow inserted = repo.selectById(insertedId, c).orElseThrow();
           assertTrue(inserted.emails().isPresent());
-          assertEquals(20, inserted.emails().get().value().length);
+          assertEquals(20, inserted.emails().get().value().value().length);
         });
   }
 
@@ -284,7 +287,7 @@ public class ContactsTest {
   public void testDeleteContact() {
     OracleTestHelper.run(
         c -> {
-          EmailTableT emails = new EmailTableT(new String[] {"delete@test.com"});
+          Email emails = new Email(new EmailTableT(new String[] {"delete@test.com"}));
           TagVarrayT tags = new TagVarrayT(new String[] {"delete"});
 
           ContactsRowUnsaved unsaved =
@@ -308,8 +311,8 @@ public class ContactsTest {
   public void testSelectAll() {
     OracleTestHelper.run(
         c -> {
-          EmailTableT emails1 = new EmailTableT(new String[] {"contact1@test.com"});
-          EmailTableT emails2 = new EmailTableT(new String[] {"contact2@test.com"});
+          Email emails1 = new Email(new EmailTableT(new String[] {"contact1@test.com"}));
+          Email emails2 = new Email(new EmailTableT(new String[] {"contact2@test.com"}));
 
           ContactsRowUnsaved unsaved1 =
               new ContactsRowUnsaved(
@@ -352,7 +355,7 @@ public class ContactsTest {
   public void testEmptyEmailArray() {
     OracleTestHelper.run(
         c -> {
-          EmailTableT emptyEmails = new EmailTableT(new String[] {});
+          Email emptyEmails = new Email(new EmailTableT(new String[] {}));
 
           ContactsRowUnsaved unsaved =
               new ContactsRowUnsaved(
@@ -364,7 +367,7 @@ public class ContactsTest {
           ContactsId insertedId = repo.insert(unsaved, c);
           ContactsRow inserted = repo.selectById(insertedId, c).orElseThrow();
           assertTrue(inserted.emails().isPresent());
-          assertEquals(0, inserted.emails().get().value().length);
+          assertEquals(0, inserted.emails().get().value().value().length);
         });
   }
 }

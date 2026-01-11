@@ -35,6 +35,6 @@ data class CheckConstraintTestRow(
   override fun _4(): BigDecimal? = price
 
   companion object {
-    val _rowParser: RowParser<CheckConstraintTestRow> = RowParsers.of(CheckConstraintTestId.dbType, KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.decimal.nullable(), { t0, t1, t2, t3 -> CheckConstraintTestRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.age, row.status, row.price) })
+    val _rowParser: RowParser<CheckConstraintTestRow> = RowParsers.of(CheckConstraintTestId.db2Type, KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.decimal.nullable(), { t0, t1, t2, t3 -> CheckConstraintTestRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.age, row.status, row.price) })
   }
 }

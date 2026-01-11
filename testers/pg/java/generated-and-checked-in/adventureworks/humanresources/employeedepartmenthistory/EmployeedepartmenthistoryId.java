@@ -43,10 +43,10 @@ public record EmployeedepartmenthistoryId(
 
   public static RowParser<EmployeedepartmenthistoryId> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.date,
-          DepartmentId.dbType,
-          ShiftId.dbType,
+          DepartmentId.pgType,
+          ShiftId.pgType,
           EmployeedepartmenthistoryId::new,
           row ->
               new Object[] {

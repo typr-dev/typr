@@ -9,6 +9,7 @@ import testdb.all_scalar_types.*
 import testdb.customers.*
 import testdb.orders.*
 import testdb.customer_orders_view.*
+import testdb.userdefined.Email
 import java.math.BigDecimal
 import java.time.*
 import java.util.Random
@@ -220,7 +221,7 @@ class DatabaseFeaturesTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "View Test Customer",
-                email = "viewtest@example.com",
+                email = Email("viewtest@example.com"),
                 c = c
             )
             testInsert.Orders(
@@ -242,8 +243,8 @@ class DatabaseFeaturesTest {
     @Test
     fun testViewDSLFilter() {
         SqlServerTestHelper.run { c ->
-            val customer1 = testInsert.Customers(name = "View Filter A", email = "filter-a@test.com", c = c)
-            val customer2 = testInsert.Customers(name = "View Filter B", email = "filter-b@test.com", c = c)
+            val customer1 = testInsert.Customers(name = "View Filter A", email = Email("filter-a@test.com"), c = c)
+            val customer2 = testInsert.Customers(name = "View Filter B", email = Email("filter-b@test.com"), c = c)
             testInsert.Orders(customerId = customer1.customerId, c = c)
             testInsert.Orders(customerId = customer2.customerId, c = c)
 

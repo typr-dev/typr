@@ -34,7 +34,7 @@ public class CustomerOrdersSqlRepoImpl implements CustomerOrdersSqlRepo {
                     + "FROM customers c\n"
                     + "LEFT JOIN orders o ON c.customer_id = o.customer_id\n"
                     + "WHERE c.customer_id = "),
-            Fragment.encode(CustomersId.dbType, customerId),
+            Fragment.encode(CustomersId.mariaType, customerId),
             Fragment.lit("\n  AND ("),
             Fragment.encode(MariaTypes.text.opt(), orderStatus),
             Fragment.lit(" IS NULL OR o.order_status = "),

@@ -208,15 +208,15 @@ public record StateprovinceRowUnsaved(
           (row, sb) -> {
             PgTypes.bpchar.text().unsafeEncode(row.stateprovincecode, sb);
             sb.append(PgText.DELIMETER);
-            CountryregionId.dbType.text().unsafeEncode(row.countryregioncode, sb);
+            CountryregionId.pgType.text().unsafeEncode(row.countryregioncode, sb);
             sb.append(PgText.DELIMETER);
-            Name.dbType.text().unsafeEncode(row.name, sb);
+            Name.pgType.text().unsafeEncode(row.name, sb);
             sb.append(PgText.DELIMETER);
-            SalesterritoryId.dbType.text().unsafeEncode(row.territoryid, sb);
+            SalesterritoryId.pgType.text().unsafeEncode(row.territoryid, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(StateprovinceId.dbType.text()).unsafeEncode(row.stateprovinceid, sb);
+            Defaulted.pgText(StateprovinceId.pgType.text()).unsafeEncode(row.stateprovinceid, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(Flag.dbType.text()).unsafeEncode(row.isonlystateprovinceflag, sb);
+            Defaulted.pgText(Flag.pgType.text()).unsafeEncode(row.isonlystateprovinceflag, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb);
             sb.append(PgText.DELIMETER);

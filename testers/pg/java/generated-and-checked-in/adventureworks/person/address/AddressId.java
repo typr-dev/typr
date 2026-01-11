@@ -27,9 +27,9 @@ public record AddressId(@JsonValue Integer value) {
   public static Bijection<AddressId, Integer> bijection =
       Bijection.of(AddressId::value, AddressId::new);
 
-  public static PgType<AddressId> dbType = PgTypes.int4.bimap(AddressId::new, AddressId::value);
+  public static PgType<AddressId> pgType = PgTypes.int4.bimap(AddressId::new, AddressId::value);
 
-  public static PgType<AddressId[]> dbTypeArray =
+  public static PgType<AddressId[]> pgTypeArray =
       PgTypes.int4Array.bimap(
           xs -> arrayMap.map(xs, AddressId::new, AddressId.class),
           xs -> arrayMap.map(xs, AddressId::value, Integer.class));

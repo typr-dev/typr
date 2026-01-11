@@ -56,7 +56,7 @@ public class VInventoryStatusViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public Field<String, VInventoryStatusViewRow> sku() {
@@ -89,7 +89,7 @@ public class VInventoryStatusViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withWarehouseId(value),
-        WarehousesId.dbType);
+        WarehousesId.mariaType);
   }
 
   public Field<String, VInventoryStatusViewRow> warehouseCode() {

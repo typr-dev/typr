@@ -23,6 +23,8 @@ import java.util.Optional;
 import testdb.customers.CustomersId;
 import testdb.order_items.OrderItemsId;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsApproved;
+import testdb.userdefined.IsVerifiedPurchase;
 
 public class ReviewsRepoImpl implements ReviewsRepo {
   @Override
@@ -34,7 +36,7 @@ public class ReviewsRepoImpl implements ReviewsRepo {
   public Boolean deleteById(ReviewsId reviewId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `reviews` where `review_id` = "),
-                Fragment.encode(ReviewsId.dbType, reviewId),
+                Fragment.encode(ReviewsId.mariaType, reviewId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -45,7 +47,7 @@ public class ReviewsRepoImpl implements ReviewsRepo {
   public Integer deleteByIds(ReviewsId[] reviewIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : reviewIds) {
-      fragments.add(Fragment.encode(ReviewsId.dbType, id));
+      fragments.add(Fragment.encode(ReviewsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -65,11 +67,11 @@ public class ReviewsRepoImpl implements ReviewsRepo {
                     + " `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`,"
                     + " `responded_at`, `created_at`, `updated_at`)\n"
                     + "values ("),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()),
             Fragment.lit(", "),
-            Fragment.encode(OrderItemsId.dbType.opt(), unsaved.orderItemId()),
+            Fragment.encode(OrderItemsId.mariaType.opt(), unsaved.orderItemId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.rating()),
             Fragment.lit(", "),
@@ -83,9 +85,9 @@ public class ReviewsRepoImpl implements ReviewsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.images()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isVerifiedPurchase()),
+            Fragment.encode(IsVerifiedPurchase.mariaType, unsaved.isVerifiedPurchase()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isApproved()),
+            Fragment.encode(IsApproved.mariaType, unsaved.isApproved()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.intUnsigned, unsaved.helpfulVotes()),
             Fragment.lit(", "),
@@ -116,10 +118,11 @@ public class ReviewsRepoImpl implements ReviewsRepo {
     ;
     columns.add(Fragment.lit("`product_id`"));
     values.add(
-        interpolate(Fragment.encode(ProductsId.dbType, unsaved.productId()), Fragment.lit("")));
+        interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId()), Fragment.lit("")));
     columns.add(Fragment.lit("`customer_id`"));
     values.add(
-        interpolate(Fragment.encode(CustomersId.dbType, unsaved.customerId()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()), Fragment.lit("")));
     columns.add(Fragment.lit("`rating`"));
     values.add(
         interpolate(
@@ -131,7 +134,8 @@ public class ReviewsRepoImpl implements ReviewsRepo {
             value -> {
               columns.add(Fragment.lit("`order_item_id`"));
               values.add(
-                  interpolate(Fragment.encode(OrderItemsId.dbType.opt(), value), Fragment.lit("")));
+                  interpolate(
+                      Fragment.encode(OrderItemsId.mariaType.opt(), value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -190,7 +194,9 @@ public class ReviewsRepoImpl implements ReviewsRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_verified_purchase`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(
+                  interpolate(
+                      Fragment.encode(IsVerifiedPurchase.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -199,7 +205,8 @@ public class ReviewsRepoImpl implements ReviewsRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_approved`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(
+                  interpolate(Fragment.encode(IsApproved.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -307,7 +314,7 @@ public class ReviewsRepoImpl implements ReviewsRepo {
                     + " `responded_at`, `created_at`, `updated_at`\n"
                     + "from `reviews`\n"
                     + "where `review_id` = "),
-            Fragment.encode(ReviewsId.dbType, reviewId),
+            Fragment.encode(ReviewsId.mariaType, reviewId),
             Fragment.lit(""))
         .query(ReviewsRow._rowParser.first())
         .runUnchecked(c);
@@ -317,7 +324,7 @@ public class ReviewsRepoImpl implements ReviewsRepo {
   public List<ReviewsRow> selectByIds(ReviewsId[] reviewIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : reviewIds) {
-      fragments.add(Fragment.encode(ReviewsId.dbType, id));
+      fragments.add(Fragment.encode(ReviewsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -352,11 +359,11 @@ public class ReviewsRepoImpl implements ReviewsRepo {
     ;
     return interpolate(
                 Fragment.lit("update `reviews`\nset `product_id` = "),
-                Fragment.encode(ProductsId.dbType, row.productId()),
+                Fragment.encode(ProductsId.mariaType, row.productId()),
                 Fragment.lit(",\n`customer_id` = "),
-                Fragment.encode(CustomersId.dbType, row.customerId()),
+                Fragment.encode(CustomersId.mariaType, row.customerId()),
                 Fragment.lit(",\n`order_item_id` = "),
-                Fragment.encode(OrderItemsId.dbType.opt(), row.orderItemId()),
+                Fragment.encode(OrderItemsId.mariaType.opt(), row.orderItemId()),
                 Fragment.lit(",\n`rating` = "),
                 Fragment.encode(MariaTypes.tinyintUnsigned, row.rating()),
                 Fragment.lit(",\n`title` = "),
@@ -370,9 +377,9 @@ public class ReviewsRepoImpl implements ReviewsRepo {
                 Fragment.lit(",\n`images` = "),
                 Fragment.encode(MariaTypes.json.opt(), row.images()),
                 Fragment.lit(",\n`is_verified_purchase` = "),
-                Fragment.encode(MariaTypes.bool, row.isVerifiedPurchase()),
+                Fragment.encode(IsVerifiedPurchase.mariaType, row.isVerifiedPurchase()),
                 Fragment.lit(",\n`is_approved` = "),
-                Fragment.encode(MariaTypes.bool, row.isApproved()),
+                Fragment.encode(IsApproved.mariaType, row.isApproved()),
                 Fragment.lit(",\n`helpful_votes` = "),
                 Fragment.encode(MariaTypes.intUnsigned, row.helpfulVotes()),
                 Fragment.lit(",\n`unhelpful_votes` = "),
@@ -386,7 +393,7 @@ public class ReviewsRepoImpl implements ReviewsRepo {
                 Fragment.lit(",\n`updated_at` = "),
                 Fragment.encode(MariaTypes.datetime, row.updatedAt()),
                 Fragment.lit("\nwhere `review_id` = "),
-                Fragment.encode(ReviewsId.dbType, reviewId),
+                Fragment.encode(ReviewsId.mariaType, reviewId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -402,13 +409,13 @@ public class ReviewsRepoImpl implements ReviewsRepo {
                     + " `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`,"
                     + " `admin_response`, `responded_at`, `created_at`, `updated_at`)\n"
                     + "VALUES ("),
-            Fragment.encode(ReviewsId.dbType, unsaved.reviewId()),
+            Fragment.encode(ReviewsId.mariaType, unsaved.reviewId()),
             Fragment.lit(", "),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()),
             Fragment.lit(", "),
-            Fragment.encode(OrderItemsId.dbType.opt(), unsaved.orderItemId()),
+            Fragment.encode(OrderItemsId.mariaType.opt(), unsaved.orderItemId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.rating()),
             Fragment.lit(", "),
@@ -422,9 +429,9 @@ public class ReviewsRepoImpl implements ReviewsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.images()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isVerifiedPurchase()),
+            Fragment.encode(IsVerifiedPurchase.mariaType, unsaved.isVerifiedPurchase()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isApproved()),
+            Fragment.encode(IsApproved.mariaType, unsaved.isApproved()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.intUnsigned, unsaved.helpfulVotes()),
             Fragment.lit(", "),

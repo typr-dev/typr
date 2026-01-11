@@ -2,6 +2,7 @@ package testdb
 
 import org.junit.Assert.*
 import org.junit.Test
+import testdb.userdefined.Email
 import java.math.BigDecimal
 import java.util.Random
 
@@ -16,14 +17,14 @@ class TestInsertTest {
         SqlServerTestHelper.run { c ->
             val row = testInsert.Customers(
                 name = "Test Customer",
-                email = "test@example.com",
+                email = Email("test@example.com"),
                 c = c
             )
 
             assertNotNull(row)
             assertNotNull(row.customerId)
             assertEquals("Test Customer", row.name)
-            assertEquals("test@example.com", row.email)
+            assertEquals(Email("test@example.com"), row.email)
         }
     }
 
@@ -59,7 +60,7 @@ class TestInsertTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "FK Customer",
-                email = "fk@example.com",
+                email = Email("fk@example.com"),
                 c = c
             )
 
@@ -78,7 +79,7 @@ class TestInsertTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "OrderItem Customer",
-                email = "orderitem@example.com",
+                email = Email("orderitem@example.com"),
                 c = c
             )
             val product = testInsert.Products(
@@ -106,9 +107,9 @@ class TestInsertTest {
     @Test
     fun testMultipleInserts() {
         SqlServerTestHelper.run { c ->
-            val row1 = testInsert.Customers(name = "Customer1", email = "c1@test.com", c = c)
-            val row2 = testInsert.Customers(name = "Customer2", email = "c2@test.com", c = c)
-            val row3 = testInsert.Customers(name = "Customer3", email = "c3@test.com", c = c)
+            val row1 = testInsert.Customers(name = "Customer1", email = Email("c1@test.com"), c = c)
+            val row2 = testInsert.Customers(name = "Customer2", email = Email("c2@test.com"), c = c)
+            val row3 = testInsert.Customers(name = "Customer3", email = Email("c3@test.com"), c = c)
 
             assertNotEquals(row1.customerId, row2.customerId)
             assertNotEquals(row2.customerId, row3.customerId)
@@ -119,13 +120,13 @@ class TestInsertTest {
     @Test
     fun testInsertWithDifferentValues() {
         SqlServerTestHelper.run { c ->
-            val row1 = testInsert.Customers(name = "Alpha", email = "alpha@test.com", c = c)
-            val row2 = testInsert.Customers(name = "Beta", email = "beta@test.com", c = c)
+            val row1 = testInsert.Customers(name = "Alpha", email = Email("alpha@test.com"), c = c)
+            val row2 = testInsert.Customers(name = "Beta", email = Email("beta@test.com"), c = c)
 
             assertEquals("Alpha", row1.name)
             assertEquals("Beta", row2.name)
-            assertEquals("alpha@test.com", row1.email)
-            assertEquals("beta@test.com", row2.email)
+            assertEquals(Email("alpha@test.com"), row1.email)
+            assertEquals(Email("beta@test.com"), row2.email)
         }
     }
 }

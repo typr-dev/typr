@@ -70,7 +70,7 @@ data class ProductsFields(val _path: List<Path>) : TupleExpr18<ProductsId, Strin
 
   fun basePrice(): Field<BigDecimal, ProductsRow> = Field<BigDecimal, ProductsRow>(_path, "base_price", ProductsRow::basePrice, null, null, { row, value -> row.copy(basePrice = value) }, KotlinDbTypes.MariaTypes.numeric)
 
-  fun brandId(): OptField<BrandsId, ProductsRow> = OptField<BrandsId, ProductsRow>(_path, "brand_id", ProductsRow::brandId, null, null, { row, value -> row.copy(brandId = value) }, BrandsId.dbType)
+  fun brandId(): OptField<BrandsId, ProductsRow> = OptField<BrandsId, ProductsRow>(_path, "brand_id", ProductsRow::brandId, null, null, { row, value -> row.copy(brandId = value) }, BrandsId.mariaType)
 
   override fun columns(): List<FieldLike<*, ProductsRow>> = listOf(this.productId().underlying, this.sku().underlying, this.brandId().underlying, this.name().underlying, this.shortDescription().underlying, this.fullDescription().underlying, this.basePrice().underlying, this.costPrice().underlying, this.weightKg().underlying, this.dimensionsJson().underlying, this.status().underlying, this.taxClass().underlying, this.tags().underlying, this.attributes().underlying, this.seoMetadata().underlying, this.createdAt().underlying, this.updatedAt().underlying, this.publishedAt().underlying)
 
@@ -86,7 +86,7 @@ data class ProductsFields(val _path: List<Path>) : TupleExpr18<ProductsId, Strin
 
   fun name(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "name", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
 
-  fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.dbType)
+  fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
 
   fun publishedAt(): OptField<LocalDateTime, ProductsRow> = OptField<LocalDateTime, ProductsRow>(_path, "published_at", ProductsRow::publishedAt, null, null, { row, value -> row.copy(publishedAt = value) }, MariaTypes.datetime)
 
@@ -100,7 +100,7 @@ data class ProductsFields(val _path: List<Path>) : TupleExpr18<ProductsId, Strin
 
   fun status(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "status", ProductsRow::status, null, null, { row, value -> row.copy(status = value) }, MariaTypes.text)
 
-  fun tags(): OptField<BestsellerClearanceFSet, ProductsRow> = OptField<BestsellerClearanceFSet, ProductsRow>(_path, "tags", ProductsRow::tags, null, null, { row, value -> row.copy(tags = value) }, BestsellerClearanceFSet.dbType)
+  fun tags(): OptField<BestsellerClearanceFSet, ProductsRow> = OptField<BestsellerClearanceFSet, ProductsRow>(_path, "tags", ProductsRow::tags, null, null, { row, value -> row.copy(tags = value) }, BestsellerClearanceFSet.mariaType)
 
   fun taxClass(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "tax_class", ProductsRow::taxClass, null, null, { row, value -> row.copy(taxClass = value) }, MariaTypes.text)
 

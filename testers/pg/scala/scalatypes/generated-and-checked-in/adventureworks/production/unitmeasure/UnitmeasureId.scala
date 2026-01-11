@@ -16,7 +16,7 @@ case class UnitmeasureId(@JsonValue value: String) extends scala.AnyVal
 object UnitmeasureId {
   given bijection: Bijection[UnitmeasureId, String] = Bijection.apply[UnitmeasureId, String](_.value)(UnitmeasureId.apply)
 
-  given dbType: PgType[UnitmeasureId] = PgTypes.bpchar.bimap(UnitmeasureId.apply, _.value)
+  given pgType: PgType[UnitmeasureId] = PgTypes.bpchar.bimap(UnitmeasureId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[UnitmeasureId]] = PgTypes.bpcharArray.bimap(xs => xs.map(UnitmeasureId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[UnitmeasureId]] = PgTypes.bpcharArray.bimap(xs => xs.map(UnitmeasureId.apply), xs => xs.map(_.value))
 }

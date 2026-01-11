@@ -27,7 +27,7 @@ class UnitmeasureFields(val `_path`: java.util.List[Path]) extends TupleExpr3[Un
       None,
       Some("bpchar"),
       (row, value) => row.copy(unitmeasurecode = value),
-      UnitmeasureId.dbType
+      UnitmeasureId.pgType
     )
   }
 
@@ -39,7 +39,7 @@ class UnitmeasureFields(val `_path`: java.util.List[Path]) extends TupleExpr3[Un
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

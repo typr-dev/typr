@@ -832,14 +832,14 @@ public record PrecisionTypesRow(
 
   public static RowParser<PrecisionTypesRow> _rowParser =
       RowParsers.of(
-          PrecisionTypesId.dbType,
-          String10.dbType,
-          String20.dbType,
-          String50.dbType,
-          String100.dbType,
-          String255.dbType,
-          PaddedString3.dbType,
-          PaddedString10.dbType,
+          PrecisionTypesId.pgType,
+          String10.pgType,
+          String20.pgType,
+          String50.pgType,
+          String100.pgType,
+          String255.pgType,
+          PaddedString3.pgType,
+          PaddedString10.pgType,
           PgTypes.numeric,
           PgTypes.numeric,
           PgTypes.numeric,

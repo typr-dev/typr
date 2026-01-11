@@ -34,7 +34,7 @@ class PrecisionTypesRepoImpl() : PrecisionTypesRepo {
   override fun deleteByIds(
     ids: Array<PrecisionTypesId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"precision_types\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesId.dbTypeArray, ids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"precision_types\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
@@ -56,7 +56,7 @@ class PrecisionTypesRepoImpl() : PrecisionTypesRepo {
   override fun selectByIds(
     ids: Array<PrecisionTypesId>,
     c: Connection
-  ): List<PrecisionTypesRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesId.dbTypeArray, ids), Fragment.lit(")")).query(PrecisionTypesRow._rowParser.all()).runUnchecked(c)
+  ): List<PrecisionTypesRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids), Fragment.lit(")")).query(PrecisionTypesRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     ids: Array<PrecisionTypesId>,

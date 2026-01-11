@@ -16,7 +16,7 @@ case class CountryregionId(@JsonValue value: String) extends scala.AnyVal
 object CountryregionId {
   given bijection: Bijection[CountryregionId, String] = Bijection.apply[CountryregionId, String](_.value)(CountryregionId.apply)
 
-  given dbType: PgType[CountryregionId] = PgTypes.text.bimap(CountryregionId.apply, _.value)
+  given pgType: PgType[CountryregionId] = PgTypes.text.bimap(CountryregionId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[CountryregionId]] = PgTypes.textArray.bimap(xs => xs.map(CountryregionId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[CountryregionId]] = PgTypes.textArray.bimap(xs => xs.map(CountryregionId.apply), xs => xs.map(_.value))
 }

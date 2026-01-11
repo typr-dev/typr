@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 
 public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
   @Override
@@ -31,7 +32,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
   public Boolean deleteById(PaymentMethodsId methodId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `payment_methods` where `method_id` = "),
-                Fragment.encode(PaymentMethodsId.dbType, methodId),
+                Fragment.encode(PaymentMethodsId.mariaType, methodId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +43,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
   public Integer deleteByIds(PaymentMethodsId[] methodIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : methodIds) {
-      fragments.add(Fragment.encode(PaymentMethodsId.dbType, id));
+      fragments.add(Fragment.encode(PaymentMethodsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -68,7 +69,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.processorConfig()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.tinyint, unsaved.sortOrder()),
             Fragment.lit(
@@ -108,7 +109,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_active`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(interpolate(Fragment.encode(IsActive.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -162,7 +163,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
                     + " `is_active`, `sort_order`\n"
                     + "from `payment_methods`\n"
                     + "where `method_id` = "),
-            Fragment.encode(PaymentMethodsId.dbType, methodId),
+            Fragment.encode(PaymentMethodsId.mariaType, methodId),
             Fragment.lit(""))
         .query(PaymentMethodsRow._rowParser.first())
         .runUnchecked(c);
@@ -172,7 +173,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
   public List<PaymentMethodsRow> selectByIds(PaymentMethodsId[] methodIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : methodIds) {
-      fragments.add(Fragment.encode(PaymentMethodsId.dbType, id));
+      fragments.add(Fragment.encode(PaymentMethodsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -231,11 +232,11 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
                 Fragment.lit(",\n`processor_config` = "),
                 Fragment.encode(MariaTypes.json.opt(), row.processorConfig()),
                 Fragment.lit(",\n`is_active` = "),
-                Fragment.encode(MariaTypes.bool, row.isActive()),
+                Fragment.encode(IsActive.mariaType, row.isActive()),
                 Fragment.lit(",\n`sort_order` = "),
                 Fragment.encode(MariaTypes.tinyint, row.sortOrder()),
                 Fragment.lit("\nwhere `method_id` = "),
-                Fragment.encode(PaymentMethodsId.dbType, methodId),
+                Fragment.encode(PaymentMethodsId.mariaType, methodId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -249,7 +250,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
                 "INSERT INTO `payment_methods`(`method_id`, `code`, `name`, `method_type`,"
                     + " `processor_config`, `is_active`, `sort_order`)\n"
                     + "VALUES ("),
-            Fragment.encode(PaymentMethodsId.dbType, unsaved.methodId()),
+            Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.code()),
             Fragment.lit(", "),
@@ -259,7 +260,7 @@ public class PaymentMethodsRepoImpl implements PaymentMethodsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.processorConfig()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.tinyint, unsaved.sortOrder()),
             Fragment.lit(

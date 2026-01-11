@@ -19,10 +19,10 @@ data class AccountNumber(@field:JsonValue val value: String) {
     val bijection: Bijection<AccountNumber, String> =
       Bijection.of(AccountNumber::value, ::AccountNumber)
 
-    val dbType: PgType<AccountNumber> =
+    val pgType: PgType<AccountNumber> =
       PgTypes.text.bimap(::AccountNumber, AccountNumber::value).renamed("\"public\".\"AccountNumber\"")
 
-    val dbTypeArray: PgType<Array<AccountNumber>> =
+    val pgTypeArray: PgType<Array<AccountNumber>> =
       PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::AccountNumber, AccountNumber::class.java) }, { xs -> arrayMap.map(xs, AccountNumber::value, String::class.java) }).renamed("\"public\".\"AccountNumber\"[]")
   }
 }

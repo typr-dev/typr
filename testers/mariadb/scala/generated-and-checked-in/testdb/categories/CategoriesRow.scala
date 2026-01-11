@@ -95,5 +95,5 @@ case class CategoriesRow(
 }
 
 object CategoriesRow {
-  val `_rowParser`: RowParser[CategoriesRow] = RowParsers.of(CategoriesId.dbType, CategoriesId.dbType.nullable, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.smallint, ScalaDbTypes.MariaTypes.bool, MariaTypes.json.nullable)(CategoriesRow.apply)(row => Array[Any](row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata))
+  val `_rowParser`: RowParser[CategoriesRow] = RowParsers.of(CategoriesId.mariaType, CategoriesId.mariaType.nullable, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.smallint, ScalaDbTypes.MariaTypes.bool, MariaTypes.json.nullable)(CategoriesRow.apply)(row => Array[Any](row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata))
 }

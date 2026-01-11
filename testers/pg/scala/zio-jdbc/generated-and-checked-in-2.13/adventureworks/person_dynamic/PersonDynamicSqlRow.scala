@@ -5,8 +5,9 @@
  */
 package adventureworks.person_dynamic
 
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import java.sql.ResultSet
 import zio.jdbc.JdbcDecoder
 import zio.json.JsonDecoder
@@ -21,9 +22,9 @@ case class PersonDynamicSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Option[Name],
+  middlename: Option[/* user-picked */ MiddleName],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name
+  lastname: /* user-picked */ LastName
 )
 
 object PersonDynamicSqlRow {
@@ -34,8 +35,8 @@ object PersonDynamicSqlRow {
           PersonDynamicSqlRow(
             title = JdbcDecoder.optionDecoder(JdbcDecoder.stringDecoder).unsafeDecode(columIndex + 0, rs)._2,
             firstname = FirstName.jdbcDecoder.unsafeDecode(columIndex + 1, rs)._2,
-            middlename = JdbcDecoder.optionDecoder(Name.jdbcDecoder).unsafeDecode(columIndex + 2, rs)._2,
-            lastname = Name.jdbcDecoder.unsafeDecode(columIndex + 3, rs)._2
+            middlename = JdbcDecoder.optionDecoder(MiddleName.jdbcDecoder).unsafeDecode(columIndex + 2, rs)._2,
+            lastname = LastName.jdbcDecoder.unsafeDecode(columIndex + 3, rs)._2
           )
     }
   }
@@ -44,8 +45,8 @@ object PersonDynamicSqlRow {
     JsonDecoder[Json.Obj].mapOrFail { jsonObj =>
       val title = jsonObj.get("title").fold[Either[String, Option[String]]](Right(None))(_.as(JsonDecoder.option(JsonDecoder.string)))
       val firstname = jsonObj.get("firstname").toRight("Missing field 'firstname'").flatMap(_.as(FirstName.jsonDecoder))
-      val middlename = jsonObj.get("middlename").fold[Either[String, Option[Name]]](Right(None))(_.as(JsonDecoder.option(Name.jsonDecoder)))
-      val lastname = jsonObj.get("lastname").toRight("Missing field 'lastname'").flatMap(_.as(Name.jsonDecoder))
+      val middlename = jsonObj.get("middlename").fold[Either[String, Option[MiddleName]]](Right(None))(_.as(JsonDecoder.option(MiddleName.jsonDecoder)))
+      val lastname = jsonObj.get("lastname").toRight("Missing field 'lastname'").flatMap(_.as(LastName.jsonDecoder))
       if (title.isRight && firstname.isRight && middlename.isRight && lastname.isRight)
         Right(PersonDynamicSqlRow(title = title.toOption.get, firstname = firstname.toOption.get, middlename = middlename.toOption.get, lastname = lastname.toOption.get))
       else Left(List[Either[String, Any]](title, firstname, middlename, lastname).flatMap(_.left.toOption).mkString(", "))
@@ -63,10 +64,10 @@ object PersonDynamicSqlRow {
         FirstName.jsonEncoder.unsafeEncode(a.firstname, indent, out)
         out.write(",")
         out.write(""""middlename":""")
-        JsonEncoder.option(Name.jsonEncoder).unsafeEncode(a.middlename, indent, out)
+        JsonEncoder.option(MiddleName.jsonEncoder).unsafeEncode(a.middlename, indent, out)
         out.write(",")
         out.write(""""lastname":""")
-        Name.jsonEncoder.unsafeEncode(a.lastname, indent, out)
+        LastName.jsonEncoder.unsafeEncode(a.lastname, indent, out)
         out.write("}")
       }
     }

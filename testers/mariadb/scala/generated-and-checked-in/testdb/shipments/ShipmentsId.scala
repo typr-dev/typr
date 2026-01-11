@@ -17,5 +17,5 @@ case class ShipmentsId(@JsonValue value: Uint8) extends scala.AnyVal
 object ShipmentsId {
   given bijection: Bijection[ShipmentsId, Uint8] = Bijection.apply[ShipmentsId, Uint8](_.value)(ShipmentsId.apply)
 
-  given dbType: MariaType[ShipmentsId] = MariaTypes.bigintUnsigned.bimap(ShipmentsId.apply, _.value)
+  given mariaType: MariaType[ShipmentsId] = MariaTypes.bigintUnsigned.bimap(ShipmentsId.apply, _.value)
 }

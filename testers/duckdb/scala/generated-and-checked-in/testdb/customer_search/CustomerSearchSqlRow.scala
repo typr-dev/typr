@@ -14,6 +14,7 @@ import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
 /** SQL file: customer_search.sql */
 case class CustomerSearchSqlRow(
@@ -22,17 +23,17 @@ case class CustomerSearchSqlRow(
   /** Points to [[testdb.customers.CustomersRow.name]] */
   name: String,
   /** Points to [[testdb.customers.CustomersRow.email]] */
-  email: Option[String],
+  email: Option[/* user-picked */ Email],
   /** Points to [[testdb.customers.CustomersRow.createdAt]] */
   @JsonProperty("created_at") createdAt: LocalDateTime,
   /** Points to [[testdb.customers.CustomersRow.priority]] */
   priority: Option[Priority]
-) extends Tuple5[CustomersId, String, Option[String], LocalDateTime, Option[Priority]] {
+) extends Tuple5[CustomersId, String, Option[/* user-picked */ Email], LocalDateTime, Option[Priority]] {
   override def `_1`: CustomersId = customerId
 
   override def `_2`: String = name
 
-  override def `_3`: Option[String] = email
+  override def `_3`: Option[/* user-picked */ Email] = email
 
   override def `_4`: LocalDateTime = createdAt
 
@@ -40,5 +41,5 @@ case class CustomerSearchSqlRow(
 }
 
 object CustomerSearchSqlRow {
-  val `_rowParser`: RowParser[CustomerSearchSqlRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)(CustomerSearchSqlRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
+  val `_rowParser`: RowParser[CustomerSearchSqlRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)(CustomerSearchSqlRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
 }

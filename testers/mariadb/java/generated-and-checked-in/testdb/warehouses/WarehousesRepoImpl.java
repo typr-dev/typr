@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.Email;
+import testdb.userdefined.IsActive;
 
 public class WarehousesRepoImpl implements WarehousesRepo {
   @Override
@@ -31,7 +33,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
   public Boolean deleteById(WarehousesId warehouseId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `warehouses` where `warehouse_id` = "),
-                Fragment.encode(WarehousesId.dbType, warehouseId),
+                Fragment.encode(WarehousesId.mariaType, warehouseId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +44,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
   public Integer deleteByIds(WarehousesId[] warehouseIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : warehouseIds) {
-      fragments.add(Fragment.encode(WarehousesId.dbType, id));
+      fragments.add(Fragment.encode(WarehousesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -72,9 +74,9 @@ public class WarehousesRepoImpl implements WarehousesRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.timezone()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.varchar.opt(), unsaved.contactEmail()),
+            Fragment.encode(Email.mariaType.opt(), unsaved.contactEmail()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar.opt(), unsaved.contactPhone()),
             Fragment.lit(
@@ -127,7 +129,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_active`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(interpolate(Fragment.encode(IsActive.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -137,7 +139,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
             value -> {
               columns.add(Fragment.lit("`contact_email`"));
               values.add(
-                  interpolate(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.lit("")));
+                  interpolate(Fragment.encode(Email.mariaType.opt(), value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -190,7 +192,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
                     + " `timezone`, `is_active`, `contact_email`, `contact_phone`\n"
                     + "from `warehouses`\n"
                     + "where `warehouse_id` = "),
-            Fragment.encode(WarehousesId.dbType, warehouseId),
+            Fragment.encode(WarehousesId.mariaType, warehouseId),
             Fragment.lit(""))
         .query(WarehousesRow._rowParser.first())
         .runUnchecked(c);
@@ -200,7 +202,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
   public List<WarehousesRow> selectByIds(WarehousesId[] warehouseIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : warehouseIds) {
-      fragments.add(Fragment.encode(WarehousesId.dbType, id));
+      fragments.add(Fragment.encode(WarehousesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -260,13 +262,13 @@ public class WarehousesRepoImpl implements WarehousesRepo {
                 Fragment.lit(",\n`timezone` = "),
                 Fragment.encode(MariaTypes.varchar, row.timezone()),
                 Fragment.lit(",\n`is_active` = "),
-                Fragment.encode(MariaTypes.bool, row.isActive()),
+                Fragment.encode(IsActive.mariaType, row.isActive()),
                 Fragment.lit(",\n`contact_email` = "),
-                Fragment.encode(MariaTypes.varchar.opt(), row.contactEmail()),
+                Fragment.encode(Email.mariaType.opt(), row.contactEmail()),
                 Fragment.lit(",\n`contact_phone` = "),
                 Fragment.encode(MariaTypes.varchar.opt(), row.contactPhone()),
                 Fragment.lit("\nwhere `warehouse_id` = "),
-                Fragment.encode(WarehousesId.dbType, warehouseId),
+                Fragment.encode(WarehousesId.mariaType, warehouseId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -281,7 +283,7 @@ public class WarehousesRepoImpl implements WarehousesRepo {
                     + " `service_area`, `timezone`, `is_active`, `contact_email`,"
                     + " `contact_phone`)\n"
                     + "VALUES ("),
-            Fragment.encode(WarehousesId.dbType, unsaved.warehouseId()),
+            Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.char_, unsaved.code()),
             Fragment.lit(", "),
@@ -295,9 +297,9 @@ public class WarehousesRepoImpl implements WarehousesRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.timezone()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.varchar.opt(), unsaved.contactEmail()),
+            Fragment.encode(Email.mariaType.opt(), unsaved.contactEmail()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar.opt(), unsaved.contactPhone()),
             Fragment.lit(

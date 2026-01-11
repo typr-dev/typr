@@ -8,9 +8,10 @@ package adventureworks.person.person
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Xml
@@ -34,9 +35,9 @@ data class PersonRowUnsaved(
   /** First name of the person. */
   val firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  val middlename: Name? = null,
+  val middlename: /* user-picked */ MiddleName? = null,
   /** Last name of the person. */
-  val lastname: Name,
+  val lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   val suffix: /* max 10 chars */ String? = null,
   /** Additional contact information about the person stored in xml format. */
@@ -66,17 +67,17 @@ data class PersonRowUnsaved(
 
   companion object {
     val pgText: PgText<PersonRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.bpchar.text().unsafeEncode(row.persontype, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.text.nullable().text().unsafeEncode(row.title, sb)
       sb.append(PgText.DELIMETER)
-      FirstName.dbType.text().unsafeEncode(row.firstname, sb)
+      FirstName.pgType.text().unsafeEncode(row.firstname, sb)
       sb.append(PgText.DELIMETER)
-      Name.dbType.nullable().text().unsafeEncode(row.middlename, sb)
+      MiddleName.pgType.nullable().text().unsafeEncode(row.middlename, sb)
       sb.append(PgText.DELIMETER)
-      Name.dbType.text().unsafeEncode(row.lastname, sb)
+      LastName.pgType.text().unsafeEncode(row.lastname, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.text.nullable().text().unsafeEncode(row.suffix, sb)
       sb.append(PgText.DELIMETER)
@@ -84,7 +85,7 @@ data class PersonRowUnsaved(
       sb.append(PgText.DELIMETER)
       PgTypes.xml.nullable().text().unsafeEncode(row.demographics, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(NameStyle.dbType.text()).unsafeEncode(row.namestyle, sb)
+      Defaulted.pgText(NameStyle.pgType.text()).unsafeEncode(row.namestyle, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(KotlinDbTypes.PgTypes.int4.text()).unsafeEncode(row.emailpromotion, sb)
       sb.append(PgText.DELIMETER)

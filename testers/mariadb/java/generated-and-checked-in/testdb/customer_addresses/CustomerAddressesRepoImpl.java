@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import testdb.customers.CustomersId;
+import testdb.userdefined.IsDefault;
 
 public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
   @Override
@@ -33,7 +34,7 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
   public Boolean deleteById(CustomerAddressesId addressId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `customer_addresses` where `address_id` = "),
-                Fragment.encode(CustomerAddressesId.dbType, addressId),
+                Fragment.encode(CustomerAddressesId.mariaType, addressId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -44,7 +45,7 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
   public Integer deleteByIds(CustomerAddressesId[] addressIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : addressIds) {
-      fragments.add(Fragment.encode(CustomerAddressesId.dbType, id));
+      fragments.add(Fragment.encode(CustomerAddressesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -64,11 +65,11 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
                     + " `postal_code`, `country_code`, `location`, `delivery_notes`,"
                     + " `created_at`)\n"
                     + "values ("),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.addressType()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isDefault()),
+            Fragment.encode(IsDefault.mariaType, unsaved.isDefault()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.recipientName()),
             Fragment.lit(", "),
@@ -107,7 +108,8 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
     ;
     columns.add(Fragment.lit("`customer_id`"));
     values.add(
-        interpolate(Fragment.encode(CustomersId.dbType, unsaved.customerId()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()), Fragment.lit("")));
     columns.add(Fragment.lit("`address_type`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.text, unsaved.addressType()), Fragment.lit("")));
@@ -132,7 +134,8 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_default`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(
+                  interpolate(Fragment.encode(IsDefault.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -231,7 +234,7 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
                     + " `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\n"
                     + "from `customer_addresses`\n"
                     + "where `address_id` = "),
-            Fragment.encode(CustomerAddressesId.dbType, addressId),
+            Fragment.encode(CustomerAddressesId.mariaType, addressId),
             Fragment.lit(""))
         .query(CustomerAddressesRow._rowParser.first())
         .runUnchecked(c);
@@ -241,7 +244,7 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
   public List<CustomerAddressesRow> selectByIds(CustomerAddressesId[] addressIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : addressIds) {
-      fragments.add(Fragment.encode(CustomerAddressesId.dbType, id));
+      fragments.add(Fragment.encode(CustomerAddressesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -280,11 +283,11 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
     ;
     return interpolate(
                 Fragment.lit("update `customer_addresses`\nset `customer_id` = "),
-                Fragment.encode(CustomersId.dbType, row.customerId()),
+                Fragment.encode(CustomersId.mariaType, row.customerId()),
                 Fragment.lit(",\n`address_type` = "),
                 Fragment.encode(MariaTypes.text, row.addressType()),
                 Fragment.lit(",\n`is_default` = "),
-                Fragment.encode(MariaTypes.bool, row.isDefault()),
+                Fragment.encode(IsDefault.mariaType, row.isDefault()),
                 Fragment.lit(",\n`recipient_name` = "),
                 Fragment.encode(MariaTypes.varchar, row.recipientName()),
                 Fragment.lit(",\n`street_line1` = "),
@@ -306,7 +309,7 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
                 Fragment.lit(",\n`created_at` = "),
                 Fragment.encode(MariaTypes.datetime, row.createdAt()),
                 Fragment.lit("\nwhere `address_id` = "),
-                Fragment.encode(CustomerAddressesId.dbType, addressId),
+                Fragment.encode(CustomerAddressesId.mariaType, addressId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -322,13 +325,13 @@ public class CustomerAddressesRepoImpl implements CustomerAddressesRepo {
                     + " `state_province`, `postal_code`, `country_code`, `location`,"
                     + " `delivery_notes`, `created_at`)\n"
                     + "VALUES ("),
-            Fragment.encode(CustomerAddressesId.dbType, unsaved.addressId()),
+            Fragment.encode(CustomerAddressesId.mariaType, unsaved.addressId()),
             Fragment.lit(", "),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.addressType()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isDefault()),
+            Fragment.encode(IsDefault.mariaType, unsaved.isDefault()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.recipientName()),
             Fragment.lit(", "),

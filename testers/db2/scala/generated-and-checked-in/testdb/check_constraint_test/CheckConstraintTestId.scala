@@ -16,5 +16,5 @@ case class CheckConstraintTestId(@JsonValue value: Int) extends scala.AnyVal
 object CheckConstraintTestId {
   given bijection: Bijection[CheckConstraintTestId, Int] = Bijection.apply[CheckConstraintTestId, Int](_.value)(CheckConstraintTestId.apply)
 
-  given dbType: Db2Type[CheckConstraintTestId] = ScalaDbTypes.Db2Types.integer.bimap(CheckConstraintTestId.apply, _.value)
+  given db2Type: Db2Type[CheckConstraintTestId] = ScalaDbTypes.Db2Types.integer.bimap(CheckConstraintTestId.apply, _.value)
 }

@@ -1,6 +1,7 @@
 package adventureworks
 
 import adventureworks.person_row_join.PersonRowJoinSqlRepoImpl
+import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import org.junit.Test
 import java.time.LocalDate
@@ -17,7 +18,7 @@ class RecordTest {
             val personRow = testInsert.personPerson(
                 businessentityid = businessentityRow.businessentityid,
                 persontype = "EM",
-                firstname = FirstName("a"),
+                firstname = FirstName(Name("a")),
                 c = c
             )
             testInsert.personEmailaddress(

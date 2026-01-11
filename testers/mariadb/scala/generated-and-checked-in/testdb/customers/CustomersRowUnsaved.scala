@@ -12,17 +12,20 @@ import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusId
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 case class CustomersRowUnsaved(
   /**  */
-  email: String,
+  email: /* user-picked */ Email,
   /**  */
   @JsonProperty("password_hash") passwordHash: Array[Byte],
   /**  */
-  @JsonProperty("first_name") firstName: String,
+  @JsonProperty("first_name") firstName: /* user-picked */ FirstName,
   /**  */
-  @JsonProperty("last_name") lastName: String,
+  @JsonProperty("last_name") lastName: /* user-picked */ LastName,
   /** Default: NULL
 
    */

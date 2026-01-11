@@ -32,6 +32,8 @@ import testdb.order_items.OrderItemsRow;
 import testdb.products.ProductsFields;
 import testdb.products.ProductsId;
 import testdb.products.ProductsRow;
+import testdb.userdefined.IsApproved;
+import testdb.userdefined.IsVerifiedPurchase;
 
 public class ReviewsFields
     extends TupleExpr18<
@@ -44,9 +46,9 @@ public class ReviewsFields
         String,
         Json,
         Json,
-        Json,
-        Boolean,
-        Boolean,
+        Json, /* user-picked */
+        IsVerifiedPurchase, /* user-picked */
+        IsApproved,
         Uint4,
         Uint4,
         String,
@@ -70,7 +72,7 @@ public class ReviewsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withReviewId(value),
-        ReviewsId.dbType);
+        ReviewsId.mariaType);
   }
 
   public Field<ProductsId, ReviewsRow> productId() {
@@ -81,7 +83,7 @@ public class ReviewsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public Field<CustomersId, ReviewsRow> customerId() {
@@ -92,7 +94,7 @@ public class ReviewsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCustomerId(value),
-        CustomersId.dbType);
+        CustomersId.mariaType);
   }
 
   public OptField<OrderItemsId, ReviewsRow> orderItemId() {
@@ -103,7 +105,7 @@ public class ReviewsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderItemId(value),
-        OrderItemsId.dbType);
+        OrderItemsId.mariaType);
   }
 
   public Field<Uint1, ReviewsRow> rating() {
@@ -172,26 +174,26 @@ public class ReviewsFields
         MariaTypes.json);
   }
 
-  public Field<Boolean, ReviewsRow> isVerifiedPurchase() {
-    return new Field<Boolean, ReviewsRow>(
+  public Field</* user-picked */ IsVerifiedPurchase, ReviewsRow> isVerifiedPurchase() {
+    return new Field</* user-picked */ IsVerifiedPurchase, ReviewsRow>(
         _path,
         "is_verified_purchase",
         ReviewsRow::isVerifiedPurchase,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsVerifiedPurchase(value),
-        MariaTypes.bool);
+        IsVerifiedPurchase.mariaType);
   }
 
-  public Field<Boolean, ReviewsRow> isApproved() {
-    return new Field<Boolean, ReviewsRow>(
+  public Field</* user-picked */ IsApproved, ReviewsRow> isApproved() {
+    return new Field</* user-picked */ IsApproved, ReviewsRow>(
         _path,
         "is_approved",
         ReviewsRow::isApproved,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsApproved(value),
-        MariaTypes.bool);
+        IsApproved.mariaType);
   }
 
   public Field<Uint4, ReviewsRow> helpfulVotes() {
@@ -364,12 +366,12 @@ public class ReviewsFields
   }
 
   @Override
-  public SqlExpr<Boolean> _11() {
+  public SqlExpr</* user-picked */ IsVerifiedPurchase> _11() {
     return isVerifiedPurchase();
   }
 
   @Override
-  public SqlExpr<Boolean> _12() {
+  public SqlExpr</* user-picked */ IsApproved> _12() {
     return isApproved();
   }
 

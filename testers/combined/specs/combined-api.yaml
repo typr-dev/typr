@@ -1,0 +1,344 @@
+openapi: 3.0.3
+info:
+  title: Combined Multi-Database API
+  description: |
+    A demonstration API that combines data from multiple databases:
+    - PostgreSQL (AdventureWorks) - HR and production data
+    - MariaDB (Ordering System) - E-commerce customers and orders
+
+    This spec is designed to demonstrate how TypeDefinitions can match
+    across both database columns AND OpenAPI fields, creating shared
+    wrapper types like FirstName, LastName, Email, and IsActive.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local development server
+
+tags:
+  - name: Employees
+    description: Employee management (from PostgreSQL AdventureWorks)
+  - name: Customers
+    description: Customer management (from MariaDB Ordering System)
+  - name: Products
+    description: Product catalog (from both databases)
+
+paths:
+  # PostgreSQL-backed endpoints (AdventureWorks HR)
+  /employees:
+    get:
+      tags: [Employees]
+      operationId: listEmployees
+      summary: List all employees
+      parameters:
+        - name: isActive
+          in: query
+          description: Filter by active status
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+
+  /employees/{employeeId}:
+    get:
+      tags: [Employees]
+      operationId: getEmployee
+      summary: Get employee by ID
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Employee details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Employee not found
+
+  # MariaDB-backed endpoints (Ordering System)
+  /customers:
+    get:
+      tags: [Customers]
+      operationId: listCustomers
+      summary: List all customers
+      parameters:
+        - name: isActive
+          in: query
+          description: Filter by active status
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+    post:
+      tags: [Customers]
+      operationId: createCustomer
+      summary: Create a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerCreate'
+      responses:
+        '201':
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+
+  /customers/{customerId}:
+    get:
+      tags: [Customers]
+      operationId: getCustomer
+      summary: Get customer by ID
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Customer details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Customer not found
+    put:
+      tags: [Customers]
+      operationId: updateCustomer
+      summary: Update customer
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdate'
+      responses:
+        '200':
+          description: Customer updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+
+  # Product endpoints (data from both databases)
+  /products:
+    get:
+      tags: [Products]
+      operationId: listProducts
+      summary: List all products from both databases
+      parameters:
+        - name: source
+          in: query
+          description: Filter by data source
+          schema:
+            type: string
+            enum: [postgres, mariadb, all]
+            default: all
+        - name: isActive
+          in: query
+          description: Filter by active status
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+components:
+  schemas:
+    # Employee from PostgreSQL (HumanResources.Employee + Person.Person)
+    Employee:
+      type: object
+      required:
+        - employeeId
+        - firstName
+        - lastName
+        - email
+        - isActive
+        - isSalaried
+      properties:
+        employeeId:
+          type: integer
+          format: int32
+          description: Employee business entity ID
+        firstName:
+          type: string
+          description: Employee's first name (matches FirstName type)
+          maxLength: 50
+        lastName:
+          type: string
+          description: Employee's last name (matches LastName type)
+          maxLength: 50
+        middleName:
+          type: string
+          description: Employee's middle name (matches MiddleName type)
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          description: Employee's email address (matches Email type)
+        jobTitle:
+          type: string
+          description: Job title
+        isActive:
+          type: boolean
+          description: Whether employee is currently active (matches IsActive type)
+        isSalaried:
+          type: boolean
+          description: Whether employee is salaried vs hourly (matches SalariedFlag type)
+        hireDate:
+          type: string
+          format: date
+          description: Date employee was hired
+
+    # Customer from MariaDB (customers table)
+    Customer:
+      type: object
+      required:
+        - customerId
+        - firstName
+        - lastName
+        - email
+        - isActive
+      properties:
+        customerId:
+          type: integer
+          format: int64
+          description: Customer ID
+        firstName:
+          type: string
+          description: Customer's first name (matches FirstName type)
+          maxLength: 100
+        lastName:
+          type: string
+          description: Customer's last name (matches LastName type)
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          description: Customer's email address (matches Email type)
+        tier:
+          type: string
+          enum: [bronze, silver, gold, platinum]
+          description: Customer loyalty tier
+        isActive:
+          type: boolean
+          description: Whether customer account is active (matches IsActive type)
+        createdAt:
+          type: string
+          format: date-time
+          description: When the customer was created
+
+    CustomerCreate:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+      properties:
+        firstName:
+          type: string
+          description: Customer's first name (matches FirstName type)
+          maxLength: 100
+        lastName:
+          type: string
+          description: Customer's last name (matches LastName type)
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          description: Customer's email address (matches Email type)
+        tier:
+          type: string
+          enum: [bronze, silver, gold, platinum]
+          default: bronze
+
+    CustomerUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Customer's first name (matches FirstName type)
+          maxLength: 100
+        lastName:
+          type: string
+          description: Customer's last name (matches LastName type)
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          description: Customer's email address (matches Email type)
+        tier:
+          type: string
+          enum: [bronze, silver, gold, platinum]
+        isActive:
+          type: boolean
+          description: Whether customer account is active (matches IsActive type)
+
+    # Product - unified from both databases
+    Product:
+      type: object
+      required:
+        - productId
+        - name
+        - source
+        - isActive
+      properties:
+        productId:
+          type: string
+          description: Product ID (prefixed with source, e.g., "pg-123" or "maria-456")
+        name:
+          type: string
+          description: Product name
+        description:
+          type: string
+          description: Product description
+        price:
+          type: number
+          format: double
+          description: Product price
+        source:
+          type: string
+          enum: [postgres, mariadb]
+          description: Which database this product comes from
+        isActive:
+          type: boolean
+          description: Whether product is active/visible (matches IsActive type)

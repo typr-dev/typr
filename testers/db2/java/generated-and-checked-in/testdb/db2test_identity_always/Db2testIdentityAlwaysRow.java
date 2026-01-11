@@ -29,7 +29,7 @@ public record Db2testIdentityAlwaysRow(
 
   public static RowParser<Db2testIdentityAlwaysRow> _rowParser =
       RowParsers.of(
-          Db2testIdentityAlwaysId.dbType,
+          Db2testIdentityAlwaysId.db2Type,
           Db2Types.varchar,
           Db2testIdentityAlwaysRow::new,
           row -> new Object[] {row.id(), row.name()});

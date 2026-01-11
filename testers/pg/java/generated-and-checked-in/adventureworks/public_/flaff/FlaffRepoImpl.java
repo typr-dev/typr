@@ -33,13 +33,13 @@ public class FlaffRepoImpl implements FlaffRepo {
   public Boolean deleteById(FlaffId compositeId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"public\".\"flaff\" where \"code\" = "),
-                Fragment.encode(ShortText.dbType, compositeId.code()),
+                Fragment.encode(ShortText.pgType, compositeId.code()),
                 Fragment.lit(" AND \"another_code\" = "),
                 Fragment.encode(PgTypes.text, compositeId.anotherCode()),
                 Fragment.lit(" AND \"some_number\" = "),
                 Fragment.encode(PgTypes.int4, compositeId.someNumber()),
                 Fragment.lit(" AND \"specifier\" = "),
-                Fragment.encode(ShortText.dbType, compositeId.specifier()),
+                Fragment.encode(ShortText.pgType, compositeId.specifier()),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -62,13 +62,13 @@ public class FlaffRepoImpl implements FlaffRepo {
                     + "from \"public\".\"flaff\"\n"
                     + "where (\"code\", \"another_code\", \"some_number\", \"specifier\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(ShortText.dbTypeArray, code),
+            Fragment.encode(ShortText.pgTypeArray, code),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.textArray, anotherCode),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.int4Array, someNumber),
             Fragment.lit(", "),
-            Fragment.encode(ShortText.dbTypeArray, specifier),
+            Fragment.encode(ShortText.pgTypeArray, specifier),
             Fragment.lit("))\n"))
         .update()
         .runUnchecked(c);
@@ -81,15 +81,15 @@ public class FlaffRepoImpl implements FlaffRepo {
                 "insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\","
                     + " \"specifier\", \"parentspecifier\")\n"
                     + "values ("),
-            Fragment.encode(ShortText.dbType, unsaved.code()),
+            Fragment.encode(ShortText.pgType, unsaved.code()),
             Fragment.lit("::text, "),
             Fragment.encode(PgTypes.text, unsaved.anotherCode()),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.int4, unsaved.someNumber()),
             Fragment.lit("::int4, "),
-            Fragment.encode(ShortText.dbType, unsaved.specifier()),
+            Fragment.encode(ShortText.pgType, unsaved.specifier()),
             Fragment.lit("::text, "),
-            Fragment.encode(ShortText.dbType.opt(), unsaved.parentspecifier()),
+            Fragment.encode(ShortText.pgType.opt(), unsaved.parentspecifier()),
             Fragment.lit(
                 "::text)\n"
                     + "RETURNING \"code\", \"another_code\", \"some_number\", \"specifier\","
@@ -134,13 +134,13 @@ public class FlaffRepoImpl implements FlaffRepo {
                     + " \"parentspecifier\"\n"
                     + "from \"public\".\"flaff\"\n"
                     + "where \"code\" = "),
-            Fragment.encode(ShortText.dbType, compositeId.code()),
+            Fragment.encode(ShortText.pgType, compositeId.code()),
             Fragment.lit(" AND \"another_code\" = "),
             Fragment.encode(PgTypes.text, compositeId.anotherCode()),
             Fragment.lit(" AND \"some_number\" = "),
             Fragment.encode(PgTypes.int4, compositeId.someNumber()),
             Fragment.lit(" AND \"specifier\" = "),
-            Fragment.encode(ShortText.dbType, compositeId.specifier()),
+            Fragment.encode(ShortText.pgType, compositeId.specifier()),
             Fragment.lit(""))
         .query(FlaffRow._rowParser.first())
         .runUnchecked(c);
@@ -163,13 +163,13 @@ public class FlaffRepoImpl implements FlaffRepo {
                     + "from \"public\".\"flaff\"\n"
                     + "where (\"code\", \"another_code\", \"some_number\", \"specifier\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(ShortText.dbTypeArray, code),
+            Fragment.encode(ShortText.pgTypeArray, code),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.textArray, anotherCode),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.int4Array, someNumber),
             Fragment.lit(", "),
-            Fragment.encode(ShortText.dbTypeArray, specifier),
+            Fragment.encode(ShortText.pgTypeArray, specifier),
             Fragment.lit("))\n"))
         .query(FlaffRow._rowParser.all())
         .runUnchecked(c);
@@ -194,15 +194,15 @@ public class FlaffRepoImpl implements FlaffRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"public\".\"flaff\"\nset \"parentspecifier\" = "),
-                Fragment.encode(ShortText.dbType.opt(), row.parentspecifier()),
+                Fragment.encode(ShortText.pgType.opt(), row.parentspecifier()),
                 Fragment.lit("::text\nwhere \"code\" = "),
-                Fragment.encode(ShortText.dbType, compositeId.code()),
+                Fragment.encode(ShortText.pgType, compositeId.code()),
                 Fragment.lit(" AND \"another_code\" = "),
                 Fragment.encode(PgTypes.text, compositeId.anotherCode()),
                 Fragment.lit(" AND \"some_number\" = "),
                 Fragment.encode(PgTypes.int4, compositeId.someNumber()),
                 Fragment.lit(" AND \"specifier\" = "),
-                Fragment.encode(ShortText.dbType, compositeId.specifier()),
+                Fragment.encode(ShortText.pgType, compositeId.specifier()),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -216,15 +216,15 @@ public class FlaffRepoImpl implements FlaffRepo {
                 "insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\","
                     + " \"specifier\", \"parentspecifier\")\n"
                     + "values ("),
-            Fragment.encode(ShortText.dbType, unsaved.code()),
+            Fragment.encode(ShortText.pgType, unsaved.code()),
             Fragment.lit("::text, "),
             Fragment.encode(PgTypes.text, unsaved.anotherCode()),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.int4, unsaved.someNumber()),
             Fragment.lit("::int4, "),
-            Fragment.encode(ShortText.dbType, unsaved.specifier()),
+            Fragment.encode(ShortText.pgType, unsaved.specifier()),
             Fragment.lit("::text, "),
-            Fragment.encode(ShortText.dbType.opt(), unsaved.parentspecifier()),
+            Fragment.encode(ShortText.pgType.opt(), unsaved.parentspecifier()),
             Fragment.lit(
                 "::text)\n"
                     + "on conflict (\"code\", \"another_code\", \"some_number\", \"specifier\")\n"

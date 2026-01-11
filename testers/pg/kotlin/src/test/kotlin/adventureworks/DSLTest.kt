@@ -5,6 +5,7 @@ import adventureworks.person.businessentity.BusinessentityRepoImpl
 import adventureworks.person.emailaddress.EmailaddressRepoImpl
 import adventureworks.person.person.PersonRepoImpl
 import adventureworks.sales.salesperson.SalespersonRepoImpl
+import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -26,7 +27,7 @@ class DSLTest {
             val personRow = testInsert.personPerson(
                 businessentityid = businessentityRow.businessentityid,
                 persontype = "EM",
-                firstname = FirstName("a"),
+                firstname = FirstName(Name("a")),
                 c = c
             )
             testInsert.personEmailaddress(

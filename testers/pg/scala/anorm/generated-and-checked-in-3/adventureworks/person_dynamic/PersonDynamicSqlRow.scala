@@ -5,8 +5,9 @@
  */
 package adventureworks.person_dynamic
 
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import anorm.Column
 import anorm.RowParser
 import anorm.Success
@@ -26,9 +27,9 @@ case class PersonDynamicSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Option[Name],
+  middlename: Option[/* user-picked */ MiddleName],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name
+  lastname: /* user-picked */ LastName
 )
 
 object PersonDynamicSqlRow {
@@ -38,8 +39,8 @@ object PersonDynamicSqlRow {
           PersonDynamicSqlRow(
             title = json.\("title").toOption.map(_.as(using Reads.StringReads)),
             firstname = json.\("firstname").as(using FirstName.reads),
-            middlename = json.\("middlename").toOption.map(_.as(using Name.reads)),
-            lastname = json.\("lastname").as(using Name.reads)
+            middlename = json.\("middlename").toOption.map(_.as(using MiddleName.reads)),
+            lastname = json.\("lastname").as(using LastName.reads)
           )
         )
       ),
@@ -52,8 +53,8 @@ object PersonDynamicSqlRow {
         PersonDynamicSqlRow(
           title = row(idx + 0)(using Column.columnToOption(using Column.columnToString)),
           firstname = row(idx + 1)(using /* user-picked */ FirstName.column),
-          middlename = row(idx + 2)(using Column.columnToOption(using Name.column)),
-          lastname = row(idx + 3)(using Name.column)
+          middlename = row(idx + 2)(using Column.columnToOption(using MiddleName.column)),
+          lastname = row(idx + 3)(using /* user-picked */ LastName.column)
         )
       )
     }
@@ -64,8 +65,8 @@ object PersonDynamicSqlRow {
       new JsObject(ListMap[String, JsValue](
         "title" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.title),
         "firstname" -> FirstName.writes.writes(o.firstname),
-        "middlename" -> Writes.OptionWrites(using Name.writes).writes(o.middlename),
-        "lastname" -> Name.writes.writes(o.lastname)
+        "middlename" -> Writes.OptionWrites(using MiddleName.writes).writes(o.middlename),
+        "lastname" -> LastName.writes.writes(o.lastname)
       ))
     )
   }

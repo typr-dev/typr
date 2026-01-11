@@ -104,5 +104,5 @@ case class MariatestSpatialNullRow(
 }
 
 object MariatestSpatialNullRow {
-  val `_rowParser`: RowParser[MariatestSpatialNullRow] = RowParsers.of(MariatestSpatialNullId.dbType, MariaTypes.geometry.nullable, MariaTypes.point.nullable, MariaTypes.linestring.nullable, MariaTypes.polygon.nullable, MariaTypes.multipoint.nullable, MariaTypes.multilinestring.nullable, MariaTypes.multipolygon.nullable, MariaTypes.geometrycollection.nullable)(MariatestSpatialNullRow.apply)(row => Array[Any](row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
+  val `_rowParser`: RowParser[MariatestSpatialNullRow] = RowParsers.of(MariatestSpatialNullId.mariaType, MariaTypes.geometry.nullable, MariaTypes.point.nullable, MariaTypes.linestring.nullable, MariaTypes.polygon.nullable, MariaTypes.multipoint.nullable, MariaTypes.multilinestring.nullable, MariaTypes.multipolygon.nullable, MariaTypes.geometrycollection.nullable)(MariatestSpatialNullRow.apply)(row => Array[Any](row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
 }

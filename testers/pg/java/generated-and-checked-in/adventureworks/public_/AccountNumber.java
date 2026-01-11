@@ -21,12 +21,12 @@ public record AccountNumber(@JsonValue String value) {
   public static Bijection<AccountNumber, String> bijection =
       Bijection.of(AccountNumber::value, AccountNumber::new);
 
-  public static PgType<AccountNumber> dbType =
+  public static PgType<AccountNumber> pgType =
       PgTypes.text
           .bimap(AccountNumber::new, AccountNumber::value)
           .renamed("\"public\".\"AccountNumber\"");
 
-  public static PgType<AccountNumber[]> dbTypeArray =
+  public static PgType<AccountNumber[]> pgTypeArray =
       PgTypes.textArray
           .bimap(
               xs -> arrayMap.map(xs, AccountNumber::new, AccountNumber.class),

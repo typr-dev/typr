@@ -55,13 +55,13 @@ data class ProductPricesFields(val _path: List<Path>) : TupleExpr7<ProductPrices
 
   fun price(): Field<BigDecimal, ProductPricesRow> = Field<BigDecimal, ProductPricesRow>(_path, "price", ProductPricesRow::price, null, null, { row, value -> row.copy(price = value) }, KotlinDbTypes.MariaTypes.numeric)
 
-  fun priceId(): IdField<ProductPricesId, ProductPricesRow> = IdField<ProductPricesId, ProductPricesRow>(_path, "price_id", ProductPricesRow::priceId, null, null, { row, value -> row.copy(priceId = value) }, ProductPricesId.dbType)
+  fun priceId(): IdField<ProductPricesId, ProductPricesRow> = IdField<ProductPricesId, ProductPricesRow>(_path, "price_id", ProductPricesRow::priceId, null, null, { row, value -> row.copy(priceId = value) }, ProductPricesId.mariaType)
 
-  fun productId(): Field<ProductsId, ProductPricesRow> = Field<ProductsId, ProductPricesRow>(_path, "product_id", ProductPricesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.dbType)
+  fun productId(): Field<ProductsId, ProductPricesRow> = Field<ProductsId, ProductPricesRow>(_path, "product_id", ProductPricesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
 
   override fun rowParser(): RowParser<ProductPricesRow> = ProductPricesRow._rowParser.underlying
 
-  fun tierId(): OptField<PriceTiersId, ProductPricesRow> = OptField<PriceTiersId, ProductPricesRow>(_path, "tier_id", ProductPricesRow::tierId, null, null, { row, value -> row.copy(tierId = value) }, PriceTiersId.dbType)
+  fun tierId(): OptField<PriceTiersId, ProductPricesRow> = OptField<PriceTiersId, ProductPricesRow>(_path, "tier_id", ProductPricesRow::tierId, null, null, { row, value -> row.copy(tierId = value) }, PriceTiersId.mariaType)
 
   fun validFrom(): Field<LocalDate, ProductPricesRow> = Field<LocalDate, ProductPricesRow>(_path, "valid_from", ProductPricesRow::validFrom, null, null, { row, value -> row.copy(validFrom = value) }, MariaTypes.date)
 

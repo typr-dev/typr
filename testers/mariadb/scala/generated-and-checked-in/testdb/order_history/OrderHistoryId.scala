@@ -17,5 +17,5 @@ case class OrderHistoryId(@JsonValue value: Uint8) extends scala.AnyVal
 object OrderHistoryId {
   given bijection: Bijection[OrderHistoryId, Uint8] = Bijection.apply[OrderHistoryId, Uint8](_.value)(OrderHistoryId.apply)
 
-  given dbType: MariaType[OrderHistoryId] = MariaTypes.bigintUnsigned.bimap(OrderHistoryId.apply, _.value)
+  given mariaType: MariaType[OrderHistoryId] = MariaTypes.bigintUnsigned.bimap(OrderHistoryId.apply, _.value)
 }

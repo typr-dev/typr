@@ -25,5 +25,5 @@ case class CountryregionRowUnsaved(
 }
 
 object CountryregionRowUnsaved {
-  given pgText: PgText[CountryregionRowUnsaved] = PgText.instance((row, sb) => { CountryregionId.dbType.text.unsafeEncode(row.countryregioncode, sb); sb.append(PgText.DELIMETER); Name.dbType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[CountryregionRowUnsaved] = PgText.instance((row, sb) => { CountryregionId.pgType.text.unsafeEncode(row.countryregioncode, sb); sb.append(PgText.DELIMETER); Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
 }

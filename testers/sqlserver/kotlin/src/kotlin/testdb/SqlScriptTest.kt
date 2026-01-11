@@ -4,6 +4,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import testdb.customer_orders_summary.*
 import testdb.find_customers_by_email.*
+import testdb.userdefined.Email
 import java.math.BigDecimal
 import java.util.Random
 
@@ -21,7 +22,7 @@ class SqlScriptTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Kotlin Summary Test",
-                email = "summary@test.com",
+                email = Email("summary@test.com"),
                 c = c
             )
             testInsert.Orders(
@@ -48,7 +49,7 @@ class SqlScriptTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "KotlinPatternMatch Customer",
-                email = "pattern@test.com",
+                email = Email("pattern@test.com"),
                 c = c
             )
             testInsert.Orders(customerId = customer.customerId, c = c)
@@ -69,7 +70,7 @@ class SqlScriptTest {
         SqlServerTestHelper.run { c ->
             val bigSpender = testInsert.Customers(
                 name = "Kotlin Big Spender",
-                email = "big@test.com",
+                email = Email("big@test.com"),
                 c = c
             )
             testInsert.Orders(
@@ -80,7 +81,7 @@ class SqlScriptTest {
 
             val smallSpender = testInsert.Customers(
                 name = "Kotlin Small Spender",
-                email = "small@test.com",
+                email = Email("small@test.com"),
                 c = c
             )
             testInsert.Orders(
@@ -105,7 +106,7 @@ class SqlScriptTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Email Test",
-                email = "unique-kotlin-sqlserver@example.com",
+                email = Email("unique-kotlin-sqlserver@example.com"),
                 c = c
             )
 
@@ -124,7 +125,7 @@ class SqlScriptTest {
         SqlServerTestHelper.run { c ->
             testInsert.Customers(
                 name = "No Match",
-                email = "nomatch@test.com",
+                email = Email("nomatch@test.com"),
                 c = c
             )
 
@@ -142,7 +143,7 @@ class SqlScriptTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Kotlin Multi Order Customer",
-                email = "multi@test.com",
+                email = Email("multi@test.com"),
                 c = c
             )
 

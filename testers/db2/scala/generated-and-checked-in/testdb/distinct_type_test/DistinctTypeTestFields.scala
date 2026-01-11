@@ -27,7 +27,7 @@ class DistinctTypeTestFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(id = value),
-      DistinctTypeTestId.dbType
+      DistinctTypeTestId.db2Type
     )
   }
 
@@ -39,7 +39,7 @@ class DistinctTypeTestFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(email = value),
-      EmailAddress.dbType
+      EmailAddress.db2Type
     )
   }
 
@@ -51,7 +51,7 @@ class DistinctTypeTestFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(balance = value),
-      MoneyAmount.dbType
+      MoneyAmount.db2Type
     )
   }
 

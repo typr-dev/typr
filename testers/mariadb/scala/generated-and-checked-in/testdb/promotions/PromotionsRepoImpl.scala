@@ -16,22 +16,23 @@ import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
 import testdb.AllBrandsCategoriesCSet
+import testdb.userdefined.IsActive
 import dev.typr.foundations.scala.Fragment.sql
 
 class PromotionsRepoImpl extends PromotionsRepo {
   override def delete: DeleteBuilder[PromotionsFields, PromotionsRow] = DeleteBuilder.of("`promotions`", PromotionsFields.structure, Dialect.MARIADB)
 
-  override def deleteById(promotionId: PromotionsId)(using c: Connection): Boolean = sql"delete from `promotions` where `promotion_id` = ${Fragment.encode(PromotionsId.dbType, promotionId)}".update().runUnchecked(c) > 0
+  override def deleteById(promotionId: PromotionsId)(using c: Connection): Boolean = sql"delete from `promotions` where `promotion_id` = ${Fragment.encode(PromotionsId.mariaType, promotionId)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(promotionIds: Array[PromotionsId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    promotionIds.foreach { id => fragments.addOne(Fragment.encode(PromotionsId.dbType, id)): @scala.annotation.nowarn }
+    promotionIds.foreach { id => fragments.addOne(Fragment.encode(PromotionsId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `promotions` where `promotion_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: PromotionsRow)(using c: Connection): PromotionsRow = {
   sql"""insert into `promotions`(`code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`)
-    values (${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.description)}, ${Fragment.encode(MariaTypes.text, unsaved.discountType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountValue)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.minOrderAmount)}, ${Fragment.encode(MariaTypes.intUnsigned.nullable, unsaved.maxUses)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.usesCount)}, ${Fragment.encode(MariaTypes.tinyintUnsigned.nullable, unsaved.maxUsesPerCustomer)}, ${Fragment.encode(AllBrandsCategoriesCSet.dbType.nullable, unsaved.applicableTo)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.rulesJson)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validFrom)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validTo)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isActive)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)})
+    values (${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.description)}, ${Fragment.encode(MariaTypes.text, unsaved.discountType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountValue)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.minOrderAmount)}, ${Fragment.encode(MariaTypes.intUnsigned.nullable, unsaved.maxUses)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.usesCount)}, ${Fragment.encode(MariaTypes.tinyintUnsigned.nullable, unsaved.maxUsesPerCustomer)}, ${Fragment.encode(AllBrandsCategoriesCSet.mariaType.nullable, unsaved.applicableTo)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.rulesJson)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validFrom)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validTo)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)})
     RETURNING `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`
     """
     .updateReturning(PromotionsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -74,7 +75,7 @@ class PromotionsRepoImpl extends PromotionsRepo {
     );
     unsaved.applicableTo.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`applicable_to`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(AllBrandsCategoriesCSet.dbType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit("`applicable_to`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(AllBrandsCategoriesCSet.mariaType.nullable, value)}"): @scala.annotation.nowarn }
     );
     unsaved.rulesJson.visit(
       {  },
@@ -82,7 +83,7 @@ class PromotionsRepoImpl extends PromotionsRepo {
     );
     unsaved.isActive.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`is_active`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.bool, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit("`is_active`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(IsActive.mariaType, value)}"): @scala.annotation.nowarn }
     );
     unsaved.createdAt.visit(
       {  },
@@ -108,12 +109,12 @@ class PromotionsRepoImpl extends PromotionsRepo {
   override def selectById(promotionId: PromotionsId)(using c: Connection): Option[PromotionsRow] = {
     sql"""select `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`
     from `promotions`
-    where `promotion_id` = ${Fragment.encode(PromotionsId.dbType, promotionId)}""".query(PromotionsRow.`_rowParser`.first()).runUnchecked(c)
+    where `promotion_id` = ${Fragment.encode(PromotionsId.mariaType, promotionId)}""".query(PromotionsRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(promotionIds: Array[PromotionsId])(using c: Connection): List[PromotionsRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    promotionIds.foreach { id => fragments.addOne(Fragment.encode(PromotionsId.dbType, id)): @scala.annotation.nowarn }
+    promotionIds.foreach { id => fragments.addOne(Fragment.encode(PromotionsId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at` from `promotions` where `promotion_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(PromotionsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -144,18 +145,18 @@ class PromotionsRepoImpl extends PromotionsRepo {
     `max_uses` = ${Fragment.encode(MariaTypes.intUnsigned.nullable, row.maxUses)},
     `uses_count` = ${Fragment.encode(MariaTypes.intUnsigned, row.usesCount)},
     `max_uses_per_customer` = ${Fragment.encode(MariaTypes.tinyintUnsigned.nullable, row.maxUsesPerCustomer)},
-    `applicable_to` = ${Fragment.encode(AllBrandsCategoriesCSet.dbType.nullable, row.applicableTo)},
+    `applicable_to` = ${Fragment.encode(AllBrandsCategoriesCSet.mariaType.nullable, row.applicableTo)},
     `rules_json` = ${Fragment.encode(MariaTypes.json.nullable, row.rulesJson)},
     `valid_from` = ${Fragment.encode(MariaTypes.datetime, row.validFrom)},
     `valid_to` = ${Fragment.encode(MariaTypes.datetime, row.validTo)},
-    `is_active` = ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, row.isActive)},
+    `is_active` = ${Fragment.encode(IsActive.mariaType, row.isActive)},
     `created_at` = ${Fragment.encode(MariaTypes.datetime, row.createdAt)}
-    where `promotion_id` = ${Fragment.encode(PromotionsId.dbType, promotionId)}""".update().runUnchecked(c) > 0
+    where `promotion_id` = ${Fragment.encode(PromotionsId.mariaType, promotionId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: PromotionsRow)(using c: Connection): PromotionsRow = {
   sql"""INSERT INTO `promotions`(`promotion_id`, `code`, `name`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`, `valid_from`, `valid_to`, `is_active`, `created_at`)
-    VALUES (${Fragment.encode(PromotionsId.dbType, unsaved.promotionId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.description)}, ${Fragment.encode(MariaTypes.text, unsaved.discountType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountValue)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.minOrderAmount)}, ${Fragment.encode(MariaTypes.intUnsigned.nullable, unsaved.maxUses)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.usesCount)}, ${Fragment.encode(MariaTypes.tinyintUnsigned.nullable, unsaved.maxUsesPerCustomer)}, ${Fragment.encode(AllBrandsCategoriesCSet.dbType.nullable, unsaved.applicableTo)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.rulesJson)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validFrom)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validTo)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isActive)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)})
+    VALUES (${Fragment.encode(PromotionsId.mariaType, unsaved.promotionId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.description)}, ${Fragment.encode(MariaTypes.text, unsaved.discountType)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountValue)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.minOrderAmount)}, ${Fragment.encode(MariaTypes.intUnsigned.nullable, unsaved.maxUses)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.usesCount)}, ${Fragment.encode(MariaTypes.tinyintUnsigned.nullable, unsaved.maxUsesPerCustomer)}, ${Fragment.encode(AllBrandsCategoriesCSet.mariaType.nullable, unsaved.applicableTo)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.rulesJson)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validFrom)}, ${Fragment.encode(MariaTypes.datetime, unsaved.validTo)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)})
     ON DUPLICATE KEY UPDATE `code` = VALUES(`code`),
     `name` = VALUES(`name`),
     `description` = VALUES(`description`),

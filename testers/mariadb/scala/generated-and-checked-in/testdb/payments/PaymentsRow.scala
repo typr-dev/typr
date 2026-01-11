@@ -123,5 +123,5 @@ case class PaymentsRow(
 }
 
 object PaymentsRow {
-  val `_rowParser`: RowParser[PaymentsRow] = RowParsers.of(PaymentsId.dbType, OrdersId.dbType, PaymentMethodsId.dbType, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.text, MariaTypes.json.nullable, MariaTypes.varchar.nullable, MariaTypes.inet6.nullable, MariaTypes.datetime, MariaTypes.datetime.nullable)(PaymentsRow.apply)(row => Array[Any](row.paymentId, row.orderId, row.methodId, row.transactionId, row.amount, row.currencyCode, row.status, row.processorResponse, row.errorMessage, row.ipAddress, row.createdAt, row.processedAt))
+  val `_rowParser`: RowParser[PaymentsRow] = RowParsers.of(PaymentsId.mariaType, OrdersId.mariaType, PaymentMethodsId.mariaType, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.text, MariaTypes.json.nullable, MariaTypes.varchar.nullable, MariaTypes.inet6.nullable, MariaTypes.datetime, MariaTypes.datetime.nullable)(PaymentsRow.apply)(row => Array[Any](row.paymentId, row.orderId, row.methodId, row.transactionId, row.amount, row.currencyCode, row.status, row.processorResponse, row.errorMessage, row.ipAddress, row.createdAt, row.processedAt))
 }

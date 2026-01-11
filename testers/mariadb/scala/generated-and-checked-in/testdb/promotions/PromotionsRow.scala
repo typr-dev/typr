@@ -18,6 +18,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import testdb.AllBrandsCategoriesCSet
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: promotions
  * Primary key: promotion_id
@@ -70,12 +71,12 @@ case class PromotionsRow(
   /** 
    * Default: 1
    */
-  @JsonProperty("is_active") isActive: Boolean,
+  @JsonProperty("is_active") isActive: /* user-picked */ IsActive,
   /** 
    * Default: current_timestamp()
    */
   @JsonProperty("created_at") createdAt: LocalDateTime
-) extends Tuple16[PromotionsId, String, String, Option[String], String, BigDecimal, Option[BigDecimal], Option[Uint4], Uint4, Option[Uint1], Option[AllBrandsCategoriesCSet], Option[Json], LocalDateTime, LocalDateTime, Boolean, LocalDateTime] {
+) extends Tuple16[PromotionsId, String, String, Option[String], String, BigDecimal, Option[BigDecimal], Option[Uint4], Uint4, Option[Uint1], Option[AllBrandsCategoriesCSet], Option[Json], LocalDateTime, LocalDateTime, /* user-picked */ IsActive, LocalDateTime] {
   def id: PromotionsId = promotionId
 
   def toUnsavedRow(
@@ -86,7 +87,7 @@ case class PromotionsRow(
     maxUsesPerCustomer: Defaulted[Option[Uint1]] = Defaulted.Provided(this.maxUsesPerCustomer),
     applicableTo: Defaulted[Option[AllBrandsCategoriesCSet]] = Defaulted.Provided(this.applicableTo),
     rulesJson: Defaulted[Option[Json]] = Defaulted.Provided(this.rulesJson),
-    isActive: Defaulted[Boolean] = Defaulted.Provided(this.isActive),
+    isActive: Defaulted[/* user-picked */ IsActive] = Defaulted.Provided(this.isActive),
     createdAt: Defaulted[LocalDateTime] = Defaulted.Provided(this.createdAt)
   ): PromotionsRowUnsaved = {
     new PromotionsRowUnsaved(
@@ -136,11 +137,11 @@ case class PromotionsRow(
 
   override def `_14`: LocalDateTime = validTo
 
-  override def `_15`: Boolean = isActive
+  override def `_15`: /* user-picked */ IsActive = isActive
 
   override def `_16`: LocalDateTime = createdAt
 }
 
 object PromotionsRow {
-  val `_rowParser`: RowParser[PromotionsRow] = RowParsers.of(PromotionsId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.intUnsigned.nullable, MariaTypes.intUnsigned, MariaTypes.tinyintUnsigned.nullable, AllBrandsCategoriesCSet.dbType.nullable, MariaTypes.json.nullable, MariaTypes.datetime, MariaTypes.datetime, ScalaDbTypes.MariaTypes.bool, MariaTypes.datetime)(PromotionsRow.apply)(row => Array[Any](row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt))
+  val `_rowParser`: RowParser[PromotionsRow] = RowParsers.of(PromotionsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.intUnsigned.nullable, MariaTypes.intUnsigned, MariaTypes.tinyintUnsigned.nullable, AllBrandsCategoriesCSet.mariaType.nullable, MariaTypes.json.nullable, MariaTypes.datetime, MariaTypes.datetime, IsActive.mariaType, MariaTypes.datetime)(PromotionsRow.apply)(row => Array[Any](row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt))
 }

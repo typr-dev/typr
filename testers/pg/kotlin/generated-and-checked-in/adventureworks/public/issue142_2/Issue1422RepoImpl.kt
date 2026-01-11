@@ -24,19 +24,19 @@ class Issue1422RepoImpl() : Issue1422Repo {
   override fun deleteById(
     tabellkode: Issue142Id,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"issue142_2\" where \"tabellkode\" = "), Fragment.encode(Issue142Id.dbType, tabellkode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"issue142_2\" where \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     tabellkodes: Array<Issue142Id>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.dbTypeArray, tabellkodes), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: Issue1422Row,
     c: Connection
-  ): Issue1422Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.dbType, unsaved.tabellkode), Fragment.lit(")\nRETURNING \"tabellkode\"\n"))
+  ): Issue1422Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\nRETURNING \"tabellkode\"\n"))
     .updateReturning(Issue1422Row._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(
@@ -52,12 +52,12 @@ class Issue1422RepoImpl() : Issue1422Repo {
   override fun selectById(
     tabellkode: Issue142Id,
     c: Connection
-  ): Issue1422Row? = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = "), Fragment.encode(Issue142Id.dbType, tabellkode), Fragment.lit("")).query(Issue1422Row._rowParser.first()).runUnchecked(c)
+  ): Issue1422Row? = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).query(Issue1422Row._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     tabellkodes: Array<Issue142Id>,
     c: Connection
-  ): List<Issue1422Row> = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.dbTypeArray, tabellkodes), Fragment.lit(")")).query(Issue1422Row._rowParser.all()).runUnchecked(c)
+  ): List<Issue1422Row> = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")")).query(Issue1422Row._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     tabellkodes: Array<Issue142Id>,
@@ -73,7 +73,7 @@ class Issue1422RepoImpl() : Issue1422Repo {
   override fun upsert(
     unsaved: Issue1422Row,
     c: Connection
-  ): Issue1422Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.dbType, unsaved.tabellkode), Fragment.lit(")\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
+  ): Issue1422Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
     .updateReturning(Issue1422Row._rowParser.exactlyOne())
     .runUnchecked(c)
 

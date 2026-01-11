@@ -31,7 +31,7 @@ class PasswordFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Busin
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 

@@ -10,6 +10,7 @@ import testdb.categories.CategoriesId;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsPrimary;
 
 /**
  * This class corresponds to a row in table `product_categories` which has not been persisted yet
@@ -20,7 +21,7 @@ public record ProductCategoriesRowUnsaved(
     /** Points to {@link testdb.categories.CategoriesRow#categoryId()} */
     @JsonProperty("category_id") CategoriesId categoryId,
     /** Default: 0 */
-    @JsonProperty("is_primary") Defaulted<Boolean> isPrimary,
+    @JsonProperty("is_primary") Defaulted</* user-picked */ IsPrimary> isPrimary,
     /** Default: 0 */
     @JsonProperty("sort_order") Defaulted<Short> sortOrder) {
   public ProductCategoriesRowUnsaved(
@@ -45,7 +46,8 @@ public record ProductCategoriesRowUnsaved(
   ;
 
   /** Default: 0 */
-  public ProductCategoriesRowUnsaved withIsPrimary(Defaulted<Boolean> isPrimary) {
+  public ProductCategoriesRowUnsaved withIsPrimary(
+      Defaulted</* user-picked */ IsPrimary> isPrimary) {
     return new ProductCategoriesRowUnsaved(productId, categoryId, isPrimary, sortOrder);
   }
   ;
@@ -57,7 +59,7 @@ public record ProductCategoriesRowUnsaved(
   ;
 
   public ProductCategoriesRow toRow(
-      java.util.function.Supplier<Boolean> isPrimaryDefault,
+      java.util.function.Supplier</* user-picked */ IsPrimary> isPrimaryDefault,
       java.util.function.Supplier<Short> sortOrderDefault) {
     return new ProductCategoriesRow(
         productId,

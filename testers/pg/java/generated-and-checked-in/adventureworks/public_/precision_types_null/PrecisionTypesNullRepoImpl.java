@@ -42,7 +42,7 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
   public Boolean deleteById(PrecisionTypesNullId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"public\".\"precision_types_null\" where \"id\" = "),
-                Fragment.encode(PrecisionTypesNullId.dbType, id),
+                Fragment.encode(PrecisionTypesNullId.pgType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -53,7 +53,7 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
   public Integer deleteByIds(PrecisionTypesNullId[] ids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"public\".\"precision_types_null\"\nwhere \"id\" = ANY("),
-            Fragment.encode(PrecisionTypesNullId.dbTypeArray, ids),
+            Fragment.encode(PrecisionTypesNullId.pgTypeArray, ids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -70,21 +70,21 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
                     + " \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\","
                     + " \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\n"
                     + "values ("),
-            Fragment.encode(PrecisionTypesNullId.dbType, unsaved.id()),
+            Fragment.encode(PrecisionTypesNullId.pgType, unsaved.id()),
             Fragment.lit("::int4, "),
-            Fragment.encode(String10.dbType.opt(), unsaved.string10()),
+            Fragment.encode(String10.pgType.opt(), unsaved.string10()),
             Fragment.lit(", "),
-            Fragment.encode(String20.dbType.opt(), unsaved.string20()),
+            Fragment.encode(String20.pgType.opt(), unsaved.string20()),
             Fragment.lit(", "),
-            Fragment.encode(String50.dbType.opt(), unsaved.string50()),
+            Fragment.encode(String50.pgType.opt(), unsaved.string50()),
             Fragment.lit(", "),
-            Fragment.encode(String100.dbType.opt(), unsaved.string100()),
+            Fragment.encode(String100.pgType.opt(), unsaved.string100()),
             Fragment.lit(", "),
-            Fragment.encode(String255.dbType.opt(), unsaved.string255()),
+            Fragment.encode(String255.pgType.opt(), unsaved.string255()),
             Fragment.lit(", "),
-            Fragment.encode(PaddedString3.dbType.opt(), unsaved.bpchar3()),
+            Fragment.encode(PaddedString3.pgType.opt(), unsaved.bpchar3()),
             Fragment.lit("::bpchar, "),
-            Fragment.encode(PaddedString10.dbType.opt(), unsaved.bpchar10()),
+            Fragment.encode(PaddedString10.pgType.opt(), unsaved.bpchar10()),
             Fragment.lit("::bpchar, "),
             Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal52()),
             Fragment.lit("::numeric, "),
@@ -139,30 +139,30 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
     ;
     columns.add(Fragment.lit("\"string10\""));
     values.add(
-        interpolate(Fragment.encode(String10.dbType.opt(), unsaved.string10()), Fragment.lit("")));
+        interpolate(Fragment.encode(String10.pgType.opt(), unsaved.string10()), Fragment.lit("")));
     columns.add(Fragment.lit("\"string20\""));
     values.add(
-        interpolate(Fragment.encode(String20.dbType.opt(), unsaved.string20()), Fragment.lit("")));
+        interpolate(Fragment.encode(String20.pgType.opt(), unsaved.string20()), Fragment.lit("")));
     columns.add(Fragment.lit("\"string50\""));
     values.add(
-        interpolate(Fragment.encode(String50.dbType.opt(), unsaved.string50()), Fragment.lit("")));
+        interpolate(Fragment.encode(String50.pgType.opt(), unsaved.string50()), Fragment.lit("")));
     columns.add(Fragment.lit("\"string100\""));
     values.add(
         interpolate(
-            Fragment.encode(String100.dbType.opt(), unsaved.string100()), Fragment.lit("")));
+            Fragment.encode(String100.pgType.opt(), unsaved.string100()), Fragment.lit("")));
     columns.add(Fragment.lit("\"string255\""));
     values.add(
         interpolate(
-            Fragment.encode(String255.dbType.opt(), unsaved.string255()), Fragment.lit("")));
+            Fragment.encode(String255.pgType.opt(), unsaved.string255()), Fragment.lit("")));
     columns.add(Fragment.lit("\"bpchar3\""));
     values.add(
         interpolate(
-            Fragment.encode(PaddedString3.dbType.opt(), unsaved.bpchar3()),
+            Fragment.encode(PaddedString3.pgType.opt(), unsaved.bpchar3()),
             Fragment.lit("::bpchar")));
     columns.add(Fragment.lit("\"bpchar10\""));
     values.add(
         interpolate(
-            Fragment.encode(PaddedString10.dbType.opt(), unsaved.bpchar10()),
+            Fragment.encode(PaddedString10.pgType.opt(), unsaved.bpchar10()),
             Fragment.lit("::bpchar")));
     columns.add(Fragment.lit("\"decimal5_2\""));
     values.add(
@@ -248,7 +248,7 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
               columns.add(Fragment.lit("\"id\""));
               values.add(
                   interpolate(
-                      Fragment.encode(PrecisionTypesNullId.dbType, value), Fragment.lit("::int4")));
+                      Fragment.encode(PrecisionTypesNullId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     Fragment q =
@@ -338,7 +338,7 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
                     + " \"timetz3\", \"timetz6\"\n"
                     + "from \"public\".\"precision_types_null\"\n"
                     + "where \"id\" = "),
-            Fragment.encode(PrecisionTypesNullId.dbType, id),
+            Fragment.encode(PrecisionTypesNullId.pgType, id),
             Fragment.lit(""))
         .query(PrecisionTypesNullRow._rowParser.first())
         .runUnchecked(c);
@@ -356,7 +356,7 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
                     + " \"timetz3\", \"timetz6\"\n"
                     + "from \"public\".\"precision_types_null\"\n"
                     + "where \"id\" = ANY("),
-            Fragment.encode(PrecisionTypesNullId.dbTypeArray, ids),
+            Fragment.encode(PrecisionTypesNullId.pgTypeArray, ids),
             Fragment.lit(")"))
         .query(PrecisionTypesNullRow._rowParser.all())
         .runUnchecked(c);
@@ -386,19 +386,19 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"public\".\"precision_types_null\"\nset \"string10\" = "),
-                Fragment.encode(String10.dbType.opt(), row.string10()),
+                Fragment.encode(String10.pgType.opt(), row.string10()),
                 Fragment.lit(",\n\"string20\" = "),
-                Fragment.encode(String20.dbType.opt(), row.string20()),
+                Fragment.encode(String20.pgType.opt(), row.string20()),
                 Fragment.lit(",\n\"string50\" = "),
-                Fragment.encode(String50.dbType.opt(), row.string50()),
+                Fragment.encode(String50.pgType.opt(), row.string50()),
                 Fragment.lit(",\n\"string100\" = "),
-                Fragment.encode(String100.dbType.opt(), row.string100()),
+                Fragment.encode(String100.pgType.opt(), row.string100()),
                 Fragment.lit(",\n\"string255\" = "),
-                Fragment.encode(String255.dbType.opt(), row.string255()),
+                Fragment.encode(String255.pgType.opt(), row.string255()),
                 Fragment.lit(",\n\"bpchar3\" = "),
-                Fragment.encode(PaddedString3.dbType.opt(), row.bpchar3()),
+                Fragment.encode(PaddedString3.pgType.opt(), row.bpchar3()),
                 Fragment.lit("::bpchar,\n\"bpchar10\" = "),
-                Fragment.encode(PaddedString10.dbType.opt(), row.bpchar10()),
+                Fragment.encode(PaddedString10.pgType.opt(), row.bpchar10()),
                 Fragment.lit("::bpchar,\n\"decimal5_2\" = "),
                 Fragment.encode(PgTypes.numeric.opt(), row.decimal52()),
                 Fragment.lit("::numeric,\n\"decimal10_2\" = "),
@@ -434,7 +434,7 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
                 Fragment.lit("::timetz,\n\"timetz6\" = "),
                 Fragment.encode(PgTypes.timetz.opt(), row.timetz6()),
                 Fragment.lit("::timetz\nwhere \"id\" = "),
-                Fragment.encode(PrecisionTypesNullId.dbType, id),
+                Fragment.encode(PrecisionTypesNullId.pgType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -452,21 +452,21 @@ public class PrecisionTypesNullRepoImpl implements PrecisionTypesNullRepo {
                     + " \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\","
                     + " \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\n"
                     + "values ("),
-            Fragment.encode(PrecisionTypesNullId.dbType, unsaved.id()),
+            Fragment.encode(PrecisionTypesNullId.pgType, unsaved.id()),
             Fragment.lit("::int4, "),
-            Fragment.encode(String10.dbType.opt(), unsaved.string10()),
+            Fragment.encode(String10.pgType.opt(), unsaved.string10()),
             Fragment.lit(", "),
-            Fragment.encode(String20.dbType.opt(), unsaved.string20()),
+            Fragment.encode(String20.pgType.opt(), unsaved.string20()),
             Fragment.lit(", "),
-            Fragment.encode(String50.dbType.opt(), unsaved.string50()),
+            Fragment.encode(String50.pgType.opt(), unsaved.string50()),
             Fragment.lit(", "),
-            Fragment.encode(String100.dbType.opt(), unsaved.string100()),
+            Fragment.encode(String100.pgType.opt(), unsaved.string100()),
             Fragment.lit(", "),
-            Fragment.encode(String255.dbType.opt(), unsaved.string255()),
+            Fragment.encode(String255.pgType.opt(), unsaved.string255()),
             Fragment.lit(", "),
-            Fragment.encode(PaddedString3.dbType.opt(), unsaved.bpchar3()),
+            Fragment.encode(PaddedString3.pgType.opt(), unsaved.bpchar3()),
             Fragment.lit("::bpchar, "),
-            Fragment.encode(PaddedString10.dbType.opt(), unsaved.bpchar10()),
+            Fragment.encode(PaddedString10.pgType.opt(), unsaved.bpchar10()),
             Fragment.lit("::bpchar, "),
             Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal52()),
             Fragment.lit("::numeric, "),

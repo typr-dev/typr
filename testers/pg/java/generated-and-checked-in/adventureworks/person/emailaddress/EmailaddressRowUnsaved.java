@@ -96,7 +96,7 @@ public record EmailaddressRowUnsaved(
   public static PgText<EmailaddressRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb);
+            BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.text.opt().text().unsafeEncode(row.emailaddress, sb);
             sb.append(PgText.DELIMETER);

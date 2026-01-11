@@ -25,7 +25,7 @@ class OrdersRepoImpl extends OrdersRepo {
   override def deleteByIds(orderIds: Array[OrdersId])(using c: Connection): Int = {
     sql"""delete
     from "orders"
-    where "order_id" = ANY(${Fragment.encode(OrdersId.dbTypeArray, orderIds)})"""
+    where "order_id" = ANY(${Fragment.encode(OrdersId.duckDbTypeArray, orderIds)})"""
       .update()
       .runUnchecked(c)
   }
@@ -81,7 +81,7 @@ class OrdersRepoImpl extends OrdersRepo {
   override def selectByIds(orderIds: Array[OrdersId])(using c: Connection): List[OrdersRow] = {
     sql"""select "order_id", "customer_id", "order_date", "total_amount", "status"
     from "orders"
-    where "order_id" = ANY(${Fragment.encode(OrdersId.dbTypeArray, orderIds)})""".query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    where "order_id" = ANY(${Fragment.encode(OrdersId.duckDbTypeArray, orderIds)})""".query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(orderIds: Array[OrdersId])(using c: Connection): Map[OrdersId, OrdersRow] = {

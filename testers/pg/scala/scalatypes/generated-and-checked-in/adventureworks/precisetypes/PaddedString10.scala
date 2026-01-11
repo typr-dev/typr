@@ -31,11 +31,11 @@ case class PaddedString10 private(@JsonValue value: String) extends PaddedString
 object PaddedString10 {
   given bijection: Bijection[PaddedString10, String] = Bijection.apply[PaddedString10, String](_.value)(PaddedString10.apply)
 
-  given dbType: PgType[PaddedString10] = PgTypes.bpchar.bimap(PaddedString10.apply, _.value)
-
-  given dbTypeArray: PgType[Array[PaddedString10]] = PgTypes.bpcharArray.bimap(xs => xs.map(PaddedString10.apply), xs => xs.map(_.value))
-
   def of(value: String): Option[PaddedString10] = (if (value.length <= 10) Some(new PaddedString10(String.format("%-10s", value))) else None)
+
+  given pgType: PgType[PaddedString10] = PgTypes.bpchar.bimap(PaddedString10.apply, _.value)
+
+  given pgTypeArray: PgType[Array[PaddedString10]] = PgTypes.bpcharArray.bimap(xs => xs.map(PaddedString10.apply), xs => xs.map(_.value))
 
   def unsafeForce(value: String): PaddedString10 = {
     if (value.length > 10) {

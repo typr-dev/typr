@@ -24,19 +24,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class SalespersonRepoImpl extends SalespersonRepo {
   override def delete: DeleteBuilder[SalespersonFields, SalespersonRow] = DeleteBuilder.of(""""sales"."salesperson"""", SalespersonFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "sales"."salesperson" where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "sales"."salesperson" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
     sql"""delete
     from "sales"."salesperson"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})"""
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: SalespersonRow)(using c: Connection): SalespersonRow = {
   sql"""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(SalesterritoryId.dbType.nullable, unsaved.territoryid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.salesquota)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.bonus)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.commissionpct)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(SalesterritoryId.pgType.nullable, unsaved.territoryid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.salesquota)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.bonus)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.commissionpct)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     """
     .updateReturning(SalespersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -46,9 +46,9 @@ class SalespersonRepoImpl extends SalespersonRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SalesterritoryId.dbType.nullable, unsaved.territoryid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SalesterritoryId.pgType.nullable, unsaved.territoryid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""salesquota"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.salesquota)}::numeric"): @scala.annotation.nowarn
     unsaved.bonus.visit(
@@ -106,13 +106,13 @@ class SalespersonRepoImpl extends SalespersonRepo {
   override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[SalespersonRow] = {
     sql"""select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     from "sales"."salesperson"
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".query(SalespersonRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".query(SalespersonRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[SalespersonRow] = {
     sql"""select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     from "sales"."salesperson"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})""".query(SalespersonRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})""".query(SalespersonRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, SalespersonRow] = {
@@ -126,7 +126,7 @@ class SalespersonRepoImpl extends SalespersonRepo {
   override def update(row: SalespersonRow)(using c: Connection): Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
     return sql"""update "sales"."salesperson"
-    set "territoryid" = ${Fragment.encode(SalesterritoryId.dbType.nullable, row.territoryid)}::int4,
+    set "territoryid" = ${Fragment.encode(SalesterritoryId.pgType.nullable, row.territoryid)}::int4,
     "salesquota" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, row.salesquota)}::numeric,
     "bonus" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.bonus)}::numeric,
     "commissionpct" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.commissionpct)}::numeric,
@@ -134,12 +134,12 @@ class SalespersonRepoImpl extends SalespersonRepo {
     "saleslastyear" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.saleslastyear)}::numeric,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: SalespersonRow)(using c: Connection): SalespersonRow = {
   sql"""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(SalesterritoryId.dbType.nullable, unsaved.territoryid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.salesquota)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.bonus)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.commissionpct)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(SalesterritoryId.pgType.nullable, unsaved.territoryid)}::int4, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric.nullable, unsaved.salesquota)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.bonus)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.commissionpct)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.salesytd)}::numeric, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.saleslastyear)}::numeric, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid")
     do update set
       "territoryid" = EXCLUDED."territoryid",

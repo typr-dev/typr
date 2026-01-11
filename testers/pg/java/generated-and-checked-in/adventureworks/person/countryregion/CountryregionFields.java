@@ -40,7 +40,7 @@ public class CountryregionFields extends TupleExpr3<CountryregionId, Name, Local
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCountryregioncode(value),
-        CountryregionId.dbType);
+        CountryregionId.pgType);
   }
 
   public Field<Name, CountryregionRow> name() {
@@ -51,7 +51,7 @@ public class CountryregionFields extends TupleExpr3<CountryregionId, Name, Local
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<LocalDateTime, CountryregionRow> modifieddate() {

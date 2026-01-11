@@ -33,7 +33,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(productsubcategoryid = value),
-      ProductsubcategoryId.dbType
+      ProductsubcategoryId.pgType
     )
   }
 
@@ -45,7 +45,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(productcategoryid = value),
-      ProductcategoryId.dbType
+      ProductcategoryId.pgType
     )
   }
 
@@ -57,7 +57,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
       Optional.empty(),
       Optional.of("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

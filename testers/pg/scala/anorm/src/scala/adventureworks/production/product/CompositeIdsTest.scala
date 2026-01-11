@@ -7,7 +7,7 @@ import adventureworks.person.person.{PersonRepo, PersonRepoImpl, PersonRepoMock,
 import adventureworks.production.productcosthistory.*
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.{Name, NameStyle}
-import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.{FirstName, LastName}
 import adventureworks.{DomainInsert, SnapshotTest, TestInsert, withConnection}
 import org.scalatest.Assertion
 
@@ -70,9 +70,9 @@ class CompositeIdsTest extends SnapshotTest {
         persontype = "SC",
         namestyle = NameStyle(true),
         title = None,
-        firstname = FirstName(s"first name $i"),
+        firstname = FirstName(Name(s"first name $i")),
         middlename = None,
-        lastname = Name(s"last name $i"),
+        lastname = LastName(Name(s"last name $i")),
         suffix = None,
         emailpromotion = 1,
         additionalcontactinfo = None,

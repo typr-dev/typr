@@ -14,12 +14,13 @@ import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
 import testdb.order_items.OrderItemsId
 import testdb.products.ProductsId
+import testdb.userdefined.IsApproved
+import testdb.userdefined.IsVerifiedPurchase
 
 /** Table: reviews
  * Primary key: review_id
@@ -67,11 +68,11 @@ case class ReviewsRow(
   /** 
    * Default: 0
    */
-  @JsonProperty("is_verified_purchase") isVerifiedPurchase: Boolean,
+  @JsonProperty("is_verified_purchase") isVerifiedPurchase: /* user-picked */ IsVerifiedPurchase,
   /** 
    * Default: 0
    */
-  @JsonProperty("is_approved") isApproved: Boolean,
+  @JsonProperty("is_approved") isApproved: /* user-picked */ IsApproved,
   /** 
    * Default: 0
    */
@@ -96,7 +97,7 @@ case class ReviewsRow(
    * Default: current_timestamp(6)
    */
   @JsonProperty("updated_at") updatedAt: LocalDateTime
-) extends Tuple18[ReviewsId, ProductsId, CustomersId, Option[OrderItemsId], Uint1, Option[String], Option[String], Option[Json], Option[Json], Option[Json], Boolean, Boolean, Uint4, Uint4, Option[String], Option[LocalDateTime], LocalDateTime, LocalDateTime] {
+) extends Tuple18[ReviewsId, ProductsId, CustomersId, Option[OrderItemsId], Uint1, Option[String], Option[String], Option[Json], Option[Json], Option[Json], /* user-picked */ IsVerifiedPurchase, /* user-picked */ IsApproved, Uint4, Uint4, Option[String], Option[LocalDateTime], LocalDateTime, LocalDateTime] {
   def id: ReviewsId = reviewId
 
   def toUnsavedRow(
@@ -106,8 +107,8 @@ case class ReviewsRow(
     pros: Defaulted[Option[Json]] = Defaulted.Provided(this.pros),
     cons: Defaulted[Option[Json]] = Defaulted.Provided(this.cons),
     images: Defaulted[Option[Json]] = Defaulted.Provided(this.images),
-    isVerifiedPurchase: Defaulted[Boolean] = Defaulted.Provided(this.isVerifiedPurchase),
-    isApproved: Defaulted[Boolean] = Defaulted.Provided(this.isApproved),
+    isVerifiedPurchase: Defaulted[/* user-picked */ IsVerifiedPurchase] = Defaulted.Provided(this.isVerifiedPurchase),
+    isApproved: Defaulted[/* user-picked */ IsApproved] = Defaulted.Provided(this.isApproved),
     helpfulVotes: Defaulted[Uint4] = Defaulted.Provided(this.helpfulVotes),
     unhelpfulVotes: Defaulted[Uint4] = Defaulted.Provided(this.unhelpfulVotes),
     adminResponse: Defaulted[Option[String]] = Defaulted.Provided(this.adminResponse),
@@ -156,9 +157,9 @@ case class ReviewsRow(
 
   override def `_10`: Option[Json] = images
 
-  override def `_11`: Boolean = isVerifiedPurchase
+  override def `_11`: /* user-picked */ IsVerifiedPurchase = isVerifiedPurchase
 
-  override def `_12`: Boolean = isApproved
+  override def `_12`: /* user-picked */ IsApproved = isApproved
 
   override def `_13`: Uint4 = helpfulVotes
 
@@ -174,5 +175,5 @@ case class ReviewsRow(
 }
 
 object ReviewsRow {
-  val `_rowParser`: RowParser[ReviewsRow] = RowParsers.of(ReviewsId.dbType, ProductsId.dbType, CustomersId.dbType, OrderItemsId.dbType.nullable, MariaTypes.tinyintUnsigned, MariaTypes.varchar.nullable, MariaTypes.text.nullable, MariaTypes.json.nullable, MariaTypes.json.nullable, MariaTypes.json.nullable, ScalaDbTypes.MariaTypes.bool, ScalaDbTypes.MariaTypes.bool, MariaTypes.intUnsigned, MariaTypes.intUnsigned, MariaTypes.text.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime, MariaTypes.datetime)(ReviewsRow.apply)(row => Array[Any](row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt))
+  val `_rowParser`: RowParser[ReviewsRow] = RowParsers.of(ReviewsId.mariaType, ProductsId.mariaType, CustomersId.mariaType, OrderItemsId.mariaType.nullable, MariaTypes.tinyintUnsigned, MariaTypes.varchar.nullable, MariaTypes.text.nullable, MariaTypes.json.nullable, MariaTypes.json.nullable, MariaTypes.json.nullable, IsVerifiedPurchase.mariaType, IsApproved.mariaType, MariaTypes.intUnsigned, MariaTypes.intUnsigned, MariaTypes.text.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime, MariaTypes.datetime)(ReviewsRow.apply)(row => Array[Any](row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt))
 }

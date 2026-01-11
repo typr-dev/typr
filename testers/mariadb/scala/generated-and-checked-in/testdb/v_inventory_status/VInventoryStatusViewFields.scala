@@ -29,7 +29,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -65,7 +65,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.dbType
+      WarehousesId.mariaType
     )
   }
 

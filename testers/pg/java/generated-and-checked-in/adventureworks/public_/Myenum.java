@@ -31,13 +31,13 @@ public enum Myenum {
       java.util.Arrays.stream(Myenum.values())
           .collect(java.util.stream.Collectors.toMap(n -> n.value, n -> n));
 
-  public static PgType<Myenum[]> dbTypeArray =
+  public static PgType<Myenum[]> pgTypeArray =
       PgTypes.textArray
           .bimap(
               xs -> arrayMap.map(xs, Myenum::force, Myenum.class),
               xs -> arrayMap.map(xs, Myenum::value, String.class))
           .renamedDropPrecision("public.myenum");
-  public static PgType<Myenum> dbType =
+  public static PgType<Myenum> pgType =
       PgTypes.text.bimap(Myenum::force, Myenum::value).renamedDropPrecision("public.myenum");
 
   public static Myenum force(java.lang.String str) {

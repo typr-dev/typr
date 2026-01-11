@@ -24,7 +24,7 @@ import dev.typr.foundations.scala.Fragment.sql
 class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
   override def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow] = DeleteBuilder.of(""""production"."productcosthistory"""", ProductcosthistoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): Boolean = sql"""delete from "production"."productcosthistory" where "productid" = ${Fragment.encode(ProductId.dbType, compositeId.productid)} AND "startdate" = ${Fragment.encode(PgTypes.timestamp, compositeId.startdate)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): Boolean = sql"""delete from "production"."productcosthistory" where "productid" = ${Fragment.encode(ProductId.pgType, compositeId.productid)} AND "startdate" = ${Fragment.encode(PgTypes.timestamp, compositeId.startdate)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Int = {
     val productid: Array[ProductId] = compositeIds.map(_.productid)
@@ -32,13 +32,13 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     return sql"""delete
     from "production"."productcosthistory"
     where ("productid", "startdate")
-    in (select * from unnest(${Fragment.encode(ProductId.dbTypeArray, productid)}, ${Fragment.encode(PgTypes.timestampArray, startdate)}))
+    in (select * from unnest(${Fragment.encode(ProductId.pgTypeArray, productid)}, ${Fragment.encode(PgTypes.timestampArray, startdate)}))
     """.update().runUnchecked(c)
   }
 
   override def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
   sql"""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
-    values (${Fragment.encode(ProductId.dbType, unsaved.productid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "productid", "startdate", "enddate", "standardcost", "modifieddate"
     """
     .updateReturning(ProductcosthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -48,7 +48,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""productid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ProductId.dbType, unsaved.productid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""startdate"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""enddate"""")): @scala.annotation.nowarn
@@ -90,7 +90,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
   override def selectById(compositeId: ProductcosthistoryId)(using c: Connection): Option[ProductcosthistoryRow] = {
     sql"""select "productid", "startdate", "enddate", "standardcost", "modifieddate"
     from "production"."productcosthistory"
-    where "productid" = ${Fragment.encode(ProductId.dbType, compositeId.productid)} AND "startdate" = ${Fragment.encode(PgTypes.timestamp, compositeId.startdate)}""".query(ProductcosthistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = ${Fragment.encode(ProductId.pgType, compositeId.productid)} AND "startdate" = ${Fragment.encode(PgTypes.timestamp, compositeId.startdate)}""".query(ProductcosthistoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): List[ProductcosthistoryRow] = {
@@ -99,7 +99,7 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     return sql"""select "productid", "startdate", "enddate", "standardcost", "modifieddate"
     from "production"."productcosthistory"
     where ("productid", "startdate")
-    in (select * from unnest(${Fragment.encode(ProductId.dbTypeArray, productid)}, ${Fragment.encode(PgTypes.timestampArray, startdate)}))
+    in (select * from unnest(${Fragment.encode(ProductId.pgTypeArray, productid)}, ${Fragment.encode(PgTypes.timestampArray, startdate)}))
     """.query(ProductcosthistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -117,12 +117,12 @@ class ProductcosthistoryRepoImpl extends ProductcosthistoryRepo {
     set "enddate" = ${Fragment.encode(PgTypes.timestamp.nullable, row.enddate)}::timestamp,
     "standardcost" = ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, row.standardcost)}::numeric,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "productid" = ${Fragment.encode(ProductId.dbType, compositeId.productid)} AND "startdate" = ${Fragment.encode(PgTypes.timestamp, compositeId.startdate)}""".update().runUnchecked(c) > 0
+    where "productid" = ${Fragment.encode(ProductId.pgType, compositeId.productid)} AND "startdate" = ${Fragment.encode(PgTypes.timestamp, compositeId.startdate)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow = {
   sql"""insert into "production"."productcosthistory"("productid", "startdate", "enddate", "standardcost", "modifieddate")
-    values (${Fragment.encode(ProductId.dbType, unsaved.productid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(ProductId.pgType, unsaved.productid)}::int4, ${Fragment.encode(PgTypes.timestamp, unsaved.startdate)}::timestamp, ${Fragment.encode(PgTypes.timestamp.nullable, unsaved.enddate)}::timestamp, ${Fragment.encode(ScalaDbTypes.PgTypes.numeric, unsaved.standardcost)}::numeric, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("productid", "startdate")
     do update set
       "enddate" = EXCLUDED."enddate",

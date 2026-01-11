@@ -10,8 +10,8 @@ import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple3
 import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsActive
 
 /** Table: customer_status
  * Primary key: status_code
@@ -24,19 +24,19 @@ case class CustomerStatusRow(
   /** 
    * Default: 1
    */
-  @JsonProperty("is_active") isActive: Boolean
-) extends Tuple3[CustomerStatusId, String, Boolean] {
+  @JsonProperty("is_active") isActive: /* user-picked */ IsActive
+) extends Tuple3[CustomerStatusId, String, /* user-picked */ IsActive] {
   def id: CustomerStatusId = statusCode
 
-  def toUnsavedRow(isActive: Defaulted[Boolean] = Defaulted.Provided(this.isActive)): CustomerStatusRowUnsaved = new CustomerStatusRowUnsaved(statusCode, description, isActive)
+  def toUnsavedRow(isActive: Defaulted[/* user-picked */ IsActive] = Defaulted.Provided(this.isActive)): CustomerStatusRowUnsaved = new CustomerStatusRowUnsaved(statusCode, description, isActive)
 
   override def `_1`: CustomerStatusId = statusCode
 
   override def `_2`: String = description
 
-  override def `_3`: Boolean = isActive
+  override def `_3`: /* user-picked */ IsActive = isActive
 }
 
 object CustomerStatusRow {
-  val `_rowParser`: RowParser[CustomerStatusRow] = RowParsers.of(CustomerStatusId.dbType, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bool)(CustomerStatusRow.apply)(row => Array[Any](row.statusCode, row.description, row.isActive))
+  val `_rowParser`: RowParser[CustomerStatusRow] = RowParsers.of(CustomerStatusId.mariaType, MariaTypes.varchar, IsActive.mariaType)(CustomerStatusRow.apply)(row => Array[Any](row.statusCode, row.description, row.isActive))
 }

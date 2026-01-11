@@ -25,9 +25,9 @@ data class CountryregionRowUnsaved(
 
   companion object {
     val pgText: PgText<CountryregionRowUnsaved> =
-      PgText.instance({ row, sb -> CountryregionId.dbType.text().unsafeEncode(row.countryregioncode, sb)
+      PgText.instance({ row, sb -> CountryregionId.pgType.text().unsafeEncode(row.countryregioncode, sb)
       sb.append(PgText.DELIMETER)
-      Name.dbType.text().unsafeEncode(row.name, sb)
+      Name.pgType.text().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
   }

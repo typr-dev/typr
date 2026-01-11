@@ -22,10 +22,10 @@ data class PrecisionTypesNullId(@field:JsonValue val value: Int) {
     val bijection: Bijection<PrecisionTypesNullId, Int> =
       Bijection.of(PrecisionTypesNullId::value, ::PrecisionTypesNullId)
 
-    val dbTypeArray: DuckDbType<Array<PrecisionTypesNullId>> =
-      DuckDbTypes.integerArray.bimap({ xs -> arrayMap.map(xs, ::PrecisionTypesNullId, PrecisionTypesNullId::class.java) }, { xs -> arrayMap.map(xs, PrecisionTypesNullId::value, Int::class.javaObjectType) })
-
     val duckDbType: DuckDbType<PrecisionTypesNullId> =
       KotlinDbTypes.DuckDbTypes.integer.bimap(::PrecisionTypesNullId, PrecisionTypesNullId::value)
+
+    val duckDbTypeArray: DuckDbType<Array<PrecisionTypesNullId>> =
+      DuckDbTypes.integerArray.bimap({ xs -> arrayMap.map(xs, ::PrecisionTypesNullId, PrecisionTypesNullId::class.java) }, { xs -> arrayMap.map(xs, PrecisionTypesNullId::value, Int::class.javaObjectType) })
   }
 }

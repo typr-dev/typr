@@ -21,10 +21,10 @@ data class UnitmeasureId(@field:JsonValue val value: String) {
     val bijection: Bijection<UnitmeasureId, String> =
       Bijection.of(UnitmeasureId::value, ::UnitmeasureId)
 
-    val dbType: PgType<UnitmeasureId> =
+    val pgType: PgType<UnitmeasureId> =
       PgTypes.bpchar.bimap(::UnitmeasureId, UnitmeasureId::value)
 
-    val dbTypeArray: PgType<Array<UnitmeasureId>> =
+    val pgTypeArray: PgType<Array<UnitmeasureId>> =
       PgTypes.bpcharArray.bimap({ xs -> arrayMap.map(xs, ::UnitmeasureId, UnitmeasureId::class.java) }, { xs -> arrayMap.map(xs, UnitmeasureId::value, String::class.java) })
   }
 }

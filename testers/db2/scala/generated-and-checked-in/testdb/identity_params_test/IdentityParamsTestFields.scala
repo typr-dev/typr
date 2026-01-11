@@ -25,7 +25,7 @@ class IdentityParamsTestFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(id = value),
-      IdentityParamsTestId.dbType
+      IdentityParamsTestId.db2Type
     )
   }
 

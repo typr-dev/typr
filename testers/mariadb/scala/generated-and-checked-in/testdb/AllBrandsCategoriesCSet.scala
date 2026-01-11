@@ -24,8 +24,6 @@ case class AllBrandsCategoriesCSet(members: Set[AllBrandsCategoriesCSetMember]) 
 }
 
 object AllBrandsCategoriesCSet {
-  given dbType: MariaType[AllBrandsCategoriesCSet] = MariaTypes.set.bimap((ms: MariaSet) => AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated), (s: AllBrandsCategoriesCSet) => MariaSet.fromString(s.toCommaSeparated))
-
   def empty: AllBrandsCategoriesCSet = AllBrandsCategoriesCSet(Set.empty)
 
   def fromString(str: String): AllBrandsCategoriesCSet = {
@@ -34,6 +32,8 @@ object AllBrandsCategoriesCSet {
       else AllBrandsCategoriesCSet(str.split(",").flatMap(v => AllBrandsCategoriesCSetMember.ByName.get(v.trim)).toSet)
     }
   }
+
+  given mariaType: MariaType[AllBrandsCategoriesCSet] = MariaTypes.set.bimap((ms: MariaSet) => AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated), (s: AllBrandsCategoriesCSet) => MariaSet.fromString(s.toCommaSeparated))
 
   def of(members: List[AllBrandsCategoriesCSetMember]): AllBrandsCategoriesCSet = AllBrandsCategoriesCSet(members.toSet)
 }

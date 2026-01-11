@@ -24,8 +24,6 @@ case class XYZSet(members: Set[XYZSetMember]) {
 }
 
 object XYZSet {
-  given dbType: MariaType[XYZSet] = MariaTypes.set.bimap((ms: MariaSet) => XYZSet.fromString(ms.toCommaSeparated), (s: XYZSet) => MariaSet.fromString(s.toCommaSeparated))
-
   def empty: XYZSet = XYZSet(Set.empty)
 
   def fromString(str: String): XYZSet = {
@@ -34,6 +32,8 @@ object XYZSet {
       else XYZSet(str.split(",").flatMap(v => XYZSetMember.ByName.get(v.trim)).toSet)
     }
   }
+
+  given mariaType: MariaType[XYZSet] = MariaTypes.set.bimap((ms: MariaSet) => XYZSet.fromString(ms.toCommaSeparated), (s: XYZSet) => MariaSet.fromString(s.toCommaSeparated))
 
   def of(members: List[XYZSetMember]): XYZSet = XYZSet(members.toSet)
 }

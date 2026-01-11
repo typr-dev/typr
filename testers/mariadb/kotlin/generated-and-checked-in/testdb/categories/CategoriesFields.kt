@@ -42,7 +42,7 @@ data class CategoriesFields(val _path: List<Path>) : TupleExpr9<CategoriesId, Ca
 
   override fun _path(): List<Path> = _path
 
-  fun categoryId(): IdField<CategoriesId, CategoriesRow> = IdField<CategoriesId, CategoriesRow>(_path, "category_id", CategoriesRow::categoryId, null, null, { row, value -> row.copy(categoryId = value) }, CategoriesId.dbType)
+  fun categoryId(): IdField<CategoriesId, CategoriesRow> = IdField<CategoriesId, CategoriesRow>(_path, "category_id", CategoriesRow::categoryId, null, null, { row, value -> row.copy(categoryId = value) }, CategoriesId.mariaType)
 
   override fun columns(): List<FieldLike<*, CategoriesRow>> = listOf(this.categoryId().underlying, this.parentId().underlying, this.name().underlying, this.slug().underlying, this.description().underlying, this.imageUrl().underlying, this.sortOrder().underlying, this.isVisible().underlying, this.metadata().underlying)
 
@@ -58,7 +58,7 @@ data class CategoriesFields(val _path: List<Path>) : TupleExpr9<CategoriesId, Ca
 
   fun name(): Field<String, CategoriesRow> = Field<String, CategoriesRow>(_path, "name", CategoriesRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
 
-  fun parentId(): OptField<CategoriesId, CategoriesRow> = OptField<CategoriesId, CategoriesRow>(_path, "parent_id", CategoriesRow::parentId, null, null, { row, value -> row.copy(parentId = value) }, CategoriesId.dbType)
+  fun parentId(): OptField<CategoriesId, CategoriesRow> = OptField<CategoriesId, CategoriesRow>(_path, "parent_id", CategoriesRow::parentId, null, null, { row, value -> row.copy(parentId = value) }, CategoriesId.mariaType)
 
   override fun rowParser(): RowParser<CategoriesRow> = CategoriesRow._rowParser.underlying
 

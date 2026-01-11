@@ -59,7 +59,7 @@ public class IdentityTestFields extends TupleExpr3<Integer, Integer, IdentityTes
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withName(value),
-        IdentityTestId.dbType);
+        IdentityTestId.pgType);
   }
 
   @Override

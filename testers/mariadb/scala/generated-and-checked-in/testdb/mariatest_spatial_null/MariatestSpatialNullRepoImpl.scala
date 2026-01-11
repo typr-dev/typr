@@ -19,11 +19,11 @@ import dev.typr.foundations.scala.Fragment.sql
 class MariatestSpatialNullRepoImpl extends MariatestSpatialNullRepo {
   override def delete: DeleteBuilder[MariatestSpatialNullFields, MariatestSpatialNullRow] = DeleteBuilder.of("`mariatest_spatial_null`", MariatestSpatialNullFields.structure, Dialect.MARIADB)
 
-  override def deleteById(id: MariatestSpatialNullId)(using c: Connection): Boolean = sql"delete from `mariatest_spatial_null` where `id` = ${Fragment.encode(MariatestSpatialNullId.dbType, id)}".update().runUnchecked(c) > 0
+  override def deleteById(id: MariatestSpatialNullId)(using c: Connection): Boolean = sql"delete from `mariatest_spatial_null` where `id` = ${Fragment.encode(MariatestSpatialNullId.mariaType, id)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[MariatestSpatialNullId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestSpatialNullId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestSpatialNullId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `mariatest_spatial_null` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -92,12 +92,12 @@ class MariatestSpatialNullRepoImpl extends MariatestSpatialNullRepo {
   override def selectById(id: MariatestSpatialNullId)(using c: Connection): Option[MariatestSpatialNullRow] = {
     sql"""select `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`
     from `mariatest_spatial_null`
-    where `id` = ${Fragment.encode(MariatestSpatialNullId.dbType, id)}""".query(MariatestSpatialNullRow.`_rowParser`.first()).runUnchecked(c)
+    where `id` = ${Fragment.encode(MariatestSpatialNullId.mariaType, id)}""".query(MariatestSpatialNullRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[MariatestSpatialNullId])(using c: Connection): List[MariatestSpatialNullRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestSpatialNullId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestSpatialNullId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col` from `mariatest_spatial_null` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestSpatialNullRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -120,12 +120,12 @@ class MariatestSpatialNullRepoImpl extends MariatestSpatialNullRepo {
     `multilinestring_col` = ${Fragment.encode(MariaTypes.multilinestring.nullable, row.multilinestringCol)},
     `multipolygon_col` = ${Fragment.encode(MariaTypes.multipolygon.nullable, row.multipolygonCol)},
     `geometrycollection_col` = ${Fragment.encode(MariaTypes.geometrycollection.nullable, row.geometrycollectionCol)}
-    where `id` = ${Fragment.encode(MariatestSpatialNullId.dbType, id)}""".update().runUnchecked(c) > 0
+    where `id` = ${Fragment.encode(MariatestSpatialNullId.mariaType, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: MariatestSpatialNullRow)(using c: Connection): MariatestSpatialNullRow = {
   sql"""INSERT INTO `mariatest_spatial_null`(`id`, `geometry_col`, `point_col`, `linestring_col`, `polygon_col`, `multipoint_col`, `multilinestring_col`, `multipolygon_col`, `geometrycollection_col`)
-    VALUES (${Fragment.encode(MariatestSpatialNullId.dbType, unsaved.id)}, ${Fragment.encode(MariaTypes.geometry.nullable, unsaved.geometryCol)}, ${Fragment.encode(MariaTypes.point.nullable, unsaved.pointCol)}, ${Fragment.encode(MariaTypes.linestring.nullable, unsaved.linestringCol)}, ${Fragment.encode(MariaTypes.polygon.nullable, unsaved.polygonCol)}, ${Fragment.encode(MariaTypes.multipoint.nullable, unsaved.multipointCol)}, ${Fragment.encode(MariaTypes.multilinestring.nullable, unsaved.multilinestringCol)}, ${Fragment.encode(MariaTypes.multipolygon.nullable, unsaved.multipolygonCol)}, ${Fragment.encode(MariaTypes.geometrycollection.nullable, unsaved.geometrycollectionCol)})
+    VALUES (${Fragment.encode(MariatestSpatialNullId.mariaType, unsaved.id)}, ${Fragment.encode(MariaTypes.geometry.nullable, unsaved.geometryCol)}, ${Fragment.encode(MariaTypes.point.nullable, unsaved.pointCol)}, ${Fragment.encode(MariaTypes.linestring.nullable, unsaved.linestringCol)}, ${Fragment.encode(MariaTypes.polygon.nullable, unsaved.polygonCol)}, ${Fragment.encode(MariaTypes.multipoint.nullable, unsaved.multipointCol)}, ${Fragment.encode(MariaTypes.multilinestring.nullable, unsaved.multilinestringCol)}, ${Fragment.encode(MariaTypes.multipolygon.nullable, unsaved.multipolygonCol)}, ${Fragment.encode(MariaTypes.geometrycollection.nullable, unsaved.geometrycollectionCol)})
     ON DUPLICATE KEY UPDATE `geometry_col` = VALUES(`geometry_col`),
     `point_col` = VALUES(`point_col`),
     `linestring_col` = VALUES(`linestring_col`),

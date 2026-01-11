@@ -60,9 +60,9 @@ public record DepartmentRow(
 
   public static RowParser<DepartmentRow> _rowParser =
       RowParsers.of(
-          DepartmentId.dbType,
-          Name.dbType,
-          Name.dbType,
+          DepartmentId.pgType,
+          Name.pgType,
+          Name.pgType,
           PgTypes.timestamp,
           DepartmentRow::new,
           row ->

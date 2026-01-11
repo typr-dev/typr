@@ -54,7 +54,7 @@ public record IdentityTestRow(
       RowParsers.of(
           PgTypes.int4,
           PgTypes.int4,
-          IdentityTestId.dbType,
+          IdentityTestId.pgType,
           IdentityTestRow::new,
           row -> new Object[] {row.alwaysGenerated(), row.defaultGenerated(), row.name()});
   ;

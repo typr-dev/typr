@@ -18,7 +18,7 @@ case class ShortText(@JsonValue value: String)
 object ShortText {
   given bijection: Bijection[ShortText, String] = Bijection.apply[ShortText, String](_.value)(ShortText.apply)
 
-  given dbType: PgType[ShortText] = PgTypes.text.bimap(ShortText.apply, _.value).renamed(""""public"."short_text"""")
+  given pgType: PgType[ShortText] = PgTypes.text.bimap(ShortText.apply, _.value).renamed(""""public"."short_text"""")
 
-  given dbTypeArray: PgType[Array[ShortText]] = PgTypes.textArray.bimap(xs => xs.map(ShortText.apply), xs => xs.map(_.value)).renamed(""""public"."short_text"[]""")
+  given pgTypeArray: PgType[Array[ShortText]] = PgTypes.textArray.bimap(xs => xs.map(ShortText.apply), xs => xs.map(_.value)).renamed(""""public"."short_text"[]""")
 }

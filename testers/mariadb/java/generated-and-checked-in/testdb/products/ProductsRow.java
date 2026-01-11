@@ -509,9 +509,9 @@ public record ProductsRow(
 
   public static RowParser<ProductsRow> _rowParser =
       RowParsers.of(
-          ProductsId.dbType,
+          ProductsId.mariaType,
           MariaTypes.varchar,
-          BrandsId.dbType.opt(),
+          BrandsId.mariaType.opt(),
           MariaTypes.varchar,
           MariaTypes.varchar.opt(),
           MariaTypes.longtext.opt(),
@@ -521,7 +521,7 @@ public record ProductsRow(
           MariaTypes.json.opt(),
           MariaTypes.text,
           MariaTypes.text,
-          BestsellerClearanceFSet.dbType.opt(),
+          BestsellerClearanceFSet.mariaType.opt(),
           MariaTypes.json.opt(),
           MariaTypes.json.opt(),
           MariaTypes.datetime,

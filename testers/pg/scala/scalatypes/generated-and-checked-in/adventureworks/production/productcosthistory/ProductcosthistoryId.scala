@@ -23,5 +23,5 @@ case class ProductcosthistoryId(
 }
 
 object ProductcosthistoryId {
-  val `_rowParser`: RowParser[ProductcosthistoryId] = RowParsers.of(ProductId.dbType, PgTypes.timestamp)(ProductcosthistoryId.apply)(row => Array[Any](row.productid, row.startdate))
+  val `_rowParser`: RowParser[ProductcosthistoryId] = RowParsers.of(ProductId.pgType, PgTypes.timestamp)(ProductcosthistoryId.apply)(row => Array[Any](row.productid, row.startdate))
 }

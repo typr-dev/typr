@@ -29,8 +29,8 @@ public record ProductCategoriesId(
 
   public static RowParser<ProductCategoriesId> _rowParser =
       RowParsers.of(
-          ProductsId.dbType,
-          CategoriesId.dbType,
+          ProductsId.mariaType,
+          CategoriesId.mariaType,
           ProductCategoriesId::new,
           row -> new Object[] {row.productId(), row.categoryId()});
   ;

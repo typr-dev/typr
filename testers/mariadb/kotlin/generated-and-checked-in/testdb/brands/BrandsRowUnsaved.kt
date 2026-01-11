@@ -8,6 +8,7 @@ package testdb.brands
 import com.fasterxml.jackson.annotation.JsonProperty
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.IsActive
 
 /** This class corresponds to a row in table `brands` which has not been persisted yet */
 data class BrandsRowUnsaved(
@@ -30,13 +31,13 @@ data class BrandsRowUnsaved(
   /** Default: 1
 
     */
-  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault()
+  @field:JsonProperty("is_active") val isActive: Defaulted</* user-picked */ IsActive> = UseDefault()
 ) {
   fun toRow(
     logoBlobDefault: () -> ByteArray?,
     websiteUrlDefault: () -> String?,
     countryOfOriginDefault: () -> String?,
-    isActiveDefault: () -> Boolean,
+    isActiveDefault: () -> /* user-picked */ IsActive,
     brandIdDefault: () -> BrandsId
   ): BrandsRow = BrandsRow(brandId = brandIdDefault(), name = name, slug = slug, logoBlob = logoBlob.getOrElse(logoBlobDefault), websiteUrl = websiteUrl.getOrElse(websiteUrlDefault), countryOfOrigin = countryOfOrigin.getOrElse(countryOfOriginDefault), isActive = isActive.getOrElse(isActiveDefault))
 }

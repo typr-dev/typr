@@ -50,7 +50,7 @@ public record OrderItemsRow(
 
   public static RowParser<OrderItemsRow> _rowParser =
       RowParsers.of(
-          OrdersId.dbType,
+          OrdersId.db2Type,
           Db2Types.integer,
           Db2Types.varchar,
           Db2Types.integer,

@@ -149,6 +149,14 @@ import testdb.shipping_carriers.ShippingCarriersId
 import testdb.shipping_carriers.ShippingCarriersRepoImpl
 import testdb.shipping_carriers.ShippingCarriersRow
 import testdb.shipping_carriers.ShippingCarriersRowUnsaved
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.IsActive
+import testdb.userdefined.IsApproved
+import testdb.userdefined.IsDefault
+import testdb.userdefined.IsPrimary
+import testdb.userdefined.IsVerifiedPurchase
+import testdb.userdefined.LastName
 import testdb.warehouses.WarehousesId
 import testdb.warehouses.WarehousesRepoImpl
 import testdb.warehouses.WarehousesRow
@@ -175,7 +183,7 @@ data class TestInsert(val random: Random) {
     logoBlob: Defaulted<ByteArray?> = UseDefault(),
     websiteUrl: Defaulted<String?> = UseDefault(),
     countryOfOrigin: Defaulted<String?> = UseDefault(),
-    isActive: Defaulted<Boolean> = UseDefault(),
+    isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     c: Connection
   ): BrandsRow = (BrandsRepoImpl()).insert(BrandsRowUnsaved(name = name, slug = slug, logoBlob = logoBlob, websiteUrl = websiteUrl, countryOfOrigin = countryOfOrigin, isActive = isActive), c)
 
@@ -199,7 +207,7 @@ data class TestInsert(val random: Random) {
     city: String,
     postalCode: String,
     countryCode: String,
-    isDefault: Defaulted<Boolean> = UseDefault(),
+    isDefault: Defaulted</* user-picked */ IsDefault> = UseDefault(),
     streetLine2: Defaulted<String?> = UseDefault(),
     stateProvince: Defaulted<String?> = UseDefault(),
     location: Defaulted<Point?> = UseDefault(),
@@ -211,15 +219,15 @@ data class TestInsert(val random: Random) {
   fun CustomerStatus(
     statusCode: CustomerStatusId,
     description: String,
-    isActive: Defaulted<Boolean> = UseDefault(),
+    isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     c: Connection
   ): CustomerStatusRow = (CustomerStatusRepoImpl()).insert(CustomerStatusRowUnsaved(statusCode = statusCode, description = description, isActive = isActive), c)
 
   fun Customers(
-    email: String,
+    email: /* user-picked */ Email,
     passwordHash: ByteArray,
-    firstName: String,
-    lastName: String,
+    firstName: /* user-picked */ FirstName,
+    lastName: /* user-picked */ LastName,
     phone: Defaulted<String?> = UseDefault(),
     status: Defaulted<CustomerStatusId> = UseDefault(),
     tier: Defaulted<String> = UseDefault(),
@@ -321,7 +329,7 @@ data class TestInsert(val random: Random) {
   ): MariatestSpatialNullRow = (MariatestSpatialNullRepoImpl()).insert(MariatestSpatialNullRowUnsaved(geometryCol = geometryCol, pointCol = pointCol, linestringCol = linestringCol, polygonCol = polygonCol, multipointCol = multipointCol, multilinestringCol = multilinestringCol, multipolygonCol = multipolygonCol, geometrycollectionCol = geometrycollectionCol), c)
 
   fun MariatestUnique(
-    email: String,
+    email: /* user-picked */ Email,
     code: String,
     category: String,
     c: Connection
@@ -429,7 +437,7 @@ data class TestInsert(val random: Random) {
     name: String,
     methodType: String,
     processorConfig: Defaulted<Json?> = UseDefault(),
-    isActive: Defaulted<Boolean> = UseDefault(),
+    isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     sortOrder: Defaulted<Byte> = UseDefault(),
     c: Connection
   ): PaymentMethodsRow = (PaymentMethodsRepoImpl()).insert(PaymentMethodsRowUnsaved(code = code, name = name, methodType = methodType, processorConfig = processorConfig, isActive = isActive, sortOrder = sortOrder), c)
@@ -514,7 +522,7 @@ data class TestInsert(val random: Random) {
   fun ProductCategories(
     productId: ProductsId,
     categoryId: CategoriesId,
-    isPrimary: Defaulted<Boolean> = UseDefault(),
+    isPrimary: Defaulted</* user-picked */ IsPrimary> = UseDefault(),
     sortOrder: Defaulted<Short> = UseDefault(),
     c: Connection
   ): ProductCategoriesRow = (ProductCategoriesRepoImpl()).insert(ProductCategoriesRowUnsaved(productId = productId, categoryId = categoryId, isPrimary = isPrimary, sortOrder = sortOrder), c)
@@ -525,7 +533,7 @@ data class TestInsert(val random: Random) {
     thumbnailUrl: Defaulted<String?> = UseDefault(),
     altText: Defaulted<String?> = UseDefault(),
     sortOrder: Defaulted<Uint1> = UseDefault(),
-    isPrimary: Defaulted<Boolean> = UseDefault(),
+    isPrimary: Defaulted</* user-picked */ IsPrimary> = UseDefault(),
     imageData: Defaulted<ByteArray?> = UseDefault(),
     c: Connection
   ): ProductImagesRow = (ProductImagesRepoImpl()).insert(ProductImagesRowUnsaved(productId = productId, imageUrl = imageUrl, thumbnailUrl = thumbnailUrl, altText = altText, sortOrder = sortOrder, isPrimary = isPrimary, imageData = imageData), c)
@@ -575,7 +583,7 @@ data class TestInsert(val random: Random) {
     maxUsesPerCustomer: Defaulted<Uint1?> = UseDefault(),
     applicableTo: Defaulted<AllBrandsCategoriesCSet?> = UseDefault(),
     rulesJson: Defaulted<Json?> = UseDefault(),
-    isActive: Defaulted<Boolean> = UseDefault(),
+    isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     createdAt: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): PromotionsRow = (PromotionsRepoImpl()).insert(PromotionsRowUnsaved(code = code, name = name, discountType = discountType, discountValue = discountValue, validFrom = validFrom, validTo = validTo, description = description, minOrderAmount = minOrderAmount, maxUses = maxUses, usesCount = usesCount, maxUsesPerCustomer = maxUsesPerCustomer, applicableTo = applicableTo, rulesJson = rulesJson, isActive = isActive, createdAt = createdAt), c)
@@ -590,8 +598,8 @@ data class TestInsert(val random: Random) {
     pros: Defaulted<Json?> = UseDefault(),
     cons: Defaulted<Json?> = UseDefault(),
     images: Defaulted<Json?> = UseDefault(),
-    isVerifiedPurchase: Defaulted<Boolean> = UseDefault(),
-    isApproved: Defaulted<Boolean> = UseDefault(),
+    isVerifiedPurchase: Defaulted</* user-picked */ IsVerifiedPurchase> = UseDefault(),
+    isApproved: Defaulted</* user-picked */ IsApproved> = UseDefault(),
     helpfulVotes: Defaulted<Uint4> = UseDefault(),
     unhelpfulVotes: Defaulted<Uint4> = UseDefault(),
     adminResponse: Defaulted<String?> = UseDefault(),
@@ -626,7 +634,7 @@ data class TestInsert(val random: Random) {
     name: String,
     trackingUrlTemplate: Defaulted<String?> = UseDefault(),
     apiConfig: Defaulted<Json?> = UseDefault(),
-    isActive: Defaulted<Boolean> = UseDefault(),
+    isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     c: Connection
   ): ShippingCarriersRow = (ShippingCarriersRepoImpl()).insert(ShippingCarriersRowUnsaved(code = code, name = name, trackingUrlTemplate = trackingUrlTemplate, apiConfig = apiConfig, isActive = isActive), c)
 
@@ -637,8 +645,8 @@ data class TestInsert(val random: Random) {
     location: Point,
     serviceArea: Defaulted<Polygon?> = UseDefault(),
     timezone: Defaulted<String> = UseDefault(),
-    isActive: Defaulted<Boolean> = UseDefault(),
-    contactEmail: Defaulted<String?> = UseDefault(),
+    isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
+    contactEmail: Defaulted</* user-picked */ Email?> = UseDefault(),
     contactPhone: Defaulted<String?> = UseDefault(),
     c: Connection
   ): WarehousesRow = (WarehousesRepoImpl()).insert(WarehousesRowUnsaved(code = code, name = name, address = address, location = location, serviceArea = serviceArea, timezone = timezone, isActive = isActive, contactEmail = contactEmail, contactPhone = contactPhone), c)

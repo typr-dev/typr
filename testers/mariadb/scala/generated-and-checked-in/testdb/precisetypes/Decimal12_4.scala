@@ -33,9 +33,9 @@ object Decimal12_4 {
 
   given bijection: Bijection[Decimal12_4, BigDecimal] = Bijection.apply[Decimal12_4, BigDecimal](_.value)(Decimal12_4.apply)
 
-  given dbType: MariaType[Decimal12_4] = ScalaDbTypes.MariaTypes.numeric.bimap(Decimal12_4.apply, _.value)
+  given mariaType: MariaType[Decimal12_4] = ScalaDbTypes.MariaTypes.numeric.bimap(Decimal12_4.apply, _.value)
 
-  def of(value: BigDecimal): Option[Decimal12_4] = { val scaled = value.setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 12) Some(new Decimal12_4(scaled)) else None }
+  def of(value: BigDecimal): Option[Decimal12_4] = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 12) Some(new Decimal12_4(scaled)) else None }
 
   def of(value: Int): Decimal12_4 = new Decimal12_4(BigDecimal(value))
 
@@ -43,5 +43,5 @@ object Decimal12_4 {
 
   def of(value: Double): Option[Decimal12_4] = Decimal12_4.of(BigDecimal(value))
 
-  def unsafeForce(value: BigDecimal): Decimal12_4 = { val scaled = value.setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP); if (scaled.precision > 12) throw new IllegalArgumentException("Value exceeds precision(12, 4)"); new Decimal12_4(scaled) }
+  def unsafeForce(value: BigDecimal): Decimal12_4 = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision > 12) throw new IllegalArgumentException("Value exceeds precision(12, 4)"); new Decimal12_4(scaled) }
 }

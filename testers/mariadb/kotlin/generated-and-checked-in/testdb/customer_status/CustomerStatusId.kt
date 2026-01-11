@@ -20,7 +20,7 @@ data class CustomerStatusId(@field:JsonValue val value: String) {
     val bijection: Bijection<CustomerStatusId, String> =
       Bijection.of(CustomerStatusId::value, ::CustomerStatusId)
 
-    val dbType: MariaType<CustomerStatusId> =
+    val mariaType: MariaType<CustomerStatusId> =
       MariaTypes.varchar.bimap(::CustomerStatusId, CustomerStatusId::value)
   }
 }

@@ -25,9 +25,6 @@ data class XYZSet(val members: Set<XYZSetMember>) {
   override fun toString(): String = toCommaSeparated()
 
   companion object {
-    val dbType: MariaType<XYZSet> =
-      MariaTypes.set.bimap({ ms: MariaSet -> XYZSet.fromString(ms.toCommaSeparated()) }, { s: XYZSet -> MariaSet.fromString(s.toCommaSeparated()) })
-
     fun empty(): XYZSet = XYZSet(EnumSet.noneOf(XYZSetMember::class.java).toSet())
 
     fun fromString(str: String): XYZSet = run {
@@ -40,6 +37,9 @@ data class XYZSet(val members: Set<XYZSetMember>) {
         XYZSet(set.toSet())
       }
     }
+
+    val mariaType: MariaType<XYZSet> =
+      MariaTypes.set.bimap({ ms: MariaSet -> XYZSet.fromString(ms.toCommaSeparated()) }, { s: XYZSet -> MariaSet.fromString(s.toCommaSeparated()) })
 
     fun of(members: List<XYZSetMember>): XYZSet = run {
       if (members.isEmpty()) XYZSet(EnumSet.noneOf(XYZSetMember::class.java).toSet())

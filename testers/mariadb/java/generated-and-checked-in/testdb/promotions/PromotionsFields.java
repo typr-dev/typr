@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import testdb.AllBrandsCategoriesCSet;
+import testdb.userdefined.IsActive;
 
 public class PromotionsFields
     extends TupleExpr16<
@@ -40,8 +41,8 @@ public class PromotionsFields
         AllBrandsCategoriesCSet,
         Json,
         LocalDateTime,
-        LocalDateTime,
-        Boolean,
+        LocalDateTime, /* user-picked */
+        IsActive,
         LocalDateTime>
     implements RelationStructure<PromotionsFields, PromotionsRow>, FieldsBase<PromotionsRow> {
   List<Path> _path;
@@ -61,7 +62,7 @@ public class PromotionsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withPromotionId(value),
-        PromotionsId.dbType);
+        PromotionsId.mariaType);
   }
 
   public Field<String, PromotionsRow> code() {
@@ -171,7 +172,7 @@ public class PromotionsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withApplicableTo(value),
-        AllBrandsCategoriesCSet.dbType);
+        AllBrandsCategoriesCSet.mariaType);
   }
 
   public OptField<Json, PromotionsRow> rulesJson() {
@@ -207,15 +208,15 @@ public class PromotionsFields
         MariaTypes.datetime);
   }
 
-  public Field<Boolean, PromotionsRow> isActive() {
-    return new Field<Boolean, PromotionsRow>(
+  public Field</* user-picked */ IsActive, PromotionsRow> isActive() {
+    return new Field</* user-picked */ IsActive, PromotionsRow>(
         _path,
         "is_active",
         PromotionsRow::isActive,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsActive(value),
-        MariaTypes.bool);
+        IsActive.mariaType);
   }
 
   public Field<LocalDateTime, PromotionsRow> createdAt() {
@@ -336,7 +337,7 @@ public class PromotionsFields
   }
 
   @Override
-  public SqlExpr<Boolean> _15() {
+  public SqlExpr</* user-picked */ IsActive> _15() {
     return isActive();
   }
 

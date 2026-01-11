@@ -15,6 +15,7 @@ import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
 import testdb.Priority
+import testdb.userdefined.Email
 import dev.typr.foundations.scala.Fragment.sql
 
 class CustomersRepoImpl extends CustomersRepo {
@@ -25,14 +26,14 @@ class CustomersRepoImpl extends CustomersRepo {
   override def deleteByIds(customerIds: Array[CustomersId])(using c: Connection): Int = {
     sql"""delete
     from "customers"
-    where "customer_id" = ANY(${Fragment.encode(CustomersId.dbTypeArray, customerIds)})"""
+    where "customer_id" = ANY(${Fragment.encode(CustomersId.duckDbTypeArray, customerIds)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""insert into "customers"("customer_id", "name", "email", "created_at", "priority")
-    values (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.nullable, unsaved.priority)})
+    values (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(Email.duckDbType.nullable, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.nullable, unsaved.priority)})
     RETURNING "customer_id", "name", "email", "created_at", "priority"
     """
     .updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -46,7 +47,7 @@ class CustomersRepoImpl extends CustomersRepo {
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""email"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.email)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Email.duckDbType.nullable, unsaved.email)}"): @scala.annotation.nowarn
     unsaved.createdAt.visit(
       {  },
       value => { columns.addOne(Fragment.lit(""""created_at"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.timestamp, value)}"): @scala.annotation.nowarn }
@@ -81,7 +82,7 @@ class CustomersRepoImpl extends CustomersRepo {
   override def selectByIds(customerIds: Array[CustomersId])(using c: Connection): List[CustomersRow] = {
     sql"""select "customer_id", "name", "email", "created_at", "priority"
     from "customers"
-    where "customer_id" = ANY(${Fragment.encode(CustomersId.dbTypeArray, customerIds)})""".query(CustomersRow.`_rowParser`.all()).runUnchecked(c)
+    where "customer_id" = ANY(${Fragment.encode(CustomersId.duckDbTypeArray, customerIds)})""".query(CustomersRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(customerIds: Array[CustomersId])(using c: Connection): Map[CustomersId, CustomersRow] = {
@@ -96,7 +97,7 @@ class CustomersRepoImpl extends CustomersRepo {
     val customerId: CustomersId = row.customerId
     return sql"""update "customers"
     set "name" = ${Fragment.encode(DuckDbTypes.varchar, row.name)},
-    "email" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.email)},
+    "email" = ${Fragment.encode(Email.duckDbType.nullable, row.email)},
     "created_at" = ${Fragment.encode(DuckDbTypes.timestamp, row.createdAt)},
     "priority" = ${Fragment.encode(Priority.duckDbType.nullable, row.priority)}
     where "customer_id" = ${Fragment.encode(CustomersId.duckDbType, customerId)}""".update().runUnchecked(c) > 0
@@ -104,7 +105,7 @@ class CustomersRepoImpl extends CustomersRepo {
 
   override def upsert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""INSERT INTO "customers"("customer_id", "name", "email", "created_at", "priority")
-    VALUES (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.nullable, unsaved.priority)})
+    VALUES (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(Email.duckDbType.nullable, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.nullable, unsaved.priority)})
     ON CONFLICT ("customer_id")
     DO UPDATE SET
       "name" = EXCLUDED."name",

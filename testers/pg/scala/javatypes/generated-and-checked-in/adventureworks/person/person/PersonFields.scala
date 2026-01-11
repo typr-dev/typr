@@ -8,9 +8,10 @@ package adventureworks.person.person
 import adventureworks.person.businessentity.BusinessentityFields
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.businessentity.BusinessentityRow
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.RowParser
 import dev.typr.foundations.data.Xml
@@ -28,7 +29,7 @@ import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
 
-class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[BusinessentityId, String, NameStyle, /* max 8 chars */ String, /* user-picked */ FirstName, Name, Name, /* max 10 chars */ String, Integer, Xml, Xml, UUID, LocalDateTime] with RelationStructure[PersonFields, PersonRow]  with FieldsBase[PersonRow] {
+class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[BusinessentityId, String, NameStyle, /* max 8 chars */ String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, /* max 10 chars */ String, Integer, Xml, Xml, UUID, LocalDateTime] with RelationStructure[PersonFields, PersonRow]  with FieldsBase[PersonRow] {
   def businessentityid: IdField[BusinessentityId, PersonRow] = {
     new IdField[BusinessentityId, PersonRow](
       _path,
@@ -37,7 +38,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 
@@ -61,7 +62,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       Optional.empty(),
       Optional.of("bool"),
       (row, value) => row.copy(namestyle = value),
-      NameStyle.dbType
+      NameStyle.pgType
     )
   }
 
@@ -85,31 +86,31 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       Optional.empty(),
       Optional.of("varchar"),
       (row, value) => row.copy(firstname = value),
-      FirstName.dbType
+      FirstName.pgType
     )
   }
 
-  def middlename: OptField[Name, PersonRow] = {
-    new OptField[Name, PersonRow](
+  def middlename: OptField[/* user-picked */ MiddleName, PersonRow] = {
+    new OptField[/* user-picked */ MiddleName, PersonRow](
       _path,
       "middlename",
       _.middlename,
       Optional.empty(),
       Optional.of("varchar"),
       (row, value) => row.copy(middlename = value),
-      Name.dbType
+      MiddleName.pgType
     )
   }
 
-  def lastname: Field[Name, PersonRow] = {
-    new Field[Name, PersonRow](
+  def lastname: Field[/* user-picked */ LastName, PersonRow] = {
+    new Field[/* user-picked */ LastName, PersonRow](
       _path,
       "lastname",
       _.lastname,
       Optional.empty(),
       Optional.of("varchar"),
       (row, value) => row.copy(lastname = value),
-      Name.dbType
+      LastName.pgType
     )
   }
 
@@ -203,9 +204,9 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
 
   override def `_5`: SqlExpr[/* user-picked */ FirstName] = firstname
 
-  override def `_6`: SqlExpr[Name] = middlename
+  override def `_6`: SqlExpr[/* user-picked */ MiddleName] = middlename
 
-  override def `_7`: SqlExpr[Name] = lastname
+  override def `_7`: SqlExpr[/* user-picked */ LastName] = lastname
 
   override def `_8`: SqlExpr[/* max 10 chars */ String] = suffix
 

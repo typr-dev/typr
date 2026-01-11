@@ -17,8 +17,10 @@ import dev.typr.foundations.dsl.SqlExpr.IdField;
 import dev.typr.foundations.dsl.TupleExpr.TupleExpr4;
 import java.util.List;
 import java.util.Optional;
+import testdb.userdefined.Email;
 
-public class MariatestUniqueFields extends TupleExpr4<MariatestUniqueId, String, String, String>
+public class MariatestUniqueFields
+    extends TupleExpr4<MariatestUniqueId, /* user-picked */ Email, String, String>
     implements RelationStructure<MariatestUniqueFields, MariatestUniqueRow>,
         FieldsBase<MariatestUniqueRow> {
   List<Path> _path;
@@ -38,18 +40,18 @@ public class MariatestUniqueFields extends TupleExpr4<MariatestUniqueId, String,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        MariatestUniqueId.dbType);
+        MariatestUniqueId.mariaType);
   }
 
-  public Field<String, MariatestUniqueRow> email() {
-    return new Field<String, MariatestUniqueRow>(
+  public Field</* user-picked */ Email, MariatestUniqueRow> email() {
+    return new Field</* user-picked */ Email, MariatestUniqueRow>(
         _path,
         "email",
         MariatestUniqueRow::email,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withEmail(value),
-        MariaTypes.varchar);
+        Email.mariaType);
   }
 
   public Field<String, MariatestUniqueRow> code() {
@@ -100,7 +102,7 @@ public class MariatestUniqueFields extends TupleExpr4<MariatestUniqueId, String,
   }
 
   @Override
-  public SqlExpr<String> _2() {
+  public SqlExpr</* user-picked */ Email> _2() {
     return email();
   }
 

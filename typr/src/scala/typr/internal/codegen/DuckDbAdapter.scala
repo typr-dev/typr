@@ -85,11 +85,11 @@ object DuckDbAdapter extends DbAdapter {
                   case db.DuckDbType.Double   => code"$ScalaDbTypes.DuckDbTypes.doubleArrayUnboxed"
                   case _                      => code"${lookupType(element, naming, TypeSupportJava)}.array()"
                 }
-              // For Scala, Generated and UserDefined types have a dbTypeArray given
+              // For Scala, Generated and UserDefined types have a typeArrayFieldName given
               case TypoType.Generated(_, _, qualifiedType) =>
-                code"$qualifiedType.dbTypeArray"
+                code"$qualifiedType.$typeArrayFieldName"
               case TypoType.UserDefined(_, _, Left(qualifiedType)) =>
-                code"$qualifiedType.dbTypeArray"
+                code"$qualifiedType.$typeArrayFieldName"
               case _ => code"${lookupType(element, naming, TypeSupportJava)}.array()"
             }
           case _ =>
@@ -122,14 +122,17 @@ object DuckDbAdapter extends DbAdapter {
                   case db.DuckDbType.Json          => code"$Types.jsonArray"
                   case _                           => code"${lookupType(element, naming, TypeSupportJava)}.array()"
                 }
-              // For Generated and UserDefined types, use the pre-defined dbTypeArray field
+              // For Generated and UserDefined types, use the pre-defined typeArrayFieldName field
               case TypoType.Generated(_, _, qualifiedType) =>
-                code"$qualifiedType.dbTypeArray"
+                code"$qualifiedType.$typeArrayFieldName"
               case TypoType.UserDefined(_, _, Left(qualifiedType)) =>
-                code"$qualifiedType.dbTypeArray"
+                code"$qualifiedType.$typeArrayFieldName"
               case _ => code"${lookupType(element, naming, TypeSupportJava)}.array()"
             }
         }
+
+      case TypoType.Aligned(_, sourceType, _, _) =>
+        lookupType(sourceType, naming, typeSupport)
     }
 
   def lookupPrimitive(primitive: analysis.WellKnownPrimitive, typeSupport: TypeSupport): Code = {

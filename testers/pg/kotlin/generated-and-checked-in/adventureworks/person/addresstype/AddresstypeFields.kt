@@ -31,13 +31,13 @@ data class AddresstypeFields(val _path: List<Path>) : TupleExpr4<AddresstypeId, 
 
   override fun _path(): List<Path> = _path
 
-  fun addresstypeid(): IdField<AddresstypeId, AddresstypeRow> = IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, null, "int4", { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.dbType)
+  fun addresstypeid(): IdField<AddresstypeId, AddresstypeRow> = IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, null, "int4", { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.pgType)
 
   override fun columns(): List<FieldLike<*, AddresstypeRow>> = listOf(this.addresstypeid().underlying, this.name().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
   fun modifieddate(): Field<LocalDateTime, AddresstypeRow> = Field<LocalDateTime, AddresstypeRow>(_path, "modifieddate", AddresstypeRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
 
-  fun name(): Field<Name, AddresstypeRow> = Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.dbType)
+  fun name(): Field<Name, AddresstypeRow> = Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
 
   override fun rowParser(): RowParser<AddresstypeRow> = AddresstypeRow._rowParser.underlying
 

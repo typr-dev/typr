@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 
 public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
   @Override
@@ -32,7 +33,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
   public Boolean deleteById(ShippingCarriersId carrierId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `shipping_carriers` where `carrier_id` = "),
-                Fragment.encode(ShippingCarriersId.dbType, carrierId),
+                Fragment.encode(ShippingCarriersId.mariaType, carrierId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +44,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
   public Integer deleteByIds(ShippingCarriersId[] carrierIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : carrierIds) {
-      fragments.add(Fragment.encode(ShippingCarriersId.dbType, id));
+      fragments.add(Fragment.encode(ShippingCarriersId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -69,7 +70,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.apiConfig()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(
                 ")\n"
                     + "RETURNING `carrier_id`, `code`, `name`, `tracking_url_template`,"
@@ -114,7 +115,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_active`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(interpolate(Fragment.encode(IsActive.mariaType, value), Fragment.lit("")));
             });
     ;
     Fragment q =
@@ -159,7 +160,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
                     + " `is_active`\n"
                     + "from `shipping_carriers`\n"
                     + "where `carrier_id` = "),
-            Fragment.encode(ShippingCarriersId.dbType, carrierId),
+            Fragment.encode(ShippingCarriersId.mariaType, carrierId),
             Fragment.lit(""))
         .query(ShippingCarriersRow._rowParser.first())
         .runUnchecked(c);
@@ -169,7 +170,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
   public List<ShippingCarriersRow> selectByIds(ShippingCarriersId[] carrierIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : carrierIds) {
-      fragments.add(Fragment.encode(ShippingCarriersId.dbType, id));
+      fragments.add(Fragment.encode(ShippingCarriersId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -228,9 +229,9 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
                 Fragment.lit(",\n`api_config` = "),
                 Fragment.encode(MariaTypes.json.opt(), row.apiConfig()),
                 Fragment.lit(",\n`is_active` = "),
-                Fragment.encode(MariaTypes.bool, row.isActive()),
+                Fragment.encode(IsActive.mariaType, row.isActive()),
                 Fragment.lit("\nwhere `carrier_id` = "),
-                Fragment.encode(ShippingCarriersId.dbType, carrierId),
+                Fragment.encode(ShippingCarriersId.mariaType, carrierId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -244,7 +245,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
                 "INSERT INTO `shipping_carriers`(`carrier_id`, `code`, `name`,"
                     + " `tracking_url_template`, `api_config`, `is_active`)\n"
                     + "VALUES ("),
-            Fragment.encode(ShippingCarriersId.dbType, unsaved.carrierId()),
+            Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.code()),
             Fragment.lit(", "),
@@ -254,7 +255,7 @@ public class ShippingCarriersRepoImpl implements ShippingCarriersRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.apiConfig()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(
                 ")\n"
                     + "ON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n"

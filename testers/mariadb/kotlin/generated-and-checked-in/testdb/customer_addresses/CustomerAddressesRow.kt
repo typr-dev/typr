@@ -8,7 +8,6 @@ package testdb.customer_addresses
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple14
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
@@ -16,6 +15,7 @@ import java.time.LocalDateTime
 import org.mariadb.jdbc.type.Point
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsDefault
 
 /** Table: customer_addresses
   * Primary key: address_id
@@ -34,7 +34,7 @@ data class CustomerAddressesRow(
   /** 
     * Default: 0
     */
-  @field:JsonProperty("is_default") val isDefault: Boolean,
+  @field:JsonProperty("is_default") val isDefault: /* user-picked */ IsDefault,
   /**  */
   @field:JsonProperty("recipient_name") val recipientName: String,
   /**  */
@@ -65,7 +65,7 @@ data class CustomerAddressesRow(
     * Default: current_timestamp()
     */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime
-) : Tuple14<CustomerAddressesId, CustomersId, String, Boolean, String, String, String?, String, String?, String, String, Point?, String?, LocalDateTime> {
+) : Tuple14<CustomerAddressesId, CustomersId, String, /* user-picked */ IsDefault, String, String, String?, String, String?, String, String, Point?, String?, LocalDateTime> {
   override fun _1(): CustomerAddressesId = addressId
 
   override fun _10(): String = postalCode
@@ -82,7 +82,7 @@ data class CustomerAddressesRow(
 
   override fun _3(): String = addressType
 
-  override fun _4(): Boolean = isDefault
+  override fun _4(): /* user-picked */ IsDefault = isDefault
 
   override fun _5(): String = recipientName
 
@@ -97,7 +97,7 @@ data class CustomerAddressesRow(
   fun id(): CustomerAddressesId = addressId
 
   fun toUnsavedRow(
-    isDefault: Defaulted<Boolean> = Defaulted.Provided(this.isDefault),
+    isDefault: Defaulted</* user-picked */ IsDefault> = Defaulted.Provided(this.isDefault),
     streetLine2: Defaulted<String?> = Defaulted.Provided(this.streetLine2),
     stateProvince: Defaulted<String?> = Defaulted.Provided(this.stateProvince),
     location: Defaulted<Point?> = Defaulted.Provided(this.location),
@@ -106,6 +106,6 @@ data class CustomerAddressesRow(
   ): CustomerAddressesRowUnsaved = CustomerAddressesRowUnsaved(customerId, addressType, recipientName, streetLine1, city, postalCode, countryCode, isDefault, streetLine2, stateProvince, location, deliveryNotes, createdAt)
 
   companion object {
-    val _rowParser: RowParser<CustomerAddressesRow> = RowParsers.of(CustomerAddressesId.dbType, CustomersId.dbType, MariaTypes.text, KotlinDbTypes.MariaTypes.bool, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.nullable(), MariaTypes.tinytext.nullable(), MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> CustomerAddressesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt) })
+    val _rowParser: RowParser<CustomerAddressesRow> = RowParsers.of(CustomerAddressesId.mariaType, CustomersId.mariaType, MariaTypes.text, IsDefault.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.nullable(), MariaTypes.tinytext.nullable(), MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> CustomerAddressesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt) })
   }
 }

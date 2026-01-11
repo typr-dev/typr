@@ -362,7 +362,7 @@ public class PgtestFields
         Optional.empty(),
         Optional.of("text"),
         (row, value) -> row.withMydomain(value),
-        Mydomain.dbType);
+        Mydomain.pgType);
   }
 
   public Field<Myenum, PgtestRow> myenum() {
@@ -373,7 +373,7 @@ public class PgtestFields
         Optional.empty(),
         Optional.of("public.myenum"),
         (row, value) -> row.withMyenum(value),
-        Myenum.dbType);
+        Myenum.pgType);
   }
 
   public Field<String, PgtestRow> name() {
@@ -736,7 +736,7 @@ public class PgtestFields
         Optional.of("text[]"),
         Optional.of("mydomain[]"),
         (row, value) -> row.withMydomaines(value),
-        Mydomain.dbTypeArray);
+        Mydomain.pgTypeArray);
   }
 
   public Field<Myenum[], PgtestRow> myenumes() {
@@ -747,7 +747,7 @@ public class PgtestFields
         Optional.empty(),
         Optional.of("myenum[]"),
         (row, value) -> row.withMyenumes(value),
-        Myenum.dbTypeArray);
+        Myenum.pgTypeArray);
   }
 
   public Field<String[], PgtestRow> namees() {

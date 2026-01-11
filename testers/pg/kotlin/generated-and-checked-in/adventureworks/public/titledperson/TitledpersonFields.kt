@@ -42,9 +42,9 @@ data class TitledpersonFields(val _path: List<Path>) : TupleExpr3<TitleDomainId,
 
   override fun rowParser(): RowParser<TitledpersonRow> = TitledpersonRow._rowParser.underlying
 
-  fun title(): Field<TitleId, TitledpersonRow> = Field<TitleId, TitledpersonRow>(_path, "title", TitledpersonRow::title, null, null, { row, value -> row.copy(title = value) }, TitleId.dbType)
+  fun title(): Field<TitleId, TitledpersonRow> = Field<TitleId, TitledpersonRow>(_path, "title", TitledpersonRow::title, null, null, { row, value -> row.copy(title = value) }, TitleId.pgType)
 
-  fun titleShort(): Field<TitleDomainId, TitledpersonRow> = Field<TitleDomainId, TitledpersonRow>(_path, "title_short", TitledpersonRow::titleShort, null, "text", { row, value -> row.copy(titleShort = value) }, TitleDomainId.dbType)
+  fun titleShort(): Field<TitleDomainId, TitledpersonRow> = Field<TitleDomainId, TitledpersonRow>(_path, "title_short", TitledpersonRow::titleShort, null, "text", { row, value -> row.copy(titleShort = value) }, TitleDomainId.pgType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<TitledpersonFields, TitledpersonRow> = TitledpersonFields(_path)
 

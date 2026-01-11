@@ -33,7 +33,7 @@ class SalesterritoryFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(territoryid = value),
-      SalesterritoryId.dbType
+      SalesterritoryId.pgType
     )
   }
 
@@ -45,7 +45,7 @@ class SalesterritoryFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       Optional.empty(),
       Optional.of("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 
@@ -57,7 +57,7 @@ class SalesterritoryFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(countryregioncode = value),
-      CountryregionId.dbType
+      CountryregionId.pgType
     )
   }
 

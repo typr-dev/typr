@@ -21,6 +21,7 @@ import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
+import testdb.userdefined.Email
 
 data class CustomersRepoMock(
   val toRow: (CustomersRowUnsaved) -> CustomersRow,
@@ -91,7 +92,7 @@ data class CustomersRepoMock(
   ): Map<CustomersId, CustomersRow> = selectByIds(customerIds, c).associateBy({ row: CustomersRow -> row.customerId })
 
   override fun selectByUniqueEmail(
-    email: String,
+    email: /* user-picked */ Email,
     c: Connection
   ): CustomersRow? = map.values.toList().find({ v -> (email == v.email) })
 

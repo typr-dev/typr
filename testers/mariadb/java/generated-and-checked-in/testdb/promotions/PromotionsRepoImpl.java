@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import testdb.AllBrandsCategoriesCSet;
+import testdb.userdefined.IsActive;
 
 public class PromotionsRepoImpl implements PromotionsRepo {
   @Override
@@ -32,7 +33,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
   public Boolean deleteById(PromotionsId promotionId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `promotions` where `promotion_id` = "),
-                Fragment.encode(PromotionsId.dbType, promotionId),
+                Fragment.encode(PromotionsId.mariaType, promotionId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +44,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
   public Integer deleteByIds(PromotionsId[] promotionIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : promotionIds) {
-      fragments.add(Fragment.encode(PromotionsId.dbType, id));
+      fragments.add(Fragment.encode(PromotionsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -81,7 +82,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.tinyintUnsigned.opt(), unsaved.maxUsesPerCustomer()),
             Fragment.lit(", "),
-            Fragment.encode(AllBrandsCategoriesCSet.dbType.opt(), unsaved.applicableTo()),
+            Fragment.encode(AllBrandsCategoriesCSet.mariaType.opt(), unsaved.applicableTo()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.rulesJson()),
             Fragment.lit(", "),
@@ -89,7 +90,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.datetime, unsaved.validTo()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.datetime, unsaved.createdAt()),
             Fragment.lit(
@@ -185,7 +186,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
               columns.add(Fragment.lit("`applicable_to`"));
               values.add(
                   interpolate(
-                      Fragment.encode(AllBrandsCategoriesCSet.dbType.opt(), value),
+                      Fragment.encode(AllBrandsCategoriesCSet.mariaType.opt(), value),
                       Fragment.lit("")));
             });
     ;
@@ -205,7 +206,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_active`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(interpolate(Fragment.encode(IsActive.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -263,7 +264,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
                     + " `valid_to`, `is_active`, `created_at`\n"
                     + "from `promotions`\n"
                     + "where `promotion_id` = "),
-            Fragment.encode(PromotionsId.dbType, promotionId),
+            Fragment.encode(PromotionsId.mariaType, promotionId),
             Fragment.lit(""))
         .query(PromotionsRow._rowParser.first())
         .runUnchecked(c);
@@ -273,7 +274,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
   public List<PromotionsRow> selectByIds(PromotionsId[] promotionIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : promotionIds) {
-      fragments.add(Fragment.encode(PromotionsId.dbType, id));
+      fragments.add(Fragment.encode(PromotionsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -343,7 +344,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
                 Fragment.lit(",\n`max_uses_per_customer` = "),
                 Fragment.encode(MariaTypes.tinyintUnsigned.opt(), row.maxUsesPerCustomer()),
                 Fragment.lit(",\n`applicable_to` = "),
-                Fragment.encode(AllBrandsCategoriesCSet.dbType.opt(), row.applicableTo()),
+                Fragment.encode(AllBrandsCategoriesCSet.mariaType.opt(), row.applicableTo()),
                 Fragment.lit(",\n`rules_json` = "),
                 Fragment.encode(MariaTypes.json.opt(), row.rulesJson()),
                 Fragment.lit(",\n`valid_from` = "),
@@ -351,11 +352,11 @@ public class PromotionsRepoImpl implements PromotionsRepo {
                 Fragment.lit(",\n`valid_to` = "),
                 Fragment.encode(MariaTypes.datetime, row.validTo()),
                 Fragment.lit(",\n`is_active` = "),
-                Fragment.encode(MariaTypes.bool, row.isActive()),
+                Fragment.encode(IsActive.mariaType, row.isActive()),
                 Fragment.lit(",\n`created_at` = "),
                 Fragment.encode(MariaTypes.datetime, row.createdAt()),
                 Fragment.lit("\nwhere `promotion_id` = "),
-                Fragment.encode(PromotionsId.dbType, promotionId),
+                Fragment.encode(PromotionsId.mariaType, promotionId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -371,7 +372,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
                     + " `uses_count`, `max_uses_per_customer`, `applicable_to`, `rules_json`,"
                     + " `valid_from`, `valid_to`, `is_active`, `created_at`)\n"
                     + "VALUES ("),
-            Fragment.encode(PromotionsId.dbType, unsaved.promotionId()),
+            Fragment.encode(PromotionsId.mariaType, unsaved.promotionId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.code()),
             Fragment.lit(", "),
@@ -391,7 +392,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.tinyintUnsigned.opt(), unsaved.maxUsesPerCustomer()),
             Fragment.lit(", "),
-            Fragment.encode(AllBrandsCategoriesCSet.dbType.opt(), unsaved.applicableTo()),
+            Fragment.encode(AllBrandsCategoriesCSet.mariaType.opt(), unsaved.applicableTo()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.rulesJson()),
             Fragment.lit(", "),
@@ -399,7 +400,7 @@ public class PromotionsRepoImpl implements PromotionsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.datetime, unsaved.validTo()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isActive()),
+            Fragment.encode(IsActive.mariaType, unsaved.isActive()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.datetime, unsaved.createdAt()),
             Fragment.lit(

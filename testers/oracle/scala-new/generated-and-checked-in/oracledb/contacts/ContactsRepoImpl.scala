@@ -13,8 +13,8 @@ import dev.typr.foundations.scala.Fragment
 import dev.typr.foundations.scala.SelectBuilder
 import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
-import oracledb.EmailTableT
 import oracledb.TagVarrayT
+import oracledb.userdefined.Email
 import scala.collection.mutable.ListBuffer
 import dev.typr.foundations.scala.Fragment.sql
 
@@ -31,7 +31,7 @@ class ContactsRepoImpl extends ContactsRepo {
 
   override def insert(unsaved: ContactsRow)(using c: Connection): ContactsId = {
   sql"""insert into "CONTACTS"("CONTACT_ID", "NAME", "EMAILS", "TAGS")
-    values (${Fragment.encode(ContactsId.oracleType, unsaved.contactId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(EmailTableT.oracleType.nullable, unsaved.emails)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)})
+    values (${Fragment.encode(ContactsId.oracleType, unsaved.contactId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(Email.oracleType.nullable, unsaved.emails)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)})
     """
     .updateReturningGeneratedKeys(Array[String]("CONTACT_ID"), ContactsId.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -42,7 +42,7 @@ class ContactsRepoImpl extends ContactsRepo {
     columns.addOne(Fragment.lit(""""NAME"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.name)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""EMAILS"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(EmailTableT.oracleType.nullable, unsaved.emails)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Email.oracleType.nullable, unsaved.emails)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""TAGS"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)}"): @scala.annotation.nowarn
     unsaved.contactId.visit(
@@ -89,19 +89,19 @@ class ContactsRepoImpl extends ContactsRepo {
     val contactId: ContactsId = row.contactId
     return sql"""update "CONTACTS"
     set "NAME" = ${Fragment.encode(OracleTypes.varchar2, row.name)},
-    "EMAILS" = ${Fragment.encode(EmailTableT.oracleType.nullable, row.emails)},
+    "EMAILS" = ${Fragment.encode(Email.oracleType.nullable, row.emails)},
     "TAGS" = ${Fragment.encode(TagVarrayT.oracleType.nullable, row.tags)}
     where "CONTACT_ID" = ${Fragment.encode(ContactsId.oracleType, contactId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ContactsRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "CONTACTS" t
-    USING (SELECT ${Fragment.encode(ContactsId.oracleType, unsaved.contactId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(EmailTableT.oracleType.nullable, unsaved.emails)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)} FROM DUAL) s
+    USING (SELECT ${Fragment.encode(ContactsId.oracleType, unsaved.contactId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(Email.oracleType.nullable, unsaved.emails)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)} FROM DUAL) s
     ON (t."CONTACT_ID" = s."CONTACT_ID")
     WHEN MATCHED THEN UPDATE SET t."NAME" = s."NAME",
     t."EMAILS" = s."EMAILS",
     t."TAGS" = s."TAGS"
-    WHEN NOT MATCHED THEN INSERT ("CONTACT_ID", "NAME", "EMAILS", "TAGS") VALUES (${Fragment.encode(ContactsId.oracleType, unsaved.contactId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(EmailTableT.oracleType.nullable, unsaved.emails)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)})"""
+    WHEN NOT MATCHED THEN INSERT ("CONTACT_ID", "NAME", "EMAILS", "TAGS") VALUES (${Fragment.encode(ContactsId.oracleType, unsaved.contactId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(Email.oracleType.nullable, unsaved.emails)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)})"""
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

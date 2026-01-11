@@ -39,7 +39,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
     return interpolate(
                 Fragment.lit(
                     "delete from \"production\".\"productcosthistory\" where \"productid\" = "),
-                Fragment.encode(ProductId.dbType, compositeId.productid()),
+                Fragment.encode(ProductId.pgType, compositeId.productid()),
                 Fragment.lit(" AND \"startdate\" = "),
                 Fragment.encode(PgTypes.timestamp, compositeId.startdate()),
                 Fragment.lit(""))
@@ -62,7 +62,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
                     + "from \"production\".\"productcosthistory\"\n"
                     + "where (\"productid\", \"startdate\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(ProductId.dbTypeArray, productid),
+            Fragment.encode(ProductId.pgTypeArray, productid),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.timestampArray, startdate),
             Fragment.lit("))\n"))
@@ -77,7 +77,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
                 "insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\","
                     + " \"enddate\", \"standardcost\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(ProductId.dbType, unsaved.productid()),
+            Fragment.encode(ProductId.pgType, unsaved.productid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.timestamp, unsaved.startdate()),
             Fragment.lit("::timestamp, "),
@@ -103,7 +103,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
     columns.add(Fragment.lit("\"productid\""));
     values.add(
         interpolate(
-            Fragment.encode(ProductId.dbType, unsaved.productid()), Fragment.lit("::int4")));
+            Fragment.encode(ProductId.pgType, unsaved.productid()), Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"startdate\""));
     values.add(
         interpolate(
@@ -196,7 +196,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
                     + " \"modifieddate\"\n"
                     + "from \"production\".\"productcosthistory\"\n"
                     + "where \"productid\" = "),
-            Fragment.encode(ProductId.dbType, compositeId.productid()),
+            Fragment.encode(ProductId.pgType, compositeId.productid()),
             Fragment.lit(" AND \"startdate\" = "),
             Fragment.encode(PgTypes.timestamp, compositeId.startdate()),
             Fragment.lit(""))
@@ -220,7 +220,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
                     + "from \"production\".\"productcosthistory\"\n"
                     + "where (\"productid\", \"startdate\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(ProductId.dbTypeArray, productid),
+            Fragment.encode(ProductId.pgTypeArray, productid),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.timestampArray, startdate),
             Fragment.lit("))\n"))
@@ -258,7 +258,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
                 Fragment.lit("::numeric,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"productid\" = "),
-                Fragment.encode(ProductId.dbType, compositeId.productid()),
+                Fragment.encode(ProductId.pgType, compositeId.productid()),
                 Fragment.lit(" AND \"startdate\" = "),
                 Fragment.encode(PgTypes.timestamp, compositeId.startdate()),
                 Fragment.lit(""))
@@ -274,7 +274,7 @@ public class ProductcosthistoryRepoImpl implements ProductcosthistoryRepo {
                 "insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\","
                     + " \"enddate\", \"standardcost\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(ProductId.dbType, unsaved.productid()),
+            Fragment.encode(ProductId.pgType, unsaved.productid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.timestamp, unsaved.startdate()),
             Fragment.lit("::timestamp, "),

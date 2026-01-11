@@ -5,7 +5,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.{BusinessentityId, BusinessentityRepoImpl, BusinessentityRowUnsaved}
 import adventureworks.person.person.{PersonRepoImpl, PersonRowUnsaved}
 import adventureworks.public.{Flag, Name}
-import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.{CurrentFlag, FirstName, LastName, MiddleName, SalariedFlag}
 import org.junit.Assert.*
 import org.junit.Test
 import dev.typr.foundations.data.Xml
@@ -29,10 +29,10 @@ class EmployeeTest {
         PersonRowUnsaved(
           businessentityid = businessentityRow.businessentityid,
           persontype = "SC",
-          firstname = FirstName("firstname"),
-          lastname = Name("lastname")
+          firstname = FirstName(Name("firstname")),
+          lastname = LastName(Name("lastname"))
         ).copy(
-          middlename = Optional.of(Name("middlename")),
+          middlename = Optional.of(MiddleName(Name("middlename"))),
           suffix = Optional.of("suffix"),
           additionalcontactinfo = Optional.of(Xml("<additionalcontactinfo/>"))
         )
@@ -48,10 +48,10 @@ class EmployeeTest {
         gender = "F",
         hiredate = LocalDate.now().minusYears(1)
       ).copy(
-        salariedflag = Defaulted.Provided(Flag(true)),
+        salariedflag = Defaulted.Provided(SalariedFlag(Flag(true))),
         vacationhours = Defaulted.Provided(java.lang.Short.valueOf(1.toShort)),
         sickleavehours = Defaulted.Provided(java.lang.Short.valueOf(2.toShort)),
-        currentflag = Defaulted.Provided(Flag(true)),
+        currentflag = Defaulted.Provided(CurrentFlag(Flag(true))),
         rowguid = Defaulted.Provided(UUID.randomUUID()),
         modifieddate = Defaulted.Provided(DbNow.localDateTime()),
         organizationnode = Defaulted.Provided(Optional.of("/"))
@@ -89,10 +89,10 @@ class EmployeeTest {
 
       val withDefaults = employeeRepo.insert(minimalUnsaved)
 
-      assertEquals(Flag(true), withDefaults.salariedflag)
+      assertEquals(SalariedFlag(Flag(true)), withDefaults.salariedflag)
       assertEquals(java.lang.Short.valueOf(0.toShort), withDefaults.vacationhours)
       assertEquals(java.lang.Short.valueOf(0.toShort), withDefaults.sickleavehours)
-      assertEquals(Flag(true), withDefaults.currentflag)
+      assertEquals(CurrentFlag(Flag(true)), withDefaults.currentflag)
       assertEquals(Optional.of("/"), withDefaults.organizationnode)
     }
   }

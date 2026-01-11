@@ -21,19 +21,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class PasswordRepoImpl extends PasswordRepo {
   override def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of(""""person"."password"""", PasswordFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "person"."password" where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "person"."password" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
     sql"""delete
     from "person"."password"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})"""
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
   sql"""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.passwordhash)}, ${Fragment.encode(PgTypes.text, unsaved.passwordsalt)}, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.passwordhash)}, ${Fragment.encode(PgTypes.text, unsaved.passwordsalt)}, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     """
     .updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -43,7 +43,7 @@ class PasswordRepoImpl extends PasswordRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""passwordhash"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.passwordhash)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""passwordsalt"""")): @scala.annotation.nowarn
@@ -87,13 +87,13 @@ class PasswordRepoImpl extends PasswordRepo {
   override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[PasswordRow] = {
     sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     from "person"."password"
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".query(PasswordRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".query(PasswordRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[PasswordRow] = {
     sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     from "person"."password"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityids)})""".query(PasswordRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})""".query(PasswordRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, PasswordRow] = {
@@ -111,12 +111,12 @@ class PasswordRepoImpl extends PasswordRepo {
     "passwordsalt" = ${Fragment.encode(PgTypes.text, row.passwordsalt)},
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, businessentityid)}""".update().runUnchecked(c) > 0
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
   sql"""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.passwordhash)}, ${Fragment.encode(PgTypes.text, unsaved.passwordsalt)}, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.passwordhash)}, ${Fragment.encode(PgTypes.text, unsaved.passwordsalt)}, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid")
     do update set
       "passwordhash" = EXCLUDED."passwordhash",

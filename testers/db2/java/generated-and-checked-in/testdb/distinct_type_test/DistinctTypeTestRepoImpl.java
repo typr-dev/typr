@@ -33,7 +33,7 @@ public class DistinctTypeTestRepoImpl implements DistinctTypeTestRepo {
   public Boolean deleteById(DistinctTypeTestId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"DISTINCT_TYPE_TEST\" where \"ID\" = "),
-                Fragment.encode(DistinctTypeTestId.dbType, id),
+                Fragment.encode(DistinctTypeTestId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -44,7 +44,7 @@ public class DistinctTypeTestRepoImpl implements DistinctTypeTestRepo {
   public Integer deleteByIds(DistinctTypeTestId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(DistinctTypeTestId.dbType, id));
+      fragments.add(Fragment.encode(DistinctTypeTestId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -62,9 +62,9 @@ public class DistinctTypeTestRepoImpl implements DistinctTypeTestRepo {
                 "SELECT \"ID\", \"EMAIL\", \"BALANCE\" FROM FINAL TABLE (INSERT INTO"
                     + " \"DISTINCT_TYPE_TEST\"(\"EMAIL\", \"BALANCE\")\n"
                     + "VALUES ("),
-            Fragment.encode(EmailAddress.dbType, unsaved.email()),
+            Fragment.encode(EmailAddress.db2Type, unsaved.email()),
             Fragment.lit(", "),
-            Fragment.encode(MoneyAmount.dbType.opt(), unsaved.balance()),
+            Fragment.encode(MoneyAmount.db2Type.opt(), unsaved.balance()),
             Fragment.lit("))\n"))
         .updateReturning(DistinctTypeTestRow._rowParser.exactlyOne())
         .runUnchecked(c);
@@ -78,11 +78,11 @@ public class DistinctTypeTestRepoImpl implements DistinctTypeTestRepo {
     ;
     columns.add(Fragment.lit("\"EMAIL\""));
     values.add(
-        interpolate(Fragment.encode(EmailAddress.dbType, unsaved.email()), Fragment.lit("")));
+        interpolate(Fragment.encode(EmailAddress.db2Type, unsaved.email()), Fragment.lit("")));
     columns.add(Fragment.lit("\"BALANCE\""));
     values.add(
         interpolate(
-            Fragment.encode(MoneyAmount.dbType.opt(), unsaved.balance()), Fragment.lit("")));
+            Fragment.encode(MoneyAmount.db2Type.opt(), unsaved.balance()), Fragment.lit("")));
     Fragment q =
         interpolate(
             Fragment.lit(
@@ -120,7 +120,7 @@ public class DistinctTypeTestRepoImpl implements DistinctTypeTestRepo {
                 "select \"ID\", \"EMAIL\", \"BALANCE\"\n"
                     + "from \"DISTINCT_TYPE_TEST\"\n"
                     + "where \"ID\" = "),
-            Fragment.encode(DistinctTypeTestId.dbType, id),
+            Fragment.encode(DistinctTypeTestId.db2Type, id),
             Fragment.lit(""))
         .query(DistinctTypeTestRow._rowParser.first())
         .runUnchecked(c);
@@ -130,7 +130,7 @@ public class DistinctTypeTestRepoImpl implements DistinctTypeTestRepo {
   public List<DistinctTypeTestRow> selectByIds(DistinctTypeTestId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(DistinctTypeTestId.dbType, id));
+      fragments.add(Fragment.encode(DistinctTypeTestId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -167,11 +167,11 @@ public class DistinctTypeTestRepoImpl implements DistinctTypeTestRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"DISTINCT_TYPE_TEST\"\nset \"EMAIL\" = "),
-                Fragment.encode(EmailAddress.dbType, row.email()),
+                Fragment.encode(EmailAddress.db2Type, row.email()),
                 Fragment.lit(",\n\"BALANCE\" = "),
-                Fragment.encode(MoneyAmount.dbType.opt(), row.balance()),
+                Fragment.encode(MoneyAmount.db2Type.opt(), row.balance()),
                 Fragment.lit("\nwhere \"ID\" = "),
-                Fragment.encode(DistinctTypeTestId.dbType, id),
+                Fragment.encode(DistinctTypeTestId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -182,22 +182,22 @@ public class DistinctTypeTestRepoImpl implements DistinctTypeTestRepo {
   public void upsert(DistinctTypeTestRow unsaved, Connection c) {
     interpolate(
             Fragment.lit("MERGE INTO \"DISTINCT_TYPE_TEST\" AS t\nUSING (VALUES ("),
-            Fragment.encode(DistinctTypeTestId.dbType, unsaved.id()),
+            Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id()),
             Fragment.lit(", "),
-            Fragment.encode(EmailAddress.dbType, unsaved.email()),
+            Fragment.encode(EmailAddress.db2Type, unsaved.email()),
             Fragment.lit(", "),
-            Fragment.encode(MoneyAmount.dbType.opt(), unsaved.balance()),
+            Fragment.encode(MoneyAmount.db2Type.opt(), unsaved.balance()),
             Fragment.lit(
                 ")) AS s(\"ID\", \"EMAIL\", \"BALANCE\")\n"
                     + "ON t.\"ID\" = s.\"ID\"\n"
                     + "WHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n"
                     + "\"BALANCE\" = s.\"BALANCE\"\n"
                     + "WHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"BALANCE\") VALUES ("),
-            Fragment.encode(DistinctTypeTestId.dbType, unsaved.id()),
+            Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id()),
             Fragment.lit(", "),
-            Fragment.encode(EmailAddress.dbType, unsaved.email()),
+            Fragment.encode(EmailAddress.db2Type, unsaved.email()),
             Fragment.lit(", "),
-            Fragment.encode(MoneyAmount.dbType.opt(), unsaved.balance()),
+            Fragment.encode(MoneyAmount.db2Type.opt(), unsaved.balance()),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);

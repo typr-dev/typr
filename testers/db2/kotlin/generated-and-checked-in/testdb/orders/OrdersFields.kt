@@ -40,13 +40,13 @@ data class OrdersFields(val _path: List<Path>) : TupleExpr5<OrdersId, CustomersI
 
   override fun columns(): List<FieldLike<*, OrdersRow>> = listOf(this.orderId().underlying, this.customerId().underlying, this.orderDate().underlying, this.totalAmount().underlying, this.status().underlying)
 
-  fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "CUSTOMER_ID", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.dbType)
+  fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "CUSTOMER_ID", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.db2Type)
 
   fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("FK_CUSTOMER").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
 
   fun orderDate(): Field<LocalDate, OrdersRow> = Field<LocalDate, OrdersRow>(_path, "ORDER_DATE", OrdersRow::orderDate, null, null, { row, value -> row.copy(orderDate = value) }, Db2Types.date)
 
-  fun orderId(): IdField<OrdersId, OrdersRow> = IdField<OrdersId, OrdersRow>(_path, "ORDER_ID", OrdersRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.dbType)
+  fun orderId(): IdField<OrdersId, OrdersRow> = IdField<OrdersId, OrdersRow>(_path, "ORDER_ID", OrdersRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.db2Type)
 
   override fun rowParser(): RowParser<OrdersRow> = OrdersRow._rowParser.underlying
 

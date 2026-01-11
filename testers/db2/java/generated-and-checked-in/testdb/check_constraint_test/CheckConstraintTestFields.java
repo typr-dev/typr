@@ -41,7 +41,7 @@ public class CheckConstraintTestFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        CheckConstraintTestId.dbType);
+        CheckConstraintTestId.db2Type);
   }
 
   public Field<Integer, CheckConstraintTestRow> age() {

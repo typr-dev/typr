@@ -7,9 +7,10 @@ package adventureworks.person.person;
 
 import adventureworks.customtypes.Defaulted;
 import adventureworks.person.businessentity.BusinessentityId;
-import adventureworks.public_.Name;
 import adventureworks.public_.NameStyle;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.PgText;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.RowParser;
@@ -48,9 +49,9 @@ public record PersonRow(
     /** First name of the person. */
     /* user-picked */ FirstName firstname,
     /** Middle name or middle initial of the person. */
-    Optional<Name> middlename,
+    Optional</* user-picked */ MiddleName> middlename,
     /** Last name of the person. */
-    Name lastname,
+    /* user-picked */ LastName lastname,
     /** Surname suffix. For example, Sr. or Jr. */
     Optional</* max 10 chars */ String> suffix,
     /**
@@ -77,8 +78,8 @@ public record PersonRow(
         NameStyle,
         Optional</* max 8 chars */ String>, /* user-picked */
         FirstName,
-        Optional<Name>,
-        Name,
+        Optional</* user-picked */ MiddleName>, /* user-picked */
+        LastName,
         Optional</* max 10 chars */ String>,
         Integer,
         Optional<Xml>,
@@ -193,7 +194,7 @@ public record PersonRow(
   ;
 
   /** Middle name or middle initial of the person. */
-  public PersonRow withMiddlename(Optional<Name> middlename) {
+  public PersonRow withMiddlename(Optional</* user-picked */ MiddleName> middlename) {
     return new PersonRow(
         businessentityid,
         persontype,
@@ -212,7 +213,7 @@ public record PersonRow(
   ;
 
   /** Last name of the person. */
-  public PersonRow withLastname(Name lastname) {
+  public PersonRow withLastname(/* user-picked */ LastName lastname) {
     return new PersonRow(
         businessentityid,
         persontype,
@@ -354,13 +355,13 @@ public record PersonRow(
 
   public static RowParser<PersonRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
+          BusinessentityId.pgType,
           PgTypes.bpchar,
-          NameStyle.dbType,
+          NameStyle.pgType,
           PgTypes.text.opt(),
-          FirstName.dbType,
-          Name.dbType.opt(),
-          Name.dbType,
+          FirstName.pgType,
+          MiddleName.pgType.opt(),
+          LastName.pgType,
           PgTypes.text.opt(),
           PgTypes.int4,
           PgTypes.xml.opt(),
@@ -443,13 +444,13 @@ public record PersonRow(
   ;
 
   @Override
-  public Optional<Name> _6() {
+  public Optional</* user-picked */ MiddleName> _6() {
     return middlename;
   }
   ;
 
   @Override
-  public Name _7() {
+  public /* user-picked */ LastName _7() {
     return lastname;
   }
   ;

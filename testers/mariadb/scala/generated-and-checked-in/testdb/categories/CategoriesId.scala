@@ -17,5 +17,5 @@ case class CategoriesId(@JsonValue value: Uint4) extends scala.AnyVal
 object CategoriesId {
   given bijection: Bijection[CategoriesId, Uint4] = Bijection.apply[CategoriesId, Uint4](_.value)(CategoriesId.apply)
 
-  given dbType: MariaType[CategoriesId] = MariaTypes.mediumintUnsigned.bimap(CategoriesId.apply, _.value)
+  given mariaType: MariaType[CategoriesId] = MariaTypes.mediumintUnsigned.bimap(CategoriesId.apply, _.value)
 }

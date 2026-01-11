@@ -13,6 +13,7 @@ import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
 
 /** Table: customers
  * Primary key: customer_id
@@ -21,10 +22,10 @@ case class CustomersRow(
   /** IDENTITY(1, 1) */
   @JsonProperty("customer_id") customerId: CustomersId,
   name: String,
-  email: String,
+  email: /* user-picked */ Email,
   /** Default: (getdate()) */
   @JsonProperty("created_at") createdAt: Option[LocalDateTime]
-) extends Tuple4[CustomersId, String, String, Option[LocalDateTime]] {
+) extends Tuple4[CustomersId, String, /* user-picked */ Email, Option[LocalDateTime]] {
   def id: CustomersId = customerId
 
   def toUnsavedRow(createdAt: Defaulted[Option[LocalDateTime]] = Defaulted.Provided(this.createdAt)): CustomersRowUnsaved = new CustomersRowUnsaved(name, email, createdAt)
@@ -33,11 +34,11 @@ case class CustomersRow(
 
   override def `_2`: String = name
 
-  override def `_3`: String = email
+  override def `_3`: /* user-picked */ Email = email
 
   override def `_4`: Option[LocalDateTime] = createdAt
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar, SqlServerTypes.datetime2.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt))
+  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt))
 }

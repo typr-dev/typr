@@ -53,13 +53,13 @@ data class OrderHistoryFields(val _path: List<Path>) : TupleExpr8<OrderHistoryId
 
   fun fkOrders(): ForeignKey<OrdersFields, OrdersRow> = ForeignKey.of<OrdersFields, OrdersRow>("fk_oh_order").withColumnPair<OrdersId>(orderId(), OrdersFields::orderId)
 
-  fun historyId(): IdField<OrderHistoryId, OrderHistoryRow> = IdField<OrderHistoryId, OrderHistoryRow>(_path, "history_id", OrderHistoryRow::historyId, null, null, { row, value -> row.copy(historyId = value) }, OrderHistoryId.dbType)
+  fun historyId(): IdField<OrderHistoryId, OrderHistoryRow> = IdField<OrderHistoryId, OrderHistoryRow>(_path, "history_id", OrderHistoryRow::historyId, null, null, { row, value -> row.copy(historyId = value) }, OrderHistoryId.mariaType)
 
   fun metadata(): OptField<Json, OrderHistoryRow> = OptField<Json, OrderHistoryRow>(_path, "metadata", OrderHistoryRow::metadata, null, null, { row, value -> row.copy(metadata = value) }, MariaTypes.json)
 
   fun newStatus(): Field<String, OrderHistoryRow> = Field<String, OrderHistoryRow>(_path, "new_status", OrderHistoryRow::newStatus, null, null, { row, value -> row.copy(newStatus = value) }, MariaTypes.text)
 
-  fun orderId(): Field<OrdersId, OrderHistoryRow> = Field<OrdersId, OrderHistoryRow>(_path, "order_id", OrderHistoryRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.dbType)
+  fun orderId(): Field<OrdersId, OrderHistoryRow> = Field<OrdersId, OrderHistoryRow>(_path, "order_id", OrderHistoryRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType)
 
   fun previousStatus(): OptField<String, OrderHistoryRow> = OptField<String, OrderHistoryRow>(_path, "previous_status", OrderHistoryRow::previousStatus, null, null, { row, value -> row.copy(previousStatus = value) }, MariaTypes.text)
 

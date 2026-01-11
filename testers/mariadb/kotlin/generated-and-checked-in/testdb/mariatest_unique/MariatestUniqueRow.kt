@@ -9,6 +9,7 @@ import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple4
 import dev.typr.foundations.kotlin.RowParser
 import dev.typr.foundations.kotlin.RowParsers
+import testdb.userdefined.Email
 
 /** Table: mariatest_unique
   * Primary key: id
@@ -19,15 +20,15 @@ data class MariatestUniqueRow(
     */
   val id: MariatestUniqueId,
   /**  */
-  val email: String,
+  val email: /* user-picked */ Email,
   /**  */
   val code: String,
   /**  */
   val category: String
-) : Tuple4<MariatestUniqueId, String, String, String> {
+) : Tuple4<MariatestUniqueId, /* user-picked */ Email, String, String> {
   override fun _1(): MariatestUniqueId = id
 
-  override fun _2(): String = email
+  override fun _2(): /* user-picked */ Email = email
 
   override fun _3(): String = code
 
@@ -36,6 +37,6 @@ data class MariatestUniqueRow(
   fun toUnsavedRow(): MariatestUniqueRowUnsaved = MariatestUniqueRowUnsaved(email, code, category)
 
   companion object {
-    val _rowParser: RowParser<MariatestUniqueRow> = RowParsers.of(MariatestUniqueId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, { t0, t1, t2, t3 -> MariatestUniqueRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
+    val _rowParser: RowParser<MariatestUniqueRow> = RowParsers.of(MariatestUniqueId.mariaType, Email.mariaType, MariaTypes.varchar, MariaTypes.varchar, { t0, t1, t2, t3 -> MariatestUniqueRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
   }
 }

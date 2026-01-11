@@ -56,7 +56,7 @@ public class SeekDbTest {
                   .maybeSeek(
                       f -> f.businessentityid().asc(),
                       Optional.empty(),
-                      v -> new SqlExpr.ConstReq<>(v, BusinessentityId.dbType))
+                      v -> new SqlExpr.ConstReq<>(v, BusinessentityId.pgType))
                   .maybeSeek(
                       f -> f.rowguid().asc(),
                       Optional.empty(),
@@ -77,7 +77,7 @@ public class SeekDbTest {
                   .maybeSeek(
                       f -> f.businessentityid().asc(),
                       Optional.of(lastRow.businessentityid()),
-                      v -> new SqlExpr.ConstReq<>(v, BusinessentityId.dbType))
+                      v -> new SqlExpr.ConstReq<>(v, BusinessentityId.pgType))
                   .maybeSeek(
                       f -> f.rowguid().asc(),
                       Optional.of(lastRow.rowguid()),
@@ -141,7 +141,7 @@ public class SeekDbTest {
                   .maybeSeek(
                       f -> f.businessentityid().asc(),
                       Optional.empty(),
-                      v -> new SqlExpr.ConstReq<>(v, BusinessentityId.dbType))
+                      v -> new SqlExpr.ConstReq<>(v, BusinessentityId.pgType))
                   .maybeSeek(
                       f -> f.rowguid().asc(),
                       Optional.empty(),
@@ -162,7 +162,7 @@ public class SeekDbTest {
                   .maybeSeek(
                       f -> f.businessentityid().asc(),
                       Optional.of(lastRow.businessentityid()),
-                      v -> new SqlExpr.ConstReq<>(v, BusinessentityId.dbType))
+                      v -> new SqlExpr.ConstReq<>(v, BusinessentityId.pgType))
                   .maybeSeek(
                       f -> f.rowguid().asc(),
                       Optional.of(lastRow.rowguid()),

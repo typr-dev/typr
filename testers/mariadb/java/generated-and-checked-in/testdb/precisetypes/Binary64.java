@@ -32,7 +32,7 @@ public record Binary64(@JsonValue byte[] value) implements BinaryN {
   public static Bijection<Binary64, byte[]> bijection =
       Bijection.of(Binary64::value, Binary64::new);
 
-  public static MariaType<Binary64> dbType =
+  public static MariaType<Binary64> mariaType =
       MariaTypes.binary.bimap(Binary64::new, Binary64::value);
 
   public static Optional<Binary64> of(byte[] value) {

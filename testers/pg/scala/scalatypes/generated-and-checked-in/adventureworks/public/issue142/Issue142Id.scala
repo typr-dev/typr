@@ -18,12 +18,12 @@ sealed abstract class Issue142Id(val value: String)
 object Issue142Id {
   def apply(underlying: String): Issue142Id =
     ByName.getOrElse(underlying, Unknown(underlying))
-  given dbTypeArray: PgType[Array[Issue142Id]] = {
+  given pgTypeArray: PgType[Array[Issue142Id]] = {
     PgTypes.textArray
       .bimap(xs => xs.map(Issue142Id.apply), xs => xs.map(_.value))
   }
 
-  given dbType: PgType[Issue142Id] = PgTypes.text.bimap(Issue142Id.apply, _.value)
+  given pgType: PgType[Issue142Id] = PgTypes.text.bimap(Issue142Id.apply, _.value)
 
   case object aa extends Issue142Id("aa")
 

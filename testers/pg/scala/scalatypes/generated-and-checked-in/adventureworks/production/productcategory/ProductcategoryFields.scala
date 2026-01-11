@@ -28,7 +28,7 @@ class ProductcategoryFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       Some("int4"),
       (row, value) => row.copy(productcategoryid = value),
-      ProductcategoryId.dbType
+      ProductcategoryId.pgType
     )
   }
 
@@ -40,7 +40,7 @@ class ProductcategoryFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

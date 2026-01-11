@@ -16,19 +16,22 @@ import java.util.Optional;
 import testdb.EmailMailPushSmsSet;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 /** Table: customers Primary key: customer_id */
 public record CustomersRow(
     /** AUTO_INCREMENT */
     @JsonProperty("customer_id") CustomersId customerId,
     /** */
-    String email,
+    /* user-picked */ Email email,
     /** */
     @JsonProperty("password_hash") byte[] passwordHash,
     /** */
-    @JsonProperty("first_name") String firstName,
+    @JsonProperty("first_name") /* user-picked */ FirstName firstName,
     /** */
-    @JsonProperty("last_name") String lastName,
+    @JsonProperty("last_name") /* user-picked */ LastName lastName,
     /** Default: NULL */
     Optional<String> phone,
     /**
@@ -50,11 +53,11 @@ public record CustomersRow(
     /** Default: NULL */
     @JsonProperty("last_login_at") Optional<LocalDateTime> lastLoginAt)
     implements Tuple14<
-        CustomersId,
-        String,
-        byte[],
-        String,
-        String,
+        CustomersId, /* user-picked */
+        Email,
+        byte[], /* user-picked */
+        FirstName, /* user-picked */
+        LastName,
         Optional<String>,
         CustomerStatusId,
         String,
@@ -85,7 +88,7 @@ public record CustomersRow(
   ;
 
   /** */
-  public CustomersRow withEmail(String email) {
+  public CustomersRow withEmail(/* user-picked */ Email email) {
     return new CustomersRow(
         customerId,
         email,
@@ -125,7 +128,7 @@ public record CustomersRow(
   ;
 
   /** */
-  public CustomersRow withFirstName(String firstName) {
+  public CustomersRow withFirstName(/* user-picked */ FirstName firstName) {
     return new CustomersRow(
         customerId,
         email,
@@ -145,7 +148,7 @@ public record CustomersRow(
   ;
 
   /** */
-  public CustomersRow withLastName(String lastName) {
+  public CustomersRow withLastName(/* user-picked */ LastName lastName) {
     return new CustomersRow(
         customerId,
         email,
@@ -346,16 +349,16 @@ public record CustomersRow(
 
   public static RowParser<CustomersRow> _rowParser =
       RowParsers.of(
-          CustomersId.dbType,
-          MariaTypes.varchar,
+          CustomersId.mariaType,
+          Email.mariaType,
           MariaTypes.binary,
-          MariaTypes.varchar,
-          MariaTypes.varchar,
+          FirstName.mariaType,
+          LastName.mariaType,
           MariaTypes.varchar.opt(),
-          CustomerStatusId.dbType,
+          CustomerStatusId.mariaType,
           MariaTypes.text,
           MariaTypes.json.opt(),
-          EmailMailPushSmsSet.dbType.opt(),
+          EmailMailPushSmsSet.mariaType.opt(),
           MariaTypes.text.opt(),
           MariaTypes.datetime,
           MariaTypes.datetime,
@@ -417,7 +420,7 @@ public record CustomersRow(
   ;
 
   @Override
-  public String _2() {
+  public /* user-picked */ Email _2() {
     return email;
   }
   ;
@@ -429,13 +432,13 @@ public record CustomersRow(
   ;
 
   @Override
-  public String _4() {
+  public /* user-picked */ FirstName _4() {
     return firstName;
   }
   ;
 
   @Override
-  public String _5() {
+  public /* user-picked */ LastName _5() {
     return lastName;
   }
   ;

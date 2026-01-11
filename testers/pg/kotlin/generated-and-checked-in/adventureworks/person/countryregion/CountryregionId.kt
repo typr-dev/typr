@@ -21,10 +21,10 @@ data class CountryregionId(@field:JsonValue val value: String) {
     val bijection: Bijection<CountryregionId, String> =
       Bijection.of(CountryregionId::value, ::CountryregionId)
 
-    val dbType: PgType<CountryregionId> =
+    val pgType: PgType<CountryregionId> =
       PgTypes.text.bimap(::CountryregionId, CountryregionId::value)
 
-    val dbTypeArray: PgType<Array<CountryregionId>> =
+    val pgTypeArray: PgType<Array<CountryregionId>> =
       PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::CountryregionId, CountryregionId::class.java) }, { xs -> arrayMap.map(xs, CountryregionId::value, String::class.java) })
   }
 }

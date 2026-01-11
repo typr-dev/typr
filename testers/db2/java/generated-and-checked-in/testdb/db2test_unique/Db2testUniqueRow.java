@@ -42,7 +42,7 @@ public record Db2testUniqueRow(
 
   public static RowParser<Db2testUniqueRow> _rowParser =
       RowParsers.of(
-          Db2testUniqueId.dbType,
+          Db2testUniqueId.db2Type,
           Db2Types.varchar,
           Db2Types.varchar,
           Db2Types.varchar,

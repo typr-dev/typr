@@ -36,7 +36,7 @@ data class Db2testUniqueFields(val _path: List<Path>) : TupleExpr4<Db2testUnique
 
   fun email(): Field<String, Db2testUniqueRow> = Field<String, Db2testUniqueRow>(_path, "EMAIL", Db2testUniqueRow::email, null, null, { row, value -> row.copy(email = value) }, Db2Types.varchar)
 
-  fun id(): IdField<Db2testUniqueId, Db2testUniqueRow> = IdField<Db2testUniqueId, Db2testUniqueRow>(_path, "ID", Db2testUniqueRow::id, null, null, { row, value -> row.copy(id = value) }, Db2testUniqueId.dbType)
+  fun id(): IdField<Db2testUniqueId, Db2testUniqueRow> = IdField<Db2testUniqueId, Db2testUniqueRow>(_path, "ID", Db2testUniqueRow::id, null, null, { row, value -> row.copy(id = value) }, Db2testUniqueId.db2Type)
 
   override fun rowParser(): RowParser<Db2testUniqueRow> = Db2testUniqueRow._rowParser.underlying
 

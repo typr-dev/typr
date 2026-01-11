@@ -18,7 +18,7 @@ case class AccountNumber(@JsonValue value: String)
 object AccountNumber {
   given bijection: Bijection[AccountNumber, String] = Bijection.apply[AccountNumber, String](_.value)(AccountNumber.apply)
 
-  given dbType: PgType[AccountNumber] = PgTypes.text.bimap(AccountNumber.apply, _.value).renamed(""""public"."AccountNumber"""")
+  given pgType: PgType[AccountNumber] = PgTypes.text.bimap(AccountNumber.apply, _.value).renamed(""""public"."AccountNumber"""")
 
-  given dbTypeArray: PgType[Array[AccountNumber]] = PgTypes.textArray.bimap(xs => xs.map(AccountNumber.apply), xs => xs.map(_.value)).renamed(""""public"."AccountNumber"[]""")
+  given pgTypeArray: PgType[Array[AccountNumber]] = PgTypes.textArray.bimap(xs => xs.map(AccountNumber.apply), xs => xs.map(_.value)).renamed(""""public"."AccountNumber"[]""")
 }

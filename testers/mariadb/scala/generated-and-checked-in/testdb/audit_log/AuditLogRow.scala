@@ -100,5 +100,5 @@ case class AuditLogRow(
 }
 
 object AuditLogRow {
-  val `_rowParser`: RowParser[AuditLogRow] = RowParsers.of(AuditLogId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable, MariaTypes.json.nullable, MariaTypes.varchar.nullable, MariaTypes.datetime, MariaTypes.inet6.nullable, MariaTypes.varbinary.nullable)(AuditLogRow.apply)(row => Array[Any](row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId))
+  val `_rowParser`: RowParser[AuditLogRow] = RowParsers.of(AuditLogId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable, MariaTypes.json.nullable, MariaTypes.varchar.nullable, MariaTypes.datetime, MariaTypes.inet6.nullable, MariaTypes.varbinary.nullable)(AuditLogRow.apply)(row => Array[Any](row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId))
 }

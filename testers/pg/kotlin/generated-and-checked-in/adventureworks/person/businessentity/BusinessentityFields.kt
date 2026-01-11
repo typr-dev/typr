@@ -28,7 +28,7 @@ data class BusinessentityFields(val _path: List<Path>) : TupleExpr3<Businessenti
 
   override fun _path(): List<Path> = _path
 
-  fun businessentityid(): IdField<BusinessentityId, BusinessentityRow> = IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.dbType)
+  fun businessentityid(): IdField<BusinessentityId, BusinessentityRow> = IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
   override fun columns(): List<FieldLike<*, BusinessentityRow>> = listOf(this.businessentityid().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 

@@ -29,7 +29,7 @@ case class String255 private(@JsonValue value: String) extends StringN {
 object String255 {
   given bijection: Bijection[String255, String] = Bijection.apply[String255, String](_.value)(String255.apply)
 
-  given dbType: MariaType[String255] = MariaTypes.varchar.bimap(String255.apply, _.value)
+  given mariaType: MariaType[String255] = MariaTypes.varchar.bimap(String255.apply, _.value)
 
   def of(value: String): Option[String255] = (if (value.length <= 255) Some(new String255(value)) else None)
 

@@ -8,7 +8,8 @@ package adventureworks.humanresources.employee;
 import static dev.typr.foundations.Fragment.interpolate;
 
 import adventureworks.person.businessentity.BusinessentityId;
-import adventureworks.public_.Flag;
+import adventureworks.userdefined.CurrentFlag;
+import adventureworks.userdefined.SalariedFlag;
 import dev.typr.foundations.Fragment;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.dsl.DeleteBuilder;
@@ -36,7 +37,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
     return interpolate(
                 Fragment.lit(
                     "delete from \"humanresources\".\"employee\" where \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -48,7 +49,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
     return interpolate(
             Fragment.lit(
                 "delete\nfrom \"humanresources\".\"employee\"\nwhere \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -64,7 +65,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
                     + " \"vacationhours\", \"sickleavehours\", \"currentflag\", \"rowguid\","
                     + " \"modifieddate\", \"organizationnode\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.text, unsaved.nationalidnumber()),
             Fragment.lit(", "),
@@ -80,13 +81,13 @@ public class EmployeeRepoImpl implements EmployeeRepo {
             Fragment.lit("::bpchar, "),
             Fragment.encode(PgTypes.date, unsaved.hiredate()),
             Fragment.lit("::date, "),
-            Fragment.encode(Flag.dbType, unsaved.salariedflag()),
+            Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag()),
             Fragment.lit("::bool, "),
             Fragment.encode(PgTypes.int2, unsaved.vacationhours()),
             Fragment.lit("::int2, "),
             Fragment.encode(PgTypes.int2, unsaved.sickleavehours()),
             Fragment.lit("::int2, "),
-            Fragment.encode(Flag.dbType, unsaved.currentflag()),
+            Fragment.encode(CurrentFlag.pgType, unsaved.currentflag()),
             Fragment.lit("::bool, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),
@@ -112,7 +113,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
     columns.add(Fragment.lit("\"businessentityid\""));
     values.add(
         interpolate(
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"nationalidnumber\""));
     values.add(
@@ -140,7 +141,8 @@ public class EmployeeRepoImpl implements EmployeeRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("\"salariedflag\""));
-              values.add(interpolate(Fragment.encode(Flag.dbType, value), Fragment.lit("::bool")));
+              values.add(
+                  interpolate(Fragment.encode(SalariedFlag.pgType, value), Fragment.lit("::bool")));
             });
     ;
     unsaved
@@ -167,7 +169,8 @@ public class EmployeeRepoImpl implements EmployeeRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("\"currentflag\""));
-              values.add(interpolate(Fragment.encode(Flag.dbType, value), Fragment.lit("::bool")));
+              values.add(
+                  interpolate(Fragment.encode(CurrentFlag.pgType, value), Fragment.lit("::bool")));
             });
     ;
     unsaved
@@ -276,7 +279,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
                     + " \"rowguid\", \"modifieddate\", \"organizationnode\"\n"
                     + "from \"humanresources\".\"employee\"\n"
                     + "where \"businessentityid\" = "),
-            Fragment.encode(BusinessentityId.dbType, businessentityid),
+            Fragment.encode(BusinessentityId.pgType, businessentityid),
             Fragment.lit(""))
         .query(EmployeeRow._rowParser.first())
         .runUnchecked(c);
@@ -292,7 +295,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
                     + " \"rowguid\", \"modifieddate\", \"organizationnode\"\n"
                     + "from \"humanresources\".\"employee\"\n"
                     + "where \"businessentityid\" = ANY("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityids),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityids),
             Fragment.lit(")"))
         .query(EmployeeRow._rowParser.all())
         .runUnchecked(c);
@@ -335,13 +338,13 @@ public class EmployeeRepoImpl implements EmployeeRepo {
                 Fragment.lit("::bpchar,\n\"hiredate\" = "),
                 Fragment.encode(PgTypes.date, row.hiredate()),
                 Fragment.lit("::date,\n\"salariedflag\" = "),
-                Fragment.encode(Flag.dbType, row.salariedflag()),
+                Fragment.encode(SalariedFlag.pgType, row.salariedflag()),
                 Fragment.lit("::bool,\n\"vacationhours\" = "),
                 Fragment.encode(PgTypes.int2, row.vacationhours()),
                 Fragment.lit("::int2,\n\"sickleavehours\" = "),
                 Fragment.encode(PgTypes.int2, row.sickleavehours()),
                 Fragment.lit("::int2,\n\"currentflag\" = "),
-                Fragment.encode(Flag.dbType, row.currentflag()),
+                Fragment.encode(CurrentFlag.pgType, row.currentflag()),
                 Fragment.lit("::bool,\n\"rowguid\" = "),
                 Fragment.encode(PgTypes.uuid, row.rowguid()),
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
@@ -349,7 +352,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
                 Fragment.lit("::timestamp,\n\"organizationnode\" = "),
                 Fragment.encode(PgTypes.text.opt(), row.organizationnode()),
                 Fragment.lit("\nwhere \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, businessentityid),
+                Fragment.encode(BusinessentityId.pgType, businessentityid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -366,7 +369,7 @@ public class EmployeeRepoImpl implements EmployeeRepo {
                     + " \"vacationhours\", \"sickleavehours\", \"currentflag\", \"rowguid\","
                     + " \"modifieddate\", \"organizationnode\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.text, unsaved.nationalidnumber()),
             Fragment.lit(", "),
@@ -382,13 +385,13 @@ public class EmployeeRepoImpl implements EmployeeRepo {
             Fragment.lit("::bpchar, "),
             Fragment.encode(PgTypes.date, unsaved.hiredate()),
             Fragment.lit("::date, "),
-            Fragment.encode(Flag.dbType, unsaved.salariedflag()),
+            Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag()),
             Fragment.lit("::bool, "),
             Fragment.encode(PgTypes.int2, unsaved.vacationhours()),
             Fragment.lit("::int2, "),
             Fragment.encode(PgTypes.int2, unsaved.sickleavehours()),
             Fragment.lit("::int2, "),
-            Fragment.encode(Flag.dbType, unsaved.currentflag()),
+            Fragment.encode(CurrentFlag.pgType, unsaved.currentflag()),
             Fragment.lit("::bool, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),

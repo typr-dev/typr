@@ -3,6 +3,7 @@ package testdb
 import org.junit.Assert.*
 import org.junit.Test
 import testdb.customers.*
+import testdb.userdefined.Email
 import java.time.LocalDateTime
 
 class DSLTest {
@@ -13,7 +14,7 @@ class DSLTest {
         DuckDbTestHelper.run { c ->
             customersRepo.insert(
                 CustomersRow(
-                    CustomersId(5001), "DSL Test User", "dsl@test.com",
+                    CustomersId(5001), "DSL Test User", Email("dsl@test.com"),
                     LocalDateTime.now(), Priority.high
                 ), c
             )
@@ -97,7 +98,7 @@ class DSLTest {
         DuckDbTestHelper.run { c ->
             customersRepo.insert(
                 CustomersRow(
-                    CustomersId(5700), "ProjectionTest", "projection@test.com",
+                    CustomersId(5700), "ProjectionTest", Email("projection@test.com"),
                     LocalDateTime.now(), null
                 ), c
             )
@@ -109,7 +110,7 @@ class DSLTest {
 
             assertEquals(1, results.size)
             assertEquals("ProjectionTest", results[0]._1())
-            assertEquals("projection@test.com", results[0]._2())
+            assertEquals(Email("projection@test.com"), results[0]._2())
         }
     }
 }

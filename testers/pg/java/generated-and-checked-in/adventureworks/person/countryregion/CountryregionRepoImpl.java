@@ -35,7 +35,7 @@ public class CountryregionRepoImpl implements CountryregionRepo {
     return interpolate(
                 Fragment.lit(
                     "delete from \"person\".\"countryregion\" where \"countryregioncode\" = "),
-                Fragment.encode(CountryregionId.dbType, countryregioncode),
+                Fragment.encode(CountryregionId.pgType, countryregioncode),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -47,7 +47,7 @@ public class CountryregionRepoImpl implements CountryregionRepo {
     return interpolate(
             Fragment.lit(
                 "delete\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("),
-            Fragment.encode(CountryregionId.dbTypeArray, countryregioncodes),
+            Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -60,9 +60,9 @@ public class CountryregionRepoImpl implements CountryregionRepo {
                 "insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode()),
+            Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode()),
             Fragment.lit(", "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(
@@ -80,11 +80,11 @@ public class CountryregionRepoImpl implements CountryregionRepo {
     columns.add(Fragment.lit("\"countryregioncode\""));
     values.add(
         interpolate(
-            Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode()),
+            Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode()),
             Fragment.lit("")));
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.name()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.name()), Fragment.lit("::varchar")));
     unsaved
         .modifieddate()
         .visit(
@@ -157,7 +157,7 @@ public class CountryregionRepoImpl implements CountryregionRepo {
                 "select \"countryregioncode\", \"name\", \"modifieddate\"\n"
                     + "from \"person\".\"countryregion\"\n"
                     + "where \"countryregioncode\" = "),
-            Fragment.encode(CountryregionId.dbType, countryregioncode),
+            Fragment.encode(CountryregionId.pgType, countryregioncode),
             Fragment.lit(""))
         .query(CountryregionRow._rowParser.first())
         .runUnchecked(c);
@@ -170,7 +170,7 @@ public class CountryregionRepoImpl implements CountryregionRepo {
                 "select \"countryregioncode\", \"name\", \"modifieddate\"\n"
                     + "from \"person\".\"countryregion\"\n"
                     + "where \"countryregioncode\" = ANY("),
-            Fragment.encode(CountryregionId.dbTypeArray, countryregioncodes),
+            Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes),
             Fragment.lit(")"))
         .query(CountryregionRow._rowParser.all())
         .runUnchecked(c);
@@ -200,11 +200,11 @@ public class CountryregionRepoImpl implements CountryregionRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"person\".\"countryregion\"\nset \"name\" = "),
-                Fragment.encode(Name.dbType, row.name()),
+                Fragment.encode(Name.pgType, row.name()),
                 Fragment.lit("::varchar,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"countryregioncode\" = "),
-                Fragment.encode(CountryregionId.dbType, countryregioncode),
+                Fragment.encode(CountryregionId.pgType, countryregioncode),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -218,9 +218,9 @@ public class CountryregionRepoImpl implements CountryregionRepo {
                 "insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode()),
+            Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode()),
             Fragment.lit(", "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.timestamp, unsaved.modifieddate()),
             Fragment.lit(

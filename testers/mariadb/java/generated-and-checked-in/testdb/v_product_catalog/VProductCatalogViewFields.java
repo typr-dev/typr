@@ -53,7 +53,7 @@ public class VProductCatalogViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public Field<String, VProductCatalogViewRow> sku() {
@@ -119,7 +119,7 @@ public class VProductCatalogViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTags(value),
-        BestsellerClearanceFSet.dbType);
+        BestsellerClearanceFSet.mariaType);
   }
 
   public OptField<String, VProductCatalogViewRow> brandName() {

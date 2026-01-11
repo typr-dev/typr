@@ -7,6 +7,9 @@ import testdb.customer_orders.*
 import testdb.simple_customer_lookup.*
 import testdb.customer_status.CustomerStatusId
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 import java.math.BigDecimal
 import java.util.Random
 
@@ -206,7 +209,7 @@ class SqlScriptTest {
     fun testSimpleCustomerLookup() {
         MariaDbTestHelper.run { c ->
             // Create a customer
-            val email = "lookup_${Random().nextInt(10000)}@example.com"
+            val email = Email("lookup_${Random().nextInt(10000)}@example.com")
             val status = testInsert.CustomerStatus(
                 statusCode = CustomerStatusId("lookup_status_${Random().nextInt(10000)}"),
                 description = "Lookup Status",
@@ -215,13 +218,13 @@ class SqlScriptTest {
             val customer = testInsert.Customers(
                 email = email,
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "Lookup",
-                lastName = "Customer",
+                firstName = FirstName("Lookup"),
+                lastName = LastName("Customer"),
                 c = c
             )
 
             // Look up by email
-            val results = simpleCustomerLookupRepo.apply(email, c)
+            val results = simpleCustomerLookupRepo.apply(email.value, c)
 
             assertNotNull(results)
             assertEquals(1, results.size)
@@ -241,10 +244,10 @@ class SqlScriptTest {
                 c = c
             )
             val customer = testInsert.Customers(
-                email = "orders_${Random().nextInt(10000)}@example.com",
+                email = Email("orders_${Random().nextInt(10000)}@example.com"),
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "Orders",
-                lastName = "Customer",
+                firstName = FirstName("Orders"),
+                lastName = LastName("Customer"),
                 c = c
             )
 

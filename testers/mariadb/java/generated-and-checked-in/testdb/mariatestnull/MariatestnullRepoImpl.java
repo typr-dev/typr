@@ -113,7 +113,7 @@ public class MariatestnullRepoImpl implements MariatestnullRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.year.opt(), unsaved.yearCol()),
             Fragment.lit(", "),
-            Fragment.encode(XYZSet.dbType.opt(), unsaved.setCol()),
+            Fragment.encode(XYZSet.mariaType.opt(), unsaved.setCol()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.jsonCol()),
             Fragment.lit(", "),
@@ -530,7 +530,7 @@ public class MariatestnullRepoImpl implements MariatestnullRepo {
             value -> {
               columns.add(Fragment.lit("`set_col`"));
               values.add(
-                  interpolate(Fragment.encode(XYZSet.dbType.opt(), value), Fragment.lit("")));
+                  interpolate(Fragment.encode(XYZSet.mariaType.opt(), value), Fragment.lit("")));
             });
     ;
     unsaved

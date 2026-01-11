@@ -8,7 +8,8 @@ package adventureworks.humanresources.employee
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.RowParser
 import dev.typr.foundations.dsl.FieldsBase
@@ -26,7 +27,7 @@ import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
 
-class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[BusinessentityId, String, String, String, LocalDate, String, String, LocalDate, Flag, java.lang.Short, java.lang.Short, Flag, UUID, LocalDateTime, String] with RelationStructure[EmployeeFields, EmployeeRow]  with FieldsBase[EmployeeRow] {
+class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[BusinessentityId, String, String, String, LocalDate, String, String, LocalDate, /* user-picked */ SalariedFlag, java.lang.Short, java.lang.Short, /* user-picked */ CurrentFlag, UUID, LocalDateTime, String] with RelationStructure[EmployeeFields, EmployeeRow]  with FieldsBase[EmployeeRow] {
   def businessentityid: IdField[BusinessentityId, EmployeeRow] = {
     new IdField[BusinessentityId, EmployeeRow](
       _path,
@@ -35,7 +36,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 
@@ -123,15 +124,15 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
     )
   }
 
-  def salariedflag: Field[Flag, EmployeeRow] = {
-    new Field[Flag, EmployeeRow](
+  def salariedflag: Field[/* user-picked */ SalariedFlag, EmployeeRow] = {
+    new Field[/* user-picked */ SalariedFlag, EmployeeRow](
       _path,
       "salariedflag",
       _.salariedflag,
       Optional.empty(),
       Optional.of("bool"),
       (row, value) => row.copy(salariedflag = value),
-      Flag.dbType
+      SalariedFlag.pgType
     )
   }
 
@@ -159,15 +160,15 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
     )
   }
 
-  def currentflag: Field[Flag, EmployeeRow] = {
-    new Field[Flag, EmployeeRow](
+  def currentflag: Field[/* user-picked */ CurrentFlag, EmployeeRow] = {
+    new Field[/* user-picked */ CurrentFlag, EmployeeRow](
       _path,
       "currentflag",
       _.currentflag,
       Optional.empty(),
       Optional.of("bool"),
       (row, value) => row.copy(currentflag = value),
-      Flag.dbType
+      CurrentFlag.pgType
     )
   }
 
@@ -231,13 +232,13 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
 
   override def `_8`: SqlExpr[LocalDate] = hiredate
 
-  override def `_9`: SqlExpr[Flag] = salariedflag
+  override def `_9`: SqlExpr[/* user-picked */ SalariedFlag] = salariedflag
 
   override def `_10`: SqlExpr[java.lang.Short] = vacationhours
 
   override def `_11`: SqlExpr[java.lang.Short] = sickleavehours
 
-  override def `_12`: SqlExpr[Flag] = currentflag
+  override def `_12`: SqlExpr[/* user-picked */ CurrentFlag] = currentflag
 
   override def `_13`: SqlExpr[UUID] = rowguid
 

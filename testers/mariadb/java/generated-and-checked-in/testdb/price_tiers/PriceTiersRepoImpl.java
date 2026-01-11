@@ -31,7 +31,7 @@ public class PriceTiersRepoImpl implements PriceTiersRepo {
   public Boolean deleteById(PriceTiersId tierId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `price_tiers` where `tier_id` = "),
-                Fragment.encode(PriceTiersId.dbType, tierId),
+                Fragment.encode(PriceTiersId.mariaType, tierId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +42,7 @@ public class PriceTiersRepoImpl implements PriceTiersRepo {
   public Integer deleteByIds(PriceTiersId[] tierIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : tierIds) {
-      fragments.add(Fragment.encode(PriceTiersId.dbType, id));
+      fragments.add(Fragment.encode(PriceTiersId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -137,7 +137,7 @@ public class PriceTiersRepoImpl implements PriceTiersRepo {
                 "select `tier_id`, `name`, `min_quantity`, `discount_type`, `discount_value`\n"
                     + "from `price_tiers`\n"
                     + "where `tier_id` = "),
-            Fragment.encode(PriceTiersId.dbType, tierId),
+            Fragment.encode(PriceTiersId.mariaType, tierId),
             Fragment.lit(""))
         .query(PriceTiersRow._rowParser.first())
         .runUnchecked(c);
@@ -147,7 +147,7 @@ public class PriceTiersRepoImpl implements PriceTiersRepo {
   public List<PriceTiersRow> selectByIds(PriceTiersId[] tierIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : tierIds) {
-      fragments.add(Fragment.encode(PriceTiersId.dbType, id));
+      fragments.add(Fragment.encode(PriceTiersId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -187,7 +187,7 @@ public class PriceTiersRepoImpl implements PriceTiersRepo {
                 Fragment.lit(",\n`discount_value` = "),
                 Fragment.encode(MariaTypes.numeric, row.discountValue()),
                 Fragment.lit("\nwhere `tier_id` = "),
-                Fragment.encode(PriceTiersId.dbType, tierId),
+                Fragment.encode(PriceTiersId.mariaType, tierId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -201,7 +201,7 @@ public class PriceTiersRepoImpl implements PriceTiersRepo {
                 "INSERT INTO `price_tiers`(`tier_id`, `name`, `min_quantity`, `discount_type`,"
                     + " `discount_value`)\n"
                     + "VALUES ("),
-            Fragment.encode(PriceTiersId.dbType, unsaved.tierId()),
+            Fragment.encode(PriceTiersId.mariaType, unsaved.tierId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.name()),
             Fragment.lit(", "),

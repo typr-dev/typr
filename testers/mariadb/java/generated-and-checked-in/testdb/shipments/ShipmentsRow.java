@@ -467,9 +467,9 @@ public record ShipmentsRow(
 
   public static RowParser<ShipmentsRow> _rowParser =
       RowParsers.of(
-          ShipmentsId.dbType,
-          OrdersId.dbType,
-          ShippingCarriersId.dbType,
+          ShipmentsId.mariaType,
+          OrdersId.mariaType,
+          ShippingCarriersId.mariaType,
           MariaTypes.varchar.opt(),
           MariaTypes.varchar,
           MariaTypes.numeric.opt(),
@@ -480,7 +480,7 @@ public record ShipmentsRow(
           MariaTypes.datetime.opt(),
           MariaTypes.numeric,
           MariaTypes.numeric.opt(),
-          WarehousesId.dbType.opt(),
+          WarehousesId.mariaType.opt(),
           MariaTypes.datetime.opt(),
           MariaTypes.datetime,
           MariaTypes.datetime,

@@ -11,11 +11,11 @@ import dev.typr.foundations.Tuple.Tuple14
 import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import org.mariadb.jdbc.`type`.Point
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
+import testdb.userdefined.IsDefault
 
 /** Table: customer_addresses
  * Primary key: address_id
@@ -34,7 +34,7 @@ case class CustomerAddressesRow(
   /** 
    * Default: 0
    */
-  @JsonProperty("is_default") isDefault: Boolean,
+  @JsonProperty("is_default") isDefault: /* user-picked */ IsDefault,
   /**  */
   @JsonProperty("recipient_name") recipientName: String,
   /**  */
@@ -65,11 +65,11 @@ case class CustomerAddressesRow(
    * Default: current_timestamp()
    */
   @JsonProperty("created_at") createdAt: LocalDateTime
-) extends Tuple14[CustomerAddressesId, CustomersId, String, Boolean, String, String, Option[String], String, Option[String], String, String, Option[Point], Option[String], LocalDateTime] {
+) extends Tuple14[CustomerAddressesId, CustomersId, String, /* user-picked */ IsDefault, String, String, Option[String], String, Option[String], String, String, Option[Point], Option[String], LocalDateTime] {
   def id: CustomerAddressesId = addressId
 
   def toUnsavedRow(
-    isDefault: Defaulted[Boolean] = Defaulted.Provided(this.isDefault),
+    isDefault: Defaulted[/* user-picked */ IsDefault] = Defaulted.Provided(this.isDefault),
     streetLine2: Defaulted[Option[String]] = Defaulted.Provided(this.streetLine2),
     stateProvince: Defaulted[Option[String]] = Defaulted.Provided(this.stateProvince),
     location: Defaulted[Option[Point]] = Defaulted.Provided(this.location),
@@ -99,7 +99,7 @@ case class CustomerAddressesRow(
 
   override def `_3`: String = addressType
 
-  override def `_4`: Boolean = isDefault
+  override def `_4`: /* user-picked */ IsDefault = isDefault
 
   override def `_5`: String = recipientName
 
@@ -123,5 +123,5 @@ case class CustomerAddressesRow(
 }
 
 object CustomerAddressesRow {
-  val `_rowParser`: RowParser[CustomerAddressesRow] = RowParsers.of(CustomerAddressesId.dbType, CustomersId.dbType, MariaTypes.text, ScalaDbTypes.MariaTypes.bool, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.nullable, MariaTypes.tinytext.nullable, MariaTypes.datetime)(CustomerAddressesRow.apply)(row => Array[Any](row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt))
+  val `_rowParser`: RowParser[CustomerAddressesRow] = RowParsers.of(CustomerAddressesId.mariaType, CustomersId.mariaType, MariaTypes.text, IsDefault.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.nullable, MariaTypes.tinytext.nullable, MariaTypes.datetime)(CustomerAddressesRow.apply)(row => Array[Any](row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt))
 }

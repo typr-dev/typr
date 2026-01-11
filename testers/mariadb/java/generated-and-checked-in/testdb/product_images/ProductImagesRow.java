@@ -14,6 +14,7 @@ import dev.typr.foundations.data.Uint1;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsPrimary;
 
 /** Table: product_images Primary key: image_id */
 public record ProductImagesRow(
@@ -30,7 +31,7 @@ public record ProductImagesRow(
     /** Default: 0 */
     @JsonProperty("sort_order") Uint1 sortOrder,
     /** Default: 0 */
-    @JsonProperty("is_primary") Boolean isPrimary,
+    @JsonProperty("is_primary") /* user-picked */ IsPrimary isPrimary,
     /** Optional embedded image data Default: NULL */
     @JsonProperty("image_data") Optional<byte[]> imageData)
     implements Tuple8<
@@ -39,8 +40,8 @@ public record ProductImagesRow(
         String,
         Optional<String>,
         Optional<String>,
-        Uint1,
-        Boolean,
+        Uint1, /* user-picked */
+        IsPrimary,
         Optional<byte[]>> {
   /** AUTO_INCREMENT */
   public ProductImagesRow withImageId(ProductImagesId imageId) {
@@ -85,7 +86,7 @@ public record ProductImagesRow(
   ;
 
   /** Default: 0 */
-  public ProductImagesRow withIsPrimary(Boolean isPrimary) {
+  public ProductImagesRow withIsPrimary(/* user-picked */ IsPrimary isPrimary) {
     return new ProductImagesRow(
         imageId, productId, imageUrl, thumbnailUrl, altText, sortOrder, isPrimary, imageData);
   }
@@ -100,13 +101,13 @@ public record ProductImagesRow(
 
   public static RowParser<ProductImagesRow> _rowParser =
       RowParsers.of(
-          ProductImagesId.dbType,
-          ProductsId.dbType,
+          ProductImagesId.mariaType,
+          ProductsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar.opt(),
           MariaTypes.varchar.opt(),
           MariaTypes.tinyintUnsigned,
-          MariaTypes.bool,
+          IsPrimary.mariaType,
           MariaTypes.longblob.opt(),
           ProductImagesRow::new,
           row ->
@@ -159,7 +160,7 @@ public record ProductImagesRow(
   ;
 
   @Override
-  public Boolean _7() {
+  public /* user-picked */ IsPrimary _7() {
     return isPrimary;
   }
   ;
@@ -179,7 +180,7 @@ public record ProductImagesRow(
       Defaulted<Optional<String>> thumbnailUrl,
       Defaulted<Optional<String>> altText,
       Defaulted<Uint1> sortOrder,
-      Defaulted<Boolean> isPrimary,
+      Defaulted</* user-picked */ IsPrimary> isPrimary,
       Defaulted<Optional<byte[]>> imageData) {
     return new ProductImagesRowUnsaved(
         productId, imageUrl, thumbnailUrl, altText, sortOrder, isPrimary, imageData);

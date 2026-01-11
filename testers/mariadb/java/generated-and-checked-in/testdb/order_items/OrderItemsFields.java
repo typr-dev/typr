@@ -64,7 +64,7 @@ public class OrderItemsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withItemId(value),
-        OrderItemsId.dbType);
+        OrderItemsId.mariaType);
   }
 
   public Field<OrdersId, OrderItemsRow> orderId() {
@@ -75,7 +75,7 @@ public class OrderItemsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderId(value),
-        OrdersId.dbType);
+        OrdersId.mariaType);
   }
 
   public Field<ProductsId, OrderItemsRow> productId() {
@@ -86,7 +86,7 @@ public class OrderItemsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public Field<String, OrderItemsRow> sku() {
@@ -185,7 +185,7 @@ public class OrderItemsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withWarehouseId(value),
-        WarehousesId.dbType);
+        WarehousesId.mariaType);
   }
 
   public OptField<String, OrderItemsRow> notes() {

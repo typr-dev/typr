@@ -21,12 +21,12 @@ public record SqlIdentifier(@JsonValue String value) {
   public static Bijection<SqlIdentifier, String> bijection =
       Bijection.of(SqlIdentifier::value, SqlIdentifier::new);
 
-  public static PgType<SqlIdentifier> dbType =
+  public static PgType<SqlIdentifier> pgType =
       PgTypes.name
           .bimap(SqlIdentifier::new, SqlIdentifier::value)
           .renamed("\"information_schema\".\"sql_identifier\"");
 
-  public static PgType<SqlIdentifier[]> dbTypeArray =
+  public static PgType<SqlIdentifier[]> pgTypeArray =
       PgTypes.nameArray
           .bimap(
               xs -> arrayMap.map(xs, SqlIdentifier::new, SqlIdentifier.class),

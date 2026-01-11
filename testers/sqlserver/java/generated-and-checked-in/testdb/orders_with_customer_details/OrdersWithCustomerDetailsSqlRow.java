@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customers.CustomersId;
 import testdb.orders.OrdersId;
+import testdb.userdefined.Email;
 
 /** SQL file: orders-with-customer-details.sql */
 public record OrdersWithCustomerDetailsSqlRow(
@@ -29,8 +30,14 @@ public record OrdersWithCustomerDetailsSqlRow(
     /** Points to {@link testdb.customers.CustomersRow#name()} */
     @JsonProperty("customer_name") String customerName,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    @JsonProperty("customer_email") String customerEmail)
-    implements Tuple6<OrdersId, Optional<LocalDateTime>, BigDecimal, CustomersId, String, String> {
+    @JsonProperty("customer_email") /* user-picked */ Email customerEmail)
+    implements Tuple6<
+        OrdersId,
+        Optional<LocalDateTime>,
+        BigDecimal,
+        CustomersId,
+        String, /* user-picked */
+        Email> {
   /** Points to {@link testdb.orders.OrdersRow#orderId()} */
   public OrdersWithCustomerDetailsSqlRow withOrderId(OrdersId orderId) {
     return new OrdersWithCustomerDetailsSqlRow(
@@ -67,7 +74,7 @@ public record OrdersWithCustomerDetailsSqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public OrdersWithCustomerDetailsSqlRow withCustomerEmail(String customerEmail) {
+  public OrdersWithCustomerDetailsSqlRow withCustomerEmail(/* user-picked */ Email customerEmail) {
     return new OrdersWithCustomerDetailsSqlRow(
         orderId, orderDate, totalAmount, customerId, customerName, customerEmail);
   }
@@ -80,7 +87,7 @@ public record OrdersWithCustomerDetailsSqlRow(
           SqlServerTypes.money,
           CustomersId.sqlServerType,
           SqlServerTypes.nvarchar,
-          SqlServerTypes.nvarchar,
+          Email.sqlServerType,
           OrdersWithCustomerDetailsSqlRow::new,
           row ->
               new Object[] {
@@ -124,7 +131,7 @@ public record OrdersWithCustomerDetailsSqlRow(
   ;
 
   @Override
-  public String _6() {
+  public /* user-picked */ Email _6() {
     return customerEmail;
   }
   ;

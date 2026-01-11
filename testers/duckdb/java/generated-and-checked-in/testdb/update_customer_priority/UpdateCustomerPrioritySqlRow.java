@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.Priority;
 import testdb.customers.CustomersId;
+import testdb.userdefined.Email;
 
 /** SQL file: update_customer_priority.sql */
 public record UpdateCustomerPrioritySqlRow(
@@ -22,12 +23,13 @@ public record UpdateCustomerPrioritySqlRow(
     /** Points to {@link testdb.customers.CustomersRow#name()} */
     String name,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    Optional<String> email,
+    Optional</* user-picked */ Email> email,
     /** Points to {@link testdb.customers.CustomersRow#createdAt()} */
     @JsonProperty("created_at") LocalDateTime createdAt,
     /** Points to {@link testdb.customers.CustomersRow#priority()} */
     Optional<Priority> priority)
-    implements Tuple5<CustomersId, String, Optional<String>, LocalDateTime, Optional<Priority>> {
+    implements Tuple5<
+        CustomersId, String, Optional</* user-picked */ Email>, LocalDateTime, Optional<Priority>> {
   /** Points to {@link testdb.customers.CustomersRow#customerId()} */
   public UpdateCustomerPrioritySqlRow withCustomerId(CustomersId customerId) {
     return new UpdateCustomerPrioritySqlRow(customerId, name, email, createdAt, priority);
@@ -41,7 +43,7 @@ public record UpdateCustomerPrioritySqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public UpdateCustomerPrioritySqlRow withEmail(Optional<String> email) {
+  public UpdateCustomerPrioritySqlRow withEmail(Optional</* user-picked */ Email> email) {
     return new UpdateCustomerPrioritySqlRow(customerId, name, email, createdAt, priority);
   }
   ;
@@ -62,7 +64,7 @@ public record UpdateCustomerPrioritySqlRow(
       RowParsers.of(
           CustomersId.duckDbType,
           DuckDbTypes.varchar,
-          DuckDbTypes.varchar.opt(),
+          Email.duckDbType.opt(),
           DuckDbTypes.timestamp,
           Priority.duckDbType.opt(),
           UpdateCustomerPrioritySqlRow::new,
@@ -85,7 +87,7 @@ public record UpdateCustomerPrioritySqlRow(
   ;
 
   @Override
-  public Optional<String> _3() {
+  public Optional</* user-picked */ Email> _3() {
     return email;
   }
   ;

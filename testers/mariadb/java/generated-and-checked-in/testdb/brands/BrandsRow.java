@@ -12,6 +12,7 @@ import dev.typr.foundations.RowParsers;
 import dev.typr.foundations.Tuple.Tuple7;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.IsActive;
 
 /** Table: brands Primary key: brand_id */
 public record BrandsRow(
@@ -28,9 +29,15 @@ public record BrandsRow(
     /** Default: NULL */
     @JsonProperty("country_of_origin") Optional<String> countryOfOrigin,
     /** Default: 1 */
-    @JsonProperty("is_active") Boolean isActive)
+    @JsonProperty("is_active") /* user-picked */ IsActive isActive)
     implements Tuple7<
-        BrandsId, String, String, Optional<byte[]>, Optional<String>, Optional<String>, Boolean> {
+        BrandsId,
+        String,
+        String,
+        Optional<byte[]>,
+        Optional<String>,
+        Optional<String>, /* user-picked */
+        IsActive> {
   /** AUTO_INCREMENT */
   public BrandsRow withBrandId(BrandsId brandId) {
     return new BrandsRow(brandId, name, slug, logoBlob, websiteUrl, countryOfOrigin, isActive);
@@ -68,20 +75,20 @@ public record BrandsRow(
   ;
 
   /** Default: 1 */
-  public BrandsRow withIsActive(Boolean isActive) {
+  public BrandsRow withIsActive(/* user-picked */ IsActive isActive) {
     return new BrandsRow(brandId, name, slug, logoBlob, websiteUrl, countryOfOrigin, isActive);
   }
   ;
 
   public static RowParser<BrandsRow> _rowParser =
       RowParsers.of(
-          BrandsId.dbType,
+          BrandsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.mediumblob.opt(),
           MariaTypes.varchar.opt(),
           MariaTypes.char_.opt(),
-          MariaTypes.bool,
+          IsActive.mariaType,
           BrandsRow::new,
           row ->
               new Object[] {
@@ -132,7 +139,7 @@ public record BrandsRow(
   ;
 
   @Override
-  public Boolean _7() {
+  public /* user-picked */ IsActive _7() {
     return isActive;
   }
   ;
@@ -146,7 +153,7 @@ public record BrandsRow(
       Defaulted<Optional<byte[]>> logoBlob,
       Defaulted<Optional<String>> websiteUrl,
       Defaulted<Optional<String>> countryOfOrigin,
-      Defaulted<Boolean> isActive) {
+      Defaulted</* user-picked */ IsActive> isActive) {
     return new BrandsRowUnsaved(name, slug, logoBlob, websiteUrl, countryOfOrigin, isActive);
   }
   ;

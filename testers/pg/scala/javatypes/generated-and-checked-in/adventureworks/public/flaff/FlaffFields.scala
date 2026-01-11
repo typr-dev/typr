@@ -29,7 +29,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
       Optional.empty(),
       Optional.of("text"),
       (row, value) => row.copy(code = value),
-      ShortText.dbType
+      ShortText.pgType
     )
   }
 
@@ -65,7 +65,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
       Optional.empty(),
       Optional.of("text"),
       (row, value) => row.copy(specifier = value),
-      ShortText.dbType
+      ShortText.pgType
     )
   }
 
@@ -77,7 +77,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
       Optional.empty(),
       Optional.of("text"),
       (row, value) => row.copy(parentspecifier = value),
-      ShortText.dbType
+      ShortText.pgType
     )
   }
 

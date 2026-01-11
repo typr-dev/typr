@@ -57,6 +57,7 @@ import testdb.precision_types_null.PrecisionTypesNullRow
 import testdb.products.ProductsId
 import testdb.products.ProductsRepoImpl
 import testdb.products.ProductsRow
+import testdb.userdefined.Email
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 case class TestInsert(random: Random) {
@@ -121,7 +122,7 @@ case class TestInsert(random: Random) {
   def Customers(
     customerId: CustomersId = new CustomersId(random.nextInt()),
     name: String = random.alphanumeric.take(20).mkString,
-    email: Option[String] = (if (random.nextBoolean()) None else Some(random.alphanumeric.take(20).mkString)),
+    email: Option[/* user-picked */ Email] = (if (random.nextBoolean()) None else Some(new Email(random.alphanumeric.take(20).mkString))),
     createdAt: Defaulted[LocalDateTime] = new UseDefault(),
     priority: Defaulted[Option[Priority]] = new UseDefault()
   )(using c: Connection): CustomersRow = {

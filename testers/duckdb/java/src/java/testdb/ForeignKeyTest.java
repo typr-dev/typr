@@ -11,6 +11,7 @@ import testdb.customers.*;
 import testdb.order_items.*;
 import testdb.orders.*;
 import testdb.products.*;
+import testdb.userdefined.Email;
 
 /**
  * Tests for foreign key relationships in DuckDB. Tests the ordering system: customers -> orders ->
@@ -30,7 +31,7 @@ public class ForeignKeyTest {
               new CustomersRow(
                   new CustomersId(100),
                   "John Doe",
-                  Optional.of("john@example.com"),
+                  Optional.of(new Email("john@example.com")),
                   LocalDateTime.now(),
                   Optional.of(Priority.high));
 
@@ -38,7 +39,7 @@ public class ForeignKeyTest {
 
           assertNotNull(inserted);
           assertEquals("John Doe", inserted.name());
-          assertEquals(Optional.of("john@example.com"), inserted.email());
+          assertEquals(Optional.of(new Email("john@example.com")), inserted.email());
           assertEquals(Optional.of(Priority.high), inserted.priority());
         });
   }
@@ -73,7 +74,7 @@ public class ForeignKeyTest {
               new CustomersRow(
                   new CustomersId(101),
                   "Jane Smith",
-                  Optional.of("jane@example.com"),
+                  Optional.of(new Email("jane@example.com")),
                   LocalDateTime.now(),
                   Optional.empty());
           var insertedCustomer = customersRepo.insert(customer, c);

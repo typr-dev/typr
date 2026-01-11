@@ -27,7 +27,7 @@ class CheckConstraintTestFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(id = value),
-      CheckConstraintTestId.dbType
+      CheckConstraintTestId.db2Type
     )
   }
 

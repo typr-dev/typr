@@ -116,5 +116,5 @@ case class InventoryRow(
 }
 
 object InventoryRow {
-  val `_rowParser`: RowParser[InventoryRow] = RowParsers.of(InventoryId.dbType, ProductsId.dbType, WarehousesId.dbType, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime)(InventoryRow.apply)(row => Array[Any](row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt))
+  val `_rowParser`: RowParser[InventoryRow] = RowParsers.of(InventoryId.mariaType, ProductsId.mariaType, WarehousesId.mariaType, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime)(InventoryRow.apply)(row => Array[Any](row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt))
 }

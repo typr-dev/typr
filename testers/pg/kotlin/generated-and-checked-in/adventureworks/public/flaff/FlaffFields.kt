@@ -36,7 +36,7 @@ data class FlaffFields(val _path: List<Path>) : TupleExpr5<ShortText, String, In
 
   fun anotherCode(): IdField<String, FlaffRow> = IdField<String, FlaffRow>(_path, "another_code", FlaffRow::anotherCode, null, null, { row, value -> row.copy(anotherCode = value) }, PgTypes.text)
 
-  fun code(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, null, "text", { row, value -> row.copy(code = value) }, ShortText.dbType)
+  fun code(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, null, "text", { row, value -> row.copy(code = value) }, ShortText.pgType)
 
   override fun columns(): List<FieldLike<*, FlaffRow>> = listOf(this.code().underlying, this.anotherCode().underlying, this.someNumber().underlying, this.specifier().underlying, this.parentspecifier().underlying)
 
@@ -46,13 +46,13 @@ data class FlaffFields(val _path: List<Path>) : TupleExpr5<ShortText, String, In
 
   fun fkFlaff(): ForeignKey<FlaffFields, FlaffRow> = ForeignKey.of<FlaffFields, FlaffRow>("public.flaff_parent_fk").withColumnPair<ShortText>(code(), FlaffFields::code).withColumnPair<String>(anotherCode(), FlaffFields::anotherCode).withColumnPair<Int>(someNumber(), FlaffFields::someNumber).withColumnPair<ShortText>(parentspecifier(), FlaffFields::specifier)
 
-  fun parentspecifier(): OptField<ShortText, FlaffRow> = OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, null, "text", { row, value -> row.copy(parentspecifier = value) }, ShortText.dbType)
+  fun parentspecifier(): OptField<ShortText, FlaffRow> = OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, null, "text", { row, value -> row.copy(parentspecifier = value) }, ShortText.pgType)
 
   override fun rowParser(): RowParser<FlaffRow> = FlaffRow._rowParser.underlying
 
   fun someNumber(): IdField<Int, FlaffRow> = IdField<Int, FlaffRow>(_path, "some_number", FlaffRow::someNumber, null, "int4", { row, value -> row.copy(someNumber = value) }, KotlinDbTypes.PgTypes.int4)
 
-  fun specifier(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, null, "text", { row, value -> row.copy(specifier = value) }, ShortText.dbType)
+  fun specifier(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, null, "text", { row, value -> row.copy(specifier = value) }, ShortText.pgType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<FlaffFields, FlaffRow> = FlaffFields(_path)
 

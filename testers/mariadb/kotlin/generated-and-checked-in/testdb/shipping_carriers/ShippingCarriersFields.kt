@@ -11,7 +11,6 @@ import dev.typr.foundations.data.Json
 import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RelationStructure
 import dev.typr.foundations.kotlin.SqlExpr
 import dev.typr.foundations.kotlin.SqlExpr.Field
@@ -19,8 +18,9 @@ import dev.typr.foundations.kotlin.SqlExpr.IdField
 import dev.typr.foundations.kotlin.SqlExpr.OptField
 import dev.typr.foundations.kotlin.TupleExpr6
 import kotlin.collections.List
+import testdb.userdefined.IsActive
 
-data class ShippingCarriersFields(val _path: List<Path>) : TupleExpr6<ShippingCarriersId, String, String, String, Json, Boolean>, RelationStructure<ShippingCarriersFields, ShippingCarriersRow>, FieldsBase<ShippingCarriersRow> {
+data class ShippingCarriersFields(val _path: List<Path>) : TupleExpr6<ShippingCarriersId, String, String, String, Json, /* user-picked */ IsActive>, RelationStructure<ShippingCarriersFields, ShippingCarriersRow>, FieldsBase<ShippingCarriersRow> {
   override fun _1(): SqlExpr<ShippingCarriersId> = carrierId()
 
   override fun _2(): SqlExpr<String> = code()
@@ -31,19 +31,19 @@ data class ShippingCarriersFields(val _path: List<Path>) : TupleExpr6<ShippingCa
 
   override fun _5(): SqlExpr<Json> = apiConfig()
 
-  override fun _6(): SqlExpr<Boolean> = isActive()
+  override fun _6(): SqlExpr</* user-picked */ IsActive> = isActive()
 
   override fun _path(): List<Path> = _path
 
   fun apiConfig(): OptField<Json, ShippingCarriersRow> = OptField<Json, ShippingCarriersRow>(_path, "api_config", ShippingCarriersRow::apiConfig, null, null, { row, value -> row.copy(apiConfig = value) }, MariaTypes.json)
 
-  fun carrierId(): IdField<ShippingCarriersId, ShippingCarriersRow> = IdField<ShippingCarriersId, ShippingCarriersRow>(_path, "carrier_id", ShippingCarriersRow::carrierId, null, null, { row, value -> row.copy(carrierId = value) }, ShippingCarriersId.dbType)
+  fun carrierId(): IdField<ShippingCarriersId, ShippingCarriersRow> = IdField<ShippingCarriersId, ShippingCarriersRow>(_path, "carrier_id", ShippingCarriersRow::carrierId, null, null, { row, value -> row.copy(carrierId = value) }, ShippingCarriersId.mariaType)
 
   fun code(): Field<String, ShippingCarriersRow> = Field<String, ShippingCarriersRow>(_path, "code", ShippingCarriersRow::code, null, null, { row, value -> row.copy(code = value) }, MariaTypes.varchar)
 
   override fun columns(): List<FieldLike<*, ShippingCarriersRow>> = listOf(this.carrierId().underlying, this.code().underlying, this.name().underlying, this.trackingUrlTemplate().underlying, this.apiConfig().underlying, this.isActive().underlying)
 
-  fun isActive(): Field<Boolean, ShippingCarriersRow> = Field<Boolean, ShippingCarriersRow>(_path, "is_active", ShippingCarriersRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isActive(): Field</* user-picked */ IsActive, ShippingCarriersRow> = Field</* user-picked */ IsActive, ShippingCarriersRow>(_path, "is_active", ShippingCarriersRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
 
   fun name(): Field<String, ShippingCarriersRow> = Field<String, ShippingCarriersRow>(_path, "name", ShippingCarriersRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
 

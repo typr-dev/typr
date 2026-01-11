@@ -49,6 +49,6 @@ data class PriceTiersRow(
   fun toUnsavedRow(minQuantity: Defaulted<Uint4> = Defaulted.Provided(this.minQuantity)): PriceTiersRowUnsaved = PriceTiersRowUnsaved(name, discountType, discountValue, minQuantity)
 
   companion object {
-    val _rowParser: RowParser<PriceTiersRow> = RowParsers.of(PriceTiersId.dbType, MariaTypes.varchar, MariaTypes.intUnsigned, MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, { t0, t1, t2, t3, t4 -> PriceTiersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue) })
+    val _rowParser: RowParser<PriceTiersRow> = RowParsers.of(PriceTiersId.mariaType, MariaTypes.varchar, MariaTypes.intUnsigned, MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, { t0, t1, t2, t3, t4 -> PriceTiersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue) })
   }
 }

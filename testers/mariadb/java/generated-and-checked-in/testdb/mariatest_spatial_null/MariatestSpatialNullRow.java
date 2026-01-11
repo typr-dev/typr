@@ -190,7 +190,7 @@ public record MariatestSpatialNullRow(
 
   public static RowParser<MariatestSpatialNullRow> _rowParser =
       RowParsers.of(
-          MariatestSpatialNullId.dbType,
+          MariatestSpatialNullId.mariaType,
           MariaTypes.geometry.opt(),
           MariaTypes.point.opt(),
           MariaTypes.linestring.opt(),

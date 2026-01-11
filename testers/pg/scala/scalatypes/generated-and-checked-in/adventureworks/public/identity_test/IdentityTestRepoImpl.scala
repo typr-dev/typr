@@ -20,19 +20,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class IdentityTestRepoImpl extends IdentityTestRepo {
   override def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(name: IdentityTestId)(using c: Connection): Boolean = sql"""delete from "public"."identity-test" where "name" = ${Fragment.encode(IdentityTestId.dbType, name)}""".update().runUnchecked(c) > 0
+  override def deleteById(name: IdentityTestId)(using c: Connection): Boolean = sql"""delete from "public"."identity-test" where "name" = ${Fragment.encode(IdentityTestId.pgType, name)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(names: Array[IdentityTestId])(using c: Connection): Int = {
     sql"""delete
     from "public"."identity-test"
-    where "name" = ANY(${Fragment.encode(IdentityTestId.dbTypeArray, names)})"""
+    where "name" = ANY(${Fragment.encode(IdentityTestId.pgTypeArray, names)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
   sql"""insert into "public"."identity-test"("default_generated", "name")
-    values (${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.defaultGenerated)}::int4, ${Fragment.encode(IdentityTestId.dbType, unsaved.name)})
+    values (${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.defaultGenerated)}::int4, ${Fragment.encode(IdentityTestId.pgType, unsaved.name)})
     RETURNING "always_generated", "default_generated", "name"
     """
     .updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -42,7 +42,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(IdentityTestId.dbType, unsaved.name)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(IdentityTestId.pgType, unsaved.name)}"): @scala.annotation.nowarn
     unsaved.defaultGenerated.visit(
       {  },
       value => { columns.addOne(Fragment.lit(""""default_generated"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.PgTypes.int4, value)}::int4"): @scala.annotation.nowarn }
@@ -78,13 +78,13 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
   override def selectById(name: IdentityTestId)(using c: Connection): Option[IdentityTestRow] = {
     sql"""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
-    where "name" = ${Fragment.encode(IdentityTestId.dbType, name)}""".query(IdentityTestRow.`_rowParser`.first()).runUnchecked(c)
+    where "name" = ${Fragment.encode(IdentityTestId.pgType, name)}""".query(IdentityTestRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(names: Array[IdentityTestId])(using c: Connection): List[IdentityTestRow] = {
     sql"""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
-    where "name" = ANY(${Fragment.encode(IdentityTestId.dbTypeArray, names)})""".query(IdentityTestRow.`_rowParser`.all()).runUnchecked(c)
+    where "name" = ANY(${Fragment.encode(IdentityTestId.pgTypeArray, names)})""".query(IdentityTestRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(names: Array[IdentityTestId])(using c: Connection): Map[IdentityTestId, IdentityTestRow] = {
@@ -99,12 +99,12 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     val name: IdentityTestId = row.name
     return sql"""update "public"."identity-test"
     set "default_generated" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, row.defaultGenerated)}::int4
-    where "name" = ${Fragment.encode(IdentityTestId.dbType, name)}""".update().runUnchecked(c) > 0
+    where "name" = ${Fragment.encode(IdentityTestId.pgType, name)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
   sql"""insert into "public"."identity-test"("default_generated", "name")
-    values (${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.defaultGenerated)}::int4, ${Fragment.encode(IdentityTestId.dbType, unsaved.name)})
+    values (${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.defaultGenerated)}::int4, ${Fragment.encode(IdentityTestId.pgType, unsaved.name)})
     on conflict ("name")
     do update set
       "default_generated" = EXCLUDED."default_generated"

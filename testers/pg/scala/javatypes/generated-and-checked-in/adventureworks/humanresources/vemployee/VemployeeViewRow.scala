@@ -9,6 +9,8 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.RowParser
 import dev.typr.foundations.RowParsers
@@ -24,9 +26,9 @@ case class VemployeeViewRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Name,
+  middlename: /* user-picked */ MiddleName,
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Points to [[adventureworks.person.person.PersonRow.suffix]] */
   suffix: String,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
@@ -53,16 +55,16 @@ case class VemployeeViewRow(
   countryregionname: Name,
   /** Points to [[adventureworks.person.person.PersonRow.additionalcontactinfo]] */
   additionalcontactinfo: Xml
-) extends Tuple18[BusinessentityId, String, /* user-picked */ FirstName, Name, Name, String, String, Phone, Name, String, Integer, String, String, String, Name, String, Name, Xml] {
+) extends Tuple18[BusinessentityId, String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, String, String, Phone, Name, String, Integer, String, String, String, Name, String, Name, Xml] {
   override def `_1`: BusinessentityId = businessentityid
 
   override def `_2`: String = title
 
   override def `_3`: /* user-picked */ FirstName = firstname
 
-  override def `_4`: Name = middlename
+  override def `_4`: /* user-picked */ MiddleName = middlename
 
-  override def `_5`: Name = lastname
+  override def `_5`: /* user-picked */ LastName = lastname
 
   override def `_6`: String = suffix
 
@@ -92,5 +94,5 @@ case class VemployeeViewRow(
 }
 
 object VemployeeViewRow {
-  val `_rowParser`: RowParser[VemployeeViewRow] = RowParsers.of(BusinessentityId.dbType, PgTypes.text, FirstName.dbType, Name.dbType, Name.dbType, PgTypes.text, PgTypes.text, Phone.dbType, Name.dbType, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.dbType, PgTypes.text, Name.dbType, PgTypes.xml, VemployeeViewRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.additionalcontactinfo))
+  val `_rowParser`: RowParser[VemployeeViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, MiddleName.pgType, LastName.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml, VemployeeViewRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.additionalcontactinfo))
 }

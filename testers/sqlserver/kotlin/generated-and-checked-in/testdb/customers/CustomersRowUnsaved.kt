@@ -9,11 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 data class CustomersRowUnsaved(
   val name: String,
-  val email: String,
+  val email: /* user-picked */ Email,
   /** Default: (getdate()) */
   @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {

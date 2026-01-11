@@ -18,11 +18,11 @@ import dev.typr.foundations.scala.Fragment.sql
 class IdentityParamsTestRepoImpl extends IdentityParamsTestRepo {
   override def delete: DeleteBuilder[IdentityParamsTestFields, IdentityParamsTestRow] = DeleteBuilder.of(""""IDENTITY_PARAMS_TEST"""", IdentityParamsTestFields.structure, Dialect.DB2)
 
-  override def deleteById(id: IdentityParamsTestId)(using c: Connection): Boolean = sql"""delete from "IDENTITY_PARAMS_TEST" where "ID" = ${Fragment.encode(IdentityParamsTestId.dbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: IdentityParamsTestId)(using c: Connection): Boolean = sql"""delete from "IDENTITY_PARAMS_TEST" where "ID" = ${Fragment.encode(IdentityParamsTestId.db2Type, id)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[IdentityParamsTestId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(IdentityParamsTestId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(IdentityParamsTestId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""delete from "IDENTITY_PARAMS_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -57,12 +57,12 @@ class IdentityParamsTestRepoImpl extends IdentityParamsTestRepo {
   override def selectById(id: IdentityParamsTestId)(using c: Connection): Option[IdentityParamsTestRow] = {
     sql"""select "ID", "NAME"
     from "IDENTITY_PARAMS_TEST"
-    where "ID" = ${Fragment.encode(IdentityParamsTestId.dbType, id)}""".query(IdentityParamsTestRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(IdentityParamsTestId.db2Type, id)}""".query(IdentityParamsTestRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[IdentityParamsTestId])(using c: Connection): List[IdentityParamsTestRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(IdentityParamsTestId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(IdentityParamsTestId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""select "ID", "NAME" from "IDENTITY_PARAMS_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(IdentityParamsTestRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -78,15 +78,15 @@ class IdentityParamsTestRepoImpl extends IdentityParamsTestRepo {
     val id: IdentityParamsTestId = row.id
     return sql"""update "IDENTITY_PARAMS_TEST"
     set "NAME" = ${Fragment.encode(Db2Types.varchar, row.name)}
-    where "ID" = ${Fragment.encode(IdentityParamsTestId.dbType, id)}""".update().runUnchecked(c) > 0
+    where "ID" = ${Fragment.encode(IdentityParamsTestId.db2Type, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: IdentityParamsTestRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "IDENTITY_PARAMS_TEST" AS t
-    USING (VALUES (${Fragment.encode(IdentityParamsTestId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})) AS s("ID", "NAME")
+    USING (VALUES (${Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})) AS s("ID", "NAME")
     ON t."ID" = s."ID"
     WHEN MATCHED THEN UPDATE SET "NAME" = s."NAME"
-    WHEN NOT MATCHED THEN INSERT ("ID", "NAME") VALUES (${Fragment.encode(IdentityParamsTestId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})"""
+    WHEN NOT MATCHED THEN INSERT ("ID", "NAME") VALUES (${Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})"""
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

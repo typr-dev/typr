@@ -46,7 +46,7 @@ public class ProductsubcategoryFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withProductsubcategoryid(value),
-        ProductsubcategoryId.dbType);
+        ProductsubcategoryId.pgType);
   }
 
   public Field<ProductcategoryId, ProductsubcategoryRow> productcategoryid() {
@@ -57,7 +57,7 @@ public class ProductsubcategoryFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withProductcategoryid(value),
-        ProductcategoryId.dbType);
+        ProductcategoryId.pgType);
   }
 
   public Field<Name, ProductsubcategoryRow> name() {
@@ -68,7 +68,7 @@ public class ProductsubcategoryFields
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<UUID, ProductsubcategoryRow> rowguid() {

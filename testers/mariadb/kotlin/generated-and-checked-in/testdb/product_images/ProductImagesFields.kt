@@ -12,7 +12,6 @@ import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RelationStructure
 import dev.typr.foundations.kotlin.SqlExpr
 import dev.typr.foundations.kotlin.SqlExpr.Field
@@ -23,8 +22,9 @@ import kotlin.collections.List
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
+import testdb.userdefined.IsPrimary
 
-data class ProductImagesFields(val _path: List<Path>) : TupleExpr8<ProductImagesId, ProductsId, String, String, String, Uint1, Boolean, ByteArray>, RelationStructure<ProductImagesFields, ProductImagesRow>, FieldsBase<ProductImagesRow> {
+data class ProductImagesFields(val _path: List<Path>) : TupleExpr8<ProductImagesId, ProductsId, String, String, String, Uint1, /* user-picked */ IsPrimary, ByteArray>, RelationStructure<ProductImagesFields, ProductImagesRow>, FieldsBase<ProductImagesRow> {
   override fun _1(): SqlExpr<ProductImagesId> = imageId()
 
   override fun _2(): SqlExpr<ProductsId> = productId()
@@ -37,7 +37,7 @@ data class ProductImagesFields(val _path: List<Path>) : TupleExpr8<ProductImages
 
   override fun _6(): SqlExpr<Uint1> = sortOrder()
 
-  override fun _7(): SqlExpr<Boolean> = isPrimary()
+  override fun _7(): SqlExpr</* user-picked */ IsPrimary> = isPrimary()
 
   override fun _8(): SqlExpr<ByteArray> = imageData()
 
@@ -51,13 +51,13 @@ data class ProductImagesFields(val _path: List<Path>) : TupleExpr8<ProductImages
 
   fun imageData(): OptField<ByteArray, ProductImagesRow> = OptField<ByteArray, ProductImagesRow>(_path, "image_data", ProductImagesRow::imageData, null, null, { row, value -> row.copy(imageData = value) }, MariaTypes.longblob)
 
-  fun imageId(): IdField<ProductImagesId, ProductImagesRow> = IdField<ProductImagesId, ProductImagesRow>(_path, "image_id", ProductImagesRow::imageId, null, null, { row, value -> row.copy(imageId = value) }, ProductImagesId.dbType)
+  fun imageId(): IdField<ProductImagesId, ProductImagesRow> = IdField<ProductImagesId, ProductImagesRow>(_path, "image_id", ProductImagesRow::imageId, null, null, { row, value -> row.copy(imageId = value) }, ProductImagesId.mariaType)
 
   fun imageUrl(): Field<String, ProductImagesRow> = Field<String, ProductImagesRow>(_path, "image_url", ProductImagesRow::imageUrl, null, null, { row, value -> row.copy(imageUrl = value) }, MariaTypes.varchar)
 
-  fun isPrimary(): Field<Boolean, ProductImagesRow> = Field<Boolean, ProductImagesRow>(_path, "is_primary", ProductImagesRow::isPrimary, null, null, { row, value -> row.copy(isPrimary = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isPrimary(): Field</* user-picked */ IsPrimary, ProductImagesRow> = Field</* user-picked */ IsPrimary, ProductImagesRow>(_path, "is_primary", ProductImagesRow::isPrimary, null, null, { row, value -> row.copy(isPrimary = value) }, IsPrimary.mariaType)
 
-  fun productId(): Field<ProductsId, ProductImagesRow> = Field<ProductsId, ProductImagesRow>(_path, "product_id", ProductImagesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.dbType)
+  fun productId(): Field<ProductsId, ProductImagesRow> = Field<ProductsId, ProductImagesRow>(_path, "product_id", ProductImagesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
 
   override fun rowParser(): RowParser<ProductImagesRow> = ProductImagesRow._rowParser.underlying
 

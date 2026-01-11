@@ -68,6 +68,9 @@ object SqlServerAdapter extends DbAdapter {
 
       case TypoType.Array(_, _) =>
         sys.error("SqlServerAdapter.lookupType: SQL Server does not support array types")
+
+      case TypoType.Aligned(_, sourceType, _, _) =>
+        lookupType(sourceType, naming, typeSupport)
     }
 
   def lookupPrimitive(primitive: analysis.WellKnownPrimitive, typeSupport: TypeSupport): Code = {

@@ -38,7 +38,7 @@ public class MariatestIdentityFields extends TupleExpr2<MariatestIdentityId, Str
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        MariatestIdentityId.dbType);
+        MariatestIdentityId.mariaType);
   }
 
   public Field<String, MariatestIdentityRow> name() {

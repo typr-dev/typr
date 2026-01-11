@@ -18,5 +18,5 @@ case class EmailAddress(@JsonValue value: String)
 object EmailAddress {
   given bijection: Bijection[EmailAddress, String] = Bijection.apply[EmailAddress, String](_.value)(EmailAddress.apply)
 
-  given dbType: Db2Type[EmailAddress] = Db2Types.varchar.bimap(EmailAddress.apply, _.value).renamed(""""EMAIL_ADDRESS"""")
+  given db2Type: Db2Type[EmailAddress] = Db2Types.varchar.bimap(EmailAddress.apply, _.value).renamed(""""EMAIL_ADDRESS"""")
 }

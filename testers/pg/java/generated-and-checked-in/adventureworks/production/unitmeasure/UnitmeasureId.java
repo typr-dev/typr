@@ -27,10 +27,10 @@ public record UnitmeasureId(@JsonValue String value) {
   public static Bijection<UnitmeasureId, String> bijection =
       Bijection.of(UnitmeasureId::value, UnitmeasureId::new);
 
-  public static PgType<UnitmeasureId> dbType =
+  public static PgType<UnitmeasureId> pgType =
       PgTypes.bpchar.bimap(UnitmeasureId::new, UnitmeasureId::value);
 
-  public static PgType<UnitmeasureId[]> dbTypeArray =
+  public static PgType<UnitmeasureId[]> pgTypeArray =
       PgTypes.bpcharArray.bimap(
           xs -> arrayMap.map(xs, UnitmeasureId::new, UnitmeasureId.class),
           xs -> arrayMap.map(xs, UnitmeasureId::value, String.class));

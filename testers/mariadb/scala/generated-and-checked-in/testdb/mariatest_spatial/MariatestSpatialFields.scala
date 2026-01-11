@@ -33,7 +33,7 @@ class MariatestSpatialFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(id = value),
-      MariatestSpatialId.dbType
+      MariatestSpatialId.mariaType
     )
   }
 

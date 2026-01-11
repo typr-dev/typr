@@ -9,6 +9,7 @@ import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple4
 import dev.typr.foundations.scala.RowParser
 import dev.typr.foundations.scala.RowParsers
+import testdb.userdefined.Email
 
 /** Table: mariatest_unique
  * Primary key: id
@@ -19,17 +20,17 @@ case class MariatestUniqueRow(
    */
   id: MariatestUniqueId,
   /**  */
-  email: String,
+  email: /* user-picked */ Email,
   /**  */
   code: String,
   /**  */
   category: String
-) extends Tuple4[MariatestUniqueId, String, String, String] {
+) extends Tuple4[MariatestUniqueId, /* user-picked */ Email, String, String] {
   def toUnsavedRow: MariatestUniqueRowUnsaved = new MariatestUniqueRowUnsaved(email, code, category)
 
   override def `_1`: MariatestUniqueId = id
 
-  override def `_2`: String = email
+  override def `_2`: /* user-picked */ Email = email
 
   override def `_3`: String = code
 
@@ -37,5 +38,5 @@ case class MariatestUniqueRow(
 }
 
 object MariatestUniqueRow {
-  val `_rowParser`: RowParser[MariatestUniqueRow] = RowParsers.of(MariatestUniqueId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar)(MariatestUniqueRow.apply)(row => Array[Any](row.id, row.email, row.code, row.category))
+  val `_rowParser`: RowParser[MariatestUniqueRow] = RowParsers.of(MariatestUniqueId.mariaType, Email.mariaType, MariaTypes.varchar, MariaTypes.varchar)(MariatestUniqueRow.apply)(row => Array[Any](row.id, row.email, row.code, row.category))
 }

@@ -18,11 +18,21 @@ import dev.typr.foundations.dsl.TupleExpr.TupleExpr10;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 import testdb.warehouses.WarehousesId;
 
 public class VWarehouseCoverageViewFields
     extends TupleExpr10<
-        WarehousesId, String, String, String, String, String, String, Boolean, Long, BigDecimal>
+        WarehousesId,
+        String,
+        String,
+        String,
+        String,
+        String,
+        String, /* user-picked */
+        IsActive,
+        Long,
+        BigDecimal>
     implements RelationStructure<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow>,
         FieldsBase<VWarehouseCoverageViewRow> {
   List<Path> _path;
@@ -42,7 +52,7 @@ public class VWarehouseCoverageViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withWarehouseId(value),
-        WarehousesId.dbType);
+        WarehousesId.mariaType);
   }
 
   public Field<String, VWarehouseCoverageViewRow> code() {
@@ -111,15 +121,15 @@ public class VWarehouseCoverageViewFields
         MariaTypes.varchar);
   }
 
-  public Field<Boolean, VWarehouseCoverageViewRow> isActive() {
-    return new Field<Boolean, VWarehouseCoverageViewRow>(
+  public Field</* user-picked */ IsActive, VWarehouseCoverageViewRow> isActive() {
+    return new Field</* user-picked */ IsActive, VWarehouseCoverageViewRow>(
         _path,
         "is_active",
         VWarehouseCoverageViewRow::isActive,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsActive(value),
-        MariaTypes.bool);
+        IsActive.mariaType);
   }
 
   public Field<Long, VWarehouseCoverageViewRow> productsStocked() {
@@ -211,7 +221,7 @@ public class VWarehouseCoverageViewFields
   }
 
   @Override
-  public SqlExpr<Boolean> _8() {
+  public SqlExpr</* user-picked */ IsActive> _8() {
     return isActive();
   }
 

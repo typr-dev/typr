@@ -46,6 +46,6 @@ data class CustomersRow(
   ): CustomersRowUnsaved = CustomersRowUnsaved(name, email, customerId, createdAt)
 
   companion object {
-    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.dbType, Db2Types.varchar, Db2Types.varchar, Db2Types.timestamp.nullable(), { t0, t1, t2, t3 -> CustomersRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt) })
+    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.timestamp.nullable(), { t0, t1, t2, t3 -> CustomersRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt) })
   }
 }

@@ -2,6 +2,7 @@ package testdb
 
 import org.scalatest.funsuite.AnyFunSuite
 import testdb.mariatest_unique.*
+import testdb.userdefined.Email
 
 /** Tests for unique constraint handling in MariaDB. */
 class UniqueConstraintTest extends AnyFunSuite {
@@ -10,12 +11,12 @@ class UniqueConstraintTest extends AnyFunSuite {
   test("insertWithUniqueEmail") {
     withConnection { c =>
       given java.sql.Connection = c
-      val row = MariatestUniqueRowUnsaved("test@example.com", "CODE001", "CategoryA")
+      val row = MariatestUniqueRowUnsaved(Email("test@example.com"), "CODE001", "CategoryA")
       val inserted = repo.insert(row)
 
       val _ = assert(inserted != null)
       val _ = assert(inserted.id.value >= 0)
-      val _ = assert(inserted.email == "test@example.com")
+      val _ = assert(inserted.email == Email("test@example.com"))
       val _ = assert(inserted.code == "CODE001")
       assert(inserted.category == "CategoryA")
     }
@@ -25,12 +26,12 @@ class UniqueConstraintTest extends AnyFunSuite {
     withConnection { c =>
       given java.sql.Connection = c
       // Insert first row
-      val row1 = MariatestUniqueRowUnsaved("unique@example.com", "CODE001", "CategoryA")
+      val row1 = MariatestUniqueRowUnsaved(Email("unique@example.com"), "CODE001", "CategoryA")
       val _ = repo.insert(row1)
 
       // Try to insert with same email (should fail in real db scenario)
       // Here we test with different codes/categories but same email
-      val row2 = MariatestUniqueRowUnsaved("unique@example.com", "CODE002", "CategoryB")
+      val row2 = MariatestUniqueRowUnsaved(Email("unique@example.com"), "CODE002", "CategoryB")
 
       val thrown = intercept[Exception] {
         repo.insert(row2)
@@ -44,21 +45,21 @@ class UniqueConstraintTest extends AnyFunSuite {
     withConnection { c =>
       given java.sql.Connection = c
       // Insert first row
-      val row1 = MariatestUniqueRowUnsaved("email1@example.com", "COMP001", "CategoryA")
+      val row1 = MariatestUniqueRowUnsaved(Email("email1@example.com"), "COMP001", "CategoryA")
       val _ = repo.insert(row1)
 
       // Same code, different category - should work (composite unique on code+category)
-      val row2 = MariatestUniqueRowUnsaved("email2@example.com", "COMP001", "CategoryB")
+      val row2 = MariatestUniqueRowUnsaved(Email("email2@example.com"), "COMP001", "CategoryB")
       val inserted2 = repo.insert(row2)
       val _ = assert(inserted2 != null)
 
       // Same category, different code - should work
-      val row3 = MariatestUniqueRowUnsaved("email3@example.com", "COMP002", "CategoryA")
+      val row3 = MariatestUniqueRowUnsaved(Email("email3@example.com"), "COMP002", "CategoryA")
       val inserted3 = repo.insert(row3)
       val _ = assert(inserted3 != null)
 
       // Same code AND category - should fail
-      val row4 = MariatestUniqueRowUnsaved("email4@example.com", "COMP001", "CategoryA")
+      val row4 = MariatestUniqueRowUnsaved(Email("email4@example.com"), "COMP001", "CategoryA")
       val thrown = intercept[Exception] {
         repo.insert(row4)
       }
@@ -71,7 +72,7 @@ class UniqueConstraintTest extends AnyFunSuite {
     withConnection { c =>
       given java.sql.Connection = c
       // Insert initial row
-      val row = MariatestUniqueRowUnsaved("upsert@example.com", "UPSERT001", "CategoryA")
+      val row = MariatestUniqueRowUnsaved(Email("upsert@example.com"), "UPSERT001", "CategoryA")
       val inserted = repo.insert(row)
 
       // Upsert with same ID - should update
@@ -87,7 +88,7 @@ class UniqueConstraintTest extends AnyFunSuite {
   test("selectByIdAfterUpdate") {
     withConnection { c =>
       given java.sql.Connection = c
-      val row = MariatestUniqueRowUnsaved("select@example.com", "SELECT001", "CategoryA")
+      val row = MariatestUniqueRowUnsaved(Email("select@example.com"), "SELECT001", "CategoryA")
       val inserted = repo.insert(row)
 
       // Update
@@ -97,7 +98,7 @@ class UniqueConstraintTest extends AnyFunSuite {
       // Select and verify
       val found = repo.selectById(inserted.id).get
       val _ = assert(found.code == "SELECT001-UPDATED")
-      assert(found.email == "select@example.com") // Email unchanged
+      assert(found.email == Email("select@example.com")) // Email unchanged
     }
   }
 
@@ -105,7 +106,7 @@ class UniqueConstraintTest extends AnyFunSuite {
     withConnection { c =>
       given java.sql.Connection = c
       // Insert
-      val row = MariatestUniqueRowUnsaved("reuse@example.com", "REUSE001", "CategoryA")
+      val row = MariatestUniqueRowUnsaved(Email("reuse@example.com"), "REUSE001", "CategoryA")
       val inserted = repo.insert(row)
 
       // Delete
@@ -113,11 +114,11 @@ class UniqueConstraintTest extends AnyFunSuite {
       val _ = assert(deleted)
 
       // Should now be able to reuse the email
-      val row2 = MariatestUniqueRowUnsaved("reuse@example.com", "REUSE002", "CategoryB")
+      val row2 = MariatestUniqueRowUnsaved(Email("reuse@example.com"), "REUSE002", "CategoryB")
       val inserted2 = repo.insert(row2)
 
       val _ = assert(inserted2 != null)
-      assert(inserted2.email == "reuse@example.com")
+      assert(inserted2.email == Email("reuse@example.com"))
     }
   }
 
@@ -125,9 +126,9 @@ class UniqueConstraintTest extends AnyFunSuite {
     withConnection { c =>
       given java.sql.Connection = c
       // Insert multiple unique rows
-      val _ = repo.insert(MariatestUniqueRowUnsaved("all1@example.com", "ALL001", "CatA"))
-      val _ = repo.insert(MariatestUniqueRowUnsaved("all2@example.com", "ALL002", "CatB"))
-      val _ = repo.insert(MariatestUniqueRowUnsaved("all3@example.com", "ALL003", "CatC"))
+      val _ = repo.insert(MariatestUniqueRowUnsaved(Email("all1@example.com"), "ALL001", "CatA"))
+      val _ = repo.insert(MariatestUniqueRowUnsaved(Email("all2@example.com"), "ALL002", "CatB"))
+      val _ = repo.insert(MariatestUniqueRowUnsaved(Email("all3@example.com"), "ALL003", "CatC"))
 
       val all = repo.selectAll
       val _ = assert(all.size >= 3)

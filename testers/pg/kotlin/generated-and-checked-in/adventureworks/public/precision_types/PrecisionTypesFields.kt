@@ -82,9 +82,9 @@ data class PrecisionTypesFields(val _path: List<Path>) : TupleExpr25<PrecisionTy
 
   override fun _path(): List<Path> = _path
 
-  fun bpchar10(): Field<PaddedString10, PrecisionTypesRow> = Field<PaddedString10, PrecisionTypesRow>(_path, "bpchar10", PrecisionTypesRow::bpchar10, null, "bpchar", { row, value -> row.copy(bpchar10 = value) }, PaddedString10.dbType)
+  fun bpchar10(): Field<PaddedString10, PrecisionTypesRow> = Field<PaddedString10, PrecisionTypesRow>(_path, "bpchar10", PrecisionTypesRow::bpchar10, null, "bpchar", { row, value -> row.copy(bpchar10 = value) }, PaddedString10.pgType)
 
-  fun bpchar3(): Field<PaddedString3, PrecisionTypesRow> = Field<PaddedString3, PrecisionTypesRow>(_path, "bpchar3", PrecisionTypesRow::bpchar3, null, "bpchar", { row, value -> row.copy(bpchar3 = value) }, PaddedString3.dbType)
+  fun bpchar3(): Field<PaddedString3, PrecisionTypesRow> = Field<PaddedString3, PrecisionTypesRow>(_path, "bpchar3", PrecisionTypesRow::bpchar3, null, "bpchar", { row, value -> row.copy(bpchar3 = value) }, PaddedString3.pgType)
 
   override fun columns(): List<FieldLike<*, PrecisionTypesRow>> = listOf(this.id().underlying, this.string10().underlying, this.string20().underlying, this.string50().underlying, this.string100().underlying, this.string255().underlying, this.bpchar3().underlying, this.bpchar10().underlying, this.decimal52().underlying, this.decimal102().underlying, this.decimal184().underlying, this.numeric82().underlying, this.numeric124().underlying, this.timestamp0().underlying, this.timestamp3().underlying, this.timestamp6().underlying, this.timestamptz0().underlying, this.timestamptz3().underlying, this.timestamptz6().underlying, this.time0().underlying, this.time3().underlying, this.time6().underlying, this.timetz0().underlying, this.timetz3().underlying, this.timetz6().underlying)
 
@@ -94,7 +94,7 @@ data class PrecisionTypesFields(val _path: List<Path>) : TupleExpr25<PrecisionTy
 
   fun decimal52(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "decimal5_2", PrecisionTypesRow::decimal52, null, "numeric", { row, value -> row.copy(decimal52 = value) }, PgTypes.numeric)
 
-  fun id(): IdField<PrecisionTypesId, PrecisionTypesRow> = IdField<PrecisionTypesId, PrecisionTypesRow>(_path, "id", PrecisionTypesRow::id, null, "int4", { row, value -> row.copy(id = value) }, PrecisionTypesId.dbType)
+  fun id(): IdField<PrecisionTypesId, PrecisionTypesRow> = IdField<PrecisionTypesId, PrecisionTypesRow>(_path, "id", PrecisionTypesRow::id, null, "int4", { row, value -> row.copy(id = value) }, PrecisionTypesId.pgType)
 
   fun numeric124(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "numeric12_4", PrecisionTypesRow::numeric124, null, "numeric", { row, value -> row.copy(numeric124 = value) }, PgTypes.numeric)
 
@@ -102,15 +102,15 @@ data class PrecisionTypesFields(val _path: List<Path>) : TupleExpr25<PrecisionTy
 
   override fun rowParser(): RowParser<PrecisionTypesRow> = PrecisionTypesRow._rowParser.underlying
 
-  fun string10(): Field<String10, PrecisionTypesRow> = Field<String10, PrecisionTypesRow>(_path, "string10", PrecisionTypesRow::string10, null, null, { row, value -> row.copy(string10 = value) }, String10.dbType)
+  fun string10(): Field<String10, PrecisionTypesRow> = Field<String10, PrecisionTypesRow>(_path, "string10", PrecisionTypesRow::string10, null, null, { row, value -> row.copy(string10 = value) }, String10.pgType)
 
-  fun string100(): Field<String100, PrecisionTypesRow> = Field<String100, PrecisionTypesRow>(_path, "string100", PrecisionTypesRow::string100, null, null, { row, value -> row.copy(string100 = value) }, String100.dbType)
+  fun string100(): Field<String100, PrecisionTypesRow> = Field<String100, PrecisionTypesRow>(_path, "string100", PrecisionTypesRow::string100, null, null, { row, value -> row.copy(string100 = value) }, String100.pgType)
 
-  fun string20(): Field<String20, PrecisionTypesRow> = Field<String20, PrecisionTypesRow>(_path, "string20", PrecisionTypesRow::string20, null, null, { row, value -> row.copy(string20 = value) }, String20.dbType)
+  fun string20(): Field<String20, PrecisionTypesRow> = Field<String20, PrecisionTypesRow>(_path, "string20", PrecisionTypesRow::string20, null, null, { row, value -> row.copy(string20 = value) }, String20.pgType)
 
-  fun string255(): Field<String255, PrecisionTypesRow> = Field<String255, PrecisionTypesRow>(_path, "string255", PrecisionTypesRow::string255, null, null, { row, value -> row.copy(string255 = value) }, String255.dbType)
+  fun string255(): Field<String255, PrecisionTypesRow> = Field<String255, PrecisionTypesRow>(_path, "string255", PrecisionTypesRow::string255, null, null, { row, value -> row.copy(string255 = value) }, String255.pgType)
 
-  fun string50(): Field<String50, PrecisionTypesRow> = Field<String50, PrecisionTypesRow>(_path, "string50", PrecisionTypesRow::string50, null, null, { row, value -> row.copy(string50 = value) }, String50.dbType)
+  fun string50(): Field<String50, PrecisionTypesRow> = Field<String50, PrecisionTypesRow>(_path, "string50", PrecisionTypesRow::string50, null, null, { row, value -> row.copy(string50 = value) }, String50.pgType)
 
   fun time0(): Field<LocalTime, PrecisionTypesRow> = Field<LocalTime, PrecisionTypesRow>(_path, "time0", PrecisionTypesRow::time0, null, "time", { row, value -> row.copy(time0 = value) }, PgTypes.time)
 

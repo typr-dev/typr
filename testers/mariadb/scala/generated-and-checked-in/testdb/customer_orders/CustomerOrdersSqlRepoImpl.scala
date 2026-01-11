@@ -30,7 +30,7 @@ class CustomerOrdersSqlRepoImpl extends CustomerOrdersSqlRepo {
            o.ordered_at
     FROM customers c
     LEFT JOIN orders o ON c.customer_id = o.customer_id
-    WHERE c.customer_id = ${Fragment.encode(CustomersId.dbType, customerId)}
+    WHERE c.customer_id = ${Fragment.encode(CustomersId.mariaType, customerId)}
       AND (${Fragment.encode(MariaTypes.text.nullable, orderStatus)} IS NULL OR o.order_status = ${Fragment.encode(MariaTypes.text.nullable, orderStatus)})
     """.query(CustomerOrdersSqlRow.`_rowParser`.all()).runUnchecked(c)
   }

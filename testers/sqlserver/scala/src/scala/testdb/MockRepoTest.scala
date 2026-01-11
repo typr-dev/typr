@@ -5,6 +5,7 @@ import org.junit.Assert._
 import org.junit.Test
 import testdb.customers._
 import testdb.products._
+import testdb.userdefined.Email
 
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
@@ -35,7 +36,7 @@ class MockRepoTest {
     val customer = CustomersRow(
       CustomersId(1),
       "Mock User",
-      "mock@test.com",
+      Email("mock@test.com"),
       Some(LocalDateTime.now())
     )
 
@@ -54,7 +55,7 @@ class MockRepoTest {
     val customer = CustomersRow(
       CustomersId(2),
       "Original Name",
-      "original@test.com",
+      Email("original@test.com"),
       Some(LocalDateTime.now())
     )
 
@@ -73,7 +74,7 @@ class MockRepoTest {
     val customer = CustomersRow(
       CustomersId(3),
       "To Delete",
-      "delete@test.com",
+      Email("delete@test.com"),
       Some(LocalDateTime.now())
     )
 
@@ -111,7 +112,7 @@ class MockRepoTest {
       CustomersRow(
         CustomersId(100),
         "Alice",
-        "alice@test.com",
+        Email("alice@test.com"),
         Some(LocalDateTime.now())
       )
     )(using null)
@@ -119,7 +120,7 @@ class MockRepoTest {
       CustomersRow(
         CustomersId(101),
         "Bob",
-        "bob@test.com",
+        Email("bob@test.com"),
         Some(LocalDateTime.now())
       )
     )(using null)
@@ -127,7 +128,7 @@ class MockRepoTest {
       CustomersRow(
         CustomersId(102),
         "Charlie",
-        "charlie@test.com",
+        Email("charlie@test.com"),
         Some(LocalDateTime.now())
       )
     )(using null)
@@ -150,7 +151,7 @@ class MockRepoTest {
       CustomersRow(
         CustomersId(200),
         "Count1",
-        "count1@test.com",
+        Email("count1@test.com"),
         Some(LocalDateTime.now())
       )
     )(using null)
@@ -158,7 +159,7 @@ class MockRepoTest {
       CustomersRow(
         CustomersId(201),
         "Count2",
-        "count2@test.com",
+        Email("count2@test.com"),
         Some(LocalDateTime.now())
       )
     )(using null)
@@ -166,7 +167,7 @@ class MockRepoTest {
       CustomersRow(
         CustomersId(202),
         "Other",
-        "other@test.com",
+        Email("other@test.com"),
         Some(LocalDateTime.now())
       )
     )(using null)
@@ -187,7 +188,7 @@ class MockRepoTest {
       CustomersRow(
         CustomersId(400),
         "Mock1 Only",
-        "mock1@test.com",
+        Email("mock1@test.com"),
         Some(LocalDateTime.now())
       )
     )(using null)

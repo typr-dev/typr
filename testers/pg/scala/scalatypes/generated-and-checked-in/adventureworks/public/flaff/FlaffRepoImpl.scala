@@ -22,7 +22,7 @@ import dev.typr.foundations.scala.Fragment.sql
 class FlaffRepoImpl extends FlaffRepo {
   override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of(""""public"."flaff"""", FlaffFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: FlaffId)(using c: Connection): Boolean = sql"""delete from "public"."flaff" where "code" = ${Fragment.encode(ShortText.dbType, compositeId.code)} AND "another_code" = ${Fragment.encode(PgTypes.text, compositeId.anotherCode)} AND "some_number" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, compositeId.someNumber)} AND "specifier" = ${Fragment.encode(ShortText.dbType, compositeId.specifier)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: FlaffId)(using c: Connection): Boolean = sql"""delete from "public"."flaff" where "code" = ${Fragment.encode(ShortText.pgType, compositeId.code)} AND "another_code" = ${Fragment.encode(PgTypes.text, compositeId.anotherCode)} AND "some_number" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, compositeId.someNumber)} AND "specifier" = ${Fragment.encode(ShortText.pgType, compositeId.specifier)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Int = {
     val code: Array[ShortText] = compositeIds.map(_.code)
@@ -32,13 +32,13 @@ class FlaffRepoImpl extends FlaffRepo {
     return sql"""delete
     from "public"."flaff"
     where ("code", "another_code", "some_number", "specifier")
-    in (select * from unnest(${Fragment.encode(ShortText.dbTypeArray, code)}, ${Fragment.encode(PgTypes.textArray, anotherCode)}, ${Fragment.encode(PgTypes.int4ArrayUnboxed, someNumber)}, ${Fragment.encode(ShortText.dbTypeArray, specifier)}))
+    in (select * from unnest(${Fragment.encode(ShortText.pgTypeArray, code)}, ${Fragment.encode(PgTypes.textArray, anotherCode)}, ${Fragment.encode(PgTypes.int4ArrayUnboxed, someNumber)}, ${Fragment.encode(ShortText.pgTypeArray, specifier)}))
     """.update().runUnchecked(c)
   }
 
   override def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   sql"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
-    values (${Fragment.encode(ShortText.dbType, unsaved.code)}::text, ${Fragment.encode(PgTypes.text, unsaved.anotherCode)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.someNumber)}::int4, ${Fragment.encode(ShortText.dbType, unsaved.specifier)}::text, ${Fragment.encode(ShortText.dbType.nullable, unsaved.parentspecifier)}::text)
+    values (${Fragment.encode(ShortText.pgType, unsaved.code)}::text, ${Fragment.encode(PgTypes.text, unsaved.anotherCode)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.someNumber)}::int4, ${Fragment.encode(ShortText.pgType, unsaved.specifier)}::text, ${Fragment.encode(ShortText.pgType.nullable, unsaved.parentspecifier)}::text)
     RETURNING "code", "another_code", "some_number", "specifier", "parentspecifier"
     """
     .updateReturning(FlaffRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -60,7 +60,7 @@ class FlaffRepoImpl extends FlaffRepo {
   override def selectById(compositeId: FlaffId)(using c: Connection): Option[FlaffRow] = {
     sql"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
-    where "code" = ${Fragment.encode(ShortText.dbType, compositeId.code)} AND "another_code" = ${Fragment.encode(PgTypes.text, compositeId.anotherCode)} AND "some_number" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, compositeId.someNumber)} AND "specifier" = ${Fragment.encode(ShortText.dbType, compositeId.specifier)}""".query(FlaffRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = ${Fragment.encode(ShortText.pgType, compositeId.code)} AND "another_code" = ${Fragment.encode(PgTypes.text, compositeId.anotherCode)} AND "some_number" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, compositeId.someNumber)} AND "specifier" = ${Fragment.encode(ShortText.pgType, compositeId.specifier)}""".query(FlaffRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): List[FlaffRow] = {
@@ -71,7 +71,7 @@ class FlaffRepoImpl extends FlaffRepo {
     return sql"""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
     where ("code", "another_code", "some_number", "specifier")
-    in (select * from unnest(${Fragment.encode(ShortText.dbTypeArray, code)}, ${Fragment.encode(PgTypes.textArray, anotherCode)}, ${Fragment.encode(PgTypes.int4ArrayUnboxed, someNumber)}, ${Fragment.encode(ShortText.dbTypeArray, specifier)}))
+    in (select * from unnest(${Fragment.encode(ShortText.pgTypeArray, code)}, ${Fragment.encode(PgTypes.textArray, anotherCode)}, ${Fragment.encode(PgTypes.int4ArrayUnboxed, someNumber)}, ${Fragment.encode(ShortText.pgTypeArray, specifier)}))
     """.query(FlaffRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -86,13 +86,13 @@ class FlaffRepoImpl extends FlaffRepo {
   override def update(row: FlaffRow)(using c: Connection): Boolean = {
     val compositeId: FlaffId = row.compositeId
     return sql"""update "public"."flaff"
-    set "parentspecifier" = ${Fragment.encode(ShortText.dbType.nullable, row.parentspecifier)}::text
-    where "code" = ${Fragment.encode(ShortText.dbType, compositeId.code)} AND "another_code" = ${Fragment.encode(PgTypes.text, compositeId.anotherCode)} AND "some_number" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, compositeId.someNumber)} AND "specifier" = ${Fragment.encode(ShortText.dbType, compositeId.specifier)}""".update().runUnchecked(c) > 0
+    set "parentspecifier" = ${Fragment.encode(ShortText.pgType.nullable, row.parentspecifier)}::text
+    where "code" = ${Fragment.encode(ShortText.pgType, compositeId.code)} AND "another_code" = ${Fragment.encode(PgTypes.text, compositeId.anotherCode)} AND "some_number" = ${Fragment.encode(ScalaDbTypes.PgTypes.int4, compositeId.someNumber)} AND "specifier" = ${Fragment.encode(ShortText.pgType, compositeId.specifier)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   sql"""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
-    values (${Fragment.encode(ShortText.dbType, unsaved.code)}::text, ${Fragment.encode(PgTypes.text, unsaved.anotherCode)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.someNumber)}::int4, ${Fragment.encode(ShortText.dbType, unsaved.specifier)}::text, ${Fragment.encode(ShortText.dbType.nullable, unsaved.parentspecifier)}::text)
+    values (${Fragment.encode(ShortText.pgType, unsaved.code)}::text, ${Fragment.encode(PgTypes.text, unsaved.anotherCode)}, ${Fragment.encode(ScalaDbTypes.PgTypes.int4, unsaved.someNumber)}::int4, ${Fragment.encode(ShortText.pgType, unsaved.specifier)}::text, ${Fragment.encode(ShortText.pgType.nullable, unsaved.parentspecifier)}::text)
     on conflict ("code", "another_code", "some_number", "specifier")
     do update set
       "parentspecifier" = EXCLUDED."parentspecifier"

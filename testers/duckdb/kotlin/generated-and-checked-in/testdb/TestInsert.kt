@@ -59,6 +59,7 @@ import testdb.precision_types_null.PrecisionTypesNullRow
 import testdb.products.ProductsId
 import testdb.products.ProductsRepoImpl
 import testdb.products.ProductsRow
+import testdb.userdefined.Email
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 data class TestInsert(val random: Random) {
@@ -95,7 +96,7 @@ data class TestInsert(val random: Random) {
   fun Customers(
     name: String,
     customerId: CustomersId = CustomersId(random.nextInt()),
-    email: String? = null,
+    email: /* user-picked */ Email? = null,
     createdAt: Defaulted<LocalDateTime> = UseDefault(),
     priority: Defaulted<Priority?> = UseDefault(),
     c: Connection

@@ -18,11 +18,11 @@ import dev.typr.foundations.scala.Fragment.sql
 class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
   override def delete: DeleteBuilder[MariatestIdentityFields, MariatestIdentityRow] = DeleteBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, Dialect.MARIADB)
 
-  override def deleteById(id: MariatestIdentityId)(using c: Connection): Boolean = sql"delete from `mariatest_identity` where `id` = ${Fragment.encode(MariatestIdentityId.dbType, id)}".update().runUnchecked(c) > 0
+  override def deleteById(id: MariatestIdentityId)(using c: Connection): Boolean = sql"delete from `mariatest_identity` where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[MariatestIdentityId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestIdentityId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestIdentityId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `mariatest_identity` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -59,12 +59,12 @@ class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
   override def selectById(id: MariatestIdentityId)(using c: Connection): Option[MariatestIdentityRow] = {
     sql"""select `id`, `name`
     from `mariatest_identity`
-    where `id` = ${Fragment.encode(MariatestIdentityId.dbType, id)}""".query(MariatestIdentityRow.`_rowParser`.first()).runUnchecked(c)
+    where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}""".query(MariatestIdentityRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[MariatestIdentityId])(using c: Connection): List[MariatestIdentityRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestIdentityId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(MariatestIdentityId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `id`, `name` from `mariatest_identity` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestIdentityRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -80,12 +80,12 @@ class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
     val id: MariatestIdentityId = row.id
     return sql"""update `mariatest_identity`
     set `name` = ${Fragment.encode(MariaTypes.varchar, row.name)}
-    where `id` = ${Fragment.encode(MariatestIdentityId.dbType, id)}""".update().runUnchecked(c) > 0
+    where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: MariatestIdentityRow)(using c: Connection): MariatestIdentityRow = {
   sql"""INSERT INTO `mariatest_identity`(`id`, `name`)
-    VALUES (${Fragment.encode(MariatestIdentityId.dbType, unsaved.id)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)})
+    VALUES (${Fragment.encode(MariatestIdentityId.mariaType, unsaved.id)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)})
     ON DUPLICATE KEY UPDATE `name` = VALUES(`name`)
     RETURNING `id`, `name`"""
     .updateReturning(MariatestIdentityRow.`_rowParser`.exactlyOne())

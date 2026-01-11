@@ -20,10 +20,10 @@ data class TimeStamp(@field:JsonValue val value: Instant) {
     val bijection: Bijection<TimeStamp, Instant> =
       Bijection.of(TimeStamp::value, ::TimeStamp)
 
-    val dbType: PgType<TimeStamp> =
+    val pgType: PgType<TimeStamp> =
       PgTypes.timestamptz.bimap(::TimeStamp, TimeStamp::value).renamed("\"information_schema\".\"time_stamp\"")
 
-    val dbTypeArray: PgType<Array<TimeStamp>> =
+    val pgTypeArray: PgType<Array<TimeStamp>> =
       PgTypes.timestamptzArray.bimap({ xs -> arrayMap.map(xs, ::TimeStamp, TimeStamp::class.java) }, { xs -> arrayMap.map(xs, TimeStamp::value, Instant::class.java) }).renamed("\"information_schema\".\"time_stamp\"[]")
   }
 }

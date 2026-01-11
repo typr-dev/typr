@@ -40,7 +40,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
   public Boolean deleteById(PrecisionTypesId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"public\".\"precision_types\" where \"id\" = "),
-                Fragment.encode(PrecisionTypesId.dbType, id),
+                Fragment.encode(PrecisionTypesId.pgType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -51,7 +51,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
   public Integer deleteByIds(PrecisionTypesId[] ids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"public\".\"precision_types\"\nwhere \"id\" = ANY("),
-            Fragment.encode(PrecisionTypesId.dbTypeArray, ids),
+            Fragment.encode(PrecisionTypesId.pgTypeArray, ids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -68,21 +68,21 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                     + " \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\","
                     + " \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\n"
                     + "values ("),
-            Fragment.encode(PrecisionTypesId.dbType, unsaved.id()),
+            Fragment.encode(PrecisionTypesId.pgType, unsaved.id()),
             Fragment.lit("::int4, "),
-            Fragment.encode(String10.dbType, unsaved.string10()),
+            Fragment.encode(String10.pgType, unsaved.string10()),
             Fragment.lit(", "),
-            Fragment.encode(String20.dbType, unsaved.string20()),
+            Fragment.encode(String20.pgType, unsaved.string20()),
             Fragment.lit(", "),
-            Fragment.encode(String50.dbType, unsaved.string50()),
+            Fragment.encode(String50.pgType, unsaved.string50()),
             Fragment.lit(", "),
-            Fragment.encode(String100.dbType, unsaved.string100()),
+            Fragment.encode(String100.pgType, unsaved.string100()),
             Fragment.lit(", "),
-            Fragment.encode(String255.dbType, unsaved.string255()),
+            Fragment.encode(String255.pgType, unsaved.string255()),
             Fragment.lit(", "),
-            Fragment.encode(PaddedString3.dbType, unsaved.bpchar3()),
+            Fragment.encode(PaddedString3.pgType, unsaved.bpchar3()),
             Fragment.lit("::bpchar, "),
-            Fragment.encode(PaddedString10.dbType, unsaved.bpchar10()),
+            Fragment.encode(PaddedString10.pgType, unsaved.bpchar10()),
             Fragment.lit("::bpchar, "),
             Fragment.encode(PgTypes.numeric, unsaved.decimal52()),
             Fragment.lit("::numeric, "),
@@ -136,25 +136,25 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
     ArrayList<Fragment> values = new ArrayList<>();
     ;
     columns.add(Fragment.lit("\"string10\""));
-    values.add(interpolate(Fragment.encode(String10.dbType, unsaved.string10()), Fragment.lit("")));
+    values.add(interpolate(Fragment.encode(String10.pgType, unsaved.string10()), Fragment.lit("")));
     columns.add(Fragment.lit("\"string20\""));
-    values.add(interpolate(Fragment.encode(String20.dbType, unsaved.string20()), Fragment.lit("")));
+    values.add(interpolate(Fragment.encode(String20.pgType, unsaved.string20()), Fragment.lit("")));
     columns.add(Fragment.lit("\"string50\""));
-    values.add(interpolate(Fragment.encode(String50.dbType, unsaved.string50()), Fragment.lit("")));
+    values.add(interpolate(Fragment.encode(String50.pgType, unsaved.string50()), Fragment.lit("")));
     columns.add(Fragment.lit("\"string100\""));
     values.add(
-        interpolate(Fragment.encode(String100.dbType, unsaved.string100()), Fragment.lit("")));
+        interpolate(Fragment.encode(String100.pgType, unsaved.string100()), Fragment.lit("")));
     columns.add(Fragment.lit("\"string255\""));
     values.add(
-        interpolate(Fragment.encode(String255.dbType, unsaved.string255()), Fragment.lit("")));
+        interpolate(Fragment.encode(String255.pgType, unsaved.string255()), Fragment.lit("")));
     columns.add(Fragment.lit("\"bpchar3\""));
     values.add(
         interpolate(
-            Fragment.encode(PaddedString3.dbType, unsaved.bpchar3()), Fragment.lit("::bpchar")));
+            Fragment.encode(PaddedString3.pgType, unsaved.bpchar3()), Fragment.lit("::bpchar")));
     columns.add(Fragment.lit("\"bpchar10\""));
     values.add(
         interpolate(
-            Fragment.encode(PaddedString10.dbType, unsaved.bpchar10()), Fragment.lit("::bpchar")));
+            Fragment.encode(PaddedString10.pgType, unsaved.bpchar10()), Fragment.lit("::bpchar")));
     columns.add(Fragment.lit("\"decimal5_2\""));
     values.add(
         interpolate(
@@ -225,7 +225,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
               columns.add(Fragment.lit("\"id\""));
               values.add(
                   interpolate(
-                      Fragment.encode(PrecisionTypesId.dbType, value), Fragment.lit("::int4")));
+                      Fragment.encode(PrecisionTypesId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     Fragment q =
@@ -315,7 +315,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                     + " \"timetz3\", \"timetz6\"\n"
                     + "from \"public\".\"precision_types\"\n"
                     + "where \"id\" = "),
-            Fragment.encode(PrecisionTypesId.dbType, id),
+            Fragment.encode(PrecisionTypesId.pgType, id),
             Fragment.lit(""))
         .query(PrecisionTypesRow._rowParser.first())
         .runUnchecked(c);
@@ -333,7 +333,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                     + " \"timetz3\", \"timetz6\"\n"
                     + "from \"public\".\"precision_types\"\n"
                     + "where \"id\" = ANY("),
-            Fragment.encode(PrecisionTypesId.dbTypeArray, ids),
+            Fragment.encode(PrecisionTypesId.pgTypeArray, ids),
             Fragment.lit(")"))
         .query(PrecisionTypesRow._rowParser.all())
         .runUnchecked(c);
@@ -363,19 +363,19 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"public\".\"precision_types\"\nset \"string10\" = "),
-                Fragment.encode(String10.dbType, row.string10()),
+                Fragment.encode(String10.pgType, row.string10()),
                 Fragment.lit(",\n\"string20\" = "),
-                Fragment.encode(String20.dbType, row.string20()),
+                Fragment.encode(String20.pgType, row.string20()),
                 Fragment.lit(",\n\"string50\" = "),
-                Fragment.encode(String50.dbType, row.string50()),
+                Fragment.encode(String50.pgType, row.string50()),
                 Fragment.lit(",\n\"string100\" = "),
-                Fragment.encode(String100.dbType, row.string100()),
+                Fragment.encode(String100.pgType, row.string100()),
                 Fragment.lit(",\n\"string255\" = "),
-                Fragment.encode(String255.dbType, row.string255()),
+                Fragment.encode(String255.pgType, row.string255()),
                 Fragment.lit(",\n\"bpchar3\" = "),
-                Fragment.encode(PaddedString3.dbType, row.bpchar3()),
+                Fragment.encode(PaddedString3.pgType, row.bpchar3()),
                 Fragment.lit("::bpchar,\n\"bpchar10\" = "),
-                Fragment.encode(PaddedString10.dbType, row.bpchar10()),
+                Fragment.encode(PaddedString10.pgType, row.bpchar10()),
                 Fragment.lit("::bpchar,\n\"decimal5_2\" = "),
                 Fragment.encode(PgTypes.numeric, row.decimal52()),
                 Fragment.lit("::numeric,\n\"decimal10_2\" = "),
@@ -411,7 +411,7 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                 Fragment.lit("::timetz,\n\"timetz6\" = "),
                 Fragment.encode(PgTypes.timetz, row.timetz6()),
                 Fragment.lit("::timetz\nwhere \"id\" = "),
-                Fragment.encode(PrecisionTypesId.dbType, id),
+                Fragment.encode(PrecisionTypesId.pgType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -429,21 +429,21 @@ public class PrecisionTypesRepoImpl implements PrecisionTypesRepo {
                     + " \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\","
                     + " \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\n"
                     + "values ("),
-            Fragment.encode(PrecisionTypesId.dbType, unsaved.id()),
+            Fragment.encode(PrecisionTypesId.pgType, unsaved.id()),
             Fragment.lit("::int4, "),
-            Fragment.encode(String10.dbType, unsaved.string10()),
+            Fragment.encode(String10.pgType, unsaved.string10()),
             Fragment.lit(", "),
-            Fragment.encode(String20.dbType, unsaved.string20()),
+            Fragment.encode(String20.pgType, unsaved.string20()),
             Fragment.lit(", "),
-            Fragment.encode(String50.dbType, unsaved.string50()),
+            Fragment.encode(String50.pgType, unsaved.string50()),
             Fragment.lit(", "),
-            Fragment.encode(String100.dbType, unsaved.string100()),
+            Fragment.encode(String100.pgType, unsaved.string100()),
             Fragment.lit(", "),
-            Fragment.encode(String255.dbType, unsaved.string255()),
+            Fragment.encode(String255.pgType, unsaved.string255()),
             Fragment.lit(", "),
-            Fragment.encode(PaddedString3.dbType, unsaved.bpchar3()),
+            Fragment.encode(PaddedString3.pgType, unsaved.bpchar3()),
             Fragment.lit("::bpchar, "),
-            Fragment.encode(PaddedString10.dbType, unsaved.bpchar10()),
+            Fragment.encode(PaddedString10.pgType, unsaved.bpchar10()),
             Fragment.lit("::bpchar, "),
             Fragment.encode(PgTypes.numeric, unsaved.decimal52()),
             Fragment.lit("::numeric, "),

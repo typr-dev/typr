@@ -78,7 +78,7 @@ public class ProductFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withProductid(value),
-        ProductId.dbType);
+        ProductId.pgType);
   }
 
   public Field<Name, ProductRow> name() {
@@ -89,7 +89,7 @@ public class ProductFields
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<String, ProductRow> productnumber() {
@@ -111,7 +111,7 @@ public class ProductFields
         Optional.empty(),
         Optional.of("bool"),
         (row, value) -> row.withMakeflag(value),
-        Flag.dbType);
+        Flag.pgType);
   }
 
   public Field<Flag, ProductRow> finishedgoodsflag() {
@@ -122,7 +122,7 @@ public class ProductFields
         Optional.empty(),
         Optional.of("bool"),
         (row, value) -> row.withFinishedgoodsflag(value),
-        Flag.dbType);
+        Flag.pgType);
   }
 
   public OptField<String, ProductRow> color() {
@@ -199,7 +199,7 @@ public class ProductFields
         Optional.empty(),
         Optional.of("bpchar"),
         (row, value) -> row.withSizeunitmeasurecode(value),
-        UnitmeasureId.dbType);
+        UnitmeasureId.pgType);
   }
 
   public OptField<UnitmeasureId, ProductRow> weightunitmeasurecode() {
@@ -210,7 +210,7 @@ public class ProductFields
         Optional.empty(),
         Optional.of("bpchar"),
         (row, value) -> row.withWeightunitmeasurecode(value),
-        UnitmeasureId.dbType);
+        UnitmeasureId.pgType);
   }
 
   public OptField<BigDecimal, ProductRow> weight() {
@@ -276,7 +276,7 @@ public class ProductFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withProductsubcategoryid(value),
-        ProductsubcategoryId.dbType);
+        ProductsubcategoryId.pgType);
   }
 
   public OptField<ProductmodelId, ProductRow> productmodelid() {
@@ -287,7 +287,7 @@ public class ProductFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withProductmodelid(value),
-        ProductmodelId.dbType);
+        ProductmodelId.pgType);
   }
 
   public Field<LocalDateTime, ProductRow> sellstartdate() {

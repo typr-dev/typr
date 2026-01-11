@@ -19,11 +19,11 @@ import dev.typr.foundations.scala.Fragment.sql
 class AuditLogRepoImpl extends AuditLogRepo {
   override def delete: DeleteBuilder[AuditLogFields, AuditLogRow] = DeleteBuilder.of("`audit_log`", AuditLogFields.structure, Dialect.MARIADB)
 
-  override def deleteById(logId: AuditLogId)(using c: Connection): Boolean = sql"delete from `audit_log` where `log_id` = ${Fragment.encode(AuditLogId.dbType, logId)}".update().runUnchecked(c) > 0
+  override def deleteById(logId: AuditLogId)(using c: Connection): Boolean = sql"delete from `audit_log` where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(logIds: Array[AuditLogId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    logIds.foreach { id => fragments.addOne(Fragment.encode(AuditLogId.dbType, id)): @scala.annotation.nowarn }
+    logIds.foreach { id => fragments.addOne(Fragment.encode(AuditLogId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `audit_log` where `log_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
@@ -88,12 +88,12 @@ class AuditLogRepoImpl extends AuditLogRepo {
   override def selectById(logId: AuditLogId)(using c: Connection): Option[AuditLogRow] = {
     sql"""select `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
     from `audit_log`
-    where `log_id` = ${Fragment.encode(AuditLogId.dbType, logId)}""".query(AuditLogRow.`_rowParser`.first()).runUnchecked(c)
+    where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}""".query(AuditLogRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(logIds: Array[AuditLogId])(using c: Connection): List[AuditLogRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    logIds.foreach { id => fragments.addOne(Fragment.encode(AuditLogId.dbType, id)): @scala.annotation.nowarn }
+    logIds.foreach { id => fragments.addOne(Fragment.encode(AuditLogId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id` from `audit_log` where `log_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(AuditLogRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -117,12 +117,12 @@ class AuditLogRepoImpl extends AuditLogRepo {
     `changed_at` = ${Fragment.encode(MariaTypes.datetime, row.changedAt)},
     `client_ip` = ${Fragment.encode(MariaTypes.inet6.nullable, row.clientIp)},
     `session_id` = ${Fragment.encode(MariaTypes.varbinary.nullable, row.sessionId)}
-    where `log_id` = ${Fragment.encode(AuditLogId.dbType, logId)}""".update().runUnchecked(c) > 0
+    where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: AuditLogRow)(using c: Connection): AuditLogRow = {
   sql"""INSERT INTO `audit_log`(`log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`)
-    VALUES (${Fragment.encode(AuditLogId.dbType, unsaved.logId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.tableName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.recordId)}, ${Fragment.encode(MariaTypes.text, unsaved.action)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.oldValues)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.newValues)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.changedBy)}, ${Fragment.encode(MariaTypes.datetime, unsaved.changedAt)}, ${Fragment.encode(MariaTypes.inet6.nullable, unsaved.clientIp)}, ${Fragment.encode(MariaTypes.varbinary.nullable, unsaved.sessionId)})
+    VALUES (${Fragment.encode(AuditLogId.mariaType, unsaved.logId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.tableName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.recordId)}, ${Fragment.encode(MariaTypes.text, unsaved.action)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.oldValues)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.newValues)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.changedBy)}, ${Fragment.encode(MariaTypes.datetime, unsaved.changedAt)}, ${Fragment.encode(MariaTypes.inet6.nullable, unsaved.clientIp)}, ${Fragment.encode(MariaTypes.varbinary.nullable, unsaved.sessionId)})
     ON DUPLICATE KEY UPDATE `table_name` = VALUES(`table_name`),
     `record_id` = VALUES(`record_id`),
     `action` = VALUES(`action`),

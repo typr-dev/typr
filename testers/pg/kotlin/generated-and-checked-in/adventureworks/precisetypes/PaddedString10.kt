@@ -41,13 +41,13 @@ data class PaddedString10 private constructor(@field:JsonValue val value: String
     val bijection: Bijection<PaddedString10, String> =
       Bijection.of(PaddedString10::value, ::PaddedString10)
 
-    val dbType: PgType<PaddedString10> =
+    fun of(value: String): PaddedString10? = if (value.length <= 10) PaddedString10(String.format("%-10s", value)) else null
+
+    val pgType: PgType<PaddedString10> =
       PgTypes.bpchar.bimap(::PaddedString10, PaddedString10::value)
 
-    val dbTypeArray: PgType<Array<PaddedString10>> =
+    val pgTypeArray: PgType<Array<PaddedString10>> =
       PgTypes.bpcharArray.bimap({ xs -> arrayMap.map(xs, ::PaddedString10, PaddedString10::class.java) }, { xs -> arrayMap.map(xs, PaddedString10::value, String::class.java) })
-
-    fun of(value: String): PaddedString10? = if (value.length <= 10) PaddedString10(String.format("%-10s", value)) else null
 
     fun unsafeForce(value: String): PaddedString10 {
       if (value.length > 10) {

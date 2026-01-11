@@ -36,7 +36,7 @@ data class InventoryCheckSqlRow(
   @field:JsonProperty("quantity_on_hand") val quantityOnHand: Int,
   /** Points to [testdb.inventory.InventoryRow.quantityReserved] */
   @field:JsonProperty("quantity_reserved") val quantityReserved: Int,
-  /** Points to [testdb.inventory.InventoryRow.quantityOnHand] */
+  /** Points to [testdb.inventory.InventoryRow.quantityReserved] */
   val available: Int,
   /** Points to [testdb.inventory.InventoryRow.reorderPoint] */
   @field:JsonProperty("reorder_point") val reorderPoint: Int,
@@ -68,6 +68,6 @@ data class InventoryCheckSqlRow(
   override fun _9(): Int = quantityReserved
 
   companion object {
-    val _rowParser: RowParser<InventoryCheckSqlRow> = RowParsers.of(InventoryId.dbType, ProductsId.dbType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.dbType, MariaTypes.char_, MariaTypes.varchar, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> InventoryCheckSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) }, { row -> arrayOf<Any?>(row.inventoryId, row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.available, row.reorderPoint, row.binLocation) })
+    val _rowParser: RowParser<InventoryCheckSqlRow> = RowParsers.of(InventoryId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> InventoryCheckSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) }, { row -> arrayOf<Any?>(row.inventoryId, row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.available, row.reorderPoint, row.binLocation) })
   }
 }

@@ -14,6 +14,7 @@ import java.time.LocalDateTime
 import testdb.AllBrandsCategoriesCSet
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.IsActive
 
 /** This class corresponds to a row in table `promotions` which has not been persisted yet */
 data class PromotionsRowUnsaved(
@@ -60,7 +61,7 @@ data class PromotionsRowUnsaved(
   /** Default: 1
 
     */
-  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_active") val isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
   /** Default: current_timestamp()
 
     */
@@ -74,7 +75,7 @@ data class PromotionsRowUnsaved(
     maxUsesPerCustomerDefault: () -> Uint1?,
     applicableToDefault: () -> AllBrandsCategoriesCSet?,
     rulesJsonDefault: () -> Json?,
-    isActiveDefault: () -> Boolean,
+    isActiveDefault: () -> /* user-picked */ IsActive,
     createdAtDefault: () -> LocalDateTime,
     promotionIdDefault: () -> PromotionsId
   ): PromotionsRow = PromotionsRow(promotionId = promotionIdDefault(), code = code, name = name, description = description.getOrElse(descriptionDefault), discountType = discountType, discountValue = discountValue, minOrderAmount = minOrderAmount.getOrElse(minOrderAmountDefault), maxUses = maxUses.getOrElse(maxUsesDefault), usesCount = usesCount.getOrElse(usesCountDefault), maxUsesPerCustomer = maxUsesPerCustomer.getOrElse(maxUsesPerCustomerDefault), applicableTo = applicableTo.getOrElse(applicableToDefault), rulesJson = rulesJson.getOrElse(rulesJsonDefault), validFrom = validFrom, validTo = validTo, isActive = isActive.getOrElse(isActiveDefault), createdAt = createdAt.getOrElse(createdAtDefault))

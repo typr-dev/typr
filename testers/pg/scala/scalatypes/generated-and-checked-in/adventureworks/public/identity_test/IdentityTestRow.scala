@@ -35,7 +35,7 @@ case class IdentityTestRow(
 }
 
 object IdentityTestRow {
-  val `_rowParser`: RowParser[IdentityTestRow] = RowParsers.of(ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, IdentityTestId.dbType)(IdentityTestRow.apply)(row => Array[Any](row.alwaysGenerated, row.defaultGenerated, row.name))
+  val `_rowParser`: RowParser[IdentityTestRow] = RowParsers.of(ScalaDbTypes.PgTypes.int4, ScalaDbTypes.PgTypes.int4, IdentityTestId.pgType)(IdentityTestRow.apply)(row => Array[Any](row.alwaysGenerated, row.defaultGenerated, row.name))
 
   given pgText: PgText[IdentityTestRow] = PgText.from(`_rowParser`.underlying)
 }

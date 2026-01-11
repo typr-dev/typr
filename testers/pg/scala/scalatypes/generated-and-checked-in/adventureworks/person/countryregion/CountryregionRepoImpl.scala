@@ -21,19 +21,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class CountryregionRepoImpl extends CountryregionRepo {
   override def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(countryregioncode: CountryregionId)(using c: Connection): Boolean = sql"""delete from "person"."countryregion" where "countryregioncode" = ${Fragment.encode(CountryregionId.dbType, countryregioncode)}""".update().runUnchecked(c) > 0
+  override def deleteById(countryregioncode: CountryregionId)(using c: Connection): Boolean = sql"""delete from "person"."countryregion" where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): Int = {
     sql"""delete
     from "person"."countryregion"
-    where "countryregioncode" = ANY(${Fragment.encode(CountryregionId.dbTypeArray, countryregioncodes)})"""
+    where "countryregioncode" = ANY(${Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
   sql"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
-    values (${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "countryregioncode", "name", "modifieddate"
     """
     .updateReturning(CountryregionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -43,9 +43,9 @@ class CountryregionRepoImpl extends CountryregionRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.name)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
       {  },
       value => { columns.addOne(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
@@ -81,13 +81,13 @@ class CountryregionRepoImpl extends CountryregionRepo {
   override def selectById(countryregioncode: CountryregionId)(using c: Connection): Option[CountryregionRow] = {
     sql"""select "countryregioncode", "name", "modifieddate"
     from "person"."countryregion"
-    where "countryregioncode" = ${Fragment.encode(CountryregionId.dbType, countryregioncode)}""".query(CountryregionRow.`_rowParser`.first()).runUnchecked(c)
+    where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".query(CountryregionRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): List[CountryregionRow] = {
     sql"""select "countryregioncode", "name", "modifieddate"
     from "person"."countryregion"
-    where "countryregioncode" = ANY(${Fragment.encode(CountryregionId.dbTypeArray, countryregioncodes)})""".query(CountryregionRow.`_rowParser`.all()).runUnchecked(c)
+    where "countryregioncode" = ANY(${Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes)})""".query(CountryregionRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(countryregioncodes: Array[CountryregionId])(using c: Connection): Map[CountryregionId, CountryregionRow] = {
@@ -101,14 +101,14 @@ class CountryregionRepoImpl extends CountryregionRepo {
   override def update(row: CountryregionRow)(using c: Connection): Boolean = {
     val countryregioncode: CountryregionId = row.countryregioncode
     return sql"""update "person"."countryregion"
-    set "name" = ${Fragment.encode(Name.dbType, row.name)}::varchar,
+    set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "countryregioncode" = ${Fragment.encode(CountryregionId.dbType, countryregioncode)}""".update().runUnchecked(c) > 0
+    where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
   sql"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
-    values (${Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode)}, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("countryregioncode")
     do update set
       "name" = EXCLUDED."name",

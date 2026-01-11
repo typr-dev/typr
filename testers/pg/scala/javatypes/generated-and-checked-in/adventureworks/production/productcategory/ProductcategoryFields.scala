@@ -29,7 +29,7 @@ class ProductcategoryFields(val `_path`: java.util.List[Path]) extends TupleExpr
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(productcategoryid = value),
-      ProductcategoryId.dbType
+      ProductcategoryId.pgType
     )
   }
 
@@ -41,7 +41,7 @@ class ProductcategoryFields(val `_path`: java.util.List[Path]) extends TupleExpr
       Optional.empty(),
       Optional.of("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

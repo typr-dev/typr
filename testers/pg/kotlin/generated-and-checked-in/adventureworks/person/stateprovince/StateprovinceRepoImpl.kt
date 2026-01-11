@@ -29,19 +29,19 @@ class StateprovinceRepoImpl() : StateprovinceRepo {
   override fun deleteById(
     stateprovinceid: StateprovinceId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"stateprovince\" where \"stateprovinceid\" = "), Fragment.encode(StateprovinceId.dbType, stateprovinceid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"stateprovince\" where \"stateprovinceid\" = "), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     stateprovinceids: Array<StateprovinceId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"stateprovince\"\nwhere \"stateprovinceid\" = ANY("), Fragment.encode(StateprovinceId.dbTypeArray, stateprovinceids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"stateprovince\"\nwhere \"stateprovinceid\" = ANY("), Fragment.encode(StateprovinceId.pgTypeArray, stateprovinceids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: StateprovinceRow,
     c: Connection
-  ): StateprovinceRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"stateprovince\"(\"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar, "), Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Flag.dbType, unsaved.isonlystateprovinceflag), Fragment.lit("::bool, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\"\n"))
+  ): StateprovinceRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"stateprovince\"(\"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag), Fragment.lit("::bool, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(StateprovinceRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -53,20 +53,20 @@ class StateprovinceRepoImpl() : StateprovinceRepo {
     columns.add(Fragment.lit("\"stateprovincecode\""))
     values.add(Fragment.interpolate(Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar")))
     columns.add(Fragment.lit("\"countryregioncode\""))
-    values.add(Fragment.interpolate(Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit("")))
     columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     columns.add(Fragment.lit("\"territoryid\""))
-    values.add(Fragment.interpolate(Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid), Fragment.lit("::int4")))
+    values.add(Fragment.interpolate(Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4")))
     unsaved.stateprovinceid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"stateprovinceid\""))
-      values.add(Fragment.interpolate(Fragment.encode(StateprovinceId.dbType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(StateprovinceId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.isonlystateprovinceflag.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"isonlystateprovinceflag\""))
-      values.add(Fragment.interpolate(Fragment.encode(Flag.dbType, value), Fragment.lit("::bool"))) }
+      values.add(Fragment.interpolate(Fragment.encode(Flag.pgType, value), Fragment.lit("::bool"))) }
     );
     unsaved.rowguid.visit(
       {  },
@@ -102,12 +102,12 @@ class StateprovinceRepoImpl() : StateprovinceRepo {
   override fun selectById(
     stateprovinceid: StateprovinceId,
     c: Connection
-  ): StateprovinceRow? = Fragment.interpolate(Fragment.lit("select \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"stateprovince\"\nwhere \"stateprovinceid\" = "), Fragment.encode(StateprovinceId.dbType, stateprovinceid), Fragment.lit("")).query(StateprovinceRow._rowParser.first()).runUnchecked(c)
+  ): StateprovinceRow? = Fragment.interpolate(Fragment.lit("select \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"stateprovince\"\nwhere \"stateprovinceid\" = "), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.lit("")).query(StateprovinceRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     stateprovinceids: Array<StateprovinceId>,
     c: Connection
-  ): List<StateprovinceRow> = Fragment.interpolate(Fragment.lit("select \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"stateprovince\"\nwhere \"stateprovinceid\" = ANY("), Fragment.encode(StateprovinceId.dbTypeArray, stateprovinceids), Fragment.lit(")")).query(StateprovinceRow._rowParser.all()).runUnchecked(c)
+  ): List<StateprovinceRow> = Fragment.interpolate(Fragment.lit("select \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"stateprovince\"\nwhere \"stateprovinceid\" = ANY("), Fragment.encode(StateprovinceId.pgTypeArray, stateprovinceids), Fragment.lit(")")).query(StateprovinceRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     stateprovinceids: Array<StateprovinceId>,
@@ -125,13 +125,13 @@ class StateprovinceRepoImpl() : StateprovinceRepo {
     c: Connection
   ): Boolean {
     val stateprovinceid: StateprovinceId = row.stateprovinceid
-    return Fragment.interpolate(Fragment.lit("update \"person\".\"stateprovince\"\nset \"stateprovincecode\" = "), Fragment.encode(PgTypes.bpchar, row.stateprovincecode), Fragment.lit("::bpchar,\n\"countryregioncode\" = "), Fragment.encode(CountryregionId.dbType, row.countryregioncode), Fragment.lit(",\n\"isonlystateprovinceflag\" = "), Fragment.encode(Flag.dbType, row.isonlystateprovinceflag), Fragment.lit("::bool,\n\"name\" = "), Fragment.encode(Name.dbType, row.name), Fragment.lit("::varchar,\n\"territoryid\" = "), Fragment.encode(SalesterritoryId.dbType, row.territoryid), Fragment.lit("::int4,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"stateprovinceid\" = "), Fragment.encode(StateprovinceId.dbType, stateprovinceid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"person\".\"stateprovince\"\nset \"stateprovincecode\" = "), Fragment.encode(PgTypes.bpchar, row.stateprovincecode), Fragment.lit("::bpchar,\n\"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, row.countryregioncode), Fragment.lit(",\n\"isonlystateprovinceflag\" = "), Fragment.encode(Flag.pgType, row.isonlystateprovinceflag), Fragment.lit("::bool,\n\"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"territoryid\" = "), Fragment.encode(SalesterritoryId.pgType, row.territoryid), Fragment.lit("::int4,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"stateprovinceid\" = "), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: StateprovinceRow,
     c: Connection
-  ): StateprovinceRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"stateprovince\"(\"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(StateprovinceId.dbType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar, "), Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Flag.dbType, unsaved.isonlystateprovinceflag), Fragment.lit("::bool, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"stateprovinceid\")\ndo update set\n  \"stateprovincecode\" = EXCLUDED.\"stateprovincecode\",\n\"countryregioncode\" = EXCLUDED.\"countryregioncode\",\n\"isonlystateprovinceflag\" = EXCLUDED.\"isonlystateprovinceflag\",\n\"name\" = EXCLUDED.\"name\",\n\"territoryid\" = EXCLUDED.\"territoryid\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\""))
+  ): StateprovinceRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"stateprovince\"(\"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag), Fragment.lit("::bool, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"stateprovinceid\")\ndo update set\n  \"stateprovincecode\" = EXCLUDED.\"stateprovincecode\",\n\"countryregioncode\" = EXCLUDED.\"countryregioncode\",\n\"isonlystateprovinceflag\" = EXCLUDED.\"isonlystateprovinceflag\",\n\"name\" = EXCLUDED.\"name\",\n\"territoryid\" = EXCLUDED.\"territoryid\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"stateprovinceid\", \"stateprovincecode\", \"countryregioncode\", \"isonlystateprovinceflag\", \"name\", \"territoryid\", \"rowguid\", \"modifieddate\""))
     .updateReturning(StateprovinceRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

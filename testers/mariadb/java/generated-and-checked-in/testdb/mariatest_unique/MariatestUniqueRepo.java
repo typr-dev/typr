@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.Email;
 
 public interface MariatestUniqueRepo {
   DeleteBuilder<MariatestUniqueFields, MariatestUniqueRow> delete();
@@ -39,7 +40,7 @@ public interface MariatestUniqueRepo {
   Optional<MariatestUniqueRow> selectByUniqueCodeAndCategory(
       String code, String category, Connection c);
 
-  Optional<MariatestUniqueRow> selectByUniqueEmail(String email, Connection c);
+  Optional<MariatestUniqueRow> selectByUniqueEmail(/* user-picked */ Email email, Connection c);
 
   UpdateBuilder<MariatestUniqueFields, MariatestUniqueRow> update();
 

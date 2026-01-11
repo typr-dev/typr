@@ -40,7 +40,7 @@ data class PaddedString10 private constructor(@field:JsonValue val value: String
     val bijection: Bijection<PaddedString10, String> =
       Bijection.of(PaddedString10::value, ::PaddedString10)
 
-    val dbType: MariaType<PaddedString10> =
+    val mariaType: MariaType<PaddedString10> =
       MariaTypes.char_.bimap(::PaddedString10, PaddedString10::value)
 
     fun of(value: String): PaddedString10? = if (value.length <= 10) PaddedString10(String.format("%-10s", value)) else null

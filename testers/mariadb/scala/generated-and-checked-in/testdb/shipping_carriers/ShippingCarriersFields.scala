@@ -12,14 +12,14 @@ import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
 import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
 import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr6
+import testdb.userdefined.IsActive
 
-class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExpr6[ShippingCarriersId, String, String, String, Json, Boolean] with RelationStructure[ShippingCarriersFields, ShippingCarriersRow]  with FieldsBase[ShippingCarriersRow] {
+class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExpr6[ShippingCarriersId, String, String, String, Json, /* user-picked */ IsActive] with RelationStructure[ShippingCarriersFields, ShippingCarriersRow]  with FieldsBase[ShippingCarriersRow] {
   def carrierId: IdField[ShippingCarriersId, ShippingCarriersRow] = {
     new IdField[ShippingCarriersId, ShippingCarriersRow](
       _path,
@@ -28,7 +28,7 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(carrierId = value),
-      ShippingCarriersId.dbType
+      ShippingCarriersId.mariaType
     )
   }
 
@@ -80,15 +80,15 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
     )
   }
 
-  def isActive: Field[Boolean, ShippingCarriersRow] = {
-    new Field[Boolean, ShippingCarriersRow](
+  def isActive: Field[/* user-picked */ IsActive, ShippingCarriersRow] = {
+    new Field[/* user-picked */ IsActive, ShippingCarriersRow](
       _path,
       "is_active",
       _.isActive,
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsActive.mariaType
     )
   }
 
@@ -108,7 +108,7 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
 
   override def `_5`: SqlExpr[Json] = apiConfig
 
-  override def `_6`: SqlExpr[Boolean] = isActive
+  override def `_6`: SqlExpr[/* user-picked */ IsActive] = isActive
 }
 
 object ShippingCarriersFields {

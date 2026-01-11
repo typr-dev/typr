@@ -30,5 +30,5 @@ case class FlaffId(
 }
 
 object FlaffId {
-  val `_rowParser`: RowParser[FlaffId] = RowParsers.of(ShortText.dbType, PgTypes.text, ScalaDbTypes.PgTypes.int4, ShortText.dbType)(FlaffId.apply)(row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier))
+  val `_rowParser`: RowParser[FlaffId] = RowParsers.of(ShortText.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int4, ShortText.pgType)(FlaffId.apply)(row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier))
 }

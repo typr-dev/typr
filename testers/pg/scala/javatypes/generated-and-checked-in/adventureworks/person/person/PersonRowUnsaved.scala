@@ -8,9 +8,10 @@ package adventureworks.person.person
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Xml
@@ -33,9 +34,9 @@ case class PersonRowUnsaved(
   /** First name of the person. */
   firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  middlename: Optional[Name] = Optional.empty(),
+  middlename: Optional[/* user-picked */ MiddleName] = Optional.empty(),
   /** Last name of the person. */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   suffix: Optional[/* max 10 chars */ String] = Optional.empty(),
   /** Additional contact information about the person stored in xml format. */
@@ -81,5 +82,5 @@ case class PersonRowUnsaved(
 }
 
 object PersonRowUnsaved {
-  given pgText: PgText[PersonRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.dbType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.bpchar.text.unsafeEncode(row.persontype, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().text.unsafeEncode(row.title, sb); sb.append(PgText.DELIMETER); FirstName.dbType.text.unsafeEncode(row.firstname, sb); sb.append(PgText.DELIMETER); Name.dbType.opt().text.unsafeEncode(row.middlename, sb); sb.append(PgText.DELIMETER); Name.dbType.text.unsafeEncode(row.lastname, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().text.unsafeEncode(row.suffix, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt().text.unsafeEncode(row.additionalcontactinfo, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt().text.unsafeEncode(row.demographics, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using NameStyle.dbType.text).unsafeEncode(row.namestyle, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.text).unsafeEncode(row.emailpromotion, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[PersonRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.bpchar.text.unsafeEncode(row.persontype, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().text.unsafeEncode(row.title, sb); sb.append(PgText.DELIMETER); FirstName.pgType.text.unsafeEncode(row.firstname, sb); sb.append(PgText.DELIMETER); MiddleName.pgType.opt().text.unsafeEncode(row.middlename, sb); sb.append(PgText.DELIMETER); LastName.pgType.text.unsafeEncode(row.lastname, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt().text.unsafeEncode(row.suffix, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt().text.unsafeEncode(row.additionalcontactinfo, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt().text.unsafeEncode(row.demographics, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using NameStyle.pgType.text).unsafeEncode(row.namestyle, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.text).unsafeEncode(row.emailpromotion, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
 }

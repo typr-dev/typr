@@ -39,7 +39,7 @@ public class DepartmentFields extends TupleExpr4<DepartmentId, Name, Name, Local
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withDepartmentid(value),
-        DepartmentId.dbType);
+        DepartmentId.pgType);
   }
 
   public Field<Name, DepartmentRow> name() {
@@ -50,7 +50,7 @@ public class DepartmentFields extends TupleExpr4<DepartmentId, Name, Name, Local
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<Name, DepartmentRow> groupname() {
@@ -61,7 +61,7 @@ public class DepartmentFields extends TupleExpr4<DepartmentId, Name, Name, Local
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withGroupname(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<LocalDateTime, DepartmentRow> modifieddate() {

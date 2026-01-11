@@ -34,7 +34,7 @@ public class OrdersRepoImpl implements OrdersRepo {
   public Boolean deleteById(OrdersId orderId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `orders` where `order_id` = "),
-                Fragment.encode(OrdersId.dbType, orderId),
+                Fragment.encode(OrdersId.mariaType, orderId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -45,7 +45,7 @@ public class OrdersRepoImpl implements OrdersRepo {
   public Integer deleteByIds(OrdersId[] orderIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : orderIds) {
-      fragments.add(Fragment.encode(OrdersId.dbType, id));
+      fragments.add(Fragment.encode(OrdersId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -68,15 +68,15 @@ public class OrdersRepoImpl implements OrdersRepo {
                     + "values ("),
             Fragment.encode(MariaTypes.varchar, unsaved.orderNumber()),
             Fragment.lit(", "),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.orderStatus()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.paymentStatus()),
             Fragment.lit(", "),
-            Fragment.encode(CustomerAddressesId.dbType.opt(), unsaved.shippingAddressId()),
+            Fragment.encode(CustomerAddressesId.mariaType.opt(), unsaved.shippingAddressId()),
             Fragment.lit(", "),
-            Fragment.encode(CustomerAddressesId.dbType.opt(), unsaved.billingAddressId()),
+            Fragment.encode(CustomerAddressesId.mariaType.opt(), unsaved.billingAddressId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.numeric, unsaved.subtotal()),
             Fragment.lit(", "),
@@ -90,7 +90,7 @@ public class OrdersRepoImpl implements OrdersRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.char_, unsaved.currencyCode()),
             Fragment.lit(", "),
-            Fragment.encode(PromotionsId.dbType.opt(), unsaved.promotionId()),
+            Fragment.encode(PromotionsId.mariaType.opt(), unsaved.promotionId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text.opt(), unsaved.notes()),
             Fragment.lit(", "),
@@ -130,7 +130,8 @@ public class OrdersRepoImpl implements OrdersRepo {
         interpolate(Fragment.encode(MariaTypes.varchar, unsaved.orderNumber()), Fragment.lit("")));
     columns.add(Fragment.lit("`customer_id`"));
     values.add(
-        interpolate(Fragment.encode(CustomersId.dbType, unsaved.customerId()), Fragment.lit("")));
+        interpolate(
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()), Fragment.lit("")));
     columns.add(Fragment.lit("`subtotal`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.numeric, unsaved.subtotal()), Fragment.lit("")));
@@ -163,7 +164,8 @@ public class OrdersRepoImpl implements OrdersRepo {
               columns.add(Fragment.lit("`shipping_address_id`"));
               values.add(
                   interpolate(
-                      Fragment.encode(CustomerAddressesId.dbType.opt(), value), Fragment.lit("")));
+                      Fragment.encode(CustomerAddressesId.mariaType.opt(), value),
+                      Fragment.lit("")));
             });
     ;
     unsaved
@@ -174,7 +176,8 @@ public class OrdersRepoImpl implements OrdersRepo {
               columns.add(Fragment.lit("`billing_address_id`"));
               values.add(
                   interpolate(
-                      Fragment.encode(CustomerAddressesId.dbType.opt(), value), Fragment.lit("")));
+                      Fragment.encode(CustomerAddressesId.mariaType.opt(), value),
+                      Fragment.lit("")));
             });
     ;
     unsaved
@@ -220,7 +223,8 @@ public class OrdersRepoImpl implements OrdersRepo {
             value -> {
               columns.add(Fragment.lit("`promotion_id`"));
               values.add(
-                  interpolate(Fragment.encode(PromotionsId.dbType.opt(), value), Fragment.lit("")));
+                  interpolate(
+                      Fragment.encode(PromotionsId.mariaType.opt(), value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -353,7 +357,7 @@ public class OrdersRepoImpl implements OrdersRepo {
                     + " `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`\n"
                     + "from `orders`\n"
                     + "where `order_id` = "),
-            Fragment.encode(OrdersId.dbType, orderId),
+            Fragment.encode(OrdersId.mariaType, orderId),
             Fragment.lit(""))
         .query(OrdersRow._rowParser.first())
         .runUnchecked(c);
@@ -363,7 +367,7 @@ public class OrdersRepoImpl implements OrdersRepo {
   public List<OrdersRow> selectByIds(OrdersId[] orderIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : orderIds) {
-      fragments.add(Fragment.encode(OrdersId.dbType, id));
+      fragments.add(Fragment.encode(OrdersId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -418,15 +422,15 @@ public class OrdersRepoImpl implements OrdersRepo {
                 Fragment.lit("update `orders`\nset `order_number` = "),
                 Fragment.encode(MariaTypes.varchar, row.orderNumber()),
                 Fragment.lit(",\n`customer_id` = "),
-                Fragment.encode(CustomersId.dbType, row.customerId()),
+                Fragment.encode(CustomersId.mariaType, row.customerId()),
                 Fragment.lit(",\n`order_status` = "),
                 Fragment.encode(MariaTypes.text, row.orderStatus()),
                 Fragment.lit(",\n`payment_status` = "),
                 Fragment.encode(MariaTypes.text, row.paymentStatus()),
                 Fragment.lit(",\n`shipping_address_id` = "),
-                Fragment.encode(CustomerAddressesId.dbType.opt(), row.shippingAddressId()),
+                Fragment.encode(CustomerAddressesId.mariaType.opt(), row.shippingAddressId()),
                 Fragment.lit(",\n`billing_address_id` = "),
-                Fragment.encode(CustomerAddressesId.dbType.opt(), row.billingAddressId()),
+                Fragment.encode(CustomerAddressesId.mariaType.opt(), row.billingAddressId()),
                 Fragment.lit(",\n`subtotal` = "),
                 Fragment.encode(MariaTypes.numeric, row.subtotal()),
                 Fragment.lit(",\n`shipping_cost` = "),
@@ -440,7 +444,7 @@ public class OrdersRepoImpl implements OrdersRepo {
                 Fragment.lit(",\n`currency_code` = "),
                 Fragment.encode(MariaTypes.char_, row.currencyCode()),
                 Fragment.lit(",\n`promotion_id` = "),
-                Fragment.encode(PromotionsId.dbType.opt(), row.promotionId()),
+                Fragment.encode(PromotionsId.mariaType.opt(), row.promotionId()),
                 Fragment.lit(",\n`notes` = "),
                 Fragment.encode(MariaTypes.text.opt(), row.notes()),
                 Fragment.lit(",\n`internal_notes` = "),
@@ -458,7 +462,7 @@ public class OrdersRepoImpl implements OrdersRepo {
                 Fragment.lit(",\n`delivered_at` = "),
                 Fragment.encode(MariaTypes.datetime.opt(), row.deliveredAt()),
                 Fragment.lit("\nwhere `order_id` = "),
-                Fragment.encode(OrdersId.dbType, orderId),
+                Fragment.encode(OrdersId.mariaType, orderId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -475,19 +479,19 @@ public class OrdersRepoImpl implements OrdersRepo {
                     + " `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`,"
                     + " `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`)\n"
                     + "VALUES ("),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.mariaType, unsaved.orderId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.orderNumber()),
             Fragment.lit(", "),
-            Fragment.encode(CustomersId.dbType, unsaved.customerId()),
+            Fragment.encode(CustomersId.mariaType, unsaved.customerId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.orderStatus()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.paymentStatus()),
             Fragment.lit(", "),
-            Fragment.encode(CustomerAddressesId.dbType.opt(), unsaved.shippingAddressId()),
+            Fragment.encode(CustomerAddressesId.mariaType.opt(), unsaved.shippingAddressId()),
             Fragment.lit(", "),
-            Fragment.encode(CustomerAddressesId.dbType.opt(), unsaved.billingAddressId()),
+            Fragment.encode(CustomerAddressesId.mariaType.opt(), unsaved.billingAddressId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.numeric, unsaved.subtotal()),
             Fragment.lit(", "),
@@ -501,7 +505,7 @@ public class OrdersRepoImpl implements OrdersRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.char_, unsaved.currencyCode()),
             Fragment.lit(", "),
-            Fragment.encode(PromotionsId.dbType.opt(), unsaved.promotionId()),
+            Fragment.encode(PromotionsId.mariaType.opt(), unsaved.promotionId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text.opt(), unsaved.notes()),
             Fragment.lit(", "),

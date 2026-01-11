@@ -15,17 +15,20 @@ import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.orders.OrdersId
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
 /** SQL file: customer_orders.sql */
 case class CustomerOrdersSqlRow(
   /** Points to [[testdb.customers.CustomersRow.customerId]] */
   @JsonProperty("customer_id") customerId: CustomersId,
   /** Points to [[testdb.customers.CustomersRow.email]] */
-  email: String,
+  email: /* user-picked */ Email,
   /** Points to [[testdb.customers.CustomersRow.firstName]] */
-  @JsonProperty("first_name") firstName: String,
+  @JsonProperty("first_name") firstName: /* user-picked */ FirstName,
   /** Points to [[testdb.customers.CustomersRow.lastName]] */
-  @JsonProperty("last_name") lastName: String,
+  @JsonProperty("last_name") lastName: /* user-picked */ LastName,
   /** Points to [[testdb.customers.CustomersRow.tier]] */
   tier: String,
   /** Points to [[testdb.orders.OrdersRow.orderId]] */
@@ -38,14 +41,14 @@ case class CustomerOrdersSqlRow(
   @JsonProperty("total_amount") totalAmount: Option[BigDecimal],
   /** Points to [[testdb.orders.OrdersRow.orderedAt]] */
   @JsonProperty("ordered_at") orderedAt: Option[LocalDateTime]
-) extends Tuple10[CustomersId, String, String, String, String, Option[OrdersId], Option[String], Option[String], Option[BigDecimal], Option[LocalDateTime]] {
+) extends Tuple10[CustomersId, /* user-picked */ Email, /* user-picked */ FirstName, /* user-picked */ LastName, String, Option[OrdersId], Option[String], Option[String], Option[BigDecimal], Option[LocalDateTime]] {
   override def `_1`: CustomersId = customerId
 
-  override def `_2`: String = email
+  override def `_2`: /* user-picked */ Email = email
 
-  override def `_3`: String = firstName
+  override def `_3`: /* user-picked */ FirstName = firstName
 
-  override def `_4`: String = lastName
+  override def `_4`: /* user-picked */ LastName = lastName
 
   override def `_5`: String = tier
 
@@ -61,5 +64,5 @@ case class CustomerOrdersSqlRow(
 }
 
 object CustomerOrdersSqlRow {
-  val `_rowParser`: RowParser[CustomerOrdersSqlRow] = RowParsers.of(CustomersId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, OrdersId.dbType.nullable, MariaTypes.varchar.nullable, MariaTypes.text.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.datetime.nullable)(CustomerOrdersSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt))
+  val `_rowParser`: RowParser[CustomerOrdersSqlRow] = RowParsers.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, OrdersId.mariaType.nullable, MariaTypes.varchar.nullable, MariaTypes.text.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.datetime.nullable)(CustomerOrdersSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt))
 }

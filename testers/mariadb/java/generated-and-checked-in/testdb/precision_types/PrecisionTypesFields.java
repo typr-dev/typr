@@ -83,7 +83,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        PrecisionTypesId.dbType);
+        PrecisionTypesId.mariaType);
   }
 
   public Field<String10, PrecisionTypesRow> string10() {
@@ -94,7 +94,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString10(value),
-        String10.dbType);
+        String10.mariaType);
   }
 
   public Field<String20, PrecisionTypesRow> string20() {
@@ -105,7 +105,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString20(value),
-        String20.dbType);
+        String20.mariaType);
   }
 
   public Field<String50, PrecisionTypesRow> string50() {
@@ -116,7 +116,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString50(value),
-        String50.dbType);
+        String50.mariaType);
   }
 
   public Field<String100, PrecisionTypesRow> string100() {
@@ -127,7 +127,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString100(value),
-        String100.dbType);
+        String100.mariaType);
   }
 
   public Field<String255, PrecisionTypesRow> string255() {
@@ -138,7 +138,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withString255(value),
-        String255.dbType);
+        String255.mariaType);
   }
 
   public Field<PaddedString10, PrecisionTypesRow> char10() {
@@ -149,7 +149,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withChar10(value),
-        PaddedString10.dbType);
+        PaddedString10.mariaType);
   }
 
   public Field<Decimal5_2, PrecisionTypesRow> decimal52() {
@@ -160,7 +160,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withDecimal52(value),
-        Decimal5_2.dbType);
+        Decimal5_2.mariaType);
   }
 
   public Field<Decimal10_2, PrecisionTypesRow> decimal102() {
@@ -171,7 +171,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withDecimal102(value),
-        Decimal10_2.dbType);
+        Decimal10_2.mariaType);
   }
 
   public Field<Decimal18_4, PrecisionTypesRow> decimal184() {
@@ -182,7 +182,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withDecimal184(value),
-        Decimal18_4.dbType);
+        Decimal18_4.mariaType);
   }
 
   public Field<Decimal8_2, PrecisionTypesRow> numeric82() {
@@ -193,7 +193,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withNumeric82(value),
-        Decimal8_2.dbType);
+        Decimal8_2.mariaType);
   }
 
   public Field<Decimal12_4, PrecisionTypesRow> numeric124() {
@@ -204,7 +204,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withNumeric124(value),
-        Decimal12_4.dbType);
+        Decimal12_4.mariaType);
   }
 
   public Field<Binary16, PrecisionTypesRow> binary16() {
@@ -215,7 +215,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withBinary16(value),
-        Binary16.dbType);
+        Binary16.mariaType);
   }
 
   public Field<Binary32, PrecisionTypesRow> binary32() {
@@ -226,7 +226,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withBinary32(value),
-        Binary32.dbType);
+        Binary32.mariaType);
   }
 
   public Field<Binary64, PrecisionTypesRow> binary64() {
@@ -237,7 +237,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withBinary64(value),
-        Binary64.dbType);
+        Binary64.mariaType);
   }
 
   public Field<LocalTime, PrecisionTypesRow> time0() {
@@ -259,7 +259,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTime3(value),
-        LocalTime3.dbType);
+        LocalTime3.mariaType);
   }
 
   public Field<LocalTime6, PrecisionTypesRow> time6() {
@@ -270,7 +270,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTime6(value),
-        LocalTime6.dbType);
+        LocalTime6.mariaType);
   }
 
   public Field<LocalDateTime, PrecisionTypesRow> datetime0() {
@@ -292,7 +292,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withDatetime3(value),
-        LocalDateTime3.dbType);
+        LocalDateTime3.mariaType);
   }
 
   public Field<LocalDateTime6, PrecisionTypesRow> datetime6() {
@@ -303,7 +303,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withDatetime6(value),
-        LocalDateTime6.dbType);
+        LocalDateTime6.mariaType);
   }
 
   public Field<LocalDateTime, PrecisionTypesRow> ts0() {
@@ -325,7 +325,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTs3(value),
-        LocalDateTime3.dbType);
+        LocalDateTime3.mariaType);
   }
 
   public Field<LocalDateTime6, PrecisionTypesRow> ts6() {
@@ -336,7 +336,7 @@ public class PrecisionTypesFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTs6(value),
-        LocalDateTime6.dbType);
+        LocalDateTime6.mariaType);
   }
 
   @Override

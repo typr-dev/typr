@@ -5,6 +5,9 @@ import dev.typr.foundations.data.maria.Inet6
 import org.junit.Assert.*
 import org.junit.Test
 import testdb.customer_status.CustomerStatusId
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 import java.time.Year
 import java.util.Random
 
@@ -100,10 +103,10 @@ class TestInsertTest {
 
             // Now create a customer - requires password_hash
             val customer = testInsert.Customers(
-                email = "test_${Random().nextInt(10000)}@example.com",
+                email = Email("test_${Random().nextInt(10000)}@example.com"),
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "John",
-                lastName = "Doe",
+                firstName = FirstName("John"),
+                lastName = LastName("Doe"),
                 c = c
             )
 
@@ -123,10 +126,10 @@ class TestInsertTest {
                 c = c
             )
             val customer = testInsert.Customers(
-                email = "order_${Random().nextInt(10000)}@example.com",
+                email = Email("order_${Random().nextInt(10000)}@example.com"),
                 passwordHash = byteArrayOf(1, 2, 3),
-                firstName = "Jane",
-                lastName = "Smith",
+                firstName = FirstName("Jane"),
+                lastName = LastName("Smith"),
                 c = c
             )
 
@@ -150,7 +153,7 @@ class TestInsertTest {
         MariaDbTestHelper.run { c ->
             val uniqueId = Random().nextInt(100000)
             val row = testInsert.MariatestUnique(
-                email = "unique_$uniqueId@example.com",
+                email = Email("unique_$uniqueId@example.com"),
                 code = "CODE$uniqueId",
                 category = "CAT$uniqueId",
                 c = c

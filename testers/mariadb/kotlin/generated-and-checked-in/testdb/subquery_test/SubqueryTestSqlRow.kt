@@ -14,25 +14,27 @@ import dev.typr.foundations.kotlin.RowParsers
 import dev.typr.foundations.kotlin.nullable
 import java.math.BigDecimal
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
 
 /** SQL file: subquery_test.sql */
 data class SubqueryTestSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.email] */
-  val email: String,
+  val email: /* user-picked */ Email,
   /** Points to [testdb.customers.CustomersRow.firstName] */
-  @field:JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("first_name") val firstName: /* user-picked */ FirstName,
   @field:JsonProperty("order_count") val orderCount: Long,
   @field:JsonProperty("total_spent") val totalSpent: BigDecimal,
   /** Points to [testdb.brands.BrandsRow.name] */
   @field:JsonProperty("favorite_brand") val favoriteBrand: String?
-) : Tuple6<CustomersId, String, String, Long, BigDecimal, String?> {
+) : Tuple6<CustomersId, /* user-picked */ Email, /* user-picked */ FirstName, Long, BigDecimal, String?> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = email
+  override fun _2(): /* user-picked */ Email = email
 
-  override fun _3(): String = firstName
+  override fun _3(): /* user-picked */ FirstName = firstName
 
   override fun _4(): Long = orderCount
 
@@ -41,6 +43,6 @@ data class SubqueryTestSqlRow(
   override fun _6(): String? = favoriteBrand
 
   companion object {
-    val _rowParser: RowParser<SubqueryTestSqlRow> = RowParsers.of(CustomersId.dbType, MariaTypes.varchar, MariaTypes.varchar, KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5 -> SubqueryTestSqlRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand) })
+    val _rowParser: RowParser<SubqueryTestSqlRow> = RowParsers.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5 -> SubqueryTestSqlRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand) })
   }
 }

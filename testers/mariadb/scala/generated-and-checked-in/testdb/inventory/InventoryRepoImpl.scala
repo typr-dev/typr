@@ -22,17 +22,17 @@ import dev.typr.foundations.scala.Fragment.sql
 class InventoryRepoImpl extends InventoryRepo {
   override def delete: DeleteBuilder[InventoryFields, InventoryRow] = DeleteBuilder.of("`inventory`", InventoryFields.structure, Dialect.MARIADB)
 
-  override def deleteById(inventoryId: InventoryId)(using c: Connection): Boolean = sql"delete from `inventory` where `inventory_id` = ${Fragment.encode(InventoryId.dbType, inventoryId)}".update().runUnchecked(c) > 0
+  override def deleteById(inventoryId: InventoryId)(using c: Connection): Boolean = sql"delete from `inventory` where `inventory_id` = ${Fragment.encode(InventoryId.mariaType, inventoryId)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(inventoryIds: Array[InventoryId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    inventoryIds.foreach { id => fragments.addOne(Fragment.encode(InventoryId.dbType, id)): @scala.annotation.nowarn }
+    inventoryIds.foreach { id => fragments.addOne(Fragment.encode(InventoryId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `inventory` where `inventory_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: InventoryRow)(using c: Connection): InventoryRow = {
   sql"""insert into `inventory`(`product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)
-    values (${Fragment.encode(ProductsId.dbType, unsaved.productId)}, ${Fragment.encode(WarehousesId.dbType, unsaved.warehouseId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnHand)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityReserved)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderPoint)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderQuantity)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.binLocation)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.lastCountedAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)})
+    values (${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnHand)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityReserved)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderPoint)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderQuantity)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.binLocation)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.lastCountedAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)})
     RETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`
     """
     .updateReturning(InventoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -42,9 +42,9 @@ class InventoryRepoImpl extends InventoryRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit("`product_id`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ProductsId.dbType, unsaved.productId)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(ProductsId.mariaType, unsaved.productId)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`warehouse_id`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(WarehousesId.dbType, unsaved.warehouseId)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId)}"): @scala.annotation.nowarn
     unsaved.quantityOnHand.visit(
       {  },
       value => { columns.addOne(Fragment.lit("`quantity_on_hand`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.int_, value)}"): @scala.annotation.nowarn }
@@ -97,12 +97,12 @@ class InventoryRepoImpl extends InventoryRepo {
   override def selectById(inventoryId: InventoryId)(using c: Connection): Option[InventoryRow] = {
     sql"""select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`
     from `inventory`
-    where `inventory_id` = ${Fragment.encode(InventoryId.dbType, inventoryId)}""".query(InventoryRow.`_rowParser`.first()).runUnchecked(c)
+    where `inventory_id` = ${Fragment.encode(InventoryId.mariaType, inventoryId)}""".query(InventoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(inventoryIds: Array[InventoryId])(using c: Connection): List[InventoryRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    inventoryIds.foreach { id => fragments.addOne(Fragment.encode(InventoryId.dbType, id)): @scala.annotation.nowarn }
+    inventoryIds.foreach { id => fragments.addOne(Fragment.encode(InventoryId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at` from `inventory` where `inventory_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(InventoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -118,7 +118,7 @@ class InventoryRepoImpl extends InventoryRepo {
   )(using c: Connection): Option[InventoryRow] = {
     sql"""select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`
     from `inventory`
-    where `product_id` = ${Fragment.encode(ProductsId.dbType, productId)} AND `warehouse_id` = ${Fragment.encode(WarehousesId.dbType, warehouseId)}
+    where `product_id` = ${Fragment.encode(ProductsId.mariaType, productId)} AND `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType, warehouseId)}
     """.query(InventoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
@@ -127,8 +127,8 @@ class InventoryRepoImpl extends InventoryRepo {
   override def update(row: InventoryRow)(using c: Connection): Boolean = {
     val inventoryId: InventoryId = row.inventoryId
     return sql"""update `inventory`
-    set `product_id` = ${Fragment.encode(ProductsId.dbType, row.productId)},
-    `warehouse_id` = ${Fragment.encode(WarehousesId.dbType, row.warehouseId)},
+    set `product_id` = ${Fragment.encode(ProductsId.mariaType, row.productId)},
+    `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType, row.warehouseId)},
     `quantity_on_hand` = ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, row.quantityOnHand)},
     `quantity_reserved` = ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, row.quantityReserved)},
     `quantity_on_order` = ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, row.quantityOnOrder)},
@@ -137,12 +137,12 @@ class InventoryRepoImpl extends InventoryRepo {
     `bin_location` = ${Fragment.encode(MariaTypes.varchar.nullable, row.binLocation)},
     `last_counted_at` = ${Fragment.encode(MariaTypes.datetime.nullable, row.lastCountedAt)},
     `updated_at` = ${Fragment.encode(MariaTypes.datetime, row.updatedAt)}
-    where `inventory_id` = ${Fragment.encode(InventoryId.dbType, inventoryId)}""".update().runUnchecked(c) > 0
+    where `inventory_id` = ${Fragment.encode(InventoryId.mariaType, inventoryId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: InventoryRow)(using c: Connection): InventoryRow = {
   sql"""INSERT INTO `inventory`(`inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)
-    VALUES (${Fragment.encode(InventoryId.dbType, unsaved.inventoryId)}, ${Fragment.encode(ProductsId.dbType, unsaved.productId)}, ${Fragment.encode(WarehousesId.dbType, unsaved.warehouseId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnHand)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityReserved)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderPoint)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderQuantity)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.binLocation)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.lastCountedAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)})
+    VALUES (${Fragment.encode(InventoryId.mariaType, unsaved.inventoryId)}, ${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnHand)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityReserved)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.quantityOnOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderPoint)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.int_, unsaved.reorderQuantity)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.binLocation)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.lastCountedAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)})
     ON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),
     `warehouse_id` = VALUES(`warehouse_id`),
     `quantity_on_hand` = VALUES(`quantity_on_hand`),

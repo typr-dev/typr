@@ -8,7 +8,8 @@ package adventureworks.humanresources.employee;
 import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.person.person.PersonFields;
 import adventureworks.person.person.PersonRow;
-import adventureworks.public_.Flag;
+import adventureworks.userdefined.CurrentFlag;
+import adventureworks.userdefined.SalariedFlag;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.RowParser;
 import dev.typr.foundations.dsl.FieldsBase;
@@ -36,11 +37,11 @@ public class EmployeeFields
         LocalDate,
         String,
         String,
-        LocalDate,
-        Flag,
+        LocalDate, /* user-picked */
+        SalariedFlag,
         Short,
-        Short,
-        Flag,
+        Short, /* user-picked */
+        CurrentFlag,
         UUID,
         LocalDateTime,
         String>
@@ -61,7 +62,7 @@ public class EmployeeFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public Field<String, EmployeeRow> nationalidnumber() {
@@ -141,15 +142,15 @@ public class EmployeeFields
         PgTypes.date);
   }
 
-  public Field<Flag, EmployeeRow> salariedflag() {
-    return new Field<Flag, EmployeeRow>(
+  public Field</* user-picked */ SalariedFlag, EmployeeRow> salariedflag() {
+    return new Field</* user-picked */ SalariedFlag, EmployeeRow>(
         _path,
         "salariedflag",
         EmployeeRow::salariedflag,
         Optional.empty(),
         Optional.of("bool"),
         (row, value) -> row.withSalariedflag(value),
-        Flag.dbType);
+        SalariedFlag.pgType);
   }
 
   public Field<Short, EmployeeRow> vacationhours() {
@@ -174,15 +175,15 @@ public class EmployeeFields
         PgTypes.int2);
   }
 
-  public Field<Flag, EmployeeRow> currentflag() {
-    return new Field<Flag, EmployeeRow>(
+  public Field</* user-picked */ CurrentFlag, EmployeeRow> currentflag() {
+    return new Field</* user-picked */ CurrentFlag, EmployeeRow>(
         _path,
         "currentflag",
         EmployeeRow::currentflag,
         Optional.empty(),
         Optional.of("bool"),
         (row, value) -> row.withCurrentflag(value),
-        Flag.dbType);
+        CurrentFlag.pgType);
   }
 
   public Field<UUID, EmployeeRow> rowguid() {
@@ -300,7 +301,7 @@ public class EmployeeFields
   }
 
   @Override
-  public SqlExpr<Flag> _9() {
+  public SqlExpr</* user-picked */ SalariedFlag> _9() {
     return salariedflag();
   }
 
@@ -315,7 +316,7 @@ public class EmployeeFields
   }
 
   @Override
-  public SqlExpr<Flag> _12() {
+  public SqlExpr</* user-picked */ CurrentFlag> _12() {
     return currentflag();
   }
 

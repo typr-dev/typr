@@ -41,8 +41,8 @@ public record TitledpersonRow(
 
   public static RowParser<TitledpersonRow> _rowParser =
       RowParsers.of(
-          TitleDomainId.dbType,
-          TitleId.dbType,
+          TitleDomainId.pgType,
+          TitleId.pgType,
           PgTypes.text,
           TitledpersonRow::new,
           row -> new Object[] {row.titleShort(), row.title(), row.name()});

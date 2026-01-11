@@ -16,7 +16,7 @@ case class IdentityTestId(@JsonValue value: String) extends scala.AnyVal
 object IdentityTestId {
   given bijection: Bijection[IdentityTestId, String] = Bijection.apply[IdentityTestId, String](_.value)(IdentityTestId.apply)
 
-  given dbType: PgType[IdentityTestId] = PgTypes.text.bimap(IdentityTestId.apply, _.value)
+  given pgType: PgType[IdentityTestId] = PgTypes.text.bimap(IdentityTestId.apply, _.value)
 
-  given dbTypeArray: PgType[Array[IdentityTestId]] = PgTypes.textArray.bimap(xs => xs.map(IdentityTestId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[Array[IdentityTestId]] = PgTypes.textArray.bimap(xs => xs.map(IdentityTestId.apply), xs => xs.map(_.value))
 }

@@ -16,5 +16,5 @@ case class PrecisionTypesId(@JsonValue value: Int) extends scala.AnyVal
 object PrecisionTypesId {
   given bijection: Bijection[PrecisionTypesId, Int] = Bijection.apply[PrecisionTypesId, Int](_.value)(PrecisionTypesId.apply)
 
-  given dbType: MariaType[PrecisionTypesId] = ScalaDbTypes.MariaTypes.int_.bimap(PrecisionTypesId.apply, _.value)
+  given mariaType: MariaType[PrecisionTypesId] = ScalaDbTypes.MariaTypes.int_.bimap(PrecisionTypesId.apply, _.value)
 }

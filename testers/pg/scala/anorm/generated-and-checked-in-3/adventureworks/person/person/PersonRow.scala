@@ -11,9 +11,10 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import anorm.Column
 import anorm.RowParser
 import anorm.Success
@@ -48,9 +49,9 @@ case class PersonRow(
   /** First name of the person. */
   firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  middlename: Option[Name],
+  middlename: Option[/* user-picked */ MiddleName],
   /** Last name of the person. */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   suffix: Option[/* max 10 chars */ String],
   /** 0 = Contact does not wish to receive e-mail promotions, 1 = Contact does wish to receive e-mail promotions from AdventureWorks, 2 = Contact does wish to receive e-mail promotions from AdventureWorks and selected partners.
@@ -106,9 +107,9 @@ object PersonRow {
       sb.append(Text.DELIMETER)
       /* user-picked */ FirstName.pgText.unsafeEncode(row.firstname, sb)
       sb.append(Text.DELIMETER)
-      Text.option(using Name.pgText).unsafeEncode(row.middlename, sb)
+      Text.option(using MiddleName.pgText).unsafeEncode(row.middlename, sb)
       sb.append(Text.DELIMETER)
-      Name.pgText.unsafeEncode(row.lastname, sb)
+      /* user-picked */ LastName.pgText.unsafeEncode(row.lastname, sb)
       sb.append(Text.DELIMETER)
       Text.option(using Text.stringInstance).unsafeEncode(row.suffix, sb)
       sb.append(Text.DELIMETER)
@@ -133,8 +134,8 @@ object PersonRow {
             namestyle = json.\("namestyle").as(using NameStyle.reads),
             title = json.\("title").toOption.map(_.as(using Reads.StringReads)),
             firstname = json.\("firstname").as(using FirstName.reads),
-            middlename = json.\("middlename").toOption.map(_.as(using Name.reads)),
-            lastname = json.\("lastname").as(using Name.reads),
+            middlename = json.\("middlename").toOption.map(_.as(using MiddleName.reads)),
+            lastname = json.\("lastname").as(using LastName.reads),
             suffix = json.\("suffix").toOption.map(_.as(using Reads.StringReads)),
             emailpromotion = json.\("emailpromotion").as(using Reads.IntReads),
             additionalcontactinfo = json.\("additionalcontactinfo").toOption.map(_.as(using TypoXml.reads)),
@@ -156,8 +157,8 @@ object PersonRow {
           namestyle = row(idx + 2)(using NameStyle.column),
           title = row(idx + 3)(using Column.columnToOption(using Column.columnToString)),
           firstname = row(idx + 4)(using /* user-picked */ FirstName.column),
-          middlename = row(idx + 5)(using Column.columnToOption(using Name.column)),
-          lastname = row(idx + 6)(using Name.column),
+          middlename = row(idx + 5)(using Column.columnToOption(using MiddleName.column)),
+          lastname = row(idx + 6)(using /* user-picked */ LastName.column),
           suffix = row(idx + 7)(using Column.columnToOption(using Column.columnToString)),
           emailpromotion = row(idx + 8)(using Column.columnToInt),
           additionalcontactinfo = row(idx + 9)(using Column.columnToOption(using TypoXml.column)),
@@ -177,8 +178,8 @@ object PersonRow {
         "namestyle" -> NameStyle.writes.writes(o.namestyle),
         "title" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.title),
         "firstname" -> FirstName.writes.writes(o.firstname),
-        "middlename" -> Writes.OptionWrites(using Name.writes).writes(o.middlename),
-        "lastname" -> Name.writes.writes(o.lastname),
+        "middlename" -> Writes.OptionWrites(using MiddleName.writes).writes(o.middlename),
+        "lastname" -> LastName.writes.writes(o.lastname),
         "suffix" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.suffix),
         "emailpromotion" -> Writes.IntWrites.writes(o.emailpromotion),
         "additionalcontactinfo" -> Writes.OptionWrites(using TypoXml.writes).writes(o.additionalcontactinfo),

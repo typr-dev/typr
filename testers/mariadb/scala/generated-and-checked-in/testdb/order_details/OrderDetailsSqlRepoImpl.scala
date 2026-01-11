@@ -32,7 +32,7 @@ class OrderDetailsSqlRepoImpl extends OrderDetailsSqlRepo {
            oi.line_total
     FROM orders o
     JOIN order_items oi ON o.order_id = oi.order_id
-    WHERE o.order_id = ${Fragment.encode(OrdersId.dbType, orderId)}
+    WHERE o.order_id = ${Fragment.encode(OrdersId.mariaType, orderId)}
     """.query(OrderDetailsSqlRow.`_rowParser`.all()).runUnchecked(c)
   }
 }

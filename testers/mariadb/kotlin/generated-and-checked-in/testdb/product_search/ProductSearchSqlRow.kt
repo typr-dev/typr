@@ -47,6 +47,6 @@ data class ProductSearchSqlRow(
   override fun _7(): String? = brandName
 
   companion object {
-    val _rowParser: RowParser<ProductSearchSqlRow> = RowParsers.of(ProductsId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> ProductSearchSqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName) })
+    val _rowParser: RowParser<ProductSearchSqlRow> = RowParsers.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> ProductSearchSqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName) })
   }
 }

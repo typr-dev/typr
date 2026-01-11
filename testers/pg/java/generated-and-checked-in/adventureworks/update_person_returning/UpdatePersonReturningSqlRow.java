@@ -33,7 +33,7 @@ public record UpdatePersonReturningSqlRow(
 
   public static RowParser<UpdatePersonReturningSqlRow> _rowParser =
       RowParsers.of(
-          FirstName.dbType,
+          FirstName.pgType,
           PgTypes.timestamp,
           UpdatePersonReturningSqlRow::new,
           row -> new Object[] {row.firstname(), row.modifieddate()});

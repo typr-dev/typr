@@ -20,12 +20,12 @@ sealed abstract class TitleDomainId(val value: ShortText)
 object TitleDomainId {
   def apply(underlying: ShortText): TitleDomainId =
     ByName.getOrElse(underlying, Unknown(underlying))
-  given dbTypeArray: PgType[Array[TitleDomainId]] = {
-    ShortText.dbTypeArray
+  given pgTypeArray: PgType[Array[TitleDomainId]] = {
+    ShortText.pgTypeArray
       .bimap(xs => xs.map(TitleDomainId.apply), xs => xs.map(_.value))
   }
 
-  given dbType: PgType[TitleDomainId] = ShortText.dbType.bimap(TitleDomainId.apply, _.value)
+  given pgType: PgType[TitleDomainId] = ShortText.pgType.bimap(TitleDomainId.apply, _.value)
 
   def shortText(value: String): TitleDomainId = apply(new ShortText(value))
 

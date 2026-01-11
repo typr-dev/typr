@@ -36,7 +36,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 
@@ -48,7 +48,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("int4"),
       (row, value) => row.copy(territoryid = value),
-      SalesterritoryId.dbType
+      SalesterritoryId.pgType
     )
   }
 

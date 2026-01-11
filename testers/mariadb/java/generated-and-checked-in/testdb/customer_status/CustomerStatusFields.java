@@ -17,8 +17,10 @@ import dev.typr.foundations.dsl.SqlExpr.IdField;
 import dev.typr.foundations.dsl.TupleExpr.TupleExpr3;
 import java.util.List;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 
-public class CustomerStatusFields extends TupleExpr3<CustomerStatusId, String, Boolean>
+public class CustomerStatusFields
+    extends TupleExpr3<CustomerStatusId, String, /* user-picked */ IsActive>
     implements RelationStructure<CustomerStatusFields, CustomerStatusRow>,
         FieldsBase<CustomerStatusRow> {
   List<Path> _path;
@@ -38,7 +40,7 @@ public class CustomerStatusFields extends TupleExpr3<CustomerStatusId, String, B
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withStatusCode(value),
-        CustomerStatusId.dbType);
+        CustomerStatusId.mariaType);
   }
 
   public Field<String, CustomerStatusRow> description() {
@@ -52,15 +54,15 @@ public class CustomerStatusFields extends TupleExpr3<CustomerStatusId, String, B
         MariaTypes.varchar);
   }
 
-  public Field<Boolean, CustomerStatusRow> isActive() {
-    return new Field<Boolean, CustomerStatusRow>(
+  public Field</* user-picked */ IsActive, CustomerStatusRow> isActive() {
+    return new Field</* user-picked */ IsActive, CustomerStatusRow>(
         _path,
         "is_active",
         CustomerStatusRow::isActive,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsActive(value),
-        MariaTypes.bool);
+        IsActive.mariaType);
   }
 
   @Override
@@ -94,7 +96,7 @@ public class CustomerStatusFields extends TupleExpr3<CustomerStatusId, String, B
   }
 
   @Override
-  public SqlExpr<Boolean> _3() {
+  public SqlExpr</* user-picked */ IsActive> _3() {
     return isActive();
   }
 }

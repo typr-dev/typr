@@ -47,5 +47,5 @@ case class ProductSearchSqlRow(
 }
 
 object ProductSearchSqlRow {
-  val `_rowParser`: RowParser[ProductSearchSqlRow] = RowParsers.of(ProductsId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable)(ProductSearchSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName))
+  val `_rowParser`: RowParser[ProductSearchSqlRow] = RowParsers.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable)(ProductSearchSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName))
 }

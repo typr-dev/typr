@@ -32,7 +32,7 @@ public record LocalTime6(@JsonValue LocalTime value) implements LocalTimeN {
   public static Bijection<LocalTime6, LocalTime> bijection =
       Bijection.of(LocalTime6::value, LocalTime6::new);
 
-  public static MariaType<LocalTime6> dbType =
+  public static MariaType<LocalTime6> mariaType =
       MariaTypes.time.bimap(LocalTime6::new, LocalTime6::value);
 
   public static LocalTime6 now() {

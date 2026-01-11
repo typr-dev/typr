@@ -31,7 +31,7 @@ class OrdersRepoImpl() : OrdersRepo {
   override fun deleteByIds(
     orderIds: Array<OrdersId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"orders\"\nwhere \"order_id\" = ANY("), Fragment.encode(OrdersId.dbTypeArray, orderIds), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"orders\"\nwhere \"order_id\" = ANY("), Fragment.encode(OrdersId.duckDbTypeArray, orderIds), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
@@ -79,7 +79,7 @@ class OrdersRepoImpl() : OrdersRepo {
   override fun selectByIds(
     orderIds: Array<OrdersId>,
     c: Connection
-  ): List<OrdersRow> = Fragment.interpolate(Fragment.lit("select \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"orders\"\nwhere \"order_id\" = ANY("), Fragment.encode(OrdersId.dbTypeArray, orderIds), Fragment.lit(")")).query(OrdersRow._rowParser.all()).runUnchecked(c)
+  ): List<OrdersRow> = Fragment.interpolate(Fragment.lit("select \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"orders\"\nwhere \"order_id\" = ANY("), Fragment.encode(OrdersId.duckDbTypeArray, orderIds), Fragment.lit(")")).query(OrdersRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     orderIds: Array<OrdersId>,

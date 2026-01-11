@@ -766,7 +766,7 @@ public record Db2testRow(
   public static RowParser<Db2testRow> _rowParser =
       RowParsers.of(
           Db2Types.smallint,
-          Db2testId.dbType,
+          Db2testId.db2Type,
           Db2Types.bigint,
           Db2Types.decimal,
           Db2Types.decimal,

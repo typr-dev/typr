@@ -40,7 +40,7 @@ public class AddresstypeFields extends TupleExpr4<AddresstypeId, Name, UUID, Loc
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withAddresstypeid(value),
-        AddresstypeId.dbType);
+        AddresstypeId.pgType);
   }
 
   public Field<Name, AddresstypeRow> name() {
@@ -51,7 +51,7 @@ public class AddresstypeFields extends TupleExpr4<AddresstypeId, Name, UUID, Loc
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<UUID, AddresstypeRow> rowguid() {

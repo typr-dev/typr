@@ -21,6 +21,7 @@ object ComputedTestInserts {
       domains: List[ComputedDomain],
       enums: List[ComputedStringEnum],
       mariaSets: List[ComputedMariaSet],
+      sharedTypes: List[ComputedSharedType],
       allTablesByName: Map[db.RelationName, ComputedTable],
       // project data
       tables: Iterable[ComputedTable]
@@ -33,6 +34,9 @@ object ComputedTestInserts {
 
     val openEnumsByType: Map[jvm.Type, OpenEnum] =
       tables.flatMap { table => table.maybeId.collect { case x: IdComputed.UnaryOpenEnum => (x.tpe, x.openEnum) } }.toMap
+
+    val sharedTypesByType: Map[jvm.Type, ComputedSharedType] =
+      sharedTypes.iterator.map(x => (x.tpe: jvm.Type) -> x).toMap
 
     val maybeDomainMethods: Option[GenerateDomainMethods] =
       GenerateDomainMethod
@@ -350,6 +354,12 @@ object ComputedTestInserts {
                 Some(code"$tpe.of(listOf($memberEnumType.$firstMember))")
               case other =>
                 sys.error(s"Unexpected language: $other")
+            }
+          case tpe if sharedTypesByType.contains(tpe) =>
+            // Shared types wrap an underlying type
+            val shared = sharedTypesByType(tpe)
+            go(shared.underlyingJvmType, shared.underlyingDbType, None).map { default =>
+              jvm.New(shared.tpe, List(jvm.Arg.Pos(default))).code
             }
           case _ =>
             None

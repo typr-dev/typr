@@ -240,13 +240,13 @@ public record VProductCatalogViewRow(
 
   public static RowParser<VProductCatalogViewRow> _rowParser =
       RowParsers.of(
-          ProductsId.dbType,
+          ProductsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.varchar.opt(),
           MariaTypes.numeric,
           MariaTypes.text,
-          BestsellerClearanceFSet.dbType.opt(),
+          BestsellerClearanceFSet.mariaType.opt(),
           MariaTypes.varchar.opt(),
           MariaTypes.numeric,
           MariaTypes.numeric,

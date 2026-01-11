@@ -32,7 +32,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
   public Boolean deleteById(Db2testIdentityDefaultId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"DB2TEST_IDENTITY_DEFAULT\" where \"ID\" = "),
-                Fragment.encode(Db2testIdentityDefaultId.dbType, id),
+                Fragment.encode(Db2testIdentityDefaultId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +43,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
   public Integer deleteByIds(Db2testIdentityDefaultId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(Db2testIdentityDefaultId.dbType, id));
+      fragments.add(Fragment.encode(Db2testIdentityDefaultId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -61,7 +61,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
                 "SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO"
                     + " \"DB2TEST_IDENTITY_DEFAULT\"(\"ID\", \"NAME\")\n"
                     + "VALUES ("),
-            Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id()),
+            Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.name()),
             Fragment.lit("))\n"))
@@ -85,7 +85,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
               columns.add(Fragment.lit("\"ID\""));
               values.add(
                   interpolate(
-                      Fragment.encode(Db2testIdentityDefaultId.dbType, value), Fragment.lit("")));
+                      Fragment.encode(Db2testIdentityDefaultId.db2Type, value), Fragment.lit("")));
             });
     ;
     Fragment q =
@@ -122,7 +122,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
     return interpolate(
             Fragment.lit(
                 "select \"ID\", \"NAME\"\nfrom \"DB2TEST_IDENTITY_DEFAULT\"\nwhere \"ID\" = "),
-            Fragment.encode(Db2testIdentityDefaultId.dbType, id),
+            Fragment.encode(Db2testIdentityDefaultId.db2Type, id),
             Fragment.lit(""))
         .query(Db2testIdentityDefaultRow._rowParser.first())
         .runUnchecked(c);
@@ -132,7 +132,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
   public List<Db2testIdentityDefaultRow> selectByIds(Db2testIdentityDefaultId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(Db2testIdentityDefaultId.dbType, id));
+      fragments.add(Fragment.encode(Db2testIdentityDefaultId.db2Type, id));
     }
     ;
     return Fragment.interpolate(
@@ -170,7 +170,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
                 Fragment.lit("update \"DB2TEST_IDENTITY_DEFAULT\"\nset \"NAME\" = "),
                 Fragment.encode(Db2Types.varchar, row.name()),
                 Fragment.lit("\nwhere \"ID\" = "),
-                Fragment.encode(Db2testIdentityDefaultId.dbType, id),
+                Fragment.encode(Db2testIdentityDefaultId.db2Type, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -181,7 +181,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
   public void upsert(Db2testIdentityDefaultRow unsaved, Connection c) {
     interpolate(
             Fragment.lit("MERGE INTO \"DB2TEST_IDENTITY_DEFAULT\" AS t\nUSING (VALUES ("),
-            Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id()),
+            Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.name()),
             Fragment.lit(
@@ -189,7 +189,7 @@ public class Db2testIdentityDefaultRepoImpl implements Db2testIdentityDefaultRep
                     + "ON t.\"ID\" = s.\"ID\"\n"
                     + "WHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\n"
                     + "WHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("),
-            Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id()),
+            Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(Db2Types.varchar, unsaved.name()),
             Fragment.lit(")"))

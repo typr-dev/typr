@@ -13,6 +13,7 @@ import dev.typr.foundations.Tuple.Tuple4;
 import testdb.categories.CategoriesId;
 import testdb.customtypes.Defaulted;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsPrimary;
 
 /** Table: product_categories Composite primary key: product_id, category_id */
 public record ProductCategoriesRow(
@@ -21,10 +22,10 @@ public record ProductCategoriesRow(
     /** Points to {@link testdb.categories.CategoriesRow#categoryId()} */
     @JsonProperty("category_id") CategoriesId categoryId,
     /** Default: 0 */
-    @JsonProperty("is_primary") Boolean isPrimary,
+    @JsonProperty("is_primary") /* user-picked */ IsPrimary isPrimary,
     /** Default: 0 */
     @JsonProperty("sort_order") Short sortOrder)
-    implements Tuple4<ProductsId, CategoriesId, Boolean, Short> {
+    implements Tuple4<ProductsId, CategoriesId, /* user-picked */ IsPrimary, Short> {
   /** Points to {@link testdb.products.ProductsRow#productId()} */
   public ProductCategoriesRow withProductId(ProductsId productId) {
     return new ProductCategoriesRow(productId, categoryId, isPrimary, sortOrder);
@@ -38,7 +39,7 @@ public record ProductCategoriesRow(
   ;
 
   /** Default: 0 */
-  public ProductCategoriesRow withIsPrimary(Boolean isPrimary) {
+  public ProductCategoriesRow withIsPrimary(/* user-picked */ IsPrimary isPrimary) {
     return new ProductCategoriesRow(productId, categoryId, isPrimary, sortOrder);
   }
   ;
@@ -51,9 +52,9 @@ public record ProductCategoriesRow(
 
   public static RowParser<ProductCategoriesRow> _rowParser =
       RowParsers.of(
-          ProductsId.dbType,
-          CategoriesId.dbType,
-          MariaTypes.bool,
+          ProductsId.mariaType,
+          CategoriesId.mariaType,
+          IsPrimary.mariaType,
           MariaTypes.smallint,
           ProductCategoriesRow::new,
           row ->
@@ -61,7 +62,7 @@ public record ProductCategoriesRow(
   ;
 
   public static ProductCategoriesRow apply(
-      ProductCategoriesId compositeId, Boolean isPrimary, Short sortOrder) {
+      ProductCategoriesId compositeId, /* user-picked */ IsPrimary isPrimary, Short sortOrder) {
     return new ProductCategoriesRow(
         compositeId.productId(), compositeId.categoryId(), isPrimary, sortOrder);
   }
@@ -80,7 +81,7 @@ public record ProductCategoriesRow(
   ;
 
   @Override
-  public Boolean _3() {
+  public /* user-picked */ IsPrimary _3() {
     return isPrimary;
   }
   ;
@@ -102,7 +103,7 @@ public record ProductCategoriesRow(
   ;
 
   public ProductCategoriesRowUnsaved toUnsavedRow(
-      Defaulted<Boolean> isPrimary, Defaulted<Short> sortOrder) {
+      Defaulted</* user-picked */ IsPrimary> isPrimary, Defaulted<Short> sortOrder) {
     return new ProductCategoriesRowUnsaved(productId, categoryId, isPrimary, sortOrder);
   }
   ;

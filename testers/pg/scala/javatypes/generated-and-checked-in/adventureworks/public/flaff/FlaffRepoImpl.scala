@@ -21,7 +21,7 @@ import dev.typr.foundations.Fragment.interpolate
 class FlaffRepoImpl extends FlaffRepo {
   override def delete: DeleteBuilder[FlaffFields, FlaffRow] = DeleteBuilder.of(""""public"."flaff"""", FlaffFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: FlaffId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."flaff" where "code" = """), Fragment.encode(ShortText.dbType, compositeId.code), Fragment.lit(""" AND "another_code" = """), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(""" AND "some_number" = """), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.lit(""" AND "specifier" = """), Fragment.encode(ShortText.dbType, compositeId.specifier), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(compositeId: FlaffId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."flaff" where "code" = """), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.lit(""" AND "another_code" = """), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(""" AND "some_number" = """), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.lit(""" AND "specifier" = """), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Integer = {
     val code: Array[ShortText] = compositeIds.map(_.code)
@@ -31,13 +31,13 @@ class FlaffRepoImpl extends FlaffRepo {
     return interpolate(Fragment.lit("""delete
     from "public"."flaff"
     where ("code", "another_code", "some_number", "specifier")
-    in (select * from unnest("""), Fragment.encode(ShortText.dbTypeArray, code), Fragment.lit(", "), Fragment.encode(PgTypes.textArray, anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4Array, someNumber), Fragment.lit(", "), Fragment.encode(ShortText.dbTypeArray, specifier), Fragment.lit("""))
+    in (select * from unnest("""), Fragment.encode(ShortText.pgTypeArray, code), Fragment.lit(", "), Fragment.encode(PgTypes.textArray, anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4Array, someNumber), Fragment.lit(", "), Fragment.encode(ShortText.pgTypeArray, specifier), Fragment.lit("""))
     """)).update().runUnchecked(c)
   }
 
   override def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   interpolate(Fragment.lit("""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
-    values ("""), Fragment.encode(ShortText.dbType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.dbType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.dbType.opt(), unsaved.parentspecifier), Fragment.lit("""::text)
+    values ("""), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.pgType.opt(), unsaved.parentspecifier), Fragment.lit("""::text)
     RETURNING "code", "another_code", "some_number", "specifier", "parentspecifier"
     """))
     .updateReturning(FlaffRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -59,7 +59,7 @@ class FlaffRepoImpl extends FlaffRepo {
   override def selectById(compositeId: FlaffId)(using c: Connection): Optional[FlaffRow] = {
     interpolate(Fragment.lit("""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
-    where "code" = """), Fragment.encode(ShortText.dbType, compositeId.code), Fragment.lit(""" AND "another_code" = """), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(""" AND "some_number" = """), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.lit(""" AND "specifier" = """), Fragment.encode(ShortText.dbType, compositeId.specifier), Fragment.lit("")).query(FlaffRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = """), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.lit(""" AND "another_code" = """), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(""" AND "some_number" = """), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.lit(""" AND "specifier" = """), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.lit("")).query(FlaffRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): java.util.List[FlaffRow] = {
@@ -70,7 +70,7 @@ class FlaffRepoImpl extends FlaffRepo {
     return interpolate(Fragment.lit("""select "code", "another_code", "some_number", "specifier", "parentspecifier"
     from "public"."flaff"
     where ("code", "another_code", "some_number", "specifier")
-    in (select * from unnest("""), Fragment.encode(ShortText.dbTypeArray, code), Fragment.lit(", "), Fragment.encode(PgTypes.textArray, anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4Array, someNumber), Fragment.lit(", "), Fragment.encode(ShortText.dbTypeArray, specifier), Fragment.lit("""))
+    in (select * from unnest("""), Fragment.encode(ShortText.pgTypeArray, code), Fragment.lit(", "), Fragment.encode(PgTypes.textArray, anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4Array, someNumber), Fragment.lit(", "), Fragment.encode(ShortText.pgTypeArray, specifier), Fragment.lit("""))
     """)).query(FlaffRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -85,13 +85,13 @@ class FlaffRepoImpl extends FlaffRepo {
   override def update(row: FlaffRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: FlaffId = row.compositeId
     return interpolate(Fragment.lit("""update "public"."flaff"
-    set "parentspecifier" = """), Fragment.encode(ShortText.dbType.opt(), row.parentspecifier), Fragment.lit("""::text
-    where "code" = """), Fragment.encode(ShortText.dbType, compositeId.code), Fragment.lit(""" AND "another_code" = """), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(""" AND "some_number" = """), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.lit(""" AND "specifier" = """), Fragment.encode(ShortText.dbType, compositeId.specifier), Fragment.lit("")).update().runUnchecked(c) > 0
+    set "parentspecifier" = """), Fragment.encode(ShortText.pgType.opt(), row.parentspecifier), Fragment.lit("""::text
+    where "code" = """), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.lit(""" AND "another_code" = """), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(""" AND "some_number" = """), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.lit(""" AND "specifier" = """), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: FlaffRow)(using c: Connection): FlaffRow = {
   interpolate(Fragment.lit("""insert into "public"."flaff"("code", "another_code", "some_number", "specifier", "parentspecifier")
-    values ("""), Fragment.encode(ShortText.dbType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.dbType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.dbType.opt(), unsaved.parentspecifier), Fragment.lit("""::text)
+    values ("""), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.pgType.opt(), unsaved.parentspecifier), Fragment.lit("""::text)
     on conflict ("code", "another_code", "some_number", "specifier")
     do update set
       "parentspecifier" = EXCLUDED."parentspecifier"

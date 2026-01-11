@@ -32,7 +32,7 @@ public class MariatestIdentityRepoImpl implements MariatestIdentityRepo {
   public Boolean deleteById(MariatestIdentityId id, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `mariatest_identity` where `id` = "),
-                Fragment.encode(MariatestIdentityId.dbType, id),
+                Fragment.encode(MariatestIdentityId.mariaType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +43,7 @@ public class MariatestIdentityRepoImpl implements MariatestIdentityRepo {
   public Integer deleteByIds(MariatestIdentityId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(MariatestIdentityId.dbType, id));
+      fragments.add(Fragment.encode(MariatestIdentityId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -103,7 +103,7 @@ public class MariatestIdentityRepoImpl implements MariatestIdentityRepo {
   public Optional<MariatestIdentityRow> selectById(MariatestIdentityId id, Connection c) {
     return interpolate(
             Fragment.lit("select `id`, `name`\nfrom `mariatest_identity`\nwhere `id` = "),
-            Fragment.encode(MariatestIdentityId.dbType, id),
+            Fragment.encode(MariatestIdentityId.mariaType, id),
             Fragment.lit(""))
         .query(MariatestIdentityRow._rowParser.first())
         .runUnchecked(c);
@@ -113,7 +113,7 @@ public class MariatestIdentityRepoImpl implements MariatestIdentityRepo {
   public List<MariatestIdentityRow> selectByIds(MariatestIdentityId[] ids, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : ids) {
-      fragments.add(Fragment.encode(MariatestIdentityId.dbType, id));
+      fragments.add(Fragment.encode(MariatestIdentityId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -150,7 +150,7 @@ public class MariatestIdentityRepoImpl implements MariatestIdentityRepo {
                 Fragment.lit("update `mariatest_identity`\nset `name` = "),
                 Fragment.encode(MariaTypes.varchar, row.name()),
                 Fragment.lit("\nwhere `id` = "),
-                Fragment.encode(MariatestIdentityId.dbType, id),
+                Fragment.encode(MariatestIdentityId.mariaType, id),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -161,7 +161,7 @@ public class MariatestIdentityRepoImpl implements MariatestIdentityRepo {
   public MariatestIdentityRow upsert(MariatestIdentityRow unsaved, Connection c) {
     return interpolate(
             Fragment.lit("INSERT INTO `mariatest_identity`(`id`, `name`)\nVALUES ("),
-            Fragment.encode(MariatestIdentityId.dbType, unsaved.id()),
+            Fragment.encode(MariatestIdentityId.mariaType, unsaved.id()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.name()),
             Fragment.lit(

@@ -9,6 +9,8 @@ import adventureworks.person.businessentity.BusinessentityId;
 import adventureworks.public_.Name;
 import adventureworks.public_.Phone;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.RowParser;
 import dev.typr.foundations.data.Xml;
@@ -26,9 +28,9 @@ public class VemployeeViewFields
     extends TupleExpr18<
         BusinessentityId,
         String, /* user-picked */
-        FirstName,
-        Name,
-        Name,
+        FirstName, /* user-picked */
+        MiddleName, /* user-picked */
+        LastName,
         String,
         String,
         Phone,
@@ -61,7 +63,7 @@ public class VemployeeViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withBusinessentityid(value),
-        BusinessentityId.dbType);
+        BusinessentityId.pgType);
   }
 
   public Field<String, VemployeeViewRow> title() {
@@ -83,29 +85,29 @@ public class VemployeeViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withFirstname(value),
-        FirstName.dbType);
+        FirstName.pgType);
   }
 
-  public Field<Name, VemployeeViewRow> middlename() {
-    return new Field<Name, VemployeeViewRow>(
+  public Field</* user-picked */ MiddleName, VemployeeViewRow> middlename() {
+    return new Field</* user-picked */ MiddleName, VemployeeViewRow>(
         _path,
         "middlename",
         VemployeeViewRow::middlename,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withMiddlename(value),
-        Name.dbType);
+        MiddleName.pgType);
   }
 
-  public Field<Name, VemployeeViewRow> lastname() {
-    return new Field<Name, VemployeeViewRow>(
+  public Field</* user-picked */ LastName, VemployeeViewRow> lastname() {
+    return new Field</* user-picked */ LastName, VemployeeViewRow>(
         _path,
         "lastname",
         VemployeeViewRow::lastname,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withLastname(value),
-        Name.dbType);
+        LastName.pgType);
   }
 
   public Field<String, VemployeeViewRow> suffix() {
@@ -138,7 +140,7 @@ public class VemployeeViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withPhonenumber(value),
-        Phone.dbType);
+        Phone.pgType);
   }
 
   public Field<Name, VemployeeViewRow> phonenumbertype() {
@@ -149,7 +151,7 @@ public class VemployeeViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withPhonenumbertype(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<String, VemployeeViewRow> emailaddress() {
@@ -215,7 +217,7 @@ public class VemployeeViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withStateprovincename(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<String, VemployeeViewRow> postalcode() {
@@ -237,7 +239,7 @@ public class VemployeeViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCountryregionname(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<Xml, VemployeeViewRow> additionalcontactinfo() {
@@ -305,12 +307,12 @@ public class VemployeeViewFields
   }
 
   @Override
-  public SqlExpr<Name> _4() {
+  public SqlExpr</* user-picked */ MiddleName> _4() {
     return middlename();
   }
 
   @Override
-  public SqlExpr<Name> _5() {
+  public SqlExpr</* user-picked */ LastName> _5() {
     return lastname();
   }
 

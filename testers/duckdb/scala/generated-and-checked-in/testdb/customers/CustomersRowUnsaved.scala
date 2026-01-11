@@ -10,12 +10,13 @@ import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
 
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 case class CustomersRowUnsaved(
   @JsonProperty("customer_id") customerId: CustomersId,
   name: String,
-  email: Option[String] = None,
+  email: Option[/* user-picked */ Email] = None,
   /** Default: current_timestamp */
   @JsonProperty("created_at") createdAt: Defaulted[LocalDateTime] = new UseDefault(),
   /** Default: 'medium' */

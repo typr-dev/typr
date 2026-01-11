@@ -41,7 +41,7 @@ public class DistinctTypeTestFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withId(value),
-        DistinctTypeTestId.dbType);
+        DistinctTypeTestId.db2Type);
   }
 
   public Field<EmailAddress, DistinctTypeTestRow> email() {
@@ -52,7 +52,7 @@ public class DistinctTypeTestFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withEmail(value),
-        EmailAddress.dbType);
+        EmailAddress.db2Type);
   }
 
   public OptField<MoneyAmount, DistinctTypeTestRow> balance() {
@@ -63,7 +63,7 @@ public class DistinctTypeTestFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withBalance(value),
-        MoneyAmount.dbType);
+        MoneyAmount.db2Type);
   }
 
   @Override

@@ -30,7 +30,7 @@ class ProductmodelFields(val `_path`: java.util.List[Path]) extends TupleExpr6[P
       None,
       Some("int4"),
       (row, value) => row.copy(productmodelid = value),
-      ProductmodelId.dbType
+      ProductmodelId.pgType
     )
   }
 
@@ -42,7 +42,7 @@ class ProductmodelFields(val `_path`: java.util.List[Path]) extends TupleExpr6[P
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 

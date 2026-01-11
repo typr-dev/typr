@@ -13,16 +13,17 @@ import dev.typr.foundations.Tuple.Tuple4;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.Email;
 
 /** Table: customers Primary key: customer_id */
 public record CustomersRow(
     /** IDENTITY(1, 1) */
     @JsonProperty("customer_id") CustomersId customerId,
     String name,
-    String email,
+    /* user-picked */ Email email,
     /** Default: (getdate()) */
     @JsonProperty("created_at") Optional<LocalDateTime> createdAt)
-    implements Tuple4<CustomersId, String, String, Optional<LocalDateTime>> {
+    implements Tuple4<CustomersId, String, /* user-picked */ Email, Optional<LocalDateTime>> {
   /** IDENTITY(1, 1) */
   public CustomersRow withCustomerId(CustomersId customerId) {
     return new CustomersRow(customerId, name, email, createdAt);
@@ -34,7 +35,7 @@ public record CustomersRow(
   }
   ;
 
-  public CustomersRow withEmail(String email) {
+  public CustomersRow withEmail(/* user-picked */ Email email) {
     return new CustomersRow(customerId, name, email, createdAt);
   }
   ;
@@ -49,7 +50,7 @@ public record CustomersRow(
       RowParsers.of(
           CustomersId.sqlServerType,
           SqlServerTypes.nvarchar,
-          SqlServerTypes.nvarchar,
+          Email.sqlServerType,
           SqlServerTypes.datetime2.opt(),
           CustomersRow::new,
           row -> new Object[] {row.customerId(), row.name(), row.email(), row.createdAt()});
@@ -68,7 +69,7 @@ public record CustomersRow(
   ;
 
   @Override
-  public String _3() {
+  public /* user-picked */ Email _3() {
     return email;
   }
   ;

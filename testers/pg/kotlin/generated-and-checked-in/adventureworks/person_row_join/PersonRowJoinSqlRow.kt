@@ -27,6 +27,6 @@ data class PersonRowJoinSqlRow(
   override fun _3(): Array<Record>? = emails
 
   companion object {
-    val _rowParser: RowParser<PersonRowJoinSqlRow> = RowParsers.of(BusinessentityId.dbType, PgTypes.recordArray.nullable(), PgTypes.recordArray.nullable(), { t0, t1, t2 -> PersonRowJoinSqlRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.email, row.emails) })
+    val _rowParser: RowParser<PersonRowJoinSqlRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.recordArray.nullable(), PgTypes.recordArray.nullable(), { t0, t1, t2 -> PersonRowJoinSqlRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.email, row.emails) })
   }
 }

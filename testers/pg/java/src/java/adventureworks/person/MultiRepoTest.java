@@ -12,6 +12,7 @@ import adventureworks.person.countryregion.CountryregionId;
 import adventureworks.person.person.*;
 import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
 import java.sql.Connection;
 import java.util.*;
 import org.junit.Test;
@@ -129,8 +130,11 @@ public class MultiRepoTest {
           var businessentityRow = testInsert.personBusinessentity().insert(c);
           var personRow =
               testInsert
-                  .personPerson(businessentityRow.businessentityid(), "SC", new FirstName("name"))
-                  .with(row -> row.withLastname(new Name("lastname")))
+                  .personPerson(businessentityRow.businessentityid(), "SC")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("name")))
+                              .withLastname(new LastName(new Name("lastname"))))
                   .insert(c);
           var countryregionRow =
               testInsert

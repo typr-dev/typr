@@ -26,7 +26,7 @@ data class MariatestIdentityFields(val _path: List<Path>) : TupleExpr2<Mariatest
 
   override fun columns(): List<FieldLike<*, MariatestIdentityRow>> = listOf(this.id().underlying, this.name().underlying)
 
-  fun id(): IdField<MariatestIdentityId, MariatestIdentityRow> = IdField<MariatestIdentityId, MariatestIdentityRow>(_path, "id", MariatestIdentityRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestIdentityId.dbType)
+  fun id(): IdField<MariatestIdentityId, MariatestIdentityRow> = IdField<MariatestIdentityId, MariatestIdentityRow>(_path, "id", MariatestIdentityRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestIdentityId.mariaType)
 
   fun name(): Field<String, MariatestIdentityRow> = Field<String, MariatestIdentityRow>(_path, "name", MariatestIdentityRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
 

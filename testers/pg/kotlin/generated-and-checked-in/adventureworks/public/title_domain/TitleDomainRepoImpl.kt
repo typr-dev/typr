@@ -23,19 +23,19 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
   override fun deleteById(
     code: TitleDomainId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"title_domain\" where \"code\" = "), Fragment.encode(TitleDomainId.dbType, code), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"title_domain\" where \"code\" = "), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     codes: Array<TitleDomainId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("), Fragment.encode(TitleDomainId.dbTypeArray, codes), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: TitleDomainRow,
     c: Connection
-  ): TitleDomainRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.dbType, unsaved.code), Fragment.lit("::text)\nRETURNING \"code\"\n"))
+  ): TitleDomainRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("::text)\nRETURNING \"code\"\n"))
     .updateReturning(TitleDomainRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insertStreaming(
@@ -51,12 +51,12 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
   override fun selectById(
     code: TitleDomainId,
     c: Connection
-  ): TitleDomainRow? = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = "), Fragment.encode(TitleDomainId.dbType, code), Fragment.lit("")).query(TitleDomainRow._rowParser.first()).runUnchecked(c)
+  ): TitleDomainRow? = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = "), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).query(TitleDomainRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     codes: Array<TitleDomainId>,
     c: Connection
-  ): List<TitleDomainRow> = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("), Fragment.encode(TitleDomainId.dbTypeArray, codes), Fragment.lit(")")).query(TitleDomainRow._rowParser.all()).runUnchecked(c)
+  ): List<TitleDomainRow> = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title_domain\"\nwhere \"code\" = ANY("), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")")).query(TitleDomainRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     codes: Array<TitleDomainId>,
@@ -72,7 +72,7 @@ class TitleDomainRepoImpl() : TitleDomainRepo {
   override fun upsert(
     unsaved: TitleDomainRow,
     c: Connection
-  ): TitleDomainRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.dbType, unsaved.code), Fragment.lit("::text)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
+  ): TitleDomainRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title_domain\"(\"code\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("::text)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
     .updateReturning(TitleDomainRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

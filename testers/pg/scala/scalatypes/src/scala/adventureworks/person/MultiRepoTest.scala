@@ -7,7 +7,7 @@ import adventureworks.person.businessentityaddress.*
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.person.person.*
 import adventureworks.public.Name
-import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.{FirstName, LastName}
 import adventureworks.{DomainInsertImpl, TestInsert, WithConnection}
 import org.junit.Assert.*
 import org.junit.Test
@@ -90,10 +90,10 @@ class MultiRepoTest {
       val personRow = testInsert.personPerson(
         businessentityRow.businessentityid,
         "SC",
-        FirstName("name"),
         None,
+        FirstName(Name("name")),
         None,
-        Name("lastname"),
+        LastName(Name("lastname")),
         None,
         None,
         None,

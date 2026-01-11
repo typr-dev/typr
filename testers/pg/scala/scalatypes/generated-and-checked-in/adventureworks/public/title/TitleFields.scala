@@ -23,7 +23,7 @@ class TitleFields(val `_path`: java.util.List[Path]) extends TupleExpr1[TitleId]
       None,
       None,
       (row, value) => row.copy(code = value),
-      TitleId.dbType
+      TitleId.pgType
     )
   }
 

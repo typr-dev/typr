@@ -32,7 +32,7 @@ public record LocalDateTime6(@JsonValue LocalDateTime value) implements LocalDat
   public static Bijection<LocalDateTime6, LocalDateTime> bijection =
       Bijection.of(LocalDateTime6::value, LocalDateTime6::new);
 
-  public static MariaType<LocalDateTime6> dbType =
+  public static MariaType<LocalDateTime6> mariaType =
       MariaTypes.timestamp.bimap(LocalDateTime6::new, LocalDateTime6::value);
 
   public static LocalDateTime6 now() {

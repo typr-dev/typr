@@ -16,6 +16,9 @@ import java.time.LocalDateTime
 import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusId
 import testdb.customtypes.Defaulted
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
 /** Table: customers
   * Primary key: customer_id
@@ -26,13 +29,13 @@ data class CustomersRow(
     */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /**  */
-  val email: String,
+  val email: /* user-picked */ Email,
   /**  */
   @field:JsonProperty("password_hash") val passwordHash: ByteArray,
   /**  */
-  @field:JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("first_name") val firstName: /* user-picked */ FirstName,
   /**  */
-  @field:JsonProperty("last_name") val lastName: String,
+  @field:JsonProperty("last_name") val lastName: /* user-picked */ LastName,
   /** 
     * Default: NULL
     */
@@ -70,7 +73,7 @@ data class CustomersRow(
     * Default: NULL
     */
   @field:JsonProperty("last_login_at") val lastLoginAt: LocalDateTime?
-) : Tuple14<CustomersId, String, ByteArray, String, String, String?, CustomerStatusId, String, Json?, EmailMailPushSmsSet?, String?, LocalDateTime, LocalDateTime, LocalDateTime?> {
+) : Tuple14<CustomersId, /* user-picked */ Email, ByteArray, /* user-picked */ FirstName, /* user-picked */ LastName, String?, CustomerStatusId, String, Json?, EmailMailPushSmsSet?, String?, LocalDateTime, LocalDateTime, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
   override fun _10(): EmailMailPushSmsSet? = marketingFlags
@@ -83,13 +86,13 @@ data class CustomersRow(
 
   override fun _14(): LocalDateTime? = lastLoginAt
 
-  override fun _2(): String = email
+  override fun _2(): /* user-picked */ Email = email
 
   override fun _3(): ByteArray = passwordHash
 
-  override fun _4(): String = firstName
+  override fun _4(): /* user-picked */ FirstName = firstName
 
-  override fun _5(): String = lastName
+  override fun _5(): /* user-picked */ LastName = lastName
 
   override fun _6(): String? = phone
 
@@ -114,6 +117,6 @@ data class CustomersRow(
   ): CustomersRowUnsaved = CustomersRowUnsaved(email, passwordHash, firstName, lastName, phone, status, tier, preferences, marketingFlags, notes, createdAt, updatedAt, lastLoginAt)
 
   companion object {
-    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.dbType, MariaTypes.varchar, MariaTypes.binary, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), CustomerStatusId.dbType, MariaTypes.text, MariaTypes.json.nullable(), EmailMailPushSmsSet.dbType.nullable(), MariaTypes.text.nullable(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> CustomersRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt) })
+    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.mariaType, Email.mariaType, MariaTypes.binary, FirstName.mariaType, LastName.mariaType, MariaTypes.varchar.nullable(), CustomerStatusId.mariaType, MariaTypes.text, MariaTypes.json.nullable(), EmailMailPushSmsSet.mariaType.nullable(), MariaTypes.text.nullable(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> CustomersRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt) })
   }
 }

@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import testdb.orders.OrdersId;
+import testdb.userdefined.Email;
 
 public class VOrderDetailsViewFields
     extends TupleExpr14<
@@ -29,8 +30,8 @@ public class VOrderDetailsViewFields
         String,
         BigDecimal,
         String,
-        LocalDateTime,
-        String,
+        LocalDateTime, /* user-picked */
+        Email,
         String,
         Long,
         BigDecimal,
@@ -56,7 +57,7 @@ public class VOrderDetailsViewFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withOrderId(value),
-        OrdersId.dbType);
+        OrdersId.mariaType);
   }
 
   public Field<String, VOrderDetailsViewRow> orderNumber() {
@@ -125,15 +126,15 @@ public class VOrderDetailsViewFields
         MariaTypes.datetime);
   }
 
-  public Field<String, VOrderDetailsViewRow> customerEmail() {
-    return new Field<String, VOrderDetailsViewRow>(
+  public Field</* user-picked */ Email, VOrderDetailsViewRow> customerEmail() {
+    return new Field</* user-picked */ Email, VOrderDetailsViewRow>(
         _path,
         "customer_email",
         VOrderDetailsViewRow::customerEmail,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCustomerEmail(value),
-        MariaTypes.varchar);
+        Email.mariaType);
   }
 
   public OptField<String, VOrderDetailsViewRow> customerName() {
@@ -273,7 +274,7 @@ public class VOrderDetailsViewFields
   }
 
   @Override
-  public SqlExpr<String> _8() {
+  public SqlExpr</* user-picked */ Email> _8() {
     return customerEmail();
   }
 

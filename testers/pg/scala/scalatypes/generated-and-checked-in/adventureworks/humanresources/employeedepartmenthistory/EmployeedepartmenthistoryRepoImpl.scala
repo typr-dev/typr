@@ -25,7 +25,7 @@ import dev.typr.foundations.scala.Fragment.sql
 class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
   override def delete: DeleteBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = DeleteBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Boolean = sql"""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.dbType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.dbType, compositeId.shiftid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Boolean = sql"""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Int = {
     val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
@@ -35,13 +35,13 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     return sql"""delete
     from "humanresources"."employeedepartmenthistory"
     where ("businessentityid", "startdate", "departmentid", "shiftid")
-    in (select * from unnest(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityid)}, ${Fragment.encode(PgTypes.dateArray, startdate)}, ${Fragment.encode(DepartmentId.dbTypeArray, departmentid)}, ${Fragment.encode(ShiftId.dbTypeArray, shiftid)}))
+    in (select * from unnest(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityid)}, ${Fragment.encode(PgTypes.dateArray, startdate)}, ${Fragment.encode(DepartmentId.pgTypeArray, departmentid)}, ${Fragment.encode(ShiftId.pgTypeArray, shiftid)}))
     """.update().runUnchecked(c)
   }
 
   override def insert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   sql"""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.dbType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.dbType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.nullable, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.nullable, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     """
     .updateReturning(EmployeedepartmenthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -51,11 +51,11 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""departmentid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(DepartmentId.dbType, unsaved.departmentid)}::int2"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ShiftId.dbType, unsaved.shiftid)}::int2"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""startdate"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.date, unsaved.startdate)}::date"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""enddate"""")): @scala.annotation.nowarn
@@ -95,7 +95,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
   override def selectById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Option[EmployeedepartmenthistoryRow] = {
     sql"""select "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     from "humanresources"."employeedepartmenthistory"
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.dbType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.dbType, compositeId.shiftid)}""".query(EmployeedepartmenthistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".query(EmployeedepartmenthistoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): List[EmployeedepartmenthistoryRow] = {
@@ -106,7 +106,7 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     return sql"""select "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     from "humanresources"."employeedepartmenthistory"
     where ("businessentityid", "startdate", "departmentid", "shiftid")
-    in (select * from unnest(${Fragment.encode(BusinessentityId.dbTypeArray, businessentityid)}, ${Fragment.encode(PgTypes.dateArray, startdate)}, ${Fragment.encode(DepartmentId.dbTypeArray, departmentid)}, ${Fragment.encode(ShiftId.dbTypeArray, shiftid)}))
+    in (select * from unnest(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityid)}, ${Fragment.encode(PgTypes.dateArray, startdate)}, ${Fragment.encode(DepartmentId.pgTypeArray, departmentid)}, ${Fragment.encode(ShiftId.pgTypeArray, shiftid)}))
     """.query(EmployeedepartmenthistoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -123,12 +123,12 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     return sql"""update "humanresources"."employeedepartmenthistory"
     set "enddate" = ${Fragment.encode(PgTypes.date.nullable, row.enddate)}::date,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.dbType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.dbType, compositeId.shiftid)}""".update().runUnchecked(c) > 0
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   sql"""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.dbType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.dbType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.nullable, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.nullable, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid", "startdate", "departmentid", "shiftid")
     do update set
       "enddate" = EXCLUDED."enddate",

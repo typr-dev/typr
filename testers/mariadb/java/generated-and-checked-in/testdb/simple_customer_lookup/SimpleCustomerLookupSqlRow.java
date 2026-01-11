@@ -13,17 +13,20 @@ import dev.typr.foundations.Tuple.Tuple7;
 import java.time.LocalDateTime;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customers.CustomersId;
+import testdb.userdefined.Email;
+import testdb.userdefined.FirstName;
+import testdb.userdefined.LastName;
 
 /** SQL file: simple_customer_lookup.sql */
 public record SimpleCustomerLookupSqlRow(
     /** Points to {@link testdb.customers.CustomersRow#customerId()} */
     @JsonProperty("customer_id") CustomersId customerId,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    String email,
+    /* user-picked */ Email email,
     /** Points to {@link testdb.customers.CustomersRow#firstName()} */
-    @JsonProperty("first_name") String firstName,
+    @JsonProperty("first_name") /* user-picked */ FirstName firstName,
     /** Points to {@link testdb.customers.CustomersRow#lastName()} */
-    @JsonProperty("last_name") String lastName,
+    @JsonProperty("last_name") /* user-picked */ LastName lastName,
     /** Points to {@link testdb.customers.CustomersRow#tier()} */
     String tier,
     /** Points to {@link testdb.customers.CustomersRow#status()} */
@@ -31,7 +34,13 @@ public record SimpleCustomerLookupSqlRow(
     /** Points to {@link testdb.customers.CustomersRow#createdAt()} */
     @JsonProperty("created_at") LocalDateTime createdAt)
     implements Tuple7<
-        CustomersId, String, String, String, String, CustomerStatusId, LocalDateTime> {
+        CustomersId, /* user-picked */
+        Email, /* user-picked */
+        FirstName, /* user-picked */
+        LastName,
+        String,
+        CustomerStatusId,
+        LocalDateTime> {
   /** Points to {@link testdb.customers.CustomersRow#customerId()} */
   public SimpleCustomerLookupSqlRow withCustomerId(CustomersId customerId) {
     return new SimpleCustomerLookupSqlRow(
@@ -40,21 +49,21 @@ public record SimpleCustomerLookupSqlRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public SimpleCustomerLookupSqlRow withEmail(String email) {
+  public SimpleCustomerLookupSqlRow withEmail(/* user-picked */ Email email) {
     return new SimpleCustomerLookupSqlRow(
         customerId, email, firstName, lastName, tier, status, createdAt);
   }
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#firstName()} */
-  public SimpleCustomerLookupSqlRow withFirstName(String firstName) {
+  public SimpleCustomerLookupSqlRow withFirstName(/* user-picked */ FirstName firstName) {
     return new SimpleCustomerLookupSqlRow(
         customerId, email, firstName, lastName, tier, status, createdAt);
   }
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#lastName()} */
-  public SimpleCustomerLookupSqlRow withLastName(String lastName) {
+  public SimpleCustomerLookupSqlRow withLastName(/* user-picked */ LastName lastName) {
     return new SimpleCustomerLookupSqlRow(
         customerId, email, firstName, lastName, tier, status, createdAt);
   }
@@ -83,12 +92,12 @@ public record SimpleCustomerLookupSqlRow(
 
   public static RowParser<SimpleCustomerLookupSqlRow> _rowParser =
       RowParsers.of(
-          CustomersId.dbType,
-          MariaTypes.varchar,
-          MariaTypes.varchar,
-          MariaTypes.varchar,
+          CustomersId.mariaType,
+          Email.mariaType,
+          FirstName.mariaType,
+          LastName.mariaType,
           MariaTypes.text,
-          CustomerStatusId.dbType,
+          CustomerStatusId.mariaType,
           MariaTypes.datetime,
           SimpleCustomerLookupSqlRow::new,
           row ->
@@ -110,19 +119,19 @@ public record SimpleCustomerLookupSqlRow(
   ;
 
   @Override
-  public String _2() {
+  public /* user-picked */ Email _2() {
     return email;
   }
   ;
 
   @Override
-  public String _3() {
+  public /* user-picked */ FirstName _3() {
     return firstName;
   }
   ;
 
   @Override
-  public String _4() {
+  public /* user-picked */ LastName _4() {
     return lastName;
   }
   ;

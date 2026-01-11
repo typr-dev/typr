@@ -28,11 +28,11 @@ sealed interface TitleDomainId {
     companion object {
         fun apply(str: ShortText): TitleDomainId =
             Known.ByName[str] ?: Unknown(str)
-        val dbTypeArray: PgType<Array<TitleDomainId>> =
-          ShortText.dbTypeArray
+        val pgTypeArray: PgType<Array<TitleDomainId>> =
+          ShortText.pgTypeArray
             .bimap({ xs -> arrayMap.map(xs, TitleDomainId::apply, TitleDomainId::class.java) }, { xs -> arrayMap.map(xs, TitleDomainId::value, ShortText::class.java) })
-        val dbType: PgType<TitleDomainId> =
-          ShortText.dbType.bimap(TitleDomainId::apply, TitleDomainId::value)
+        val pgType: PgType<TitleDomainId> =
+          ShortText.pgType.bimap(TitleDomainId::apply, TitleDomainId::value)
         fun shortText(value: String): TitleDomainId = apply(ShortText(value))
     }
 }

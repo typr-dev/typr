@@ -31,11 +31,11 @@ case class PaddedString3 private(@JsonValue value: String) extends PaddedStringN
 object PaddedString3 {
   given bijection: Bijection[PaddedString3, String] = Bijection.apply[PaddedString3, String](_.value)(PaddedString3.apply)
 
-  given dbType: PgType[PaddedString3] = PgTypes.bpchar.bimap(PaddedString3.apply, _.value)
-
-  given dbTypeArray: PgType[Array[PaddedString3]] = PgTypes.bpcharArray.bimap(xs => xs.map(PaddedString3.apply), xs => xs.map(_.value))
-
   def of(value: String): Option[PaddedString3] = (if (value.length <= 3) Some(new PaddedString3(String.format("%-3s", value))) else None)
+
+  given pgType: PgType[PaddedString3] = PgTypes.bpchar.bimap(PaddedString3.apply, _.value)
+
+  given pgTypeArray: PgType[Array[PaddedString3]] = PgTypes.bpcharArray.bimap(xs => xs.map(PaddedString3.apply), xs => xs.map(_.value))
 
   def unsafeForce(value: String): PaddedString3 = {
     if (value.length > 3) {

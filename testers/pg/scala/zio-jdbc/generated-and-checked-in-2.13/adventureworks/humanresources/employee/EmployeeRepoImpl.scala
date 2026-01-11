@@ -11,8 +11,9 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoShort
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
 import adventureworks.streamingInsert
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import typr.dsl.DeleteBuilder
 import typr.dsl.SelectBuilder
 import typr.dsl.UpdateBuilder
@@ -34,7 +35,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
 
   override def insert(unsaved: EmployeeRow): ZIO[ZConnection, Throwable, EmployeeRow] = {
     sql"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values (${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.nationalidnumber)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.loginid)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.jobtitle)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.birthdate)(TypoLocalDate.setter)}::date, ${Segment.paramSegment(unsaved.maritalstatus)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.gender)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.hiredate)(TypoLocalDate.setter)}::date, ${Segment.paramSegment(unsaved.salariedflag)(Flag.setter)}::bool, ${Segment.paramSegment(unsaved.vacationhours)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.sickleavehours)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.currentflag)(Flag.setter)}::bool, ${Segment.paramSegment(unsaved.rowguid)(TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.organizationnode)(Setter.optionParamSetter(Setter.stringSetter))})
+    values (${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.nationalidnumber)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.loginid)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.jobtitle)(Setter.stringSetter)}, ${Segment.paramSegment(unsaved.birthdate)(TypoLocalDate.setter)}::date, ${Segment.paramSegment(unsaved.maritalstatus)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.gender)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.hiredate)(TypoLocalDate.setter)}::date, ${Segment.paramSegment(unsaved.salariedflag)(/* user-picked */ SalariedFlag.setter)}::bool, ${Segment.paramSegment(unsaved.vacationhours)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.sickleavehours)(TypoShort.setter)}::int2, ${Segment.paramSegment(unsaved.currentflag)(/* user-picked */ CurrentFlag.setter)}::bool, ${Segment.paramSegment(unsaved.rowguid)(TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp, ${Segment.paramSegment(unsaved.organizationnode)(Setter.optionParamSetter(Setter.stringSetter))})
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
     """.insertReturning(EmployeeRow.jdbcDecoder).map(_.updatedKeys.head)
   }
@@ -51,7 +52,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
       Some((sql""""hiredate"""", sql"${Segment.paramSegment(unsaved.hiredate)(TypoLocalDate.setter)}::date")),
       unsaved.salariedflag match {
         case Defaulted.UseDefault() => None
-        case Defaulted.Provided(value) => Some((sql""""salariedflag"""", sql"${Segment.paramSegment(value: Flag)(Flag.setter)}::bool"))
+        case Defaulted.Provided(value) => Some((sql""""salariedflag"""", sql"${Segment.paramSegment(value: /* user-picked */ SalariedFlag)(/* user-picked */ SalariedFlag.setter)}::bool"))
       },
       unsaved.vacationhours match {
         case Defaulted.UseDefault() => None
@@ -63,7 +64,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
       },
       unsaved.currentflag match {
         case Defaulted.UseDefault() => None
-        case Defaulted.Provided(value) => Some((sql""""currentflag"""", sql"${Segment.paramSegment(value: Flag)(Flag.setter)}::bool"))
+        case Defaulted.Provided(value) => Some((sql""""currentflag"""", sql"${Segment.paramSegment(value: /* user-picked */ CurrentFlag)(/* user-picked */ CurrentFlag.setter)}::bool"))
       },
       unsaved.rowguid match {
         case Defaulted.UseDefault() => None
@@ -128,10 +129,10 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "maritalstatus" = ${Segment.paramSegment(row.maritalstatus)(Setter.stringSetter)}::bpchar,
     "gender" = ${Segment.paramSegment(row.gender)(Setter.stringSetter)}::bpchar,
     "hiredate" = ${Segment.paramSegment(row.hiredate)(TypoLocalDate.setter)}::date,
-    "salariedflag" = ${Segment.paramSegment(row.salariedflag)(Flag.setter)}::bool,
+    "salariedflag" = ${Segment.paramSegment(row.salariedflag)(/* user-picked */ SalariedFlag.setter)}::bool,
     "vacationhours" = ${Segment.paramSegment(row.vacationhours)(TypoShort.setter)}::int2,
     "sickleavehours" = ${Segment.paramSegment(row.sickleavehours)(TypoShort.setter)}::int2,
-    "currentflag" = ${Segment.paramSegment(row.currentflag)(Flag.setter)}::bool,
+    "currentflag" = ${Segment.paramSegment(row.currentflag)(/* user-picked */ CurrentFlag.setter)}::bool,
     "rowguid" = ${Segment.paramSegment(row.rowguid)(TypoUUID.setter)}::uuid,
     "modifieddate" = ${Segment.paramSegment(row.modifieddate)(TypoLocalDateTime.setter)}::timestamp,
     "organizationnode" = ${Segment.paramSegment(row.organizationnode)(Setter.optionParamSetter(Setter.stringSetter))}
@@ -152,10 +153,10 @@ class EmployeeRepoImpl extends EmployeeRepo {
     ${Segment.paramSegment(unsaved.maritalstatus)(Setter.stringSetter)}::bpchar,
     ${Segment.paramSegment(unsaved.gender)(Setter.stringSetter)}::bpchar,
     ${Segment.paramSegment(unsaved.hiredate)(TypoLocalDate.setter)}::date,
-    ${Segment.paramSegment(unsaved.salariedflag)(Flag.setter)}::bool,
+    ${Segment.paramSegment(unsaved.salariedflag)(/* user-picked */ SalariedFlag.setter)}::bool,
     ${Segment.paramSegment(unsaved.vacationhours)(TypoShort.setter)}::int2,
     ${Segment.paramSegment(unsaved.sickleavehours)(TypoShort.setter)}::int2,
-    ${Segment.paramSegment(unsaved.currentflag)(Flag.setter)}::bool,
+    ${Segment.paramSegment(unsaved.currentflag)(/* user-picked */ CurrentFlag.setter)}::bool,
     ${Segment.paramSegment(unsaved.rowguid)(TypoUUID.setter)}::uuid,
     ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp,
     ${Segment.paramSegment(unsaved.organizationnode)(Setter.optionParamSetter(Setter.stringSetter))}

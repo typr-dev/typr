@@ -8,9 +8,10 @@ package adventureworks.person.person;
 import adventureworks.customtypes.Defaulted;
 import adventureworks.customtypes.Defaulted.UseDefault;
 import adventureworks.person.businessentity.BusinessentityId;
-import adventureworks.public_.Name;
 import adventureworks.public_.NameStyle;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.PgText;
 import dev.typr.foundations.PgTypes;
 import dev.typr.foundations.data.Xml;
@@ -38,9 +39,9 @@ public record PersonRowUnsaved(
     /** First name of the person. */
     /* user-picked */ FirstName firstname,
     /** Middle name or middle initial of the person. */
-    Optional<Name> middlename,
+    Optional</* user-picked */ MiddleName> middlename,
     /** Last name of the person. */
-    Name lastname,
+    /* user-picked */ LastName lastname,
     /** Surname suffix. For example, Sr. or Jr. */
     Optional</* max 10 chars */ String> suffix,
     /** Additional contact information about the person stored in xml format. */
@@ -83,7 +84,7 @@ public record PersonRowUnsaved(
       /** First name of the person. */
       /* user-picked */ FirstName firstname,
       /** Last name of the person. */
-      Name lastname) {
+      /* user-picked */ LastName lastname) {
     this(
         businessentityid,
         persontype,
@@ -187,7 +188,7 @@ public record PersonRowUnsaved(
   ;
 
   /** Middle name or middle initial of the person. */
-  public PersonRowUnsaved withMiddlename(Optional<Name> middlename) {
+  public PersonRowUnsaved withMiddlename(Optional</* user-picked */ MiddleName> middlename) {
     return new PersonRowUnsaved(
         businessentityid,
         persontype,
@@ -206,7 +207,7 @@ public record PersonRowUnsaved(
   ;
 
   /** Last name of the person. */
-  public PersonRowUnsaved withLastname(Name lastname) {
+  public PersonRowUnsaved withLastname(/* user-picked */ LastName lastname) {
     return new PersonRowUnsaved(
         businessentityid,
         persontype,
@@ -371,17 +372,17 @@ public record PersonRowUnsaved(
   public static PgText<PersonRowUnsaved> pgText =
       PgText.instance(
           (row, sb) -> {
-            BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb);
+            BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.bpchar.text().unsafeEncode(row.persontype, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.text.opt().text().unsafeEncode(row.title, sb);
             sb.append(PgText.DELIMETER);
-            FirstName.dbType.text().unsafeEncode(row.firstname, sb);
+            FirstName.pgType.text().unsafeEncode(row.firstname, sb);
             sb.append(PgText.DELIMETER);
-            Name.dbType.opt().text().unsafeEncode(row.middlename, sb);
+            MiddleName.pgType.opt().text().unsafeEncode(row.middlename, sb);
             sb.append(PgText.DELIMETER);
-            Name.dbType.text().unsafeEncode(row.lastname, sb);
+            LastName.pgType.text().unsafeEncode(row.lastname, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.text.opt().text().unsafeEncode(row.suffix, sb);
             sb.append(PgText.DELIMETER);
@@ -389,7 +390,7 @@ public record PersonRowUnsaved(
             sb.append(PgText.DELIMETER);
             PgTypes.xml.opt().text().unsafeEncode(row.demographics, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(NameStyle.dbType.text()).unsafeEncode(row.namestyle, sb);
+            Defaulted.pgText(NameStyle.pgType.text()).unsafeEncode(row.namestyle, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.int4.text()).unsafeEncode(row.emailpromotion, sb);
             sb.append(PgText.DELIMETER);

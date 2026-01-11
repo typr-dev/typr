@@ -21,6 +21,7 @@ import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
+import testdb.userdefined.Email
 
 data class MariatestUniqueRepoMock(
   val toRow: (MariatestUniqueRowUnsaved) -> MariatestUniqueRow,
@@ -97,7 +98,7 @@ data class MariatestUniqueRepoMock(
   ): MariatestUniqueRow? = map.values.toList().find({ v -> (code == v.code) && (category == v.category) })
 
   override fun selectByUniqueEmail(
-    email: String,
+    email: /* user-picked */ Email,
     c: Connection
   ): MariatestUniqueRow? = map.values.toList().find({ v -> (email == v.email) })
 

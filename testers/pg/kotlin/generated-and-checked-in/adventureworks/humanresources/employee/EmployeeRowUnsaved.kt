@@ -8,7 +8,8 @@ package adventureworks.humanresources.employee
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.kotlin.KotlinDbTypes
@@ -48,7 +49,7 @@ data class EmployeeRowUnsaved(
   /** Default: true
     * Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt from collective bargaining.
     */
-  val salariedflag: Defaulted<Flag> = UseDefault(),
+  val salariedflag: Defaulted</* user-picked */ SalariedFlag> = UseDefault(),
   /** Default: 0
     * Number of available vacation hours.
     * Constraint CK_Employee_VacationHours affecting columns vacationhours:  (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -62,7 +63,7 @@ data class EmployeeRowUnsaved(
   /** Default: true
     * 0 = Inactive, 1 = Active
     */
-  val currentflag: Defaulted<Flag> = UseDefault(),
+  val currentflag: Defaulted</* user-picked */ CurrentFlag> = UseDefault(),
   /** Default: uuid_generate_v1() */
   val rowguid: Defaulted<UUID> = UseDefault(),
   /** Default: now() */
@@ -73,10 +74,10 @@ data class EmployeeRowUnsaved(
   val organizationnode: Defaulted<String?> = UseDefault()
 ) {
   fun toRow(
-    salariedflagDefault: () -> Flag,
+    salariedflagDefault: () -> /* user-picked */ SalariedFlag,
     vacationhoursDefault: () -> Short,
     sickleavehoursDefault: () -> Short,
-    currentflagDefault: () -> Flag,
+    currentflagDefault: () -> /* user-picked */ CurrentFlag,
     rowguidDefault: () -> UUID,
     modifieddateDefault: () -> LocalDateTime,
     organizationnodeDefault: () -> String?
@@ -84,7 +85,7 @@ data class EmployeeRowUnsaved(
 
   companion object {
     val pgText: PgText<EmployeeRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.text.text().unsafeEncode(row.nationalidnumber, sb)
       sb.append(PgText.DELIMETER)
@@ -100,13 +101,13 @@ data class EmployeeRowUnsaved(
       sb.append(PgText.DELIMETER)
       PgTypes.date.text().unsafeEncode(row.hiredate, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(Flag.dbType.text()).unsafeEncode(row.salariedflag, sb)
+      Defaulted.pgText(SalariedFlag.pgType.text()).unsafeEncode(row.salariedflag, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(KotlinDbTypes.PgTypes.int2.text()).unsafeEncode(row.vacationhours, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(KotlinDbTypes.PgTypes.int2.text()).unsafeEncode(row.sickleavehours, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(Flag.dbType.text()).unsafeEncode(row.currentflag, sb)
+      Defaulted.pgText(CurrentFlag.pgType.text()).unsafeEncode(row.currentflag, sb)
       sb.append(PgText.DELIMETER)
       Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)

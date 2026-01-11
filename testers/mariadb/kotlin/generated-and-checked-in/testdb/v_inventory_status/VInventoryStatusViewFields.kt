@@ -60,7 +60,7 @@ data class VInventoryStatusViewFields(val _path: List<Path>) : TupleExpr14<Produ
 
   fun lastCountedAt(): OptField<LocalDateTime, VInventoryStatusViewRow> = OptField<LocalDateTime, VInventoryStatusViewRow>(_path, "last_counted_at", VInventoryStatusViewRow::lastCountedAt, null, null, { row, value -> row.copy(lastCountedAt = value) }, MariaTypes.datetime)
 
-  fun productId(): Field<ProductsId, VInventoryStatusViewRow> = Field<ProductsId, VInventoryStatusViewRow>(_path, "product_id", VInventoryStatusViewRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.dbType)
+  fun productId(): Field<ProductsId, VInventoryStatusViewRow> = Field<ProductsId, VInventoryStatusViewRow>(_path, "product_id", VInventoryStatusViewRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
 
   fun productName(): Field<String, VInventoryStatusViewRow> = Field<String, VInventoryStatusViewRow>(_path, "product_name", VInventoryStatusViewRow::productName, null, null, { row, value -> row.copy(productName = value) }, MariaTypes.varchar)
 
@@ -80,7 +80,7 @@ data class VInventoryStatusViewFields(val _path: List<Path>) : TupleExpr14<Produ
 
   fun warehouseCode(): Field<String, VInventoryStatusViewRow> = Field<String, VInventoryStatusViewRow>(_path, "warehouse_code", VInventoryStatusViewRow::warehouseCode, null, null, { row, value -> row.copy(warehouseCode = value) }, MariaTypes.char_)
 
-  fun warehouseId(): Field<WarehousesId, VInventoryStatusViewRow> = Field<WarehousesId, VInventoryStatusViewRow>(_path, "warehouse_id", VInventoryStatusViewRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.dbType)
+  fun warehouseId(): Field<WarehousesId, VInventoryStatusViewRow> = Field<WarehousesId, VInventoryStatusViewRow>(_path, "warehouse_id", VInventoryStatusViewRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.mariaType)
 
   fun warehouseName(): Field<String, VInventoryStatusViewRow> = Field<String, VInventoryStatusViewRow>(_path, "warehouse_name", VInventoryStatusViewRow::warehouseName, null, null, { row, value -> row.copy(warehouseName = value) }, MariaTypes.varchar)
 

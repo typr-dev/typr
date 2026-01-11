@@ -1,6 +1,6 @@
 package typr.openapi
 
-import typr.jvm
+import typr.{jvm, TypeDefinitions}
 
 /** Configuration options for OpenAPI code generation */
 case class OpenApiOptions(
@@ -20,6 +20,12 @@ case class OpenApiOptions(
     generateWrapperTypes: Boolean,
     /** Custom type mappings: schema name -> qualified type name */
     typeOverrides: Map[String, jvm.Type.Qualified],
+    /** Explicit field name -> type mappings. These override field types by property name (lowercase). Used for shared types across sources where the type is defined elsewhere.
+      */
+    fieldTypeOverrides: Map[String, jvm.Type.Qualified],
+    /** TypeDefinitions for matching fields to shared types. When a field matches an ApiMatch predicate, it uses the corresponding wrapper type.
+      */
+    typeDefinitions: TypeDefinitions,
     /** Whether to generate nullable fields as Optional instead of using @Nullable */
     useOptionalForNullable: Boolean,
     /** Whether to generate deprecated annotations */
@@ -49,6 +55,8 @@ object OpenApiOptions {
       clientLib = None,
       generateWrapperTypes = true,
       typeOverrides = Map.empty,
+      fieldTypeOverrides = Map.empty,
+      typeDefinitions = TypeDefinitions.Empty,
       useOptionalForNullable = false,
       includeDeprecated = true,
       generateValidation = false,

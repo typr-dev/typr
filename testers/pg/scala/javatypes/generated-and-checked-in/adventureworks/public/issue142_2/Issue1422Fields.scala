@@ -28,7 +28,7 @@ class Issue1422Fields(val `_path`: java.util.List[Path]) extends TupleExpr1[Issu
       Optional.empty(),
       Optional.empty(),
       (row, value) => row.copy(tabellkode = value),
-      Issue142Id.dbType
+      Issue142Id.pgType
     )
   }
 

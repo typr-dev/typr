@@ -27,19 +27,19 @@ class SalesterritoryRepoImpl() : SalesterritoryRepo {
   override fun deleteById(
     territoryid: SalesterritoryId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"sales\".\"salesterritory\" where \"territoryid\" = "), Fragment.encode(SalesterritoryId.dbType, territoryid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"sales\".\"salesterritory\" where \"territoryid\" = "), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     territoryids: Array<SalesterritoryId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"sales\".\"salesterritory\"\nwhere \"territoryid\" = ANY("), Fragment.encode(SalesterritoryId.dbTypeArray, territoryids), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"sales\".\"salesterritory\"\nwhere \"territoryid\" = ANY("), Fragment.encode(SalesterritoryId.pgTypeArray, territoryids), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: SalesterritoryRow,
     c: Connection
-  ): SalesterritoryRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesterritory\"(\"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\"\n"))
+  ): SalesterritoryRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesterritory\"(\"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\"\n"))
     .updateReturning(SalesterritoryRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,15 +49,15 @@ class SalesterritoryRepoImpl() : SalesterritoryRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     columns.add(Fragment.lit("\"countryregioncode\""))
-    values.add(Fragment.interpolate(Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit("")))
     columns.add(Fragment.lit("\"group\""))
     values.add(Fragment.interpolate(Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit("")))
     unsaved.territoryid.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"territoryid\""))
-      values.add(Fragment.interpolate(Fragment.encode(SalesterritoryId.dbType, value), Fragment.lit("::int4"))) }
+      values.add(Fragment.interpolate(Fragment.encode(SalesterritoryId.pgType, value), Fragment.lit("::int4"))) }
     );
     unsaved.salesytd.visit(
       {  },
@@ -113,12 +113,12 @@ class SalesterritoryRepoImpl() : SalesterritoryRepo {
   override fun selectById(
     territoryid: SalesterritoryId,
     c: Connection
-  ): SalesterritoryRow? = Fragment.interpolate(Fragment.lit("select \"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesterritory\"\nwhere \"territoryid\" = "), Fragment.encode(SalesterritoryId.dbType, territoryid), Fragment.lit("")).query(SalesterritoryRow._rowParser.first()).runUnchecked(c)
+  ): SalesterritoryRow? = Fragment.interpolate(Fragment.lit("select \"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesterritory\"\nwhere \"territoryid\" = "), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.lit("")).query(SalesterritoryRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     territoryids: Array<SalesterritoryId>,
     c: Connection
-  ): List<SalesterritoryRow> = Fragment.interpolate(Fragment.lit("select \"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesterritory\"\nwhere \"territoryid\" = ANY("), Fragment.encode(SalesterritoryId.dbTypeArray, territoryids), Fragment.lit(")")).query(SalesterritoryRow._rowParser.all()).runUnchecked(c)
+  ): List<SalesterritoryRow> = Fragment.interpolate(Fragment.lit("select \"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\"\nfrom \"sales\".\"salesterritory\"\nwhere \"territoryid\" = ANY("), Fragment.encode(SalesterritoryId.pgTypeArray, territoryids), Fragment.lit(")")).query(SalesterritoryRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     territoryids: Array<SalesterritoryId>,
@@ -136,13 +136,13 @@ class SalesterritoryRepoImpl() : SalesterritoryRepo {
     c: Connection
   ): Boolean {
     val territoryid: SalesterritoryId = row.territoryid
-    return Fragment.interpolate(Fragment.lit("update \"sales\".\"salesterritory\"\nset \"name\" = "), Fragment.encode(Name.dbType, row.name), Fragment.lit("::varchar,\n\"countryregioncode\" = "), Fragment.encode(CountryregionId.dbType, row.countryregioncode), Fragment.lit(",\n\"group\" = "), Fragment.encode(PgTypes.text, row.group), Fragment.lit(",\n\"salesytd\" = "), Fragment.encode(PgTypes.numeric, row.salesytd), Fragment.lit("::numeric,\n\"saleslastyear\" = "), Fragment.encode(PgTypes.numeric, row.saleslastyear), Fragment.lit("::numeric,\n\"costytd\" = "), Fragment.encode(PgTypes.numeric, row.costytd), Fragment.lit("::numeric,\n\"costlastyear\" = "), Fragment.encode(PgTypes.numeric, row.costlastyear), Fragment.lit("::numeric,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"territoryid\" = "), Fragment.encode(SalesterritoryId.dbType, territoryid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"sales\".\"salesterritory\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, row.countryregioncode), Fragment.lit(",\n\"group\" = "), Fragment.encode(PgTypes.text, row.group), Fragment.lit(",\n\"salesytd\" = "), Fragment.encode(PgTypes.numeric, row.salesytd), Fragment.lit("::numeric,\n\"saleslastyear\" = "), Fragment.encode(PgTypes.numeric, row.saleslastyear), Fragment.lit("::numeric,\n\"costytd\" = "), Fragment.encode(PgTypes.numeric, row.costytd), Fragment.lit("::numeric,\n\"costlastyear\" = "), Fragment.encode(PgTypes.numeric, row.costlastyear), Fragment.lit("::numeric,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"territoryid\" = "), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: SalesterritoryRow,
     c: Connection
-  ): SalesterritoryRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesterritory\"(\"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"territoryid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"countryregioncode\" = EXCLUDED.\"countryregioncode\",\n\"group\" = EXCLUDED.\"group\",\n\"salesytd\" = EXCLUDED.\"salesytd\",\n\"saleslastyear\" = EXCLUDED.\"saleslastyear\",\n\"costytd\" = EXCLUDED.\"costytd\",\n\"costlastyear\" = EXCLUDED.\"costlastyear\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\""))
+  ): SalesterritoryRow = Fragment.interpolate(Fragment.lit("insert into \"sales\".\"salesterritory\"(\"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"territoryid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"countryregioncode\" = EXCLUDED.\"countryregioncode\",\n\"group\" = EXCLUDED.\"group\",\n\"salesytd\" = EXCLUDED.\"salesytd\",\n\"saleslastyear\" = EXCLUDED.\"saleslastyear\",\n\"costytd\" = EXCLUDED.\"costytd\",\n\"costlastyear\" = EXCLUDED.\"costlastyear\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"territoryid\", \"name\", \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\", \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\""))
     .updateReturning(SalesterritoryRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

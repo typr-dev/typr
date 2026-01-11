@@ -64,7 +64,7 @@ public class ProductsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withProductId(value),
-        ProductsId.dbType);
+        ProductsId.mariaType);
   }
 
   public Field<String, ProductsRow> sku() {
@@ -86,7 +86,7 @@ public class ProductsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withBrandId(value),
-        BrandsId.dbType);
+        BrandsId.mariaType);
   }
 
   public Field<String, ProductsRow> name() {
@@ -196,7 +196,7 @@ public class ProductsFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withTags(value),
-        BestsellerClearanceFSet.dbType);
+        BestsellerClearanceFSet.mariaType);
   }
 
   public OptField<Json, ProductsRow> attributes() {

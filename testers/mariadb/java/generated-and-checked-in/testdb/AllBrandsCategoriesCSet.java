@@ -20,11 +20,6 @@ public record AllBrandsCategoriesCSet(Set<AllBrandsCategoriesCSetMember> members
   }
   ;
 
-  public static MariaType<AllBrandsCategoriesCSet> dbType =
-      MariaTypes.set.bimap(
-          (MariaSet ms) -> AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated()),
-          (AllBrandsCategoriesCSet s) -> MariaSet.fromString(s.toCommaSeparated()));
-
   public static AllBrandsCategoriesCSet empty() {
     return new AllBrandsCategoriesCSet(EnumSet.noneOf(AllBrandsCategoriesCSetMember.class));
   }
@@ -46,6 +41,11 @@ public record AllBrandsCategoriesCSet(Set<AllBrandsCategoriesCSetMember> members
     return new AllBrandsCategoriesCSet(set);
   }
   ;
+
+  public static MariaType<AllBrandsCategoriesCSet> mariaType =
+      MariaTypes.set.bimap(
+          (MariaSet ms) -> AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated()),
+          (AllBrandsCategoriesCSet s) -> MariaSet.fromString(s.toCommaSeparated()));
 
   public static AllBrandsCategoriesCSet of(List<AllBrandsCategoriesCSetMember> members) {
     if (members.isEmpty()) {

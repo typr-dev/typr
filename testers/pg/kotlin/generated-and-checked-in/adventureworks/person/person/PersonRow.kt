@@ -7,9 +7,10 @@ package adventureworks.person.person
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple13
@@ -43,9 +44,9 @@ data class PersonRow(
   /** First name of the person. */
   val firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  val middlename: Name?,
+  val middlename: /* user-picked */ MiddleName?,
   /** Last name of the person. */
-  val lastname: Name,
+  val lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   val suffix: /* max 10 chars */ String?,
   /** 0 = Contact does not wish to receive e-mail promotions, 1 = Contact does wish to receive e-mail promotions from AdventureWorks, 2 = Contact does wish to receive e-mail promotions from AdventureWorks and selected partners.
@@ -61,7 +62,7 @@ data class PersonRow(
   val rowguid: UUID,
   /** Default: now() */
   val modifieddate: LocalDateTime
-) : Tuple13<BusinessentityId, String, NameStyle, /* max 8 chars */ String?, /* user-picked */ FirstName, Name?, Name, /* max 10 chars */ String?, Int, Xml?, Xml?, UUID, LocalDateTime> {
+) : Tuple13<BusinessentityId, String, NameStyle, /* max 8 chars */ String?, /* user-picked */ FirstName, /* user-picked */ MiddleName?, /* user-picked */ LastName, /* max 10 chars */ String?, Int, Xml?, Xml?, UUID, LocalDateTime> {
   override fun _1(): BusinessentityId = businessentityid
 
   override fun _10(): Xml? = additionalcontactinfo
@@ -80,9 +81,9 @@ data class PersonRow(
 
   override fun _5(): /* user-picked */ FirstName = firstname
 
-  override fun _6(): Name? = middlename
+  override fun _6(): /* user-picked */ MiddleName? = middlename
 
-  override fun _7(): Name = lastname
+  override fun _7(): /* user-picked */ LastName = lastname
 
   override fun _8(): /* max 10 chars */ String? = suffix
 
@@ -98,7 +99,7 @@ data class PersonRow(
   ): PersonRowUnsaved = PersonRowUnsaved(businessentityid, persontype, title, firstname, middlename, lastname, suffix, additionalcontactinfo, demographics, namestyle, emailpromotion, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<PersonRow> = RowParsers.of(BusinessentityId.dbType, PgTypes.bpchar, NameStyle.dbType, PgTypes.text.nullable(), FirstName.dbType, Name.dbType.nullable(), Name.dbType, PgTypes.text.nullable(), KotlinDbTypes.PgTypes.int4, PgTypes.xml.nullable(), PgTypes.xml.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> PersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) }, { row -> arrayOf<Any?>(row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate) })
+    val _rowParser: RowParser<PersonRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text.nullable(), FirstName.pgType, MiddleName.pgType.nullable(), LastName.pgType, PgTypes.text.nullable(), KotlinDbTypes.PgTypes.int4, PgTypes.xml.nullable(), PgTypes.xml.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> PersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) }, { row -> arrayOf<Any?>(row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<PersonRow> =
       PgText.from(_rowParser.underlying)

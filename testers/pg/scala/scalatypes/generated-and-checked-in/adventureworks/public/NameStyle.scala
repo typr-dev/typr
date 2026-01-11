@@ -19,7 +19,7 @@ case class NameStyle(@JsonValue value: Boolean)
 object NameStyle {
   given bijection: Bijection[NameStyle, Boolean] = Bijection.apply[NameStyle, Boolean](_.value)(NameStyle.apply)
 
-  given dbType: PgType[NameStyle] = ScalaDbTypes.PgTypes.bool.bimap(NameStyle.apply, _.value).renamed(""""public"."NameStyle"""")
+  given pgType: PgType[NameStyle] = ScalaDbTypes.PgTypes.bool.bimap(NameStyle.apply, _.value).renamed(""""public"."NameStyle"""")
 
-  given dbTypeArray: PgType[Array[NameStyle]] = PgTypes.boolArrayUnboxed.bimap(xs => xs.map(NameStyle.apply), xs => xs.map(_.value)).renamed(""""public"."NameStyle"[]""")
+  given pgTypeArray: PgType[Array[NameStyle]] = PgTypes.boolArrayUnboxed.bimap(xs => xs.map(NameStyle.apply), xs => xs.map(_.value)).renamed(""""public"."NameStyle"[]""")
 }

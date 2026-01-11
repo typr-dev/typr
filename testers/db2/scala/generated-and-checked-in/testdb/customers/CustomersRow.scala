@@ -54,5 +54,5 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.dbType, Db2Types.varchar, Db2Types.varchar, Db2Types.timestamp.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt))
+  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.timestamp.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt))
 }

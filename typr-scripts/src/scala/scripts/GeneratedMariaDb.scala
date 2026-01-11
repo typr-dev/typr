@@ -55,6 +55,18 @@ object GeneratedMariaDb {
               lang = lang,
               dbLib = Some(dbLib),
               jsonLibs = List(jsonLib),
+              typeDefinitions = TypeDefinitions(
+                // Name types - shared across customer-related tables
+                TypeEntry.db("FirstName", DbMatch.column("first_name")),
+                TypeEntry.db("LastName", DbMatch.column("last_name")),
+                TypeEntry.db("Email", DbMatch.column("email", "contact_email")),
+                // Boolean flags with semantic meaning
+                TypeEntry.db("IsActive", DbMatch.column("is_active")),
+                TypeEntry.db("IsDefault", DbMatch.column("is_default")),
+                TypeEntry.db("IsPrimary", DbMatch.column("is_primary")),
+                TypeEntry.db("IsApproved", DbMatch.column("is_approved")),
+                TypeEntry.db("IsVerifiedPurchase", DbMatch.column("is_verified_purchase"))
+              ),
               generateMockRepos = Selector.All,
               enablePrimaryKeyType = Selector.All,
               enableTestInserts = Selector.All,
@@ -64,7 +76,7 @@ object GeneratedMariaDb {
             val targetSources = buildDir.resolve(s"$projectPath/generated-and-checked-in$suffix")
 
             val newFiles: Generated =
-              generate(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), Map.empty).head
+              generate.orThrow(options, metadb, ProjectGraph(name = "", targetSources, None, selector, newSqlScripts, Nil), Map.empty).head
 
             newFiles
               .overwriteFolder(softWrite = FileSync.SoftWrite.Yes(Set.empty))

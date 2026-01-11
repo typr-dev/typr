@@ -21,19 +21,19 @@ import dev.typr.foundations.Fragment.interpolate
 class IdentityTestRepoImpl extends IdentityTestRepo {
   override def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow] = DeleteBuilder.of(""""public"."identity-test"""", IdentityTestFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(name: IdentityTestId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."identity-test" where "name" = """), Fragment.encode(IdentityTestId.dbType, name), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(name: IdentityTestId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."identity-test" where "name" = """), Fragment.encode(IdentityTestId.pgType, name), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(names: Array[IdentityTestId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "public"."identity-test"
-    where "name" = ANY("""), Fragment.encode(IdentityTestId.dbTypeArray, names), Fragment.lit(")"))
+    where "name" = ANY("""), Fragment.encode(IdentityTestId.pgTypeArray, names), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
   interpolate(Fragment.lit("""insert into "public"."identity-test"("default_generated", "name")
-    values ("""), Fragment.encode(PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.dbType, unsaved.name), Fragment.lit(""")
+    values ("""), Fragment.encode(PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit(""")
     RETURNING "always_generated", "default_generated", "name"
     """))
     .updateReturning(IdentityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -43,7 +43,7 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(IdentityTestId.dbType, unsaved.name), Fragment.lit(""))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit(""))): @scala.annotation.nowarn
     unsaved.defaultGenerated.visit(
       {  },
       value => { columns.add(Fragment.lit(""""default_generated"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.int4, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
@@ -79,13 +79,13 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
   override def selectById(name: IdentityTestId)(using c: Connection): Optional[IdentityTestRow] = {
     interpolate(Fragment.lit("""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
-    where "name" = """), Fragment.encode(IdentityTestId.dbType, name), Fragment.lit("")).query(IdentityTestRow.`_rowParser`.first()).runUnchecked(c)
+    where "name" = """), Fragment.encode(IdentityTestId.pgType, name), Fragment.lit("")).query(IdentityTestRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(names: Array[IdentityTestId])(using c: Connection): java.util.List[IdentityTestRow] = {
     interpolate(Fragment.lit("""select "always_generated", "default_generated", "name"
     from "public"."identity-test"
-    where "name" = ANY("""), Fragment.encode(IdentityTestId.dbTypeArray, names), Fragment.lit(")")).query(IdentityTestRow.`_rowParser`.all()).runUnchecked(c)
+    where "name" = ANY("""), Fragment.encode(IdentityTestId.pgTypeArray, names), Fragment.lit(")")).query(IdentityTestRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(names: Array[IdentityTestId])(using c: Connection): java.util.Map[IdentityTestId, IdentityTestRow] = {
@@ -100,12 +100,12 @@ class IdentityTestRepoImpl extends IdentityTestRepo {
     val name: IdentityTestId = row.name
     return interpolate(Fragment.lit("""update "public"."identity-test"
     set "default_generated" = """), Fragment.encode(PgTypes.int4, row.defaultGenerated), Fragment.lit("""::int4
-    where "name" = """), Fragment.encode(IdentityTestId.dbType, name), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "name" = """), Fragment.encode(IdentityTestId.pgType, name), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow = {
   interpolate(Fragment.lit("""insert into "public"."identity-test"("default_generated", "name")
-    values ("""), Fragment.encode(PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.dbType, unsaved.name), Fragment.lit(""")
+    values ("""), Fragment.encode(PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit(""")
     on conflict ("name")
     do update set
       "default_generated" = EXCLUDED."default_generated"

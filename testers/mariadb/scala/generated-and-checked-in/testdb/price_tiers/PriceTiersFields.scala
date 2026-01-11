@@ -27,7 +27,7 @@ class PriceTiersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Pri
       None,
       None,
       (row, value) => row.copy(tierId = value),
-      PriceTiersId.dbType
+      PriceTiersId.mariaType
     )
   }
 

@@ -18,5 +18,5 @@ case class MoneyAmount(@JsonValue value: BigDecimal)
 object MoneyAmount {
   given bijection: Bijection[MoneyAmount, BigDecimal] = Bijection.apply[MoneyAmount, BigDecimal](_.value)(MoneyAmount.apply)
 
-  given dbType: Db2Type[MoneyAmount] = ScalaDbTypes.Db2Types.decimal.bimap(MoneyAmount.apply, _.value).renamed(""""MONEY_AMOUNT"""")
+  given db2Type: Db2Type[MoneyAmount] = ScalaDbTypes.Db2Types.decimal.bimap(MoneyAmount.apply, _.value).renamed(""""MONEY_AMOUNT"""")
 }

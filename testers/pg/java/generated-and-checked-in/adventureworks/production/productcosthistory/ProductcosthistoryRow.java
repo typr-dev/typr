@@ -89,7 +89,7 @@ public record ProductcosthistoryRow(
 
   public static RowParser<ProductcosthistoryRow> _rowParser =
       RowParsers.of(
-          ProductId.dbType,
+          ProductId.pgType,
           PgTypes.timestamp,
           PgTypes.timestamp.opt(),
           PgTypes.numeric,

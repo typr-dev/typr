@@ -10,28 +10,28 @@ import dev.typr.foundations.scala.DbTypeOps
 import dev.typr.foundations.scala.DeleteBuilder
 import dev.typr.foundations.scala.Dialect
 import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
 import dev.typr.foundations.scala.SelectBuilder
 import dev.typr.foundations.scala.UpdateBuilder
 import java.sql.Connection
 import scala.collection.mutable.ListBuffer
 import testdb.products.ProductsId
+import testdb.userdefined.IsPrimary
 import dev.typr.foundations.scala.Fragment.sql
 
 class ProductImagesRepoImpl extends ProductImagesRepo {
   override def delete: DeleteBuilder[ProductImagesFields, ProductImagesRow] = DeleteBuilder.of("`product_images`", ProductImagesFields.structure, Dialect.MARIADB)
 
-  override def deleteById(imageId: ProductImagesId)(using c: Connection): Boolean = sql"delete from `product_images` where `image_id` = ${Fragment.encode(ProductImagesId.dbType, imageId)}".update().runUnchecked(c) > 0
+  override def deleteById(imageId: ProductImagesId)(using c: Connection): Boolean = sql"delete from `product_images` where `image_id` = ${Fragment.encode(ProductImagesId.mariaType, imageId)}".update().runUnchecked(c) > 0
 
   override def deleteByIds(imageIds: Array[ProductImagesId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    imageIds.foreach { id => fragments.addOne(Fragment.encode(ProductImagesId.dbType, id)): @scala.annotation.nowarn }
+    imageIds.foreach { id => fragments.addOne(Fragment.encode(ProductImagesId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("delete from `product_images` where `image_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: ProductImagesRow)(using c: Connection): ProductImagesRow = {
   sql"""insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)
-    values (${Fragment.encode(ProductsId.dbType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.imageUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.thumbnailUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.altText)}, ${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isPrimary)}, ${Fragment.encode(MariaTypes.longblob.nullable, unsaved.imageData)})
+    values (${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.imageUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.thumbnailUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.altText)}, ${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder)}, ${Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary)}, ${Fragment.encode(MariaTypes.longblob.nullable, unsaved.imageData)})
     RETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`
     """
     .updateReturning(ProductImagesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -41,7 +41,7 @@ class ProductImagesRepoImpl extends ProductImagesRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit("`product_id`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ProductsId.dbType, unsaved.productId)}"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(ProductsId.mariaType, unsaved.productId)}"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit("`image_url`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.imageUrl)}"): @scala.annotation.nowarn
     unsaved.thumbnailUrl.visit(
@@ -58,7 +58,7 @@ class ProductImagesRepoImpl extends ProductImagesRepo {
     );
     unsaved.isPrimary.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`is_primary`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.bool, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit("`is_primary`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(IsPrimary.mariaType, value)}"): @scala.annotation.nowarn }
     );
     unsaved.imageData.visit(
       {  },
@@ -84,12 +84,12 @@ class ProductImagesRepoImpl extends ProductImagesRepo {
   override def selectById(imageId: ProductImagesId)(using c: Connection): Option[ProductImagesRow] = {
     sql"""select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`
     from `product_images`
-    where `image_id` = ${Fragment.encode(ProductImagesId.dbType, imageId)}""".query(ProductImagesRow.`_rowParser`.first()).runUnchecked(c)
+    where `image_id` = ${Fragment.encode(ProductImagesId.mariaType, imageId)}""".query(ProductImagesRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(imageIds: Array[ProductImagesId])(using c: Connection): List[ProductImagesRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    imageIds.foreach { id => fragments.addOne(Fragment.encode(ProductImagesId.dbType, id)): @scala.annotation.nowarn }
+    imageIds.foreach { id => fragments.addOne(Fragment.encode(ProductImagesId.mariaType, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data` from `product_images` where `image_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ProductImagesRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -104,19 +104,19 @@ class ProductImagesRepoImpl extends ProductImagesRepo {
   override def update(row: ProductImagesRow)(using c: Connection): Boolean = {
     val imageId: ProductImagesId = row.imageId
     return sql"""update `product_images`
-    set `product_id` = ${Fragment.encode(ProductsId.dbType, row.productId)},
+    set `product_id` = ${Fragment.encode(ProductsId.mariaType, row.productId)},
     `image_url` = ${Fragment.encode(MariaTypes.varchar, row.imageUrl)},
     `thumbnail_url` = ${Fragment.encode(MariaTypes.varchar.nullable, row.thumbnailUrl)},
     `alt_text` = ${Fragment.encode(MariaTypes.varchar.nullable, row.altText)},
     `sort_order` = ${Fragment.encode(MariaTypes.tinyintUnsigned, row.sortOrder)},
-    `is_primary` = ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, row.isPrimary)},
+    `is_primary` = ${Fragment.encode(IsPrimary.mariaType, row.isPrimary)},
     `image_data` = ${Fragment.encode(MariaTypes.longblob.nullable, row.imageData)}
-    where `image_id` = ${Fragment.encode(ProductImagesId.dbType, imageId)}""".update().runUnchecked(c) > 0
+    where `image_id` = ${Fragment.encode(ProductImagesId.mariaType, imageId)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ProductImagesRow)(using c: Connection): ProductImagesRow = {
   sql"""INSERT INTO `product_images`(`image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)
-    VALUES (${Fragment.encode(ProductImagesId.dbType, unsaved.imageId)}, ${Fragment.encode(ProductsId.dbType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.imageUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.thumbnailUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.altText)}, ${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.isPrimary)}, ${Fragment.encode(MariaTypes.longblob.nullable, unsaved.imageData)})
+    VALUES (${Fragment.encode(ProductImagesId.mariaType, unsaved.imageId)}, ${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.imageUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.thumbnailUrl)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.altText)}, ${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder)}, ${Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary)}, ${Fragment.encode(MariaTypes.longblob.nullable, unsaved.imageData)})
     ON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),
     `image_url` = VALUES(`image_url`),
     `thumbnail_url` = VALUES(`thumbnail_url`),

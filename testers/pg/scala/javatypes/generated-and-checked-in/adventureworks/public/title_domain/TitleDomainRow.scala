@@ -20,7 +20,7 @@ case class TitleDomainRow(code: TitleDomainId) extends Tuple1[TitleDomainId] {
 }
 
 object TitleDomainRow {
-  val `_rowParser`: RowParser[TitleDomainRow] = RowParsers.of(TitleDomainId.dbType, TitleDomainRow.apply, row => Array[Any](row.code))
+  val `_rowParser`: RowParser[TitleDomainRow] = RowParsers.of(TitleDomainId.pgType, TitleDomainRow.apply, row => Array[Any](row.code))
 
   given pgText: PgText[TitleDomainRow] = PgText.from(`_rowParser`)
 }

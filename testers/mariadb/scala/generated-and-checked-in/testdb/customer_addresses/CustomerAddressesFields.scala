@@ -12,7 +12,6 @@ import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
 import dev.typr.foundations.scala.ForeignKey
 import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
 import dev.typr.foundations.scala.SqlExpr
 import dev.typr.foundations.scala.SqlExpr.Field
 import dev.typr.foundations.scala.SqlExpr.IdField
@@ -23,8 +22,9 @@ import org.mariadb.jdbc.`type`.Point
 import testdb.customers.CustomersFields
 import testdb.customers.CustomersId
 import testdb.customers.CustomersRow
+import testdb.userdefined.IsDefault
 
-class CustomerAddressesFields(val `_path`: java.util.List[Path]) extends TupleExpr14[CustomerAddressesId, CustomersId, String, Boolean, String, String, String, String, String, String, String, Point, String, LocalDateTime] with RelationStructure[CustomerAddressesFields, CustomerAddressesRow]  with FieldsBase[CustomerAddressesRow] {
+class CustomerAddressesFields(val `_path`: java.util.List[Path]) extends TupleExpr14[CustomerAddressesId, CustomersId, String, /* user-picked */ IsDefault, String, String, String, String, String, String, String, Point, String, LocalDateTime] with RelationStructure[CustomerAddressesFields, CustomerAddressesRow]  with FieldsBase[CustomerAddressesRow] {
   def addressId: IdField[CustomerAddressesId, CustomerAddressesRow] = {
     new IdField[CustomerAddressesId, CustomerAddressesRow](
       _path,
@@ -33,7 +33,7 @@ class CustomerAddressesFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(addressId = value),
-      CustomerAddressesId.dbType
+      CustomerAddressesId.mariaType
     )
   }
 
@@ -45,7 +45,7 @@ class CustomerAddressesFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.dbType
+      CustomersId.mariaType
     )
   }
 
@@ -61,15 +61,15 @@ class CustomerAddressesFields(val `_path`: java.util.List[Path]) extends TupleEx
     )
   }
 
-  def isDefault: Field[Boolean, CustomerAddressesRow] = {
-    new Field[Boolean, CustomerAddressesRow](
+  def isDefault: Field[/* user-picked */ IsDefault, CustomerAddressesRow] = {
+    new Field[/* user-picked */ IsDefault, CustomerAddressesRow](
       _path,
       "is_default",
       _.isDefault,
       None,
       None,
       (row, value) => row.copy(isDefault = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsDefault.mariaType
     )
   }
 
@@ -207,7 +207,7 @@ class CustomerAddressesFields(val `_path`: java.util.List[Path]) extends TupleEx
 
   override def `_3`: SqlExpr[String] = addressType
 
-  override def `_4`: SqlExpr[Boolean] = isDefault
+  override def `_4`: SqlExpr[/* user-picked */ IsDefault] = isDefault
 
   override def `_5`: SqlExpr[String] = recipientName
 

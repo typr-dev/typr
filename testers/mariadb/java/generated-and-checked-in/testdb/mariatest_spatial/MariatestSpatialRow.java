@@ -186,7 +186,7 @@ public record MariatestSpatialRow(
 
   public static RowParser<MariatestSpatialRow> _rowParser =
       RowParsers.of(
-          MariatestSpatialId.dbType,
+          MariatestSpatialId.mariaType,
           MariaTypes.geometry,
           MariaTypes.point,
           MariaTypes.linestring,

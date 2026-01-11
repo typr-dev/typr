@@ -21,19 +21,19 @@ import dev.typr.foundations.scala.Fragment.sql
 class DepartmentRepoImpl extends DepartmentRepo {
   override def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(departmentid: DepartmentId)(using c: Connection): Boolean = sql"""delete from "humanresources"."department" where "departmentid" = ${Fragment.encode(DepartmentId.dbType, departmentid)}""".update().runUnchecked(c) > 0
+  override def deleteById(departmentid: DepartmentId)(using c: Connection): Boolean = sql"""delete from "humanresources"."department" where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(departmentids: Array[DepartmentId])(using c: Connection): Int = {
     sql"""delete
     from "humanresources"."department"
-    where "departmentid" = ANY(${Fragment.encode(DepartmentId.dbTypeArray, departmentids)})"""
+    where "departmentid" = ANY(${Fragment.encode(DepartmentId.pgTypeArray, departmentids)})"""
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
   sql"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
-    values (${Fragment.encode(DepartmentId.dbType, unsaved.departmentid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(Name.dbType, unsaved.groupname)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(Name.pgType, unsaved.groupname)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "departmentid", "name", "groupname", "modifieddate"
     """
     .updateReturning(DepartmentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -43,12 +43,12 @@ class DepartmentRepoImpl extends DepartmentRepo {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
     columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.name)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     columns.addOne(Fragment.lit(""""groupname"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Name.dbType, unsaved.groupname)}::varchar"): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.groupname)}::varchar"): @scala.annotation.nowarn
     unsaved.departmentid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""departmentid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DepartmentId.dbType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""departmentid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DepartmentId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
@@ -85,13 +85,13 @@ class DepartmentRepoImpl extends DepartmentRepo {
   override def selectById(departmentid: DepartmentId)(using c: Connection): Option[DepartmentRow] = {
     sql"""select "departmentid", "name", "groupname", "modifieddate"
     from "humanresources"."department"
-    where "departmentid" = ${Fragment.encode(DepartmentId.dbType, departmentid)}""".query(DepartmentRow.`_rowParser`.first()).runUnchecked(c)
+    where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".query(DepartmentRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): List[DepartmentRow] = {
     sql"""select "departmentid", "name", "groupname", "modifieddate"
     from "humanresources"."department"
-    where "departmentid" = ANY(${Fragment.encode(DepartmentId.dbTypeArray, departmentids)})""".query(DepartmentRow.`_rowParser`.all()).runUnchecked(c)
+    where "departmentid" = ANY(${Fragment.encode(DepartmentId.pgTypeArray, departmentids)})""".query(DepartmentRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(departmentids: Array[DepartmentId])(using c: Connection): Map[DepartmentId, DepartmentRow] = {
@@ -105,15 +105,15 @@ class DepartmentRepoImpl extends DepartmentRepo {
   override def update(row: DepartmentRow)(using c: Connection): Boolean = {
     val departmentid: DepartmentId = row.departmentid
     return sql"""update "humanresources"."department"
-    set "name" = ${Fragment.encode(Name.dbType, row.name)}::varchar,
-    "groupname" = ${Fragment.encode(Name.dbType, row.groupname)}::varchar,
+    set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
+    "groupname" = ${Fragment.encode(Name.pgType, row.groupname)}::varchar,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "departmentid" = ${Fragment.encode(DepartmentId.dbType, departmentid)}""".update().runUnchecked(c) > 0
+    where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
   sql"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
-    values (${Fragment.encode(DepartmentId.dbType, unsaved.departmentid)}::int4, ${Fragment.encode(Name.dbType, unsaved.name)}::varchar, ${Fragment.encode(Name.dbType, unsaved.groupname)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(Name.pgType, unsaved.groupname)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("departmentid")
     do update set
       "name" = EXCLUDED."name",

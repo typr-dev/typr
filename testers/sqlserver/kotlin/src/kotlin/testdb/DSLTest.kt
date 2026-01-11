@@ -5,6 +5,7 @@ import org.junit.Test
 import testdb.customers.*
 import testdb.orders.*
 import testdb.products.*
+import testdb.userdefined.Email
 import java.math.BigDecimal
 import java.util.Random
 
@@ -23,7 +24,7 @@ class DSLTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Kotlin DSL Where Test",
-                email = "dsl-where@test.com",
+                email = Email("dsl-where@test.com"),
                 c = c
             )
 
@@ -39,9 +40,9 @@ class DSLTest {
     @Test
     fun testSelectWithOrderBy() {
         SqlServerTestHelper.run { c ->
-            testInsert.Customers(name = "KotlinZebra", email = "zebra@test.com", c = c)
-            testInsert.Customers(name = "KotlinAlpha", email = "alpha@test.com", c = c)
-            testInsert.Customers(name = "KotlinMike", email = "mike@test.com", c = c)
+            testInsert.Customers(name = "KotlinZebra", email = Email("zebra@test.com"), c = c)
+            testInsert.Customers(name = "KotlinAlpha", email = Email("alpha@test.com"), c = c)
+            testInsert.Customers(name = "KotlinMike", email = Email("mike@test.com"), c = c)
 
             val results = customersRepo.select()
                 .orderBy { cust -> cust.name().asc() }
@@ -61,7 +62,7 @@ class DSLTest {
     fun testSelectWithLimit() {
         SqlServerTestHelper.run { c ->
             for (i in 0 until 10) {
-                testInsert.Customers(name = "KotlinLimitTest$i", email = "limit$i@test.com", c = c)
+                testInsert.Customers(name = "KotlinLimitTest$i", email = Email("limit$i@test.com"), c = c)
             }
 
             val results = customersRepo.select()
@@ -76,9 +77,9 @@ class DSLTest {
     @Test
     fun testSelectWithCount() {
         SqlServerTestHelper.run { c ->
-            testInsert.Customers(name = "KotlinCountA", email = "counta@test.com", c = c)
-            testInsert.Customers(name = "KotlinCountB", email = "countb@test.com", c = c)
-            testInsert.Customers(name = "KotlinCountC", email = "countc@test.com", c = c)
+            testInsert.Customers(name = "KotlinCountA", email = Email("counta@test.com"), c = c)
+            testInsert.Customers(name = "KotlinCountB", email = Email("countb@test.com"), c = c)
+            testInsert.Customers(name = "KotlinCountC", email = Email("countc@test.com"), c = c)
 
             val count = customersRepo.select()
                 .where { cust -> cust.name().like("KotlinCount%") }
@@ -91,9 +92,9 @@ class DSLTest {
     @Test
     fun testSelectWithIn() {
         SqlServerTestHelper.run { c ->
-            val c1 = testInsert.Customers(name = "KotlinInTest1", email = "in1@test.com", c = c)
-            testInsert.Customers(name = "KotlinInTest2", email = "in2@test.com", c = c)
-            val c3 = testInsert.Customers(name = "KotlinInTest3", email = "in3@test.com", c = c)
+            val c1 = testInsert.Customers(name = "KotlinInTest1", email = Email("in1@test.com"), c = c)
+            testInsert.Customers(name = "KotlinInTest2", email = Email("in2@test.com"), c = c)
+            val c3 = testInsert.Customers(name = "KotlinInTest3", email = Email("in3@test.com"), c = c)
 
             val results = customersRepo.select()
                 .where { cust -> cust.customerId().`in`(c1.customerId, c3.customerId) }
@@ -108,7 +109,7 @@ class DSLTest {
         SqlServerTestHelper.run { c ->
             testInsert.Customers(
                 name = "KotlinProjectionTest",
-                email = "kotlin-projection@test.com",
+                email = Email("kotlin-projection@test.com"),
                 c = c
             )
 
@@ -119,7 +120,7 @@ class DSLTest {
 
             assertEquals(1, results.size)
             assertEquals("KotlinProjectionTest", results[0]._1())
-            assertEquals("kotlin-projection@test.com", results[0]._2())
+            assertEquals(Email("kotlin-projection@test.com"), results[0]._2())
         }
     }
 
@@ -143,7 +144,7 @@ class DSLTest {
         SqlServerTestHelper.run { c ->
             val customer = testInsert.Customers(
                 name = "Orders DSL Customer",
-                email = "orders-dsl@test.com",
+                email = Email("orders-dsl@test.com"),
                 c = c
             )
 
@@ -162,13 +163,13 @@ class DSLTest {
     @Test
     fun testComplexWhereClause() {
         SqlServerTestHelper.run { c ->
-            testInsert.Customers(name = "Kotlin Complex A", email = "kotlin-complex-a@test.com", c = c)
-            testInsert.Customers(name = "Kotlin Complex B", email = "kotlin-complex-b@test.com", c = c)
-            testInsert.Customers(name = "Kotlin Other", email = "kotlin-other@test.com", c = c)
+            testInsert.Customers(name = "Kotlin Complex A", email = Email("kotlin-complex-a@test.com"), c = c)
+            testInsert.Customers(name = "Kotlin Complex B", email = Email("kotlin-complex-b@test.com"), c = c)
+            testInsert.Customers(name = "Kotlin Other", email = Email("kotlin-other@test.com"), c = c)
 
             val results = customersRepo.select()
                 .where { cust ->
-                    cust.name().like("Kotlin Complex%").and(cust.email().like("%@test.com"))
+                    cust.name().like("Kotlin Complex%").and(cust.email().like("%@test.com", Email.bijection))
                 }
                 .toList(c)
 

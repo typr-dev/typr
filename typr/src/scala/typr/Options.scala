@@ -28,7 +28,8 @@ case class Options(
     executionContext: ExecutionContext = ExecutionContext.global,
     schemaMode: SchemaMode = SchemaMode.MultiSchema,
     openEnums: Selector = Selector.None,
-    enablePreciseTypes: Selector = Selector.None
+    enablePreciseTypes: Selector = Selector.None,
+    typeDefinitions: TypeDefinitions = TypeDefinitions.Empty
 )
 
 object Options {

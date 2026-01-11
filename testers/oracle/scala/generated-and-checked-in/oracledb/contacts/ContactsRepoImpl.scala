@@ -15,8 +15,8 @@ import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import oracledb.EmailTableT
 import oracledb.TagVarrayT
+import oracledb.userdefined.Email
 import dev.typr.foundations.Fragment.interpolate
 
 class ContactsRepoImpl extends ContactsRepo {
@@ -32,7 +32,7 @@ class ContactsRepoImpl extends ContactsRepo {
 
   override def insert(unsaved: ContactsRow)(using c: Connection): ContactsId = {
   interpolate(Fragment.lit("""insert into "CONTACTS"("CONTACT_ID", "NAME", "EMAILS", "TAGS")
-    values ("""), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(""")
+    values ("""), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(""")
     """))
     .updateReturningGeneratedKeys(Array[String]("CONTACT_ID"), ContactsId.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -43,7 +43,7 @@ class ContactsRepoImpl extends ContactsRepo {
     columns.add(Fragment.lit(""""NAME"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""EMAILS"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails), Fragment.lit(""))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(Email.oracleType.opt(), unsaved.emails), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""TAGS"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(""))): @scala.annotation.nowarn
     unsaved.contactId.visit(
@@ -90,19 +90,19 @@ class ContactsRepoImpl extends ContactsRepo {
     val contactId: ContactsId = row.contactId
     return interpolate(Fragment.lit("""update "CONTACTS"
     set "NAME" = """), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.lit(""",
-    "EMAILS" = """), Fragment.encode(EmailTableT.oracleType.opt(), row.emails), Fragment.lit(""",
+    "EMAILS" = """), Fragment.encode(Email.oracleType.opt(), row.emails), Fragment.lit(""",
     "TAGS" = """), Fragment.encode(TagVarrayT.oracleType.opt(), row.tags), Fragment.lit("""
     where "CONTACT_ID" = """), Fragment.encode(ContactsId.oracleType, contactId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ContactsRow)(using c: Connection): Unit = {
     interpolate(Fragment.lit("""MERGE INTO "CONTACTS" t
-    USING (SELECT """), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(""" FROM DUAL) s
+    USING (SELECT """), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(""" FROM DUAL) s
     ON (t."CONTACT_ID" = s."CONTACT_ID")
     WHEN MATCHED THEN UPDATE SET t."NAME" = s."NAME",
     t."EMAILS" = s."EMAILS",
     t."TAGS" = s."TAGS"
-    WHEN NOT MATCHED THEN INSERT ("CONTACT_ID", "NAME", "EMAILS", "TAGS") VALUES ("""), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(")"))
+    WHEN NOT MATCHED THEN INSERT ("CONTACT_ID", "NAME", "EMAILS", "TAGS") VALUES ("""), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(")"))
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

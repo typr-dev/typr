@@ -15,13 +15,14 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import testdb.customer_status.CustomerStatusId;
 import testdb.customers.CustomersId;
+import testdb.userdefined.Email;
 
 /** View: v_customer_summary VIEW */
 public record VCustomerSummaryViewRow(
     /** Default: 0 Points to {@link testdb.customers.CustomersRow#customerId()} */
     @JsonProperty("customer_id") CustomersId customerId,
     /** Points to {@link testdb.customers.CustomersRow#email()} */
-    String email,
+    /* user-picked */ Email email,
     /** Default: NULL */
     @JsonProperty("full_name") Optional<String> fullName,
     /** Default: 'bronze' Points to {@link testdb.customers.CustomersRow#tier()} */
@@ -39,8 +40,8 @@ public record VCustomerSummaryViewRow(
     /** Default: current_timestamp(6) */
     @JsonProperty("last_order_date") Optional<LocalDateTime> lastOrderDate)
     implements Tuple10<
-        CustomersId,
-        String,
+        CustomersId, /* user-picked */
+        Email,
         Optional<String>,
         String,
         CustomerStatusId,
@@ -66,7 +67,7 @@ public record VCustomerSummaryViewRow(
   ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
-  public VCustomerSummaryViewRow withEmail(String email) {
+  public VCustomerSummaryViewRow withEmail(/* user-picked */ Email email) {
     return new VCustomerSummaryViewRow(
         customerId,
         email,
@@ -211,11 +212,11 @@ public record VCustomerSummaryViewRow(
 
   public static RowParser<VCustomerSummaryViewRow> _rowParser =
       RowParsers.of(
-          CustomersId.dbType,
-          MariaTypes.varchar,
+          CustomersId.mariaType,
+          Email.mariaType,
           MariaTypes.varchar.opt(),
           MariaTypes.text,
-          CustomerStatusId.dbType,
+          CustomerStatusId.mariaType,
           MariaTypes.datetime,
           MariaTypes.datetime.opt(),
           MariaTypes.bigint,
@@ -250,7 +251,7 @@ public record VCustomerSummaryViewRow(
   ;
 
   @Override
-  public String _2() {
+  public /* user-picked */ Email _2() {
     return email;
   }
   ;

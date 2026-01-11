@@ -10,6 +10,7 @@ import dev.typr.foundations.data.Json;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.IsActive;
 
 /** This class corresponds to a row in table `payment_methods` which has not been persisted yet */
 public record PaymentMethodsRowUnsaved(
@@ -22,7 +23,7 @@ public record PaymentMethodsRowUnsaved(
     /** Default: NULL */
     @JsonProperty("processor_config") Defaulted<Optional<Json>> processorConfig,
     /** Default: 1 */
-    @JsonProperty("is_active") Defaulted<Boolean> isActive,
+    @JsonProperty("is_active") Defaulted</* user-picked */ IsActive> isActive,
     /** Default: 0 */
     @JsonProperty("sort_order") Defaulted<Byte> sortOrder) {
   public PaymentMethodsRowUnsaved(
@@ -65,7 +66,7 @@ public record PaymentMethodsRowUnsaved(
   ;
 
   /** Default: 1 */
-  public PaymentMethodsRowUnsaved withIsActive(Defaulted<Boolean> isActive) {
+  public PaymentMethodsRowUnsaved withIsActive(Defaulted</* user-picked */ IsActive> isActive) {
     return new PaymentMethodsRowUnsaved(
         code, name, methodType, processorConfig, isActive, sortOrder);
   }
@@ -80,7 +81,7 @@ public record PaymentMethodsRowUnsaved(
 
   public PaymentMethodsRow toRow(
       java.util.function.Supplier<Optional<Json>> processorConfigDefault,
-      java.util.function.Supplier<Boolean> isActiveDefault,
+      java.util.function.Supplier</* user-picked */ IsActive> isActiveDefault,
       java.util.function.Supplier<Byte> sortOrderDefault,
       java.util.function.Supplier<PaymentMethodsId> methodIdDefault) {
     return new PaymentMethodsRow(

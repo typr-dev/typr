@@ -15,6 +15,7 @@ import java.util.Optional;
 import testdb.AllBrandsCategoriesCSet;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.IsActive;
 
 /** This class corresponds to a row in table `promotions` which has not been persisted yet */
 public record PromotionsRowUnsaved(
@@ -45,7 +46,7 @@ public record PromotionsRowUnsaved(
     /** Default: NULL Complex eligibility rules */
     @JsonProperty("rules_json") Defaulted<Optional<Json>> rulesJson,
     /** Default: 1 */
-    @JsonProperty("is_active") Defaulted<Boolean> isActive,
+    @JsonProperty("is_active") Defaulted</* user-picked */ IsActive> isActive,
     /** Default: current_timestamp() */
     @JsonProperty("created_at") Defaulted<LocalDateTime> createdAt) {
   public PromotionsRowUnsaved(
@@ -356,7 +357,7 @@ public record PromotionsRowUnsaved(
   ;
 
   /** Default: 1 */
-  public PromotionsRowUnsaved withIsActive(Defaulted<Boolean> isActive) {
+  public PromotionsRowUnsaved withIsActive(Defaulted</* user-picked */ IsActive> isActive) {
     return new PromotionsRowUnsaved(
         code,
         name,
@@ -405,7 +406,7 @@ public record PromotionsRowUnsaved(
       java.util.function.Supplier<Optional<Uint1>> maxUsesPerCustomerDefault,
       java.util.function.Supplier<Optional<AllBrandsCategoriesCSet>> applicableToDefault,
       java.util.function.Supplier<Optional<Json>> rulesJsonDefault,
-      java.util.function.Supplier<Boolean> isActiveDefault,
+      java.util.function.Supplier</* user-picked */ IsActive> isActiveDefault,
       java.util.function.Supplier<LocalDateTime> createdAtDefault,
       java.util.function.Supplier<PromotionsId> promotionIdDefault) {
     return new PromotionsRow(

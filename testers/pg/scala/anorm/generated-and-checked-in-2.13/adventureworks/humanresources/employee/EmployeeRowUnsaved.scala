@@ -13,7 +13,8 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoShort
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsResult
 import play.api.libs.json.JsValue
@@ -54,7 +55,7 @@ case class EmployeeRowUnsaved(
   /** Default: true
    * Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt from collective bargaining.
    */
-  salariedflag: Defaulted[Flag] = new UseDefault(),
+  salariedflag: Defaulted[/* user-picked */ SalariedFlag] = new UseDefault(),
   /** Default: 0
    * Number of available vacation hours.
    * Constraint CK_Employee_VacationHours affecting columns vacationhours:  (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -68,7 +69,7 @@ case class EmployeeRowUnsaved(
   /** Default: true
    * 0 = Inactive, 1 = Active
    */
-  currentflag: Defaulted[Flag] = new UseDefault(),
+  currentflag: Defaulted[/* user-picked */ CurrentFlag] = new UseDefault(),
   /** Default: uuid_generate_v1() */
   rowguid: Defaulted[TypoUUID] = new UseDefault(),
   /** Default: now() */
@@ -79,10 +80,10 @@ case class EmployeeRowUnsaved(
   organizationnode: Defaulted[Option[String]] = new UseDefault()
 ) {
   def toRow(
-    salariedflagDefault: => Flag,
+    salariedflagDefault: => /* user-picked */ SalariedFlag,
     vacationhoursDefault: => TypoShort,
     sickleavehoursDefault: => TypoShort,
-    currentflagDefault: => Flag,
+    currentflagDefault: => /* user-picked */ CurrentFlag,
     rowguidDefault: => TypoUUID,
     modifieddateDefault: => TypoLocalDateTime,
     organizationnodeDefault: => Option[String]
@@ -126,13 +127,13 @@ object EmployeeRowUnsaved {
       sb.append(Text.DELIMETER)
       TypoLocalDate.pgText.unsafeEncode(row.hiredate, sb)
       sb.append(Text.DELIMETER)
-      Defaulted.pgText(Flag.pgText).unsafeEncode(row.salariedflag, sb)
+      Defaulted.pgText(SalariedFlag.pgText).unsafeEncode(row.salariedflag, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoShort.pgText).unsafeEncode(row.vacationhours, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoShort.pgText).unsafeEncode(row.sickleavehours, sb)
       sb.append(Text.DELIMETER)
-      Defaulted.pgText(Flag.pgText).unsafeEncode(row.currentflag, sb)
+      Defaulted.pgText(CurrentFlag.pgText).unsafeEncode(row.currentflag, sb)
       sb.append(Text.DELIMETER)
       Defaulted.pgText(TypoUUID.pgText).unsafeEncode(row.rowguid, sb)
       sb.append(Text.DELIMETER)
@@ -154,10 +155,10 @@ object EmployeeRowUnsaved {
             maritalstatus = json.\("maritalstatus").as(Reads.StringReads),
             gender = json.\("gender").as(Reads.StringReads),
             hiredate = json.\("hiredate").as(TypoLocalDate.reads),
-            salariedflag = json.\("salariedflag").as(Defaulted.reads(Flag.reads)),
+            salariedflag = json.\("salariedflag").as(Defaulted.reads(SalariedFlag.reads)),
             vacationhours = json.\("vacationhours").as(Defaulted.reads(TypoShort.reads)),
             sickleavehours = json.\("sickleavehours").as(Defaulted.reads(TypoShort.reads)),
-            currentflag = json.\("currentflag").as(Defaulted.reads(Flag.reads)),
+            currentflag = json.\("currentflag").as(Defaulted.reads(CurrentFlag.reads)),
             rowguid = json.\("rowguid").as(Defaulted.reads(TypoUUID.reads)),
             modifieddate = json.\("modifieddate").as(Defaulted.reads(TypoLocalDateTime.reads)),
             organizationnode = json.\("organizationnode").as(Defaulted.readsOpt(Reads.StringReads))
@@ -178,10 +179,10 @@ object EmployeeRowUnsaved {
         "maritalstatus" -> Writes.StringWrites.writes(o.maritalstatus),
         "gender" -> Writes.StringWrites.writes(o.gender),
         "hiredate" -> TypoLocalDate.writes.writes(o.hiredate),
-        "salariedflag" -> Defaulted.writes(Flag.writes).writes(o.salariedflag),
+        "salariedflag" -> Defaulted.writes(SalariedFlag.writes).writes(o.salariedflag),
         "vacationhours" -> Defaulted.writes(TypoShort.writes).writes(o.vacationhours),
         "sickleavehours" -> Defaulted.writes(TypoShort.writes).writes(o.sickleavehours),
-        "currentflag" -> Defaulted.writes(Flag.writes).writes(o.currentflag),
+        "currentflag" -> Defaulted.writes(CurrentFlag.writes).writes(o.currentflag),
         "rowguid" -> Defaulted.writes(TypoUUID.writes).writes(o.rowguid),
         "modifieddate" -> Defaulted.writes(TypoLocalDateTime.writes).writes(o.modifieddate),
         "organizationnode" -> Defaulted.writes(Writes.OptionWrites(Writes.StringWrites)).writes(o.organizationnode)

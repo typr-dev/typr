@@ -20,7 +20,7 @@ data class Db2testUniqueId(@field:JsonValue val value: Int) {
     val bijection: Bijection<Db2testUniqueId, Int> =
       Bijection.of(Db2testUniqueId::value, ::Db2testUniqueId)
 
-    val dbType: Db2Type<Db2testUniqueId> =
+    val db2Type: Db2Type<Db2testUniqueId> =
       KotlinDbTypes.Db2Types.integer.bimap(::Db2testUniqueId, Db2testUniqueId::value)
   }
 }

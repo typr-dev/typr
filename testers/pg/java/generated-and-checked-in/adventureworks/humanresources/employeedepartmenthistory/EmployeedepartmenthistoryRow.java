@@ -117,9 +117,9 @@ public record EmployeedepartmenthistoryRow(
 
   public static RowParser<EmployeedepartmenthistoryRow> _rowParser =
       RowParsers.of(
-          BusinessentityId.dbType,
-          DepartmentId.dbType,
-          ShiftId.dbType,
+          BusinessentityId.pgType,
+          DepartmentId.pgType,
+          ShiftId.pgType,
           PgTypes.date,
           PgTypes.date.opt(),
           PgTypes.timestamp,

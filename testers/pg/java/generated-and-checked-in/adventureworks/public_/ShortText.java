@@ -21,10 +21,10 @@ public record ShortText(@JsonValue String value) {
   public static Bijection<ShortText, String> bijection =
       Bijection.of(ShortText::value, ShortText::new);
 
-  public static PgType<ShortText> dbType =
+  public static PgType<ShortText> pgType =
       PgTypes.text.bimap(ShortText::new, ShortText::value).renamed("\"public\".\"short_text\"");
 
-  public static PgType<ShortText[]> dbTypeArray =
+  public static PgType<ShortText[]> pgTypeArray =
       PgTypes.textArray
           .bimap(
               xs -> arrayMap.map(xs, ShortText::new, ShortText.class),

@@ -31,7 +31,7 @@ public class AuditLogRepoImpl implements AuditLogRepo {
   public Boolean deleteById(AuditLogId logId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `audit_log` where `log_id` = "),
-                Fragment.encode(AuditLogId.dbType, logId),
+                Fragment.encode(AuditLogId.mariaType, logId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -42,7 +42,7 @@ public class AuditLogRepoImpl implements AuditLogRepo {
   public Integer deleteByIds(AuditLogId[] logIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : logIds) {
-      fragments.add(Fragment.encode(AuditLogId.dbType, id));
+      fragments.add(Fragment.encode(AuditLogId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -199,7 +199,7 @@ public class AuditLogRepoImpl implements AuditLogRepo {
                     + " `changed_by`, `changed_at`, `client_ip`, `session_id`\n"
                     + "from `audit_log`\n"
                     + "where `log_id` = "),
-            Fragment.encode(AuditLogId.dbType, logId),
+            Fragment.encode(AuditLogId.mariaType, logId),
             Fragment.lit(""))
         .query(AuditLogRow._rowParser.first())
         .runUnchecked(c);
@@ -209,7 +209,7 @@ public class AuditLogRepoImpl implements AuditLogRepo {
   public List<AuditLogRow> selectByIds(AuditLogId[] logIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : logIds) {
-      fragments.add(Fragment.encode(AuditLogId.dbType, id));
+      fragments.add(Fragment.encode(AuditLogId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -260,7 +260,7 @@ public class AuditLogRepoImpl implements AuditLogRepo {
                 Fragment.lit(",\n`session_id` = "),
                 Fragment.encode(MariaTypes.varbinary.opt(), row.sessionId()),
                 Fragment.lit("\nwhere `log_id` = "),
-                Fragment.encode(AuditLogId.dbType, logId),
+                Fragment.encode(AuditLogId.mariaType, logId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -275,7 +275,7 @@ public class AuditLogRepoImpl implements AuditLogRepo {
                     + " `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`,"
                     + " `session_id`)\n"
                     + "VALUES ("),
-            Fragment.encode(AuditLogId.dbType, unsaved.logId()),
+            Fragment.encode(AuditLogId.mariaType, unsaved.logId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.tableName()),
             Fragment.lit(", "),

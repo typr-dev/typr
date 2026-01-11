@@ -10,7 +10,6 @@ import dev.typr.foundations.RowParser
 import dev.typr.foundations.dsl.FieldsBase
 import dev.typr.foundations.dsl.Path
 import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.RelationStructure
 import dev.typr.foundations.kotlin.SqlExpr
 import dev.typr.foundations.kotlin.SqlExpr.Field
@@ -18,8 +17,9 @@ import dev.typr.foundations.kotlin.SqlExpr.IdField
 import dev.typr.foundations.kotlin.SqlExpr.OptField
 import dev.typr.foundations.kotlin.TupleExpr7
 import kotlin.collections.List
+import testdb.userdefined.IsActive
 
-data class BrandsFields(val _path: List<Path>) : TupleExpr7<BrandsId, String, String, ByteArray, String, String, Boolean>, RelationStructure<BrandsFields, BrandsRow>, FieldsBase<BrandsRow> {
+data class BrandsFields(val _path: List<Path>) : TupleExpr7<BrandsId, String, String, ByteArray, String, String, /* user-picked */ IsActive>, RelationStructure<BrandsFields, BrandsRow>, FieldsBase<BrandsRow> {
   override fun _1(): SqlExpr<BrandsId> = brandId()
 
   override fun _2(): SqlExpr<String> = name()
@@ -32,17 +32,17 @@ data class BrandsFields(val _path: List<Path>) : TupleExpr7<BrandsId, String, St
 
   override fun _6(): SqlExpr<String> = countryOfOrigin()
 
-  override fun _7(): SqlExpr<Boolean> = isActive()
+  override fun _7(): SqlExpr</* user-picked */ IsActive> = isActive()
 
   override fun _path(): List<Path> = _path
 
-  fun brandId(): IdField<BrandsId, BrandsRow> = IdField<BrandsId, BrandsRow>(_path, "brand_id", BrandsRow::brandId, null, null, { row, value -> row.copy(brandId = value) }, BrandsId.dbType)
+  fun brandId(): IdField<BrandsId, BrandsRow> = IdField<BrandsId, BrandsRow>(_path, "brand_id", BrandsRow::brandId, null, null, { row, value -> row.copy(brandId = value) }, BrandsId.mariaType)
 
   override fun columns(): List<FieldLike<*, BrandsRow>> = listOf(this.brandId().underlying, this.name().underlying, this.slug().underlying, this.logoBlob().underlying, this.websiteUrl().underlying, this.countryOfOrigin().underlying, this.isActive().underlying)
 
   fun countryOfOrigin(): OptField<String, BrandsRow> = OptField<String, BrandsRow>(_path, "country_of_origin", BrandsRow::countryOfOrigin, null, null, { row, value -> row.copy(countryOfOrigin = value) }, MariaTypes.char_)
 
-  fun isActive(): Field<Boolean, BrandsRow> = Field<Boolean, BrandsRow>(_path, "is_active", BrandsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isActive(): Field</* user-picked */ IsActive, BrandsRow> = Field</* user-picked */ IsActive, BrandsRow>(_path, "is_active", BrandsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
 
   fun logoBlob(): OptField<ByteArray, BrandsRow> = OptField<ByteArray, BrandsRow>(_path, "logo_blob", BrandsRow::logoBlob, null, null, { row, value -> row.copy(logoBlob = value) }, MariaTypes.mediumblob)
 

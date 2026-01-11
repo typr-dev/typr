@@ -22,19 +22,19 @@ import dev.typr.foundations.Fragment.interpolate
 class UsersRepoImpl extends UsersRepo {
   override def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of(""""public"."users"""", UsersFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(userId: UsersId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."users" where "user_id" = """), Fragment.encode(UsersId.dbType, userId), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(userId: UsersId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."users" where "user_id" = """), Fragment.encode(UsersId.pgType, userId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(userIds: Array[UsersId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "public"."users"
-    where "user_id" = ANY("""), Fragment.encode(UsersId.dbTypeArray, userIds), Fragment.lit(")"))
+    where "user_id" = ANY("""), Fragment.encode(UsersId.pgTypeArray, userIds), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   interpolate(Fragment.lit("""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
-    values ("""), Fragment.encode(UsersId.dbType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.verifiedOn), Fragment.lit("""::timestamptz)
+    values ("""), Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.verifiedOn), Fragment.lit("""::timestamptz)
     RETURNING "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     """))
     .updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -44,7 +44,7 @@ class UsersRepoImpl extends UsersRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""user_id"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(UsersId.dbType, unsaved.userId), Fragment.lit("::uuid"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""last_name"""")): @scala.annotation.nowarn
@@ -90,13 +90,13 @@ class UsersRepoImpl extends UsersRepo {
   override def selectById(userId: UsersId)(using c: Connection): Optional[UsersRow] = {
     interpolate(Fragment.lit("""select "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     from "public"."users"
-    where "user_id" = """), Fragment.encode(UsersId.dbType, userId), Fragment.lit("")).query(UsersRow.`_rowParser`.first()).runUnchecked(c)
+    where "user_id" = """), Fragment.encode(UsersId.pgType, userId), Fragment.lit("")).query(UsersRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(userIds: Array[UsersId])(using c: Connection): java.util.List[UsersRow] = {
     interpolate(Fragment.lit("""select "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     from "public"."users"
-    where "user_id" = ANY("""), Fragment.encode(UsersId.dbTypeArray, userIds), Fragment.lit(")")).query(UsersRow.`_rowParser`.all()).runUnchecked(c)
+    where "user_id" = ANY("""), Fragment.encode(UsersId.pgTypeArray, userIds), Fragment.lit(")")).query(UsersRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(userIds: Array[UsersId])(using c: Connection): java.util.Map[UsersId, UsersRow] = {
@@ -123,12 +123,12 @@ class UsersRepoImpl extends UsersRepo {
     "password" = """), Fragment.encode(PgTypes.text, row.password), Fragment.lit(""",
     "created_at" = """), Fragment.encode(PgTypes.timestamptz, row.createdAt), Fragment.lit("""::timestamptz,
     "verified_on" = """), Fragment.encode(PgTypes.timestamptz.opt(), row.verifiedOn), Fragment.lit("""::timestamptz
-    where "user_id" = """), Fragment.encode(UsersId.dbType, userId), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "user_id" = """), Fragment.encode(UsersId.pgType, userId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   interpolate(Fragment.lit("""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
-    values ("""), Fragment.encode(UsersId.dbType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.verifiedOn), Fragment.lit("""::timestamptz)
+    values ("""), Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.opt(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.verifiedOn), Fragment.lit("""::timestamptz)
     on conflict ("user_id")
     do update set
       "name" = EXCLUDED."name",

@@ -20,11 +20,6 @@ public record BestsellerClearanceFSet(Set<BestsellerClearanceFSetMember> members
   }
   ;
 
-  public static MariaType<BestsellerClearanceFSet> dbType =
-      MariaTypes.set.bimap(
-          (MariaSet ms) -> BestsellerClearanceFSet.fromString(ms.toCommaSeparated()),
-          (BestsellerClearanceFSet s) -> MariaSet.fromString(s.toCommaSeparated()));
-
   public static BestsellerClearanceFSet empty() {
     return new BestsellerClearanceFSet(EnumSet.noneOf(BestsellerClearanceFSetMember.class));
   }
@@ -46,6 +41,11 @@ public record BestsellerClearanceFSet(Set<BestsellerClearanceFSetMember> members
     return new BestsellerClearanceFSet(set);
   }
   ;
+
+  public static MariaType<BestsellerClearanceFSet> mariaType =
+      MariaTypes.set.bimap(
+          (MariaSet ms) -> BestsellerClearanceFSet.fromString(ms.toCommaSeparated()),
+          (BestsellerClearanceFSet s) -> MariaSet.fromString(s.toCommaSeparated()));
 
   public static BestsellerClearanceFSet of(List<BestsellerClearanceFSetMember> members) {
     if (members.isEmpty()) {

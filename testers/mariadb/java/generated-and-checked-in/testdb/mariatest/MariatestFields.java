@@ -124,7 +124,7 @@ public class MariatestFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIntCol(value),
-        MariatestId.dbType);
+        MariatestId.mariaType);
   }
 
   public Field<Long, MariatestRow> bigintCol() {
@@ -498,7 +498,7 @@ public class MariatestFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withSetCol(value),
-        XYZSet.dbType);
+        XYZSet.mariaType);
   }
 
   public Field<Json, MariatestRow> jsonCol() {

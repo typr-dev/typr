@@ -11,9 +11,10 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import doobie.postgres.Text
 import io.circe.Decoder
 import io.circe.Encoder
@@ -33,9 +34,9 @@ case class PersonRowUnsaved(
   /** First name of the person. */
   firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
-  middlename: Option[Name] = None,
+  middlename: Option[/* user-picked */ MiddleName] = None,
   /** Last name of the person. */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
   suffix: Option[/* max 10 chars */ String] = None,
   /** Additional contact information about the person stored in xml format. */
@@ -81,9 +82,9 @@ case class PersonRowUnsaved(
 }
 
 object PersonRowUnsaved {
-  implicit lazy val decoder: Decoder[PersonRowUnsaved] = Decoder.forProduct13[PersonRowUnsaved, BusinessentityId, String, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[Name], Name, Option[/* max 10 chars */ String], Option[TypoXml], Option[TypoXml], Defaulted[NameStyle], Defaulted[Int], Defaulted[TypoUUID], Defaulted[TypoLocalDateTime]]("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate")(PersonRowUnsaved.apply)(BusinessentityId.decoder, Decoder.decodeString, Decoder.decodeOption(Decoder.decodeString), FirstName.decoder, Decoder.decodeOption(Name.decoder), Name.decoder, Decoder.decodeOption(Decoder.decodeString), Decoder.decodeOption(TypoXml.decoder), Decoder.decodeOption(TypoXml.decoder), Defaulted.decoder(NameStyle.decoder), Defaulted.decoder(Decoder.decodeInt), Defaulted.decoder(TypoUUID.decoder), Defaulted.decoder(TypoLocalDateTime.decoder))
+  implicit lazy val decoder: Decoder[PersonRowUnsaved] = Decoder.forProduct13[PersonRowUnsaved, BusinessentityId, String, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[/* user-picked */ MiddleName], /* user-picked */ LastName, Option[/* max 10 chars */ String], Option[TypoXml], Option[TypoXml], Defaulted[NameStyle], Defaulted[Int], Defaulted[TypoUUID], Defaulted[TypoLocalDateTime]]("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate")(PersonRowUnsaved.apply)(BusinessentityId.decoder, Decoder.decodeString, Decoder.decodeOption(Decoder.decodeString), FirstName.decoder, Decoder.decodeOption(MiddleName.decoder), LastName.decoder, Decoder.decodeOption(Decoder.decodeString), Decoder.decodeOption(TypoXml.decoder), Decoder.decodeOption(TypoXml.decoder), Defaulted.decoder(NameStyle.decoder), Defaulted.decoder(Decoder.decodeInt), Defaulted.decoder(TypoUUID.decoder), Defaulted.decoder(TypoLocalDateTime.decoder))
 
-  implicit lazy val encoder: Encoder[PersonRowUnsaved] = Encoder.forProduct13[PersonRowUnsaved, BusinessentityId, String, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[Name], Name, Option[/* max 10 chars */ String], Option[TypoXml], Option[TypoXml], Defaulted[NameStyle], Defaulted[Int], Defaulted[TypoUUID], Defaulted[TypoLocalDateTime]]("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate")(x => (x.businessentityid, x.persontype, x.title, x.firstname, x.middlename, x.lastname, x.suffix, x.additionalcontactinfo, x.demographics, x.namestyle, x.emailpromotion, x.rowguid, x.modifieddate))(BusinessentityId.encoder, Encoder.encodeString, Encoder.encodeOption(Encoder.encodeString), FirstName.encoder, Encoder.encodeOption(Name.encoder), Name.encoder, Encoder.encodeOption(Encoder.encodeString), Encoder.encodeOption(TypoXml.encoder), Encoder.encodeOption(TypoXml.encoder), Defaulted.encoder(NameStyle.encoder), Defaulted.encoder(Encoder.encodeInt), Defaulted.encoder(TypoUUID.encoder), Defaulted.encoder(TypoLocalDateTime.encoder))
+  implicit lazy val encoder: Encoder[PersonRowUnsaved] = Encoder.forProduct13[PersonRowUnsaved, BusinessentityId, String, Option[/* max 8 chars */ String], /* user-picked */ FirstName, Option[/* user-picked */ MiddleName], /* user-picked */ LastName, Option[/* max 10 chars */ String], Option[TypoXml], Option[TypoXml], Defaulted[NameStyle], Defaulted[Int], Defaulted[TypoUUID], Defaulted[TypoLocalDateTime]]("businessentityid", "persontype", "title", "firstname", "middlename", "lastname", "suffix", "additionalcontactinfo", "demographics", "namestyle", "emailpromotion", "rowguid", "modifieddate")(x => (x.businessentityid, x.persontype, x.title, x.firstname, x.middlename, x.lastname, x.suffix, x.additionalcontactinfo, x.demographics, x.namestyle, x.emailpromotion, x.rowguid, x.modifieddate))(BusinessentityId.encoder, Encoder.encodeString, Encoder.encodeOption(Encoder.encodeString), FirstName.encoder, Encoder.encodeOption(MiddleName.encoder), LastName.encoder, Encoder.encodeOption(Encoder.encodeString), Encoder.encodeOption(TypoXml.encoder), Encoder.encodeOption(TypoXml.encoder), Defaulted.encoder(NameStyle.encoder), Defaulted.encoder(Encoder.encodeInt), Defaulted.encoder(TypoUUID.encoder), Defaulted.encoder(TypoLocalDateTime.encoder))
 
   implicit lazy val pgText: Text[PersonRowUnsaved] = {
     Text.instance[PersonRowUnsaved]{ (row, sb) =>
@@ -95,9 +96,9 @@ object PersonRowUnsaved {
       sb.append(Text.DELIMETER)
       /* user-picked */ FirstName.pgText.unsafeEncode(row.firstname, sb)
       sb.append(Text.DELIMETER)
-      Text.option(Name.pgText).unsafeEncode(row.middlename, sb)
+      Text.option(MiddleName.pgText).unsafeEncode(row.middlename, sb)
       sb.append(Text.DELIMETER)
-      Name.pgText.unsafeEncode(row.lastname, sb)
+      /* user-picked */ LastName.pgText.unsafeEncode(row.lastname, sb)
       sb.append(Text.DELIMETER)
       Text.option(Text.stringInstance).unsafeEncode(row.suffix, sb)
       sb.append(Text.DELIMETER)

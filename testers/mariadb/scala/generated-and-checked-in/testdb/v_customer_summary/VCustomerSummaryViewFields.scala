@@ -19,8 +19,9 @@ import dev.typr.foundations.scala.TupleExpr10
 import java.time.LocalDateTime
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
-class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends TupleExpr10[CustomersId, String, String, String, CustomerStatusId, LocalDateTime, LocalDateTime, Long, BigDecimal, LocalDateTime] with RelationStructure[VCustomerSummaryViewFields, VCustomerSummaryViewRow]  with FieldsBase[VCustomerSummaryViewRow] {
+class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends TupleExpr10[CustomersId, /* user-picked */ Email, String, String, CustomerStatusId, LocalDateTime, LocalDateTime, Long, BigDecimal, LocalDateTime] with RelationStructure[VCustomerSummaryViewFields, VCustomerSummaryViewRow]  with FieldsBase[VCustomerSummaryViewRow] {
   def customerId: Field[CustomersId, VCustomerSummaryViewRow] = {
     new Field[CustomersId, VCustomerSummaryViewRow](
       _path,
@@ -29,19 +30,19 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.dbType
+      CustomersId.mariaType
     )
   }
 
-  def email: Field[String, VCustomerSummaryViewRow] = {
-    new Field[String, VCustomerSummaryViewRow](
+  def email: Field[/* user-picked */ Email, VCustomerSummaryViewRow] = {
+    new Field[/* user-picked */ Email, VCustomerSummaryViewRow](
       _path,
       "email",
       _.email,
       None,
       None,
       (row, value) => row.copy(email = value),
-      MariaTypes.varchar
+      Email.mariaType
     )
   }
 
@@ -77,7 +78,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(status = value),
-      CustomerStatusId.dbType
+      CustomerStatusId.mariaType
     )
   }
 
@@ -149,7 +150,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
 
   override def `_1`: SqlExpr[CustomersId] = customerId
 
-  override def `_2`: SqlExpr[String] = email
+  override def `_2`: SqlExpr[/* user-picked */ Email] = email
 
   override def `_3`: SqlExpr[String] = fullName
 

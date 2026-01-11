@@ -16,17 +16,20 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.orders.OrdersId
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
 /** SQL file: customer_orders.sql */
 data class CustomerOrdersSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.email] */
-  val email: String,
+  val email: /* user-picked */ Email,
   /** Points to [testdb.customers.CustomersRow.firstName] */
-  @field:JsonProperty("first_name") val firstName: String,
+  @field:JsonProperty("first_name") val firstName: /* user-picked */ FirstName,
   /** Points to [testdb.customers.CustomersRow.lastName] */
-  @field:JsonProperty("last_name") val lastName: String,
+  @field:JsonProperty("last_name") val lastName: /* user-picked */ LastName,
   /** Points to [testdb.customers.CustomersRow.tier] */
   val tier: String,
   /** Points to [testdb.orders.OrdersRow.orderId] */
@@ -39,16 +42,16 @@ data class CustomerOrdersSqlRow(
   @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.orderedAt] */
   @field:JsonProperty("ordered_at") val orderedAt: LocalDateTime?
-) : Tuple10<CustomersId, String, String, String, String, OrdersId?, String?, String?, BigDecimal?, LocalDateTime?> {
+) : Tuple10<CustomersId, /* user-picked */ Email, /* user-picked */ FirstName, /* user-picked */ LastName, String, OrdersId?, String?, String?, BigDecimal?, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
   override fun _10(): LocalDateTime? = orderedAt
 
-  override fun _2(): String = email
+  override fun _2(): /* user-picked */ Email = email
 
-  override fun _3(): String = firstName
+  override fun _3(): /* user-picked */ FirstName = firstName
 
-  override fun _4(): String = lastName
+  override fun _4(): /* user-picked */ LastName = lastName
 
   override fun _5(): String = tier
 
@@ -61,6 +64,6 @@ data class CustomerOrdersSqlRow(
   override fun _9(): BigDecimal? = totalAmount
 
   companion object {
-    val _rowParser: RowParser<CustomerOrdersSqlRow> = RowParsers.of(CustomersId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, OrdersId.dbType.nullable(), MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> CustomerOrdersSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt) })
+    val _rowParser: RowParser<CustomerOrdersSqlRow> = RowParsers.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, OrdersId.mariaType.nullable(), MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> CustomerOrdersSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt) })
   }
 }

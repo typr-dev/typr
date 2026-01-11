@@ -5,12 +5,12 @@
  */
 package testdb.mariatest_unique
 
-
+import testdb.userdefined.Email
 
 /** This class corresponds to a row in table `mariatest_unique` which has not been persisted yet */
 case class MariatestUniqueRowUnsaved(
   /**  */
-  email: String,
+  email: /* user-picked */ Email,
   /**  */
   code: String,
   /**  */

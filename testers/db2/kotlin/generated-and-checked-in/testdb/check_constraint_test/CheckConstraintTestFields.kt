@@ -35,7 +35,7 @@ data class CheckConstraintTestFields(val _path: List<Path>) : TupleExpr4<CheckCo
 
   override fun columns(): List<FieldLike<*, CheckConstraintTestRow>> = listOf(this.id().underlying, this.age().underlying, this.status().underlying, this.price().underlying)
 
-  fun id(): IdField<CheckConstraintTestId, CheckConstraintTestRow> = IdField<CheckConstraintTestId, CheckConstraintTestRow>(_path, "ID", CheckConstraintTestRow::id, null, null, { row, value -> row.copy(id = value) }, CheckConstraintTestId.dbType)
+  fun id(): IdField<CheckConstraintTestId, CheckConstraintTestRow> = IdField<CheckConstraintTestId, CheckConstraintTestRow>(_path, "ID", CheckConstraintTestRow::id, null, null, { row, value -> row.copy(id = value) }, CheckConstraintTestId.db2Type)
 
   fun price(): OptField<BigDecimal, CheckConstraintTestRow> = OptField<BigDecimal, CheckConstraintTestRow>(_path, "PRICE", CheckConstraintTestRow::price, null, null, { row, value -> row.copy(price = value) }, KotlinDbTypes.Db2Types.decimal)
 

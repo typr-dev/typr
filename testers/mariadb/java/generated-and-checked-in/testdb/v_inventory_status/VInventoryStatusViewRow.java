@@ -342,10 +342,10 @@ public record VInventoryStatusViewRow(
 
   public static RowParser<VInventoryStatusViewRow> _rowParser =
       RowParsers.of(
-          ProductsId.dbType,
+          ProductsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
-          WarehousesId.dbType,
+          WarehousesId.mariaType,
           MariaTypes.char_,
           MariaTypes.varchar,
           MariaTypes.int_,

@@ -18,8 +18,9 @@ import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr5
 import java.time.LocalDateTime
 import testdb.Priority
+import testdb.userdefined.Email
 
-class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[CustomersId, String, String, LocalDateTime, Priority] with RelationStructure[CustomersFields, CustomersRow]  with FieldsBase[CustomersRow] {
+class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[CustomersId, String, /* user-picked */ Email, LocalDateTime, Priority] with RelationStructure[CustomersFields, CustomersRow]  with FieldsBase[CustomersRow] {
   def customerId: IdField[CustomersId, CustomersRow] = {
     new IdField[CustomersId, CustomersRow](
       _path,
@@ -44,15 +45,15 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Cust
     )
   }
 
-  def email: OptField[String, CustomersRow] = {
-    new OptField[String, CustomersRow](
+  def email: OptField[/* user-picked */ Email, CustomersRow] = {
+    new OptField[/* user-picked */ Email, CustomersRow](
       _path,
       "email",
       _.email,
       None,
       None,
       (row, value) => row.copy(email = value),
-      DuckDbTypes.varchar
+      Email.duckDbType
     )
   }
 
@@ -90,7 +91,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Cust
 
   override def `_2`: SqlExpr[String] = name
 
-  override def `_3`: SqlExpr[String] = email
+  override def `_3`: SqlExpr[/* user-picked */ Email] = email
 
   override def `_4`: SqlExpr[LocalDateTime] = createdAt
 

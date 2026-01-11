@@ -61,8 +61,8 @@ public record OrdersRow(
 
   public static RowParser<OrdersRow> _rowParser =
       RowParsers.of(
-          OrdersId.dbType,
-          CustomersId.dbType,
+          OrdersId.db2Type,
+          CustomersId.db2Type,
           Db2Types.date,
           Db2Types.decimal.opt(),
           Db2Types.varchar.opt(),

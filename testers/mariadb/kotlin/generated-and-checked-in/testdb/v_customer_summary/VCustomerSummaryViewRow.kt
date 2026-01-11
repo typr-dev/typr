@@ -16,6 +16,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
 /** View: v_customer_summary
   * VIEW
@@ -29,7 +30,7 @@ data class VCustomerSummaryViewRow(
   /** 
     * Points to [testdb.customers.CustomersRow.email]
     */
-  val email: String,
+  val email: /* user-picked */ Email,
   /** 
     * Default: NULL
     */
@@ -66,12 +67,12 @@ data class VCustomerSummaryViewRow(
     * Default: current_timestamp(6)
     */
   @field:JsonProperty("last_order_date") val lastOrderDate: LocalDateTime?
-) : Tuple10<CustomersId, String, String?, String, CustomerStatusId, LocalDateTime, LocalDateTime?, Long, BigDecimal, LocalDateTime?> {
+) : Tuple10<CustomersId, /* user-picked */ Email, String?, String, CustomerStatusId, LocalDateTime, LocalDateTime?, Long, BigDecimal, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
   override fun _10(): LocalDateTime? = lastOrderDate
 
-  override fun _2(): String = email
+  override fun _2(): /* user-picked */ Email = email
 
   override fun _3(): String? = fullName
 
@@ -88,6 +89,6 @@ data class VCustomerSummaryViewRow(
   override fun _9(): BigDecimal = lifetimeValue
 
   companion object {
-    val _rowParser: RowParser<VCustomerSummaryViewRow> = RowParsers.of(CustomersId.dbType, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.text, CustomerStatusId.dbType, MariaTypes.datetime, MariaTypes.datetime.nullable(), KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric, MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> VCustomerSummaryViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.fullName, row.tier, row.status, row.createdAt, row.lastLoginAt, row.totalOrders, row.lifetimeValue, row.lastOrderDate) })
+    val _rowParser: RowParser<VCustomerSummaryViewRow> = RowParsers.of(CustomersId.mariaType, Email.mariaType, MariaTypes.varchar.nullable(), MariaTypes.text, CustomerStatusId.mariaType, MariaTypes.datetime, MariaTypes.datetime.nullable(), KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric, MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> VCustomerSummaryViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.fullName, row.tier, row.status, row.createdAt, row.lastLoginAt, row.totalOrders, row.lifetimeValue, row.lastOrderDate) })
   }
 }

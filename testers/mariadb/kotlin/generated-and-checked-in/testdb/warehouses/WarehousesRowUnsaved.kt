@@ -10,6 +10,8 @@ import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
 import testdb.customtypes.Defaulted
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
+import testdb.userdefined.IsActive
 
 /** This class corresponds to a row in table `warehouses` which has not been persisted yet */
 data class WarehousesRowUnsaved(
@@ -32,11 +34,11 @@ data class WarehousesRowUnsaved(
   /** Default: 1
 
     */
-  @field:JsonProperty("is_active") val isActive: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_active") val isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("contact_email") val contactEmail: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("contact_email") val contactEmail: Defaulted</* user-picked */ Email?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -45,8 +47,8 @@ data class WarehousesRowUnsaved(
   fun toRow(
     serviceAreaDefault: () -> Polygon?,
     timezoneDefault: () -> String,
-    isActiveDefault: () -> Boolean,
-    contactEmailDefault: () -> String?,
+    isActiveDefault: () -> /* user-picked */ IsActive,
+    contactEmailDefault: () -> /* user-picked */ Email?,
     contactPhoneDefault: () -> String?,
     warehouseIdDefault: () -> WarehousesId
   ): WarehousesRow = WarehousesRow(warehouseId = warehouseIdDefault(), code = code, name = name, address = address, location = location, serviceArea = serviceArea.getOrElse(serviceAreaDefault), timezone = timezone.getOrElse(timezoneDefault), isActive = isActive.getOrElse(isActiveDefault), contactEmail = contactEmail.getOrElse(contactEmailDefault), contactPhone = contactPhone.getOrElse(contactPhoneDefault))

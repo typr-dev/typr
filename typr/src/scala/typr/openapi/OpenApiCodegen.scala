@@ -170,7 +170,16 @@ object OpenApiCodegen {
     } else {
       new TypeMapper(modelPkg, options.typeOverrides, lang)
     }
-    val modelCodegen = new ModelCodegen(modelPkg, typeMapper, lang, jsonLib, validationSupport, serverFrameworkSupport.getOrElse(NoFrameworkSupport))
+    val modelCodegen = new ModelCodegen(
+      modelPkg,
+      typeMapper,
+      lang,
+      jsonLib,
+      validationSupport,
+      serverFrameworkSupport.getOrElse(NoFrameworkSupport),
+      options.typeDefinitions,
+      options.fieldTypeOverrides
+    )
     val apiCodegen = new ApiCodegen(
       apiPkg,
       typeMapper,
@@ -185,6 +194,16 @@ object OpenApiCodegen {
     )
 
     val files = List.newBuilder[jvm.File]
+
+    // Generate wrapper types for TypeDefinitions entries that have api name patterns
+    if (!options.typeDefinitions.isEmpty) {
+      options.typeDefinitions.entries.foreach { entry =>
+        if (entry.api.name.nonEmpty) {
+          val wrapperFile = generateWrapperTypeForEntry(entry, modelPkg, lang, jsonLib, serverFrameworkSupport.getOrElse(NoFrameworkSupport))
+          files += wrapperFile
+        }
+      }
+    }
 
     // Generate model classes
     spec.models.foreach { model =>
@@ -251,5 +270,63 @@ object OpenApiCodegen {
       .flatMap(shape => shape.statusCodes.map(code => (code, shape)))
       .groupBy(_._1)
       .map { case (code, pairs) => (code, pairs.map(_._2)) }
+  }
+
+  /** Generate a wrapper type for a TypeDefinitions entry.
+    *
+    * The underlying type is inferred from the entry name:
+    *   - Names containing "Is" or ending with "Flag" -> Boolean
+    *   - Everything else -> String
+    */
+  private def generateWrapperTypeForEntry(
+      entry: typr.TypeEntry,
+      modelPkg: jvm.QIdent,
+      lang: Lang,
+      jsonLib: codegen.JsonLibSupport,
+      serverFramework: codegen.FrameworkSupport
+  ): jvm.File = {
+    import typr.Scope
+
+    val tpe = jvm.Type.Qualified(modelPkg / jvm.Ident(entry.name))
+
+    // Infer underlying type based on naming convention
+    val underlyingType: jvm.Type = {
+      val nameLower = entry.name.toLowerCase
+      if (nameLower.startsWith("is") || nameLower.endsWith("flag") || nameLower.contains("active") || nameLower.contains("salaried")) {
+        lang.Boolean
+      } else {
+        lang.String
+      }
+    }
+
+    val valueParam = jvm.Param(
+      annotations = jsonLib.valueAnnotations,
+      comments = jvm.Comments.Empty,
+      name = jvm.Ident("value"),
+      tpe = underlyingType,
+      default = None
+    )
+
+    val staticMembers = jsonLib.wrapperTypeStaticMembers(tpe, underlyingType) ++
+      serverFramework.wrapperTypeStaticMembers(tpe, underlyingType)
+
+    val record = jvm.Adt.Record(
+      annotations = jsonLib.wrapperAnnotations(tpe),
+      constructorAnnotations = jsonLib.constructorAnnotations,
+      isWrapper = true,
+      privateConstructor = false,
+      comments = jvm.Comments.Empty,
+      name = tpe,
+      tparams = Nil,
+      params = List(valueParam),
+      implicitParams = Nil,
+      `extends` = None,
+      implements = Nil,
+      members = Nil,
+      staticMembers = staticMembers
+    )
+
+    val generatedCode = lang.renderTree(record, lang.Ctx.Empty)
+    jvm.File(tpe, generatedCode, secondaryTypes = Nil, scope = Scope.Main)
   }
 }

@@ -43,11 +43,11 @@ data class BusinessentityaddressFields(val _path: List<Path>) : TupleExpr5<Busin
 
   override fun _path(): List<Path> = _path
 
-  fun addressid(): IdField<AddressId, BusinessentityaddressRow> = IdField<AddressId, BusinessentityaddressRow>(_path, "addressid", BusinessentityaddressRow::addressid, null, "int4", { row, value -> row.copy(addressid = value) }, AddressId.dbType)
+  fun addressid(): IdField<AddressId, BusinessentityaddressRow> = IdField<AddressId, BusinessentityaddressRow>(_path, "addressid", BusinessentityaddressRow::addressid, null, "int4", { row, value -> row.copy(addressid = value) }, AddressId.pgType)
 
-  fun addresstypeid(): IdField<AddresstypeId, BusinessentityaddressRow> = IdField<AddresstypeId, BusinessentityaddressRow>(_path, "addresstypeid", BusinessentityaddressRow::addresstypeid, null, "int4", { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.dbType)
+  fun addresstypeid(): IdField<AddresstypeId, BusinessentityaddressRow> = IdField<AddresstypeId, BusinessentityaddressRow>(_path, "addresstypeid", BusinessentityaddressRow::addresstypeid, null, "int4", { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.pgType)
 
-  fun businessentityid(): IdField<BusinessentityId, BusinessentityaddressRow> = IdField<BusinessentityId, BusinessentityaddressRow>(_path, "businessentityid", BusinessentityaddressRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.dbType)
+  fun businessentityid(): IdField<BusinessentityId, BusinessentityaddressRow> = IdField<BusinessentityId, BusinessentityaddressRow>(_path, "businessentityid", BusinessentityaddressRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
   override fun columns(): List<FieldLike<*, BusinessentityaddressRow>> = listOf(this.businessentityid().underlying, this.addressid().underlying, this.addresstypeid().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 

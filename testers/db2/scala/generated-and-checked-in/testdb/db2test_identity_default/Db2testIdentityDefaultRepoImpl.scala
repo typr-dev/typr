@@ -18,17 +18,17 @@ import dev.typr.foundations.scala.Fragment.sql
 class Db2testIdentityDefaultRepoImpl extends Db2testIdentityDefaultRepo {
   override def delete: DeleteBuilder[Db2testIdentityDefaultFields, Db2testIdentityDefaultRow] = DeleteBuilder.of(""""DB2TEST_IDENTITY_DEFAULT"""", Db2testIdentityDefaultFields.structure, Dialect.DB2)
 
-  override def deleteById(id: Db2testIdentityDefaultId)(using c: Connection): Boolean = sql"""delete from "DB2TEST_IDENTITY_DEFAULT" where "ID" = ${Fragment.encode(Db2testIdentityDefaultId.dbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: Db2testIdentityDefaultId)(using c: Connection): Boolean = sql"""delete from "DB2TEST_IDENTITY_DEFAULT" where "ID" = ${Fragment.encode(Db2testIdentityDefaultId.db2Type, id)}""".update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[Db2testIdentityDefaultId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testIdentityDefaultId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testIdentityDefaultId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""delete from "DB2TEST_IDENTITY_DEFAULT" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override def insert(unsaved: Db2testIdentityDefaultRow)(using c: Connection): Db2testIdentityDefaultRow = {
   sql"""SELECT "ID", "NAME" FROM FINAL TABLE (INSERT INTO "DB2TEST_IDENTITY_DEFAULT"("ID", "NAME")
-    VALUES (${Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)}))
+    VALUES (${Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)}))
     """
     .updateReturning(Db2testIdentityDefaultRow.`_rowParser`.exactlyOne()).runUnchecked(c)
   }
@@ -40,7 +40,7 @@ class Db2testIdentityDefaultRepoImpl extends Db2testIdentityDefaultRepo {
     values.addOne(sql"${Fragment.encode(Db2Types.varchar, unsaved.name)}"): @scala.annotation.nowarn
     unsaved.id.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Db2testIdentityDefaultId.dbType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.lit(""""ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Db2testIdentityDefaultId.db2Type, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""SELECT "ID", "NAME" FROM FINAL TABLE (INSERT INTO "DB2TEST_IDENTITY_DEFAULT"(${Fragment.comma(columns)})
@@ -61,12 +61,12 @@ class Db2testIdentityDefaultRepoImpl extends Db2testIdentityDefaultRepo {
   override def selectById(id: Db2testIdentityDefaultId)(using c: Connection): Option[Db2testIdentityDefaultRow] = {
     sql"""select "ID", "NAME"
     from "DB2TEST_IDENTITY_DEFAULT"
-    where "ID" = ${Fragment.encode(Db2testIdentityDefaultId.dbType, id)}""".query(Db2testIdentityDefaultRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(Db2testIdentityDefaultId.db2Type, id)}""".query(Db2testIdentityDefaultRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[Db2testIdentityDefaultId])(using c: Connection): List[Db2testIdentityDefaultRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testIdentityDefaultId.dbType, id)): @scala.annotation.nowarn }
+    ids.foreach { id => fragments.addOne(Fragment.encode(Db2testIdentityDefaultId.db2Type, id)): @scala.annotation.nowarn }
     return Fragment.interpolate(Fragment.lit("""select "ID", "NAME" from "DB2TEST_IDENTITY_DEFAULT" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(Db2testIdentityDefaultRow.`_rowParser`.all()).runUnchecked(c)
   }
 
@@ -82,15 +82,15 @@ class Db2testIdentityDefaultRepoImpl extends Db2testIdentityDefaultRepo {
     val id: Db2testIdentityDefaultId = row.id
     return sql"""update "DB2TEST_IDENTITY_DEFAULT"
     set "NAME" = ${Fragment.encode(Db2Types.varchar, row.name)}
-    where "ID" = ${Fragment.encode(Db2testIdentityDefaultId.dbType, id)}""".update().runUnchecked(c) > 0
+    where "ID" = ${Fragment.encode(Db2testIdentityDefaultId.db2Type, id)}""".update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: Db2testIdentityDefaultRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "DB2TEST_IDENTITY_DEFAULT" AS t
-    USING (VALUES (${Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})) AS s("ID", "NAME")
+    USING (VALUES (${Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})) AS s("ID", "NAME")
     ON t."ID" = s."ID"
     WHEN MATCHED THEN UPDATE SET "NAME" = s."NAME"
-    WHEN NOT MATCHED THEN INSERT ("ID", "NAME") VALUES (${Fragment.encode(Db2testIdentityDefaultId.dbType, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})"""
+    WHEN NOT MATCHED THEN INSERT ("ID", "NAME") VALUES (${Fragment.encode(Db2testIdentityDefaultId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.name)})"""
       .update()
       .runUnchecked(c): @scala.annotation.nowarn
   }

@@ -31,7 +31,7 @@ case class PaddedString10 private(@JsonValue value: String) extends PaddedString
 object PaddedString10 {
   given bijection: Bijection[PaddedString10, String] = Bijection.apply[PaddedString10, String](_.value)(PaddedString10.apply)
 
-  given dbType: MariaType[PaddedString10] = MariaTypes.char_.bimap(PaddedString10.apply, _.value)
+  given mariaType: MariaType[PaddedString10] = MariaTypes.char_.bimap(PaddedString10.apply, _.value)
 
   def of(value: String): Option[PaddedString10] = (if (value.length <= 10) Some(new PaddedString10(String.format("%-10s", value))) else None)
 

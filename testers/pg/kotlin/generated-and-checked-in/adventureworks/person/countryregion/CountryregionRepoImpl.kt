@@ -26,19 +26,19 @@ class CountryregionRepoImpl() : CountryregionRepo {
   override fun deleteById(
     countryregioncode: CountryregionId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"countryregion\" where \"countryregioncode\" = "), Fragment.encode(CountryregionId.dbType, countryregioncode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"countryregion\" where \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     countryregioncodes: Array<CountryregionId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("), Fragment.encode(CountryregionId.dbTypeArray, countryregioncodes), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("), Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: CountryregionRow,
     c: Connection
-  ): CountryregionRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
+  ): CountryregionRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
     .updateReturning(CountryregionRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -48,9 +48,9 @@ class CountryregionRepoImpl() : CountryregionRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"countryregioncode\""))
-    values.add(Fragment.interpolate(Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit("")))
     columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar")))
+    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
     unsaved.modifieddate.visit(
       {  },
       { value -> columns.add(Fragment.lit("\"modifieddate\""))
@@ -80,12 +80,12 @@ class CountryregionRepoImpl() : CountryregionRepo {
   override fun selectById(
     countryregioncode: CountryregionId,
     c: Connection
-  ): CountryregionRow? = Fragment.interpolate(Fragment.lit("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = "), Fragment.encode(CountryregionId.dbType, countryregioncode), Fragment.lit("")).query(CountryregionRow._rowParser.first()).runUnchecked(c)
+  ): CountryregionRow? = Fragment.interpolate(Fragment.lit("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.lit("")).query(CountryregionRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     countryregioncodes: Array<CountryregionId>,
     c: Connection
-  ): List<CountryregionRow> = Fragment.interpolate(Fragment.lit("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("), Fragment.encode(CountryregionId.dbTypeArray, countryregioncodes), Fragment.lit(")")).query(CountryregionRow._rowParser.all()).runUnchecked(c)
+  ): List<CountryregionRow> = Fragment.interpolate(Fragment.lit("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("), Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes), Fragment.lit(")")).query(CountryregionRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     countryregioncodes: Array<CountryregionId>,
@@ -103,13 +103,13 @@ class CountryregionRepoImpl() : CountryregionRepo {
     c: Connection
   ): Boolean {
     val countryregioncode: CountryregionId = row.countryregioncode
-    return Fragment.interpolate(Fragment.lit("update \"person\".\"countryregion\"\nset \"name\" = "), Fragment.encode(Name.dbType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"countryregioncode\" = "), Fragment.encode(CountryregionId.dbType, countryregioncode), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"person\".\"countryregion\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: CountryregionRow,
     c: Connection
-  ): CountryregionRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"countryregioncode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"countryregioncode\", \"name\", \"modifieddate\""))
+  ): CountryregionRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"countryregioncode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"countryregioncode\", \"name\", \"modifieddate\""))
     .updateReturning(CountryregionRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

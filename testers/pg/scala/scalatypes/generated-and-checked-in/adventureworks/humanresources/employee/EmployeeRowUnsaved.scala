@@ -8,7 +8,8 @@ package adventureworks.humanresources.employee
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.scala.DbTypeOps
@@ -48,7 +49,7 @@ case class EmployeeRowUnsaved(
   /** Default: true
    * Job classification. 0 = Hourly, not exempt from collective bargaining. 1 = Salaried, exempt from collective bargaining.
    */
-  salariedflag: Defaulted[Flag] = new UseDefault(),
+  salariedflag: Defaulted[/* user-picked */ SalariedFlag] = new UseDefault(),
   /** Default: 0
    * Number of available vacation hours.
    * Constraint CK_Employee_VacationHours affecting columns vacationhours:  (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
@@ -62,7 +63,7 @@ case class EmployeeRowUnsaved(
   /** Default: true
    * 0 = Inactive, 1 = Active
    */
-  currentflag: Defaulted[Flag] = new UseDefault(),
+  currentflag: Defaulted[/* user-picked */ CurrentFlag] = new UseDefault(),
   /** Default: uuid_generate_v1() */
   rowguid: Defaulted[UUID] = new UseDefault(),
   /** Default: now() */
@@ -73,10 +74,10 @@ case class EmployeeRowUnsaved(
   organizationnode: Defaulted[Option[String]] = new UseDefault()
 ) {
   def toRow(
-    salariedflagDefault: => Flag,
+    salariedflagDefault: => /* user-picked */ SalariedFlag,
     vacationhoursDefault: => Short,
     sickleavehoursDefault: => Short,
-    currentflagDefault: => Flag,
+    currentflagDefault: => /* user-picked */ CurrentFlag,
     rowguidDefault: => UUID,
     modifieddateDefault: => LocalDateTime,
     organizationnodeDefault: => Option[String]
@@ -102,5 +103,5 @@ case class EmployeeRowUnsaved(
 }
 
 object EmployeeRowUnsaved {
-  given pgText: PgText[EmployeeRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.dbType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.nationalidnumber, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.loginid, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.jobtitle, sb); sb.append(PgText.DELIMETER); PgTypes.date.text.unsafeEncode(row.birthdate, sb); sb.append(PgText.DELIMETER); PgTypes.bpchar.text.unsafeEncode(row.maritalstatus, sb); sb.append(PgText.DELIMETER); PgTypes.bpchar.text.unsafeEncode(row.gender, sb); sb.append(PgText.DELIMETER); PgTypes.date.text.unsafeEncode(row.hiredate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using Flag.dbType.text).unsafeEncode(row.salariedflag, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.int2.text).unsafeEncode(row.vacationhours, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.int2.text).unsafeEncode(row.sickleavehours, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using Flag.dbType.text).unsafeEncode(row.currentflag, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.text.nullable.text).unsafeEncode(row.organizationnode, sb) })
+  given pgText: PgText[EmployeeRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.nationalidnumber, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.loginid, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.jobtitle, sb); sb.append(PgText.DELIMETER); PgTypes.date.text.unsafeEncode(row.birthdate, sb); sb.append(PgText.DELIMETER); PgTypes.bpchar.text.unsafeEncode(row.maritalstatus, sb); sb.append(PgText.DELIMETER); PgTypes.bpchar.text.unsafeEncode(row.gender, sb); sb.append(PgText.DELIMETER); PgTypes.date.text.unsafeEncode(row.hiredate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using SalariedFlag.pgType.text).unsafeEncode(row.salariedflag, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.int2.text).unsafeEncode(row.vacationhours, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.int2.text).unsafeEncode(row.sickleavehours, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using CurrentFlag.pgType.text).unsafeEncode(row.currentflag, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.text.nullable.text).unsafeEncode(row.organizationnode, sb) })
 }

@@ -79,7 +79,7 @@ class TestInsertTest extends AnyFunSuite {
 
       // Customer and its fields are non-null by design
       val _ = assert(customer.customerId.value.value().compareTo(java.math.BigInteger.ZERO) >= 0)
-      assert(customer.email.nonEmpty)
+      assert(customer.email.value.nonEmpty)
     }
   }
 
@@ -106,7 +106,7 @@ class TestInsertTest extends AnyFunSuite {
 
       // Row and its fields are non-null by design
       val _ = assert(row.id.value >= 0)
-      val _ = assert(row.email.nonEmpty)
+      val _ = assert(row.email.value.nonEmpty)
       val _ = assert(row.code.nonEmpty)
       assert(row.category.nonEmpty)
     }

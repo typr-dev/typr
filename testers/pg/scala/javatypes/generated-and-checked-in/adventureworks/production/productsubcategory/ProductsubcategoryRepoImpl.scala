@@ -23,19 +23,19 @@ import dev.typr.foundations.Fragment.interpolate
 class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
   override def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = DeleteBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "production"."productsubcategory" where "productsubcategoryid" = """), Fragment.encode(ProductsubcategoryId.dbType, productsubcategoryid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "production"."productsubcategory" where "productsubcategoryid" = """), Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "production"."productsubcategory"
-    where "productsubcategoryid" = ANY("""), Fragment.encode(ProductsubcategoryId.dbTypeArray, productsubcategoryids), Fragment.lit(")"))
+    where "productsubcategoryid" = ANY("""), Fragment.encode(ProductsubcategoryId.pgTypeArray, productsubcategoryids), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
   interpolate(Fragment.lit("""insert into "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(ProductsubcategoryId.dbType, unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductcategoryId.dbType, unsaved.productcategoryid), Fragment.lit("::int4, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(ProductsubcategoryId.pgType, unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     RETURNING "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
     """))
     .updateReturning(ProductsubcategoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -45,12 +45,12 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""productcategoryid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(ProductcategoryId.dbType, unsaved.productcategoryid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid), Fragment.lit("::int4"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
     unsaved.productsubcategoryid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""productsubcategoryid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(ProductsubcategoryId.dbType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.lit(""""productsubcategoryid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(ProductsubcategoryId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
@@ -91,13 +91,13 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
   override def selectById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Optional[ProductsubcategoryRow] = {
     interpolate(Fragment.lit("""select "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
     from "production"."productsubcategory"
-    where "productsubcategoryid" = """), Fragment.encode(ProductsubcategoryId.dbType, productsubcategoryid), Fragment.lit("")).query(ProductsubcategoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "productsubcategoryid" = """), Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid), Fragment.lit("")).query(ProductsubcategoryRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): java.util.List[ProductsubcategoryRow] = {
     interpolate(Fragment.lit("""select "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
     from "production"."productsubcategory"
-    where "productsubcategoryid" = ANY("""), Fragment.encode(ProductsubcategoryId.dbTypeArray, productsubcategoryids), Fragment.lit(")")).query(ProductsubcategoryRow.`_rowParser`.all()).runUnchecked(c)
+    where "productsubcategoryid" = ANY("""), Fragment.encode(ProductsubcategoryId.pgTypeArray, productsubcategoryids), Fragment.lit(")")).query(ProductsubcategoryRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): java.util.Map[ProductsubcategoryId, ProductsubcategoryRow] = {
@@ -111,16 +111,16 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
   override def update(row: ProductsubcategoryRow)(using c: Connection): java.lang.Boolean = {
     val productsubcategoryid: ProductsubcategoryId = row.productsubcategoryid
     return interpolate(Fragment.lit("""update "production"."productsubcategory"
-    set "productcategoryid" = """), Fragment.encode(ProductcategoryId.dbType, row.productcategoryid), Fragment.lit("""::int4,
-    "name" = """), Fragment.encode(Name.dbType, row.name), Fragment.lit("""::varchar,
+    set "productcategoryid" = """), Fragment.encode(ProductcategoryId.pgType, row.productcategoryid), Fragment.lit("""::int4,
+    "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.lit("""::varchar,
     "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
     "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "productsubcategoryid" = """), Fragment.encode(ProductsubcategoryId.dbType, productsubcategoryid), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "productsubcategoryid" = """), Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
   interpolate(Fragment.lit("""insert into "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(ProductsubcategoryId.dbType, unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductcategoryId.dbType, unsaved.productcategoryid), Fragment.lit("::int4, "), Fragment.encode(Name.dbType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+    values ("""), Fragment.encode(ProductsubcategoryId.pgType, unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
     on conflict ("productsubcategoryid")
     do update set
       "productcategoryid" = EXCLUDED."productcategoryid",

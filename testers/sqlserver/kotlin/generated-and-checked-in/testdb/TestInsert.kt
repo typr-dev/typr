@@ -69,6 +69,7 @@ import testdb.products.ProductsRowUnsaved
 import testdb.test_connection.TestConnectionRepoImpl
 import testdb.test_connection.TestConnectionRow
 import testdb.test_connection.TestConnectionRowUnsaved
+import testdb.userdefined.Email
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 data class TestInsert(val random: Random) {
@@ -114,7 +115,7 @@ data class TestInsert(val random: Random) {
 
   fun Customers(
     name: String,
-    email: String,
+    email: /* user-picked */ Email,
     createdAt: Defaulted<LocalDateTime?> = UseDefault(),
     c: Connection
   ): CustomersRow = (CustomersRepoImpl()).insert(CustomersRowUnsaved(name = name, email = email, createdAt = createdAt), c)

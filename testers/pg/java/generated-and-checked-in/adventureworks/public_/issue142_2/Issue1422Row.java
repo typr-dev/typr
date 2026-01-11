@@ -23,7 +23,7 @@ public record Issue1422Row(
   ;
 
   public static RowParser<Issue1422Row> _rowParser =
-      RowParsers.of(Issue142Id.dbType, Issue1422Row::new, row -> new Object[] {row.tabellkode()});
+      RowParsers.of(Issue142Id.pgType, Issue1422Row::new, row -> new Object[] {row.tabellkode()});
   ;
 
   public static PgText<Issue1422Row> pgText = PgText.from(_rowParser);

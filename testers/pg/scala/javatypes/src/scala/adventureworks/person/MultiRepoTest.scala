@@ -7,7 +7,7 @@ import adventureworks.person.businessentityaddress.*
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.person.person.*
 import adventureworks.public.Name
-import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.{FirstName, LastName}
 import adventureworks.{DomainInsertImpl, TestInsert, WithConnection}
 import org.junit.Assert.*
 import org.junit.Test
@@ -91,19 +91,19 @@ class MultiRepoTest {
         new Defaulted.UseDefault()
       )
       val personRow = testInsert.personPerson(
-        businessentityRow.businessentityid,
-        "SC",
-        FirstName("name"),
-        Optional.empty(),
-        Optional.empty(),
-        Name("lastname"),
-        Optional.empty(),
-        Optional.empty(),
-        Optional.empty(),
-        new Defaulted.UseDefault(),
-        new Defaulted.UseDefault(),
-        new Defaulted.UseDefault(),
-        new Defaulted.UseDefault()
+        businessentityid = businessentityRow.businessentityid,
+        persontype = "SC",
+        title = Optional.empty(),
+        firstname = FirstName(Name("name")),
+        middlename = Optional.empty(),
+        lastname = LastName(Name("lastname")),
+        suffix = Optional.empty(),
+        additionalcontactinfo = Optional.empty(),
+        demographics = Optional.empty(),
+        namestyle = new Defaulted.UseDefault(),
+        emailpromotion = new Defaulted.UseDefault(),
+        rowguid = new Defaulted.UseDefault(),
+        modifieddate = new Defaulted.UseDefault()
       )
       val countryregionRow = testInsert.personCountryregion(
         CountryregionId("NOR"),

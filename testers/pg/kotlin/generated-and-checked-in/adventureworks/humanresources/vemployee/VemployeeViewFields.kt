@@ -9,6 +9,8 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.public.Name
 import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.RowParser
 import dev.typr.foundations.data.Xml
@@ -22,7 +24,7 @@ import dev.typr.foundations.kotlin.SqlExpr.Field
 import dev.typr.foundations.kotlin.TupleExpr18
 import kotlin.collections.List
 
-data class VemployeeViewFields(val _path: List<Path>) : TupleExpr18<BusinessentityId, String, /* user-picked */ FirstName, Name, Name, String, String, Phone, Name, String, Int, String, String, String, Name, String, Name, Xml>, RelationStructure<VemployeeViewFields, VemployeeViewRow>, FieldsBase<VemployeeViewRow> {
+data class VemployeeViewFields(val _path: List<Path>) : TupleExpr18<BusinessentityId, String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, String, String, Phone, Name, String, Int, String, String, String, Name, String, Name, Xml>, RelationStructure<VemployeeViewFields, VemployeeViewRow>, FieldsBase<VemployeeViewRow> {
   override fun _1(): SqlExpr<BusinessentityId> = businessentityid()
 
   override fun _10(): SqlExpr<String> = emailaddress()
@@ -47,9 +49,9 @@ data class VemployeeViewFields(val _path: List<Path>) : TupleExpr18<Businessenti
 
   override fun _3(): SqlExpr</* user-picked */ FirstName> = firstname()
 
-  override fun _4(): SqlExpr<Name> = middlename()
+  override fun _4(): SqlExpr</* user-picked */ MiddleName> = middlename()
 
-  override fun _5(): SqlExpr<Name> = lastname()
+  override fun _5(): SqlExpr</* user-picked */ LastName> = lastname()
 
   override fun _6(): SqlExpr<String> = suffix()
 
@@ -67,35 +69,35 @@ data class VemployeeViewFields(val _path: List<Path>) : TupleExpr18<Businessenti
 
   fun addressline2(): Field<String, VemployeeViewRow> = Field<String, VemployeeViewRow>(_path, "addressline2", VemployeeViewRow::addressline2, null, null, { row, value -> row.copy(addressline2 = value) }, PgTypes.text)
 
-  fun businessentityid(): Field<BusinessentityId, VemployeeViewRow> = Field<BusinessentityId, VemployeeViewRow>(_path, "businessentityid", VemployeeViewRow::businessentityid, null, null, { row, value -> row.copy(businessentityid = value) }, BusinessentityId.dbType)
+  fun businessentityid(): Field<BusinessentityId, VemployeeViewRow> = Field<BusinessentityId, VemployeeViewRow>(_path, "businessentityid", VemployeeViewRow::businessentityid, null, null, { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
 
   fun city(): Field<String, VemployeeViewRow> = Field<String, VemployeeViewRow>(_path, "city", VemployeeViewRow::city, null, null, { row, value -> row.copy(city = value) }, PgTypes.text)
 
   override fun columns(): List<FieldLike<*, VemployeeViewRow>> = listOf(this.businessentityid().underlying, this.title().underlying, this.firstname().underlying, this.middlename().underlying, this.lastname().underlying, this.suffix().underlying, this.jobtitle().underlying, this.phonenumber().underlying, this.phonenumbertype().underlying, this.emailaddress().underlying, this.emailpromotion().underlying, this.addressline1().underlying, this.addressline2().underlying, this.city().underlying, this.stateprovincename().underlying, this.postalcode().underlying, this.countryregionname().underlying, this.additionalcontactinfo().underlying)
 
-  fun countryregionname(): Field<Name, VemployeeViewRow> = Field<Name, VemployeeViewRow>(_path, "countryregionname", VemployeeViewRow::countryregionname, null, null, { row, value -> row.copy(countryregionname = value) }, Name.dbType)
+  fun countryregionname(): Field<Name, VemployeeViewRow> = Field<Name, VemployeeViewRow>(_path, "countryregionname", VemployeeViewRow::countryregionname, null, null, { row, value -> row.copy(countryregionname = value) }, Name.pgType)
 
   fun emailaddress(): Field<String, VemployeeViewRow> = Field<String, VemployeeViewRow>(_path, "emailaddress", VemployeeViewRow::emailaddress, null, null, { row, value -> row.copy(emailaddress = value) }, PgTypes.text)
 
   fun emailpromotion(): Field<Int, VemployeeViewRow> = Field<Int, VemployeeViewRow>(_path, "emailpromotion", VemployeeViewRow::emailpromotion, null, null, { row, value -> row.copy(emailpromotion = value) }, KotlinDbTypes.PgTypes.int4)
 
-  fun firstname(): Field</* user-picked */ FirstName, VemployeeViewRow> = Field</* user-picked */ FirstName, VemployeeViewRow>(_path, "firstname", VemployeeViewRow::firstname, null, null, { row, value -> row.copy(firstname = value) }, FirstName.dbType)
+  fun firstname(): Field</* user-picked */ FirstName, VemployeeViewRow> = Field</* user-picked */ FirstName, VemployeeViewRow>(_path, "firstname", VemployeeViewRow::firstname, null, null, { row, value -> row.copy(firstname = value) }, FirstName.pgType)
 
   fun jobtitle(): Field<String, VemployeeViewRow> = Field<String, VemployeeViewRow>(_path, "jobtitle", VemployeeViewRow::jobtitle, null, null, { row, value -> row.copy(jobtitle = value) }, PgTypes.text)
 
-  fun lastname(): Field<Name, VemployeeViewRow> = Field<Name, VemployeeViewRow>(_path, "lastname", VemployeeViewRow::lastname, null, null, { row, value -> row.copy(lastname = value) }, Name.dbType)
+  fun lastname(): Field</* user-picked */ LastName, VemployeeViewRow> = Field</* user-picked */ LastName, VemployeeViewRow>(_path, "lastname", VemployeeViewRow::lastname, null, null, { row, value -> row.copy(lastname = value) }, LastName.pgType)
 
-  fun middlename(): Field<Name, VemployeeViewRow> = Field<Name, VemployeeViewRow>(_path, "middlename", VemployeeViewRow::middlename, null, null, { row, value -> row.copy(middlename = value) }, Name.dbType)
+  fun middlename(): Field</* user-picked */ MiddleName, VemployeeViewRow> = Field</* user-picked */ MiddleName, VemployeeViewRow>(_path, "middlename", VemployeeViewRow::middlename, null, null, { row, value -> row.copy(middlename = value) }, MiddleName.pgType)
 
-  fun phonenumber(): Field<Phone, VemployeeViewRow> = Field<Phone, VemployeeViewRow>(_path, "phonenumber", VemployeeViewRow::phonenumber, null, null, { row, value -> row.copy(phonenumber = value) }, Phone.dbType)
+  fun phonenumber(): Field<Phone, VemployeeViewRow> = Field<Phone, VemployeeViewRow>(_path, "phonenumber", VemployeeViewRow::phonenumber, null, null, { row, value -> row.copy(phonenumber = value) }, Phone.pgType)
 
-  fun phonenumbertype(): Field<Name, VemployeeViewRow> = Field<Name, VemployeeViewRow>(_path, "phonenumbertype", VemployeeViewRow::phonenumbertype, null, null, { row, value -> row.copy(phonenumbertype = value) }, Name.dbType)
+  fun phonenumbertype(): Field<Name, VemployeeViewRow> = Field<Name, VemployeeViewRow>(_path, "phonenumbertype", VemployeeViewRow::phonenumbertype, null, null, { row, value -> row.copy(phonenumbertype = value) }, Name.pgType)
 
   fun postalcode(): Field<String, VemployeeViewRow> = Field<String, VemployeeViewRow>(_path, "postalcode", VemployeeViewRow::postalcode, null, null, { row, value -> row.copy(postalcode = value) }, PgTypes.text)
 
   override fun rowParser(): RowParser<VemployeeViewRow> = VemployeeViewRow._rowParser.underlying
 
-  fun stateprovincename(): Field<Name, VemployeeViewRow> = Field<Name, VemployeeViewRow>(_path, "stateprovincename", VemployeeViewRow::stateprovincename, null, null, { row, value -> row.copy(stateprovincename = value) }, Name.dbType)
+  fun stateprovincename(): Field<Name, VemployeeViewRow> = Field<Name, VemployeeViewRow>(_path, "stateprovincename", VemployeeViewRow::stateprovincename, null, null, { row, value -> row.copy(stateprovincename = value) }, Name.pgType)
 
   fun suffix(): Field<String, VemployeeViewRow> = Field<String, VemployeeViewRow>(_path, "suffix", VemployeeViewRow::suffix, null, null, { row, value -> row.copy(suffix = value) }, PgTypes.text)
 

@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Random;
 import org.junit.Test;
+import testdb.userdefined.Email;
 
 /**
  * Tests for the TestInsert helper class that generates random test data. Tests seeded randomness,
@@ -115,11 +116,11 @@ public class TestInsertTest {
               testInsert
                   .Customers()
                   .with(r -> r.withName("First"))
-                  .with(r -> r.withEmail("first@test.com"))
+                  .with(r -> r.withEmail(new Email("first@test.com")))
                   .insert(c);
 
           assertEquals("First", row.name());
-          assertEquals("first@test.com", row.email());
+          assertEquals(new Email("first@test.com"), row.email());
         });
   }
 }

@@ -57,7 +57,7 @@ public class SalesterritoryFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withTerritoryid(value),
-        SalesterritoryId.dbType);
+        SalesterritoryId.pgType);
   }
 
   public Field<Name, SalesterritoryRow> name() {
@@ -68,7 +68,7 @@ public class SalesterritoryFields
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public Field<CountryregionId, SalesterritoryRow> countryregioncode() {
@@ -79,7 +79,7 @@ public class SalesterritoryFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCountryregioncode(value),
-        CountryregionId.dbType);
+        CountryregionId.pgType);
   }
 
   public Field<String, SalesterritoryRow> group() {

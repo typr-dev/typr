@@ -211,13 +211,13 @@ public record AddressRowUnsaved(
             sb.append(PgText.DELIMETER);
             PgTypes.text.text().unsafeEncode(row.city, sb);
             sb.append(PgText.DELIMETER);
-            StateprovinceId.dbType.text().unsafeEncode(row.stateprovinceid, sb);
+            StateprovinceId.pgType.text().unsafeEncode(row.stateprovinceid, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.text.text().unsafeEncode(row.postalcode, sb);
             sb.append(PgText.DELIMETER);
             PgTypes.bytea.opt().text().unsafeEncode(row.spatiallocation, sb);
             sb.append(PgText.DELIMETER);
-            Defaulted.pgText(AddressId.dbType.text()).unsafeEncode(row.addressid, sb);
+            Defaulted.pgText(AddressId.pgType.text()).unsafeEncode(row.addressid, sb);
             sb.append(PgText.DELIMETER);
             Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb);
             sb.append(PgText.DELIMETER);

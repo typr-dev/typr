@@ -4,7 +4,7 @@ import adventureworks.customtypes.*
 import adventureworks.person.businessentity.{BusinessentityId, BusinessentityRepoImpl, BusinessentityRow, BusinessentityRowUnsaved}
 import adventureworks.person.person.{PersonRepoImpl, PersonRowUnsaved}
 import adventureworks.public.{Flag, Name}
-import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.{CurrentFlag, FirstName, LastName, MiddleName, SalariedFlag}
 import adventureworks.withConnection
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.funsuite.AnyFunSuite
@@ -30,9 +30,9 @@ class EmployeeTest extends AnyFunSuite with TypeCheckedTripleEquals {
           businessentityid = businessentityRow.businessentityid,
           persontype = "SC",
           title = None,
-          firstname = FirstName("firstname"),
-          middlename = Some(Name("middlename")),
-          lastname = Name("lastname"),
+          firstname = FirstName(Name("firstname")),
+          middlename = Some(MiddleName(Name("middlename"))),
+          lastname = LastName(Name("lastname")),
           suffix = Some("suffix"),
           additionalcontactinfo = Some(TypoXml("<additionalcontactinfo/>")),
           demographics = None
@@ -48,10 +48,10 @@ class EmployeeTest extends AnyFunSuite with TypeCheckedTripleEquals {
         maritalstatus = "M",
         gender = "F",
         hiredate = TypoLocalDate(LocalDate.now().minusYears(1)),
-        salariedflag = Defaulted.Provided(Flag(true)),
+        salariedflag = Defaulted.Provided(SalariedFlag(Flag(true))),
         vacationhours = Defaulted.Provided(TypoShort(1)),
         sickleavehours = Defaulted.Provided(TypoShort(2)),
-        currentflag = Defaulted.Provided(Flag(true)),
+        currentflag = Defaulted.Provided(CurrentFlag(Flag(true))),
         rowguid = Defaulted.Provided(TypoUUID.randomUUID),
         modifieddate = Defaulted.Provided(TypoLocalDateTime.now),
         organizationnode = Defaulted.Provided(Some("/"))
@@ -99,10 +99,10 @@ class EmployeeTest extends AnyFunSuite with TypeCheckedTripleEquals {
           unsaved.gender,
           unsaved.hiredate,
           // below: these are assertions for the static default values
-          Flag(true),
+          SalariedFlag(Flag(true)),
           TypoShort(0),
           TypoShort(0),
-          Flag(true),
+          CurrentFlag(Flag(true)),
           _,
           _,
           Some("/")

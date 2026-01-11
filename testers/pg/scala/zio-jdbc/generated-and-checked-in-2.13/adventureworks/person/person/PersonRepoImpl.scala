@@ -10,10 +10,11 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoUUID
 import adventureworks.customtypes.TypoXml
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.public.NameStyle
 import adventureworks.streamingInsert
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import typr.dsl.DeleteBuilder
 import typr.dsl.SelectBuilder
 import typr.dsl.UpdateBuilder
@@ -35,7 +36,7 @@ class PersonRepoImpl extends PersonRepo {
 
   override def insert(unsaved: PersonRow): ZIO[ZConnection, Throwable, PersonRow] = {
     sql"""insert into "person"."person"("businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate")
-    values (${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.persontype)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.namestyle)(NameStyle.setter)}::bool, ${Segment.paramSegment(unsaved.title)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.firstname)(/* user-picked */ FirstName.setter)}::varchar, ${Segment.paramSegment(unsaved.middlename)(Setter.optionParamSetter(Name.setter))}::varchar, ${Segment.paramSegment(unsaved.lastname)(Name.setter)}::varchar, ${Segment.paramSegment(unsaved.suffix)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.emailpromotion)(Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.additionalcontactinfo)(Setter.optionParamSetter(TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.demographics)(Setter.optionParamSetter(TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.rowguid)(TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp)
+    values (${Segment.paramSegment(unsaved.businessentityid)(BusinessentityId.setter)}::int4, ${Segment.paramSegment(unsaved.persontype)(Setter.stringSetter)}::bpchar, ${Segment.paramSegment(unsaved.namestyle)(NameStyle.setter)}::bool, ${Segment.paramSegment(unsaved.title)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.firstname)(/* user-picked */ FirstName.setter)}::varchar, ${Segment.paramSegment(unsaved.middlename)(Setter.optionParamSetter(MiddleName.setter))}::varchar, ${Segment.paramSegment(unsaved.lastname)(/* user-picked */ LastName.setter)}::varchar, ${Segment.paramSegment(unsaved.suffix)(Setter.optionParamSetter(Setter.stringSetter))}, ${Segment.paramSegment(unsaved.emailpromotion)(Setter.intSetter)}::int4, ${Segment.paramSegment(unsaved.additionalcontactinfo)(Setter.optionParamSetter(TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.demographics)(Setter.optionParamSetter(TypoXml.setter))}::xml, ${Segment.paramSegment(unsaved.rowguid)(TypoUUID.setter)}::uuid, ${Segment.paramSegment(unsaved.modifieddate)(TypoLocalDateTime.setter)}::timestamp)
     returning "businessentityid", "persontype", "namestyle", "title", "firstname", "middlename", "lastname", "suffix", "emailpromotion", "additionalcontactinfo", "demographics", "rowguid", "modifieddate"::text
     """.insertReturning(PersonRow.jdbcDecoder).map(_.updatedKeys.head)
   }
@@ -46,8 +47,8 @@ class PersonRepoImpl extends PersonRepo {
       Some((sql""""persontype"""", sql"${Segment.paramSegment(unsaved.persontype)(Setter.stringSetter)}::bpchar")),
       Some((sql""""title"""", sql"${Segment.paramSegment(unsaved.title)(Setter.optionParamSetter(Setter.stringSetter))}")),
       Some((sql""""firstname"""", sql"${Segment.paramSegment(unsaved.firstname)(/* user-picked */ FirstName.setter)}::varchar")),
-      Some((sql""""middlename"""", sql"${Segment.paramSegment(unsaved.middlename)(Setter.optionParamSetter(Name.setter))}::varchar")),
-      Some((sql""""lastname"""", sql"${Segment.paramSegment(unsaved.lastname)(Name.setter)}::varchar")),
+      Some((sql""""middlename"""", sql"${Segment.paramSegment(unsaved.middlename)(Setter.optionParamSetter(MiddleName.setter))}::varchar")),
+      Some((sql""""lastname"""", sql"${Segment.paramSegment(unsaved.lastname)(/* user-picked */ LastName.setter)}::varchar")),
       Some((sql""""suffix"""", sql"${Segment.paramSegment(unsaved.suffix)(Setter.optionParamSetter(Setter.stringSetter))}")),
       Some((sql""""additionalcontactinfo"""", sql"${Segment.paramSegment(unsaved.additionalcontactinfo)(Setter.optionParamSetter(TypoXml.setter))}::xml")),
       Some((sql""""demographics"""", sql"${Segment.paramSegment(unsaved.demographics)(Setter.optionParamSetter(TypoXml.setter))}::xml")),
@@ -115,8 +116,8 @@ class PersonRepoImpl extends PersonRepo {
     "namestyle" = ${Segment.paramSegment(row.namestyle)(NameStyle.setter)}::bool,
     "title" = ${Segment.paramSegment(row.title)(Setter.optionParamSetter(Setter.stringSetter))},
     "firstname" = ${Segment.paramSegment(row.firstname)(/* user-picked */ FirstName.setter)}::varchar,
-    "middlename" = ${Segment.paramSegment(row.middlename)(Setter.optionParamSetter(Name.setter))}::varchar,
-    "lastname" = ${Segment.paramSegment(row.lastname)(Name.setter)}::varchar,
+    "middlename" = ${Segment.paramSegment(row.middlename)(Setter.optionParamSetter(MiddleName.setter))}::varchar,
+    "lastname" = ${Segment.paramSegment(row.lastname)(/* user-picked */ LastName.setter)}::varchar,
     "suffix" = ${Segment.paramSegment(row.suffix)(Setter.optionParamSetter(Setter.stringSetter))},
     "emailpromotion" = ${Segment.paramSegment(row.emailpromotion)(Setter.intSetter)}::int4,
     "additionalcontactinfo" = ${Segment.paramSegment(row.additionalcontactinfo)(Setter.optionParamSetter(TypoXml.setter))}::xml,
@@ -137,8 +138,8 @@ class PersonRepoImpl extends PersonRepo {
     ${Segment.paramSegment(unsaved.namestyle)(NameStyle.setter)}::bool,
     ${Segment.paramSegment(unsaved.title)(Setter.optionParamSetter(Setter.stringSetter))},
     ${Segment.paramSegment(unsaved.firstname)(/* user-picked */ FirstName.setter)}::varchar,
-    ${Segment.paramSegment(unsaved.middlename)(Setter.optionParamSetter(Name.setter))}::varchar,
-    ${Segment.paramSegment(unsaved.lastname)(Name.setter)}::varchar,
+    ${Segment.paramSegment(unsaved.middlename)(Setter.optionParamSetter(MiddleName.setter))}::varchar,
+    ${Segment.paramSegment(unsaved.lastname)(/* user-picked */ LastName.setter)}::varchar,
     ${Segment.paramSegment(unsaved.suffix)(Setter.optionParamSetter(Setter.stringSetter))},
     ${Segment.paramSegment(unsaved.emailpromotion)(Setter.intSetter)}::int4,
     ${Segment.paramSegment(unsaved.additionalcontactinfo)(Setter.optionParamSetter(TypoXml.setter))}::xml,

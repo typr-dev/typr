@@ -28,19 +28,19 @@ import dev.typr.foundations.Fragment.interpolate
 class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def delete: DeleteBuilder[PrecisionTypesFields, PrecisionTypesRow] = DeleteBuilder.of(""""public"."precision_types"""", PrecisionTypesFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(id: PrecisionTypesId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."precision_types" where "id" = """), Fragment.encode(PrecisionTypesId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(id: PrecisionTypesId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."precision_types" where "id" = """), Fragment.encode(PrecisionTypesId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override def deleteByIds(ids: Array[PrecisionTypesId])(using c: Connection): Integer = {
     interpolate(Fragment.lit("""delete
     from "public"."precision_types"
-    where "id" = ANY("""), Fragment.encode(PrecisionTypesId.dbTypeArray, ids), Fragment.lit(")"))
+    where "id" = ANY("""), Fragment.encode(PrecisionTypesId.pgTypeArray, ids), Fragment.lit(")"))
       .update()
       .runUnchecked(c)
   }
 
   override def insert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow = {
   interpolate(Fragment.lit("""insert into "public"."precision_types"("id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6")
-    values ("""), Fragment.encode(PrecisionTypesId.dbType, unsaved.id), Fragment.lit("::int4, "), Fragment.encode(String10.dbType, unsaved.string10), Fragment.lit(", "), Fragment.encode(String20.dbType, unsaved.string20), Fragment.lit(", "), Fragment.encode(String50.dbType, unsaved.string50), Fragment.lit(", "), Fragment.encode(String100.dbType, unsaved.string100), Fragment.lit(", "), Fragment.encode(String255.dbType, unsaved.string255), Fragment.lit(", "), Fragment.encode(PaddedString3.dbType, unsaved.bpchar3), Fragment.lit("::bpchar, "), Fragment.encode(PaddedString10.dbType, unsaved.bpchar10), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric, unsaved.decimal52), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.decimal102), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.decimal184), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.numeric82), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.numeric124), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp0), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp3), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp6), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz0), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz3), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz6), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.time, unsaved.time0), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.time3), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.time6), Fragment.lit("::time, "), Fragment.encode(PgTypes.timetz, unsaved.timetz0), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz, unsaved.timetz3), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz, unsaved.timetz6), Fragment.lit("""::timetz)
+    values ("""), Fragment.encode(PrecisionTypesId.pgType, unsaved.id), Fragment.lit("::int4, "), Fragment.encode(String10.pgType, unsaved.string10), Fragment.lit(", "), Fragment.encode(String20.pgType, unsaved.string20), Fragment.lit(", "), Fragment.encode(String50.pgType, unsaved.string50), Fragment.lit(", "), Fragment.encode(String100.pgType, unsaved.string100), Fragment.lit(", "), Fragment.encode(String255.pgType, unsaved.string255), Fragment.lit(", "), Fragment.encode(PaddedString3.pgType, unsaved.bpchar3), Fragment.lit("::bpchar, "), Fragment.encode(PaddedString10.pgType, unsaved.bpchar10), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric, unsaved.decimal52), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.decimal102), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.decimal184), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.numeric82), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.numeric124), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp0), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp3), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp6), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz0), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz3), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz6), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.time, unsaved.time0), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.time3), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.time6), Fragment.lit("::time, "), Fragment.encode(PgTypes.timetz, unsaved.timetz0), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz, unsaved.timetz3), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz, unsaved.timetz6), Fragment.lit("""::timetz)
     RETURNING "id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6"
     """))
     .updateReturning(PrecisionTypesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
@@ -50,19 +50,19 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
     columns.add(Fragment.lit(""""string10"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(String10.dbType, unsaved.string10), Fragment.lit(""))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(String10.pgType, unsaved.string10), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""string20"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(String20.dbType, unsaved.string20), Fragment.lit(""))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(String20.pgType, unsaved.string20), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""string50"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(String50.dbType, unsaved.string50), Fragment.lit(""))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(String50.pgType, unsaved.string50), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""string100"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(String100.dbType, unsaved.string100), Fragment.lit(""))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(String100.pgType, unsaved.string100), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""string255"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(String255.dbType, unsaved.string255), Fragment.lit(""))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(String255.pgType, unsaved.string255), Fragment.lit(""))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""bpchar3"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PaddedString3.dbType, unsaved.bpchar3), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(PaddedString3.pgType, unsaved.bpchar3), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""bpchar10"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PaddedString10.dbType, unsaved.bpchar10), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
+    values.add(interpolate(Fragment.encode(PaddedString10.pgType, unsaved.bpchar10), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""decimal5_2"""")): @scala.annotation.nowarn
     values.add(interpolate(Fragment.encode(PgTypes.numeric, unsaved.decimal52), Fragment.lit("::numeric"))): @scala.annotation.nowarn
     columns.add(Fragment.lit(""""decimal10_2"""")): @scala.annotation.nowarn
@@ -99,7 +99,7 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     values.add(interpolate(Fragment.encode(PgTypes.timetz, unsaved.timetz6), Fragment.lit("::timetz"))): @scala.annotation.nowarn
     unsaved.id.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""id"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PrecisionTypesId.dbType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.lit(""""id"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PrecisionTypesId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       interpolate(Fragment.lit("""insert into "public"."precision_types"("""), Fragment.comma(columns), Fragment.lit(""")
@@ -132,13 +132,13 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def selectById(id: PrecisionTypesId)(using c: Connection): Optional[PrecisionTypesRow] = {
     interpolate(Fragment.lit("""select "id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6"
     from "public"."precision_types"
-    where "id" = """), Fragment.encode(PrecisionTypesId.dbType, id), Fragment.lit("")).query(PrecisionTypesRow.`_rowParser`.first()).runUnchecked(c)
+    where "id" = """), Fragment.encode(PrecisionTypesId.pgType, id), Fragment.lit("")).query(PrecisionTypesRow.`_rowParser`.first()).runUnchecked(c)
   }
 
   override def selectByIds(ids: Array[PrecisionTypesId])(using c: Connection): java.util.List[PrecisionTypesRow] = {
     interpolate(Fragment.lit("""select "id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6"
     from "public"."precision_types"
-    where "id" = ANY("""), Fragment.encode(PrecisionTypesId.dbTypeArray, ids), Fragment.lit(")")).query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY("""), Fragment.encode(PrecisionTypesId.pgTypeArray, ids), Fragment.lit(")")).query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(ids: Array[PrecisionTypesId])(using c: Connection): java.util.Map[PrecisionTypesId, PrecisionTypesRow] = {
@@ -152,13 +152,13 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def update(row: PrecisionTypesRow)(using c: Connection): java.lang.Boolean = {
     val id: PrecisionTypesId = row.id
     return interpolate(Fragment.lit("""update "public"."precision_types"
-    set "string10" = """), Fragment.encode(String10.dbType, row.string10), Fragment.lit(""",
-    "string20" = """), Fragment.encode(String20.dbType, row.string20), Fragment.lit(""",
-    "string50" = """), Fragment.encode(String50.dbType, row.string50), Fragment.lit(""",
-    "string100" = """), Fragment.encode(String100.dbType, row.string100), Fragment.lit(""",
-    "string255" = """), Fragment.encode(String255.dbType, row.string255), Fragment.lit(""",
-    "bpchar3" = """), Fragment.encode(PaddedString3.dbType, row.bpchar3), Fragment.lit("""::bpchar,
-    "bpchar10" = """), Fragment.encode(PaddedString10.dbType, row.bpchar10), Fragment.lit("""::bpchar,
+    set "string10" = """), Fragment.encode(String10.pgType, row.string10), Fragment.lit(""",
+    "string20" = """), Fragment.encode(String20.pgType, row.string20), Fragment.lit(""",
+    "string50" = """), Fragment.encode(String50.pgType, row.string50), Fragment.lit(""",
+    "string100" = """), Fragment.encode(String100.pgType, row.string100), Fragment.lit(""",
+    "string255" = """), Fragment.encode(String255.pgType, row.string255), Fragment.lit(""",
+    "bpchar3" = """), Fragment.encode(PaddedString3.pgType, row.bpchar3), Fragment.lit("""::bpchar,
+    "bpchar10" = """), Fragment.encode(PaddedString10.pgType, row.bpchar10), Fragment.lit("""::bpchar,
     "decimal5_2" = """), Fragment.encode(PgTypes.numeric, row.decimal52), Fragment.lit("""::numeric,
     "decimal10_2" = """), Fragment.encode(PgTypes.numeric, row.decimal102), Fragment.lit("""::numeric,
     "decimal18_4" = """), Fragment.encode(PgTypes.numeric, row.decimal184), Fragment.lit("""::numeric,
@@ -176,12 +176,12 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     "timetz0" = """), Fragment.encode(PgTypes.timetz, row.timetz0), Fragment.lit("""::timetz,
     "timetz3" = """), Fragment.encode(PgTypes.timetz, row.timetz3), Fragment.lit("""::timetz,
     "timetz6" = """), Fragment.encode(PgTypes.timetz, row.timetz6), Fragment.lit("""::timetz
-    where "id" = """), Fragment.encode(PrecisionTypesId.dbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    where "id" = """), Fragment.encode(PrecisionTypesId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override def upsert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow = {
   interpolate(Fragment.lit("""insert into "public"."precision_types"("id", "string10", "string20", "string50", "string100", "string255", "bpchar3", "bpchar10", "decimal5_2", "decimal10_2", "decimal18_4", "numeric8_2", "numeric12_4", "timestamp0", "timestamp3", "timestamp6", "timestamptz0", "timestamptz3", "timestamptz6", "time0", "time3", "time6", "timetz0", "timetz3", "timetz6")
-    values ("""), Fragment.encode(PrecisionTypesId.dbType, unsaved.id), Fragment.lit("::int4, "), Fragment.encode(String10.dbType, unsaved.string10), Fragment.lit(", "), Fragment.encode(String20.dbType, unsaved.string20), Fragment.lit(", "), Fragment.encode(String50.dbType, unsaved.string50), Fragment.lit(", "), Fragment.encode(String100.dbType, unsaved.string100), Fragment.lit(", "), Fragment.encode(String255.dbType, unsaved.string255), Fragment.lit(", "), Fragment.encode(PaddedString3.dbType, unsaved.bpchar3), Fragment.lit("::bpchar, "), Fragment.encode(PaddedString10.dbType, unsaved.bpchar10), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric, unsaved.decimal52), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.decimal102), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.decimal184), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.numeric82), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.numeric124), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp0), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp3), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp6), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz0), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz3), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz6), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.time, unsaved.time0), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.time3), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.time6), Fragment.lit("::time, "), Fragment.encode(PgTypes.timetz, unsaved.timetz0), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz, unsaved.timetz3), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz, unsaved.timetz6), Fragment.lit("""::timetz)
+    values ("""), Fragment.encode(PrecisionTypesId.pgType, unsaved.id), Fragment.lit("::int4, "), Fragment.encode(String10.pgType, unsaved.string10), Fragment.lit(", "), Fragment.encode(String20.pgType, unsaved.string20), Fragment.lit(", "), Fragment.encode(String50.pgType, unsaved.string50), Fragment.lit(", "), Fragment.encode(String100.pgType, unsaved.string100), Fragment.lit(", "), Fragment.encode(String255.pgType, unsaved.string255), Fragment.lit(", "), Fragment.encode(PaddedString3.pgType, unsaved.bpchar3), Fragment.lit("::bpchar, "), Fragment.encode(PaddedString10.pgType, unsaved.bpchar10), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric, unsaved.decimal52), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.decimal102), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.decimal184), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.numeric82), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.numeric124), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp0), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp3), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp, unsaved.timestamp6), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz0), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz3), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz, unsaved.timestamptz6), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.time, unsaved.time0), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.time3), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.time6), Fragment.lit("::time, "), Fragment.encode(PgTypes.timetz, unsaved.timetz0), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz, unsaved.timetz3), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz, unsaved.timetz6), Fragment.lit("""::timetz)
     on conflict ("id")
     do update set
       "string10" = EXCLUDED."string10",

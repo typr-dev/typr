@@ -15,6 +15,7 @@ import testdb.all_scalar_types.*;
 import testdb.customer_orders_view.*;
 import testdb.customers.*;
 import testdb.orders.*;
+import testdb.userdefined.Email;
 
 /**
  * Tests for SQL Server-specific features: MONEY, ROWVERSION, XML, JSON, UUID, DATETIMEOFFSET,
@@ -285,7 +286,10 @@ public class DatabaseFeaturesTest {
           var customer =
               testInsert
                   .Customers()
-                  .with(r -> r.withName("View Test Customer").withEmail("viewtest@example.com"))
+                  .with(
+                      r ->
+                          r.withName("View Test Customer")
+                              .withEmail(new Email("viewtest@example.com")))
                   .insert(c);
           var order =
               testInsert

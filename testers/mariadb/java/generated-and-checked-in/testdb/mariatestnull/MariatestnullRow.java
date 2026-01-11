@@ -2118,7 +2118,7 @@ public record MariatestnullRow(
           MariaTypes.timestamp.opt(),
           MariaTypes.timestamp.opt(),
           MariaTypes.year.opt(),
-          XYZSet.dbType.opt(),
+          XYZSet.mariaType.opt(),
           MariaTypes.json.opt(),
           MariaTypes.inet4.opt(),
           MariaTypes.inet6.opt(),

@@ -464,7 +464,7 @@ public record OrderDetailsSqlRow(
 
   public static RowParser<OrderDetailsSqlRow> _rowParser =
       RowParsers.of(
-          OrdersId.dbType,
+          OrdersId.mariaType,
           MariaTypes.varchar,
           MariaTypes.text,
           MariaTypes.text,
@@ -474,8 +474,8 @@ public record OrderDetailsSqlRow(
           MariaTypes.numeric,
           MariaTypes.numeric,
           MariaTypes.datetime,
-          OrderItemsId.dbType,
-          ProductsId.dbType,
+          OrderItemsId.mariaType,
+          ProductsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.smallintUnsigned,

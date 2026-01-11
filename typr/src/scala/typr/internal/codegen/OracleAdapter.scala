@@ -73,6 +73,9 @@ object OracleAdapter extends DbAdapter {
 
     case TypoType.Array(_, _) =>
       sys.error("OracleAdapter.lookupType: Oracle does not support array types in the same way as PostgreSQL")
+
+    case TypoType.Aligned(_, sourceType, _, _) =>
+      lookupType(sourceType, naming, typeSupport)
   }
 
   def lookupPrimitive(primitive: analysis.WellKnownPrimitive, typeSupport: TypeSupport): Code = {

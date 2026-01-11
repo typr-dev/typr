@@ -16,6 +16,7 @@ import dev.typr.foundations.scala.UpdateBuilderMock
 import dev.typr.foundations.scala.UpdateParams
 import java.lang.RuntimeException
 import java.sql.Connection
+import testdb.userdefined.Email
 
 case class MariatestUniqueRepoMock(
   toRow: MariatestUniqueRowUnsaved => MariatestUniqueRow,
@@ -58,7 +59,7 @@ case class MariatestUniqueRepoMock(
     category: String
   )(using c: Connection): Option[MariatestUniqueRow] = map.values.toList.find(v => (code == v.code) && (category == v.category))
 
-  override def selectByUniqueEmail(email: String)(using c: Connection): Option[MariatestUniqueRow] = map.values.toList.find(v => (email == v.email))
+  override def selectByUniqueEmail(email: /* user-picked */ Email)(using c: Connection): Option[MariatestUniqueRow] = map.values.toList.find(v => (email == v.email))
 
   override def update: UpdateBuilder[MariatestUniqueFields, MariatestUniqueRow] = UpdateBuilderMock(MariatestUniqueFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

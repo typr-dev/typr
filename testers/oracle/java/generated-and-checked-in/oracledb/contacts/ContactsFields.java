@@ -18,10 +18,11 @@ import dev.typr.foundations.dsl.SqlExpr.OptField;
 import dev.typr.foundations.dsl.TupleExpr.TupleExpr4;
 import java.util.List;
 import java.util.Optional;
-import oracledb.EmailTableT;
 import oracledb.TagVarrayT;
+import oracledb.userdefined.Email;
 
-public class ContactsFields extends TupleExpr4<ContactsId, String, EmailTableT, TagVarrayT>
+public class ContactsFields
+    extends TupleExpr4<ContactsId, String, /* user-picked */ Email, TagVarrayT>
     implements RelationStructure<ContactsFields, ContactsRow>, FieldsBase<ContactsRow> {
   List<Path> _path;
 
@@ -53,15 +54,15 @@ public class ContactsFields extends TupleExpr4<ContactsId, String, EmailTableT, 
         OracleTypes.varchar2);
   }
 
-  public OptField<EmailTableT, ContactsRow> emails() {
-    return new OptField<EmailTableT, ContactsRow>(
+  public OptField</* user-picked */ Email, ContactsRow> emails() {
+    return new OptField</* user-picked */ Email, ContactsRow>(
         _path,
         "EMAILS",
         ContactsRow::emails,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withEmails(value),
-        EmailTableT.oracleType);
+        Email.oracleType);
   }
 
   public OptField<TagVarrayT, ContactsRow> tags() {
@@ -106,7 +107,7 @@ public class ContactsFields extends TupleExpr4<ContactsId, String, EmailTableT, 
   }
 
   @Override
-  public SqlExpr<EmailTableT> _3() {
+  public SqlExpr</* user-picked */ Email> _3() {
     return emails();
   }
 

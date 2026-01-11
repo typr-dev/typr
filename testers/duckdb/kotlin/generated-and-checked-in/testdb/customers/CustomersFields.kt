@@ -19,13 +19,14 @@ import dev.typr.foundations.kotlin.TupleExpr5
 import java.time.LocalDateTime
 import kotlin.collections.List
 import testdb.Priority
+import testdb.userdefined.Email
 
-data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, String, String, LocalDateTime, Priority>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
+data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, String, /* user-picked */ Email, LocalDateTime, Priority>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   override fun _1(): SqlExpr<CustomersId> = customerId()
 
   override fun _2(): SqlExpr<String> = name()
 
-  override fun _3(): SqlExpr<String> = email()
+  override fun _3(): SqlExpr</* user-picked */ Email> = email()
 
   override fun _4(): SqlExpr<LocalDateTime> = createdAt()
 
@@ -39,7 +40,7 @@ data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, Stri
 
   fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "customer_id", CustomersRow::customerId, null, "INTEGER", { row, value -> row.copy(customerId = value) }, CustomersId.duckDbType)
 
-  fun email(): OptField<String, CustomersRow> = OptField<String, CustomersRow>(_path, "email", CustomersRow::email, null, null, { row, value -> row.copy(email = value) }, DuckDbTypes.varchar)
+  fun email(): OptField</* user-picked */ Email, CustomersRow> = OptField</* user-picked */ Email, CustomersRow>(_path, "email", CustomersRow::email, null, null, { row, value -> row.copy(email = value) }, Email.duckDbType)
 
   fun name(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "name", CustomersRow::name, null, null, { row, value -> row.copy(name = value) }, DuckDbTypes.varchar)
 

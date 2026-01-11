@@ -39,7 +39,7 @@ public class FlaffFields extends TupleExpr5<ShortText, String, Integer, ShortTex
         Optional.empty(),
         Optional.of("text"),
         (row, value) -> row.withCode(value),
-        ShortText.dbType);
+        ShortText.pgType);
   }
 
   public IdField<String, FlaffRow> anotherCode() {
@@ -72,7 +72,7 @@ public class FlaffFields extends TupleExpr5<ShortText, String, Integer, ShortTex
         Optional.empty(),
         Optional.of("text"),
         (row, value) -> row.withSpecifier(value),
-        ShortText.dbType);
+        ShortText.pgType);
   }
 
   public OptField<ShortText, FlaffRow> parentspecifier() {
@@ -83,7 +83,7 @@ public class FlaffFields extends TupleExpr5<ShortText, String, Integer, ShortTex
         Optional.empty(),
         Optional.of("text"),
         (row, value) -> row.withParentspecifier(value),
-        ShortText.dbType);
+        ShortText.pgType);
   }
 
   @Override

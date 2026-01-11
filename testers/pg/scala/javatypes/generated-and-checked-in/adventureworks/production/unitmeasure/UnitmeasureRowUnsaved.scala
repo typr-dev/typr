@@ -25,5 +25,5 @@ case class UnitmeasureRowUnsaved(
 }
 
 object UnitmeasureRowUnsaved {
-  given pgText: PgText[UnitmeasureRowUnsaved] = PgText.instance((row, sb) => { UnitmeasureId.dbType.text.unsafeEncode(row.unitmeasurecode, sb); sb.append(PgText.DELIMETER); Name.dbType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[UnitmeasureRowUnsaved] = PgText.instance((row, sb) => { UnitmeasureId.pgType.text.unsafeEncode(row.unitmeasurecode, sb); sb.append(PgText.DELIMETER); Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
 }

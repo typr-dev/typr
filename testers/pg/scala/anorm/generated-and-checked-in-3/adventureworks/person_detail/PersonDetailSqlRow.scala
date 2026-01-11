@@ -7,8 +7,9 @@ package adventureworks.person_detail
 
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.LastName
+import adventureworks.userdefined.MiddleName
 import anorm.Column
 import anorm.RowParser
 import anorm.Success
@@ -30,9 +31,9 @@ case class PersonDetailSqlRow(
   /** Points to [[adventureworks.person.person.PersonRow.firstname]] */
   firstname: /* user-picked */ FirstName,
   /** Points to [[adventureworks.person.person.PersonRow.middlename]] */
-  middlename: Option[Name],
+  middlename: Option[/* user-picked */ MiddleName],
   /** Points to [[adventureworks.person.person.PersonRow.lastname]] */
-  lastname: Name,
+  lastname: /* user-picked */ LastName,
   /** Points to [[adventureworks.humanresources.employee.EmployeeRow.jobtitle]] */
   jobtitle: String,
   /** Points to [[adventureworks.person.address.AddressRow.addressline1]] */
@@ -53,8 +54,8 @@ object PersonDetailSqlRow {
             businessentityid = json.\("businessentityid").as(using BusinessentityId.reads),
             title = json.\("title").toOption.map(_.as(using Reads.StringReads)),
             firstname = json.\("firstname").as(using FirstName.reads),
-            middlename = json.\("middlename").toOption.map(_.as(using Name.reads)),
-            lastname = json.\("lastname").as(using Name.reads),
+            middlename = json.\("middlename").toOption.map(_.as(using MiddleName.reads)),
+            lastname = json.\("lastname").as(using LastName.reads),
             jobtitle = json.\("jobtitle").as(using Reads.StringReads),
             addressline1 = json.\("addressline1").toOption.map(_.as(using Reads.StringReads)),
             city = json.\("city").toOption.map(_.as(using Reads.StringReads)),
@@ -73,8 +74,8 @@ object PersonDetailSqlRow {
           businessentityid = row(idx + 0)(using BusinessentityId.column),
           title = row(idx + 1)(using Column.columnToOption(using Column.columnToString)),
           firstname = row(idx + 2)(using /* user-picked */ FirstName.column),
-          middlename = row(idx + 3)(using Column.columnToOption(using Name.column)),
-          lastname = row(idx + 4)(using Name.column),
+          middlename = row(idx + 3)(using Column.columnToOption(using MiddleName.column)),
+          lastname = row(idx + 4)(using /* user-picked */ LastName.column),
           jobtitle = row(idx + 5)(using Column.columnToString),
           addressline1 = row(idx + 6)(using Column.columnToOption(using Column.columnToString)),
           city = row(idx + 7)(using Column.columnToOption(using Column.columnToString)),
@@ -91,8 +92,8 @@ object PersonDetailSqlRow {
         "businessentityid" -> BusinessentityId.writes.writes(o.businessentityid),
         "title" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.title),
         "firstname" -> FirstName.writes.writes(o.firstname),
-        "middlename" -> Writes.OptionWrites(using Name.writes).writes(o.middlename),
-        "lastname" -> Name.writes.writes(o.lastname),
+        "middlename" -> Writes.OptionWrites(using MiddleName.writes).writes(o.middlename),
+        "lastname" -> LastName.writes.writes(o.lastname),
         "jobtitle" -> Writes.StringWrites.writes(o.jobtitle),
         "addressline1" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.addressline1),
         "city" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.city),

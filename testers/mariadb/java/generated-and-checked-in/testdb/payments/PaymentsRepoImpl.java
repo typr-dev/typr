@@ -33,7 +33,7 @@ public class PaymentsRepoImpl implements PaymentsRepo {
   public Boolean deleteById(PaymentsId paymentId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `payments` where `payment_id` = "),
-                Fragment.encode(PaymentsId.dbType, paymentId),
+                Fragment.encode(PaymentsId.mariaType, paymentId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -44,7 +44,7 @@ public class PaymentsRepoImpl implements PaymentsRepo {
   public Integer deleteByIds(PaymentsId[] paymentIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : paymentIds) {
-      fragments.add(Fragment.encode(PaymentsId.dbType, id));
+      fragments.add(Fragment.encode(PaymentsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -63,9 +63,9 @@ public class PaymentsRepoImpl implements PaymentsRepo {
                     + " `currency_code`, `status`, `processor_response`, `error_message`,"
                     + " `ip_address`, `created_at`, `processed_at`)\n"
                     + "values ("),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.mariaType, unsaved.orderId()),
             Fragment.lit(", "),
-            Fragment.encode(PaymentMethodsId.dbType, unsaved.methodId()),
+            Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar.opt(), unsaved.transactionId()),
             Fragment.lit(", "),
@@ -100,11 +100,12 @@ public class PaymentsRepoImpl implements PaymentsRepo {
     ArrayList<Fragment> values = new ArrayList<>();
     ;
     columns.add(Fragment.lit("`order_id`"));
-    values.add(interpolate(Fragment.encode(OrdersId.dbType, unsaved.orderId()), Fragment.lit("")));
+    values.add(
+        interpolate(Fragment.encode(OrdersId.mariaType, unsaved.orderId()), Fragment.lit("")));
     columns.add(Fragment.lit("`method_id`"));
     values.add(
         interpolate(
-            Fragment.encode(PaymentMethodsId.dbType, unsaved.methodId()), Fragment.lit("")));
+            Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId()), Fragment.lit("")));
     columns.add(Fragment.lit("`amount`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.numeric, unsaved.amount()), Fragment.lit("")));
@@ -228,7 +229,7 @@ public class PaymentsRepoImpl implements PaymentsRepo {
                     + " `ip_address`, `created_at`, `processed_at`\n"
                     + "from `payments`\n"
                     + "where `payment_id` = "),
-            Fragment.encode(PaymentsId.dbType, paymentId),
+            Fragment.encode(PaymentsId.mariaType, paymentId),
             Fragment.lit(""))
         .query(PaymentsRow._rowParser.first())
         .runUnchecked(c);
@@ -238,7 +239,7 @@ public class PaymentsRepoImpl implements PaymentsRepo {
   public List<PaymentsRow> selectByIds(PaymentsId[] paymentIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : paymentIds) {
-      fragments.add(Fragment.encode(PaymentsId.dbType, id));
+      fragments.add(Fragment.encode(PaymentsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -272,9 +273,9 @@ public class PaymentsRepoImpl implements PaymentsRepo {
     ;
     return interpolate(
                 Fragment.lit("update `payments`\nset `order_id` = "),
-                Fragment.encode(OrdersId.dbType, row.orderId()),
+                Fragment.encode(OrdersId.mariaType, row.orderId()),
                 Fragment.lit(",\n`method_id` = "),
-                Fragment.encode(PaymentMethodsId.dbType, row.methodId()),
+                Fragment.encode(PaymentMethodsId.mariaType, row.methodId()),
                 Fragment.lit(",\n`transaction_id` = "),
                 Fragment.encode(MariaTypes.varchar.opt(), row.transactionId()),
                 Fragment.lit(",\n`amount` = "),
@@ -294,7 +295,7 @@ public class PaymentsRepoImpl implements PaymentsRepo {
                 Fragment.lit(",\n`processed_at` = "),
                 Fragment.encode(MariaTypes.datetime.opt(), row.processedAt()),
                 Fragment.lit("\nwhere `payment_id` = "),
-                Fragment.encode(PaymentsId.dbType, paymentId),
+                Fragment.encode(PaymentsId.mariaType, paymentId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -309,11 +310,11 @@ public class PaymentsRepoImpl implements PaymentsRepo {
                     + " `amount`, `currency_code`, `status`, `processor_response`, `error_message`,"
                     + " `ip_address`, `created_at`, `processed_at`)\n"
                     + "VALUES ("),
-            Fragment.encode(PaymentsId.dbType, unsaved.paymentId()),
+            Fragment.encode(PaymentsId.mariaType, unsaved.paymentId()),
             Fragment.lit(", "),
-            Fragment.encode(OrdersId.dbType, unsaved.orderId()),
+            Fragment.encode(OrdersId.mariaType, unsaved.orderId()),
             Fragment.lit(", "),
-            Fragment.encode(PaymentMethodsId.dbType, unsaved.methodId()),
+            Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar.opt(), unsaved.transactionId()),
             Fragment.lit(", "),

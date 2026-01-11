@@ -72,7 +72,7 @@ data class ShipmentsFields(val _path: List<Path>) : TupleExpr17<ShipmentsId, Ord
 
   fun actualDeliveryAt(): OptField<LocalDateTime, ShipmentsRow> = OptField<LocalDateTime, ShipmentsRow>(_path, "actual_delivery_at", ShipmentsRow::actualDeliveryAt, null, null, { row, value -> row.copy(actualDeliveryAt = value) }, MariaTypes.datetime)
 
-  fun carrierId(): Field<ShippingCarriersId, ShipmentsRow> = Field<ShippingCarriersId, ShipmentsRow>(_path, "carrier_id", ShipmentsRow::carrierId, null, null, { row, value -> row.copy(carrierId = value) }, ShippingCarriersId.dbType)
+  fun carrierId(): Field<ShippingCarriersId, ShipmentsRow> = Field<ShippingCarriersId, ShipmentsRow>(_path, "carrier_id", ShipmentsRow::carrierId, null, null, { row, value -> row.copy(carrierId = value) }, ShippingCarriersId.mariaType)
 
   override fun columns(): List<FieldLike<*, ShipmentsRow>> = listOf(this.shipmentId().underlying, this.orderId().underlying, this.carrierId().underlying, this.trackingNumber().underlying, this.shippingMethod().underlying, this.weightKg().underlying, this.dimensionsJson().underlying, this.labelData().underlying, this.status().underlying, this.estimatedDeliveryDate().underlying, this.actualDeliveryAt().underlying, this.shippingCost().underlying, this.insuranceAmount().underlying, this.originWarehouseId().underlying, this.shippedAt().underlying, this.createdAt().underlying, this.updatedAt().underlying)
 
@@ -92,13 +92,13 @@ data class ShipmentsFields(val _path: List<Path>) : TupleExpr17<ShipmentsId, Ord
 
   fun labelData(): OptField<ByteArray, ShipmentsRow> = OptField<ByteArray, ShipmentsRow>(_path, "label_data", ShipmentsRow::labelData, null, null, { row, value -> row.copy(labelData = value) }, MariaTypes.longblob)
 
-  fun orderId(): Field<OrdersId, ShipmentsRow> = Field<OrdersId, ShipmentsRow>(_path, "order_id", ShipmentsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.dbType)
+  fun orderId(): Field<OrdersId, ShipmentsRow> = Field<OrdersId, ShipmentsRow>(_path, "order_id", ShipmentsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType)
 
-  fun originWarehouseId(): OptField<WarehousesId, ShipmentsRow> = OptField<WarehousesId, ShipmentsRow>(_path, "origin_warehouse_id", ShipmentsRow::originWarehouseId, null, null, { row, value -> row.copy(originWarehouseId = value) }, WarehousesId.dbType)
+  fun originWarehouseId(): OptField<WarehousesId, ShipmentsRow> = OptField<WarehousesId, ShipmentsRow>(_path, "origin_warehouse_id", ShipmentsRow::originWarehouseId, null, null, { row, value -> row.copy(originWarehouseId = value) }, WarehousesId.mariaType)
 
   override fun rowParser(): RowParser<ShipmentsRow> = ShipmentsRow._rowParser.underlying
 
-  fun shipmentId(): IdField<ShipmentsId, ShipmentsRow> = IdField<ShipmentsId, ShipmentsRow>(_path, "shipment_id", ShipmentsRow::shipmentId, null, null, { row, value -> row.copy(shipmentId = value) }, ShipmentsId.dbType)
+  fun shipmentId(): IdField<ShipmentsId, ShipmentsRow> = IdField<ShipmentsId, ShipmentsRow>(_path, "shipment_id", ShipmentsRow::shipmentId, null, null, { row, value -> row.copy(shipmentId = value) }, ShipmentsId.mariaType)
 
   fun shippedAt(): OptField<LocalDateTime, ShipmentsRow> = OptField<LocalDateTime, ShipmentsRow>(_path, "shipped_at", ShipmentsRow::shippedAt, null, null, { row, value -> row.copy(shippedAt = value) }, MariaTypes.datetime)
 

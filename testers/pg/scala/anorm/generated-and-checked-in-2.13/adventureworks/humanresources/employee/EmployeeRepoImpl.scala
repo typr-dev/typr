@@ -11,8 +11,9 @@ import adventureworks.customtypes.TypoLocalDateTime
 import adventureworks.customtypes.TypoShort
 import adventureworks.customtypes.TypoUUID
 import adventureworks.person.businessentity.BusinessentityId
-import adventureworks.public.Flag
 import adventureworks.streamingInsert
+import adventureworks.userdefined.CurrentFlag
+import adventureworks.userdefined.SalariedFlag
 import anorm.BatchSql
 import anorm.NamedParameter
 import anorm.ParameterMetaData
@@ -42,7 +43,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
 
   override def insert(unsaved: EmployeeRow)(implicit c: Connection): EmployeeRow = {
   SQL"""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.nationalidnumber, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.loginid, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.jobtitle, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.birthdate, null, TypoLocalDate.toStatement)}::date, ${ParameterValue(unsaved.maritalstatus, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.gender, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.hiredate, null, TypoLocalDate.toStatement)}::date, ${ParameterValue(unsaved.salariedflag, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.vacationhours, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.sickleavehours, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.currentflag, null, Flag.toStatement)}::bool, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.organizationnode, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))})
+    values (${ParameterValue(unsaved.businessentityid, null, BusinessentityId.toStatement)}::int4, ${ParameterValue(unsaved.nationalidnumber, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.loginid, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.jobtitle, null, ToStatement.stringToStatement)}, ${ParameterValue(unsaved.birthdate, null, TypoLocalDate.toStatement)}::date, ${ParameterValue(unsaved.maritalstatus, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.gender, null, ToStatement.stringToStatement)}::bpchar, ${ParameterValue(unsaved.hiredate, null, TypoLocalDate.toStatement)}::date, ${ParameterValue(unsaved.salariedflag, null, /* user-picked */ SalariedFlag.toStatement)}::bool, ${ParameterValue(unsaved.vacationhours, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.sickleavehours, null, TypoShort.toStatement)}::int2, ${ParameterValue(unsaved.currentflag, null, /* user-picked */ CurrentFlag.toStatement)}::bool, ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid, ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp, ${ParameterValue(unsaved.organizationnode, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))})
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate"::text, "maritalstatus", "gender", "hiredate"::text, "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate"::text, "organizationnode"
     """
     .executeInsert(EmployeeRow.rowParser(1).single)
@@ -60,7 +61,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
       Some((NamedParameter("hiredate", ParameterValue(unsaved.hiredate, null, TypoLocalDate.toStatement)), "::date")),
       unsaved.salariedflag match {
         case Defaulted.UseDefault() => None
-        case Defaulted.Provided(value) => Some((NamedParameter("salariedflag", ParameterValue(value, null, Flag.toStatement)), "::bool"))
+        case Defaulted.Provided(value) => Some((NamedParameter("salariedflag", ParameterValue(value, null, /* user-picked */ SalariedFlag.toStatement)), "::bool"))
       },
       unsaved.vacationhours match {
         case Defaulted.UseDefault() => None
@@ -72,7 +73,7 @@ class EmployeeRepoImpl extends EmployeeRepo {
       },
       unsaved.currentflag match {
         case Defaulted.UseDefault() => None
-        case Defaulted.Provided(value) => Some((NamedParameter("currentflag", ParameterValue(value, null, Flag.toStatement)), "::bool"))
+        case Defaulted.Provided(value) => Some((NamedParameter("currentflag", ParameterValue(value, null, /* user-picked */ CurrentFlag.toStatement)), "::bool"))
       },
       unsaved.rowguid match {
         case Defaulted.UseDefault() => None
@@ -153,10 +154,10 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "maritalstatus" = ${ParameterValue(row.maritalstatus, null, ToStatement.stringToStatement)}::bpchar,
     "gender" = ${ParameterValue(row.gender, null, ToStatement.stringToStatement)}::bpchar,
     "hiredate" = ${ParameterValue(row.hiredate, null, TypoLocalDate.toStatement)}::date,
-    "salariedflag" = ${ParameterValue(row.salariedflag, null, Flag.toStatement)}::bool,
+    "salariedflag" = ${ParameterValue(row.salariedflag, null, /* user-picked */ SalariedFlag.toStatement)}::bool,
     "vacationhours" = ${ParameterValue(row.vacationhours, null, TypoShort.toStatement)}::int2,
     "sickleavehours" = ${ParameterValue(row.sickleavehours, null, TypoShort.toStatement)}::int2,
-    "currentflag" = ${ParameterValue(row.currentflag, null, Flag.toStatement)}::bool,
+    "currentflag" = ${ParameterValue(row.currentflag, null, /* user-picked */ CurrentFlag.toStatement)}::bool,
     "rowguid" = ${ParameterValue(row.rowguid, null, TypoUUID.toStatement)}::uuid,
     "modifieddate" = ${ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp,
     "organizationnode" = ${ParameterValue(row.organizationnode, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
@@ -176,10 +177,10 @@ class EmployeeRepoImpl extends EmployeeRepo {
     ${ParameterValue(unsaved.maritalstatus, null, ToStatement.stringToStatement)}::bpchar,
     ${ParameterValue(unsaved.gender, null, ToStatement.stringToStatement)}::bpchar,
     ${ParameterValue(unsaved.hiredate, null, TypoLocalDate.toStatement)}::date,
-    ${ParameterValue(unsaved.salariedflag, null, Flag.toStatement)}::bool,
+    ${ParameterValue(unsaved.salariedflag, null, /* user-picked */ SalariedFlag.toStatement)}::bool,
     ${ParameterValue(unsaved.vacationhours, null, TypoShort.toStatement)}::int2,
     ${ParameterValue(unsaved.sickleavehours, null, TypoShort.toStatement)}::int2,
-    ${ParameterValue(unsaved.currentflag, null, Flag.toStatement)}::bool,
+    ${ParameterValue(unsaved.currentflag, null, /* user-picked */ CurrentFlag.toStatement)}::bool,
     ${ParameterValue(unsaved.rowguid, null, TypoUUID.toStatement)}::uuid,
     ${ParameterValue(unsaved.modifieddate, null, TypoLocalDateTime.toStatement)}::timestamp,
     ${ParameterValue(unsaved.organizationnode, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData))}
@@ -215,10 +216,10 @@ class EmployeeRepoImpl extends EmployeeRepo {
       NamedParameter("maritalstatus", ParameterValue(row.maritalstatus, null, ToStatement.stringToStatement)),
       NamedParameter("gender", ParameterValue(row.gender, null, ToStatement.stringToStatement)),
       NamedParameter("hiredate", ParameterValue(row.hiredate, null, TypoLocalDate.toStatement)),
-      NamedParameter("salariedflag", ParameterValue(row.salariedflag, null, Flag.toStatement)),
+      NamedParameter("salariedflag", ParameterValue(row.salariedflag, null, /* user-picked */ SalariedFlag.toStatement)),
       NamedParameter("vacationhours", ParameterValue(row.vacationhours, null, TypoShort.toStatement)),
       NamedParameter("sickleavehours", ParameterValue(row.sickleavehours, null, TypoShort.toStatement)),
-      NamedParameter("currentflag", ParameterValue(row.currentflag, null, Flag.toStatement)),
+      NamedParameter("currentflag", ParameterValue(row.currentflag, null, /* user-picked */ CurrentFlag.toStatement)),
       NamedParameter("rowguid", ParameterValue(row.rowguid, null, TypoUUID.toStatement)),
       NamedParameter("modifieddate", ParameterValue(row.modifieddate, null, TypoLocalDateTime.toStatement)),
       NamedParameter("organizationnode", ParameterValue(row.organizationnode, null, ToStatement.optionToStatement(ToStatement.stringToStatement, ParameterMetaData.StringParameterMetaData)))

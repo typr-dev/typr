@@ -33,7 +33,7 @@ data class PasswordRowUnsaved(
 
   companion object {
     val pgText: PgText<PasswordRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.dbType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.text.text().unsafeEncode(row.passwordhash, sb)
       sb.append(PgText.DELIMETER)

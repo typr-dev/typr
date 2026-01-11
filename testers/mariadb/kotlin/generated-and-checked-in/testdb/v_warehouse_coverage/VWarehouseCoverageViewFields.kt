@@ -18,9 +18,10 @@ import dev.typr.foundations.kotlin.SqlExpr.OptField
 import dev.typr.foundations.kotlin.TupleExpr10
 import java.math.BigDecimal
 import kotlin.collections.List
+import testdb.userdefined.IsActive
 import testdb.warehouses.WarehousesId
 
-data class VWarehouseCoverageViewFields(val _path: List<Path>) : TupleExpr10<WarehousesId, String, String, String, String, String, String, Boolean, Long, BigDecimal>, RelationStructure<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow>, FieldsBase<VWarehouseCoverageViewRow> {
+data class VWarehouseCoverageViewFields(val _path: List<Path>) : TupleExpr10<WarehousesId, String, String, String, String, String, String, /* user-picked */ IsActive, Long, BigDecimal>, RelationStructure<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow>, FieldsBase<VWarehouseCoverageViewRow> {
   override fun _1(): SqlExpr<WarehousesId> = warehouseId()
 
   override fun _10(): SqlExpr<BigDecimal> = totalInventory()
@@ -37,7 +38,7 @@ data class VWarehouseCoverageViewFields(val _path: List<Path>) : TupleExpr10<War
 
   override fun _7(): SqlExpr<String> = timezone()
 
-  override fun _8(): SqlExpr<Boolean> = isActive()
+  override fun _8(): SqlExpr</* user-picked */ IsActive> = isActive()
 
   override fun _9(): SqlExpr<Long> = productsStocked()
 
@@ -49,7 +50,7 @@ data class VWarehouseCoverageViewFields(val _path: List<Path>) : TupleExpr10<War
 
   override fun columns(): List<FieldLike<*, VWarehouseCoverageViewRow>> = listOf(this.warehouseId().underlying, this.code().underlying, this.name().underlying, this.address().underlying, this.locationWkt().underlying, this.serviceAreaWkt().underlying, this.timezone().underlying, this.isActive().underlying, this.productsStocked().underlying, this.totalInventory().underlying)
 
-  fun isActive(): Field<Boolean, VWarehouseCoverageViewRow> = Field<Boolean, VWarehouseCoverageViewRow>(_path, "is_active", VWarehouseCoverageViewRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isActive(): Field</* user-picked */ IsActive, VWarehouseCoverageViewRow> = Field</* user-picked */ IsActive, VWarehouseCoverageViewRow>(_path, "is_active", VWarehouseCoverageViewRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
 
   fun locationWkt(): OptField<String, VWarehouseCoverageViewRow> = OptField<String, VWarehouseCoverageViewRow>(_path, "location_wkt", VWarehouseCoverageViewRow::locationWkt, null, null, { row, value -> row.copy(locationWkt = value) }, MariaTypes.longtext)
 
@@ -65,7 +66,7 @@ data class VWarehouseCoverageViewFields(val _path: List<Path>) : TupleExpr10<War
 
   fun totalInventory(): OptField<BigDecimal, VWarehouseCoverageViewRow> = OptField<BigDecimal, VWarehouseCoverageViewRow>(_path, "total_inventory", VWarehouseCoverageViewRow::totalInventory, null, null, { row, value -> row.copy(totalInventory = value) }, KotlinDbTypes.MariaTypes.numeric)
 
-  fun warehouseId(): Field<WarehousesId, VWarehouseCoverageViewRow> = Field<WarehousesId, VWarehouseCoverageViewRow>(_path, "warehouse_id", VWarehouseCoverageViewRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.dbType)
+  fun warehouseId(): Field<WarehousesId, VWarehouseCoverageViewRow> = Field<WarehousesId, VWarehouseCoverageViewRow>(_path, "warehouse_id", VWarehouseCoverageViewRow::warehouseId, null, null, { row, value -> row.copy(warehouseId = value) }, WarehousesId.mariaType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow> = VWarehouseCoverageViewFields(_path)
 

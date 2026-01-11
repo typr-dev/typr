@@ -11,6 +11,8 @@ import org.mariadb.jdbc.type.Point;
 import org.mariadb.jdbc.type.Polygon;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.Email;
+import testdb.userdefined.IsActive;
 
 /** This class corresponds to a row in table `warehouses` which has not been persisted yet */
 public record WarehousesRowUnsaved(
@@ -27,9 +29,9 @@ public record WarehousesRowUnsaved(
     /** Default: 'UTC' */
     Defaulted<String> timezone,
     /** Default: 1 */
-    @JsonProperty("is_active") Defaulted<Boolean> isActive,
+    @JsonProperty("is_active") Defaulted</* user-picked */ IsActive> isActive,
     /** Default: NULL */
-    @JsonProperty("contact_email") Defaulted<Optional<String>> contactEmail,
+    @JsonProperty("contact_email") Defaulted<Optional</* user-picked */ Email>> contactEmail,
     /** Default: NULL */
     @JsonProperty("contact_phone") Defaulted<Optional<String>> contactPhone) {
   public WarehousesRowUnsaved(
@@ -97,14 +99,15 @@ public record WarehousesRowUnsaved(
   ;
 
   /** Default: 1 */
-  public WarehousesRowUnsaved withIsActive(Defaulted<Boolean> isActive) {
+  public WarehousesRowUnsaved withIsActive(Defaulted</* user-picked */ IsActive> isActive) {
     return new WarehousesRowUnsaved(
         code, name, address, location, serviceArea, timezone, isActive, contactEmail, contactPhone);
   }
   ;
 
   /** Default: NULL */
-  public WarehousesRowUnsaved withContactEmail(Defaulted<Optional<String>> contactEmail) {
+  public WarehousesRowUnsaved withContactEmail(
+      Defaulted<Optional</* user-picked */ Email>> contactEmail) {
     return new WarehousesRowUnsaved(
         code, name, address, location, serviceArea, timezone, isActive, contactEmail, contactPhone);
   }
@@ -120,8 +123,8 @@ public record WarehousesRowUnsaved(
   public WarehousesRow toRow(
       java.util.function.Supplier<Optional<Polygon>> serviceAreaDefault,
       java.util.function.Supplier<String> timezoneDefault,
-      java.util.function.Supplier<Boolean> isActiveDefault,
-      java.util.function.Supplier<Optional<String>> contactEmailDefault,
+      java.util.function.Supplier</* user-picked */ IsActive> isActiveDefault,
+      java.util.function.Supplier<Optional</* user-picked */ Email>> contactEmailDefault,
       java.util.function.Supplier<Optional<String>> contactPhoneDefault,
       java.util.function.Supplier<WarehousesId> warehouseIdDefault) {
     return new WarehousesRow(

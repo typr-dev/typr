@@ -21,12 +21,12 @@ public record CardinalNumber(@JsonValue Integer value) {
   public static Bijection<CardinalNumber, Integer> bijection =
       Bijection.of(CardinalNumber::value, CardinalNumber::new);
 
-  public static PgType<CardinalNumber> dbType =
+  public static PgType<CardinalNumber> pgType =
       PgTypes.int4
           .bimap(CardinalNumber::new, CardinalNumber::value)
           .renamed("\"information_schema\".\"cardinal_number\"");
 
-  public static PgType<CardinalNumber[]> dbTypeArray =
+  public static PgType<CardinalNumber[]> pgTypeArray =
       PgTypes.int4Array
           .bimap(
               xs -> arrayMap.map(xs, CardinalNumber::new, CardinalNumber.class),

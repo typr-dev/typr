@@ -22,10 +22,10 @@ data class UsersId(@field:JsonValue val value: UUID) {
     val bijection: Bijection<UsersId, UUID> =
       Bijection.of(UsersId::value, ::UsersId)
 
-    val dbType: PgType<UsersId> =
+    val pgType: PgType<UsersId> =
       PgTypes.uuid.bimap(::UsersId, UsersId::value)
 
-    val dbTypeArray: PgType<Array<UsersId>> =
+    val pgTypeArray: PgType<Array<UsersId>> =
       PgTypes.uuidArray.bimap({ xs -> arrayMap.map(xs, ::UsersId, UsersId::class.java) }, { xs -> arrayMap.map(xs, UsersId::value, UUID::class.java) })
   }
 }

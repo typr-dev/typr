@@ -42,13 +42,13 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
                 Fragment.lit(
                     "delete from \"humanresources\".\"employeedepartmenthistory\" where"
                         + " \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+                Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
                 Fragment.lit(" AND \"startdate\" = "),
                 Fragment.encode(PgTypes.date, compositeId.startdate()),
                 Fragment.lit(" AND \"departmentid\" = "),
-                Fragment.encode(DepartmentId.dbType, compositeId.departmentid()),
+                Fragment.encode(DepartmentId.pgType, compositeId.departmentid()),
                 Fragment.lit(" AND \"shiftid\" = "),
-                Fragment.encode(ShiftId.dbType, compositeId.shiftid()),
+                Fragment.encode(ShiftId.pgType, compositeId.shiftid()),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -76,13 +76,13 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
                     + "from \"humanresources\".\"employeedepartmenthistory\"\n"
                     + "where (\"businessentityid\", \"startdate\", \"departmentid\", \"shiftid\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityid),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityid),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.dateArray, startdate),
             Fragment.lit(", "),
-            Fragment.encode(DepartmentId.dbTypeArray, departmentid),
+            Fragment.encode(DepartmentId.pgTypeArray, departmentid),
             Fragment.lit(", "),
-            Fragment.encode(ShiftId.dbTypeArray, shiftid),
+            Fragment.encode(ShiftId.pgTypeArray, shiftid),
             Fragment.lit("))\n"))
         .update()
         .runUnchecked(c);
@@ -96,11 +96,11 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
                     + " \"departmentid\", \"shiftid\", \"startdate\", \"enddate\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(DepartmentId.dbType, unsaved.departmentid()),
+            Fragment.encode(DepartmentId.pgType, unsaved.departmentid()),
             Fragment.lit("::int2, "),
-            Fragment.encode(ShiftId.dbType, unsaved.shiftid()),
+            Fragment.encode(ShiftId.pgType, unsaved.shiftid()),
             Fragment.lit("::int2, "),
             Fragment.encode(PgTypes.date, unsaved.startdate()),
             Fragment.lit("::date, "),
@@ -125,15 +125,15 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
     columns.add(Fragment.lit("\"businessentityid\""));
     values.add(
         interpolate(
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"departmentid\""));
     values.add(
         interpolate(
-            Fragment.encode(DepartmentId.dbType, unsaved.departmentid()), Fragment.lit("::int2")));
+            Fragment.encode(DepartmentId.pgType, unsaved.departmentid()), Fragment.lit("::int2")));
     columns.add(Fragment.lit("\"shiftid\""));
     values.add(
-        interpolate(Fragment.encode(ShiftId.dbType, unsaved.shiftid()), Fragment.lit("::int2")));
+        interpolate(Fragment.encode(ShiftId.pgType, unsaved.shiftid()), Fragment.lit("::int2")));
     columns.add(Fragment.lit("\"startdate\""));
     values.add(
         interpolate(Fragment.encode(PgTypes.date, unsaved.startdate()), Fragment.lit("::date")));
@@ -222,13 +222,13 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
                     + " \"enddate\", \"modifieddate\"\n"
                     + "from \"humanresources\".\"employeedepartmenthistory\"\n"
                     + "where \"businessentityid\" = "),
-            Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
             Fragment.lit(" AND \"startdate\" = "),
             Fragment.encode(PgTypes.date, compositeId.startdate()),
             Fragment.lit(" AND \"departmentid\" = "),
-            Fragment.encode(DepartmentId.dbType, compositeId.departmentid()),
+            Fragment.encode(DepartmentId.pgType, compositeId.departmentid()),
             Fragment.lit(" AND \"shiftid\" = "),
-            Fragment.encode(ShiftId.dbType, compositeId.shiftid()),
+            Fragment.encode(ShiftId.pgType, compositeId.shiftid()),
             Fragment.lit(""))
         .query(EmployeedepartmenthistoryRow._rowParser.first())
         .runUnchecked(c);
@@ -257,13 +257,13 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
                     + "from \"humanresources\".\"employeedepartmenthistory\"\n"
                     + "where (\"businessentityid\", \"startdate\", \"departmentid\", \"shiftid\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityid),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityid),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.dateArray, startdate),
             Fragment.lit(", "),
-            Fragment.encode(DepartmentId.dbTypeArray, departmentid),
+            Fragment.encode(DepartmentId.pgTypeArray, departmentid),
             Fragment.lit(", "),
-            Fragment.encode(ShiftId.dbTypeArray, shiftid),
+            Fragment.encode(ShiftId.pgTypeArray, shiftid),
             Fragment.lit("))\n"))
         .query(EmployeedepartmenthistoryRow._rowParser.all())
         .runUnchecked(c);
@@ -298,13 +298,13 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
                 Fragment.lit("::date,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+                Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
                 Fragment.lit(" AND \"startdate\" = "),
                 Fragment.encode(PgTypes.date, compositeId.startdate()),
                 Fragment.lit(" AND \"departmentid\" = "),
-                Fragment.encode(DepartmentId.dbType, compositeId.departmentid()),
+                Fragment.encode(DepartmentId.pgType, compositeId.departmentid()),
                 Fragment.lit(" AND \"shiftid\" = "),
-                Fragment.encode(ShiftId.dbType, compositeId.shiftid()),
+                Fragment.encode(ShiftId.pgType, compositeId.shiftid()),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -319,11 +319,11 @@ public class EmployeedepartmenthistoryRepoImpl implements Employeedepartmenthist
                     + " \"departmentid\", \"shiftid\", \"startdate\", \"enddate\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(DepartmentId.dbType, unsaved.departmentid()),
+            Fragment.encode(DepartmentId.pgType, unsaved.departmentid()),
             Fragment.lit("::int2, "),
-            Fragment.encode(ShiftId.dbType, unsaved.shiftid()),
+            Fragment.encode(ShiftId.pgType, unsaved.shiftid()),
             Fragment.lit("::int2, "),
             Fragment.encode(PgTypes.date, unsaved.startdate()),
             Fragment.lit("::date, "),

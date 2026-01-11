@@ -30,7 +30,7 @@ data class Issue1422Fields(val _path: List<Path>) : TupleExpr1<Issue142Id>, Rela
 
   override fun rowParser(): RowParser<Issue1422Row> = Issue1422Row._rowParser.underlying
 
-  fun tabellkode(): IdField<Issue142Id, Issue1422Row> = IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, null, null, { row, value -> row.copy(tabellkode = value) }, Issue142Id.dbType)
+  fun tabellkode(): IdField<Issue142Id, Issue1422Row> = IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, null, null, { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType)
 
   override fun withPaths(_path: List<Path>): RelationStructure<Issue1422Fields, Issue1422Row> = Issue1422Fields(_path)
 

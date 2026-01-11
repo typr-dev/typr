@@ -13,6 +13,7 @@ import dev.typr.foundations.Tuple.Tuple7;
 import dev.typr.foundations.data.Json;
 import java.util.Optional;
 import testdb.customtypes.Defaulted;
+import testdb.userdefined.IsActive;
 
 /** Table: payment_methods Primary key: method_id */
 public record PaymentMethodsRow(
@@ -27,10 +28,17 @@ public record PaymentMethodsRow(
     /** Default: NULL */
     @JsonProperty("processor_config") Optional<Json> processorConfig,
     /** Default: 1 */
-    @JsonProperty("is_active") Boolean isActive,
+    @JsonProperty("is_active") /* user-picked */ IsActive isActive,
     /** Default: 0 */
     @JsonProperty("sort_order") Byte sortOrder)
-    implements Tuple7<PaymentMethodsId, String, String, String, Optional<Json>, Boolean, Byte> {
+    implements Tuple7<
+        PaymentMethodsId,
+        String,
+        String,
+        String,
+        Optional<Json>, /* user-picked */
+        IsActive,
+        Byte> {
   /** AUTO_INCREMENT */
   public PaymentMethodsRow withMethodId(PaymentMethodsId methodId) {
     return new PaymentMethodsRow(
@@ -67,7 +75,7 @@ public record PaymentMethodsRow(
   ;
 
   /** Default: 1 */
-  public PaymentMethodsRow withIsActive(Boolean isActive) {
+  public PaymentMethodsRow withIsActive(/* user-picked */ IsActive isActive) {
     return new PaymentMethodsRow(
         methodId, code, name, methodType, processorConfig, isActive, sortOrder);
   }
@@ -82,12 +90,12 @@ public record PaymentMethodsRow(
 
   public static RowParser<PaymentMethodsRow> _rowParser =
       RowParsers.of(
-          PaymentMethodsId.dbType,
+          PaymentMethodsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.text,
           MariaTypes.json.opt(),
-          MariaTypes.bool,
+          IsActive.mariaType,
           MariaTypes.tinyint,
           PaymentMethodsRow::new,
           row ->
@@ -133,7 +141,7 @@ public record PaymentMethodsRow(
   ;
 
   @Override
-  public Boolean _6() {
+  public /* user-picked */ IsActive _6() {
     return isActive;
   }
   ;
@@ -151,7 +159,7 @@ public record PaymentMethodsRow(
 
   public PaymentMethodsRowUnsaved toUnsavedRow(
       Defaulted<Optional<Json>> processorConfig,
-      Defaulted<Boolean> isActive,
+      Defaulted</* user-picked */ IsActive> isActive,
       Defaulted<Byte> sortOrder) {
     return new PaymentMethodsRowUnsaved(
         code, name, methodType, processorConfig, isActive, sortOrder);

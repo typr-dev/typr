@@ -31,7 +31,7 @@ public enum Mood {
       java.util.Arrays.stream(Mood.values())
           .collect(java.util.stream.Collectors.toMap(n -> n.value, n -> n));
 
-  public static DuckDbType<Mood[]> dbTypeArray =
+  public static DuckDbType<Mood[]> duckDbTypeArray =
       DuckDbTypes.varcharArray
           .bimap(
               xs -> arrayMap.map(xs, Mood::force, Mood.class),

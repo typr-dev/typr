@@ -35,7 +35,7 @@ public record InventoryCheckSqlRow(
     @JsonProperty("quantity_on_hand") Integer quantityOnHand,
     /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
     @JsonProperty("quantity_reserved") Integer quantityReserved,
-    /** Points to {@link testdb.inventory.InventoryRow#quantityOnHand()} */
+    /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
     Integer available,
     /** Points to {@link testdb.inventory.InventoryRow#reorderPoint()} */
     @JsonProperty("reorder_point") Integer reorderPoint,
@@ -216,7 +216,7 @@ public record InventoryCheckSqlRow(
   }
   ;
 
-  /** Points to {@link testdb.inventory.InventoryRow#quantityOnHand()} */
+  /** Points to {@link testdb.inventory.InventoryRow#quantityReserved()} */
   public InventoryCheckSqlRow withAvailable(Integer available) {
     return new InventoryCheckSqlRow(
         inventoryId,
@@ -272,11 +272,11 @@ public record InventoryCheckSqlRow(
 
   public static RowParser<InventoryCheckSqlRow> _rowParser =
       RowParsers.of(
-          InventoryId.dbType,
-          ProductsId.dbType,
+          InventoryId.mariaType,
+          ProductsId.mariaType,
           MariaTypes.varchar,
           MariaTypes.varchar,
-          WarehousesId.dbType,
+          WarehousesId.mariaType,
           MariaTypes.char_,
           MariaTypes.varchar,
           MariaTypes.int_,

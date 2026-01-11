@@ -35,7 +35,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
   public Boolean deleteById(SalesterritoryId territoryid, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"sales\".\"salesterritory\" where \"territoryid\" = "),
-                Fragment.encode(SalesterritoryId.dbType, territoryid),
+                Fragment.encode(SalesterritoryId.pgType, territoryid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -46,7 +46,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
   public Integer deleteByIds(SalesterritoryId[] territoryids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"sales\".\"salesterritory\"\nwhere \"territoryid\" = ANY("),
-            Fragment.encode(SalesterritoryId.dbTypeArray, territoryids),
+            Fragment.encode(SalesterritoryId.pgTypeArray, territoryids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -60,11 +60,11 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
                     + " \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\","
                     + " \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid()),
+            Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
-            Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode()),
+            Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode()),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.text, unsaved.group()),
             Fragment.lit(", "),
@@ -96,11 +96,11 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
     ;
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.name()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.name()), Fragment.lit("::varchar")));
     columns.add(Fragment.lit("\"countryregioncode\""));
     values.add(
         interpolate(
-            Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode()),
+            Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode()),
             Fragment.lit("")));
     columns.add(Fragment.lit("\"group\""));
     values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.group()), Fragment.lit("")));
@@ -112,7 +112,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
               columns.add(Fragment.lit("\"territoryid\""));
               values.add(
                   interpolate(
-                      Fragment.encode(SalesterritoryId.dbType, value), Fragment.lit("::int4")));
+                      Fragment.encode(SalesterritoryId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     unsaved
@@ -247,7 +247,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
                     + " \"modifieddate\"\n"
                     + "from \"sales\".\"salesterritory\"\n"
                     + "where \"territoryid\" = "),
-            Fragment.encode(SalesterritoryId.dbType, territoryid),
+            Fragment.encode(SalesterritoryId.pgType, territoryid),
             Fragment.lit(""))
         .query(SalesterritoryRow._rowParser.first())
         .runUnchecked(c);
@@ -262,7 +262,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
                     + " \"modifieddate\"\n"
                     + "from \"sales\".\"salesterritory\"\n"
                     + "where \"territoryid\" = ANY("),
-            Fragment.encode(SalesterritoryId.dbTypeArray, territoryids),
+            Fragment.encode(SalesterritoryId.pgTypeArray, territoryids),
             Fragment.lit(")"))
         .query(SalesterritoryRow._rowParser.all())
         .runUnchecked(c);
@@ -292,9 +292,9 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"sales\".\"salesterritory\"\nset \"name\" = "),
-                Fragment.encode(Name.dbType, row.name()),
+                Fragment.encode(Name.pgType, row.name()),
                 Fragment.lit("::varchar,\n\"countryregioncode\" = "),
-                Fragment.encode(CountryregionId.dbType, row.countryregioncode()),
+                Fragment.encode(CountryregionId.pgType, row.countryregioncode()),
                 Fragment.lit(",\n\"group\" = "),
                 Fragment.encode(PgTypes.text, row.group()),
                 Fragment.lit(",\n\"salesytd\" = "),
@@ -310,7 +310,7 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"territoryid\" = "),
-                Fragment.encode(SalesterritoryId.dbType, territoryid),
+                Fragment.encode(SalesterritoryId.pgType, territoryid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -325,11 +325,11 @@ public class SalesterritoryRepoImpl implements SalesterritoryRepo {
                     + " \"countryregioncode\", \"group\", \"salesytd\", \"saleslastyear\","
                     + " \"costytd\", \"costlastyear\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(SalesterritoryId.dbType, unsaved.territoryid()),
+            Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
-            Fragment.encode(CountryregionId.dbType, unsaved.countryregioncode()),
+            Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode()),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.text, unsaved.group()),
             Fragment.lit(", "),

@@ -25,9 +25,6 @@ data class AllBrandsCategoriesCSet(val members: Set<AllBrandsCategoriesCSetMembe
   override fun toString(): String = toCommaSeparated()
 
   companion object {
-    val dbType: MariaType<AllBrandsCategoriesCSet> =
-      MariaTypes.set.bimap({ ms: MariaSet -> AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated()) }, { s: AllBrandsCategoriesCSet -> MariaSet.fromString(s.toCommaSeparated()) })
-
     fun empty(): AllBrandsCategoriesCSet = AllBrandsCategoriesCSet(EnumSet.noneOf(AllBrandsCategoriesCSetMember::class.java).toSet())
 
     fun fromString(str: String): AllBrandsCategoriesCSet = run {
@@ -40,6 +37,9 @@ data class AllBrandsCategoriesCSet(val members: Set<AllBrandsCategoriesCSetMembe
         AllBrandsCategoriesCSet(set.toSet())
       }
     }
+
+    val mariaType: MariaType<AllBrandsCategoriesCSet> =
+      MariaTypes.set.bimap({ ms: MariaSet -> AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated()) }, { s: AllBrandsCategoriesCSet -> MariaSet.fromString(s.toCommaSeparated()) })
 
     fun of(members: List<AllBrandsCategoriesCSetMember>): AllBrandsCategoriesCSet = run {
       if (members.isEmpty()) AllBrandsCategoriesCSet(EnumSet.noneOf(AllBrandsCategoriesCSetMember::class.java).toSet())

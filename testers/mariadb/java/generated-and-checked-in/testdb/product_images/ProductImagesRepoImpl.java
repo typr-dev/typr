@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import testdb.products.ProductsId;
+import testdb.userdefined.IsPrimary;
 
 public class ProductImagesRepoImpl implements ProductImagesRepo {
   @Override
@@ -32,7 +33,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
   public Boolean deleteById(ProductImagesId imageId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `product_images` where `image_id` = "),
-                Fragment.encode(ProductImagesId.dbType, imageId),
+                Fragment.encode(ProductImagesId.mariaType, imageId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -43,7 +44,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
   public Integer deleteByIds(ProductImagesId[] imageIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : imageIds) {
-      fragments.add(Fragment.encode(ProductImagesId.dbType, id));
+      fragments.add(Fragment.encode(ProductImagesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -61,7 +62,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
                 "insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`,"
                     + " `alt_text`, `sort_order`, `is_primary`, `image_data`)\n"
                     + "values ("),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.imageUrl()),
             Fragment.lit(", "),
@@ -71,7 +72,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isPrimary()),
+            Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.longblob.opt(), unsaved.imageData()),
             Fragment.lit(
@@ -90,7 +91,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
     ;
     columns.add(Fragment.lit("`product_id`"));
     values.add(
-        interpolate(Fragment.encode(ProductsId.dbType, unsaved.productId()), Fragment.lit("")));
+        interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId()), Fragment.lit("")));
     columns.add(Fragment.lit("`image_url`"));
     values.add(
         interpolate(Fragment.encode(MariaTypes.varchar, unsaved.imageUrl()), Fragment.lit("")));
@@ -131,7 +132,8 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
             () -> {},
             value -> {
               columns.add(Fragment.lit("`is_primary`"));
-              values.add(interpolate(Fragment.encode(MariaTypes.bool, value), Fragment.lit("")));
+              values.add(
+                  interpolate(Fragment.encode(IsPrimary.mariaType, value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -186,7 +188,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
                     + " `sort_order`, `is_primary`, `image_data`\n"
                     + "from `product_images`\n"
                     + "where `image_id` = "),
-            Fragment.encode(ProductImagesId.dbType, imageId),
+            Fragment.encode(ProductImagesId.mariaType, imageId),
             Fragment.lit(""))
         .query(ProductImagesRow._rowParser.first())
         .runUnchecked(c);
@@ -196,7 +198,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
   public List<ProductImagesRow> selectByIds(ProductImagesId[] imageIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : imageIds) {
-      fragments.add(Fragment.encode(ProductImagesId.dbType, id));
+      fragments.add(Fragment.encode(ProductImagesId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -234,7 +236,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
     ;
     return interpolate(
                 Fragment.lit("update `product_images`\nset `product_id` = "),
-                Fragment.encode(ProductsId.dbType, row.productId()),
+                Fragment.encode(ProductsId.mariaType, row.productId()),
                 Fragment.lit(",\n`image_url` = "),
                 Fragment.encode(MariaTypes.varchar, row.imageUrl()),
                 Fragment.lit(",\n`thumbnail_url` = "),
@@ -244,11 +246,11 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
                 Fragment.lit(",\n`sort_order` = "),
                 Fragment.encode(MariaTypes.tinyintUnsigned, row.sortOrder()),
                 Fragment.lit(",\n`is_primary` = "),
-                Fragment.encode(MariaTypes.bool, row.isPrimary()),
+                Fragment.encode(IsPrimary.mariaType, row.isPrimary()),
                 Fragment.lit(",\n`image_data` = "),
                 Fragment.encode(MariaTypes.longblob.opt(), row.imageData()),
                 Fragment.lit("\nwhere `image_id` = "),
-                Fragment.encode(ProductImagesId.dbType, imageId),
+                Fragment.encode(ProductImagesId.mariaType, imageId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -262,9 +264,9 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
                 "INSERT INTO `product_images`(`image_id`, `product_id`, `image_url`,"
                     + " `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\n"
                     + "VALUES ("),
-            Fragment.encode(ProductImagesId.dbType, unsaved.imageId()),
+            Fragment.encode(ProductImagesId.mariaType, unsaved.imageId()),
             Fragment.lit(", "),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.imageUrl()),
             Fragment.lit(", "),
@@ -274,7 +276,7 @@ public class ProductImagesRepoImpl implements ProductImagesRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder()),
             Fragment.lit(", "),
-            Fragment.encode(MariaTypes.bool, unsaved.isPrimary()),
+            Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.longblob.opt(), unsaved.imageData()),
             Fragment.lit(

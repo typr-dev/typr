@@ -147,6 +147,14 @@ import testdb.shipping_carriers.ShippingCarriersId
 import testdb.shipping_carriers.ShippingCarriersRepoImpl
 import testdb.shipping_carriers.ShippingCarriersRow
 import testdb.shipping_carriers.ShippingCarriersRowUnsaved
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.IsActive
+import testdb.userdefined.IsApproved
+import testdb.userdefined.IsDefault
+import testdb.userdefined.IsPrimary
+import testdb.userdefined.IsVerifiedPurchase
+import testdb.userdefined.LastName
 import testdb.warehouses.WarehousesId
 import testdb.warehouses.WarehousesRepoImpl
 import testdb.warehouses.WarehousesRow
@@ -184,7 +192,7 @@ case class TestInsert(random: Random) {
     logoBlob: Defaulted[Option[Array[Byte]]] = new UseDefault(),
     websiteUrl: Defaulted[Option[String]] = new UseDefault(),
     countryOfOrigin: Defaulted[Option[String]] = new UseDefault(),
-    isActive: Defaulted[Boolean] = new UseDefault()
+    isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault()
   )(using c: Connection): BrandsRow = {
     (new BrandsRepoImpl()).insert(new BrandsRowUnsaved(
       name = name,
@@ -226,7 +234,7 @@ case class TestInsert(random: Random) {
     city: String = random.alphanumeric.take(20).mkString,
     postalCode: String = random.alphanumeric.take(20).mkString,
     countryCode: String = random.alphanumeric.take(2).mkString,
-    isDefault: Defaulted[Boolean] = new UseDefault(),
+    isDefault: Defaulted[/* user-picked */ IsDefault] = new UseDefault(),
     streetLine2: Defaulted[Option[String]] = new UseDefault(),
     stateProvince: Defaulted[Option[String]] = new UseDefault(),
     location: Defaulted[Option[Point]] = new UseDefault(),
@@ -253,14 +261,14 @@ case class TestInsert(random: Random) {
   def CustomerStatus(
     statusCode: CustomerStatusId = new CustomerStatusId(random.alphanumeric.take(20).mkString),
     description: String = random.alphanumeric.take(20).mkString,
-    isActive: Defaulted[Boolean] = new UseDefault()
+    isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault()
   )(using c: Connection): CustomerStatusRow = (new CustomerStatusRepoImpl()).insert(new CustomerStatusRowUnsaved(statusCode = statusCode, description = description, isActive = isActive))(using c)
 
   def Customers(
     passwordHash: Array[Byte],
-    email: String = random.alphanumeric.take(20).mkString,
-    firstName: String = random.alphanumeric.take(20).mkString,
-    lastName: String = random.alphanumeric.take(20).mkString,
+    email: /* user-picked */ Email = new Email(random.alphanumeric.take(20).mkString),
+    firstName: /* user-picked */ FirstName = new FirstName(random.alphanumeric.take(20).mkString),
+    lastName: /* user-picked */ LastName = new LastName(random.alphanumeric.take(20).mkString),
     phone: Defaulted[Option[String]] = new UseDefault(),
     status: Defaulted[CustomerStatusId] = new UseDefault(),
     tier: Defaulted[String] = new UseDefault(),
@@ -449,7 +457,7 @@ case class TestInsert(random: Random) {
   }
 
   def MariatestUnique(
-    email: String = random.alphanumeric.take(20).mkString,
+    email: /* user-picked */ Email = new Email(random.alphanumeric.take(20).mkString),
     code: String = random.alphanumeric.take(20).mkString,
     category: String = random.alphanumeric.take(20).mkString
   )(using c: Connection): MariatestUniqueRow = (new MariatestUniqueRepoImpl()).insert(new MariatestUniqueRowUnsaved(email = email, code = code, category = category))(using c)
@@ -645,7 +653,7 @@ case class TestInsert(random: Random) {
     name: String = random.alphanumeric.take(20).mkString,
     methodType: String = random.alphanumeric.take(20).mkString,
     processorConfig: Defaulted[Option[Json]] = new UseDefault(),
-    isActive: Defaulted[Boolean] = new UseDefault(),
+    isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault(),
     sortOrder: Defaulted[Byte] = new UseDefault()
   )(using c: Connection): PaymentMethodsRow = {
     (new PaymentMethodsRepoImpl()).insert(new PaymentMethodsRowUnsaved(
@@ -807,7 +815,7 @@ case class TestInsert(random: Random) {
   def ProductCategories(
     productId: ProductsId,
     categoryId: CategoriesId,
-    isPrimary: Defaulted[Boolean] = new UseDefault(),
+    isPrimary: Defaulted[/* user-picked */ IsPrimary] = new UseDefault(),
     sortOrder: Defaulted[Short] = new UseDefault()
   )(using c: Connection): ProductCategoriesRow = {
     (new ProductCategoriesRepoImpl()).insert(new ProductCategoriesRowUnsaved(
@@ -824,7 +832,7 @@ case class TestInsert(random: Random) {
     thumbnailUrl: Defaulted[Option[String]] = new UseDefault(),
     altText: Defaulted[Option[String]] = new UseDefault(),
     sortOrder: Defaulted[Uint1] = new UseDefault(),
-    isPrimary: Defaulted[Boolean] = new UseDefault(),
+    isPrimary: Defaulted[/* user-picked */ IsPrimary] = new UseDefault(),
     imageData: Defaulted[Option[Array[Byte]]] = new UseDefault()
   )(using c: Connection): ProductImagesRow = {
     (new ProductImagesRepoImpl()).insert(new ProductImagesRowUnsaved(
@@ -910,7 +918,7 @@ case class TestInsert(random: Random) {
     maxUsesPerCustomer: Defaulted[Option[Uint1]] = new UseDefault(),
     applicableTo: Defaulted[Option[AllBrandsCategoriesCSet]] = new UseDefault(),
     rulesJson: Defaulted[Option[Json]] = new UseDefault(),
-    isActive: Defaulted[Boolean] = new UseDefault(),
+    isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault(),
     createdAt: Defaulted[LocalDateTime] = new UseDefault()
   )(using c: Connection): PromotionsRow = {
     (new PromotionsRepoImpl()).insert(new PromotionsRowUnsaved(
@@ -942,8 +950,8 @@ case class TestInsert(random: Random) {
     pros: Defaulted[Option[Json]] = new UseDefault(),
     cons: Defaulted[Option[Json]] = new UseDefault(),
     images: Defaulted[Option[Json]] = new UseDefault(),
-    isVerifiedPurchase: Defaulted[Boolean] = new UseDefault(),
-    isApproved: Defaulted[Boolean] = new UseDefault(),
+    isVerifiedPurchase: Defaulted[/* user-picked */ IsVerifiedPurchase] = new UseDefault(),
+    isApproved: Defaulted[/* user-picked */ IsApproved] = new UseDefault(),
     helpfulVotes: Defaulted[Uint4] = new UseDefault(),
     unhelpfulVotes: Defaulted[Uint4] = new UseDefault(),
     adminResponse: Defaulted[Option[String]] = new UseDefault(),
@@ -1015,7 +1023,7 @@ case class TestInsert(random: Random) {
     name: String = random.alphanumeric.take(20).mkString,
     trackingUrlTemplate: Defaulted[Option[String]] = new UseDefault(),
     apiConfig: Defaulted[Option[Json]] = new UseDefault(),
-    isActive: Defaulted[Boolean] = new UseDefault()
+    isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault()
   )(using c: Connection): ShippingCarriersRow = {
     (new ShippingCarriersRepoImpl()).insert(new ShippingCarriersRowUnsaved(
       code = code,
@@ -1033,8 +1041,8 @@ case class TestInsert(random: Random) {
     address: String = random.alphanumeric.take(20).mkString,
     serviceArea: Defaulted[Option[Polygon]] = new UseDefault(),
     timezone: Defaulted[String] = new UseDefault(),
-    isActive: Defaulted[Boolean] = new UseDefault(),
-    contactEmail: Defaulted[Option[String]] = new UseDefault(),
+    isActive: Defaulted[/* user-picked */ IsActive] = new UseDefault(),
+    contactEmail: Defaulted[Option[/* user-picked */ Email]] = new UseDefault(),
     contactPhone: Defaulted[Option[String]] = new UseDefault()
   )(using c: Connection): WarehousesRow = {
     (new WarehousesRepoImpl()).insert(new WarehousesRowUnsaved(

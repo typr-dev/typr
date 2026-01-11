@@ -36,7 +36,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
     return interpolate(
                 Fragment.lit(
                     "delete from \"person\".\"emailaddress\" where \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+                Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
                 Fragment.lit(" AND \"emailaddressid\" = "),
                 Fragment.encode(PgTypes.int4, compositeId.emailaddressid()),
                 Fragment.lit(""))
@@ -59,7 +59,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
                     + "from \"person\".\"emailaddress\"\n"
                     + "where (\"businessentityid\", \"emailaddressid\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityid),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityid),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.int4Array, emailaddressid),
             Fragment.lit("))\n"))
@@ -74,7 +74,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
                 "insert into \"person\".\"emailaddress\"(\"businessentityid\", \"emailaddressid\","
                     + " \"emailaddress\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.int4, unsaved.emailaddressid()),
             Fragment.lit("::int4, "),
@@ -100,7 +100,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
     columns.add(Fragment.lit("\"businessentityid\""));
     values.add(
         interpolate(
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4")));
     columns.add(Fragment.lit("\"emailaddress\""));
     values.add(
@@ -201,7 +201,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
                     + " \"modifieddate\"\n"
                     + "from \"person\".\"emailaddress\"\n"
                     + "where \"businessentityid\" = "),
-            Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
             Fragment.lit(" AND \"emailaddressid\" = "),
             Fragment.encode(PgTypes.int4, compositeId.emailaddressid()),
             Fragment.lit(""))
@@ -224,7 +224,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
                     + "from \"person\".\"emailaddress\"\n"
                     + "where (\"businessentityid\", \"emailaddressid\")\n"
                     + "in (select * from unnest("),
-            Fragment.encode(BusinessentityId.dbTypeArray, businessentityid),
+            Fragment.encode(BusinessentityId.pgTypeArray, businessentityid),
             Fragment.lit(", "),
             Fragment.encode(PgTypes.int4Array, emailaddressid),
             Fragment.lit("))\n"))
@@ -261,7 +261,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"businessentityid\" = "),
-                Fragment.encode(BusinessentityId.dbType, compositeId.businessentityid()),
+                Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid()),
                 Fragment.lit(" AND \"emailaddressid\" = "),
                 Fragment.encode(PgTypes.int4, compositeId.emailaddressid()),
                 Fragment.lit(""))
@@ -277,7 +277,7 @@ public class EmailaddressRepoImpl implements EmailaddressRepo {
                 "insert into \"person\".\"emailaddress\"(\"businessentityid\", \"emailaddressid\","
                     + " \"emailaddress\", \"rowguid\", \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(BusinessentityId.dbType, unsaved.businessentityid()),
+            Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid()),
             Fragment.lit("::int4, "),
             Fragment.encode(PgTypes.int4, unsaved.emailaddressid()),
             Fragment.lit("::int4, "),

@@ -13,7 +13,7 @@ class SeekTest {
     @Test
     fun uniformAscending() {
         val query = productRepo.select()
-            .seek({ f -> f.name().asc() }, SqlExpr.ConstReq(Name("foo"), Name.dbType))
+            .seek({ f -> f.name().asc() }, SqlExpr.ConstReq(Name("foo"), Name.pgType))
             .seek({ f -> f.weight().asc() }, SqlExpr.ConstOpt(BigDecimal("22.2"), PgTypes.numeric))
             .seek({ f -> f.listprice().asc() }, SqlExpr.ConstReq(BigDecimal("33.3"), PgTypes.numeric))
 
@@ -26,7 +26,7 @@ class SeekTest {
     @Test
     fun uniformDescending() {
         val query = productRepo.select()
-            .seek({ f -> f.name().desc() }, SqlExpr.ConstReq(Name("foo"), Name.dbType))
+            .seek({ f -> f.name().desc() }, SqlExpr.ConstReq(Name("foo"), Name.pgType))
             .seek({ f -> f.weight().desc() }, SqlExpr.ConstOpt(BigDecimal("22.2"), PgTypes.numeric))
             .seek({ f -> f.listprice().desc() }, SqlExpr.ConstReq(BigDecimal("33.3"), PgTypes.numeric))
 
@@ -38,7 +38,7 @@ class SeekTest {
     @Test
     fun complex() {
         val query = productRepo.select()
-            .seek({ f -> f.name().asc() }, SqlExpr.ConstReq(Name("foo"), Name.dbType))
+            .seek({ f -> f.name().asc() }, SqlExpr.ConstReq(Name("foo"), Name.pgType))
             .seek({ f -> f.weight().desc() }, SqlExpr.ConstOpt(BigDecimal("22.2"), PgTypes.numeric))
             .seek({ f -> f.listprice().desc() }, SqlExpr.ConstReq(BigDecimal("33.3"), PgTypes.numeric))
 

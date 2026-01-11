@@ -43,7 +43,7 @@ public class ProductmodelFields
         Optional.empty(),
         Optional.of("int4"),
         (row, value) -> row.withProductmodelid(value),
-        ProductmodelId.dbType);
+        ProductmodelId.pgType);
   }
 
   public Field<Name, ProductmodelRow> name() {
@@ -54,7 +54,7 @@ public class ProductmodelFields
         Optional.empty(),
         Optional.of("varchar"),
         (row, value) -> row.withName(value),
-        Name.dbType);
+        Name.pgType);
   }
 
   public OptField<Xml, ProductmodelRow> catalogdescription() {

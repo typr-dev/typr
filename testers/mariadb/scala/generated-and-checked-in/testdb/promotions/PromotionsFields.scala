@@ -22,8 +22,9 @@ import dev.typr.foundations.scala.SqlExpr.OptField
 import dev.typr.foundations.scala.TupleExpr16
 import java.time.LocalDateTime
 import testdb.AllBrandsCategoriesCSet
+import testdb.userdefined.IsActive
 
-class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[PromotionsId, String, String, String, String, BigDecimal, BigDecimal, Uint4, Uint4, Uint1, AllBrandsCategoriesCSet, Json, LocalDateTime, LocalDateTime, Boolean, LocalDateTime] with RelationStructure[PromotionsFields, PromotionsRow]  with FieldsBase[PromotionsRow] {
+class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[PromotionsId, String, String, String, String, BigDecimal, BigDecimal, Uint4, Uint4, Uint1, AllBrandsCategoriesCSet, Json, LocalDateTime, LocalDateTime, /* user-picked */ IsActive, LocalDateTime] with RelationStructure[PromotionsFields, PromotionsRow]  with FieldsBase[PromotionsRow] {
   def promotionId: IdField[PromotionsId, PromotionsRow] = {
     new IdField[PromotionsId, PromotionsRow](
       _path,
@@ -32,7 +33,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(promotionId = value),
-      PromotionsId.dbType
+      PromotionsId.mariaType
     )
   }
 
@@ -152,7 +153,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(applicableTo = value),
-      AllBrandsCategoriesCSet.dbType
+      AllBrandsCategoriesCSet.mariaType
     )
   }
 
@@ -192,15 +193,15 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
     )
   }
 
-  def isActive: Field[Boolean, PromotionsRow] = {
-    new Field[Boolean, PromotionsRow](
+  def isActive: Field[/* user-picked */ IsActive, PromotionsRow] = {
+    new Field[/* user-picked */ IsActive, PromotionsRow](
       _path,
       "is_active",
       _.isActive,
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      ScalaDbTypes.MariaTypes.bool
+      IsActive.mariaType
     )
   }
 
@@ -250,7 +251,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
 
   override def `_14`: SqlExpr[LocalDateTime] = validTo
 
-  override def `_15`: SqlExpr[Boolean] = isActive
+  override def `_15`: SqlExpr[/* user-picked */ IsActive] = isActive
 
   override def `_16`: SqlExpr[LocalDateTime] = createdAt
 }

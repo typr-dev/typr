@@ -27,19 +27,19 @@ class UsersRepoImpl() : UsersRepo {
   override fun deleteById(
     userId: UsersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"users\" where \"user_id\" = "), Fragment.encode(UsersId.dbType, userId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"users\" where \"user_id\" = "), Fragment.encode(UsersId.pgType, userId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     userIds: Array<UsersId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"users\"\nwhere \"user_id\" = ANY("), Fragment.encode(UsersId.dbTypeArray, userIds), Fragment.lit(")"))
+  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"users\"\nwhere \"user_id\" = ANY("), Fragment.encode(UsersId.pgTypeArray, userIds), Fragment.lit(")"))
     .update()
     .runUnchecked(c)
 
   override fun insert(
     unsaved: UsersRow,
     c: Connection
-  ): UsersRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"(\"user_id\", \"name\", \"last_name\", \"email\", \"password\", \"created_at\", \"verified_on\")\nvalues ("), Fragment.encode(UsersId.dbType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.nullable(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.verifiedOn), Fragment.lit("::timestamptz)\nRETURNING \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\n"))
+  ): UsersRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"(\"user_id\", \"name\", \"last_name\", \"email\", \"password\", \"created_at\", \"verified_on\")\nvalues ("), Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.nullable(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.verifiedOn), Fragment.lit("::timestamptz)\nRETURNING \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\n"))
     .updateReturning(UsersRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -49,7 +49,7 @@ class UsersRepoImpl() : UsersRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("\"user_id\""))
-    values.add(Fragment.interpolate(Fragment.encode(UsersId.dbType, unsaved.userId), Fragment.lit("::uuid")))
+    values.add(Fragment.interpolate(Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid")))
     columns.add(Fragment.lit("\"name\""))
     values.add(Fragment.interpolate(Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit("")))
     columns.add(Fragment.lit("\"last_name\""))
@@ -89,12 +89,12 @@ class UsersRepoImpl() : UsersRepo {
   override fun selectById(
     userId: UsersId,
     c: Connection
-  ): UsersRow? = Fragment.interpolate(Fragment.lit("select \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\nfrom \"public\".\"users\"\nwhere \"user_id\" = "), Fragment.encode(UsersId.dbType, userId), Fragment.lit("")).query(UsersRow._rowParser.first()).runUnchecked(c)
+  ): UsersRow? = Fragment.interpolate(Fragment.lit("select \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\nfrom \"public\".\"users\"\nwhere \"user_id\" = "), Fragment.encode(UsersId.pgType, userId), Fragment.lit("")).query(UsersRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     userIds: Array<UsersId>,
     c: Connection
-  ): List<UsersRow> = Fragment.interpolate(Fragment.lit("select \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\nfrom \"public\".\"users\"\nwhere \"user_id\" = ANY("), Fragment.encode(UsersId.dbTypeArray, userIds), Fragment.lit(")")).query(UsersRow._rowParser.all()).runUnchecked(c)
+  ): List<UsersRow> = Fragment.interpolate(Fragment.lit("select \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\"\nfrom \"public\".\"users\"\nwhere \"user_id\" = ANY("), Fragment.encode(UsersId.pgTypeArray, userIds), Fragment.lit(")")).query(UsersRow._rowParser.all()).runUnchecked(c)
 
   override fun selectByIdsTracked(
     userIds: Array<UsersId>,
@@ -117,13 +117,13 @@ class UsersRepoImpl() : UsersRepo {
     c: Connection
   ): Boolean {
     val userId: UsersId = row.userId
-    return Fragment.interpolate(Fragment.lit("update \"public\".\"users\"\nset \"name\" = "), Fragment.encode(PgTypes.text, row.name), Fragment.lit(",\n\"last_name\" = "), Fragment.encode(PgTypes.text.nullable(), row.lastName), Fragment.lit(",\n\"email\" = "), Fragment.encode(PgTypes.unknown, row.email), Fragment.lit("::citext,\n\"password\" = "), Fragment.encode(PgTypes.text, row.password), Fragment.lit(",\n\"created_at\" = "), Fragment.encode(PgTypes.timestamptz, row.createdAt), Fragment.lit("::timestamptz,\n\"verified_on\" = "), Fragment.encode(PgTypes.timestamptz.nullable(), row.verifiedOn), Fragment.lit("::timestamptz\nwhere \"user_id\" = "), Fragment.encode(UsersId.dbType, userId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update \"public\".\"users\"\nset \"name\" = "), Fragment.encode(PgTypes.text, row.name), Fragment.lit(",\n\"last_name\" = "), Fragment.encode(PgTypes.text.nullable(), row.lastName), Fragment.lit(",\n\"email\" = "), Fragment.encode(PgTypes.unknown, row.email), Fragment.lit("::citext,\n\"password\" = "), Fragment.encode(PgTypes.text, row.password), Fragment.lit(",\n\"created_at\" = "), Fragment.encode(PgTypes.timestamptz, row.createdAt), Fragment.lit("::timestamptz,\n\"verified_on\" = "), Fragment.encode(PgTypes.timestamptz.nullable(), row.verifiedOn), Fragment.lit("::timestamptz\nwhere \"user_id\" = "), Fragment.encode(UsersId.pgType, userId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: UsersRow,
     c: Connection
-  ): UsersRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"(\"user_id\", \"name\", \"last_name\", \"email\", \"password\", \"created_at\", \"verified_on\")\nvalues ("), Fragment.encode(UsersId.dbType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.nullable(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.verifiedOn), Fragment.lit("::timestamptz)\non conflict (\"user_id\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"last_name\" = EXCLUDED.\"last_name\",\n\"email\" = EXCLUDED.\"email\",\n\"password\" = EXCLUDED.\"password\",\n\"created_at\" = EXCLUDED.\"created_at\",\n\"verified_on\" = EXCLUDED.\"verified_on\"\nreturning \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\""))
+  ): UsersRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"users\"(\"user_id\", \"name\", \"last_name\", \"email\", \"password\", \"created_at\", \"verified_on\")\nvalues ("), Fragment.encode(UsersId.pgType, unsaved.userId), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(", "), Fragment.encode(PgTypes.text.nullable(), unsaved.lastName), Fragment.lit(", "), Fragment.encode(PgTypes.unknown, unsaved.email), Fragment.lit("::citext, "), Fragment.encode(PgTypes.text, unsaved.password), Fragment.lit(", "), Fragment.encode(PgTypes.timestamptz, unsaved.createdAt), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.verifiedOn), Fragment.lit("::timestamptz)\non conflict (\"user_id\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"last_name\" = EXCLUDED.\"last_name\",\n\"email\" = EXCLUDED.\"email\",\n\"password\" = EXCLUDED.\"password\",\n\"created_at\" = EXCLUDED.\"created_at\",\n\"verified_on\" = EXCLUDED.\"verified_on\"\nreturning \"user_id\", \"name\", \"last_name\", \"email\"::text, \"password\", \"created_at\", \"verified_on\""))
     .updateReturning(UsersRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

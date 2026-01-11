@@ -9,6 +9,8 @@ import adventureworks.person.person.PersonRepoImpl;
 import adventureworks.public_.Name;
 import adventureworks.sales.salesperson.SalespersonRepoImpl;
 import adventureworks.userdefined.FirstName;
+import adventureworks.userdefined.LastName;
+import adventureworks.userdefined.MiddleName;
 import dev.typr.foundations.dsl.Bijection;
 import dev.typr.foundations.dsl.SqlExpr;
 import dev.typr.foundations.dsl.TupleExpr;
@@ -38,7 +40,8 @@ public class DSLTest extends SnapshotTest {
           // Create person
           var personRow =
               testInsert
-                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("a"))
+                  .personPerson(businessentityRow.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("a"))))
                   .insert(c);
 
           // Create emailaddress
@@ -115,8 +118,11 @@ public class DSLTest extends SnapshotTest {
           // Create person
           var personRow =
               testInsert
-                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("John"))
-                  .with(row -> row.withLastname(new Name("Doe")))
+                  .personPerson(businessentityRow.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("John")))
+                              .withLastname(new LastName(new Name("Doe"))))
                   .insert(c);
 
           // Test map operation - project only firstname and lastname
@@ -132,8 +138,8 @@ public class DSLTest extends SnapshotTest {
           // Execute and verify results
           var results = projected.toList(c);
           assertEquals(1, results.size());
-          assertEquals(new FirstName("John"), results.get(0)._1());
-          assertEquals(new Name("Doe"), results.get(0)._2());
+          assertEquals(new FirstName(new Name("John")), results.get(0)._1());
+          assertEquals(new LastName(new Name("Doe")), results.get(0)._2());
         });
   }
 
@@ -150,8 +156,11 @@ public class DSLTest extends SnapshotTest {
           // Create person
           var personRow =
               testInsert
-                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("Jane"))
-                  .with(row -> row.withLastname(new Name("Smith")))
+                  .personPerson(businessentityRow.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Jane")))
+                              .withLastname(new LastName(new Name("Smith"))))
                   .insert(c);
 
           // Create emailaddress
@@ -175,7 +184,7 @@ public class DSLTest extends SnapshotTest {
           // Execute - note: emailaddress is Optional<String>, so we get Optional
           var results = projected.toList(c);
           assertEquals(1, results.size());
-          assertEquals(new FirstName("Jane"), results.get(0)._1());
+          assertEquals(new FirstName(new Name("Jane")), results.get(0)._1());
 
           // Test nested tuple syntax: Tuple.of() can be used as a SqlExpr
           var nestedProjected =
@@ -195,8 +204,8 @@ public class DSLTest extends SnapshotTest {
           assertEquals(1, nestedResults.size());
           // First element is a nested tuple
           var nameTuple = nestedResults.get(0);
-          assertEquals(new FirstName("Jane"), nameTuple._1());
-          assertEquals(new Name("Smith"), nameTuple._2());
+          assertEquals(new FirstName(new Name("Jane")), nameTuple._1());
+          assertEquals(new LastName(new Name("Smith")), nameTuple._2());
         });
   }
 
@@ -213,8 +222,11 @@ public class DSLTest extends SnapshotTest {
           // Create person
           var personRow =
               testInsert
-                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("Bob"))
-                  .with(row -> row.withLastname(new Name("Wilson")))
+                  .personPerson(businessentityRow.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Bob")))
+                              .withLastname(new LastName(new Name("Wilson"))))
                   .insert(c);
 
           // Create multiple email addresses for the same person
@@ -245,8 +257,8 @@ public class DSLTest extends SnapshotTest {
 
           // The parent row should be Bob Wilson
           var parent = results.get(0)._1();
-          assertEquals(new FirstName("Bob"), parent.firstname());
-          assertEquals(new Name("Wilson"), parent.lastname());
+          assertEquals(new FirstName(new Name("Bob")), parent.firstname());
+          assertEquals(new LastName(new Name("Wilson")), parent.lastname());
 
           // The child should be a typed list of emails
           var childEmails = results.get(0)._2();
@@ -272,8 +284,8 @@ public class DSLTest extends SnapshotTest {
           // Create person with NO email addresses
           var personRow =
               testInsert
-                  .personPerson(
-                      businessentityRow.businessentityid(), "EM", new FirstName("NoEmail"))
+                  .personPerson(businessentityRow.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("NoEmail"))))
                   .insert(c);
 
           // Test multisetOn with no children
@@ -291,7 +303,7 @@ public class DSLTest extends SnapshotTest {
 
           // The parent row should be found
           var parent = results.get(0)._1();
-          assertEquals(new FirstName("NoEmail"), parent.firstname());
+          assertEquals(new FirstName(new Name("NoEmail")), parent.firstname());
 
           // The child list should be empty
           var childEmails = results.get(0)._2();
@@ -316,8 +328,11 @@ public class DSLTest extends SnapshotTest {
           // Create person
           var personRow =
               testInsert
-                  .personPerson(businessentityRow.businessentityid(), "EM", new FirstName("Alice"))
-                  .with(row -> row.withLastname(new Name("Johnson")))
+                  .personPerson(businessentityRow.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Alice")))
+                              .withLastname(new LastName(new Name("Johnson"))))
                   .insert(c);
 
           // Create multiple email addresses
@@ -363,8 +378,8 @@ public class DSLTest extends SnapshotTest {
           var parentTuple =
               results.get(0)._1(); // Tuple2<Tuple2<FirstName, Name>, BusinessentityId>
           var nameTuple = parentTuple._1(); // Tuple2<FirstName, Name>
-          assertEquals(new FirstName("Alice"), nameTuple._1());
-          assertEquals(new Name("Johnson"), nameTuple._2());
+          assertEquals(new FirstName(new Name("Alice")), nameTuple._1());
+          assertEquals(new LastName(new Name("Johnson")), nameTuple._2());
 
           // The child should be a typed list of emails
           var childEmails = results.get(0)._2();
@@ -388,7 +403,8 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("HasEmail"))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("HasEmail"))))
                   .insert(c);
           testInsert
               .personEmailaddress(person1.businessentityid())
@@ -399,7 +415,8 @@ public class DSLTest extends SnapshotTest {
           var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
               testInsert
-                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoEmail"))
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("NoEmail"))))
                   .insert(c);
 
           // Find persons whose businessentityid is IN the email table
@@ -424,7 +441,7 @@ public class DSLTest extends SnapshotTest {
           // Execute and verify - should only find person1
           var results = query.toList(c);
           assertEquals(1, results.size());
-          assertEquals(new FirstName("HasEmail"), results.get(0).firstname());
+          assertEquals(new FirstName(new Name("HasEmail")), results.get(0).firstname());
         });
   }
 
@@ -439,7 +456,8 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("HasEmail"))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("HasEmail"))))
                   .insert(c);
           testInsert
               .personEmailaddress(person1.businessentityid())
@@ -450,7 +468,8 @@ public class DSLTest extends SnapshotTest {
           var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
               testInsert
-                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoEmail"))
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("NoEmail"))))
                   .insert(c);
 
           // Find persons where EXISTS (select from email where email.businessentityid =
@@ -480,7 +499,7 @@ public class DSLTest extends SnapshotTest {
           // Execute and verify
           var results = query.toList(c);
           assertEquals(1, results.size());
-          assertEquals(new FirstName("HasEmail"), results.get(0).firstname());
+          assertEquals(new FirstName(new Name("HasEmail")), results.get(0).firstname());
         });
   }
 
@@ -495,7 +514,8 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("HasEmail"))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("HasEmail"))))
                   .insert(c);
           testInsert
               .personEmailaddress(person1.businessentityid())
@@ -506,7 +526,8 @@ public class DSLTest extends SnapshotTest {
           var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
               testInsert
-                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoEmail"))
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("NoEmail"))))
                   .insert(c);
 
           // Find persons who DON'T have email
@@ -527,7 +548,7 @@ public class DSLTest extends SnapshotTest {
           // Execute and verify - should find person2 (who has no email)
           var results = query.toList(c);
           assertEquals(1, results.size());
-          assertEquals(new FirstName("NoEmail"), results.get(0).firstname());
+          assertEquals(new FirstName(new Name("NoEmail")), results.get(0).firstname());
         });
   }
 
@@ -542,7 +563,8 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("WorkEmail"))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("WorkEmail"))))
                   .insert(c);
           testInsert
               .personEmailaddress(person1.businessentityid())
@@ -553,7 +575,8 @@ public class DSLTest extends SnapshotTest {
           var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
               testInsert
-                  .personPerson(be2.businessentityid(), "EM", new FirstName("PersonalEmail"))
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("PersonalEmail"))))
                   .insert(c);
           testInsert
               .personEmailaddress(person2.businessentityid())
@@ -577,7 +600,7 @@ public class DSLTest extends SnapshotTest {
 
           var results = query.toList(c);
           assertEquals(1, results.size());
-          assertEquals(new FirstName("WorkEmail"), results.get(0).firstname());
+          assertEquals(new FirstName(new Name("WorkEmail")), results.get(0).firstname());
         });
   }
 
@@ -592,7 +615,8 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var employee =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("Employee"))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("Employee"))))
                   .insert(c);
           testInsert
               .humanresourcesEmployee(
@@ -608,7 +632,8 @@ public class DSLTest extends SnapshotTest {
           var be2 = testInsert.personBusinessentity().insert(c);
           var nonEmployee =
               testInsert
-                  .personPerson(be2.businessentityid(), "SC", new FirstName("Customer"))
+                  .personPerson(be2.businessentityid(), "SC")
+                  .with(row -> row.withFirstname(new FirstName(new Name("Customer"))))
                   .insert(c);
 
           // Left join person with employee - should return both persons
@@ -633,11 +658,11 @@ public class DSLTest extends SnapshotTest {
           assertEquals(2, results.size());
 
           // First result: Customer (no employee data)
-          assertEquals(new FirstName("Customer"), results.get(0)._1().firstname());
+          assertEquals(new FirstName(new Name("Customer")), results.get(0)._1().firstname());
           assertTrue(results.get(0)._2().isEmpty());
 
           // Second result: Employee (has employee data)
-          assertEquals(new FirstName("Employee"), results.get(1)._1().firstname());
+          assertEquals(new FirstName(new Name("Employee")), results.get(1)._1().firstname());
           assertTrue(results.get(1)._2().isPresent());
           assertEquals("Developer", results.get(1)._2().get().jobtitle());
         });
@@ -654,17 +679,22 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("Alice"))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("Alice"))))
                   .insert(c);
 
           var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(be2.businessentityid(), "EM", new FirstName("Bob")).insert(c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("Bob"))))
+                  .insert(c);
 
           var be3 = testInsert.personBusinessentity().insert(c);
           var person3 =
               testInsert
-                  .personPerson(be3.businessentityid(), "EM", new FirstName("Charlie"))
+                  .personPerson(be3.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("Charlie"))))
                   .insert(c);
 
           // Test greaterThan - find persons with id > person1's id
@@ -677,8 +707,8 @@ public class DSLTest extends SnapshotTest {
 
           var gtResults = gtQuery.toList(c);
           assertEquals(2, gtResults.size());
-          assertEquals(new FirstName("Bob"), gtResults.get(0).firstname());
-          assertEquals(new FirstName("Charlie"), gtResults.get(1).firstname());
+          assertEquals(new FirstName(new Name("Bob")), gtResults.get(0).firstname());
+          assertEquals(new FirstName(new Name("Charlie")), gtResults.get(1).firstname());
 
           // Test lessThan - find persons with id < person3's id
           var ltQuery =
@@ -690,8 +720,8 @@ public class DSLTest extends SnapshotTest {
 
           var ltResults = ltQuery.toList(c);
           assertEquals(2, ltResults.size());
-          assertEquals(new FirstName("Alice"), ltResults.get(0).firstname());
-          assertEquals(new FirstName("Bob"), ltResults.get(1).firstname());
+          assertEquals(new FirstName(new Name("Alice")), ltResults.get(0).firstname());
+          assertEquals(new FirstName(new Name("Bob")), ltResults.get(1).firstname());
 
           // Test isNotEqual
           var neqQuery =
@@ -704,8 +734,8 @@ public class DSLTest extends SnapshotTest {
 
           var neqResults = neqQuery.toList(c);
           assertEquals(2, neqResults.size());
-          assertEquals(new FirstName("Alice"), neqResults.get(0).firstname());
-          assertEquals(new FirstName("Charlie"), neqResults.get(1).firstname());
+          assertEquals(new FirstName(new Name("Alice")), neqResults.get(0).firstname());
+          assertEquals(new FirstName(new Name("Charlie")), neqResults.get(1).firstname());
         });
   }
 
@@ -720,19 +750,22 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("InTest1"))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("InTest1"))))
                   .insert(c);
 
           var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
               testInsert
-                  .personPerson(be2.businessentityid(), "EM", new FirstName("InTest2"))
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("InTest2"))))
                   .insert(c);
 
           var be3 = testInsert.personBusinessentity().insert(c);
           var person3 =
               testInsert
-                  .personPerson(be3.businessentityid(), "EM", new FirstName("InTest3"))
+                  .personPerson(be3.businessentityid(), "EM")
+                  .with(row -> row.withFirstname(new FirstName(new Name("InTest3"))))
                   .insert(c);
 
           // Use IN to find person1 and person3 (not person2)
@@ -749,8 +782,8 @@ public class DSLTest extends SnapshotTest {
 
           var results = query.toList(c);
           assertEquals(2, results.size());
-          assertEquals(new FirstName("InTest1"), results.get(0).firstname());
-          assertEquals(new FirstName("InTest3"), results.get(1).firstname());
+          assertEquals(new FirstName(new Name("InTest1")), results.get(0).firstname());
+          assertEquals(new FirstName(new Name("InTest3")), results.get(1).firstname());
         });
   }
 
@@ -765,16 +798,22 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var personWithMiddle =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("WithMiddle"))
-                  .with(row -> row.withMiddlename(Optional.of(new Name("MiddleName"))))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("WithMiddle")))
+                              .withMiddlename(Optional.of(new MiddleName(new Name("MiddleName")))))
                   .insert(c);
 
           // Create person without middle name
           var be2 = testInsert.personBusinessentity().insert(c);
           var personWithoutMiddle =
               testInsert
-                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoMiddle"))
-                  .with(row -> row.withMiddlename(Optional.empty()))
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("NoMiddle")))
+                              .withMiddlename(Optional.empty()))
                   .insert(c);
 
           // Query and verify persons were created correctly
@@ -795,12 +834,13 @@ public class DSLTest extends SnapshotTest {
           assertEquals(2, results.size());
 
           // NoMiddle should have empty middle name
-          assertEquals(new FirstName("NoMiddle"), results.get(0).firstname());
+          assertEquals(new FirstName(new Name("NoMiddle")), results.get(0).firstname());
           assertEquals(Optional.empty(), results.get(0).middlename());
 
           // WithMiddle should have actual middle name
-          assertEquals(new FirstName("WithMiddle"), results.get(1).firstname());
-          assertEquals(Optional.of(new Name("MiddleName")), results.get(1).middlename());
+          assertEquals(new FirstName(new Name("WithMiddle")), results.get(1).firstname());
+          assertEquals(
+              Optional.of(new MiddleName(new Name("MiddleName"))), results.get(1).middlename());
         });
   }
 
@@ -815,16 +855,22 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var personWithTitle =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("HasTitle"))
-                  .with(row -> row.withTitle(Optional.of("Mr.")))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("HasTitle")))
+                              .withTitle(Optional.of("Mr.")))
                   .insert(c);
 
           // Create person without title
           var be2 = testInsert.personBusinessentity().insert(c);
           var personWithoutTitle =
               testInsert
-                  .personPerson(be2.businessentityid(), "EM", new FirstName("NoTitle"))
-                  .with(row -> row.withTitle(Optional.empty()))
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("NoTitle")))
+                              .withTitle(Optional.empty()))
                   .insert(c);
 
           // Find persons with NULL title
@@ -845,7 +891,7 @@ public class DSLTest extends SnapshotTest {
 
           var nullResults = nullQuery.toList(c);
           assertEquals(1, nullResults.size());
-          assertEquals(new FirstName("NoTitle"), nullResults.get(0).firstname());
+          assertEquals(new FirstName(new Name("NoTitle")), nullResults.get(0).firstname());
 
           // Find persons with non-NULL title using NOT
           var notNullQuery =
@@ -863,7 +909,7 @@ public class DSLTest extends SnapshotTest {
 
           var notNullResults = notNullQuery.toList(c);
           assertEquals(1, notNullResults.size());
-          assertEquals(new FirstName("HasTitle"), notNullResults.get(0).firstname());
+          assertEquals(new FirstName(new Name("HasTitle")), notNullResults.get(0).firstname());
         });
   }
 
@@ -878,13 +924,19 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("Alice"))
-                  .with(row -> row.withLastname(new Name("Anderson")))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Alice")))
+                              .withLastname(new LastName(new Name("Anderson"))))
                   .insert(c);
 
           var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
-              testInsert.personPerson(be2.businessentityid(), "SC", new FirstName("Bob")).insert(c);
+              testInsert
+                  .personPerson(be2.businessentityid(), "SC")
+                  .with(row -> row.withFirstname(new FirstName(new Name("Bob"))))
+                  .insert(c);
 
           // Test SqlExpr.all() - all conditions must be true
           var allQuery =
@@ -894,14 +946,14 @@ public class DSLTest extends SnapshotTest {
                       p ->
                           SqlExpr.all(
                               p.persontype().isEqual("EM"),
-                              p.firstname().isEqual(new FirstName("Alice")),
-                              p.lastname().isEqual(new Name("Anderson"))));
+                              p.firstname().isEqual(new FirstName(new Name("Alice"))),
+                              p.lastname().isEqual(new LastName(new Name("Anderson")))));
 
           compareFragment("allCombinesBooleanExpressions", allQuery.sql());
 
           var allResults = allQuery.toList(c);
           assertEquals(1, allResults.size());
-          assertEquals(new FirstName("Alice"), allResults.get(0).firstname());
+          assertEquals(new FirstName(new Name("Alice")), allResults.get(0).firstname());
 
           // Test SqlExpr.any() - any condition can be true
           var anyQuery =
@@ -917,14 +969,15 @@ public class DSLTest extends SnapshotTest {
                   .where(
                       p ->
                           SqlExpr.any(
-                              p.firstname().isEqual(new FirstName("Alice")),
-                              p.firstname().isEqual(new FirstName("Charlie")) // doesn't exist
+                              p.firstname().isEqual(new FirstName(new Name("Alice"))),
+                              p.firstname()
+                                  .isEqual(new FirstName(new Name("Charlie"))) // doesn't exist
                               ))
                   .orderBy(p -> p.firstname().asc());
 
           var anyResults = anyQuery.toList(c);
           assertEquals(1, anyResults.size());
-          assertEquals(new FirstName("Alice"), anyResults.get(0).firstname());
+          assertEquals(new FirstName(new Name("Alice")), anyResults.get(0).firstname());
         });
   }
 
@@ -939,22 +992,31 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var person1 =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("Zoe"))
-                  .with(row -> row.withLastname(new Name("Smith")))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Zoe")))
+                              .withLastname(new LastName(new Name("Smith"))))
                   .insert(c);
 
           var be2 = testInsert.personBusinessentity().insert(c);
           var person2 =
               testInsert
-                  .personPerson(be2.businessentityid(), "EM", new FirstName("Alice"))
-                  .with(row -> row.withLastname(new Name("Smith")))
+                  .personPerson(be2.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Alice")))
+                              .withLastname(new LastName(new Name("Smith"))))
                   .insert(c);
 
           var be3 = testInsert.personBusinessentity().insert(c);
           var person3 =
               testInsert
-                  .personPerson(be3.businessentityid(), "EM", new FirstName("Bob"))
-                  .with(row -> row.withLastname(new Name("Jones")))
+                  .personPerson(be3.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Bob")))
+                              .withLastname(new LastName(new Name("Jones"))))
                   .insert(c);
 
           // Order by lastname ASC, then firstname DESC
@@ -980,15 +1042,15 @@ public class DSLTest extends SnapshotTest {
           assertEquals(3, results.size());
 
           // Jones comes first (alphabetically before Smith)
-          assertEquals(new Name("Jones"), results.get(0).lastname());
-          assertEquals(new FirstName("Bob"), results.get(0).firstname());
+          assertEquals(new LastName(new Name("Jones")), results.get(0).lastname());
+          assertEquals(new FirstName(new Name("Bob")), results.get(0).firstname());
 
           // Then Smiths, but ordered by firstname DESC (Zoe before Alice)
-          assertEquals(new Name("Smith"), results.get(1).lastname());
-          assertEquals(new FirstName("Zoe"), results.get(1).firstname());
+          assertEquals(new LastName(new Name("Smith")), results.get(1).lastname());
+          assertEquals(new FirstName(new Name("Zoe")), results.get(1).firstname());
 
-          assertEquals(new Name("Smith"), results.get(2).lastname());
-          assertEquals(new FirstName("Alice"), results.get(2).firstname());
+          assertEquals(new LastName(new Name("Smith")), results.get(2).lastname());
+          assertEquals(new FirstName(new Name("Alice")), results.get(2).firstname());
         });
   }
 
@@ -1002,11 +1064,15 @@ public class DSLTest extends SnapshotTest {
           // Create 5 persons
           var persons = new java.util.ArrayList<adventureworks.person.person.PersonRow>();
           for (int i = 0; i < 5; i++) {
+            final int idx = i;
             var be = testInsert.personBusinessentity().insert(c);
             var person =
                 testInsert
-                    .personPerson(be.businessentityid(), "EM", new FirstName("Person" + i))
-                    .with(row -> row.withLastname(new Name("Test")))
+                    .personPerson(be.businessentityid(), "EM")
+                    .with(
+                        row ->
+                            row.withFirstname(new FirstName(new Name("Person" + idx)))
+                                .withLastname(new LastName(new Name("Test"))))
                     .insert(c);
             persons.add(person);
           }
@@ -1015,20 +1081,20 @@ public class DSLTest extends SnapshotTest {
           var page1Query =
               personRepoImpl
                   .select()
-                  .where(p -> p.lastname().isEqual(new Name("Test")))
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("Test"))))
                   .orderBy(p -> p.businessentityid().asc())
                   .limit(2);
 
           var page1 = page1Query.toList(c);
           assertEquals(2, page1.size());
-          assertEquals(new FirstName("Person0"), page1.get(0).firstname());
-          assertEquals(new FirstName("Person1"), page1.get(1).firstname());
+          assertEquals(new FirstName(new Name("Person0")), page1.get(0).firstname());
+          assertEquals(new FirstName(new Name("Person1")), page1.get(1).firstname());
 
           // Get page 2 (next 2 results, offset 2)
           var page2Query =
               personRepoImpl
                   .select()
-                  .where(p -> p.lastname().isEqual(new Name("Test")))
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("Test"))))
                   .orderBy(p -> p.businessentityid().asc())
                   .offset(2)
                   .limit(2);
@@ -1037,21 +1103,21 @@ public class DSLTest extends SnapshotTest {
 
           var page2 = page2Query.toList(c);
           assertEquals(2, page2.size());
-          assertEquals(new FirstName("Person2"), page2.get(0).firstname());
-          assertEquals(new FirstName("Person3"), page2.get(1).firstname());
+          assertEquals(new FirstName(new Name("Person2")), page2.get(0).firstname());
+          assertEquals(new FirstName(new Name("Person3")), page2.get(1).firstname());
 
           // Get page 3 (last person)
           var page3Query =
               personRepoImpl
                   .select()
-                  .where(p -> p.lastname().isEqual(new Name("Test")))
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("Test"))))
                   .orderBy(p -> p.businessentityid().asc())
                   .offset(4)
                   .limit(2);
 
           var page3 = page3Query.toList(c);
           assertEquals(1, page3.size());
-          assertEquals(new FirstName("Person4"), page3.get(0).firstname());
+          assertEquals(new FirstName(new Name("Person4")), page3.get(0).firstname());
         });
   }
 
@@ -1064,16 +1130,22 @@ public class DSLTest extends SnapshotTest {
 
           // Create some test persons with unique lastname for isolation
           for (int i = 0; i < 3; i++) {
+            final int idx = i;
             var be = testInsert.personBusinessentity().insert(c);
             testInsert
-                .personPerson(be.businessentityid(), "EM", new FirstName("Count" + i))
-                .with(row -> row.withLastname(new Name("TestCount")))
+                .personPerson(be.businessentityid(), "EM")
+                .with(
+                    row ->
+                        row.withFirstname(new FirstName(new Name("Count" + idx)))
+                            .withLastname(new LastName(new Name("TestCount"))))
                 .insert(c);
           }
 
           // Count persons with specific lastname
           var query =
-              personRepoImpl.select().where(p -> p.lastname().isEqual(new Name("TestCount")));
+              personRepoImpl
+                  .select()
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("TestCount"))));
 
           long count = query.count(c);
           assertEquals(3, count);
@@ -1082,8 +1154,8 @@ public class DSLTest extends SnapshotTest {
           var filteredQuery =
               personRepoImpl
                   .select()
-                  .where(p -> p.lastname().isEqual(new Name("TestCount")))
-                  .where(p -> p.firstname().isEqual(new FirstName("Count1")));
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("TestCount"))))
+                  .where(p -> p.firstname().isEqual(new FirstName(new Name("Count1"))));
 
           long filteredCount = filteredQuery.count(c);
           assertEquals(1, filteredCount);
@@ -1101,15 +1173,19 @@ public class DSLTest extends SnapshotTest {
           var be1 = testInsert.personBusinessentity().insert(c);
           var employee =
               testInsert
-                  .personPerson(be1.businessentityid(), "EM", new FirstName("Employee"))
-                  .with(row -> row.withLastname(new Name("Worker")))
+                  .personPerson(be1.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Employee")))
+                              .withLastname(new LastName(new Name("Worker"))))
                   .insert(c);
 
           // Create non-employee (person with SC type)
           var be2 = testInsert.personBusinessentity().insert(c);
           var customer =
               testInsert
-                  .personPerson(be2.businessentityid(), "SC", new FirstName("Customer"))
+                  .personPerson(be2.businessentityid(), "SC")
+                  .with(row -> row.withFirstname(new FirstName(new Name("Customer"))))
                   .insert(c);
 
           // Query with includeIf - only include lastname for employees
@@ -1139,13 +1215,13 @@ public class DSLTest extends SnapshotTest {
           assertEquals(2, results.size());
 
           // Customer (SC type) - lastname should be empty
-          assertEquals(new FirstName("Customer"), results.get(0)._1());
+          assertEquals(new FirstName(new Name("Customer")), results.get(0)._1());
           assertTrue("Customer lastname should be empty", results.get(0)._2().isEmpty());
 
           // Employee (EM type) - lastname should be present
-          assertEquals(new FirstName("Employee"), results.get(1)._1());
+          assertEquals(new FirstName(new Name("Employee")), results.get(1)._1());
           assertTrue("Employee lastname should be present", results.get(1)._2().isPresent());
-          assertEquals(new Name("Worker"), results.get(1)._2().get());
+          assertEquals(new LastName(new Name("Worker")), results.get(1)._2().get());
         });
   }
 
@@ -1159,8 +1235,11 @@ public class DSLTest extends SnapshotTest {
           var be = testInsert.personBusinessentity().insert(c);
           var person =
               testInsert
-                  .personPerson(be.businessentityid(), "EM", new FirstName("Test"))
-                  .with(row -> row.withLastname(new Name("Person")))
+                  .personPerson(be.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Test")))
+                              .withLastname(new LastName(new Name("Person"))))
                   .insert(c);
 
           // includeIf with constant true - should always include
@@ -1181,7 +1260,7 @@ public class DSLTest extends SnapshotTest {
           assertEquals(1, results.size());
           assertTrue(
               "Lastname should be present with true predicate", results.get(0)._2().isPresent());
-          assertEquals(new Name("Person"), results.get(0)._2().get());
+          assertEquals(new LastName(new Name("Person")), results.get(0)._2().get());
         });
   }
 
@@ -1195,8 +1274,11 @@ public class DSLTest extends SnapshotTest {
           var be = testInsert.personBusinessentity().insert(c);
           var person =
               testInsert
-                  .personPerson(be.businessentityid(), "EM", new FirstName("Test"))
-                  .with(row -> row.withLastname(new Name("Person")))
+                  .personPerson(be.businessentityid(), "EM")
+                  .with(
+                      row ->
+                          row.withFirstname(new FirstName(new Name("Test")))
+                              .withLastname(new LastName(new Name("Person"))))
                   .insert(c);
 
           // includeIf with constant false - should never include
@@ -1229,17 +1311,25 @@ public class DSLTest extends SnapshotTest {
 
           // Create multiple persons with different types
           for (int i = 0; i < 3; i++) {
+            final int idx = i;
             var be = testInsert.personBusinessentity().insert(c);
             testInsert
-                .personPerson(be.businessentityid(), "EM", new FirstName("Employee" + i))
-                .with(row -> row.withLastname(new Name("GroupTest")))
+                .personPerson(be.businessentityid(), "EM")
+                .with(
+                    row ->
+                        row.withFirstname(new FirstName(new Name("Employee" + idx)))
+                            .withLastname(new LastName(new Name("GroupTest"))))
                 .insert(c);
           }
           for (int i = 0; i < 2; i++) {
+            final int idx = i;
             var be = testInsert.personBusinessentity().insert(c);
             testInsert
-                .personPerson(be.businessentityid(), "SC", new FirstName("Customer" + i))
-                .with(row -> row.withLastname(new Name("GroupTest")))
+                .personPerson(be.businessentityid(), "SC")
+                .with(
+                    row ->
+                        row.withFirstname(new FirstName(new Name("Customer" + idx)))
+                            .withLastname(new LastName(new Name("GroupTest"))))
                 .insert(c);
           }
 
@@ -1247,7 +1337,7 @@ public class DSLTest extends SnapshotTest {
           var query =
               personRepoImpl
                   .select()
-                  .where(p -> p.lastname().isEqual(new Name("GroupTest")))
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("GroupTest"))))
                   .groupBy(p -> p.persontype())
                   .select(p -> TupleExpr.of(p.persontype(), SqlExpr.count()));
 
@@ -1278,23 +1368,30 @@ public class DSLTest extends SnapshotTest {
 
           // Create persons - 3 EM, 1 SC, so only EM should pass HAVING count > 1
           for (int i = 0; i < 3; i++) {
+            final int idx = i;
             var be = testInsert.personBusinessentity().insert(c);
             testInsert
-                .personPerson(be.businessentityid(), "EM", new FirstName("Employee" + i))
-                .with(row -> row.withLastname(new Name("HavingTest")))
+                .personPerson(be.businessentityid(), "EM")
+                .with(
+                    row ->
+                        row.withFirstname(new FirstName(new Name("Employee" + idx)))
+                            .withLastname(new LastName(new Name("HavingTest"))))
                 .insert(c);
           }
           var be = testInsert.personBusinessentity().insert(c);
           testInsert
-              .personPerson(be.businessentityid(), "SC", new FirstName("Customer"))
-              .with(row -> row.withLastname(new Name("HavingTest")))
+              .personPerson(be.businessentityid(), "SC")
+              .with(
+                  row ->
+                      row.withFirstname(new FirstName(new Name("Customer")))
+                          .withLastname(new LastName(new Name("HavingTest"))))
               .insert(c);
 
           // Group by persontype with HAVING count > 1
           var query =
               personRepoImpl
                   .select()
-                  .where(p -> p.lastname().isEqual(new Name("HavingTest")))
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("HavingTest"))))
                   .groupBy(p -> p.persontype())
                   .having(
                       p ->
@@ -1352,7 +1449,10 @@ public class DSLTest extends SnapshotTest {
               new adventureworks.person.businessentity.BusinessentityRowUnsaved(), null);
       personRepoMock.insert(
           new adventureworks.person.person.PersonRowUnsaved(
-              be.businessentityid(), "EM", new FirstName("Employee" + id), new Name("Test")),
+              be.businessentityid(),
+              "EM",
+              new FirstName(new Name("Employee" + id)),
+              new LastName(new Name("Test"))),
           null);
     }
     for (int i = 1; i <= 2; i++) {
@@ -1362,7 +1462,10 @@ public class DSLTest extends SnapshotTest {
               new adventureworks.person.businessentity.BusinessentityRowUnsaved(), null);
       personRepoMock.insert(
           new adventureworks.person.person.PersonRowUnsaved(
-              be.businessentityid(), "SC", new FirstName("Customer" + id), new Name("Test")),
+              be.businessentityid(),
+              "SC",
+              new FirstName(new Name("Customer" + id)),
+              new LastName(new Name("Test"))),
           null);
     }
 
@@ -1370,7 +1473,7 @@ public class DSLTest extends SnapshotTest {
     var grouped =
         personRepoMock
             .select()
-            .where(p -> p.lastname().isEqual(new Name("Test")))
+            .where(p -> p.lastname().isEqual(new LastName(new Name("Test"))))
             .groupBy(p -> p.persontype())
             .select(p -> TupleExpr.of(p.persontype(), SqlExpr.count()));
 
@@ -1411,19 +1514,27 @@ public class DSLTest extends SnapshotTest {
           // Create persons with different first names per type
           String[] emNames = {"Alice", "Bob", "Charlie"}; // min=Alice, max=Charlie
           for (String name : emNames) {
+            final String n = name;
             var be = testInsert.personBusinessentity().insert(c);
             testInsert
-                .personPerson(be.businessentityid(), "EM", new FirstName(name))
-                .with(row -> row.withLastname(new Name("MinMaxTest")))
+                .personPerson(be.businessentityid(), "EM")
+                .with(
+                    row ->
+                        row.withFirstname(new FirstName(new Name(n)))
+                            .withLastname(new LastName(new Name("MinMaxTest"))))
                 .insert(c);
           }
 
           String[] scNames = {"Xavier", "Yolanda"}; // min=Xavier, max=Yolanda
           for (String name : scNames) {
+            final String n = name;
             var be = testInsert.personBusinessentity().insert(c);
             testInsert
-                .personPerson(be.businessentityid(), "SC", new FirstName(name))
-                .with(row -> row.withLastname(new Name("MinMaxTest")))
+                .personPerson(be.businessentityid(), "SC")
+                .with(
+                    row ->
+                        row.withFirstname(new FirstName(new Name(n)))
+                            .withLastname(new LastName(new Name("MinMaxTest"))))
                 .insert(c);
           }
 
@@ -1431,7 +1542,7 @@ public class DSLTest extends SnapshotTest {
           var query =
               personRepoImpl
                   .select()
-                  .where(p -> p.lastname().isEqual(new Name("MinMaxTest")))
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("MinMaxTest"))))
                   .groupBy(p -> p.persontype())
                   .select(
                       p ->
@@ -1452,10 +1563,10 @@ public class DSLTest extends SnapshotTest {
           var scResult =
               results.stream().filter(r -> "SC".equals(r._1())).findFirst().orElseThrow();
 
-          assertEquals(new FirstName("Alice"), emResult._2());
-          assertEquals(new FirstName("Charlie"), emResult._3());
-          assertEquals(new FirstName("Xavier"), scResult._2());
-          assertEquals(new FirstName("Yolanda"), scResult._3());
+          assertEquals(new FirstName(new Name("Alice")), emResult._2());
+          assertEquals(new FirstName(new Name("Charlie")), emResult._3());
+          assertEquals(new FirstName(new Name("Xavier")), scResult._2());
+          assertEquals(new FirstName(new Name("Yolanda")), scResult._3());
         });
   }
 
@@ -1489,17 +1600,25 @@ public class DSLTest extends SnapshotTest {
 
           // Create employees with different person types for grouping
           for (int i = 0; i < 3; i++) {
+            final int idx = i;
             var be = testInsert.personBusinessentity().insert(c);
             testInsert
-                .personPerson(be.businessentityid(), "EM", new FirstName("Emp" + i))
-                .with(row -> row.withLastname(new Name("JoinTest")))
+                .personPerson(be.businessentityid(), "EM")
+                .with(
+                    row ->
+                        row.withFirstname(new FirstName(new Name("Emp" + idx)))
+                            .withLastname(new LastName(new Name("JoinTest"))))
                 .insert(c);
           }
           for (int i = 0; i < 2; i++) {
+            final int idx = i;
             var be = testInsert.personBusinessentity().insert(c);
             testInsert
-                .personPerson(be.businessentityid(), "SC", new FirstName("Cust" + i))
-                .with(row -> row.withLastname(new Name("JoinTest")))
+                .personPerson(be.businessentityid(), "SC")
+                .with(
+                    row ->
+                        row.withFirstname(new FirstName(new Name("Cust" + idx)))
+                            .withLastname(new LastName(new Name("JoinTest"))))
                 .insert(c);
           }
 
@@ -1507,7 +1626,7 @@ public class DSLTest extends SnapshotTest {
           var grouped =
               personRepoImpl
                   .select()
-                  .where(p -> p.lastname().isEqual(new Name("JoinTest")))
+                  .where(p -> p.lastname().isEqual(new LastName(new Name("JoinTest"))))
                   .groupBy(p -> p.persontype())
                   .select(p -> TupleExpr.of(p.persontype(), SqlExpr.count()));
 

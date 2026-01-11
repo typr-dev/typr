@@ -35,7 +35,7 @@ public class TitleDomainFields extends TupleExpr1<TitleDomainId>
         Optional.empty(),
         Optional.of("text"),
         (row, value) -> row.withCode(value),
-        TitleDomainId.dbType);
+        TitleDomainId.pgType);
   }
 
   @Override

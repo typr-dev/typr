@@ -7,15 +7,15 @@ package oracledb.contacts
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.Optional
-import oracledb.EmailTableT
 import oracledb.TagVarrayT
 import oracledb.customtypes.Defaulted
 import oracledb.customtypes.Defaulted.UseDefault
+import oracledb.userdefined.Email
 
 /** This class corresponds to a row in table `CONTACTS` which has not been persisted yet */
 case class ContactsRowUnsaved(
   @JsonProperty("NAME") name: String,
-  @JsonProperty("EMAILS") emails: Optional[EmailTableT] = Optional.empty(),
+  @JsonProperty("EMAILS") emails: Optional[/* user-picked */ Email] = Optional.empty(),
   @JsonProperty("TAGS") tags: Optional[TagVarrayT] = Optional.empty(),
   /** Default: "TYPR"."ISEQ$$_72857".nextval */
   @JsonProperty("CONTACT_ID") contactId: Defaulted[ContactsId] = new UseDefault()

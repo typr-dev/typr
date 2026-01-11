@@ -24,7 +24,7 @@ class ProductsRepoImpl extends ProductsRepo {
   override def deleteByIds(productIds: Array[ProductsId])(using c: Connection): Int = {
     sql"""delete
     from "products"
-    where "product_id" = ANY(${Fragment.encode(ProductsId.dbTypeArray, productIds)})"""
+    where "product_id" = ANY(${Fragment.encode(ProductsId.duckDbTypeArray, productIds)})"""
       .update()
       .runUnchecked(c)
   }
@@ -54,7 +54,7 @@ class ProductsRepoImpl extends ProductsRepo {
   override def selectByIds(productIds: Array[ProductsId])(using c: Connection): List[ProductsRow] = {
     sql"""select "product_id", "sku", "name", "price", "metadata"
     from "products"
-    where "product_id" = ANY(${Fragment.encode(ProductsId.dbTypeArray, productIds)})""".query(ProductsRow.`_rowParser`.all()).runUnchecked(c)
+    where "product_id" = ANY(${Fragment.encode(ProductsId.duckDbTypeArray, productIds)})""".query(ProductsRow.`_rowParser`.all()).runUnchecked(c)
   }
 
   override def selectByIdsTracked(productIds: Array[ProductsId])(using c: Connection): Map[ProductsId, ProductsRow] = {

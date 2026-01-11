@@ -19,9 +19,10 @@ import dev.typr.foundations.dsl.SqlExpr.OptField;
 import dev.typr.foundations.dsl.TupleExpr.TupleExpr6;
 import java.util.List;
 import java.util.Optional;
+import testdb.userdefined.IsActive;
 
 public class ShippingCarriersFields
-    extends TupleExpr6<ShippingCarriersId, String, String, String, Json, Boolean>
+    extends TupleExpr6<ShippingCarriersId, String, String, String, Json, /* user-picked */ IsActive>
     implements RelationStructure<ShippingCarriersFields, ShippingCarriersRow>,
         FieldsBase<ShippingCarriersRow> {
   List<Path> _path;
@@ -41,7 +42,7 @@ public class ShippingCarriersFields
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withCarrierId(value),
-        ShippingCarriersId.dbType);
+        ShippingCarriersId.mariaType);
   }
 
   public Field<String, ShippingCarriersRow> code() {
@@ -88,15 +89,15 @@ public class ShippingCarriersFields
         MariaTypes.json);
   }
 
-  public Field<Boolean, ShippingCarriersRow> isActive() {
-    return new Field<Boolean, ShippingCarriersRow>(
+  public Field</* user-picked */ IsActive, ShippingCarriersRow> isActive() {
+    return new Field</* user-picked */ IsActive, ShippingCarriersRow>(
         _path,
         "is_active",
         ShippingCarriersRow::isActive,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withIsActive(value),
-        MariaTypes.bool);
+        IsActive.mariaType);
   }
 
   @Override
@@ -152,7 +153,7 @@ public class ShippingCarriersFields
   }
 
   @Override
-  public SqlExpr<Boolean> _6() {
+  public SqlExpr</* user-picked */ IsActive> _6() {
     return isActive();
   }
 }

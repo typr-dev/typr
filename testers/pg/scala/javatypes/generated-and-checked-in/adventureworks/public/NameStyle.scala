@@ -18,7 +18,7 @@ case class NameStyle(@JsonValue value: java.lang.Boolean)
 object NameStyle {
   given bijection: Bijection[NameStyle, java.lang.Boolean] = Bijection.apply[NameStyle, java.lang.Boolean](_.value)(NameStyle.apply)
 
-  given dbType: PgType[NameStyle] = PgTypes.bool.bimap(NameStyle.apply, _.value).renamed(""""public"."NameStyle"""")
+  given pgType: PgType[NameStyle] = PgTypes.bool.bimap(NameStyle.apply, _.value).renamed(""""public"."NameStyle"""")
 
-  given dbTypeArray: PgType[Array[NameStyle]] = PgTypes.boolArray.bimap(xs => xs.map(NameStyle.apply), xs => xs.map(_.value)).renamed(""""public"."NameStyle"[]""")
+  given pgTypeArray: PgType[Array[NameStyle]] = PgTypes.boolArray.bimap(xs => xs.map(NameStyle.apply), xs => xs.map(_.value)).renamed(""""public"."NameStyle"[]""")
 }

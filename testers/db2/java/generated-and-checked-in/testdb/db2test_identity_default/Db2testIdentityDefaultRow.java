@@ -30,7 +30,7 @@ public record Db2testIdentityDefaultRow(
 
   public static RowParser<Db2testIdentityDefaultRow> _rowParser =
       RowParsers.of(
-          Db2testIdentityDefaultId.dbType,
+          Db2testIdentityDefaultId.db2Type,
           Db2Types.varchar,
           Db2testIdentityDefaultRow::new,
           row -> new Object[] {row.id(), row.name()});

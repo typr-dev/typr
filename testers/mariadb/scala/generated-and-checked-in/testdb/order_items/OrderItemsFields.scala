@@ -38,7 +38,7 @@ class OrderItemsFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Or
       None,
       None,
       (row, value) => row.copy(itemId = value),
-      OrderItemsId.dbType
+      OrderItemsId.mariaType
     )
   }
 
@@ -50,7 +50,7 @@ class OrderItemsFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Or
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.dbType
+      OrdersId.mariaType
     )
   }
 
@@ -62,7 +62,7 @@ class OrderItemsFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Or
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.dbType
+      ProductsId.mariaType
     )
   }
 
@@ -170,7 +170,7 @@ class OrderItemsFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Or
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.dbType
+      WarehousesId.mariaType
     )
   }
 

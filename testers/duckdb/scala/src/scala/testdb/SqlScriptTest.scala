@@ -8,6 +8,7 @@ import testdb.department_employee_details._
 import testdb.employee_salary_update._
 import testdb.order_summary_by_customer._
 import testdb.product_summary._
+import testdb.userdefined.Email
 
 import java.time.LocalDateTime
 import scala.util.Random
@@ -44,7 +45,7 @@ class SqlScriptTest {
   def testCustomerSearchWithEmailPattern(): Unit = withConnection { c =>
     given java.sql.Connection = c
 
-    val customer = testInsert.Customers(email = Some("unique-scala-search@example.com"))
+    val customer = testInsert.Customers(email = Some(Email("unique-scala-search@example.com")))
 
     val results = customerSearchRepo(
       namePattern = None,

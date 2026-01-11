@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import testdb.userdefined.Email;
 
 public record MariatestUniqueRepoMock(
     java.util.function.Function<MariatestUniqueRowUnsaved, MariatestUniqueRow> toRow,
@@ -145,7 +146,8 @@ public record MariatestUniqueRepoMock(
   ;
 
   @Override
-  public Optional<MariatestUniqueRow> selectByUniqueEmail(String email, Connection c) {
+  public Optional<MariatestUniqueRow> selectByUniqueEmail(
+      /* user-picked */ Email email, Connection c) {
     return new ArrayList<>(map.values()).stream().filter(v -> email.equals(v.email())).findFirst();
   }
   ;

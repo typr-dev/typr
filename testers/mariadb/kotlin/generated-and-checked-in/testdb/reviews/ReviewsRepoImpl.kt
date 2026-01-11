@@ -9,7 +9,6 @@ import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.kotlin.DeleteBuilder
 import dev.typr.foundations.kotlin.Dialect
 import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
 import dev.typr.foundations.kotlin.SelectBuilder
 import dev.typr.foundations.kotlin.UpdateBuilder
 import dev.typr.foundations.kotlin.nullable
@@ -22,6 +21,8 @@ import kotlin.collections.MutableMap
 import testdb.customers.CustomersId
 import testdb.order_items.OrderItemsId
 import testdb.products.ProductsId
+import testdb.userdefined.IsApproved
+import testdb.userdefined.IsVerifiedPurchase
 
 class ReviewsRepoImpl() : ReviewsRepo {
   override fun delete(): DeleteBuilder<ReviewsFields, ReviewsRow> = DeleteBuilder.of("`reviews`", ReviewsFields.structure, Dialect.MARIADB)
@@ -29,21 +30,21 @@ class ReviewsRepoImpl() : ReviewsRepo {
   override fun deleteById(
     reviewId: ReviewsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `reviews` where `review_id` = "), Fragment.encode(ReviewsId.dbType, reviewId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `reviews` where `review_id` = "), Fragment.encode(ReviewsId.mariaType, reviewId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     reviewIds: Array<ReviewsId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in reviewIds) { fragments.add(Fragment.encode(ReviewsId.dbType, id)) }
+    for (id in reviewIds) { fragments.add(Fragment.encode(ReviewsId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("delete from `reviews` where `review_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
   }
 
   override fun insert(
     unsaved: ReviewsRow,
     c: Connection
-  ): ReviewsRow = Fragment.interpolate(Fragment.lit("insert into `reviews`(`product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`)\nvalues ("), Fragment.encode(ProductsId.dbType, unsaved.productId), Fragment.lit(", "), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(OrderItemsId.dbType.nullable(), unsaved.orderItemId), Fragment.lit(", "), Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.rating), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.title), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.content), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.pros), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.cons), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.images), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVerifiedPurchase), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isApproved), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.helpfulVotes), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.unhelpfulVotes), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.adminResponse), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.respondedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(")\nRETURNING `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`\n"))
+  ): ReviewsRow = Fragment.interpolate(Fragment.lit("insert into `reviews`(`product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`)\nvalues ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(OrderItemsId.mariaType.nullable(), unsaved.orderItemId), Fragment.lit(", "), Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.rating), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.title), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.content), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.pros), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.cons), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.images), Fragment.lit(", "), Fragment.encode(IsVerifiedPurchase.mariaType, unsaved.isVerifiedPurchase), Fragment.lit(", "), Fragment.encode(IsApproved.mariaType, unsaved.isApproved), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.helpfulVotes), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.unhelpfulVotes), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.adminResponse), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.respondedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(")\nRETURNING `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`\n"))
     .updateReturning(ReviewsRow._rowParser.exactlyOne()).runUnchecked(c)
 
   override fun insert(
@@ -53,15 +54,15 @@ class ReviewsRepoImpl() : ReviewsRepo {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
     columns.add(Fragment.lit("`product_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(ProductsId.dbType, unsaved.productId), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit("")))
     columns.add(Fragment.lit("`customer_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit("")))
+    values.add(Fragment.interpolate(Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.lit("")))
     columns.add(Fragment.lit("`rating`"))
     values.add(Fragment.interpolate(Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.rating), Fragment.lit("")))
     unsaved.orderItemId.visit(
       {  },
       { value -> columns.add(Fragment.lit("`order_item_id`"))
-      values.add(Fragment.interpolate(Fragment.encode(OrderItemsId.dbType.nullable(), value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(OrderItemsId.mariaType.nullable(), value), Fragment.lit(""))) }
     );
     unsaved.title.visit(
       {  },
@@ -91,12 +92,12 @@ class ReviewsRepoImpl() : ReviewsRepo {
     unsaved.isVerifiedPurchase.visit(
       {  },
       { value -> columns.add(Fragment.lit("`is_verified_purchase`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(IsVerifiedPurchase.mariaType, value), Fragment.lit(""))) }
     );
     unsaved.isApproved.visit(
       {  },
       { value -> columns.add(Fragment.lit("`is_approved`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
+      values.add(Fragment.interpolate(Fragment.encode(IsApproved.mariaType, value), Fragment.lit(""))) }
     );
     unsaved.helpfulVotes.visit(
       {  },
@@ -139,14 +140,14 @@ class ReviewsRepoImpl() : ReviewsRepo {
   override fun selectById(
     reviewId: ReviewsId,
     c: Connection
-  ): ReviewsRow? = Fragment.interpolate(Fragment.lit("select `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`\nfrom `reviews`\nwhere `review_id` = "), Fragment.encode(ReviewsId.dbType, reviewId), Fragment.lit("")).query(ReviewsRow._rowParser.first()).runUnchecked(c)
+  ): ReviewsRow? = Fragment.interpolate(Fragment.lit("select `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`\nfrom `reviews`\nwhere `review_id` = "), Fragment.encode(ReviewsId.mariaType, reviewId), Fragment.lit("")).query(ReviewsRow._rowParser.first()).runUnchecked(c)
 
   override fun selectByIds(
     reviewIds: Array<ReviewsId>,
     c: Connection
   ): List<ReviewsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in reviewIds) { fragments.add(Fragment.encode(ReviewsId.dbType, id)) }
+    for (id in reviewIds) { fragments.add(Fragment.encode(ReviewsId.mariaType, id)) }
     return Fragment.interpolate(Fragment.lit("select `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at` from `reviews` where `review_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ReviewsRow._rowParser.all()).runUnchecked(c)
   }
 
@@ -166,13 +167,13 @@ class ReviewsRepoImpl() : ReviewsRepo {
     c: Connection
   ): Boolean {
     val reviewId: ReviewsId = row.reviewId
-    return Fragment.interpolate(Fragment.lit("update `reviews`\nset `product_id` = "), Fragment.encode(ProductsId.dbType, row.productId), Fragment.lit(",\n`customer_id` = "), Fragment.encode(CustomersId.dbType, row.customerId), Fragment.lit(",\n`order_item_id` = "), Fragment.encode(OrderItemsId.dbType.nullable(), row.orderItemId), Fragment.lit(",\n`rating` = "), Fragment.encode(MariaTypes.tinyintUnsigned, row.rating), Fragment.lit(",\n`title` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.title), Fragment.lit(",\n`content` = "), Fragment.encode(MariaTypes.text.nullable(), row.content), Fragment.lit(",\n`pros` = "), Fragment.encode(MariaTypes.json.nullable(), row.pros), Fragment.lit(",\n`cons` = "), Fragment.encode(MariaTypes.json.nullable(), row.cons), Fragment.lit(",\n`images` = "), Fragment.encode(MariaTypes.json.nullable(), row.images), Fragment.lit(",\n`is_verified_purchase` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isVerifiedPurchase), Fragment.lit(",\n`is_approved` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isApproved), Fragment.lit(",\n`helpful_votes` = "), Fragment.encode(MariaTypes.intUnsigned, row.helpfulVotes), Fragment.lit(",\n`unhelpful_votes` = "), Fragment.encode(MariaTypes.intUnsigned, row.unhelpfulVotes), Fragment.lit(",\n`admin_response` = "), Fragment.encode(MariaTypes.text.nullable(), row.adminResponse), Fragment.lit(",\n`responded_at` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.respondedAt), Fragment.lit(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.lit(",\n`updated_at` = "), Fragment.encode(MariaTypes.datetime, row.updatedAt), Fragment.lit("\nwhere `review_id` = "), Fragment.encode(ReviewsId.dbType, reviewId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.interpolate(Fragment.lit("update `reviews`\nset `product_id` = "), Fragment.encode(ProductsId.mariaType, row.productId), Fragment.lit(",\n`customer_id` = "), Fragment.encode(CustomersId.mariaType, row.customerId), Fragment.lit(",\n`order_item_id` = "), Fragment.encode(OrderItemsId.mariaType.nullable(), row.orderItemId), Fragment.lit(",\n`rating` = "), Fragment.encode(MariaTypes.tinyintUnsigned, row.rating), Fragment.lit(",\n`title` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.title), Fragment.lit(",\n`content` = "), Fragment.encode(MariaTypes.text.nullable(), row.content), Fragment.lit(",\n`pros` = "), Fragment.encode(MariaTypes.json.nullable(), row.pros), Fragment.lit(",\n`cons` = "), Fragment.encode(MariaTypes.json.nullable(), row.cons), Fragment.lit(",\n`images` = "), Fragment.encode(MariaTypes.json.nullable(), row.images), Fragment.lit(",\n`is_verified_purchase` = "), Fragment.encode(IsVerifiedPurchase.mariaType, row.isVerifiedPurchase), Fragment.lit(",\n`is_approved` = "), Fragment.encode(IsApproved.mariaType, row.isApproved), Fragment.lit(",\n`helpful_votes` = "), Fragment.encode(MariaTypes.intUnsigned, row.helpfulVotes), Fragment.lit(",\n`unhelpful_votes` = "), Fragment.encode(MariaTypes.intUnsigned, row.unhelpfulVotes), Fragment.lit(",\n`admin_response` = "), Fragment.encode(MariaTypes.text.nullable(), row.adminResponse), Fragment.lit(",\n`responded_at` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.respondedAt), Fragment.lit(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.lit(",\n`updated_at` = "), Fragment.encode(MariaTypes.datetime, row.updatedAt), Fragment.lit("\nwhere `review_id` = "), Fragment.encode(ReviewsId.mariaType, reviewId), Fragment.lit("")).update().runUnchecked(c) > 0
   }
 
   override fun upsert(
     unsaved: ReviewsRow,
     c: Connection
-  ): ReviewsRow = Fragment.interpolate(Fragment.lit("INSERT INTO `reviews`(`review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`)\nVALUES ("), Fragment.encode(ReviewsId.dbType, unsaved.reviewId), Fragment.lit(", "), Fragment.encode(ProductsId.dbType, unsaved.productId), Fragment.lit(", "), Fragment.encode(CustomersId.dbType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(OrderItemsId.dbType.nullable(), unsaved.orderItemId), Fragment.lit(", "), Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.rating), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.title), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.content), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.pros), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.cons), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.images), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVerifiedPurchase), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isApproved), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.helpfulVotes), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.unhelpfulVotes), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.adminResponse), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.respondedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`customer_id` = VALUES(`customer_id`),\n`order_item_id` = VALUES(`order_item_id`),\n`rating` = VALUES(`rating`),\n`title` = VALUES(`title`),\n`content` = VALUES(`content`),\n`pros` = VALUES(`pros`),\n`cons` = VALUES(`cons`),\n`images` = VALUES(`images`),\n`is_verified_purchase` = VALUES(`is_verified_purchase`),\n`is_approved` = VALUES(`is_approved`),\n`helpful_votes` = VALUES(`helpful_votes`),\n`unhelpful_votes` = VALUES(`unhelpful_votes`),\n`admin_response` = VALUES(`admin_response`),\n`responded_at` = VALUES(`responded_at`),\n`created_at` = VALUES(`created_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`"))
+  ): ReviewsRow = Fragment.interpolate(Fragment.lit("INSERT INTO `reviews`(`review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`)\nVALUES ("), Fragment.encode(ReviewsId.mariaType, unsaved.reviewId), Fragment.lit(", "), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(OrderItemsId.mariaType.nullable(), unsaved.orderItemId), Fragment.lit(", "), Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.rating), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.title), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.content), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.pros), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.cons), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.images), Fragment.lit(", "), Fragment.encode(IsVerifiedPurchase.mariaType, unsaved.isVerifiedPurchase), Fragment.lit(", "), Fragment.encode(IsApproved.mariaType, unsaved.isApproved), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.helpfulVotes), Fragment.lit(", "), Fragment.encode(MariaTypes.intUnsigned, unsaved.unhelpfulVotes), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.adminResponse), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.respondedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`customer_id` = VALUES(`customer_id`),\n`order_item_id` = VALUES(`order_item_id`),\n`rating` = VALUES(`rating`),\n`title` = VALUES(`title`),\n`content` = VALUES(`content`),\n`pros` = VALUES(`pros`),\n`cons` = VALUES(`cons`),\n`images` = VALUES(`images`),\n`is_verified_purchase` = VALUES(`is_verified_purchase`),\n`is_approved` = VALUES(`is_approved`),\n`helpful_votes` = VALUES(`helpful_votes`),\n`unhelpful_votes` = VALUES(`unhelpful_votes`),\n`admin_response` = VALUES(`admin_response`),\n`responded_at` = VALUES(`responded_at`),\n`created_at` = VALUES(`created_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `review_id`, `product_id`, `customer_id`, `order_item_id`, `rating`, `title`, `content`, `pros`, `cons`, `images`, `is_verified_purchase`, `is_approved`, `helpful_votes`, `unhelpful_votes`, `admin_response`, `responded_at`, `created_at`, `updated_at`"))
     .updateReturning(ReviewsRow._rowParser.exactlyOne())
     .runUnchecked(c)
 

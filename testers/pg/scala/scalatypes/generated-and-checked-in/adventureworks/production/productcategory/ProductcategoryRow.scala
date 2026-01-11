@@ -56,7 +56,7 @@ case class ProductcategoryRow(
 }
 
 object ProductcategoryRow {
-  val `_rowParser`: RowParser[ProductcategoryRow] = RowParsers.of(ProductcategoryId.dbType, Name.dbType, PgTypes.uuid, PgTypes.timestamp)(ProductcategoryRow.apply)(row => Array[Any](row.productcategoryid, row.name, row.rowguid, row.modifieddate))
+  val `_rowParser`: RowParser[ProductcategoryRow] = RowParsers.of(ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp)(ProductcategoryRow.apply)(row => Array[Any](row.productcategoryid, row.name, row.rowguid, row.modifieddate))
 
   given pgText: PgText[ProductcategoryRow] = PgText.from(`_rowParser`.underlying)
 }

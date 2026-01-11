@@ -40,7 +40,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       Optional.empty(),
       Optional.of("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.dbType
+      BusinessentityId.pgType
     )
   }
 
@@ -52,7 +52,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       Optional.empty(),
       Optional.of("int2"),
       (row, value) => row.copy(departmentid = value),
-      DepartmentId.dbType
+      DepartmentId.pgType
     )
   }
 
@@ -64,7 +64,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       Optional.empty(),
       Optional.of("int2"),
       (row, value) => row.copy(shiftid = value),
-      ShiftId.dbType
+      ShiftId.pgType
     )
   }
 

@@ -119,5 +119,5 @@ case class OrderItemsRow(
 }
 
 object OrderItemsRow {
-  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrderItemsId.dbType, OrdersId.dbType, ProductsId.dbType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, WarehousesId.dbType.nullable, MariaTypes.tinytext.nullable)(OrderItemsRow.apply)(row => Array[Any](row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes))
+  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrderItemsId.mariaType, OrdersId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, WarehousesId.mariaType.nullable, MariaTypes.tinytext.nullable)(OrderItemsRow.apply)(row => Array[Any](row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes))
 }

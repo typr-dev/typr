@@ -109,8 +109,8 @@ public record CategoriesRow(
 
   public static RowParser<CategoriesRow> _rowParser =
       RowParsers.of(
-          CategoriesId.dbType,
-          CategoriesId.dbType.opt(),
+          CategoriesId.mariaType,
+          CategoriesId.mariaType.opt(),
           MariaTypes.varchar,
           MariaTypes.varchar,
           MariaTypes.mediumtext.opt(),

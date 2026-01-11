@@ -20,9 +20,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import testdb.Priority;
+import testdb.userdefined.Email;
 
 public class CustomersFields
-    extends TupleExpr5<CustomersId, String, String, LocalDateTime, Priority>
+    extends TupleExpr5<CustomersId, String, /* user-picked */ Email, LocalDateTime, Priority>
     implements RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   List<Path> _path;
 
@@ -54,15 +55,15 @@ public class CustomersFields
         DuckDbTypes.varchar);
   }
 
-  public OptField<String, CustomersRow> email() {
-    return new OptField<String, CustomersRow>(
+  public OptField</* user-picked */ Email, CustomersRow> email() {
+    return new OptField</* user-picked */ Email, CustomersRow>(
         _path,
         "email",
         CustomersRow::email,
         Optional.empty(),
         Optional.empty(),
         (row, value) -> row.withEmail(value),
-        DuckDbTypes.varchar);
+        Email.duckDbType);
   }
 
   public Field<LocalDateTime, CustomersRow> createdAt() {
@@ -119,7 +120,7 @@ public class CustomersFields
   }
 
   @Override
-  public SqlExpr<String> _3() {
+  public SqlExpr</* user-picked */ Email> _3() {
     return email();
   }
 

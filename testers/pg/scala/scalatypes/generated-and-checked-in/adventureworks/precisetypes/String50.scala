@@ -29,11 +29,11 @@ case class String50 private(@JsonValue value: String) extends StringN {
 object String50 {
   given bijection: Bijection[String50, String] = Bijection.apply[String50, String](_.value)(String50.apply)
 
-  given dbType: PgType[String50] = PgTypes.text.bimap(String50.apply, _.value)
-
-  given dbTypeArray: PgType[Array[String50]] = PgTypes.textArray.bimap(xs => xs.map(String50.apply), xs => xs.map(_.value))
-
   def of(value: String): Option[String50] = (if (value.length <= 50) Some(new String50(value)) else None)
+
+  given pgType: PgType[String50] = PgTypes.text.bimap(String50.apply, _.value)
+
+  given pgTypeArray: PgType[Array[String50]] = PgTypes.textArray.bimap(xs => xs.map(String50.apply), xs => xs.map(_.value))
 
   def truncate(value: String): String50 = new String50((if (value.length <= 50) value else value.substring(0, 50)))
 

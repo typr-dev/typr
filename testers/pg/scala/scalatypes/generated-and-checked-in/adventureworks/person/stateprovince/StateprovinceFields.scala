@@ -36,7 +36,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("int4"),
       (row, value) => row.copy(stateprovinceid = value),
-      StateprovinceId.dbType
+      StateprovinceId.pgType
     )
   }
 
@@ -60,7 +60,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(countryregioncode = value),
-      CountryregionId.dbType
+      CountryregionId.pgType
     )
   }
 
@@ -72,7 +72,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("bool"),
       (row, value) => row.copy(isonlystateprovinceflag = value),
-      Flag.dbType
+      Flag.pgType
     )
   }
 
@@ -84,7 +84,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.dbType
+      Name.pgType
     )
   }
 
@@ -96,7 +96,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("int4"),
       (row, value) => row.copy(territoryid = value),
-      SalesterritoryId.dbType
+      SalesterritoryId.pgType
     )
   }
 

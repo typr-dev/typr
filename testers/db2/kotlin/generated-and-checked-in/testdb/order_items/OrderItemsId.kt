@@ -22,6 +22,6 @@ data class OrderItemsId(
   override fun _2(): Int = itemNumber
 
   companion object {
-    val _rowParser: RowParser<OrderItemsId> = RowParsers.of(OrdersId.dbType, KotlinDbTypes.Db2Types.integer, { t0, t1 -> OrderItemsId(t0, t1) }, { row -> arrayOf<Any?>(row.orderId, row.itemNumber) })
+    val _rowParser: RowParser<OrderItemsId> = RowParsers.of(OrdersId.db2Type, KotlinDbTypes.Db2Types.integer, { t0, t1 -> OrderItemsId(t0, t1) }, { row -> arrayOf<Any?>(row.orderId, row.itemNumber) })
   }
 }

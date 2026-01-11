@@ -15,6 +15,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.orders.OrdersId
+import testdb.userdefined.Email
 
 /** SQL file: customer-orders-summary.sql */
 case class CustomerOrdersSummarySqlRow(
@@ -23,7 +24,7 @@ case class CustomerOrdersSummarySqlRow(
   /** Points to [[testdb.customers.CustomersRow.name]] */
   @JsonProperty("customer_name") customerName: String,
   /** Points to [[testdb.customers.CustomersRow.email]] */
-  @JsonProperty("customer_email") customerEmail: String,
+  @JsonProperty("customer_email") customerEmail: /* user-picked */ Email,
   /** Points to [[testdb.orders.OrdersRow.orderId]] */
   @JsonProperty("order_count") orderCount: Option[OrdersId],
   /** Points to [[testdb.orders.OrdersRow.totalAmount]] */
@@ -32,12 +33,12 @@ case class CustomerOrdersSummarySqlRow(
   @JsonProperty("avg_order_amount") avgOrderAmount: Option[BigDecimal],
   /** Points to [[testdb.orders.OrdersRow.orderDate]] */
   @JsonProperty("last_order_date") lastOrderDate: Option[LocalDateTime]
-) extends Tuple7[CustomersId, String, String, Option[OrdersId], Option[BigDecimal], Option[BigDecimal], Option[LocalDateTime]] {
+) extends Tuple7[CustomersId, String, /* user-picked */ Email, Option[OrdersId], Option[BigDecimal], Option[BigDecimal], Option[LocalDateTime]] {
   override def `_1`: CustomersId = customerId
 
   override def `_2`: String = customerName
 
-  override def `_3`: String = customerEmail
+  override def `_3`: /* user-picked */ Email = customerEmail
 
   override def `_4`: Option[OrdersId] = orderCount
 
@@ -49,5 +50,5 @@ case class CustomerOrdersSummarySqlRow(
 }
 
 object CustomerOrdersSummarySqlRow {
-  val `_rowParser`: RowParser[CustomerOrdersSummarySqlRow] = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar, OrdersId.sqlServerType.nullable, ScalaDbTypes.SqlServerTypes.money.nullable, ScalaDbTypes.SqlServerTypes.money.nullable, SqlServerTypes.datetime2.nullable)(CustomerOrdersSummarySqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.customerEmail, row.orderCount, row.totalSpent, row.avgOrderAmount, row.lastOrderDate))
+  val `_rowParser`: RowParser[CustomerOrdersSummarySqlRow] = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, OrdersId.sqlServerType.nullable, ScalaDbTypes.SqlServerTypes.money.nullable, ScalaDbTypes.SqlServerTypes.money.nullable, SqlServerTypes.datetime2.nullable)(CustomerOrdersSummarySqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.customerEmail, row.orderCount, row.totalSpent, row.avgOrderAmount, row.lastOrderDate))
 }

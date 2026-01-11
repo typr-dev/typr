@@ -8,6 +8,7 @@ package testdb.customer_status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import testdb.customtypes.Defaulted;
 import testdb.customtypes.Defaulted.UseDefault;
+import testdb.userdefined.IsActive;
 
 /** This class corresponds to a row in table `customer_status` which has not been persisted yet */
 public record CustomerStatusRowUnsaved(
@@ -16,7 +17,7 @@ public record CustomerStatusRowUnsaved(
     /** */
     String description,
     /** Default: 1 */
-    @JsonProperty("is_active") Defaulted<Boolean> isActive) {
+    @JsonProperty("is_active") Defaulted</* user-picked */ IsActive> isActive) {
   public CustomerStatusRowUnsaved(
       /** */
       @JsonProperty("status_code") CustomerStatusId statusCode,
@@ -39,12 +40,13 @@ public record CustomerStatusRowUnsaved(
   ;
 
   /** Default: 1 */
-  public CustomerStatusRowUnsaved withIsActive(Defaulted<Boolean> isActive) {
+  public CustomerStatusRowUnsaved withIsActive(Defaulted</* user-picked */ IsActive> isActive) {
     return new CustomerStatusRowUnsaved(statusCode, description, isActive);
   }
   ;
 
-  public CustomerStatusRow toRow(java.util.function.Supplier<Boolean> isActiveDefault) {
+  public CustomerStatusRow toRow(
+      java.util.function.Supplier</* user-picked */ IsActive> isActiveDefault) {
     return new CustomerStatusRow(statusCode, description, isActive.getOrElse(isActiveDefault));
   }
   ;

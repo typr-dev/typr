@@ -33,7 +33,7 @@ public class ProductsRepoImpl implements ProductsRepo {
   public Boolean deleteById(ProductsId productId, Connection c) {
     return interpolate(
                 Fragment.lit("delete from `products` where `product_id` = "),
-                Fragment.encode(ProductsId.dbType, productId),
+                Fragment.encode(ProductsId.mariaType, productId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -44,7 +44,7 @@ public class ProductsRepoImpl implements ProductsRepo {
   public Integer deleteByIds(ProductsId[] productIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : productIds) {
-      fragments.add(Fragment.encode(ProductsId.dbType, id));
+      fragments.add(Fragment.encode(ProductsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -66,7 +66,7 @@ public class ProductsRepoImpl implements ProductsRepo {
                     + "values ("),
             Fragment.encode(MariaTypes.varchar, unsaved.sku()),
             Fragment.lit(", "),
-            Fragment.encode(BrandsId.dbType.opt(), unsaved.brandId()),
+            Fragment.encode(BrandsId.mariaType.opt(), unsaved.brandId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.name()),
             Fragment.lit(", "),
@@ -86,7 +86,7 @@ public class ProductsRepoImpl implements ProductsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.taxClass()),
             Fragment.lit(", "),
-            Fragment.encode(BestsellerClearanceFSet.dbType.opt(), unsaved.tags()),
+            Fragment.encode(BestsellerClearanceFSet.mariaType.opt(), unsaved.tags()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.attributes()),
             Fragment.lit(", "),
@@ -127,7 +127,7 @@ public class ProductsRepoImpl implements ProductsRepo {
             value -> {
               columns.add(Fragment.lit("`brand_id`"));
               values.add(
-                  interpolate(Fragment.encode(BrandsId.dbType.opt(), value), Fragment.lit("")));
+                  interpolate(Fragment.encode(BrandsId.mariaType.opt(), value), Fragment.lit("")));
             });
     ;
     unsaved
@@ -206,7 +206,7 @@ public class ProductsRepoImpl implements ProductsRepo {
               columns.add(Fragment.lit("`tags`"));
               values.add(
                   interpolate(
-                      Fragment.encode(BestsellerClearanceFSet.dbType.opt(), value),
+                      Fragment.encode(BestsellerClearanceFSet.mariaType.opt(), value),
                       Fragment.lit("")));
             });
     ;
@@ -305,7 +305,7 @@ public class ProductsRepoImpl implements ProductsRepo {
                     + " `seo_metadata`, `created_at`, `updated_at`, `published_at`\n"
                     + "from `products`\n"
                     + "where `product_id` = "),
-            Fragment.encode(ProductsId.dbType, productId),
+            Fragment.encode(ProductsId.mariaType, productId),
             Fragment.lit(""))
         .query(ProductsRow._rowParser.first())
         .runUnchecked(c);
@@ -315,7 +315,7 @@ public class ProductsRepoImpl implements ProductsRepo {
   public List<ProductsRow> selectByIds(ProductsId[] productIds, Connection c) {
     ArrayList<Fragment> fragments = new ArrayList<>();
     for (var id : productIds) {
-      fragments.add(Fragment.encode(ProductsId.dbType, id));
+      fragments.add(Fragment.encode(ProductsId.mariaType, id));
     }
     ;
     return Fragment.interpolate(
@@ -368,7 +368,7 @@ public class ProductsRepoImpl implements ProductsRepo {
                 Fragment.lit("update `products`\nset `sku` = "),
                 Fragment.encode(MariaTypes.varchar, row.sku()),
                 Fragment.lit(",\n`brand_id` = "),
-                Fragment.encode(BrandsId.dbType.opt(), row.brandId()),
+                Fragment.encode(BrandsId.mariaType.opt(), row.brandId()),
                 Fragment.lit(",\n`name` = "),
                 Fragment.encode(MariaTypes.varchar, row.name()),
                 Fragment.lit(",\n`short_description` = "),
@@ -388,7 +388,7 @@ public class ProductsRepoImpl implements ProductsRepo {
                 Fragment.lit(",\n`tax_class` = "),
                 Fragment.encode(MariaTypes.text, row.taxClass()),
                 Fragment.lit(",\n`tags` = "),
-                Fragment.encode(BestsellerClearanceFSet.dbType.opt(), row.tags()),
+                Fragment.encode(BestsellerClearanceFSet.mariaType.opt(), row.tags()),
                 Fragment.lit(",\n`attributes` = "),
                 Fragment.encode(MariaTypes.json.opt(), row.attributes()),
                 Fragment.lit(",\n`seo_metadata` = "),
@@ -400,7 +400,7 @@ public class ProductsRepoImpl implements ProductsRepo {
                 Fragment.lit(",\n`published_at` = "),
                 Fragment.encode(MariaTypes.datetime.opt(), row.publishedAt()),
                 Fragment.lit("\nwhere `product_id` = "),
-                Fragment.encode(ProductsId.dbType, productId),
+                Fragment.encode(ProductsId.mariaType, productId),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -416,11 +416,11 @@ public class ProductsRepoImpl implements ProductsRepo {
                     + " `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`,"
                     + " `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`)\n"
                     + "VALUES ("),
-            Fragment.encode(ProductsId.dbType, unsaved.productId()),
+            Fragment.encode(ProductsId.mariaType, unsaved.productId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.sku()),
             Fragment.lit(", "),
-            Fragment.encode(BrandsId.dbType.opt(), unsaved.brandId()),
+            Fragment.encode(BrandsId.mariaType.opt(), unsaved.brandId()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.varchar, unsaved.name()),
             Fragment.lit(", "),
@@ -440,7 +440,7 @@ public class ProductsRepoImpl implements ProductsRepo {
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.text, unsaved.taxClass()),
             Fragment.lit(", "),
-            Fragment.encode(BestsellerClearanceFSet.dbType.opt(), unsaved.tags()),
+            Fragment.encode(BestsellerClearanceFSet.mariaType.opt(), unsaved.tags()),
             Fragment.lit(", "),
             Fragment.encode(MariaTypes.json.opt(), unsaved.attributes()),
             Fragment.lit(", "),

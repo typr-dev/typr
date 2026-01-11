@@ -23,8 +23,11 @@ import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusFields
 import testdb.customer_status.CustomerStatusId
 import testdb.customer_status.CustomerStatusRow
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
-class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[CustomersId, String, Array[Byte], String, String, String, CustomerStatusId, String, Json, EmailMailPushSmsSet, String, LocalDateTime, LocalDateTime, LocalDateTime] with RelationStructure[CustomersFields, CustomersRow]  with FieldsBase[CustomersRow] {
+class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[CustomersId, /* user-picked */ Email, Array[Byte], /* user-picked */ FirstName, /* user-picked */ LastName, String, CustomerStatusId, String, Json, EmailMailPushSmsSet, String, LocalDateTime, LocalDateTime, LocalDateTime] with RelationStructure[CustomersFields, CustomersRow]  with FieldsBase[CustomersRow] {
   def customerId: IdField[CustomersId, CustomersRow] = {
     new IdField[CustomersId, CustomersRow](
       _path,
@@ -33,19 +36,19 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.dbType
+      CustomersId.mariaType
     )
   }
 
-  def email: Field[String, CustomersRow] = {
-    new Field[String, CustomersRow](
+  def email: Field[/* user-picked */ Email, CustomersRow] = {
+    new Field[/* user-picked */ Email, CustomersRow](
       _path,
       "email",
       _.email,
       None,
       None,
       (row, value) => row.copy(email = value),
-      MariaTypes.varchar
+      Email.mariaType
     )
   }
 
@@ -61,27 +64,27 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
     )
   }
 
-  def firstName: Field[String, CustomersRow] = {
-    new Field[String, CustomersRow](
+  def firstName: Field[/* user-picked */ FirstName, CustomersRow] = {
+    new Field[/* user-picked */ FirstName, CustomersRow](
       _path,
       "first_name",
       _.firstName,
       None,
       None,
       (row, value) => row.copy(firstName = value),
-      MariaTypes.varchar
+      FirstName.mariaType
     )
   }
 
-  def lastName: Field[String, CustomersRow] = {
-    new Field[String, CustomersRow](
+  def lastName: Field[/* user-picked */ LastName, CustomersRow] = {
+    new Field[/* user-picked */ LastName, CustomersRow](
       _path,
       "last_name",
       _.lastName,
       None,
       None,
       (row, value) => row.copy(lastName = value),
-      MariaTypes.varchar
+      LastName.mariaType
     )
   }
 
@@ -105,7 +108,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(status = value),
-      CustomerStatusId.dbType
+      CustomerStatusId.mariaType
     )
   }
 
@@ -141,7 +144,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(marketingFlags = value),
-      EmailMailPushSmsSet.dbType
+      EmailMailPushSmsSet.mariaType
     )
   }
 
@@ -203,13 +206,13 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
 
   override def `_1`: SqlExpr[CustomersId] = customerId
 
-  override def `_2`: SqlExpr[String] = email
+  override def `_2`: SqlExpr[/* user-picked */ Email] = email
 
   override def `_3`: SqlExpr[Array[Byte]] = passwordHash
 
-  override def `_4`: SqlExpr[String] = firstName
+  override def `_4`: SqlExpr[/* user-picked */ FirstName] = firstName
 
-  override def `_5`: SqlExpr[String] = lastName
+  override def `_5`: SqlExpr[/* user-picked */ LastName] = lastName
 
   override def `_6`: SqlExpr[String] = phone
 

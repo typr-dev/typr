@@ -13,6 +13,7 @@ import testdb.product_categories.ProductCategoriesRow
 import testdb.product_categories.ProductCategoriesRowUnsaved
 import testdb.products.ProductsRepoImpl
 import testdb.products.ProductsRowUnsaved
+import testdb.userdefined.IsPrimary
 import java.math.BigDecimal
 
 /**
@@ -77,7 +78,7 @@ class CompositeIdTest {
                 ProductCategoriesRowUnsaved(
                     productId = product.productId,
                     categoryId = category.categoryId,
-                    isPrimary = Provided(true),
+                    isPrimary = Provided(IsPrimary(true)),
                     sortOrder = Provided(1.toShort())
                 ),
                 c
@@ -89,7 +90,7 @@ class CompositeIdTest {
             assertNotNull(selected)
             assertEquals(product.productId, selected!!.productId)
             assertEquals(category.categoryId, selected.categoryId)
-            assertTrue(selected.isPrimary)
+            assertTrue(selected.isPrimary.value)
             assertEquals(1.toShort(), selected.sortOrder)
         }
     }
@@ -157,7 +158,7 @@ class CompositeIdTest {
                 ProductCategoriesRowUnsaved(
                     productId = product.productId,
                     categoryId = category1.categoryId,
-                    isPrimary = Provided(true),
+                    isPrimary = Provided(IsPrimary(true)),
                     sortOrder = Provided(1.toShort())
                 ),
                 c
@@ -166,7 +167,7 @@ class CompositeIdTest {
                 ProductCategoriesRowUnsaved(
                     productId = product.productId,
                     categoryId = category2.categoryId,
-                    isPrimary = Provided(false),
+                    isPrimary = Provided(IsPrimary(false)),
                     sortOrder = Provided(2.toShort())
                 ),
                 c
@@ -179,8 +180,8 @@ class CompositeIdTest {
             val tracked = productCategoriesRepo.selectByIdsTracked(ids, c)
 
             assertEquals(2, tracked.size)
-            assertTrue(tracked[id1]!!.isPrimary)
-            assertFalse(tracked[id2]!!.isPrimary)
+            assertTrue(tracked[id1]!!.isPrimary.value)
+            assertFalse(tracked[id2]!!.isPrimary.value)
         }
     }
 
@@ -200,19 +201,19 @@ class CompositeIdTest {
                 ProductCategoriesRowUnsaved(
                     productId = product.productId,
                     categoryId = category.categoryId,
-                    isPrimary = Provided(false),
+                    isPrimary = Provided(IsPrimary(false)),
                     sortOrder = Provided(10.toShort())
                 ),
                 c
             )
 
-            val updated = inserted.copy(isPrimary = true, sortOrder = 5.toShort())
+            val updated = inserted.copy(isPrimary = IsPrimary(true), sortOrder = 5.toShort())
             val success = productCategoriesRepo.update(updated, c)
             assertTrue(success)
 
             val selected = productCategoriesRepo.selectById(inserted.compositeId(), c)
             assertNotNull(selected)
-            assertTrue(selected!!.isPrimary)
+            assertTrue(selected!!.isPrimary.value)
             assertEquals(5.toShort(), selected.sortOrder)
         }
     }
@@ -304,16 +305,16 @@ class CompositeIdTest {
             val row = ProductCategoriesRow(
                 productId = product.productId,
                 categoryId = category.categoryId,
-                isPrimary = false,
+                isPrimary = IsPrimary(false),
                 sortOrder = 1.toShort()
             )
             val inserted = productCategoriesRepo.upsert(row, c)
-            assertFalse(inserted.isPrimary)
+            assertFalse(inserted.isPrimary.value)
             assertEquals(1.toShort(), inserted.sortOrder)
 
-            val updatedRow = row.copy(isPrimary = true, sortOrder = 99.toShort())
+            val updatedRow = row.copy(isPrimary = IsPrimary(true), sortOrder = 99.toShort())
             val updated = productCategoriesRepo.upsert(updatedRow, c)
-            assertTrue(updated.isPrimary)
+            assertTrue(updated.isPrimary.value)
             assertEquals(99.toShort(), updated.sortOrder)
 
             val all = productCategoriesRepo.selectAll(c)
@@ -341,7 +342,7 @@ class CompositeIdTest {
                 ProductCategoriesRowUnsaved(
                     productId = product1.productId,
                     categoryId = category.categoryId,
-                    isPrimary = Provided(true),
+                    isPrimary = Provided(IsPrimary(true)),
                     sortOrder = Provided(1.toShort())
                 ),
                 c
@@ -350,14 +351,14 @@ class CompositeIdTest {
                 ProductCategoriesRowUnsaved(
                     productId = product2.productId,
                     categoryId = category.categoryId,
-                    isPrimary = Provided(false),
+                    isPrimary = Provided(IsPrimary(false)),
                     sortOrder = Provided(2.toShort())
                 ),
                 c
             )
 
             val primaries = productCategoriesRepo.select()
-                .where { f -> f.isPrimary().isEqual(true) }
+                .where { f -> f.isPrimary().isEqual(IsPrimary(true)) }
                 .toList(c)
             assertEquals(1, primaries.size)
             assertEquals(product1.productId, primaries[0].productId)
@@ -374,12 +375,12 @@ class CompositeIdTest {
             assertEquals(100.toShort(), updated!!.sortOrder)
 
             productCategoriesRepo.delete()
-                .where { f -> f.isPrimary().isEqual(false) }
+                .where { f -> f.isPrimary().isEqual(IsPrimary(false)) }
                 .execute(c)
 
             val remaining = productCategoriesRepo.selectAll(c)
             assertEquals(1, remaining.size)
-            assertTrue(remaining[0].isPrimary)
+            assertTrue(remaining[0].isPrimary.value)
         }
     }
 }

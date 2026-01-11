@@ -43,5 +43,5 @@ case class ShiftRowUnsaved(
 }
 
 object ShiftRowUnsaved {
-  given pgText: PgText[ShiftRowUnsaved] = PgText.instance((row, sb) => { Name.dbType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.time.text.unsafeEncode(row.starttime, sb); sb.append(PgText.DELIMETER); PgTypes.time.text.unsafeEncode(row.endtime, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ShiftId.dbType.text).unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[ShiftRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.time.text.unsafeEncode(row.starttime, sb); sb.append(PgText.DELIMETER); PgTypes.time.text.unsafeEncode(row.endtime, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ShiftId.pgType.text).unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
 }

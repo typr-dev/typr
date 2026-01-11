@@ -10,7 +10,7 @@ import adventureworks.production.productmodel.*
 import adventureworks.production.productsubcategory.*
 import adventureworks.production.unitmeasure.*
 import adventureworks.public.{Name, NameStyle}
-import adventureworks.userdefined.FirstName
+import adventureworks.userdefined.{FirstName, LastName}
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -174,9 +174,9 @@ class CompositeIdsTest extends SnapshotTest {
       "SC",
       NameStyle(true),
       Optional.empty(),
-      FirstName(s"first name $i"),
+      FirstName(Name(s"first name $i")),
       Optional.empty(),
-      Name(s"last name $i"),
+      LastName(Name(s"last name $i")),
       Optional.empty(),
       Integer.valueOf(1),
       Optional.empty(),

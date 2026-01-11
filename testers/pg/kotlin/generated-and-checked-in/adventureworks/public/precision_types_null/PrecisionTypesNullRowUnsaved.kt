@@ -57,19 +57,19 @@ data class PrecisionTypesNullRowUnsaved(
 
   companion object {
     val pgText: PgText<PrecisionTypesNullRowUnsaved> =
-      PgText.instance({ row, sb -> String10.dbType.nullable().text().unsafeEncode(row.string10, sb)
+      PgText.instance({ row, sb -> String10.pgType.nullable().text().unsafeEncode(row.string10, sb)
       sb.append(PgText.DELIMETER)
-      String20.dbType.nullable().text().unsafeEncode(row.string20, sb)
+      String20.pgType.nullable().text().unsafeEncode(row.string20, sb)
       sb.append(PgText.DELIMETER)
-      String50.dbType.nullable().text().unsafeEncode(row.string50, sb)
+      String50.pgType.nullable().text().unsafeEncode(row.string50, sb)
       sb.append(PgText.DELIMETER)
-      String100.dbType.nullable().text().unsafeEncode(row.string100, sb)
+      String100.pgType.nullable().text().unsafeEncode(row.string100, sb)
       sb.append(PgText.DELIMETER)
-      String255.dbType.nullable().text().unsafeEncode(row.string255, sb)
+      String255.pgType.nullable().text().unsafeEncode(row.string255, sb)
       sb.append(PgText.DELIMETER)
-      PaddedString3.dbType.nullable().text().unsafeEncode(row.bpchar3, sb)
+      PaddedString3.pgType.nullable().text().unsafeEncode(row.bpchar3, sb)
       sb.append(PgText.DELIMETER)
-      PaddedString10.dbType.nullable().text().unsafeEncode(row.bpchar10, sb)
+      PaddedString10.pgType.nullable().text().unsafeEncode(row.bpchar10, sb)
       sb.append(PgText.DELIMETER)
       PgTypes.numeric.nullable().text().unsafeEncode(row.decimal52, sb)
       sb.append(PgText.DELIMETER)
@@ -105,6 +105,6 @@ data class PrecisionTypesNullRowUnsaved(
       sb.append(PgText.DELIMETER)
       PgTypes.timetz.nullable().text().unsafeEncode(row.timetz6, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PrecisionTypesNullId.dbType.text()).unsafeEncode(row.id, sb) })
+      Defaulted.pgText(PrecisionTypesNullId.pgType.text()).unsafeEncode(row.id, sb) })
   }
 }

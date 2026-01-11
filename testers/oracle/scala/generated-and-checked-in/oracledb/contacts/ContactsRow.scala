@@ -11,9 +11,9 @@ import dev.typr.foundations.RowParser
 import dev.typr.foundations.RowParsers
 import dev.typr.foundations.Tuple.Tuple4
 import java.util.Optional
-import oracledb.EmailTableT
 import oracledb.TagVarrayT
 import oracledb.customtypes.Defaulted
+import oracledb.userdefined.Email
 
 /** Table: CONTACTS
  * Primary key: CONTACT_ID
@@ -22,9 +22,9 @@ case class ContactsRow(
   /** Default: "TYPR"."ISEQ$$_72857".nextval */
   @JsonProperty("CONTACT_ID") contactId: ContactsId,
   @JsonProperty("NAME") name: String,
-  @JsonProperty("EMAILS") emails: Optional[EmailTableT],
+  @JsonProperty("EMAILS") emails: Optional[/* user-picked */ Email],
   @JsonProperty("TAGS") tags: Optional[TagVarrayT]
-) extends Tuple4[ContactsId, String, Optional[EmailTableT], Optional[TagVarrayT]] {
+) extends Tuple4[ContactsId, String, Optional[/* user-picked */ Email], Optional[TagVarrayT]] {
   def id: ContactsId = contactId
 
   def toUnsavedRow(contactId: Defaulted[ContactsId]): ContactsRowUnsaved = {
@@ -40,11 +40,11 @@ case class ContactsRow(
 
   override def `_2`: String = name
 
-  override def `_3`: Optional[EmailTableT] = emails
+  override def `_3`: Optional[/* user-picked */ Email] = emails
 
   override def `_4`: Optional[TagVarrayT] = tags
 }
 
 object ContactsRow {
-  val `_rowParser`: RowParser[ContactsRow] = RowParsers.of(ContactsId.oracleType, OracleTypes.varchar2, EmailTableT.oracleType.opt(), TagVarrayT.oracleType.opt(), ContactsRow.apply, row => Array[Any](row.contactId, row.name, row.emails, row.tags))
+  val `_rowParser`: RowParser[ContactsRow] = RowParsers.of(ContactsId.oracleType, OracleTypes.varchar2, Email.oracleType.opt(), TagVarrayT.oracleType.opt(), ContactsRow.apply, row => Array[Any](row.contactId, row.name, row.emails, row.tags))
 }

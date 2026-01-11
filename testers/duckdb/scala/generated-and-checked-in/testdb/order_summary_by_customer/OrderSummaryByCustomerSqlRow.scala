@@ -15,6 +15,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 import java.time.LocalDate
 import testdb.Priority
 import testdb.customers.CustomersId
+import testdb.userdefined.Email
 
 /** SQL file: order_summary_by_customer.sql */
 case class OrderSummaryByCustomerSqlRow(
@@ -23,7 +24,7 @@ case class OrderSummaryByCustomerSqlRow(
   /** Points to [[testdb.customers.CustomersRow.name]] */
   @JsonProperty("customer_name") customerName: String,
   /** Points to [[testdb.customers.CustomersRow.email]] */
-  email: Option[String],
+  email: Option[/* user-picked */ Email],
   /** Points to [[testdb.customers.CustomersRow.priority]] */
   priority: Option[Priority],
   /** Points to [[testdb.orders.OrdersRow.orderId]] */
@@ -36,12 +37,12 @@ case class OrderSummaryByCustomerSqlRow(
   @JsonProperty("first_order_date") firstOrderDate: Option[LocalDate],
   /** Points to [[testdb.orders.OrdersRow.totalAmount]] */
   @JsonProperty("avg_order_amount") avgOrderAmount: Option[Double]
-) extends Tuple9[CustomersId, String, Option[String], Option[Priority], Option[Long], Option[BigDecimal], Option[LocalDate], Option[LocalDate], Option[Double]] {
+) extends Tuple9[CustomersId, String, Option[/* user-picked */ Email], Option[Priority], Option[Long], Option[BigDecimal], Option[LocalDate], Option[LocalDate], Option[Double]] {
   override def `_1`: CustomersId = customerId
 
   override def `_2`: String = customerName
 
-  override def `_3`: Option[String] = email
+  override def `_3`: Option[/* user-picked */ Email] = email
 
   override def `_4`: Option[Priority] = priority
 
@@ -57,5 +58,5 @@ case class OrderSummaryByCustomerSqlRow(
 }
 
 object OrderSummaryByCustomerSqlRow {
-  val `_rowParser`: RowParser[OrderSummaryByCustomerSqlRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar.nullable, Priority.duckDbType.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.double_.nullable)(OrderSummaryByCustomerSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount))
+  val `_rowParser`: RowParser[OrderSummaryByCustomerSqlRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable, Priority.duckDbType.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.double_.nullable)(OrderSummaryByCustomerSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount))
 }

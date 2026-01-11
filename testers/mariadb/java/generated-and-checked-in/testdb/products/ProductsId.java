@@ -27,6 +27,6 @@ public record ProductsId(@JsonValue Uint8 value) {
   public static Bijection<ProductsId, Uint8> bijection =
       Bijection.of(ProductsId::value, ProductsId::new);
 
-  public static MariaType<ProductsId> dbType =
+  public static MariaType<ProductsId> mariaType =
       MariaTypes.bigintUnsigned.bimap(ProductsId::new, ProductsId::value);
 }

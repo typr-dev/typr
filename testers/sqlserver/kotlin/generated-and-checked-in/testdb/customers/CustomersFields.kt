@@ -18,13 +18,14 @@ import dev.typr.foundations.kotlin.SqlExpr.OptField
 import dev.typr.foundations.kotlin.TupleExpr4
 import java.time.LocalDateTime
 import kotlin.collections.List
+import testdb.userdefined.Email
 
-data class CustomersFields(val _path: List<Path>) : TupleExpr4<CustomersId, String, String, LocalDateTime>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
+data class CustomersFields(val _path: List<Path>) : TupleExpr4<CustomersId, String, /* user-picked */ Email, LocalDateTime>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   override fun _1(): SqlExpr<CustomersId> = customerId()
 
   override fun _2(): SqlExpr<String> = name()
 
-  override fun _3(): SqlExpr<String> = email()
+  override fun _3(): SqlExpr</* user-picked */ Email> = email()
 
   override fun _4(): SqlExpr<LocalDateTime> = createdAt()
 
@@ -36,7 +37,7 @@ data class CustomersFields(val _path: List<Path>) : TupleExpr4<CustomersId, Stri
 
   fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "customer_id", CustomersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.sqlServerType)
 
-  fun email(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "email", CustomersRow::email, null, null, { row, value -> row.copy(email = value) }, SqlServerTypes.nvarchar)
+  fun email(): Field</* user-picked */ Email, CustomersRow> = Field</* user-picked */ Email, CustomersRow>(_path, "email", CustomersRow::email, null, null, { row, value -> row.copy(email = value) }, Email.sqlServerType)
 
   fun name(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "name", CustomersRow::name, null, null, { row, value -> row.copy(name = value) }, SqlServerTypes.nvarchar)
 

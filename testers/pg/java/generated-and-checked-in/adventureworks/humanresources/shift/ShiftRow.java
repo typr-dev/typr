@@ -64,8 +64,8 @@ public record ShiftRow(
 
   public static RowParser<ShiftRow> _rowParser =
       RowParsers.of(
-          ShiftId.dbType,
-          Name.dbType,
+          ShiftId.pgType,
+          Name.pgType,
           PgTypes.time,
           PgTypes.time,
           PgTypes.timestamp,

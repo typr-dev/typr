@@ -57,6 +57,7 @@ import oracledb.precision_types_null.PrecisionTypesNullRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
+import oracledb.userdefined.Email
 import scala.util.Random
 
 /** Methods to generate random data for `Ident(TestInsert)` */
@@ -97,7 +98,7 @@ case class TestInsert(random: Random) {
 
   def Contacts(
     name: String = random.alphanumeric.take(20).mkString,
-    emails: Option[EmailTableT] = None,
+    emails: Option[/* user-picked */ Email] = None,
     tags: Option[TagVarrayT] = None,
     contactId: Defaulted[ContactsId] = new UseDefault()
   )(using c: Connection): ContactsId = {

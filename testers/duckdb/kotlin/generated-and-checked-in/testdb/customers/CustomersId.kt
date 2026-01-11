@@ -22,10 +22,10 @@ data class CustomersId(@field:JsonValue val value: Int) {
     val bijection: Bijection<CustomersId, Int> =
       Bijection.of(CustomersId::value, ::CustomersId)
 
-    val dbTypeArray: DuckDbType<Array<CustomersId>> =
-      DuckDbTypes.integerArray.bimap({ xs -> arrayMap.map(xs, ::CustomersId, CustomersId::class.java) }, { xs -> arrayMap.map(xs, CustomersId::value, Int::class.javaObjectType) })
-
     val duckDbType: DuckDbType<CustomersId> =
       KotlinDbTypes.DuckDbTypes.integer.bimap(::CustomersId, CustomersId::value)
+
+    val duckDbTypeArray: DuckDbType<Array<CustomersId>> =
+      DuckDbTypes.integerArray.bimap({ xs -> arrayMap.map(xs, ::CustomersId, CustomersId::class.java) }, { xs -> arrayMap.map(xs, CustomersId::value, Int::class.javaObjectType) })
   }
 }

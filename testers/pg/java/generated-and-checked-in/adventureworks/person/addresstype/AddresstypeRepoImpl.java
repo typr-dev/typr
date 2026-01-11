@@ -34,7 +34,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
   public Boolean deleteById(AddresstypeId addresstypeid, Connection c) {
     return interpolate(
                 Fragment.lit("delete from \"person\".\"addresstype\" where \"addresstypeid\" = "),
-                Fragment.encode(AddresstypeId.dbType, addresstypeid),
+                Fragment.encode(AddresstypeId.pgType, addresstypeid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -45,7 +45,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
   public Integer deleteByIds(AddresstypeId[] addresstypeids, Connection c) {
     return interpolate(
             Fragment.lit("delete\nfrom \"person\".\"addresstype\"\nwhere \"addresstypeid\" = ANY("),
-            Fragment.encode(AddresstypeId.dbTypeArray, addresstypeids),
+            Fragment.encode(AddresstypeId.pgTypeArray, addresstypeids),
             Fragment.lit(")"))
         .update()
         .runUnchecked(c);
@@ -58,9 +58,9 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
                 "insert into \"person\".\"addresstype\"(\"addresstypeid\", \"name\", \"rowguid\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid()),
+            Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),
@@ -80,7 +80,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
     ;
     columns.add(Fragment.lit("\"name\""));
     values.add(
-        interpolate(Fragment.encode(Name.dbType, unsaved.name()), Fragment.lit("::varchar")));
+        interpolate(Fragment.encode(Name.pgType, unsaved.name()), Fragment.lit("::varchar")));
     unsaved
         .addresstypeid()
         .visit(
@@ -89,7 +89,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
               columns.add(Fragment.lit("\"addresstypeid\""));
               values.add(
                   interpolate(
-                      Fragment.encode(AddresstypeId.dbType, value), Fragment.lit("::int4")));
+                      Fragment.encode(AddresstypeId.pgType, value), Fragment.lit("::int4")));
             });
     ;
     unsaved
@@ -174,7 +174,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
                 "select \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"
                     + "from \"person\".\"addresstype\"\n"
                     + "where \"addresstypeid\" = "),
-            Fragment.encode(AddresstypeId.dbType, addresstypeid),
+            Fragment.encode(AddresstypeId.pgType, addresstypeid),
             Fragment.lit(""))
         .query(AddresstypeRow._rowParser.first())
         .runUnchecked(c);
@@ -187,7 +187,7 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
                 "select \"addresstypeid\", \"name\", \"rowguid\", \"modifieddate\"\n"
                     + "from \"person\".\"addresstype\"\n"
                     + "where \"addresstypeid\" = ANY("),
-            Fragment.encode(AddresstypeId.dbTypeArray, addresstypeids),
+            Fragment.encode(AddresstypeId.pgTypeArray, addresstypeids),
             Fragment.lit(")"))
         .query(AddresstypeRow._rowParser.all())
         .runUnchecked(c);
@@ -216,13 +216,13 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
     ;
     return interpolate(
                 Fragment.lit("update \"person\".\"addresstype\"\nset \"name\" = "),
-                Fragment.encode(Name.dbType, row.name()),
+                Fragment.encode(Name.pgType, row.name()),
                 Fragment.lit("::varchar,\n\"rowguid\" = "),
                 Fragment.encode(PgTypes.uuid, row.rowguid()),
                 Fragment.lit("::uuid,\n\"modifieddate\" = "),
                 Fragment.encode(PgTypes.timestamp, row.modifieddate()),
                 Fragment.lit("::timestamp\nwhere \"addresstypeid\" = "),
-                Fragment.encode(AddresstypeId.dbType, addresstypeid),
+                Fragment.encode(AddresstypeId.pgType, addresstypeid),
                 Fragment.lit(""))
             .update()
             .runUnchecked(c)
@@ -236,9 +236,9 @@ public class AddresstypeRepoImpl implements AddresstypeRepo {
                 "insert into \"person\".\"addresstype\"(\"addresstypeid\", \"name\", \"rowguid\","
                     + " \"modifieddate\")\n"
                     + "values ("),
-            Fragment.encode(AddresstypeId.dbType, unsaved.addresstypeid()),
+            Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid()),
             Fragment.lit("::int4, "),
-            Fragment.encode(Name.dbType, unsaved.name()),
+            Fragment.encode(Name.pgType, unsaved.name()),
             Fragment.lit("::varchar, "),
             Fragment.encode(PgTypes.uuid, unsaved.rowguid()),
             Fragment.lit("::uuid, "),

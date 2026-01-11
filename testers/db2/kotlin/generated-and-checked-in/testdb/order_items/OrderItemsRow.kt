@@ -40,7 +40,7 @@ data class OrderItemsRow(
   fun id(): OrderItemsId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<OrderItemsRow> = RowParsers.of(OrdersId.dbType, KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.integer, KotlinDbTypes.Db2Types.decimal, { t0, t1, t2, t3, t4 -> OrderItemsRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.itemNumber, row.productName, row.quantity, row.unitPrice) })
+    val _rowParser: RowParser<OrderItemsRow> = RowParsers.of(OrdersId.db2Type, KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.integer, KotlinDbTypes.Db2Types.decimal, { t0, t1, t2, t3, t4 -> OrderItemsRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.itemNumber, row.productName, row.quantity, row.unitPrice) })
 
     fun apply(
       compositeId: OrderItemsId,

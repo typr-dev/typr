@@ -18,7 +18,7 @@ case class Mydomain(@JsonValue value: String)
 object Mydomain {
   given bijection: Bijection[Mydomain, String] = Bijection.apply[Mydomain, String](_.value)(Mydomain.apply)
 
-  given dbType: PgType[Mydomain] = PgTypes.text.bimap(Mydomain.apply, _.value).renamed(""""public"."mydomain"""")
+  given pgType: PgType[Mydomain] = PgTypes.text.bimap(Mydomain.apply, _.value).renamed(""""public"."mydomain"""")
 
-  given dbTypeArray: PgType[Array[Mydomain]] = PgTypes.textArray.bimap(xs => xs.map(Mydomain.apply), xs => xs.map(_.value)).renamed(""""public"."mydomain"[]""")
+  given pgTypeArray: PgType[Array[Mydomain]] = PgTypes.textArray.bimap(xs => xs.map(Mydomain.apply), xs => xs.map(_.value)).renamed(""""public"."mydomain"[]""")
 }

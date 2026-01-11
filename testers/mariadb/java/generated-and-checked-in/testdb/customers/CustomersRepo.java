@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import testdb.userdefined.Email;
 
 public interface CustomersRepo {
   DeleteBuilder<CustomersFields, CustomersRow> delete();
@@ -35,7 +36,7 @@ public interface CustomersRepo {
 
   Map<CustomersId, CustomersRow> selectByIdsTracked(CustomersId[] customerIds, Connection c);
 
-  Optional<CustomersRow> selectByUniqueEmail(String email, Connection c);
+  Optional<CustomersRow> selectByUniqueEmail(/* user-picked */ Email email, Connection c);
 
   UpdateBuilder<CustomersFields, CustomersRow> update();
 

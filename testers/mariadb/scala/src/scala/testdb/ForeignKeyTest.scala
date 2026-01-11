@@ -6,6 +6,9 @@ import testdb.customer_status.*
 import testdb.customers.*
 import testdb.orders.*
 import testdb.customtypes.Defaulted.UseDefault
+import testdb.userdefined.Email
+import testdb.userdefined.FirstName
+import testdb.userdefined.LastName
 
 import java.util.Random
 
@@ -47,19 +50,19 @@ class ForeignKeyTest extends AnyFunSuite {
 
       // Create a customer with FK to the status - use short constructor
       val customer = CustomersRowUnsaved(
-        "test@example.com",
+        Email("test@example.com"),
         Array[Byte](1, 2, 3, 4),
-        "John",
-        "Doe"
+        FirstName("John"),
+        LastName("Doe")
       )
 
       val insertedCustomer = customersRepo.insert(customer)
 
       val _ = assert(insertedCustomer != null)
       val _ = assert(insertedCustomer.customerId.value.value.compareTo(java.math.BigInteger.ZERO) >= 0)
-      val _ = assert(insertedCustomer.email == "test@example.com")
-      val _ = assert(insertedCustomer.firstName == "John")
-      assert(insertedCustomer.lastName == "Doe")
+      val _ = assert(insertedCustomer.email == Email("test@example.com"))
+      val _ = assert(insertedCustomer.firstName == FirstName("John"))
+      assert(insertedCustomer.lastName == LastName("Doe"))
     }
   }
 

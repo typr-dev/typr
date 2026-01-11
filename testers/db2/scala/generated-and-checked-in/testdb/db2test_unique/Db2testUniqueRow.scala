@@ -33,5 +33,5 @@ case class Db2testUniqueRow(
 }
 
 object Db2testUniqueRow {
-  val `_rowParser`: RowParser[Db2testUniqueRow] = RowParsers.of(Db2testUniqueId.dbType, Db2Types.varchar, Db2Types.varchar, Db2Types.varchar)(Db2testUniqueRow.apply)(row => Array[Any](row.id, row.email, row.code, row.category))
+  val `_rowParser`: RowParser[Db2testUniqueRow] = RowParsers.of(Db2testUniqueId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.varchar)(Db2testUniqueRow.apply)(row => Array[Any](row.id, row.email, row.code, row.category))
 }
