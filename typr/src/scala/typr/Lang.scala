@@ -309,4 +309,18 @@ trait MapSupport {
 
   /** Get all values as a List */
   def valuesToList(map: jvm.Code): jvm.Code
+
+  /** Create an immutable map from a list of key-value pairs.
+    *   - Java: Map.ofEntries(Map.entry(k1, v1), ...)
+    *   - Scala: Map(k1 -> v1, ...)
+    *   - Kotlin: mapOf(k1 to v1, ...)
+    */
+  def createWithEntries(entries: List[(jvm.Code, jvm.Code)]): jvm.Code
+
+  /** Get value by key directly (nullable), without Optional wrapper.
+    *   - Java: map.get(key)
+    *   - Scala: map.get(key).orNull
+    *   - Kotlin: map[key]
+    */
+  def getNullable(map: jvm.Code, key: jvm.Code): jvm.Code
 }

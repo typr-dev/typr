@@ -1,0 +1,7 @@
+{
+  "type": "enum",
+  "name": "OrderStatus",
+  "namespace": "com.example.events",
+  "doc": "Status of an order",
+  "symbols": ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"]
+}

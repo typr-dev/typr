@@ -1,0 +1,28 @@
+{
+  "type": "record",
+  "name": "Address",
+  "namespace": "com.example.events",
+  "doc": "A physical address",
+  "fields": [
+    {
+      "name": "street",
+      "type": "string",
+      "doc": "Street address"
+    },
+    {
+      "name": "city",
+      "type": "string",
+      "doc": "City name"
+    },
+    {
+      "name": "postalCode",
+      "type": "string",
+      "doc": "Postal/ZIP code"
+    },
+    {
+      "name": "country",
+      "type": "string",
+      "doc": "Country code (ISO 3166-1 alpha-2)"
+    }
+  ]
+}

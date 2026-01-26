@@ -1,6 +1,7 @@
 package scripts
 
 import typr.openapi.{OpenApiClientLib, OpenApiCodegen, OpenApiEffectType, OpenApiOptions, OpenApiServerLib}
+import typr.openapi.codegen.{CirceSupport, JacksonSupport, JsonLibSupport}
 import typr.internal.FileSync
 import typr.jvm
 import typr.internal.codegen.{LangJava, LangKotlin, LangScala, TypeSupportKotlin, addPackageAndImports}
@@ -58,7 +59,7 @@ object GenerateOpenApiTest {
       clientLib = Some(OpenApiClientLib.Http4s),
       lang = langScala,
       generateValidation = false,
-      jsonLib = typr.openapi.OpenApiJsonLib.Circe
+      jsonLib = CirceSupport
     )
 
     // Scala with Spring server + JDK HTTP Client (blocking, uses Jackson for JSON)
@@ -70,7 +71,7 @@ object GenerateOpenApiTest {
       clientLib = Some(OpenApiClientLib.JdkHttpClient(OpenApiEffectType.Blocking)),
       lang = langScalaWithJavaTypes,
       generateValidation = true,
-      jsonLib = typr.openapi.OpenApiJsonLib.Jackson
+      jsonLib = JacksonSupport
     )
 
     // Kotlin with JAX-RS server + JDK HTTP Client (blocking)
@@ -148,7 +149,7 @@ object GenerateOpenApiTest {
       clientLib: Option[OpenApiClientLib],
       lang: Lang,
       generateValidation: Boolean,
-      jsonLib: typr.openapi.OpenApiJsonLib = typr.openapi.OpenApiJsonLib.Jackson
+      jsonLib: JsonLibSupport = JacksonSupport
   ): Unit = {
     val outputDirName = buildOutputDirName(language, serverLib, clientLib)
     val projectDir = buildDir.resolve(outputDirName)

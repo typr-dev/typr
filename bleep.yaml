@@ -1,5 +1,7 @@
 $schema: https://raw.githubusercontent.com/oyvindberg/bleep/master/schema.json
 $version: 0.0.14
+resolvers:
+- https://packages.confluent.io/maven/
 jvm:
   name: graalvm-community:25.0.0
 projects:
@@ -477,6 +479,184 @@ projects:
     sources:
     - ./generated-and-checked-in
     - ./src/scala
+  testers/avro/java:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.novocode:junit-interface:0.11
+    - io.confluent:kafka-avro-serializer:7.8.0
+    - junit:junit:4.13.2
+    - org.apache.avro:avro:1.12.0
+    - org.apache.kafka:kafka-clients:3.9.0
+    dependsOn: foundations-jdbc
+    folder: ./testers/avro/java
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src/java
+  testers/avro/scala:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.novocode:junit-interface:0.11
+    - io.confluent:kafka-avro-serializer:7.8.0
+    - junit:junit:4.13.2
+    - org.apache.avro:avro:1.12.0
+    - org.apache.kafka:kafka-clients:3.9.0
+    dependsOn: foundations-jdbc
+    extends: template-scala-3
+    isTestProject: true
+    sources:
+    - ./generated-and-checked-in
+    - ./src/scala
+  testers/avro/java-async:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.novocode:junit-interface:0.11
+    - io.confluent:kafka-avro-serializer:7.8.0
+    - junit:junit:4.13.2
+    - org.apache.avro:avro:1.12.0
+    - org.apache.kafka:kafka-clients:3.9.0
+    dependsOn: foundations-jdbc
+    folder: ./testers/avro/java-async
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src/java
+  testers/avro/java-vanilla:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.novocode:junit-interface:0.11
+    - junit:junit:4.13.2
+    - org.apache.avro:avro:1.12.0
+    - org.apache.kafka:kafka-clients:3.9.0
+    dependsOn: foundations-jdbc
+    folder: ./testers/avro/java-vanilla
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src/java
+  testers/avro/scala-cats:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.novocode:junit-interface:0.11
+    - io.confluent:kafka-avro-serializer:7.8.0
+    - junit:junit:4.13.2
+    - org.apache.avro:avro:1.12.0
+    - org.apache.kafka:kafka-clients:3.9.0
+    - org.typelevel::cats-effect:3.5.4
+    dependsOn: foundations-jdbc
+    extends: template-scala-3
+    isTestProject: true
+    sources:
+    - ./generated-and-checked-in
+    - ./src/scala
+  testers/avro/java-json:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.novocode:junit-interface:0.11
+    - junit:junit:4.13.2
+    dependsOn: foundations-jdbc
+    folder: ./testers/avro/java-json
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+  testers/avro/scala-json:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.fasterxml.jackson.module::jackson-module-scala:2.17.2
+    - com.novocode:junit-interface:0.11
+    - junit:junit:4.13.2
+    dependsOn: foundations-jdbc
+    extends: template-scala-3
+    isTestProject: true
+    sources:
+    - ./generated-and-checked-in
+    - ./src/scala
+  testers/avro/java-spring:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.novocode:junit-interface:0.11
+    - junit:junit:4.13.2
+    - org.apache.kafka:kafka-clients:3.9.0
+    - org.mockito:mockito-core:5.14.2
+    - org.springframework.kafka:spring-kafka:3.3.1
+    - org.springframework:spring-context:6.2.1
+    dependsOn: foundations-jdbc
+    folder: ./testers/avro/java-spring
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src
+  testers/avro/java-quarkus:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.novocode:junit-interface:0.11
+    - io.quarkus:quarkus-arc:3.17.2
+    - io.quarkus:quarkus-junit5:3.17.2
+    - io.smallrye.reactive:mutiny:2.7.0
+    - io.smallrye.reactive:smallrye-mutiny-vertx-kafka-client:3.18.0
+    - io.smallrye.reactive:smallrye-reactive-messaging-api:4.26.0
+    - io.smallrye.reactive:smallrye-reactive-messaging-kafka:4.26.0
+    - jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0
+    - junit:junit:4.13.2
+    - org.apache.kafka:kafka-clients:3.9.0
+    - org.eclipse.microprofile.reactive.messaging:microprofile-reactive-messaging-api:3.0
+    dependsOn: foundations-jdbc
+    folder: ./testers/avro/java-quarkus
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src
   tests:
     dependencies: org.scalatest::scalatest:3.2.18
     dependsOn: typr
@@ -487,6 +667,7 @@ projects:
     - com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11
     - com.oracle.database.jdbc:ojdbc11:23.6.0.24.10
     - com.typesafe.play::play-json:2.10.6
+    - org.apache.avro:avro:1.12.0
     - for3Use213: true
       module: io.get-coursier::coursier:2.1.24
     - io.swagger.parser.v3:swagger-parser:2.1.24
@@ -553,6 +734,9 @@ scripts:
     sourceGlobs: ../adventureworks_sql
   generate-all:
     main: scripts.GenerateAll
+    project: typr-scripts
+  generate-avro-test:
+    main: scripts.GenerateAvroTest
     project: typr-scripts
   generate-db2:
     main: scripts.GeneratedDb2
