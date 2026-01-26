@@ -529,6 +529,7 @@ docker-compose logs -f oracle
  CODE IN BOTH ENDS HERE
 - YOU ARE NOT UNDER ANY CIRCUMSTANCE ALLOWED TO CAST TO CHEAT THE TYPE SYSTEM. IF YOU COME ACROSS A SITUATION WHERE YOU HAVE NO OTHER CHOICE, STOP AND ASK USER
 - NEVER EVER PERFORM DESTRUCTIVE GIT ACTIONS IN GIT WHERE CHANGES ARE IRREVOCABLY LOST. GIT CHECKOUT FILE? STASH CHANGES INSTEAD. GIT RESET HARD? A STASH INSTEAD
+- **NEVER PUSH TO MAIN. EVER.** Before ANY git push, ALWAYS run `git branch --show-current` and VERIFY you are NOT on main. If you need to create a PR, create a feature branch FIRST. If the user asks you to push or create a PR, ALWAYS push to a feature branch, NEVER to main. This applies even if you think the user wants you to push to main - ASK FIRST.
 - WHEN YOU CHANGE CODE, NEVER LEAVE DANGLING COMMENTS DESCRIBING HOW IT WAS BEFORE OR WHY YOU MADE A CHANGE. WE HAVE GIT FOR THAT
 - when restarting a database container always restart only the one you want to restart. it takes ages to start all
 - UNDER NO CIRCUMSTANCE, EVER. FUCKING EVER. WILL CLAUDE GIVE UP AND REVERT ALL THE FILES
