@@ -2027,4 +2027,4 @@ libraryDependencies ++= Seq(
 - [Apache Avro Specification](https://avro.apache.org/docs/current/spec.html)
 - [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
 - [Confluent Schema Registry](https://docs.confluent.io/platform/current/schema-registry/)
-- [Typr Database Code Generation](../readme.md)
+- [Typr Database Code Generation](/db/)
