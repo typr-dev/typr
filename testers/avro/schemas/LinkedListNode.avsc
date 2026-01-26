@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "LinkedListNode",
+  "namespace": "com.example.events",
+  "doc": "A recursive linked list for testing recursive type support",
+  "fields": [
+    {
+      "name": "value",
+      "type": "int",
+      "doc": "The value stored in this node"
+    },
+    {
+      "name": "next",
+      "type": ["null", "LinkedListNode"],
+      "default": null,
+      "doc": "Optional next node in the list"
+    }
+  ]
+}

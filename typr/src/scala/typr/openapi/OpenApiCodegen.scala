@@ -1,6 +1,7 @@
 package typr.openapi
 
 import typr.{jvm, Lang, TypeSupportJava, TypeSupportScala}
+import typr.effects.EffectTypeOps
 import typr.internal.codegen.LangScala
 import typr.openapi.codegen.{
   ApiCodegen,
@@ -86,12 +87,7 @@ object OpenApiCodegen {
 
     val isScala = lang.isInstanceOf[LangScala]
 
-    val jsonLib: JsonLibSupport = (isScala, options.jsonLib) match {
-      case (_, OpenApiJsonLib.Jackson) => JacksonSupport
-      case (_, OpenApiJsonLib.Circe)   => CirceSupport
-      case (true, _)                   => CirceSupport // Default to Circe for Scala
-      case (false, _)                  => JacksonSupport // Default to Jackson for Java/Kotlin
-    }
+    val jsonLib: JsonLibSupport = options.jsonLib
 
     // Determine server framework support based on serverLib
     val serverFrameworkSupport: Option[FrameworkSupport] = options.serverLib.map {

@@ -4,7 +4,7 @@
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Typo",
-  tagline: "Type-safe code generation for Postgres and OpenAPI",
+  tagline: "Type-safe code generation for Databases, OpenAPI, and Kafka/Avro",
   url: "https://typo.oyvindberg.dev",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -70,6 +70,15 @@ const config = {
         sidebarPath: require.resolve('./sidebars-jdbc.js'),
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'avro',
+        path: 'docs-avro',
+        routeBasePath: 'avro',
+        sidebarPath: require.resolve('./sidebars-avro.js'),
+      },
+    ],
   ],
 
   clientModules: [
@@ -104,6 +113,12 @@ const config = {
             position: 'left',
             activeBaseRegex: '/jdbc/',
           },
+          {
+            to: '/avro/',
+            label: 'Kafka/Avro',
+            position: 'left',
+            activeBaseRegex: '/avro/',
+          },
           {to: 'blog', label: 'Blog', position: 'left'},
           {
             href: "https://github.com/oyvindberg/typr",
@@ -129,6 +144,10 @@ const config = {
               {
                 label: "Foundations JDBC",
                 to: "/jdbc/",
+              },
+              {
+                label: "Kafka/Avro",
+                to: "/avro/",
               },
             ],
           },

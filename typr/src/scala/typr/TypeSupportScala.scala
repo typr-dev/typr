@@ -150,6 +150,18 @@ object TypeSupportScala extends TypeSupport {
 
     def valuesToList(map: jvm.Code): jvm.Code =
       code"$map.values.toList"
+
+    def createWithEntries(entries: List[(jvm.Code, jvm.Code)]): jvm.Code = {
+      if (entries.isEmpty) {
+        code"${TypesScala.Map}.empty"
+      } else {
+        val mapEntries = entries.map { case (k, v) => code"$k -> $v" }
+        code"${TypesScala.Map}(${mapEntries.mkCode(", ")})"
+      }
+    }
+
+    def getNullable(map: jvm.Code, key: jvm.Code): jvm.Code =
+      code"$map.get($key).orNull"
   }
 
   override object IteratorOps extends IteratorSupport {
