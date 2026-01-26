@@ -94,12 +94,6 @@ case object LangJava extends Lang {
         code"""|while ($cond) {
                |  $bodyWithSemicolons
                |}""".stripMargin
-      case jvm.ForEach(elem, elemType, iterable, body) =>
-        val bodyWithSemicolons = body.map(stmt => stmt ++ code";").mkCode("\n")
-        code"""|for ($elemType $elem : $iterable) {
-               |  $bodyWithSemicolons
-               |}""".stripMargin
-      case jvm.Assign(target, value)     => code"$target = $value"
       case jvm.IgnoreResult(expr)        => expr // Java: expression value is discarded automatically
       case jvm.NotNull(expr)             => expr // Java doesn't need not-null assertions
       case jvm.ConstructorMethodRef(tpe) => code"$tpe::new"
@@ -289,7 +283,7 @@ case object LangJava extends Lang {
 
         body match {
           case jvm.Body.Abstract =>
-            signature ++ code";"
+            signature
           case jvm.Body.Expr(expr) =>
             // TryCatch has internal returns, so don't add outer return
             val bodyCode =
@@ -455,7 +449,7 @@ case object LangJava extends Lang {
             case nonEmpty => Some(code" implements ${nonEmpty.map(x => code"$x").mkCode(", ")}")
           },
           Some(code"""| {
-                      |  ${(compactConstructor.toList ++ shortConstructor.toList ++ withers ++ toStringMethod.toList ++ body).mkCode("\n\n")}
+                      |  ${(compactConstructor.toList ++ shortConstructor.toList ++ withers ++ toStringMethod.toList ++ body).map(_ ++ code";").mkCode("\n\n")}
                       |}""".stripMargin)
         ).flatten.mkCode("")
       case sum: jvm.Adt.Sum =>
@@ -504,7 +498,7 @@ case object LangJava extends Lang {
             case nonEmpty => Some(nonEmpty.map(x => code" extends $x").mkCode(" "))
           },
           Some(code"""| {
-                      |  ${body.mkCode("\n\n")}
+                      |  ${body.map(_ ++ code";").mkCode("\n\n")}
                       |}""".stripMargin)
         ).flatten.mkCode("")
       case cls: jvm.Class =>
@@ -589,7 +583,7 @@ case object LangJava extends Lang {
         else {
           val memberCtx = Ctx.Empty // Inside anonymous class, public is required
           code"""|new $tpe() {
-                 |  ${members.map(m => renderTree(m, memberCtx)).mkCode("\n")}
+                 |  ${members.map(m => renderTree(m, memberCtx) ++ code";").mkCode("\n")}
                  |}""".stripMargin
         }
 
@@ -606,7 +600,7 @@ case object LangJava extends Lang {
                  |  $superCall
                  |}""".stripMargin
         }
-        val membersCode = cls.members.map(m => renderTree(m, memberCtx)).mkCode("\n\n")
+        val membersCode = cls.members.map(m => renderTree(m, memberCtx) ++ code";").mkCode("\n\n")
         code"""|${finalMod}class ${cls.name}$extendsClause {
                |  $constructor
                |
@@ -624,7 +618,7 @@ case object LangJava extends Lang {
         if (rec.members.isEmpty) {
           code"record ${rec.name}($paramsCode)$implementsClause {}"
         } else {
-          val membersCode = rec.members.map(m => renderTree(m, memberCtx)).mkCode("\n\n")
+          val membersCode = rec.members.map(m => renderTree(m, memberCtx) ++ code";").mkCode("\n\n")
           code"""|record ${rec.name}($paramsCode)$implementsClause {
                  |  $membersCode
                  |}""".stripMargin
@@ -668,7 +662,6 @@ case object LangJava extends Lang {
     case jvm.Code.Tree(jvm.Stmt(inner, needsSemi)) => if (needsSemi) code"$inner;" else inner
     case jvm.Code.Tree(_: jvm.IfElseChain)         => stmt
     case jvm.Code.Tree(_: jvm.TryCatch)            => stmt
-    case jvm.Code.Tree(_: jvm.If)                  => stmt
     case _                                         => code"$stmt;"
   }
 

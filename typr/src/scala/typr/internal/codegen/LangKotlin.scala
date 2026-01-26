@@ -41,9 +41,8 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
     s"Points to [${cls.dotName}.${value.value}]"
 
   // don't generate imports for these
-  // Also include java.lang types that map to Kotlin builtins (e.g., java.lang.Object -> Any)
-  override val BuiltIn: Map[jvm.Ident, jvm.Type.Qualified] = {
-    val kotlinBuiltins = Set(
+  override val BuiltIn: Map[jvm.Ident, jvm.Type.Qualified] =
+    Set(
       TypesKotlin.Any,
       TypesKotlin.Array,
       TypesKotlin.Boolean,
@@ -57,22 +56,9 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
       TypesKotlin.Short,
       TypesKotlin.String,
       TypesKotlin.Unit
-    ).map(x => (x.value.name, x)).toMap
-    // Java types that map to Kotlin builtins (to avoid imports like "import Any")
-    val javaBuiltins = Set(
-      jvm.Type.Qualified("java.lang.Object"),
-      jvm.Type.Qualified("java.lang.String"),
-      jvm.Type.Qualified("java.lang.Boolean"),
-      jvm.Type.Qualified("java.lang.Integer"),
-      jvm.Type.Qualified("java.lang.Long"),
-      jvm.Type.Qualified("java.lang.Short"),
-      jvm.Type.Qualified("java.lang.Byte"),
-      jvm.Type.Qualified("java.lang.Float"),
-      jvm.Type.Qualified("java.lang.Double"),
-      jvm.Type.Qualified("java.lang.Character")
-    ).map(x => (x.value.name, x)).toMap
-    kotlinBuiltins ++ javaBuiltins
-  }
+    )
+      .map(x => (x.value.name, x))
+      .toMap
 
   override def extension: String = "kt"
 
@@ -202,12 +188,6 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
         code"""|while ($cond) {
                |  $bodyCode
                |}""".stripMargin
-      case jvm.ForEach(elem, elemType, iterable, body) =>
-        val bodyCode = body.mkCode("\n")
-        code"""|for ($elem: $elemType in $iterable) {
-               |  $bodyCode
-               |}""".stripMargin
-      case jvm.Assign(target, value)     => code"$target = $value"
       case jvm.IgnoreResult(expr)        => expr
       case jvm.NotNull(expr)             => code"$expr!!"
       case jvm.ConstructorMethodRef(tpe) => code"::$tpe"
@@ -540,11 +520,11 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
 
           // Constructor annotations render as: data class Name @Annotation constructor(params)
           // Private constructor renders as: data class Name private constructor(params)
+          val constructorModifier = if (cls.privateConstructor) " private constructor" else ""
           val constructorAnnotationsCode = if (cls.constructorAnnotations.nonEmpty) {
-            val modifier = if (cls.privateConstructor) " private" else ""
-            Some(code" ${cls.constructorAnnotations.map(renderAnnotation).mkCode(" ")}$modifier constructor")
+            Some(code" ${cls.constructorAnnotations.map(renderAnnotation).mkCode(" ")}$constructorModifier")
           } else if (cls.privateConstructor) {
-            Some(code" private constructor")
+            Some(code"$constructorModifier")
           } else None
 
           // Add @ConsistentCopyVisibility when privateConstructor is true to avoid Kotlin 2.2+ error

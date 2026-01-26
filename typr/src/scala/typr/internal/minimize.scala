@@ -55,14 +55,6 @@ object minimize {
             case jvm.While(cond, body) =>
               go(cond)
               body.foreach(go)
-            case jvm.ForEach(elem, elemType, iterable, body) =>
-              goTree(elem)
-              goTree(elemType)
-              go(iterable)
-              body.foreach(go)
-            case jvm.Assign(target, value) =>
-              goTree(target)
-              go(value)
             case jvm.ConstructorMethodRef(tpe) =>
               goTree(tpe)
             case jvm.ClassOf(tpe) =>

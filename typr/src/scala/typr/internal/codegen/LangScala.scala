@@ -92,13 +92,6 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
         code"""|while ($cond) {
                |  $bodyCode
                |}""".stripMargin
-      case jvm.ForEach(elem, _, iterable, body) =>
-        // Scala: for (elem <- iterable) { body } - type is inferred
-        val bodyCode = body.mkCode("\n")
-        code"""|for ($elem <- $iterable.asScala) {
-               |  $bodyCode
-               |}""".stripMargin
-      case jvm.Assign(target, value)     => code"$target = $value"
       case jvm.IgnoreResult(expr)        => code"$expr: @${TypesScala.nowarn}"
       case jvm.NotNull(expr)             => expr // Scala doesn't need not-null assertions
       case jvm.ConstructorMethodRef(tpe) => code"$tpe.apply"
@@ -295,48 +288,26 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
             jvm.Code.Combined(List(signature, code" = {\n", jvm.Code.Str(indentedBody), code"\n}"))
         }
       case enm: jvm.Enum =>
+        val members = enm.values.map { case (name, expr) => name -> code"case object $name extends ${enm.tpe.name}($expr)" }
         val str = jvm.Ident("str")
         val annotationsCode = renderAnnotations(enm.annotations)
-        dialect match {
-          case Dialect.Scala3 =>
-            // Scala 3 enum syntax - compiles to Java enum, works with Jackson natively
-            val caseNames = enm.values.map { case (name, _) => name.code }.mkCode(", ")
-            code"""|$annotationsCode${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
-                   |enum ${enm.tpe.name} {
-                   |  case $caseNames
-                   |}
-                   |
-                   |object ${enm.tpe.name} {
-                   |  ${enm.staticMembers.map(_.code).mkCode("\n\n")}
-                   |  extension (e: ${enm.tpe}) def value: ${TypesJava.String} = e.toString
-                   |  def apply($str: ${TypesJava.String}): ${TypesScala.Either.of(TypesJava.String, enm.tpe)} =
-                   |    ${TypesScala.Try}(${enm.tpe}.valueOf($str)).toEither.left.map(_ => s"'$$str' does not match any of the following legal values: $$Names")
-                   |  def force($str: ${TypesJava.String}): ${enm.tpe} = ${enm.tpe}.valueOf($str)
-                   |  val All: ${TypesScala.List.of(enm.tpe)} = values.toList
-                   |  val Names: ${TypesJava.String} = All.map(_.toString).mkString(", ")
-                   |  val ByName: ${TypesScala.Map.of(TypesJava.String, enm.tpe)} = All.map(x => (x.toString, x)).toMap
-                   |}""".stripMargin
-          case Dialect.Scala2XSource3 =>
-            // Scala 2 sealed abstract class pattern
-            val members = enm.values.map { case (name, expr) => name -> code"case object $name extends ${enm.tpe.name}($expr)" }
-            code"""|$annotationsCode${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
-                   |sealed abstract class ${enm.tpe.name}(val value: ${TypesJava.String})
-                   |
-                   |object ${enm.tpe.name} {
-                   |  ${enm.staticMembers.map(_.code).mkCode("\n\n")}
-                   |  def apply($str: ${TypesJava.String}): ${TypesScala.Either.of(TypesJava.String, enm.tpe)} =
-                   |    ByName.get($str).toRight(s"'$$str' does not match any of the following legal values: $$Names")
-                   |  def force($str: ${TypesJava.String}): ${enm.tpe} =
-                   |    apply($str) match {
-                   |      case ${TypesScala.Left}(msg) => sys.error(msg)
-                   |      case ${TypesScala.Right}(value) => value
-                   |    }
-                   |  ${members.map { case (_, definition) => definition }.mkCode("\n\n")}
-                   |  val All: ${TypesScala.List.of(enm.tpe)} = ${TypesScala.List}(${members.map { case (ident, _) => ident.code }.mkCode(", ")})
-                   |  val Names: ${TypesJava.String} = All.map(_.value).mkString(", ")
-                   |  val ByName: ${TypesScala.Map.of(TypesJava.String, enm.tpe)} = All.map(x => (x.value, x)).toMap
-                   |}""".stripMargin
-        }
+        code"""|$annotationsCode${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
+               |sealed abstract class ${enm.tpe.name}(val value: ${TypesJava.String})
+               |
+               |object ${enm.tpe.name} {
+               |  ${enm.staticMembers.map(_.code).mkCode("\n\n")}
+               |  def apply($str: ${TypesJava.String}): ${TypesScala.Either.of(TypesJava.String, enm.tpe)} =
+               |    ByName.get($str).toRight(s"'$$str' does not match any of the following legal values: $$Names")
+               |  def force($str: ${TypesJava.String}): ${enm.tpe} =
+               |    apply($str) match {
+               |      case ${TypesScala.Left}(msg) => sys.error(msg)
+               |      case ${TypesScala.Right}(value) => value
+               |    }
+               |  ${members.map { case (_, definition) => definition }.mkCode("\n\n")}
+               |  val All: ${TypesScala.List.of(enm.tpe)} = ${TypesScala.List}(${members.map { case (ident, _) => ident.code }.mkCode(", ")})
+               |  val Names: ${TypesJava.String} = All.map(_.value).mkString(", ")
+               |  val ByName: ${TypesScala.Map.of(TypesJava.String, enm.tpe)} = All.map(x => (x.value, x)).toMap
+               |}""".stripMargin
 
       case enm: jvm.OpenEnum =>
         val members = enm.values.map { case (name, expr) => (name, code"case object $name extends ${enm.tpe.name}($expr)") }

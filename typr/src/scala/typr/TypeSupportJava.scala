@@ -137,18 +137,6 @@ object TypeSupportJava extends TypeSupport {
 
     def valuesToList(map: jvm.Code): jvm.Code =
       jvm.New(jvm.InferredTargs(TypesJava.ArrayList), List(jvm.Arg.Pos(code"$map.values()")))
-
-    def createWithEntries(entries: List[(jvm.Code, jvm.Code)]): jvm.Code = {
-      if (entries.isEmpty) {
-        code"${TypesJava.Map}.of()"
-      } else {
-        val mapEntries = entries.map { case (k, v) => code"${TypesJava.Map}.entry($k, $v)" }
-        code"${TypesJava.Map}.ofEntries(${mapEntries.mkCode(", ")})"
-      }
-    }
-
-    def getNullable(map: jvm.Code, key: jvm.Code): jvm.Code =
-      code"$map.get($key)"
   }
 
   override object IteratorOps extends IteratorSupport {

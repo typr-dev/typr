@@ -533,4 +533,3 @@ docker-compose logs -f oracle
 - WHEN YOU CHANGE CODE, NEVER LEAVE DANGLING COMMENTS DESCRIBING HOW IT WAS BEFORE OR WHY YOU MADE A CHANGE. WE HAVE GIT FOR THAT
 - when restarting a database container always restart only the one you want to restart. it takes ages to start all
 - UNDER NO CIRCUMSTANCE, EVER. FUCKING EVER. WILL CLAUDE GIVE UP AND REVERT ALL THE FILES
-- NEVER HIDE PROBLEMS BY WORKING AROUND THEM. When you discover an issue (e.g., serialization doesn't work, types don't match, framework integration fails), IMMEDIATELY TELL THE USER. Do not quietly work around it with simpler/different code and pretend everything is fine. Tests exist to find these problems - report them, don't hide them.

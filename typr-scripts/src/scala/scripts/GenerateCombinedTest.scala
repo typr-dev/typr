@@ -4,8 +4,7 @@ import ryddig.{Formatter, LogLevel, LogPatterns, Loggers}
 import typr.*
 import typr.internal.FileSync
 import typr.internal.codegen.LangJava
-import typr.openapi.{OpenApiOptions, OpenApiServerLib}
-import typr.openapi.codegen.JacksonSupport
+import typr.openapi.{OpenApiJsonLib, OpenApiOptions, OpenApiServerLib}
 
 import java.nio.file.Path
 
@@ -140,7 +139,7 @@ object GenerateCombinedTest {
           options = OpenApiOptions
             .default(jvm.QIdent("combined.api"))
             .copy(
-              jsonLib = JacksonSupport,
+              jsonLib = OpenApiJsonLib.Jackson,
               serverLib = Some(OpenApiServerLib.QuarkusReactive),
               generateValidation = true,
               useGenericResponseTypes = false

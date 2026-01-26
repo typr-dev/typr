@@ -27,16 +27,8 @@ trait JsonLibSupport {
   /** Annotations for a wrapper type */
   def wrapperAnnotations(tpe: jvm.Type.Qualified): List[jvm.Annotation]
 
-  /** Annotations for a sum type (sealed interface) - OpenAPI specific */
+  /** Annotations for a sum type (sealed interface) */
   def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation]
-
-  /** Annotations for a sealed type with given subtypes (generic, for Avro and other uses)
-    * @param subtypes
-    *   List of (subtype, discriminatorValue) pairs
-    * @param discriminatorProperty
-    *   The JSON property name for the type discriminator (e.g., "@type")
-    */
-  def sealedTypeAnnotations(subtypes: List[(jvm.Type.Qualified, String)], discriminatorProperty: String): List[jvm.Annotation]
 
   /** Static members to add to object type companion objects (e.g., Circe codecs) */
   def objectTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember]
@@ -60,7 +52,6 @@ object NoJsonLibSupport extends JsonLibSupport {
   override def constructorAnnotations: List[jvm.Annotation] = Nil
   override def wrapperAnnotations(tpe: jvm.Type.Qualified): List[jvm.Annotation] = Nil
   override def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation] = Nil
-  override def sealedTypeAnnotations(subtypes: List[(jvm.Type.Qualified, String)], discriminatorProperty: String): List[jvm.Annotation] = Nil
   override def objectTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = Nil
   override def wrapperTypeStaticMembers(tpe: jvm.Type.Qualified, underlyingType: jvm.Type): List[jvm.ClassMember] = Nil
   override def enumTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = Nil
@@ -149,36 +140,6 @@ object JacksonSupport extends JsonLibSupport {
     List(typeInfoAnnotation, subTypesAnnotation)
   }
 
-  override def sealedTypeAnnotations(subtypes: List[(jvm.Type.Qualified, String)], discriminatorProperty: String): List[jvm.Annotation] = {
-    // @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = discriminatorProperty)
-    val typeInfoAnnotation = jvm.Annotation(
-      Types.Jackson.JsonTypeInfo,
-      List(
-        jvm.Annotation.Arg.Named(jvm.Ident("use"), code"${Types.Jackson.JsonTypeInfo}.Id.NAME"),
-        jvm.Annotation.Arg.Named(jvm.Ident("include"), code"${Types.Jackson.JsonTypeInfo}.As.PROPERTY"),
-        jvm.Annotation.Arg.Named(jvm.Ident("property"), jvm.StrLit(discriminatorProperty).code)
-      )
-    )
-
-    // @JsonSubTypes({ @Type(value = X.class, name = "X"), ... })
-    val subTypesArgs = subtypes.map { case (subtypeTpe, discValue) =>
-      jvm.Annotation(
-        Types.Jackson.JsonSubTypesType,
-        List(
-          jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.ClassOf(subtypeTpe).code),
-          jvm.Annotation.Arg.Named(jvm.Ident("name"), jvm.StrLit(discValue).code)
-        )
-      )
-    }
-
-    val subTypesAnnotation = jvm.Annotation(
-      Types.Jackson.JsonSubTypes,
-      List(jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.AnnotationArray(subTypesArgs.map(_.code)).code))
-    )
-
-    List(typeInfoAnnotation, subTypesAnnotation)
-  }
-
   override def objectTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = Nil
   override def wrapperTypeStaticMembers(tpe: jvm.Type.Qualified, underlyingType: jvm.Type): List[jvm.ClassMember] = Nil
   override def enumTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = Nil
@@ -194,7 +155,6 @@ object CirceSupport extends JsonLibSupport {
   override def constructorAnnotations: List[jvm.Annotation] = Nil
   override def wrapperAnnotations(tpe: jvm.Type.Qualified): List[jvm.Annotation] = Nil
   override def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation] = Nil
-  override def sealedTypeAnnotations(subtypes: List[(jvm.Type.Qualified, String)], discriminatorProperty: String): List[jvm.Annotation] = Nil
 
   override def objectTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = {
     // Generate: implicit val encoder: Encoder[T] = deriveEncoder[T]

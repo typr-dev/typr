@@ -104,15 +104,6 @@ object addPackageAndImports {
           cond.mapTrees(t => shortenNames(t, typeImport, staticImport)),
           body.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport)))
         )
-      case jvm.ForEach(elem, elemType, iterable, body) =>
-        jvm.ForEach(
-          elem,
-          shortenNamesType(elemType, typeImport),
-          iterable.mapTrees(t => shortenNames(t, typeImport, staticImport)),
-          body.map(_.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-        )
-      case jvm.Assign(target, value) =>
-        jvm.Assign(target, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
       case jvm.ConstructorMethodRef(tpe) => jvm.ConstructorMethodRef(shortenNamesType(tpe, typeImport))
       case jvm.ClassOf(tpe)              => jvm.ClassOf(shortenNamesType(tpe, typeImport))
       case jvm.JavaClassOf(tpe)          => jvm.JavaClassOf(shortenNamesType(tpe, typeImport))
@@ -314,8 +305,7 @@ object addPackageAndImports {
       implements = x.implements.map(shortenNamesType(_, typeImport)),
       members = x.members.map(shortenNamesMethod(_, typeImport, staticImport)),
       staticMembers = x.staticMembers.map(shortenNamesClassMember(_, typeImport, staticImport)),
-      subtypes = x.subtypes.map(shortenNamesAdt(_, typeImport, staticImport)),
-      permittedSubtypes = x.permittedSubtypes.map(shortenNamesType(_, typeImport).asInstanceOf[jvm.Type.Qualified])
+      subtypes = x.subtypes.map(shortenNamesAdt(_, typeImport, staticImport))
     )
 
   def shortenNamesClassMember(cm: jvm.ClassMember, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.ClassMember =
@@ -369,7 +359,7 @@ object addPackageAndImports {
 
   def shortenNamesMethod(x: jvm.Method, typeImport: jvm.Type.Qualified => jvm.Type.Qualified, staticImport: jvm.Type.Qualified => jvm.Type.Qualified): jvm.Method =
     jvm.Method(
-      x.annotations.map(shortenNamesAnnotation(_, typeImport, staticImport)),
+      Nil,
       x.comments,
       x.tparams,
       x.name,

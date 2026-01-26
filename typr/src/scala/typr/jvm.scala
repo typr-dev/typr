@@ -82,12 +82,6 @@ object jvm {
   /** While loop statement: all languages: `while (cond) { body }` */
   case class While(cond: Code, body: List[Code]) extends Tree
 
-  /** For-each loop statement: Java/Kotlin: `for (Type elem : iterable) { body }`, Scala: `for (elem <- iterable) { body }` */
-  case class ForEach(elem: Ident, elemType: Type, iterable: Code, body: List[Code]) extends Tree
-
-  /** Assignment statement: `target = value` */
-  case class Assign(target: Ident, value: Code) extends Tree
-
   case class MethodRef(tpe: Type, name: Ident) extends Tree
   case class ConstructorMethodRef(tpe: Type) extends Tree
   case class ClassOf(tpe: Type) extends Tree
