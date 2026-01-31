@@ -179,6 +179,7 @@ object jvm {
       comments: Comments,
       tpe: Type.Qualified,
       values: NonEmptyList[(Ident, jvm.Code)],
+      members: List[ClassMember],
       staticMembers: List[ClassMember]
   ) extends Tree
 
@@ -428,8 +429,15 @@ object jvm {
       isImplicit: Boolean = false
   ) extends ClassMember
 
-  /** Local variable declaration - renders as `val` in Scala, `var` in Java */
+  /** Local variable declaration - renders as `val` in Scala, `var` in Java/Kotlin */
   case class LocalVar(
+      name: Ident,
+      tpe: Option[Type],
+      value: Code
+  ) extends Tree
+
+  /** Mutable local variable declaration - renders as `var` in all languages */
+  case class MutableVar(
       name: Ident,
       tpe: Option[Type],
       value: Code

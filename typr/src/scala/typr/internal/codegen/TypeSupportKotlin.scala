@@ -12,6 +12,7 @@ object TypeSupportKotlin extends TypeSupport {
   override val Float: jvm.Type.Qualified = TypesKotlin.Float
   override val Int: jvm.Type.Qualified = TypesKotlin.Int
   override val IteratorType: jvm.Type.Qualified = TypesKotlin.Iterator
+  override val JavaIteratorType: jvm.Type.Qualified = TypesKotlin.Iterator
   override val Long: jvm.Type.Qualified = TypesKotlin.Long
   override val Short: jvm.Type.Qualified = TypesKotlin.Short
   override val String: jvm.Type.Qualified = TypesKotlin.String
@@ -77,6 +78,9 @@ object TypeSupportKotlin extends TypeSupport {
 
     def forEach(collection: jvm.Code, lambda: jvm.Code): jvm.Code =
       code"$collection.forEach($lambda)"
+
+    def forEachStmt(collection: jvm.Code, elem: jvm.Ident, elemType: jvm.Type)(body: jvm.Code => List[jvm.Code]): jvm.Code =
+      jvm.ForEach(elem, elemType, collection, body(elem.code)).code
 
     def arrayMapToList(array: jvm.Code, mapper: jvm.Code): jvm.Code =
       code"$array.map($mapper).toList()"
@@ -168,6 +172,15 @@ object TypeSupportKotlin extends TypeSupport {
     // Kotlin map access already returns nullable type
     def getNullable(map: jvm.Code, key: jvm.Code): jvm.Code =
       code"$map[$key]"
+
+    def forEachEntry(map: jvm.Code, keyType: jvm.Type, valueType: jvm.Type)(body: (jvm.Code, jvm.Code) => List[jvm.Code]): jvm.Code = {
+      val key = jvm.Ident("k")
+      val value = jvm.Ident("v")
+      val bodyCode = body(key.code, value.code).map(s => code"$s;").mkCode("\n")
+      code"""|for (($key, $value) in $map) {
+             |  $bodyCode
+             |}""".stripMargin
+    }
   }
 
   override object IteratorOps extends IteratorSupport {
@@ -196,5 +209,8 @@ object TypeSupportKotlin extends TypeSupport {
 
     def add(list: jvm.Code, element: jvm.Code): jvm.Code =
       code"$list.add($element)"
+
+    def toImmutable(list: jvm.Code): jvm.Code =
+      list
   }
 }

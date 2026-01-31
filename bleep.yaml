@@ -657,6 +657,87 @@ projects:
     sources:
     - ./generated-and-checked-in
     - ./src
+  testers/grpc/java:
+    dependencies:
+    - com.google.protobuf:protobuf-java:4.29.3
+    - com.novocode:junit-interface:0.11
+    - io.grpc:grpc-netty-shaded:1.69.0
+    - io.grpc:grpc-protobuf:1.69.0
+    - io.grpc:grpc-stub:1.69.0
+    - io.grpc:grpc-testing:1.69.0
+    - io.grpc:grpc-inprocess:1.69.0
+    - junit:junit:4.13.2
+    dependsOn: foundations-jdbc
+    folder: ./testers/grpc/java
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src/java
+  testers/grpc/scala:
+    dependencies:
+    - com.google.protobuf:protobuf-java:4.29.3
+    - com.novocode:junit-interface:0.11
+    - io.grpc:grpc-netty-shaded:1.69.0
+    - io.grpc:grpc-protobuf:1.69.0
+    - io.grpc:grpc-stub:1.69.0
+    - io.grpc:grpc-testing:1.69.0
+    - io.grpc:grpc-inprocess:1.69.0
+    - junit:junit:4.13.2
+    dependsOn: foundations-jdbc
+    extends: template-scala-3
+    isTestProject: true
+    sources:
+    - ./generated-and-checked-in
+    - ./src/scala
+  testers/grpc/java-spring:
+    dependencies:
+    - com.google.protobuf:protobuf-java:4.29.3
+    - com.novocode:junit-interface:0.11
+    - io.grpc:grpc-netty-shaded:1.69.0
+    - io.grpc:grpc-protobuf:1.69.0
+    - io.grpc:grpc-stub:1.69.0
+    - io.grpc:grpc-testing:1.69.0
+    - io.grpc:grpc-inprocess:1.69.0
+    - junit:junit:4.13.2
+    - org.springframework.grpc:spring-grpc-core:0.3.0
+    - org.springframework:spring-context:6.2.1
+    dependsOn: foundations-jdbc
+    folder: ./testers/grpc/java-spring
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src/java
+  testers/grpc/java-quarkus:
+    dependencies:
+    - com.google.protobuf:protobuf-java:4.29.3
+    - com.novocode:junit-interface:0.11
+    - io.grpc:grpc-netty-shaded:1.69.0
+    - io.grpc:grpc-protobuf:1.69.0
+    - io.grpc:grpc-stub:1.69.0
+    - io.grpc:grpc-testing:1.69.0
+    - io.grpc:grpc-inprocess:1.69.0
+    - io.quarkus:quarkus-arc:3.17.2
+    - io.quarkus:quarkus-grpc:3.17.2
+    - jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0
+    - junit:junit:4.13.2
+    dependsOn: foundations-jdbc
+    folder: ./testers/grpc/java-quarkus
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src/java
   tests:
     dependencies: org.scalatest::scalatest:3.2.18
     dependsOn: typr
@@ -667,6 +748,9 @@ projects:
     - com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11
     - com.oracle.database.jdbc:ojdbc11:23.6.0.24.10
     - com.typesafe.play::play-json:2.10.6
+    - com.google.protobuf:protobuf-java:4.29.3
+    - io.grpc:grpc-protobuf:1.69.0
+    - io.grpc:grpc-stub:1.69.0
     - org.apache.avro:avro:1.12.0
     - for3Use213: true
       module: io.get-coursier::coursier:2.1.24
@@ -737,6 +821,9 @@ scripts:
     project: typr-scripts
   generate-avro-test:
     main: scripts.GenerateAvroTest
+    project: typr-scripts
+  generate-grpc-test:
+    main: scripts.GenerateGrpcTest
     project: typr-scripts
   generate-db2:
     main: scripts.GeneratedDb2

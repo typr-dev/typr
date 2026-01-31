@@ -187,10 +187,10 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
         code"$tryCode $catchCode $finallyCode"
       case jvm.IfElseChain(cases, elseCase) =>
         val ifCases = cases.zipWithIndex.map { case ((cond, body), idx) =>
-          if (idx == 0) code"if ($cond) $body"
-          else code"else if ($cond) $body"
+          if (idx == 0) code"if ($cond) { $body }"
+          else code"else if ($cond) { $body }"
         }
-        val elseCode = code"else $elseCase"
+        val elseCode = code"else { $elseCase }"
         (ifCases :+ elseCode).mkCode("\n")
       case jvm.Stmt(inner, _) => inner // Scala doesn't need semicolons, just render inner code
       case jvm.New(target, args) =>
@@ -200,6 +200,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
                  |)""".stripMargin
         else code"new $target(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
       case jvm.LocalVar(name, tpe, value)                            => tpe.fold(code"val $name = $value")(t => code"val $name: $t = $value")
+      case jvm.MutableVar(name, tpe, value)                          => tpe.fold(code"var $name = $value")(t => code"var $name: $t = $value")
       case jvm.InferredTargs(target)                                 => target // Scala doesn't need diamond operator
       case jvm.GenericMethodCall(target, methodName, typeArgs, args) =>
         // Scala: target.method[T1, T2](args)
@@ -304,6 +305,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
             code"""|$annotationsCode${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
                    |enum ${enm.tpe.name} {
                    |  case $caseNames
+                   |  ${enm.members.map(_.code).mkCode("\n\n")}
                    |}
                    |
                    |object ${enm.tpe.name} {
@@ -320,7 +322,9 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
             // Scala 2 sealed abstract class pattern
             val members = enm.values.map { case (name, expr) => name -> code"case object $name extends ${enm.tpe.name}($expr)" }
             code"""|$annotationsCode${renderComments(enm.comments).getOrElse(jvm.Code.Empty)}
-                   |sealed abstract class ${enm.tpe.name}(val value: ${TypesJava.String})
+                   |sealed abstract class ${enm.tpe.name}(val value: ${TypesJava.String}) {
+                   |  ${enm.members.map(_.code).mkCode("\n\n")}
+                   |}
                    |
                    |object ${enm.tpe.name} {
                    |  ${enm.staticMembers.map(_.code).mkCode("\n\n")}
@@ -781,6 +785,8 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
 
   override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
     code"$expr.asInstanceOf[$targetType]"
+
+  override def nullableRefType(tpe: jvm.Type): jvm.Type = tpe
 
   override val isKeyword: Set[String] =
     Set(

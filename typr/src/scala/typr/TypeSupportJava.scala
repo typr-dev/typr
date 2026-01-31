@@ -82,6 +82,9 @@ object TypeSupportJava extends TypeSupport {
     def forEach(collection: jvm.Code, lambda: jvm.Code): jvm.Code =
       code"$collection.forEach($lambda)"
 
+    def forEachStmt(collection: jvm.Code, elem: jvm.Ident, elemType: jvm.Type)(body: jvm.Code => List[jvm.Code]): jvm.Code =
+      jvm.ForEach(elem, elemType, collection, body(elem.code)).code
+
     def arrayMapToList(array: jvm.Code, mapper: jvm.Code): jvm.Code =
       code"${TypesJava.Arrays}.stream($array).map($mapper).toList()"
 
@@ -149,6 +152,15 @@ object TypeSupportJava extends TypeSupport {
 
     def getNullable(map: jvm.Code, key: jvm.Code): jvm.Code =
       code"$map.get($key)"
+
+    def forEachEntry(map: jvm.Code, keyType: jvm.Type, valueType: jvm.Type)(body: (jvm.Code, jvm.Code) => List[jvm.Code]): jvm.Code = {
+      val MapEntryType = jvm.Type.Qualified(jvm.QIdent("java.util.Map.Entry"))
+      val entry = jvm.Ident("entry")
+      val keyRef = entry.code.invoke("getKey")
+      val valRef = entry.code.invoke("getValue")
+      val entryType = MapEntryType.of(keyType, valueType)
+      jvm.ForEach(entry, entryType, code"$map.entrySet()", body(keyRef, valRef)).code
+    }
   }
 
   override object IteratorOps extends IteratorSupport {
@@ -178,5 +190,8 @@ object TypeSupportJava extends TypeSupport {
 
     def add(list: jvm.Code, element: jvm.Code): jvm.Code =
       jvm.IgnoreResult(code"$list.add($element)")
+
+    def toImmutable(list: jvm.Code): jvm.Code =
+      list
   }
 }

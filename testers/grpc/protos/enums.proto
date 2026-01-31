@@ -1,0 +1,22 @@
+syntax = "proto3";
+package testgrpc;
+
+option java_package = "com.example.grpc.proto";
+option java_multiple_files = true;
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_PROCESSING = 2;
+  ORDER_STATUS_SHIPPED = 3;
+  ORDER_STATUS_DELIVERED = 4;
+  ORDER_STATUS_CANCELLED = 5;
+}
+
+enum Priority {
+  PRIORITY_UNSPECIFIED = 0;
+  PRIORITY_LOW = 1;
+  PRIORITY_MEDIUM = 2;
+  PRIORITY_HIGH = 3;
+  PRIORITY_CRITICAL = 4;
+}

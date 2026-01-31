@@ -17,6 +17,10 @@ trait TypeSupport {
   val Float: jvm.Type.Qualified
   val Int: jvm.Type.Qualified
   val IteratorType: jvm.Type.Qualified
+
+  /** Iterator type compatible with Java APIs (gRPC, etc). Java: java.util.Iterator, Kotlin: kotlin.collections.Iterator, Scala: java.util.Iterator */
+  val JavaIteratorType: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("java.util.Iterator"))
+
   val Long: jvm.Type.Qualified
   val Short: jvm.Type.Qualified
   val String: jvm.Type.Qualified
@@ -83,4 +87,7 @@ trait MutableListSupport {
 
   /** Add an element to the mutable list */
   def add(list: jvm.Code, element: jvm.Code): jvm.Code
+
+  /** Convert mutable list to immutable list type. Scala: `.toList`, Java/Kotlin: noop */
+  def toImmutable(list: jvm.Code): jvm.Code
 }

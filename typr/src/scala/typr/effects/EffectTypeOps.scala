@@ -56,4 +56,10 @@ trait EffectTypeOps {
     *   The complete async expression wrapped in the effect type
     */
   def async(resultType: jvm.Type)(bodyBuilder: (jvm.Code => jvm.Code, jvm.Code => jvm.Code) => jvm.Code): jvm.Code
+
+  /** Subscribe to an effect with success/failure callbacks (fire-and-forget). Used by gRPC server adapter. */
+  def subscribeWith(effect: jvm.Code, onItem: jvm.Code, onFailure: jvm.Code): jvm.Code
+
+  /** Create an effect that lazily evaluates a supplier. Used by gRPC client wrapper. */
+  def defer(supplier: jvm.Code): jvm.Code
 }

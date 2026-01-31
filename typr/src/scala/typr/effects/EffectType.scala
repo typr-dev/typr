@@ -41,6 +41,10 @@ object EffectType {
       val emitterLambda = jvm.Lambda(List(jvm.LambdaParam(em)), jvm.Body.Stmts(List(body)))
       code"$tpe.createFrom().emitter($emitterLambda)"
     }
+    def subscribeWith(effect: jvm.Code, onItem: jvm.Code, onFailure: jvm.Code): jvm.Code =
+      code"$effect.subscribe().with($onItem, $onFailure)"
+    def defer(supplier: jvm.Code): jvm.Code =
+      code"$tpe.createFrom().item($supplier)"
   }
 
   /** Project Reactor Mono operations - used by Spring WebFlux */
@@ -62,6 +66,10 @@ object EffectType {
       val sinkLambda = jvm.Lambda(List(jvm.LambdaParam(sink)), jvm.Body.Stmts(List(body)))
       code"$tpe.create($sinkLambda)"
     }
+    def subscribeWith(effect: jvm.Code, onItem: jvm.Code, onFailure: jvm.Code): jvm.Code =
+      code"$effect.subscribe($onItem, $onFailure)"
+    def defer(supplier: jvm.Code): jvm.Code =
+      code"$tpe.fromSupplier($supplier)"
   }
 
   /** Java CompletableFuture operations */
@@ -94,6 +102,19 @@ object EffectType {
       val identityLambda = jvm.Lambda(List(jvm.LambdaParam(f)), jvm.Body.Expr(f.code))
       code"$tpe.supplyAsync($supplierLambda).thenCompose($identityLambda)"
     }
+    def subscribeWith(effect: jvm.Code, onItem: jvm.Code, onFailure: jvm.Code): jvm.Code = {
+      val t = jvm.Ident("t")
+      val exceptionallyBody = jvm.Body.Stmts(
+        List(
+          onFailure.invoke("accept", t.code),
+          jvm.Return(code"null").code
+        )
+      )
+      val exceptionallyLambda = jvm.Lambda(List(jvm.LambdaParam(t)), exceptionallyBody)
+      code"$effect.thenAccept($onItem).exceptionally($exceptionallyLambda)"
+    }
+    def defer(supplier: jvm.Code): jvm.Code =
+      code"$tpe.supplyAsync($supplier)"
   }
 
   /** Cats Effect IO operations */
@@ -117,6 +138,12 @@ object EffectType {
       val cbLambda = jvm.Lambda(List(jvm.LambdaParam(cb)), jvm.Body.Stmts(List(body)))
       code"$tpe.async_($cbLambda)"
     }
+    def subscribeWith(effect: jvm.Code, onItem: jvm.Code, onFailure: jvm.Code): jvm.Code = {
+      val result = jvm.Ident("result")
+      code"{ val $result = $effect.unsafeRunSync()(cats.effect.unsafe.IORuntime.global); $onItem.apply($result) }"
+    }
+    def defer(supplier: jvm.Code): jvm.Code =
+      code"$tpe.delay($supplier.apply())"
   }
 
   /** ZIO Task operations */
@@ -139,6 +166,15 @@ object EffectType {
       val cbLambda = jvm.Lambda(List(jvm.LambdaParam(cb)), jvm.Body.Stmts(List(body)))
       code"zio.ZIO.async($cbLambda)"
     }
+    def subscribeWith(effect: jvm.Code, onItem: jvm.Code, onFailure: jvm.Code): jvm.Code = {
+      val UnsafeType = jvm.Type.Qualified(jvm.QIdent("zio.Unsafe"))
+      val RuntimeType = jvm.Type.Qualified(jvm.QIdent("zio.Runtime"))
+      val u = jvm.Ident("u")
+      val result = jvm.Ident("result")
+      code"$UnsafeType.unsafe { implicit $u => val $result = $RuntimeType.default.unsafe.run($effect).getOrThrowFiberFailure(); $onItem.apply($result) }"
+    }
+    def defer(supplier: jvm.Code): jvm.Code =
+      code"zio.ZIO.attempt($supplier.apply())"
   }
 
   /** SmallRye Mutiny Uni - used by Quarkus */

@@ -130,6 +130,10 @@ object minimize {
               goTree(name)
               tpe.foreach(goTree)
               go(value)
+            case jvm.MutableVar(name, tpe, value) =>
+              goTree(name)
+              tpe.foreach(goTree)
+              go(value)
             case jvm.MethodRef(tpe, name) =>
               goTree(tpe)
               goTree(name)
@@ -157,8 +161,9 @@ object minimize {
               goTree(tpe)
               throws.foreach(goTree)
               goBody(body)
-            case jvm.Enum(_, _, tpe, _, instances) =>
+            case jvm.Enum(_, _, tpe, _, members, instances) =>
               goTree(tpe)
+              members.foreach(goTree)
               instances.foreach(goTree)
             case jvm.Class(_, _, _, _, tparams, params, implicitParams, extends_, implements, members, staticMembers) =>
               tparams.foreach(goTree)

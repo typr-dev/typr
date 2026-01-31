@@ -137,6 +137,7 @@ case object LangJava extends Lang {
       case jvm.MethodRef(tpe, name)                                                       => code"$tpe::$name"
       case jvm.New(target, args)                                                          => code"new $target(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
       case jvm.LocalVar(name, tpe, value)                                                 => tpe.fold(code"var $name = $value")(t => code"$t $name = $value")
+      case jvm.MutableVar(name, tpe, value)                                               => tpe.fold(code"var $name = $value")(t => code"$t $name = $value")
       case jvm.InferredTargs(target)                                                      => code"$target<>"
       case jvm.GenericMethodCall(target, methodName, typeArgs, args)                      =>
         // Java: target.<T1, T2>method(args)
@@ -252,7 +253,7 @@ case object LangJava extends Lang {
         val staticMod = if (ctx.staticImplied) "static " else ""
         if (tparams.isEmpty && implicitParams.isEmpty)
           code"""|${annotationsCode}${staticMod}${ctx.public}$tpe $name =
-                 |  $body""".stripMargin
+                 |  $body;""".stripMargin
         else {
           val paramsCode = renderParams(implicitParams, ctx)
           code"${annotationsCode}${staticMod}${ctx.public}${renderTparams(tparams)} $tpe $name" ++ paramsCode ++ code"""| {
@@ -320,6 +321,8 @@ case object LangJava extends Lang {
                |
                |    public static final ${TypesJava.String} Names = ${TypesJava.Arrays}.stream(${enm.tpe}.values()).map(x -> x.value).collect(${TypesJava.Collectors}.joining(", "));
                |    public static final $enumMap ByName = ${TypesJava.Arrays}.stream(${enm.tpe}.values()).collect(${TypesJava.Collectors}.toMap(n -> n.value, n -> n));
+               |
+               |    ${enm.members.map(t => code"$t").mkCode("\n")}
                |
                |    ${enm.staticMembers.map(t => code"static $t;").mkCode("\n")}
                |
@@ -806,6 +809,8 @@ case object LangJava extends Lang {
 
   override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
     code"($targetType) $expr"
+
+  override def nullableRefType(tpe: jvm.Type): jvm.Type = tpe
 
   val isKeyword: Set[String] =
     Set(

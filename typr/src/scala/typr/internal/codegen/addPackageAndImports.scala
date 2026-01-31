@@ -136,12 +136,20 @@ object addPackageAndImports {
           arg1.mapTrees(t => shortenNames(t, typeImport, staticImport)),
           arg2.mapTrees(t => shortenNames(t, typeImport, staticImport))
         )
-      case jvm.Select(target, name)                          => jvm.Select(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
-      case jvm.ArrayIndex(target, num)                       => jvm.ArrayIndex(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), num)
-      case jvm.ApplyNullary(target, name)                    => jvm.ApplyNullary(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
-      case jvm.Arg.Named(name, value)                        => jvm.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.Arg.Pos(value)                                => jvm.Arg.Pos(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.Enum(anns, comments, tpe, members, instances) => jvm.Enum(anns, comments, typeImport(tpe), members, instances.map(shortenNamesClassMember(_, typeImport, staticImport)))
+      case jvm.Select(target, name)       => jvm.Select(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
+      case jvm.ArrayIndex(target, num)    => jvm.ArrayIndex(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), num)
+      case jvm.ApplyNullary(target, name) => jvm.ApplyNullary(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
+      case jvm.Arg.Named(name, value)     => jvm.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Arg.Pos(value)             => jvm.Arg.Pos(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Enum(anns, comments, tpe, values, members, instances) =>
+        jvm.Enum(
+          anns,
+          comments,
+          typeImport(tpe),
+          values,
+          members.map(shortenNamesClassMember(_, typeImport, staticImport)),
+          instances.map(shortenNamesClassMember(_, typeImport, staticImport))
+        )
       case jvm.OpenEnum(anns, comments, tpe, underlyingType, values, staticMembers) =>
         jvm.OpenEnum(
           annotations = anns,
@@ -194,6 +202,8 @@ object addPackageAndImports {
       case x: jvm.Summon                             => jvm.Summon(shortenNamesType(x.tpe, typeImport))
       case jvm.LocalVar(name, tpe, value) =>
         jvm.LocalVar(name, tpe.map(shortenNamesType(_, typeImport)), value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.MutableVar(name, tpe, value) =>
+        jvm.MutableVar(name, tpe.map(shortenNamesType(_, typeImport)), value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
       case jvm.TypeSwitch(value, cases, nullCase, defaultCase, unchecked) =>
         jvm.TypeSwitch(
           value.mapTrees(t => shortenNames(t, typeImport, staticImport)),

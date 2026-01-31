@@ -36,6 +36,12 @@ project(":testers:avro:kotlin-json").projectDir = file("testers/avro/kotlin-json
 include("testers:avro:kotlin-quarkus-mutiny")
 project(":testers:avro:kotlin-quarkus-mutiny").projectDir = file("testers/avro/kotlin-quarkus-mutiny")
 
+// gRPC Kotlin testers
+include("testers:grpc:kotlin")
+project(":testers:grpc:kotlin").projectDir = file("testers/grpc/kotlin")
+include("testers:grpc:kotlin-quarkus")
+project(":testers:grpc:kotlin-quarkus").projectDir = file("testers/grpc/kotlin-quarkus")
+
 // OpenAPI Kotlin testers
 include("testers:openapi:kotlin:jaxrs")
 project(":testers:openapi:kotlin:jaxrs").projectDir = file("testers/openapi/kotlin/jaxrs")
