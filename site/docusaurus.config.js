@@ -73,9 +73,9 @@ const config = {
     [
       '@docusaurus/plugin-content-docs',
       {
-        id: 'avro',
+        id: 'events',
         path: 'docs-avro',
-        routeBasePath: 'avro',
+        routeBasePath: 'events',
         sidebarPath: require.resolve('./sidebars-avro.js'),
       },
     ],
@@ -113,12 +113,6 @@ const config = {
             position: 'left',
             activeBaseRegex: '/jdbc/',
           },
-          {
-            to: '/avro/',
-            label: 'Kafka/Avro',
-            position: 'left',
-            activeBaseRegex: '/avro/',
-          },
           {to: 'blog', label: 'Blog', position: 'left'},
           {
             href: "https://github.com/oyvindberg/typr",
@@ -144,10 +138,6 @@ const config = {
               {
                 label: "Foundations JDBC",
                 to: "/jdbc/",
-              },
-              {
-                label: "Kafka/Avro",
-                to: "/avro/",
               },
             ],
           },
