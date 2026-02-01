@@ -18,12 +18,10 @@ public record DepartmentsId(
   public DepartmentsId withDeptCode(String deptCode) {
     return new DepartmentsId(deptCode, deptRegion);
   }
-  ;
 
   public DepartmentsId withDeptRegion(String deptRegion) {
     return new DepartmentsId(deptCode, deptRegion);
   }
-  ;
 
   public static RowParser<DepartmentsId> _rowParser =
       RowParsers.of(
@@ -31,17 +29,14 @@ public record DepartmentsId(
           DuckDbTypes.varchar,
           DepartmentsId::new,
           row -> new Object[] {row.deptCode(), row.deptRegion()});
-  ;
 
   @Override
   public String _1() {
     return deptCode;
   }
-  ;
 
   @Override
   public String _2() {
     return deptRegion;
   }
-  ;
 }

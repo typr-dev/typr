@@ -27,8 +27,8 @@ data class DeleteOldOrdersSqlRow(
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
   @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.status] */
-  val status: String?
-) : Tuple5<OrdersId, Int, LocalDate, BigDecimal?, String?> {
+  val status: kotlin.String?
+) : Tuple5<OrdersId, Int, LocalDate, BigDecimal?, kotlin.String?> {
   override fun _1(): OrdersId = orderId
 
   override fun _2(): Int = customerId
@@ -37,7 +37,7 @@ data class DeleteOldOrdersSqlRow(
 
   override fun _4(): BigDecimal? = totalAmount
 
-  override fun _5(): String? = status
+  override fun _5(): kotlin.String? = status
 
   companion object {
     val _rowParser: RowParser<DeleteOldOrdersSqlRow> = RowParsers.of(OrdersId.duckDbType, KotlinDbTypes.DuckDbTypes.integer, DuckDbTypes.date, DuckDbTypes.numeric.nullable(), DuckDbTypes.varchar.nullable(), { t0, t1, t2, t3, t4 -> DeleteOldOrdersSqlRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status) })

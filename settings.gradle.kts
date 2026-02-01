@@ -49,3 +49,7 @@ include("testers:openapi:kotlin:spring")
 project(":testers:openapi:kotlin:spring").projectDir = file("testers/openapi/kotlin/spring")
 include("testers:openapi:kotlin:quarkus")
 project(":testers:openapi:kotlin:quarkus").projectDir = file("testers/openapi/kotlin/quarkus")
+
+// Showcase demo (for documentation demos)
+include("showcase-demo:postgres:java")
+project(":showcase-demo:postgres:java").projectDir = file("site/showcase-demo/postgres/java")

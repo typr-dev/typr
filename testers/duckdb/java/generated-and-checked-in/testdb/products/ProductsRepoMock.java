@@ -28,12 +28,10 @@ public record ProductsRepoMock(HashMap<ProductsId, ProductsRow> map) implements 
   public ProductsRepoMock() {
     this(new HashMap<ProductsId, ProductsRow>());
   }
-  ;
 
   public ProductsRepoMock withMap(HashMap<ProductsId, ProductsRow> map) {
     return new ProductsRepoMock(map);
   }
-  ;
 
   @Override
   public DeleteBuilder<ProductsFields, ProductsRow> delete() {
@@ -44,13 +42,11 @@ public record ProductsRepoMock(HashMap<ProductsId, ProductsRow> map) implements 
         row -> row.productId(),
         id -> map.remove(id));
   }
-  ;
 
   @Override
   public Boolean deleteById(ProductsId productId, Connection c) {
     return Optional.ofNullable(map.remove(productId)).isPresent();
   }
-  ;
 
   @Override
   public Integer deleteByIds(ProductsId[] productIds, Connection c) {
@@ -60,42 +56,35 @@ public record ProductsRepoMock(HashMap<ProductsId, ProductsRow> map) implements 
         count = count + 1;
         ;
       }
-      ;
     }
     ;
     return count;
   }
-  ;
 
   @Override
   public ProductsRow insert(ProductsRow unsaved, Connection c) {
     if (map.containsKey(unsaved.productId())) {
       throw new RuntimeException("id " + unsaved.productId() + " already exists");
     }
-    ;
     map.put(unsaved.productId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public SelectBuilder<ProductsFields, ProductsRow> select() {
     return new SelectBuilderMock<>(
         ProductsFields.structure, () -> new ArrayList<>(map.values()), SelectParams.empty());
   }
-  ;
 
   @Override
   public List<ProductsRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   }
-  ;
 
   @Override
   public Optional<ProductsRow> selectById(ProductsId productId, Connection c) {
     return Optional.ofNullable(map.get(productId));
   }
-  ;
 
   @Override
   public List<ProductsRow> selectByIds(ProductsId[] productIds, Connection c) {
@@ -105,25 +94,21 @@ public record ProductsRepoMock(HashMap<ProductsId, ProductsRow> map) implements 
       if (opt.isPresent()) {
         result.add(opt.get());
       }
-      ;
     }
     ;
     return result;
   }
-  ;
 
   @Override
   public Map<ProductsId, ProductsRow> selectByIdsTracked(ProductsId[] productIds, Connection c) {
     return selectByIds(productIds, c).stream()
         .collect(Collectors.toMap((ProductsRow row) -> row.productId(), Function.identity()));
   }
-  ;
 
   @Override
   public Optional<ProductsRow> selectByUniqueSku(String sku, Connection c) {
     return new ArrayList<>(map.values()).stream().filter(v -> sku.equals(v.sku())).findFirst();
   }
-  ;
 
   @Override
   public UpdateBuilder<ProductsFields, ProductsRow> update() {
@@ -133,7 +118,6 @@ public record ProductsRepoMock(HashMap<ProductsId, ProductsRow> map) implements 
         UpdateParams.empty(),
         row -> row);
   }
-  ;
 
   @Override
   public Boolean update(ProductsRow row, Connection c) {
@@ -145,17 +129,14 @@ public record ProductsRepoMock(HashMap<ProductsId, ProductsRow> map) implements 
       map.put(row.productId(), row);
       ;
     }
-    ;
     return shouldUpdate;
   }
-  ;
 
   @Override
   public ProductsRow upsert(ProductsRow unsaved, Connection c) {
     map.put(unsaved.productId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public List<ProductsRow> upsertBatch(Iterator<ProductsRow> unsaved, Connection c) {
@@ -168,5 +149,4 @@ public record ProductsRepoMock(HashMap<ProductsId, ProductsRow> map) implements 
     ;
     return result;
   }
-  ;
 }

@@ -34,31 +34,26 @@ public record UpdateCustomerPrioritySqlRow(
   public UpdateCustomerPrioritySqlRow withCustomerId(CustomersId customerId) {
     return new UpdateCustomerPrioritySqlRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   /** Points to {@link testdb.customers.CustomersRow#name()} */
   public UpdateCustomerPrioritySqlRow withName(String name) {
     return new UpdateCustomerPrioritySqlRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
   public UpdateCustomerPrioritySqlRow withEmail(Optional</* user-picked */ Email> email) {
     return new UpdateCustomerPrioritySqlRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   /** Points to {@link testdb.customers.CustomersRow#createdAt()} */
   public UpdateCustomerPrioritySqlRow withCreatedAt(LocalDateTime createdAt) {
     return new UpdateCustomerPrioritySqlRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   /** Points to {@link testdb.customers.CustomersRow#priority()} */
   public UpdateCustomerPrioritySqlRow withPriority(Optional<Priority> priority) {
     return new UpdateCustomerPrioritySqlRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   public static RowParser<UpdateCustomerPrioritySqlRow> _rowParser =
       RowParsers.of(
@@ -72,35 +67,29 @@ public record UpdateCustomerPrioritySqlRow(
               new Object[] {
                 row.customerId(), row.name(), row.email(), row.createdAt(), row.priority()
               });
-  ;
 
   @Override
   public CustomersId _1() {
     return customerId;
   }
-  ;
 
   @Override
   public String _2() {
     return name;
   }
-  ;
 
   @Override
   public Optional</* user-picked */ Email> _3() {
     return email;
   }
-  ;
 
   @Override
   public LocalDateTime _4() {
     return createdAt;
   }
-  ;
 
   @Override
   public Optional<Priority> _5() {
     return priority;
   }
-  ;
 }

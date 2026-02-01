@@ -12,8 +12,8 @@ import kotlin.collections.List
 
 interface DepartmentEmployeeDetailsSqlRepo {
   abstract fun apply(
-    deptCode: String?,
-    deptRegion: String?,
+    deptCode: kotlin.String?,
+    deptRegion: kotlin.String?,
     minSalary: BigDecimal?,
     hiredAfter: LocalDate?,
     c: Connection

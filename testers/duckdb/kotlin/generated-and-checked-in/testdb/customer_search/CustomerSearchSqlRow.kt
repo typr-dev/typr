@@ -21,17 +21,17 @@ data class CustomerSearchSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  val name: String,
+  val name: kotlin.String,
   /** Points to [testdb.customers.CustomersRow.email] */
   val email: /* user-picked */ Email?,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** Points to [testdb.customers.CustomersRow.priority] */
   val priority: Priority?
-) : Tuple5<CustomersId, String, /* user-picked */ Email?, LocalDateTime, Priority?> {
+) : Tuple5<CustomersId, kotlin.String, /* user-picked */ Email?, LocalDateTime, Priority?> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   override fun _3(): /* user-picked */ Email? = email
 

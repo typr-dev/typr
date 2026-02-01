@@ -17,7 +17,7 @@ interface InsertOrderWithItemsSqlRepo {
     customerId: /* user-picked */ CustomersId,
     orderDate: LocalDate?,
     totalAmount: BigDecimal?,
-    status: String?,
+    status: kotlin.String?,
     c: Connection
   ): List<InsertOrderWithItemsSqlRow>
 }

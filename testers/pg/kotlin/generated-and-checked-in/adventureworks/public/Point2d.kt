@@ -17,13 +17,13 @@ data class Point2d(
   val y: Double?
 ) {
   companion object {
-    val pgStruct: PgStruct<Point2d> =
+    val dbStruct: PgStruct<Point2d> =
       PgStruct.builder<Point2d>("public.point_2d").optField("x", KotlinDbTypes.PgTypes.float8, { v: Point2d -> Optional.ofNullable(v.x) }).optField("y", KotlinDbTypes.PgTypes.float8, { v: Point2d -> Optional.ofNullable(v.y) }).build({ arr -> Point2d(arr[0] as? Double, arr[1] as? Double) })
 
-    val pgType: PgType<Point2d> =
-      pgStruct.asType()
+    val dbType: PgType<Point2d> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<Point2d>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<Point2d>(n) }), { n -> arrayOfNulls<Point2d>(n) })
+    val dbTypeArray: PgType<Array<Point2d>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<Point2d>(n) }), { n -> arrayOfNulls<Point2d>(n) })
   }
 }

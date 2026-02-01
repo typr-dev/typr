@@ -23,7 +23,7 @@ import testdb.precisetypes.Int10
 import testdb.precisetypes.Int18
 import testdb.precisetypes.Int5
 
-data class PrecisionTypesNullFields(val _path: List<Path>) : TupleExpr12<PrecisionTypesNullId, String, String, String, String, String, Decimal5_2, Decimal10_2, Decimal18_4, Int5, Int10, Int18>, RelationStructure<PrecisionTypesNullFields, PrecisionTypesNullRow>, FieldsBase<PrecisionTypesNullRow> {
+data class PrecisionTypesNullFields(val _path: List<Path>) : TupleExpr12<PrecisionTypesNullId, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, Decimal5_2, Decimal10_2, Decimal18_4, Int5, Int10, Int18>, RelationStructure<PrecisionTypesNullFields, PrecisionTypesNullRow>, FieldsBase<PrecisionTypesNullRow> {
   override fun _1(): SqlExpr<PrecisionTypesNullId> = id()
 
   override fun _10(): SqlExpr<Int5> = decimal50()
@@ -32,15 +32,15 @@ data class PrecisionTypesNullFields(val _path: List<Path>) : TupleExpr12<Precisi
 
   override fun _12(): SqlExpr<Int18> = decimal180()
 
-  override fun _2(): SqlExpr<String> = string10()
+  override fun _2(): SqlExpr<kotlin.String> = string10()
 
-  override fun _3(): SqlExpr<String> = string20()
+  override fun _3(): SqlExpr<kotlin.String> = string20()
 
-  override fun _4(): SqlExpr<String> = string50()
+  override fun _4(): SqlExpr<kotlin.String> = string50()
 
-  override fun _5(): SqlExpr<String> = string100()
+  override fun _5(): SqlExpr<kotlin.String> = string100()
 
-  override fun _6(): SqlExpr<String> = string255()
+  override fun _6(): SqlExpr<kotlin.String> = string255()
 
   override fun _7(): SqlExpr<Decimal5_2> = decimal52()
 
@@ -68,15 +68,15 @@ data class PrecisionTypesNullFields(val _path: List<Path>) : TupleExpr12<Precisi
 
   override fun rowParser(): RowParser<PrecisionTypesNullRow> = PrecisionTypesNullRow._rowParser.underlying
 
-  fun string10(): OptField<String, PrecisionTypesNullRow> = OptField<String, PrecisionTypesNullRow>(_path, "string10", PrecisionTypesNullRow::string10, null, null, { row, value -> row.copy(string10 = value) }, DuckDbTypes.varchar)
+  fun string10(): OptField<kotlin.String, PrecisionTypesNullRow> = OptField<kotlin.String, PrecisionTypesNullRow>(_path, "string10", PrecisionTypesNullRow::string10, null, null, { row, value -> row.copy(string10 = value) }, DuckDbTypes.varchar)
 
-  fun string100(): OptField<String, PrecisionTypesNullRow> = OptField<String, PrecisionTypesNullRow>(_path, "string100", PrecisionTypesNullRow::string100, null, null, { row, value -> row.copy(string100 = value) }, DuckDbTypes.varchar)
+  fun string100(): OptField<kotlin.String, PrecisionTypesNullRow> = OptField<kotlin.String, PrecisionTypesNullRow>(_path, "string100", PrecisionTypesNullRow::string100, null, null, { row, value -> row.copy(string100 = value) }, DuckDbTypes.varchar)
 
-  fun string20(): OptField<String, PrecisionTypesNullRow> = OptField<String, PrecisionTypesNullRow>(_path, "string20", PrecisionTypesNullRow::string20, null, null, { row, value -> row.copy(string20 = value) }, DuckDbTypes.varchar)
+  fun string20(): OptField<kotlin.String, PrecisionTypesNullRow> = OptField<kotlin.String, PrecisionTypesNullRow>(_path, "string20", PrecisionTypesNullRow::string20, null, null, { row, value -> row.copy(string20 = value) }, DuckDbTypes.varchar)
 
-  fun string255(): OptField<String, PrecisionTypesNullRow> = OptField<String, PrecisionTypesNullRow>(_path, "string255", PrecisionTypesNullRow::string255, null, null, { row, value -> row.copy(string255 = value) }, DuckDbTypes.varchar)
+  fun string255(): OptField<kotlin.String, PrecisionTypesNullRow> = OptField<kotlin.String, PrecisionTypesNullRow>(_path, "string255", PrecisionTypesNullRow::string255, null, null, { row, value -> row.copy(string255 = value) }, DuckDbTypes.varchar)
 
-  fun string50(): OptField<String, PrecisionTypesNullRow> = OptField<String, PrecisionTypesNullRow>(_path, "string50", PrecisionTypesNullRow::string50, null, null, { row, value -> row.copy(string50 = value) }, DuckDbTypes.varchar)
+  fun string50(): OptField<kotlin.String, PrecisionTypesNullRow> = OptField<kotlin.String, PrecisionTypesNullRow>(_path, "string50", PrecisionTypesNullRow::string50, null, null, { row, value -> row.copy(string50 = value) }, DuckDbTypes.varchar)
 
   override fun withPaths(_path: List<Path>): RelationStructure<PrecisionTypesNullFields, PrecisionTypesNullRow> = PrecisionTypesNullFields(_path)
 

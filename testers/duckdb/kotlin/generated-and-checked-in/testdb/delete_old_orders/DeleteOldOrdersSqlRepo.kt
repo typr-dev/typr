@@ -12,7 +12,7 @@ import kotlin.collections.List
 interface DeleteOldOrdersSqlRepo {
   abstract fun apply(
     cutoffDate: LocalDate,
-    status: String?,
+    status: kotlin.String?,
     c: Connection
   ): List<DeleteOldOrdersSqlRow>
 }

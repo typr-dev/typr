@@ -20,9 +20,9 @@ case class Address(
 )
 
 object Address {
-  given pgStruct: PgStruct[Address] = PgStruct.builder[Address]("public.address").optField("street", PgTypes.text, (v: Address) => v.street.asJava).optField("city", PgTypes.text, (v: Address) => v.city.asJava).optField("zip", PgTypes.text, (v: Address) => v.zip.asJava).optField("country", PgTypes.text, (v: Address) => v.country.asJava).build(arr => Address(street = Option(arr(0).asInstanceOf[String]), city = Option(arr(1).asInstanceOf[String]), zip = Option(arr(2).asInstanceOf[String]), country = Option(arr(3).asInstanceOf[String])))
+  given dbStruct: PgStruct[Address] = PgStruct.builder[Address]("public.address").optField("street", PgTypes.text, (v: Address) => v.street.asJava).optField("city", PgTypes.text, (v: Address) => v.city.asJava).optField("zip", PgTypes.text, (v: Address) => v.zip.asJava).optField("country", PgTypes.text, (v: Address) => v.country.asJava).build(arr => Address(street = Option(arr(0).asInstanceOf[String]), city = Option(arr(1).asInstanceOf[String]), zip = Option(arr(2).asInstanceOf[String]), country = Option(arr(3).asInstanceOf[String])))
 
-  given pgType: PgType[Address] = pgStruct.asType()
+  given dbType: PgType[Address] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[Address]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Address](n)), n => new Array[Address](n))
+  given dbTypeArray: PgType[Array[Address]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[Address](n)), n => new Array[Address](n))
 }

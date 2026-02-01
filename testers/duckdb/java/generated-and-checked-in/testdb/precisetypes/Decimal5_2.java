@@ -18,18 +18,15 @@ import java.util.Optional;
 public record Decimal5_2(@JsonValue BigDecimal value) implements DecimalN {
   @java.lang.Deprecated
   public Decimal5_2 {}
-  ;
 
   public Decimal5_2 withValue(BigDecimal value) {
     return new Decimal5_2(value);
   }
-  ;
 
   @Override
   public java.lang.String toString() {
     return value.toString();
   }
-  ;
 
   public static Decimal5_2 Zero = new Decimal5_2(BigDecimal.ZERO);
 
@@ -48,22 +45,18 @@ public record Decimal5_2(@JsonValue BigDecimal value) implements DecimalN {
     BigDecimal scaled = value.setScale(2, RoundingMode.HALF_UP);
     return scaled.precision() <= 5 ? Optional.of(new Decimal5_2(scaled)) : Optional.empty();
   }
-  ;
 
   public static Decimal5_2 of(Integer value) {
     return new Decimal5_2(BigDecimal.valueOf((long) (value)));
   }
-  ;
 
   public static Optional<Decimal5_2> of(Long value) {
     return Decimal5_2.of(BigDecimal.valueOf(value));
   }
-  ;
 
   public static Optional<Decimal5_2> of(Double value) {
     return Decimal5_2.of(BigDecimal.valueOf(value));
   }
-  ;
 
   public static Decimal5_2 unsafeForce(BigDecimal value) {
     BigDecimal scaled = value.setScale(2, RoundingMode.HALF_UP);
@@ -73,13 +66,11 @@ public record Decimal5_2(@JsonValue BigDecimal value) implements DecimalN {
     ;
     return new Decimal5_2(scaled);
   }
-  ;
 
   @Override
   public BigDecimal decimalValue() {
     return value;
   }
-  ;
 
   @Override
   public boolean equals(Object obj) {
@@ -87,35 +78,29 @@ public record Decimal5_2(@JsonValue BigDecimal value) implements DecimalN {
     if (!(obj instanceof DecimalN other)) return false;
     return decimalValue().compareTo(other.decimalValue()) == 0;
   }
-  ;
 
   @Override
   public int hashCode() {
     return decimalValue().stripTrailingZeros().hashCode();
   }
-  ;
 
   @Override
   public int precision() {
     return 5;
   }
-  ;
 
   @Override
   public int scale() {
     return 2;
   }
-  ;
 
   @Override
   public boolean semanticEquals(DecimalN other) {
     return (other == null ? false : decimalValue().compareTo(other.decimalValue()) == 0);
   }
-  ;
 
   @Override
   public int semanticHashCode() {
     return decimalValue().stripTrailingZeros().hashCode();
   }
-  ;
 }

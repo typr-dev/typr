@@ -33,13 +33,13 @@ data class AllScalarTypesSearchSqlRow(
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.id] */
   val id: AllScalarTypesId,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colTinyint] */
-  @field:JsonProperty("col_tinyint") val colTinyint: Byte?,
+  @field:JsonProperty("col_tinyint") val colTinyint: kotlin.Byte?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colSmallint] */
-  @field:JsonProperty("col_smallint") val colSmallint: Short?,
+  @field:JsonProperty("col_smallint") val colSmallint: kotlin.Short?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colInteger] */
   @field:JsonProperty("col_integer") val colInteger: Int?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colBigint] */
-  @field:JsonProperty("col_bigint") val colBigint: Long?,
+  @field:JsonProperty("col_bigint") val colBigint: kotlin.Long?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colHugeint] */
   @field:JsonProperty("col_hugeint") val colHugeint: BigInteger?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colUtinyint] */
@@ -51,17 +51,17 @@ data class AllScalarTypesSearchSqlRow(
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colUbigint] */
   @field:JsonProperty("col_ubigint") val colUbigint: Uint8?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colFloat] */
-  @field:JsonProperty("col_float") val colFloat: Float?,
+  @field:JsonProperty("col_float") val colFloat: kotlin.Float?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colDouble] */
-  @field:JsonProperty("col_double") val colDouble: Double?,
+  @field:JsonProperty("col_double") val colDouble: kotlin.Double?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colDecimal] */
   @field:JsonProperty("col_decimal") val colDecimal: BigDecimal?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colBoolean] */
-  @field:JsonProperty("col_boolean") val colBoolean: Boolean?,
+  @field:JsonProperty("col_boolean") val colBoolean: kotlin.Boolean?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colVarchar] */
-  @field:JsonProperty("col_varchar") val colVarchar: String?,
+  @field:JsonProperty("col_varchar") val colVarchar: kotlin.String?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colText] */
-  @field:JsonProperty("col_text") val colText: String?,
+  @field:JsonProperty("col_text") val colText: kotlin.String?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colBlob] */
   @field:JsonProperty("col_blob") val colBlob: ByteArray?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colDate] */
@@ -81,23 +81,23 @@ data class AllScalarTypesSearchSqlRow(
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colMood] */
   @field:JsonProperty("col_mood") val colMood: Mood?,
   /** Points to [testdb.all_scalar_types.AllScalarTypesRow.colNotNull] */
-  @field:JsonProperty("col_not_null") val colNotNull: String
-) : Tuple26<AllScalarTypesId, Byte?, Short?, Int?, Long?, BigInteger?, Uint1?, Uint2?, Uint4?, Uint8?, Float?, Double?, BigDecimal?, Boolean?, String?, String?, ByteArray?, LocalDate?, LocalTime?, LocalDateTime?, OffsetDateTime?, Duration?, UUID?, Json?, Mood?, String> {
+  @field:JsonProperty("col_not_null") val colNotNull: kotlin.String
+) : Tuple26<AllScalarTypesId, kotlin.Byte?, kotlin.Short?, Int?, kotlin.Long?, BigInteger?, Uint1?, Uint2?, Uint4?, Uint8?, kotlin.Float?, kotlin.Double?, BigDecimal?, kotlin.Boolean?, kotlin.String?, kotlin.String?, ByteArray?, LocalDate?, LocalTime?, LocalDateTime?, OffsetDateTime?, Duration?, UUID?, Json?, Mood?, kotlin.String> {
   override fun _1(): AllScalarTypesId = id
 
   override fun _10(): Uint8? = colUbigint
 
-  override fun _11(): Float? = colFloat
+  override fun _11(): kotlin.Float? = colFloat
 
-  override fun _12(): Double? = colDouble
+  override fun _12(): kotlin.Double? = colDouble
 
   override fun _13(): BigDecimal? = colDecimal
 
-  override fun _14(): Boolean? = colBoolean
+  override fun _14(): kotlin.Boolean? = colBoolean
 
-  override fun _15(): String? = colVarchar
+  override fun _15(): kotlin.String? = colVarchar
 
-  override fun _16(): String? = colText
+  override fun _16(): kotlin.String? = colText
 
   override fun _17(): ByteArray? = colBlob
 
@@ -105,7 +105,7 @@ data class AllScalarTypesSearchSqlRow(
 
   override fun _19(): LocalTime? = colTime
 
-  override fun _2(): Byte? = colTinyint
+  override fun _2(): kotlin.Byte? = colTinyint
 
   override fun _20(): LocalDateTime? = colTimestamp
 
@@ -119,13 +119,13 @@ data class AllScalarTypesSearchSqlRow(
 
   override fun _25(): Mood? = colMood
 
-  override fun _26(): String = colNotNull
+  override fun _26(): kotlin.String = colNotNull
 
-  override fun _3(): Short? = colSmallint
+  override fun _3(): kotlin.Short? = colSmallint
 
   override fun _4(): Int? = colInteger
 
-  override fun _5(): Long? = colBigint
+  override fun _5(): kotlin.Long? = colBigint
 
   override fun _6(): BigInteger? = colHugeint
 

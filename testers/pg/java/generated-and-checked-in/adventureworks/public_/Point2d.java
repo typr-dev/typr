@@ -23,7 +23,7 @@ public record Point2d(Optional<Double> x, Optional<Double> y) {
   }
   ;
 
-  public static PgStruct<Point2d> pgStruct =
+  public static PgStruct<Point2d> dbStruct =
       PgStruct.<Point2d>builder("public.point_2d")
           .optField("x", PgTypes.float8, v -> v.x())
           .optField("y", PgTypes.float8, v -> v.y())
@@ -32,9 +32,9 @@ public record Point2d(Optional<Double> x, Optional<Double> y) {
                   new Point2d(
                       Optional.ofNullable((Double) arr[0]), Optional.ofNullable((Double) arr[1])));
 
-  public static PgType<Point2d> pgType = pgStruct.asType();
+  public static PgType<Point2d> dbType = dbStruct.asType();
 
-  public static PgType<Point2d[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), Point2d[]::new), Point2d[]::new);
+  public static PgType<Point2d[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), Point2d[]::new), Point2d[]::new);
 }

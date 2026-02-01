@@ -28,29 +28,24 @@ public record OrdersRow(
   public OrdersRow withOrderId(OrdersId orderId) {
     return new OrdersRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   public OrdersRow withCustomerId(Integer customerId) {
     return new OrdersRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   /** Default: current_date */
   public OrdersRow withOrderDate(LocalDate orderDate) {
     return new OrdersRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   public OrdersRow withTotalAmount(Optional<BigDecimal> totalAmount) {
     return new OrdersRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   /** Default: 'pending' */
   public OrdersRow withStatus(Optional<String> status) {
     return new OrdersRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   public static RowParser<OrdersRow> _rowParser =
       RowParsers.of(
@@ -64,46 +59,38 @@ public record OrdersRow(
               new Object[] {
                 row.orderId(), row.customerId(), row.orderDate(), row.totalAmount(), row.status()
               });
-  ;
 
   @Override
   public OrdersId _1() {
     return orderId;
   }
-  ;
 
   @Override
   public Integer _2() {
     return customerId;
   }
-  ;
 
   @Override
   public LocalDate _3() {
     return orderDate;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _4() {
     return totalAmount;
   }
-  ;
 
   @Override
   public Optional<String> _5() {
     return status;
   }
-  ;
 
   public OrdersId id() {
     return orderId;
   }
-  ;
 
   public OrdersRowUnsaved toUnsavedRow(
       Defaulted<LocalDate> orderDate, Defaulted<Optional<String>> status) {
     return new OrdersRowUnsaved(orderId, customerId, totalAmount, orderDate, status);
   }
-  ;
 }

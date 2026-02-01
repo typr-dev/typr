@@ -18,9 +18,9 @@ case class Point2d(
 )
 
 object Point2d {
-  given pgStruct: PgStruct[Point2d] = PgStruct.builder[Point2d]("public.point_2d").optField("x", PgTypes.float8, (v: Point2d) => v.x).optField("y", PgTypes.float8, (v: Point2d) => v.y).build(arr => Point2d(x = Optional.ofNullable(arr(0).asInstanceOf[java.lang.Double]), y = Optional.ofNullable(arr(1).asInstanceOf[java.lang.Double])))
+  given dbStruct: PgStruct[Point2d] = PgStruct.builder[Point2d]("public.point_2d").optField("x", PgTypes.float8, (v: Point2d) => v.x).optField("y", PgTypes.float8, (v: Point2d) => v.y).build(arr => Point2d(x = Optional.ofNullable(arr(0).asInstanceOf[java.lang.Double]), y = Optional.ofNullable(arr(1).asInstanceOf[java.lang.Double])))
 
-  given pgType: PgType[Point2d] = pgStruct.asType()
+  given dbType: PgType[Point2d] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[Point2d]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Point2d](n)), n => new Array[Point2d](n))
+  given dbTypeArray: PgType[Array[Point2d]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[Point2d](n)), n => new Array[Point2d](n))
 }

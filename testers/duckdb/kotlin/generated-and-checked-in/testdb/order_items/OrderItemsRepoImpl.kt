@@ -25,7 +25,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   override fun deleteById(
     compositeId: OrderItemsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"order_items\" where \"order_id\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.orderId), Fragment.lit(" AND \"product_id\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.productId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.interpolate(Fragment.lit("delete from \"order_items\" where \"order_id\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.orderId), Fragment.lit(" AND \"product_id\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.productId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<OrderItemsId>,
@@ -95,7 +95,7 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   override fun update(
     row: OrderItemsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val compositeId: OrderItemsId = row.compositeId()
     return Fragment.interpolate(Fragment.lit("update \"order_items\"\nset \"quantity\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, row.quantity), Fragment.lit(",\n\"unit_price\" = "), Fragment.encode(DuckDbTypes.numeric, row.unitPrice), Fragment.lit("\nwhere \"order_id\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.orderId), Fragment.lit(" AND \"product_id\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.productId), Fragment.lit("")).update().runUnchecked(c) > 0
   }

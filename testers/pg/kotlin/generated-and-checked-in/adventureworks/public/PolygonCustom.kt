@@ -17,13 +17,13 @@ data class PolygonCustom(
   val vertices: Array<Point2d>?
 ) {
   companion object {
-    val pgStruct: PgStruct<PolygonCustom> =
-      PgStruct.builder<PolygonCustom>("public.polygon_custom").optField("name", PgTypes.text, { v: PolygonCustom -> Optional.ofNullable(v.name) }).optField("vertices", Point2d.pgTypeArray, { v: PolygonCustom -> Optional.ofNullable(v.vertices) }).build({ arr -> PolygonCustom(arr[0] as? String, arr[1] as? Array<Point2d>) })
+    val dbStruct: PgStruct<PolygonCustom> =
+      PgStruct.builder<PolygonCustom>("public.polygon_custom").optField("name", PgTypes.text, { v: PolygonCustom -> Optional.ofNullable(v.name) }).optField("vertices", Point2d.dbTypeArray, { v: PolygonCustom -> Optional.ofNullable(v.vertices) }).build({ arr -> PolygonCustom(arr[0] as? String, arr[1] as? Array<Point2d>) })
 
-    val pgType: PgType<PolygonCustom> =
-      pgStruct.asType()
+    val dbType: PgType<PolygonCustom> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<PolygonCustom>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<PolygonCustom>(n) }), { n -> arrayOfNulls<PolygonCustom>(n) })
+    val dbTypeArray: PgType<Array<PolygonCustom>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<PolygonCustom>(n) }), { n -> arrayOfNulls<PolygonCustom>(n) })
   }
 }

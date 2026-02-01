@@ -18,13 +18,13 @@ data class ContactInfo(
   val address: Address?
 ) {
   companion object {
-    val pgStruct: PgStruct<ContactInfo> =
-      PgStruct.builder<ContactInfo>("public.contact_info").optField("email", PgTypes.text, { v: ContactInfo -> Optional.ofNullable(v.email) }).optField("phone", PgTypes.text, { v: ContactInfo -> Optional.ofNullable(v.phone) }).optField("address", Address.pgType, { v: ContactInfo -> Optional.ofNullable(v.address) }).build({ arr -> ContactInfo(arr[0] as? String, arr[1] as? String, arr[2] as? Address) })
+    val dbStruct: PgStruct<ContactInfo> =
+      PgStruct.builder<ContactInfo>("public.contact_info").optField("email", PgTypes.text, { v: ContactInfo -> Optional.ofNullable(v.email) }).optField("phone", PgTypes.text, { v: ContactInfo -> Optional.ofNullable(v.phone) }).optField("address", Address.dbType, { v: ContactInfo -> Optional.ofNullable(v.address) }).build({ arr -> ContactInfo(arr[0] as? String, arr[1] as? String, arr[2] as? Address) })
 
-    val pgType: PgType<ContactInfo> =
-      pgStruct.asType()
+    val dbType: PgType<ContactInfo> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<ContactInfo>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<ContactInfo>(n) }), { n -> arrayOfNulls<ContactInfo>(n) })
+    val dbTypeArray: PgType<Array<ContactInfo>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<ContactInfo>(n) }), { n -> arrayOfNulls<ContactInfo>(n) })
   }
 }

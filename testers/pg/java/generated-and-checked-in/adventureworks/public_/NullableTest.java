@@ -29,7 +29,7 @@ public record NullableTest(
   }
   ;
 
-  public static PgStruct<NullableTest> pgStruct =
+  public static PgStruct<NullableTest> dbStruct =
       PgStruct.<NullableTest>builder("public.nullable_test")
           .optField("alwaysPresent", PgTypes.text, v -> v.alwaysPresent())
           .optField("oftenNull", PgTypes.text, v -> v.oftenNull())
@@ -41,10 +41,10 @@ public record NullableTest(
                       Optional.ofNullable((String) arr[1]),
                       Optional.ofNullable((String) arr[2])));
 
-  public static PgType<NullableTest> pgType = pgStruct.asType();
+  public static PgType<NullableTest> dbType = dbStruct.asType();
 
-  public static PgType<NullableTest[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), NullableTest[]::new),
+  public static PgType<NullableTest[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), NullableTest[]::new),
           NullableTest[]::new);
 }

@@ -22,18 +22,18 @@ import testdb.precisetypes.Int5
   */
 data class PrecisionTypesRow(
   val id: PrecisionTypesId,
-  val string10: String,
-  val string20: String,
-  val string50: String,
-  val string100: String,
-  val string255: String,
+  val string10: kotlin.String,
+  val string20: kotlin.String,
+  val string50: kotlin.String,
+  val string100: kotlin.String,
+  val string255: kotlin.String,
   @field:JsonProperty("decimal5_2") val decimal52: Decimal5_2,
   @field:JsonProperty("decimal10_2") val decimal102: Decimal10_2,
   @field:JsonProperty("decimal18_4") val decimal184: Decimal18_4,
   @field:JsonProperty("decimal5_0") val decimal50: Int5,
   @field:JsonProperty("decimal10_0") val decimal100: Int10,
   @field:JsonProperty("decimal18_0") val decimal180: Int18
-) : Tuple12<PrecisionTypesId, String, String, String, String, String, Decimal5_2, Decimal10_2, Decimal18_4, Int5, Int10, Int18> {
+) : Tuple12<PrecisionTypesId, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, Decimal5_2, Decimal10_2, Decimal18_4, Int5, Int10, Int18> {
   override fun _1(): PrecisionTypesId = id
 
   override fun _10(): Int5 = decimal50
@@ -42,15 +42,15 @@ data class PrecisionTypesRow(
 
   override fun _12(): Int18 = decimal180
 
-  override fun _2(): String = string10
+  override fun _2(): kotlin.String = string10
 
-  override fun _3(): String = string20
+  override fun _3(): kotlin.String = string20
 
-  override fun _4(): String = string50
+  override fun _4(): kotlin.String = string50
 
-  override fun _5(): String = string100
+  override fun _5(): kotlin.String = string100
 
-  override fun _6(): String = string255
+  override fun _6(): kotlin.String = string255
 
   override fun _7(): Decimal5_2 = decimal52
 

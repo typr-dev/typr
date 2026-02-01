@@ -26,8 +26,8 @@ data class OrdersRow(
   @field:JsonProperty("order_date") val orderDate: LocalDate,
   @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   /** Default: 'pending' */
-  val status: String?
-) : Tuple5<OrdersId, Int, LocalDate, BigDecimal?, String?> {
+  val status: kotlin.String?
+) : Tuple5<OrdersId, Int, LocalDate, BigDecimal?, kotlin.String?> {
   override fun _1(): OrdersId = orderId
 
   override fun _2(): Int = customerId
@@ -36,13 +36,13 @@ data class OrdersRow(
 
   override fun _4(): BigDecimal? = totalAmount
 
-  override fun _5(): String? = status
+  override fun _5(): kotlin.String? = status
 
   fun id(): OrdersId = orderId
 
   fun toUnsavedRow(
     orderDate: Defaulted<LocalDate> = Defaulted.Provided(this.orderDate),
-    status: Defaulted<String?> = Defaulted.Provided(this.status)
+    status: Defaulted<kotlin.String?> = Defaulted.Provided(this.status)
   ): OrdersRowUnsaved = OrdersRowUnsaved(orderId, customerId, totalAmount, orderDate, status)
 
   companion object {

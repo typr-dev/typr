@@ -22,6 +22,8 @@ class KafkaRpcCodegen(
 ) {
 
   private val isAsync = effectType != EffectType.Blocking
+  // Cats uses effectful handlers that return IO[Result[...]] instead of just Result[...]
+  private val isCats = framework.name == "Cats"
 
   private val UUIDType = jvm.Type.Qualified(jvm.QIdent("java.util.UUID"))
   private val StringType = lang.String
@@ -40,8 +42,8 @@ class KafkaRpcCodegen(
       }
     }
 
-    files += generateClient(protocol)
-    files += generateServer(protocol)
+    generateClient(protocol).foreach(files += _)
+    generateServer(protocol).foreach(files += _)
 
     files.result()
   }
@@ -247,10 +249,13 @@ class KafkaRpcCodegen(
     jvm.File(responseType, jvm.Code.Tree(sealedInterface), secondaryTypes = Nil, scope = Scope.Main)
   }
 
-  /** Generate RPC client that implements the service interface */
-  private def generateClient(protocol: AvroProtocol): jvm.File = {
+  /** Generate RPC client that implements the service interface. Returns None for Cats - fs2-kafka doesn't have built-in request-reply pattern.
+    */
+  private def generateClient(protocol: AvroProtocol): Option[jvm.File] = {
+    // Cats/fs2-kafka doesn't have ReplyingKafkaTemplate-style request-reply
+    if (isCats) return None
+
     val clientType = naming.avroServiceClientTypeName(protocol.name, protocol.namespace)
-    val serviceType = naming.avroServiceTypeName(protocol.name, protocol.namespace)
 
     val templateVar = jvm.Ident("replyingTemplate")
     val requestTopic = s"${toTopicName(protocol.name)}-requests"
@@ -287,7 +292,7 @@ class KafkaRpcCodegen(
       staticMembers = Nil
     )
 
-    jvm.File(clientType, jvm.Code.Tree(cls), secondaryTypes = Nil, scope = Scope.Main)
+    Some(jvm.File(clientType, jvm.Code.Tree(cls), secondaryTypes = Nil, scope = Scope.Main))
   }
 
   private def generateClientMethod(
@@ -457,8 +462,11 @@ class KafkaRpcCodegen(
     }
   }
 
-  /** Generate RPC server that dispatches to handler */
-  private def generateServer(protocol: AvroProtocol): jvm.File = {
+  /** Generate RPC server that dispatches to handler. Returns None for Cats - handlers return IO which requires different composition.
+    */
+  private def generateServer(protocol: AvroProtocol): Option[jvm.File] = {
+    // Cats handlers return IO[Result[...]] which requires map/flatMap composition
+    if (isCats) return None
     val serverType = naming.avroServiceServerTypeName(protocol.name, protocol.namespace)
     val handlerType = naming.avroHandlerTypeName(protocol.name, protocol.namespace)
     val requestInterfaceType = naming.avroServiceRequestInterfaceTypeName(protocol.name, protocol.namespace)
@@ -486,16 +494,8 @@ class KafkaRpcCodegen(
       val handlerMethodName = jvm.Ident("handle" + message.name.capitalize)
       if (message.oneWay) {
         // One-way: call handler, return null (no reply sent)
-        // Kotlin uses block expression (last expr is value), Java uses yield
-        val body = if (isKotlin) {
-          code"""|{
-                 |  $handlerMethodName($r)
-                 |  null
-                 |}""".stripMargin
-        } else {
-          code"{ $handlerMethodName($r); yield null; }"
-        }
-        jvm.TypeSwitch.Case(requestType, r, body)
+        val body = jvm.BlockExpr(List(code"$handlerMethodName($r)"), code"null")
+        jvm.TypeSwitch.Case(requestType, r, body.code)
       } else {
         jvm.TypeSwitch.Case(requestType, r, code"$handlerMethodName($r)")
       }
@@ -543,7 +543,7 @@ class KafkaRpcCodegen(
       staticMembers = Nil
     )
 
-    jvm.File(serverType, jvm.Code.Tree(cls), secondaryTypes = Nil, scope = Scope.Main)
+    Some(jvm.File(serverType, jvm.Code.Tree(cls), secondaryTypes = Nil, scope = Scope.Main))
   }
 
   private def generateServerHandlerMethod(
@@ -588,9 +588,10 @@ class KafkaRpcCodegen(
         val errorResponseType = responseType / jvm.Ident("Error")
         val okTypeBase = resultType / jvm.Ident("Ok")
         val errTypeBase = resultType / jvm.Ident("Err")
-        // For Kotlin pattern matching, need wildcards on generic types
-        val okType = if (lang.isInstanceOf[LangKotlin]) okTypeBase.of(jvm.Type.Wildcard, jvm.Type.Wildcard) else okTypeBase
-        val errType = if (lang.isInstanceOf[LangKotlin]) errTypeBase.of(jvm.Type.Wildcard, jvm.Type.Wildcard) else errTypeBase
+        // For Scala/Kotlin pattern matching, need wildcards on generic types
+        val needsWildcards = lang.isInstanceOf[LangKotlin] || lang.isInstanceOf[LangScala]
+        val okType = if (needsWildcards) okTypeBase.of(jvm.Type.Wildcard, jvm.Type.Wildcard) else okTypeBase
+        val errType = if (needsWildcards) errTypeBase.of(jvm.Type.Wildcard, jvm.Type.Wildcard) else errTypeBase
 
         val valueType = typeMapper.mapType(message.response)
         val msgErrorType = getErrorType(message, namespace)
@@ -604,8 +605,8 @@ class KafkaRpcCodegen(
         val errValueAccess = lang.propertyGetterAccess(err.code, jvm.Ident("error"))
         val okValueCast = jvm.Cast(valueType, okValueAccess).code
         val errValueCast = jvm.Cast(msgErrorType, errValueAccess).code
-        // Kotlin needs else branch with star projections even though Result is sealed
-        val needsDefault = lang.isInstanceOf[LangKotlin]
+        // Scala 3/Kotlin need else branch with star projections even though Result is sealed
+        val needsDefault = needsWildcards
         val typeSwitch = jvm.TypeSwitch(
           value = resultVar.code,
           cases = List(

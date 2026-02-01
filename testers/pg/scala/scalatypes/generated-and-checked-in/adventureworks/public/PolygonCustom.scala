@@ -18,9 +18,9 @@ case class PolygonCustom(
 )
 
 object PolygonCustom {
-  given pgStruct: PgStruct[PolygonCustom] = PgStruct.builder[PolygonCustom]("public.polygon_custom").optField("name", PgTypes.text, (v: PolygonCustom) => v.name.asJava).optField("vertices", Point2d.pgTypeArray, (v: PolygonCustom) => v.vertices.asJava).build(arr => PolygonCustom(name = Option(arr(0).asInstanceOf[String]), vertices = Option(arr(1).asInstanceOf[Array[Point2d]])))
+  given dbStruct: PgStruct[PolygonCustom] = PgStruct.builder[PolygonCustom]("public.polygon_custom").optField("name", PgTypes.text, (v: PolygonCustom) => v.name.asJava).optField("vertices", Point2d.dbTypeArray, (v: PolygonCustom) => v.vertices.asJava).build(arr => PolygonCustom(name = Option(arr(0).asInstanceOf[String]), vertices = Option(arr(1).asInstanceOf[Array[Point2d]])))
 
-  given pgType: PgType[PolygonCustom] = pgStruct.asType()
+  given dbType: PgType[PolygonCustom] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[PolygonCustom]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[PolygonCustom](n)), n => new Array[PolygonCustom](n))
+  given dbTypeArray: PgType[Array[PolygonCustom]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[PolygonCustom](n)), n => new Array[PolygonCustom](n))
 }

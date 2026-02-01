@@ -29,13 +29,11 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
   public PrecisionTypesNullRepoMock() {
     this(new HashMap<PrecisionTypesNullId, PrecisionTypesNullRow>());
   }
-  ;
 
   public PrecisionTypesNullRepoMock withMap(
       HashMap<PrecisionTypesNullId, PrecisionTypesNullRow> map) {
     return new PrecisionTypesNullRepoMock(map);
   }
-  ;
 
   @Override
   public DeleteBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> delete() {
@@ -46,13 +44,11 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
         row -> row.id(),
         id -> map.remove(id));
   }
-  ;
 
   @Override
   public Boolean deleteById(PrecisionTypesNullId id, Connection c) {
     return Optional.ofNullable(map.remove(id)).isPresent();
   }
-  ;
 
   @Override
   public Integer deleteByIds(PrecisionTypesNullId[] ids, Connection c) {
@@ -62,23 +58,19 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
         count = count + 1;
         ;
       }
-      ;
     }
     ;
     return count;
   }
-  ;
 
   @Override
   public PrecisionTypesNullRow insert(PrecisionTypesNullRow unsaved, Connection c) {
     if (map.containsKey(unsaved.id())) {
       throw new RuntimeException("id " + unsaved.id() + " already exists");
     }
-    ;
     map.put(unsaved.id(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> select() {
@@ -87,19 +79,16 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
         () -> new ArrayList<>(map.values()),
         SelectParams.empty());
   }
-  ;
 
   @Override
   public List<PrecisionTypesNullRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   }
-  ;
 
   @Override
   public Optional<PrecisionTypesNullRow> selectById(PrecisionTypesNullId id, Connection c) {
     return Optional.ofNullable(map.get(id));
   }
-  ;
 
   @Override
   public List<PrecisionTypesNullRow> selectByIds(PrecisionTypesNullId[] ids, Connection c) {
@@ -109,12 +98,10 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
       if (opt.isPresent()) {
         result.add(opt.get());
       }
-      ;
     }
     ;
     return result;
   }
-  ;
 
   @Override
   public Map<PrecisionTypesNullId, PrecisionTypesNullRow> selectByIdsTracked(
@@ -122,7 +109,6 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
     return selectByIds(ids, c).stream()
         .collect(Collectors.toMap((PrecisionTypesNullRow row) -> row.id(), Function.identity()));
   }
-  ;
 
   @Override
   public UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> update() {
@@ -132,7 +118,6 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
         UpdateParams.empty(),
         row -> row);
   }
-  ;
 
   @Override
   public Boolean update(PrecisionTypesNullRow row, Connection c) {
@@ -142,17 +127,14 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
       map.put(row.id(), row);
       ;
     }
-    ;
     return shouldUpdate;
   }
-  ;
 
   @Override
   public PrecisionTypesNullRow upsert(PrecisionTypesNullRow unsaved, Connection c) {
     map.put(unsaved.id(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public List<PrecisionTypesNullRow> upsertBatch(
@@ -166,5 +148,4 @@ public record PrecisionTypesNullRepoMock(HashMap<PrecisionTypesNullId, Precision
     ;
     return result;
   }
-  ;
 }

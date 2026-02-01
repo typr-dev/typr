@@ -21,9 +21,9 @@ case class InventoryItem(
 )
 
 object InventoryItem {
-  given pgStruct: PgStruct[InventoryItem] = PgStruct.builder[InventoryItem]("public.inventory_item").optField("name", PgTypes.text, (v: InventoryItem) => v.name.asJava).optField("tags", PgTypes.textArray, (v: InventoryItem) => v.tags.asJava).optField("prices", ScalaDbTypes.PgTypes.numericArray, (v: InventoryItem) => v.prices.asJava).optField("available", ScalaDbTypes.PgTypes.bool, (v: InventoryItem) => v.available.asJava).build(arr => InventoryItem(name = Option(arr(0).asInstanceOf[String]), tags = Option(arr(1).asInstanceOf[Array[String]]), prices = Option(arr(2).asInstanceOf[Array[BigDecimal]]), available = Option(arr(3).asInstanceOf[Boolean])))
+  given dbStruct: PgStruct[InventoryItem] = PgStruct.builder[InventoryItem]("public.inventory_item").optField("name", PgTypes.text, (v: InventoryItem) => v.name.asJava).optField("tags", PgTypes.textArray, (v: InventoryItem) => v.tags.asJava).optField("prices", ScalaDbTypes.PgTypes.numericArray, (v: InventoryItem) => v.prices.asJava).optField("available", ScalaDbTypes.PgTypes.bool, (v: InventoryItem) => v.available.asJava).build(arr => InventoryItem(name = Option(arr(0).asInstanceOf[String]), tags = Option(arr(1).asInstanceOf[Array[String]]), prices = Option(arr(2).asInstanceOf[Array[BigDecimal]]), available = Option(arr(3).asInstanceOf[Boolean])))
 
-  given pgType: PgType[InventoryItem] = pgStruct.asType()
+  given dbType: PgType[InventoryItem] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[InventoryItem]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[InventoryItem](n)), n => new Array[InventoryItem](n))
+  given dbTypeArray: PgType[Array[InventoryItem]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[InventoryItem](n)), n => new Array[InventoryItem](n))
 }

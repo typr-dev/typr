@@ -18,12 +18,10 @@ public record EmployeesId(
   public EmployeesId withEmpNumber(Integer empNumber) {
     return new EmployeesId(empNumber, empSuffix);
   }
-  ;
 
   public EmployeesId withEmpSuffix(String empSuffix) {
     return new EmployeesId(empNumber, empSuffix);
   }
-  ;
 
   public static RowParser<EmployeesId> _rowParser =
       RowParsers.of(
@@ -31,17 +29,14 @@ public record EmployeesId(
           DuckDbTypes.varchar,
           EmployeesId::new,
           row -> new Object[] {row.empNumber(), row.empSuffix()});
-  ;
 
   @Override
   public Integer _1() {
     return empNumber;
   }
-  ;
 
   @Override
   public String _2() {
     return empSuffix;
   }
-  ;
 }

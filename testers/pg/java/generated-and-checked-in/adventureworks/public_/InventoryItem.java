@@ -38,7 +38,7 @@ public record InventoryItem(
   }
   ;
 
-  public static PgStruct<InventoryItem> pgStruct =
+  public static PgStruct<InventoryItem> dbStruct =
       PgStruct.<InventoryItem>builder("public.inventory_item")
           .optField("name", PgTypes.text, v -> v.name())
           .optField("tags", PgTypes.textArray, v -> v.tags())
@@ -52,10 +52,10 @@ public record InventoryItem(
                       Optional.ofNullable((BigDecimal[]) arr[2]),
                       Optional.ofNullable((Boolean) arr[3])));
 
-  public static PgType<InventoryItem> pgType = pgStruct.asType();
+  public static PgType<InventoryItem> dbType = dbStruct.asType();
 
-  public static PgType<InventoryItem[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), InventoryItem[]::new),
+  public static PgType<InventoryItem[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), InventoryItem[]::new),
           InventoryItem[]::new);
 }

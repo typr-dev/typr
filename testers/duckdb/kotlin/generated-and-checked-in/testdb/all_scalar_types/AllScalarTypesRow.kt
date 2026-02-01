@@ -32,21 +32,21 @@ import testdb.Mood
   */
 data class AllScalarTypesRow(
   val id: AllScalarTypesId,
-  @field:JsonProperty("col_tinyint") val colTinyint: Byte?,
-  @field:JsonProperty("col_smallint") val colSmallint: Short?,
+  @field:JsonProperty("col_tinyint") val colTinyint: kotlin.Byte?,
+  @field:JsonProperty("col_smallint") val colSmallint: kotlin.Short?,
   @field:JsonProperty("col_integer") val colInteger: Int?,
-  @field:JsonProperty("col_bigint") val colBigint: Long?,
+  @field:JsonProperty("col_bigint") val colBigint: kotlin.Long?,
   @field:JsonProperty("col_hugeint") val colHugeint: BigInteger?,
   @field:JsonProperty("col_utinyint") val colUtinyint: Uint1?,
   @field:JsonProperty("col_usmallint") val colUsmallint: Uint2?,
   @field:JsonProperty("col_uinteger") val colUinteger: Uint4?,
   @field:JsonProperty("col_ubigint") val colUbigint: Uint8?,
-  @field:JsonProperty("col_float") val colFloat: Float?,
-  @field:JsonProperty("col_double") val colDouble: Double?,
+  @field:JsonProperty("col_float") val colFloat: kotlin.Float?,
+  @field:JsonProperty("col_double") val colDouble: kotlin.Double?,
   @field:JsonProperty("col_decimal") val colDecimal: BigDecimal?,
-  @field:JsonProperty("col_boolean") val colBoolean: Boolean?,
-  @field:JsonProperty("col_varchar") val colVarchar: String?,
-  @field:JsonProperty("col_text") val colText: String?,
+  @field:JsonProperty("col_boolean") val colBoolean: kotlin.Boolean?,
+  @field:JsonProperty("col_varchar") val colVarchar: kotlin.String?,
+  @field:JsonProperty("col_text") val colText: kotlin.String?,
   @field:JsonProperty("col_blob") val colBlob: ByteArray?,
   @field:JsonProperty("col_date") val colDate: LocalDate?,
   @field:JsonProperty("col_time") val colTime: LocalTime?,
@@ -56,23 +56,23 @@ data class AllScalarTypesRow(
   @field:JsonProperty("col_uuid") val colUuid: UUID?,
   @field:JsonProperty("col_json") val colJson: Json?,
   @field:JsonProperty("col_mood") val colMood: Mood?,
-  @field:JsonProperty("col_not_null") val colNotNull: String
-) : Tuple26<AllScalarTypesId, Byte?, Short?, Int?, Long?, BigInteger?, Uint1?, Uint2?, Uint4?, Uint8?, Float?, Double?, BigDecimal?, Boolean?, String?, String?, ByteArray?, LocalDate?, LocalTime?, LocalDateTime?, OffsetDateTime?, Duration?, UUID?, Json?, Mood?, String> {
+  @field:JsonProperty("col_not_null") val colNotNull: kotlin.String
+) : Tuple26<AllScalarTypesId, kotlin.Byte?, kotlin.Short?, Int?, kotlin.Long?, BigInteger?, Uint1?, Uint2?, Uint4?, Uint8?, kotlin.Float?, kotlin.Double?, BigDecimal?, kotlin.Boolean?, kotlin.String?, kotlin.String?, ByteArray?, LocalDate?, LocalTime?, LocalDateTime?, OffsetDateTime?, Duration?, UUID?, Json?, Mood?, kotlin.String> {
   override fun _1(): AllScalarTypesId = id
 
   override fun _10(): Uint8? = colUbigint
 
-  override fun _11(): Float? = colFloat
+  override fun _11(): kotlin.Float? = colFloat
 
-  override fun _12(): Double? = colDouble
+  override fun _12(): kotlin.Double? = colDouble
 
   override fun _13(): BigDecimal? = colDecimal
 
-  override fun _14(): Boolean? = colBoolean
+  override fun _14(): kotlin.Boolean? = colBoolean
 
-  override fun _15(): String? = colVarchar
+  override fun _15(): kotlin.String? = colVarchar
 
-  override fun _16(): String? = colText
+  override fun _16(): kotlin.String? = colText
 
   override fun _17(): ByteArray? = colBlob
 
@@ -80,7 +80,7 @@ data class AllScalarTypesRow(
 
   override fun _19(): LocalTime? = colTime
 
-  override fun _2(): Byte? = colTinyint
+  override fun _2(): kotlin.Byte? = colTinyint
 
   override fun _20(): LocalDateTime? = colTimestamp
 
@@ -94,13 +94,13 @@ data class AllScalarTypesRow(
 
   override fun _25(): Mood? = colMood
 
-  override fun _26(): String = colNotNull
+  override fun _26(): kotlin.String = colNotNull
 
-  override fun _3(): Short? = colSmallint
+  override fun _3(): kotlin.Short? = colSmallint
 
   override fun _4(): Int? = colInteger
 
-  override fun _5(): Long? = colBigint
+  override fun _5(): kotlin.Long? = colBigint
 
   override fun _6(): BigInteger? = colHugeint
 

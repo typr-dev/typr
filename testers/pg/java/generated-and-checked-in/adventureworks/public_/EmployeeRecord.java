@@ -45,10 +45,10 @@ public record EmployeeRecord(
   }
   ;
 
-  public static PgStruct<EmployeeRecord> pgStruct =
+  public static PgStruct<EmployeeRecord> dbStruct =
       PgStruct.<EmployeeRecord>builder("public.employee_record")
-          .optField("name", PersonName.pgType, v -> v.name())
-          .optField("contact", ContactInfo.pgType, v -> v.contact())
+          .optField("name", PersonName.dbType, v -> v.name())
+          .optField("contact", ContactInfo.dbType, v -> v.contact())
           .optField("employeeId", PgTypes.int4, v -> v.employeeId())
           .optField("salary", PgTypes.numeric, v -> v.salary())
           .optField("hireDate", PgTypes.date, v -> v.hireDate())
@@ -61,10 +61,10 @@ public record EmployeeRecord(
                       Optional.ofNullable((BigDecimal) arr[3]),
                       Optional.ofNullable((LocalDate) arr[4])));
 
-  public static PgType<EmployeeRecord> pgType = pgStruct.asType();
+  public static PgType<EmployeeRecord> dbType = dbStruct.asType();
 
-  public static PgType<EmployeeRecord[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), EmployeeRecord[]::new),
+  public static PgType<EmployeeRecord[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), EmployeeRecord[]::new),
           EmployeeRecord[]::new);
 }

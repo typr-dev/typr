@@ -21,7 +21,7 @@ class InsertOrderWithItemsSqlRepoImpl() : InsertOrderWithItemsSqlRepo {
     customerId: /* user-picked */ CustomersId,
     orderDate: LocalDate?,
     totalAmount: BigDecimal?,
-    status: String?,
+    status: kotlin.String?,
     c: Connection
   ): List<InsertOrderWithItemsSqlRow> = Fragment.interpolate(Fragment.lit("-- Insert a new order and return the generated data\n-- Tests: INSERT with RETURNING, multiple columns, foreign keys, DEFAULT values\n\nINSERT INTO orders (order_id, customer_id, order_date, total_amount, status)\nVALUES (\n    CAST("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, orderId), Fragment.lit(" AS INTEGER),\n    CAST("), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.lit(" AS INTEGER),\n    CAST("), Fragment.encode(DuckDbTypes.date.nullable(), orderDate), Fragment.lit(" AS DATE),\n    CAST("), Fragment.encode(DuckDbTypes.numeric.nullable(), totalAmount), Fragment.lit(" AS DECIMAL),\n    CAST("), Fragment.encode(DuckDbTypes.text.nullable(), status), Fragment.lit(" AS VARCHAR)\n)\nRETURNING\n    order_id,\n    customer_id,\n    order_date,\n    total_amount,\n    status")).query(InsertOrderWithItemsSqlRow._rowParser.all()).runUnchecked(c)
 }

@@ -32,31 +32,26 @@ public record InsertOrderWithItemsSqlRow(
   public InsertOrderWithItemsSqlRow withOrderId(OrdersId orderId) {
     return new InsertOrderWithItemsSqlRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#customerId()} */
   public InsertOrderWithItemsSqlRow withCustomerId(Integer customerId) {
     return new InsertOrderWithItemsSqlRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#orderDate()} */
   public InsertOrderWithItemsSqlRow withOrderDate(LocalDate orderDate) {
     return new InsertOrderWithItemsSqlRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#totalAmount()} */
   public InsertOrderWithItemsSqlRow withTotalAmount(Optional<BigDecimal> totalAmount) {
     return new InsertOrderWithItemsSqlRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#status()} */
   public InsertOrderWithItemsSqlRow withStatus(Optional<String> status) {
     return new InsertOrderWithItemsSqlRow(orderId, customerId, orderDate, totalAmount, status);
   }
-  ;
 
   public static RowParser<InsertOrderWithItemsSqlRow> _rowParser =
       RowParsers.of(
@@ -70,35 +65,29 @@ public record InsertOrderWithItemsSqlRow(
               new Object[] {
                 row.orderId(), row.customerId(), row.orderDate(), row.totalAmount(), row.status()
               });
-  ;
 
   @Override
   public OrdersId _1() {
     return orderId;
   }
-  ;
 
   @Override
   public Integer _2() {
     return customerId;
   }
-  ;
 
   @Override
   public LocalDate _3() {
     return orderDate;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _4() {
     return totalAmount;
   }
-  ;
 
   @Override
   public Optional<String> _5() {
     return status;
   }
-  ;
 }

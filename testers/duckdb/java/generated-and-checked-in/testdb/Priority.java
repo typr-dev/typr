@@ -38,8 +38,10 @@ public enum Priority {
               xs -> arrayMap.map(xs, Priority::force, Priority.class),
               xs -> arrayMap.map(xs, Priority::value, String.class))
           .renamedDropPrecision("priority");
+  ;
   public static DuckDbType<Priority> duckDbType =
       DuckDbTypes.text.bimap(Priority::force, Priority::value).renamedDropPrecision("priority");
+  ;
 
   public static Priority force(java.lang.String str) {
     if (ByName.containsKey(str)) {

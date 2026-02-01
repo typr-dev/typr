@@ -19,7 +19,7 @@ interface DepartmentsRepo {
   abstract fun deleteById(
     compositeId: DepartmentsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
     compositeIds: Array<DepartmentsId>,
@@ -55,7 +55,7 @@ interface DepartmentsRepo {
   abstract fun update(
     row: DepartmentsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: DepartmentsRow,

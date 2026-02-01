@@ -19,13 +19,13 @@ data class Address(
   val country: String?
 ) {
   companion object {
-    val pgStruct: PgStruct<Address> =
+    val dbStruct: PgStruct<Address> =
       PgStruct.builder<Address>("public.address").optField("street", PgTypes.text, { v: Address -> Optional.ofNullable(v.street) }).optField("city", PgTypes.text, { v: Address -> Optional.ofNullable(v.city) }).optField("zip", PgTypes.text, { v: Address -> Optional.ofNullable(v.zip) }).optField("country", PgTypes.text, { v: Address -> Optional.ofNullable(v.country) }).build({ arr -> Address(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String) })
 
-    val pgType: PgType<Address> =
-      pgStruct.asType()
+    val dbType: PgType<Address> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<Address>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<Address>(n) }), { n -> arrayOfNulls<Address>(n) })
+    val dbTypeArray: PgType<Array<Address>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<Address>(n) }), { n -> arrayOfNulls<Address>(n) })
   }
 }

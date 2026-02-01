@@ -19,12 +19,12 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
 
-data class CustomerOrdersViewFields(val _path: List<Path>) : TupleExpr7<Int, String, String, Int, LocalDate, BigDecimal, String>, RelationStructure<CustomerOrdersViewFields, CustomerOrdersViewRow>, FieldsBase<CustomerOrdersViewRow> {
+data class CustomerOrdersViewFields(val _path: List<Path>) : TupleExpr7<Int, kotlin.String, kotlin.String, Int, LocalDate, BigDecimal, kotlin.String>, RelationStructure<CustomerOrdersViewFields, CustomerOrdersViewRow>, FieldsBase<CustomerOrdersViewRow> {
   override fun _1(): SqlExpr<Int> = customerId()
 
-  override fun _2(): SqlExpr<String> = customerName()
+  override fun _2(): SqlExpr<kotlin.String> = customerName()
 
-  override fun _3(): SqlExpr<String> = email()
+  override fun _3(): SqlExpr<kotlin.String> = email()
 
   override fun _4(): SqlExpr<Int> = orderId()
 
@@ -32,7 +32,7 @@ data class CustomerOrdersViewFields(val _path: List<Path>) : TupleExpr7<Int, Str
 
   override fun _6(): SqlExpr<BigDecimal> = totalAmount()
 
-  override fun _7(): SqlExpr<String> = status()
+  override fun _7(): SqlExpr<kotlin.String> = status()
 
   override fun _path(): List<Path> = _path
 
@@ -40,9 +40,9 @@ data class CustomerOrdersViewFields(val _path: List<Path>) : TupleExpr7<Int, Str
 
   fun customerId(): OptField<Int, CustomerOrdersViewRow> = OptField<Int, CustomerOrdersViewRow>(_path, "customer_id", CustomerOrdersViewRow::customerId, null, "INTEGER", { row, value -> row.copy(customerId = value) }, KotlinDbTypes.DuckDbTypes.integer)
 
-  fun customerName(): OptField<String, CustomerOrdersViewRow> = OptField<String, CustomerOrdersViewRow>(_path, "customer_name", CustomerOrdersViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, DuckDbTypes.varchar)
+  fun customerName(): OptField<kotlin.String, CustomerOrdersViewRow> = OptField<kotlin.String, CustomerOrdersViewRow>(_path, "customer_name", CustomerOrdersViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, DuckDbTypes.varchar)
 
-  fun email(): OptField<String, CustomerOrdersViewRow> = OptField<String, CustomerOrdersViewRow>(_path, "email", CustomerOrdersViewRow::email, null, null, { row, value -> row.copy(email = value) }, DuckDbTypes.varchar)
+  fun email(): OptField<kotlin.String, CustomerOrdersViewRow> = OptField<kotlin.String, CustomerOrdersViewRow>(_path, "email", CustomerOrdersViewRow::email, null, null, { row, value -> row.copy(email = value) }, DuckDbTypes.varchar)
 
   fun orderDate(): OptField<LocalDate, CustomerOrdersViewRow> = OptField<LocalDate, CustomerOrdersViewRow>(_path, "order_date", CustomerOrdersViewRow::orderDate, null, "DATE", { row, value -> row.copy(orderDate = value) }, DuckDbTypes.date)
 
@@ -50,7 +50,7 @@ data class CustomerOrdersViewFields(val _path: List<Path>) : TupleExpr7<Int, Str
 
   override fun rowParser(): RowParser<CustomerOrdersViewRow> = CustomerOrdersViewRow._rowParser.underlying
 
-  fun status(): OptField<String, CustomerOrdersViewRow> = OptField<String, CustomerOrdersViewRow>(_path, "status", CustomerOrdersViewRow::status, null, null, { row, value -> row.copy(status = value) }, DuckDbTypes.varchar)
+  fun status(): OptField<kotlin.String, CustomerOrdersViewRow> = OptField<kotlin.String, CustomerOrdersViewRow>(_path, "status", CustomerOrdersViewRow::status, null, null, { row, value -> row.copy(status = value) }, DuckDbTypes.varchar)
 
   fun totalAmount(): OptField<BigDecimal, CustomerOrdersViewRow> = OptField<BigDecimal, CustomerOrdersViewRow>(_path, "total_amount", CustomerOrdersViewRow::totalAmount, null, "DECIMAL(12,2)", { row, value -> row.copy(totalAmount = value) }, DuckDbTypes.numeric)
 

@@ -26,7 +26,7 @@ class OrdersRepoImpl() : OrdersRepo {
   override fun deleteById(
     orderId: OrdersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"orders\" where \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.interpolate(Fragment.lit("delete from \"orders\" where \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     orderIds: Array<OrdersId>,
@@ -95,7 +95,7 @@ class OrdersRepoImpl() : OrdersRepo {
   override fun update(
     row: OrdersRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val orderId: OrdersId = row.orderId
     return Fragment.interpolate(Fragment.lit("update \"orders\"\nset \"customer_id\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, row.customerId), Fragment.lit(",\n\"order_date\" = "), Fragment.encode(DuckDbTypes.date, row.orderDate), Fragment.lit(",\n\"total_amount\" = "), Fragment.encode(DuckDbTypes.numeric.nullable(), row.totalAmount), Fragment.lit(",\n\"status\" = "), Fragment.encode(DuckDbTypes.varchar.nullable(), row.status), Fragment.lit("\nwhere \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
   }

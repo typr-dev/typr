@@ -29,12 +29,10 @@ public record DepartmentsRepoMock(HashMap<DepartmentsId, DepartmentsRow> map)
   public DepartmentsRepoMock() {
     this(new HashMap<DepartmentsId, DepartmentsRow>());
   }
-  ;
 
   public DepartmentsRepoMock withMap(HashMap<DepartmentsId, DepartmentsRow> map) {
     return new DepartmentsRepoMock(map);
   }
-  ;
 
   @Override
   public DeleteBuilder<DepartmentsFields, DepartmentsRow> delete() {
@@ -45,13 +43,11 @@ public record DepartmentsRepoMock(HashMap<DepartmentsId, DepartmentsRow> map)
         row -> row.compositeId(),
         id -> map.remove(id));
   }
-  ;
 
   @Override
   public Boolean deleteById(DepartmentsId compositeId, Connection c) {
     return Optional.ofNullable(map.remove(compositeId)).isPresent();
   }
-  ;
 
   @Override
   public Integer deleteByIds(DepartmentsId[] compositeIds, Connection c) {
@@ -61,42 +57,35 @@ public record DepartmentsRepoMock(HashMap<DepartmentsId, DepartmentsRow> map)
         count = count + 1;
         ;
       }
-      ;
     }
     ;
     return count;
   }
-  ;
 
   @Override
   public DepartmentsRow insert(DepartmentsRow unsaved, Connection c) {
     if (map.containsKey(unsaved.compositeId())) {
       throw new RuntimeException("id " + unsaved.compositeId() + " already exists");
     }
-    ;
     map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public SelectBuilder<DepartmentsFields, DepartmentsRow> select() {
     return new SelectBuilderMock<>(
         DepartmentsFields.structure, () -> new ArrayList<>(map.values()), SelectParams.empty());
   }
-  ;
 
   @Override
   public List<DepartmentsRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   }
-  ;
 
   @Override
   public Optional<DepartmentsRow> selectById(DepartmentsId compositeId, Connection c) {
     return Optional.ofNullable(map.get(compositeId));
   }
-  ;
 
   @Override
   public List<DepartmentsRow> selectByIds(DepartmentsId[] compositeIds, Connection c) {
@@ -106,12 +95,10 @@ public record DepartmentsRepoMock(HashMap<DepartmentsId, DepartmentsRow> map)
       if (opt.isPresent()) {
         result.add(opt.get());
       }
-      ;
     }
     ;
     return result;
   }
-  ;
 
   @Override
   public Map<DepartmentsId, DepartmentsRow> selectByIdsTracked(
@@ -119,7 +106,6 @@ public record DepartmentsRepoMock(HashMap<DepartmentsId, DepartmentsRow> map)
     return selectByIds(compositeIds, c).stream()
         .collect(Collectors.toMap((DepartmentsRow row) -> row.compositeId(), Function.identity()));
   }
-  ;
 
   @Override
   public UpdateBuilder<DepartmentsFields, DepartmentsRow> update() {
@@ -129,7 +115,6 @@ public record DepartmentsRepoMock(HashMap<DepartmentsId, DepartmentsRow> map)
         UpdateParams.empty(),
         row -> row);
   }
-  ;
 
   @Override
   public Boolean update(DepartmentsRow row, Connection c) {
@@ -141,17 +126,14 @@ public record DepartmentsRepoMock(HashMap<DepartmentsId, DepartmentsRow> map)
       map.put(row.compositeId(), row);
       ;
     }
-    ;
     return shouldUpdate;
   }
-  ;
 
   @Override
   public DepartmentsRow upsert(DepartmentsRow unsaved, Connection c) {
     map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public List<DepartmentsRow> upsertBatch(Iterator<DepartmentsRow> unsaved, Connection c) {
@@ -164,5 +146,4 @@ public record DepartmentsRepoMock(HashMap<DepartmentsId, DepartmentsRow> map)
     ;
     return result;
   }
-  ;
 }

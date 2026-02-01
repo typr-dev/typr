@@ -22,9 +22,9 @@ case class EmployeeRecord(
 )
 
 object EmployeeRecord {
-  given pgStruct: PgStruct[EmployeeRecord] = PgStruct.builder[EmployeeRecord]("public.employee_record").optField("name", PersonName.pgType, (v: EmployeeRecord) => v.name).optField("contact", ContactInfo.pgType, (v: EmployeeRecord) => v.contact).optField("employeeId", PgTypes.int4, (v: EmployeeRecord) => v.employeeId).optField("salary", PgTypes.numeric, (v: EmployeeRecord) => v.salary).optField("hireDate", PgTypes.date, (v: EmployeeRecord) => v.hireDate).build(arr => EmployeeRecord(name = Optional.ofNullable(arr(0).asInstanceOf[PersonName]), contact = Optional.ofNullable(arr(1).asInstanceOf[ContactInfo]), employeeId = Optional.ofNullable(arr(2).asInstanceOf[Integer]), salary = Optional.ofNullable(arr(3).asInstanceOf[java.math.BigDecimal]), hireDate = Optional.ofNullable(arr(4).asInstanceOf[LocalDate])))
+  given dbStruct: PgStruct[EmployeeRecord] = PgStruct.builder[EmployeeRecord]("public.employee_record").optField("name", PersonName.dbType, (v: EmployeeRecord) => v.name).optField("contact", ContactInfo.dbType, (v: EmployeeRecord) => v.contact).optField("employeeId", PgTypes.int4, (v: EmployeeRecord) => v.employeeId).optField("salary", PgTypes.numeric, (v: EmployeeRecord) => v.salary).optField("hireDate", PgTypes.date, (v: EmployeeRecord) => v.hireDate).build(arr => EmployeeRecord(name = Optional.ofNullable(arr(0).asInstanceOf[PersonName]), contact = Optional.ofNullable(arr(1).asInstanceOf[ContactInfo]), employeeId = Optional.ofNullable(arr(2).asInstanceOf[Integer]), salary = Optional.ofNullable(arr(3).asInstanceOf[java.math.BigDecimal]), hireDate = Optional.ofNullable(arr(4).asInstanceOf[LocalDate])))
 
-  given pgType: PgType[EmployeeRecord] = pgStruct.asType()
+  given dbType: PgType[EmployeeRecord] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[EmployeeRecord]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[EmployeeRecord](n)), n => new Array[EmployeeRecord](n))
+  given dbTypeArray: PgType[Array[EmployeeRecord]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[EmployeeRecord](n)), n => new Array[EmployeeRecord](n))
 }

@@ -27,7 +27,7 @@ case class ProductSummarySqlRow(
   @JsonProperty("order_count") orderCount: Long,
   /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_quantity") totalQuantity: Option[Long],
-  /** Points to [[testdb.order_items.OrderItemsRow.unitPrice]] */
+  /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_revenue") totalRevenue: Option[BigDecimal]
 ) extends Tuple7[ProductsId, String, String, BigDecimal, Long, Option[Long], Option[BigDecimal]] {
   override def `_1`: ProductsId = productId

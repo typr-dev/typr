@@ -19,7 +19,7 @@ interface CustomersRepo {
   abstract fun deleteById(
     customerId: CustomersId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
     customerIds: Array<CustomersId>,
@@ -60,7 +60,7 @@ interface CustomersRepo {
   abstract fun update(
     row: CustomersRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: CustomersRow,

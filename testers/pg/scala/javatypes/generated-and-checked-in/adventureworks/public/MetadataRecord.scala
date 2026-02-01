@@ -21,9 +21,9 @@ case class MetadataRecord(
 )
 
 object MetadataRecord {
-  given pgStruct: PgStruct[MetadataRecord] = PgStruct.builder[MetadataRecord]("public.metadata_record").optField("key", PgTypes.text, (v: MetadataRecord) => v.key).optField("value", PgTypes.jsonb, (v: MetadataRecord) => v.value).optField("createdAt", PgTypes.timestamptz, (v: MetadataRecord) => v.createdAt).build(arr => MetadataRecord(key = Optional.ofNullable(arr(0).asInstanceOf[String]), value = Optional.ofNullable(arr(1).asInstanceOf[Jsonb]), createdAt = Optional.ofNullable(arr(2).asInstanceOf[Instant])))
+  given dbStruct: PgStruct[MetadataRecord] = PgStruct.builder[MetadataRecord]("public.metadata_record").optField("key", PgTypes.text, (v: MetadataRecord) => v.key).optField("value", PgTypes.jsonb, (v: MetadataRecord) => v.value).optField("createdAt", PgTypes.timestamptz, (v: MetadataRecord) => v.createdAt).build(arr => MetadataRecord(key = Optional.ofNullable(arr(0).asInstanceOf[String]), value = Optional.ofNullable(arr(1).asInstanceOf[Jsonb]), createdAt = Optional.ofNullable(arr(2).asInstanceOf[Instant])))
 
-  given pgType: PgType[MetadataRecord] = pgStruct.asType()
+  given dbType: PgType[MetadataRecord] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[MetadataRecord]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[MetadataRecord](n)), n => new Array[MetadataRecord](n))
+  given dbTypeArray: PgType[Array[MetadataRecord]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[MetadataRecord](n)), n => new Array[MetadataRecord](n))
 }

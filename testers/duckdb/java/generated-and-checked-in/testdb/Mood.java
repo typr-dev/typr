@@ -37,8 +37,10 @@ public enum Mood {
               xs -> arrayMap.map(xs, Mood::force, Mood.class),
               xs -> arrayMap.map(xs, Mood::value, String.class))
           .renamedDropPrecision("mood");
+  ;
   public static DuckDbType<Mood> duckDbType =
       DuckDbTypes.text.bimap(Mood::force, Mood::value).renamedDropPrecision("mood");
+  ;
 
   public static Mood force(java.lang.String str) {
     if (ByName.containsKey(str)) {

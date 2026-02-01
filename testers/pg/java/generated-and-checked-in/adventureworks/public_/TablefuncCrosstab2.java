@@ -29,7 +29,7 @@ public record TablefuncCrosstab2(
   }
   ;
 
-  public static PgStruct<TablefuncCrosstab2> pgStruct =
+  public static PgStruct<TablefuncCrosstab2> dbStruct =
       PgStruct.<TablefuncCrosstab2>builder("public.tablefunc_crosstab_2")
           .optField("rowName", PgTypes.text, v -> v.rowName())
           .optField("category1", PgTypes.text, v -> v.category1())
@@ -41,10 +41,10 @@ public record TablefuncCrosstab2(
                       Optional.ofNullable((String) arr[1]),
                       Optional.ofNullable((String) arr[2])));
 
-  public static PgType<TablefuncCrosstab2> pgType = pgStruct.asType();
+  public static PgType<TablefuncCrosstab2> dbType = dbStruct.asType();
 
-  public static PgType<TablefuncCrosstab2[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), TablefuncCrosstab2[]::new),
+  public static PgType<TablefuncCrosstab2[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), TablefuncCrosstab2[]::new),
           TablefuncCrosstab2[]::new);
 }

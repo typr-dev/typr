@@ -15,7 +15,7 @@ import kotlin.collections.List
 class ProductDetailsWithSalesSqlRepoImpl() : ProductDetailsWithSalesSqlRepo {
   override fun apply(
     productIds: Array<Int>?,
-    skuPattern: String?,
+    skuPattern: kotlin.String?,
     minPrice: BigDecimal?,
     maxPrice: BigDecimal?,
     c: Connection

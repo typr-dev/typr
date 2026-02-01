@@ -18,12 +18,10 @@ public record OrderItemsId(
   public OrderItemsId withOrderId(Integer orderId) {
     return new OrderItemsId(orderId, productId);
   }
-  ;
 
   public OrderItemsId withProductId(Integer productId) {
     return new OrderItemsId(orderId, productId);
   }
-  ;
 
   public static RowParser<OrderItemsId> _rowParser =
       RowParsers.of(
@@ -31,17 +29,14 @@ public record OrderItemsId(
           DuckDbTypes.integer,
           OrderItemsId::new,
           row -> new Object[] {row.orderId(), row.productId()});
-  ;
 
   @Override
   public Integer _1() {
     return orderId;
   }
-  ;
 
   @Override
   public Integer _2() {
     return productId;
   }
-  ;
 }

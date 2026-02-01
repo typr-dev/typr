@@ -21,9 +21,9 @@ case class TablefuncCrosstab4(
 )
 
 object TablefuncCrosstab4 {
-  given pgStruct: PgStruct[TablefuncCrosstab4] = PgStruct.builder[TablefuncCrosstab4]("public.tablefunc_crosstab_4").optField("rowName", PgTypes.text, (v: TablefuncCrosstab4) => v.rowName).optField("category1", PgTypes.text, (v: TablefuncCrosstab4) => v.category1).optField("category2", PgTypes.text, (v: TablefuncCrosstab4) => v.category2).optField("category3", PgTypes.text, (v: TablefuncCrosstab4) => v.category3).optField("category4", PgTypes.text, (v: TablefuncCrosstab4) => v.category4).build(arr => TablefuncCrosstab4(rowName = Optional.ofNullable(arr(0).asInstanceOf[String]), category1 = Optional.ofNullable(arr(1).asInstanceOf[String]), category2 = Optional.ofNullable(arr(2).asInstanceOf[String]), category3 = Optional.ofNullable(arr(3).asInstanceOf[String]), category4 = Optional.ofNullable(arr(4).asInstanceOf[String])))
+  given dbStruct: PgStruct[TablefuncCrosstab4] = PgStruct.builder[TablefuncCrosstab4]("public.tablefunc_crosstab_4").optField("rowName", PgTypes.text, (v: TablefuncCrosstab4) => v.rowName).optField("category1", PgTypes.text, (v: TablefuncCrosstab4) => v.category1).optField("category2", PgTypes.text, (v: TablefuncCrosstab4) => v.category2).optField("category3", PgTypes.text, (v: TablefuncCrosstab4) => v.category3).optField("category4", PgTypes.text, (v: TablefuncCrosstab4) => v.category4).build(arr => TablefuncCrosstab4(rowName = Optional.ofNullable(arr(0).asInstanceOf[String]), category1 = Optional.ofNullable(arr(1).asInstanceOf[String]), category2 = Optional.ofNullable(arr(2).asInstanceOf[String]), category3 = Optional.ofNullable(arr(3).asInstanceOf[String]), category4 = Optional.ofNullable(arr(4).asInstanceOf[String])))
 
-  given pgType: PgType[TablefuncCrosstab4] = pgStruct.asType()
+  given dbType: PgType[TablefuncCrosstab4] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[TablefuncCrosstab4]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TablefuncCrosstab4](n)), n => new Array[TablefuncCrosstab4](n))
+  given dbTypeArray: PgType[Array[TablefuncCrosstab4]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[TablefuncCrosstab4](n)), n => new Array[TablefuncCrosstab4](n))
 }

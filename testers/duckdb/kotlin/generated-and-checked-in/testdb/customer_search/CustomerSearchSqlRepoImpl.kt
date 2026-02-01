@@ -16,11 +16,11 @@ import testdb.Priority
 
 class CustomerSearchSqlRepoImpl() : CustomerSearchSqlRepo {
   override fun apply(
-    namePattern: String?,
-    emailPattern: String?,
+    namePattern: kotlin.String?,
+    emailPattern: kotlin.String?,
     minPriority: /* user-picked */ Priority?,
     createdAfter: LocalDateTime?,
-    maxResults: Long,
+    maxResults: kotlin.Long,
     c: Connection
   ): List<CustomerSearchSqlRow> = Fragment.interpolate(Fragment.lit("-- Customer search with multiple optional filters and enum handling\n-- Tests: optional parameters, enum types, LIKE patterns, complex WHERE\n\nSELECT\n    customer_id,\n    name,\n    email,\n    created_at,\n    priority\nFROM customers\nWHERE\n    ("), Fragment.encode(DuckDbTypes.varchar.nullable(), namePattern), Fragment.lit(" IS NULL OR name LIKE "), Fragment.encode(DuckDbTypes.varchar.nullable(), namePattern), Fragment.lit(")\n    AND ("), Fragment.encode(DuckDbTypes.varchar.nullable(), emailPattern), Fragment.lit(" IS NULL OR email LIKE "), Fragment.encode(DuckDbTypes.varchar.nullable(), emailPattern), Fragment.lit(")\n    AND ("), Fragment.encode(Priority.duckDbType.nullable(), minPriority), Fragment.lit(" IS NULL OR priority >= "), Fragment.encode(Priority.duckDbType.nullable(), minPriority), Fragment.lit(")\n    AND ("), Fragment.encode(DuckDbTypes.timestamp.nullable(), createdAfter), Fragment.lit(" IS NULL OR created_at >= "), Fragment.encode(DuckDbTypes.timestamp.nullable(), createdAfter), Fragment.lit(")\nORDER BY created_at DESC, customer_id\nLIMIT "), Fragment.encode(KotlinDbTypes.DuckDbTypes.bigint, maxResults), Fragment.lit("")).query(CustomerSearchSqlRow._rowParser.all()).runUnchecked(c)
 }

@@ -17,13 +17,13 @@ data class Complex(
   val i: Double?
 ) {
   companion object {
-    val pgStruct: PgStruct<Complex> =
+    val dbStruct: PgStruct<Complex> =
       PgStruct.builder<Complex>("public.complex").optField("r", KotlinDbTypes.PgTypes.float8, { v: Complex -> Optional.ofNullable(v.r) }).optField("i", KotlinDbTypes.PgTypes.float8, { v: Complex -> Optional.ofNullable(v.i) }).build({ arr -> Complex(arr[0] as? Double, arr[1] as? Double) })
 
-    val pgType: PgType<Complex> =
-      pgStruct.asType()
+    val dbType: PgType<Complex> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<Complex>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<Complex>(n) }), { n -> arrayOfNulls<Complex>(n) })
+    val dbTypeArray: PgType<Array<Complex>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<Complex>(n) }), { n -> arrayOfNulls<Complex>(n) })
   }
 }

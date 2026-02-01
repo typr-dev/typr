@@ -64,23 +64,23 @@ import testdb.userdefined.Email
 /** Methods to generate random data for `Ident(TestInsert)` */
 data class TestInsert(val random: Random) {
   fun AllScalarTypes(
-    colNotNull: String,
+    colNotNull: kotlin.String,
     id: AllScalarTypesId = AllScalarTypesId(random.nextInt()),
-    colTinyint: Byte? = if (random.nextBoolean()) null else random.nextInt(Byte.MAX_VALUE.toInt()).toByte(),
-    colSmallint: Short? = if (random.nextBoolean()) null else random.nextInt(Short.MAX_VALUE.toInt()).toShort(),
+    colTinyint: kotlin.Byte? = if (random.nextBoolean()) null else random.nextInt(kotlin.Byte.MAX_VALUE.toInt()).toByte(),
+    colSmallint: kotlin.Short? = if (random.nextBoolean()) null else random.nextInt(kotlin.Short.MAX_VALUE.toInt()).toShort(),
     colInteger: Int? = if (random.nextBoolean()) null else random.nextInt(),
-    colBigint: Long? = if (random.nextBoolean()) null else random.nextLong(),
+    colBigint: kotlin.Long? = if (random.nextBoolean()) null else random.nextLong(),
     colHugeint: BigInteger? = null,
     colUtinyint: Uint1? = if (random.nextBoolean()) null else Uint1.of(random.nextInt(256)),
     colUsmallint: Uint2? = if (random.nextBoolean()) null else Uint2.of(random.nextInt(65536)),
     colUinteger: Uint4? = if (random.nextBoolean()) null else Uint4.of(Math.abs(random.nextInt()).toLong()),
     colUbigint: Uint8? = if (random.nextBoolean()) null else Uint8.of(Math.abs(random.nextLong())),
-    colFloat: Float? = if (random.nextBoolean()) null else random.nextFloat(),
-    colDouble: Double? = if (random.nextBoolean()) null else random.nextDouble(),
+    colFloat: kotlin.Float? = if (random.nextBoolean()) null else random.nextFloat(),
+    colDouble: kotlin.Double? = if (random.nextBoolean()) null else random.nextDouble(),
     colDecimal: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
-    colBoolean: Boolean? = if (random.nextBoolean()) null else random.nextBoolean(),
-    colVarchar: String? = null,
-    colText: String? = null,
+    colBoolean: kotlin.Boolean? = if (random.nextBoolean()) null else random.nextBoolean(),
+    colVarchar: kotlin.String? = null,
+    colText: kotlin.String? = null,
     colBlob: ByteArray? = null,
     colDate: LocalDate? = if (random.nextBoolean()) null else LocalDate.ofEpochDay(random.nextInt(30000).toLong()),
     colTime: LocalTime? = if (random.nextBoolean()) null else LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
@@ -94,7 +94,7 @@ data class TestInsert(val random: Random) {
   ): AllScalarTypesRow = (AllScalarTypesRepoImpl()).insert(AllScalarTypesRow(id = id, colTinyint = colTinyint, colSmallint = colSmallint, colInteger = colInteger, colBigint = colBigint, colHugeint = colHugeint, colUtinyint = colUtinyint, colUsmallint = colUsmallint, colUinteger = colUinteger, colUbigint = colUbigint, colFloat = colFloat, colDouble = colDouble, colDecimal = colDecimal, colBoolean = colBoolean, colVarchar = colVarchar, colText = colText, colBlob = colBlob, colDate = colDate, colTime = colTime, colTimestamp = colTimestamp, colTimestamptz = colTimestamptz, colInterval = colInterval, colUuid = colUuid, colJson = colJson, colMood = colMood, colNotNull = colNotNull), c)
 
   fun Customers(
-    name: String,
+    name: kotlin.String,
     customerId: CustomersId = CustomersId(random.nextInt()),
     email: /* user-picked */ Email? = null,
     createdAt: Defaulted<LocalDateTime> = UseDefault(),
@@ -103,18 +103,18 @@ data class TestInsert(val random: Random) {
   ): CustomersRow = (CustomersRepoImpl()).insert(CustomersRowUnsaved(customerId = customerId, name = name, email = email, createdAt = createdAt, priority = priority), c)
 
   fun Departments(
-    deptCode: String,
-    deptRegion: String,
-    deptName: String,
+    deptCode: kotlin.String,
+    deptRegion: kotlin.String,
+    deptName: kotlin.String,
     budget: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     c: Connection
   ): DepartmentsRow = (DepartmentsRepoImpl()).insert(DepartmentsRow(deptCode = deptCode, deptRegion = deptRegion, deptName = deptName, budget = budget), c)
 
   fun Employees(
-    empSuffix: String,
-    deptCode: String,
-    deptRegion: String,
-    empName: String,
+    empSuffix: kotlin.String,
+    deptCode: kotlin.String,
+    deptRegion: kotlin.String,
+    empName: kotlin.String,
     empNumber: Int = random.nextInt(),
     salary: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     hireDate: Defaulted<LocalDate> = UseDefault(),
@@ -134,16 +134,16 @@ data class TestInsert(val random: Random) {
     customerId: Int = random.nextInt(),
     totalAmount: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     orderDate: Defaulted<LocalDate> = UseDefault(),
-    status: Defaulted<String?> = UseDefault(),
+    status: Defaulted<kotlin.String?> = UseDefault(),
     c: Connection
   ): OrdersRow = (OrdersRepoImpl()).insert(OrdersRowUnsaved(orderId = orderId, customerId = customerId, totalAmount = totalAmount, orderDate = orderDate, status = status), c)
 
   fun PrecisionTypes(
-    string10: String,
-    string20: String,
-    string50: String,
-    string100: String,
-    string255: String,
+    string10: kotlin.String,
+    string20: kotlin.String,
+    string50: kotlin.String,
+    string100: kotlin.String,
+    string255: kotlin.String,
     id: PrecisionTypesId = PrecisionTypesId(random.nextInt()),
     decimal52: Decimal5_2 = Decimal5_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
     decimal102: Decimal10_2 = Decimal10_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
@@ -156,11 +156,11 @@ data class TestInsert(val random: Random) {
 
   fun PrecisionTypesNull(
     id: PrecisionTypesNullId = PrecisionTypesNullId(random.nextInt()),
-    string10: String? = null,
-    string20: String? = null,
-    string50: String? = null,
-    string100: String? = null,
-    string255: String? = null,
+    string10: kotlin.String? = null,
+    string20: kotlin.String? = null,
+    string50: kotlin.String? = null,
+    string100: kotlin.String? = null,
+    string255: kotlin.String? = null,
     decimal52: Decimal5_2? = if (random.nextBoolean()) null else Decimal5_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
     decimal102: Decimal10_2? = if (random.nextBoolean()) null else Decimal10_2.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 100.toLong()).movePointLeft(2))),
     decimal184: Decimal18_4? = if (random.nextBoolean()) null else Decimal18_4.unsafeForce(BigDecimal.valueOf(Math.abs(random.nextInt()) % 1000000.toLong()).add(BigDecimal.valueOf(Math.abs(random.nextInt()) % 10000.toLong()).movePointLeft(4))),
@@ -171,8 +171,8 @@ data class TestInsert(val random: Random) {
   ): PrecisionTypesNullRow = (PrecisionTypesNullRepoImpl()).insert(PrecisionTypesNullRow(id = id, string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, decimal50 = decimal50, decimal100 = decimal100, decimal180 = decimal180), c)
 
   fun Products(
-    sku: String,
-    name: String,
+    sku: kotlin.String,
+    name: kotlin.String,
     productId: ProductsId = ProductsId(random.nextInt()),
     price: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     metadata: Json? = if (random.nextBoolean()) null else Json("{}"),

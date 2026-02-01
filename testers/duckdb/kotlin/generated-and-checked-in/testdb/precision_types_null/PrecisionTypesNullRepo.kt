@@ -19,7 +19,7 @@ interface PrecisionTypesNullRepo {
   abstract fun deleteById(
     id: PrecisionTypesNullId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
     ids: Array<PrecisionTypesNullId>,
@@ -55,7 +55,7 @@ interface PrecisionTypesNullRepo {
   abstract fun update(
     row: PrecisionTypesNullRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: PrecisionTypesNullRow,

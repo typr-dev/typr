@@ -36,49 +36,42 @@ public record EmployeeSalaryUpdateSqlRow(
     return new EmployeeSalaryUpdateSqlRow(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#empSuffix()} */
   public EmployeeSalaryUpdateSqlRow withEmpSuffix(String empSuffix) {
     return new EmployeeSalaryUpdateSqlRow(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#deptCode()} */
   public EmployeeSalaryUpdateSqlRow withDeptCode(String deptCode) {
     return new EmployeeSalaryUpdateSqlRow(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#deptRegion()} */
   public EmployeeSalaryUpdateSqlRow withDeptRegion(String deptRegion) {
     return new EmployeeSalaryUpdateSqlRow(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#empName()} */
   public EmployeeSalaryUpdateSqlRow withEmpName(String empName) {
     return new EmployeeSalaryUpdateSqlRow(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#salary()} */
   public EmployeeSalaryUpdateSqlRow withSalary(Optional<BigDecimal> salary) {
     return new EmployeeSalaryUpdateSqlRow(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#hireDate()} */
   public EmployeeSalaryUpdateSqlRow withHireDate(LocalDate hireDate) {
     return new EmployeeSalaryUpdateSqlRow(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public static RowParser<EmployeeSalaryUpdateSqlRow> _rowParser =
       RowParsers.of(
@@ -100,47 +93,39 @@ public record EmployeeSalaryUpdateSqlRow(
                 row.salary(),
                 row.hireDate()
               });
-  ;
 
   @Override
   public Integer _1() {
     return empNumber;
   }
-  ;
 
   @Override
   public String _2() {
     return empSuffix;
   }
-  ;
 
   @Override
   public String _3() {
     return deptCode;
   }
-  ;
 
   @Override
   public String _4() {
     return deptRegion;
   }
-  ;
 
   @Override
   public String _5() {
     return empName;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _6() {
     return salary;
   }
-  ;
 
   @Override
   public LocalDate _7() {
     return hireDate;
   }
-  ;
 }

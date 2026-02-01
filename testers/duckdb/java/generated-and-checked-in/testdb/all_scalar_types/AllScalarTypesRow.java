@@ -110,7 +110,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColTinyint(Optional<Byte> colTinyint) {
     return new AllScalarTypesRow(
@@ -141,7 +140,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColSmallint(Optional<Short> colSmallint) {
     return new AllScalarTypesRow(
@@ -172,7 +170,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColInteger(Optional<Integer> colInteger) {
     return new AllScalarTypesRow(
@@ -203,7 +200,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColBigint(Optional<Long> colBigint) {
     return new AllScalarTypesRow(
@@ -234,7 +230,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColHugeint(Optional<BigInteger> colHugeint) {
     return new AllScalarTypesRow(
@@ -265,7 +260,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColUtinyint(Optional<Uint1> colUtinyint) {
     return new AllScalarTypesRow(
@@ -296,7 +290,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColUsmallint(Optional<Uint2> colUsmallint) {
     return new AllScalarTypesRow(
@@ -327,7 +320,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColUinteger(Optional<Uint4> colUinteger) {
     return new AllScalarTypesRow(
@@ -358,7 +350,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColUbigint(Optional<Uint8> colUbigint) {
     return new AllScalarTypesRow(
@@ -389,7 +380,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColFloat(Optional<Float> colFloat) {
     return new AllScalarTypesRow(
@@ -420,7 +410,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColDouble(Optional<Double> colDouble) {
     return new AllScalarTypesRow(
@@ -451,7 +440,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColDecimal(Optional<BigDecimal> colDecimal) {
     return new AllScalarTypesRow(
@@ -482,7 +470,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColBoolean(Optional<Boolean> colBoolean) {
     return new AllScalarTypesRow(
@@ -513,7 +500,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColVarchar(Optional<String> colVarchar) {
     return new AllScalarTypesRow(
@@ -544,7 +530,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColText(Optional<String> colText) {
     return new AllScalarTypesRow(
@@ -575,7 +560,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColBlob(Optional<byte[]> colBlob) {
     return new AllScalarTypesRow(
@@ -606,7 +590,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColDate(Optional<LocalDate> colDate) {
     return new AllScalarTypesRow(
@@ -637,7 +620,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColTime(Optional<LocalTime> colTime) {
     return new AllScalarTypesRow(
@@ -668,7 +650,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColTimestamp(Optional<LocalDateTime> colTimestamp) {
     return new AllScalarTypesRow(
@@ -699,7 +680,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColTimestamptz(Optional<OffsetDateTime> colTimestamptz) {
     return new AllScalarTypesRow(
@@ -730,7 +710,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColInterval(Optional<Duration> colInterval) {
     return new AllScalarTypesRow(
@@ -761,7 +740,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColUuid(Optional<UUID> colUuid) {
     return new AllScalarTypesRow(
@@ -792,7 +770,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColJson(Optional<Json> colJson) {
     return new AllScalarTypesRow(
@@ -823,7 +800,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColMood(Optional<Mood> colMood) {
     return new AllScalarTypesRow(
@@ -854,7 +830,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public AllScalarTypesRow withColNotNull(String colNotNull) {
     return new AllScalarTypesRow(
@@ -885,7 +860,6 @@ public record AllScalarTypesRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public static RowParser<AllScalarTypesRow> _rowParser =
       RowParsers.of(
@@ -945,161 +919,134 @@ public record AllScalarTypesRow(
                 row.colMood(),
                 row.colNotNull()
               });
-  ;
 
   @Override
   public AllScalarTypesId _1() {
     return id;
   }
-  ;
 
   @Override
   public Optional<Uint8> _10() {
     return colUbigint;
   }
-  ;
 
   @Override
   public Optional<Float> _11() {
     return colFloat;
   }
-  ;
 
   @Override
   public Optional<Double> _12() {
     return colDouble;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _13() {
     return colDecimal;
   }
-  ;
 
   @Override
   public Optional<Boolean> _14() {
     return colBoolean;
   }
-  ;
 
   @Override
   public Optional<String> _15() {
     return colVarchar;
   }
-  ;
 
   @Override
   public Optional<String> _16() {
     return colText;
   }
-  ;
 
   @Override
   public Optional<byte[]> _17() {
     return colBlob;
   }
-  ;
 
   @Override
   public Optional<LocalDate> _18() {
     return colDate;
   }
-  ;
 
   @Override
   public Optional<LocalTime> _19() {
     return colTime;
   }
-  ;
 
   @Override
   public Optional<Byte> _2() {
     return colTinyint;
   }
-  ;
 
   @Override
   public Optional<LocalDateTime> _20() {
     return colTimestamp;
   }
-  ;
 
   @Override
   public Optional<OffsetDateTime> _21() {
     return colTimestamptz;
   }
-  ;
 
   @Override
   public Optional<Duration> _22() {
     return colInterval;
   }
-  ;
 
   @Override
   public Optional<UUID> _23() {
     return colUuid;
   }
-  ;
 
   @Override
   public Optional<Json> _24() {
     return colJson;
   }
-  ;
 
   @Override
   public Optional<Mood> _25() {
     return colMood;
   }
-  ;
 
   @Override
   public String _26() {
     return colNotNull;
   }
-  ;
 
   @Override
   public Optional<Short> _3() {
     return colSmallint;
   }
-  ;
 
   @Override
   public Optional<Integer> _4() {
     return colInteger;
   }
-  ;
 
   @Override
   public Optional<Long> _5() {
     return colBigint;
   }
-  ;
 
   @Override
   public Optional<BigInteger> _6() {
     return colHugeint;
   }
-  ;
 
   @Override
   public Optional<Uint1> _7() {
     return colUtinyint;
   }
-  ;
 
   @Override
   public Optional<Uint2> _8() {
     return colUsmallint;
   }
-  ;
 
   @Override
   public Optional<Uint4> _9() {
     return colUinteger;
   }
-  ;
 }

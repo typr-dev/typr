@@ -42,7 +42,7 @@ data class DefaultedDeserializer(
     ctxt: DeserializationContext
   ): Defaulted<*> {
     if (p.currentToken() == JsonToken.VALUE_STRING) {
-      val text: String = p.getText();
+      val text: kotlin.String = p.getText();
       if ("defaulted".equals(text)) {
         return UseDefault<Any>();
       }

@@ -19,7 +19,7 @@ interface ProductsRepo {
   abstract fun deleteById(
     productId: ProductsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
     productIds: Array<ProductsId>,
@@ -51,7 +51,7 @@ interface ProductsRepo {
   ): Map<ProductsId, ProductsRow>
 
   abstract fun selectByUniqueSku(
-    sku: String,
+    sku: kotlin.String,
     c: Connection
   ): ProductsRow?
 
@@ -60,7 +60,7 @@ interface ProductsRepo {
   abstract fun update(
     row: ProductsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ProductsRow,

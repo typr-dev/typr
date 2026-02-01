@@ -46,13 +46,13 @@ data class AllTypesComposite(
   val colXml: Xml?
 ) {
   companion object {
-    val pgStruct: PgStruct<AllTypesComposite> =
+    val dbStruct: PgStruct<AllTypesComposite> =
       PgStruct.builder<AllTypesComposite>("public.all_types_composite").optField("colBoolean", KotlinDbTypes.PgTypes.bool, { v: AllTypesComposite -> Optional.ofNullable(v.colBoolean) }).optField("colSmallint", KotlinDbTypes.PgTypes.int2, { v: AllTypesComposite -> Optional.ofNullable(v.colSmallint) }).optField("colInteger", KotlinDbTypes.PgTypes.int4, { v: AllTypesComposite -> Optional.ofNullable(v.colInteger) }).optField("colBigint", KotlinDbTypes.PgTypes.int8, { v: AllTypesComposite -> Optional.ofNullable(v.colBigint) }).optField("colReal", KotlinDbTypes.PgTypes.float4, { v: AllTypesComposite -> Optional.ofNullable(v.colReal) }).optField("colDouble", KotlinDbTypes.PgTypes.float8, { v: AllTypesComposite -> Optional.ofNullable(v.colDouble) }).optField("colNumeric", PgTypes.numeric, { v: AllTypesComposite -> Optional.ofNullable(v.colNumeric) }).optField("colText", PgTypes.text, { v: AllTypesComposite -> Optional.ofNullable(v.colText) }).optField("colVarchar", PgTypes.text, { v: AllTypesComposite -> Optional.ofNullable(v.colVarchar) }).optField("colChar", PgTypes.bpchar, { v: AllTypesComposite -> Optional.ofNullable(v.colChar) }).optField("colBytea", PgTypes.bytea, { v: AllTypesComposite -> Optional.ofNullable(v.colBytea) }).optField("colDate", PgTypes.date, { v: AllTypesComposite -> Optional.ofNullable(v.colDate) }).optField("colTime", PgTypes.time, { v: AllTypesComposite -> Optional.ofNullable(v.colTime) }).optField("colTimestamp", PgTypes.timestamp, { v: AllTypesComposite -> Optional.ofNullable(v.colTimestamp) }).optField("colTimestamptz", PgTypes.timestamptz, { v: AllTypesComposite -> Optional.ofNullable(v.colTimestamptz) }).optField("colInterval", PgTypes.interval, { v: AllTypesComposite -> Optional.ofNullable(v.colInterval) }).optField("colUuid", PgTypes.uuid, { v: AllTypesComposite -> Optional.ofNullable(v.colUuid) }).optField("colJson", PgTypes.json, { v: AllTypesComposite -> Optional.ofNullable(v.colJson) }).optField("colJsonb", PgTypes.jsonb, { v: AllTypesComposite -> Optional.ofNullable(v.colJsonb) }).optField("colXml", PgTypes.xml, { v: AllTypesComposite -> Optional.ofNullable(v.colXml) }).build({ arr -> AllTypesComposite(arr[0] as? Boolean, arr[1] as? Short, arr[2] as? Int, arr[3] as? Long, arr[4] as? Float, arr[5] as? Double, arr[6] as? BigDecimal, arr[7] as? String, arr[8] as? String, arr[9] as? /* bpchar */ String, arr[10] as? ByteArray, arr[11] as? LocalDate, arr[12] as? LocalTime, arr[13] as? LocalDateTime, arr[14] as? Instant, arr[15] as? PGInterval, arr[16] as? UUID, arr[17] as? Json, arr[18] as? Jsonb, arr[19] as? Xml) })
 
-    val pgType: PgType<AllTypesComposite> =
-      pgStruct.asType()
+    val dbType: PgType<AllTypesComposite> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<AllTypesComposite>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<AllTypesComposite>(n) }), { n -> arrayOfNulls<AllTypesComposite>(n) })
+    val dbTypeArray: PgType<Array<AllTypesComposite>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<AllTypesComposite>(n) }), { n -> arrayOfNulls<AllTypesComposite>(n) })
   }
 }

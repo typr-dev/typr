@@ -65,7 +65,6 @@ public record TestInsert(Random random) {
   public TestInsert withRandom(Random random) {
     return new TestInsert(random);
   }
-  ;
 
   public Inserter<AllScalarTypesRow, AllScalarTypesRow> AllScalarTypes() {
     return Inserter.of(
@@ -136,7 +135,6 @@ public record TestInsert(Random random) {
             RandomHelper.alphanumeric(random, 20)),
         (AllScalarTypesRow row, Connection c) -> (new AllScalarTypesRepoImpl()).insert(row, c));
   }
-  ;
 
   public Inserter<CustomersRowUnsaved, CustomersRow> Customers() {
     return Inserter.of(
@@ -150,7 +148,6 @@ public record TestInsert(Random random) {
             new UseDefault()),
         (CustomersRowUnsaved row, Connection c) -> (new CustomersRepoImpl()).insert(row, c));
   }
-  ;
 
   public Inserter<DepartmentsRow, DepartmentsRow> Departments() {
     return Inserter.of(
@@ -163,7 +160,6 @@ public record TestInsert(Random random) {
                 : Optional.of(BigDecimal.valueOf(random.nextDouble())))),
         (DepartmentsRow row, Connection c) -> (new DepartmentsRepoImpl()).insert(row, c));
   }
-  ;
 
   public Inserter<EmployeesRowUnsaved, EmployeesRow> Employees() {
     return Inserter.of(
@@ -179,7 +175,6 @@ public record TestInsert(Random random) {
             new UseDefault()),
         (EmployeesRowUnsaved row, Connection c) -> (new EmployeesRepoImpl()).insert(row, c));
   }
-  ;
 
   public Inserter<OrderItemsRowUnsaved, OrderItemsRow> OrderItems() {
     return Inserter.of(
@@ -190,7 +185,6 @@ public record TestInsert(Random random) {
             new UseDefault()),
         (OrderItemsRowUnsaved row, Connection c) -> (new OrderItemsRepoImpl()).insert(row, c));
   }
-  ;
 
   public Inserter<OrdersRowUnsaved, OrdersRow> Orders() {
     return Inserter.of(
@@ -204,7 +198,6 @@ public record TestInsert(Random random) {
             new UseDefault()),
         (OrdersRowUnsaved row, Connection c) -> (new OrdersRepoImpl()).insert(row, c));
   }
-  ;
 
   public Inserter<PrecisionTypesRow, PrecisionTypesRow> PrecisionTypes() {
     return Inserter.of(
@@ -236,7 +229,6 @@ public record TestInsert(Random random) {
                 BigInteger.valueOf((long) (Math.abs(random.nextInt()) % 1000000000)))),
         (PrecisionTypesRow row, Connection c) -> (new PrecisionTypesRepoImpl()).insert(row, c));
   }
-  ;
 
   public Inserter<PrecisionTypesNullRow, PrecisionTypesNullRow> PrecisionTypesNull() {
     return Inserter.of(
@@ -299,7 +291,6 @@ public record TestInsert(Random random) {
         (PrecisionTypesNullRow row, Connection c) ->
             (new PrecisionTypesNullRepoImpl()).insert(row, c));
   }
-  ;
 
   public Inserter<ProductsRow, ProductsRow> Products() {
     return Inserter.of(
@@ -311,5 +302,4 @@ public record TestInsert(Random random) {
             (random.nextBoolean() ? Optional.empty() : Optional.of(new Json("{}")))),
         (ProductsRow row, Connection c) -> (new ProductsRepoImpl()).insert(row, c));
   }
-  ;
 }

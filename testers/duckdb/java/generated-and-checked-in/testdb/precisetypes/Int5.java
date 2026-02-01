@@ -18,18 +18,15 @@ import java.util.Optional;
 public record Int5(@JsonValue BigInteger value) implements DecimalN {
   @java.lang.Deprecated
   public Int5 {}
-  ;
 
   public Int5 withValue(BigInteger value) {
     return new Int5(value);
   }
-  ;
 
   @Override
   public java.lang.String toString() {
     return value.toString();
   }
-  ;
 
   public static Int5 Zero = new Int5(BigInteger.ZERO);
 
@@ -47,32 +44,26 @@ public record Int5(@JsonValue BigInteger value) implements DecimalN {
   public static Optional<Int5> of(BigInteger value) {
     return (value.bitLength() <= 20 ? Optional.of(new Int5(value)) : Optional.empty());
   }
-  ;
 
   public static Int5 of(Integer value) {
     return new Int5(BigInteger.valueOf((long) (value)));
   }
-  ;
 
   public static Optional<Int5> of(Long value) {
     return Int5.of(BigInteger.valueOf(value));
   }
-  ;
 
   public static Int5 unsafeForce(BigInteger value) {
     if (value.bitLength() > 20) {
       throw new IllegalArgumentException("Value exceeds precision(5, 0)");
     }
-    ;
     return new Int5(value);
   }
-  ;
 
   @Override
   public BigDecimal decimalValue() {
     return new BigDecimal(value);
   }
-  ;
 
   @Override
   public boolean equals(Object obj) {
@@ -80,35 +71,29 @@ public record Int5(@JsonValue BigInteger value) implements DecimalN {
     if (!(obj instanceof DecimalN other)) return false;
     return decimalValue().compareTo(other.decimalValue()) == 0;
   }
-  ;
 
   @Override
   public int hashCode() {
     return decimalValue().stripTrailingZeros().hashCode();
   }
-  ;
 
   @Override
   public int precision() {
     return 5;
   }
-  ;
 
   @Override
   public int scale() {
     return 0;
   }
-  ;
 
   @Override
   public boolean semanticEquals(DecimalN other) {
     return (other == null ? false : decimalValue().compareTo(other.decimalValue()) == 0);
   }
-  ;
 
   @Override
   public int semanticHashCode() {
     return decimalValue().stripTrailingZeros().hashCode();
   }
-  ;
 }

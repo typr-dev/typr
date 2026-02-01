@@ -77,21 +77,35 @@ class AvroCatsIntegrationTest {
   }
 
   @Test
-  def testIOProducerReturnsIO(): Unit = {
-    // Test that the producer returns IO[RecordMetadata]
-    // We can't fully test without Kafka, but we can verify the types compile
-    val address = Address(
-      street = "123 IO St",
-      city = "EffectCity",
-      postalCode = "12345",
-      country = "US"
-    )
+  def testIOPublisherReturnsIO(): Unit = {
+    // Verify at compile time that publisher publish() returns IO[ProducerResult[K, V]]
+    // This test passes if it compiles - the type ascription enforces the return type
+    import fs2.kafka.ProducerResult
 
-    // The generated producer should have send() returning IO[RecordMetadata]
-    // This test verifies the generated code compiles with the correct types
-    val program: IO[Unit] = IO.pure(())
-    val result = program.unsafeRunSync()
-    assertNotNull(result)
+    // Type ascription verifies the publish method returns IO[ProducerResult[String, OrderEvents]]
+    val _typeCheck: (OrderEventsPublisher, String, OrderPlaced) => IO[ProducerResult[String, OrderEvents]] =
+      (publisher, key, value) => publisher.publish(key, value)
+
+    assertTrue("Compile-time type verification passed", true)
+  }
+
+  @Test
+  def testPublisherHasNoFrameworkAnnotations(): Unit = {
+    // Verify publisher class has no DI annotations
+    val publisherClass = classOf[OrderEventsPublisher]
+    val annotations = publisherClass.getAnnotations
+
+    // Should have no Spring/Quarkus annotations
+    annotations.foreach { ann =>
+      val annotationName = ann.annotationType.getName
+      assertFalse(
+        s"Unexpected framework annotation: $annotationName",
+        annotationName.contains("springframework") ||
+          annotationName.contains("quarkus") ||
+          annotationName.contains("ApplicationScoped") ||
+          annotationName.contains("Service")
+      )
+    }
   }
 
   @Test

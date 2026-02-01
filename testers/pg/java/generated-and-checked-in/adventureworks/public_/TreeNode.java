@@ -28,7 +28,7 @@ public record TreeNode(Optional<Integer> id, Optional<String> label, Optional<In
   }
   ;
 
-  public static PgStruct<TreeNode> pgStruct =
+  public static PgStruct<TreeNode> dbStruct =
       PgStruct.<TreeNode>builder("public.tree_node")
           .optField("id", PgTypes.int4, v -> v.id())
           .optField("label", PgTypes.text, v -> v.label())
@@ -40,9 +40,9 @@ public record TreeNode(Optional<Integer> id, Optional<String> label, Optional<In
                       Optional.ofNullable((String) arr[1]),
                       Optional.ofNullable((Integer) arr[2])));
 
-  public static PgType<TreeNode> pgType = pgStruct.asType();
+  public static PgType<TreeNode> dbType = dbStruct.asType();
 
-  public static PgType<TreeNode[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), TreeNode[]::new), TreeNode[]::new);
+  public static PgType<TreeNode[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), TreeNode[]::new), TreeNode[]::new);
 }

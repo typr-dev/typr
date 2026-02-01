@@ -14,19 +14,19 @@ import dev.typr.foundations.kotlin.Bijection
 /** Shared type `Email`
   * Generated from TypeDefinitions matching
   */
-data class Email(@field:JsonValue val value: String) {
+data class Email(@field:JsonValue val value: kotlin.String) {
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<Email, String> =
+    val bijection: Bijection<Email, kotlin.String> =
       Bijection.of(Email::value, ::Email)
 
     val duckDbType: DuckDbType<Email> =
       DuckDbTypes.varchar.bimap(::Email, Email::value)
 
     val duckDbTypeArray: DuckDbType<Array<Email>> =
-      DuckDbTypes.varcharArray.bimap({ xs -> arrayMap.map(xs, ::Email, Email::class.java) }, { xs -> arrayMap.map(xs, Email::value, String::class.java) })
+      DuckDbTypes.varcharArray.bimap({ xs -> arrayMap.map(xs, ::Email, Email::class.java) }, { xs -> arrayMap.map(xs, Email::value, kotlin.String::class.java) })
   }
 }

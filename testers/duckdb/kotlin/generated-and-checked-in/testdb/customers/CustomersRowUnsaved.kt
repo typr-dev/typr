@@ -15,7 +15,7 @@ import testdb.userdefined.Email
 /** This class corresponds to a row in table `customers` which has not been persisted yet */
 data class CustomersRowUnsaved(
   @field:JsonProperty("customer_id") val customerId: CustomersId,
-  val name: String,
+  val name: kotlin.String,
   val email: /* user-picked */ Email? = null,
   /** Default: current_timestamp */
   @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault(),

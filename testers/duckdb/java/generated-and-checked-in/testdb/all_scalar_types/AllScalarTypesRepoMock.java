@@ -29,12 +29,10 @@ public record AllScalarTypesRepoMock(HashMap<AllScalarTypesId, AllScalarTypesRow
   public AllScalarTypesRepoMock() {
     this(new HashMap<AllScalarTypesId, AllScalarTypesRow>());
   }
-  ;
 
   public AllScalarTypesRepoMock withMap(HashMap<AllScalarTypesId, AllScalarTypesRow> map) {
     return new AllScalarTypesRepoMock(map);
   }
-  ;
 
   @Override
   public DeleteBuilder<AllScalarTypesFields, AllScalarTypesRow> delete() {
@@ -45,13 +43,11 @@ public record AllScalarTypesRepoMock(HashMap<AllScalarTypesId, AllScalarTypesRow
         row -> row.id(),
         id -> map.remove(id));
   }
-  ;
 
   @Override
   public Boolean deleteById(AllScalarTypesId id, Connection c) {
     return Optional.ofNullable(map.remove(id)).isPresent();
   }
-  ;
 
   @Override
   public Integer deleteByIds(AllScalarTypesId[] ids, Connection c) {
@@ -61,42 +57,35 @@ public record AllScalarTypesRepoMock(HashMap<AllScalarTypesId, AllScalarTypesRow
         count = count + 1;
         ;
       }
-      ;
     }
     ;
     return count;
   }
-  ;
 
   @Override
   public AllScalarTypesRow insert(AllScalarTypesRow unsaved, Connection c) {
     if (map.containsKey(unsaved.id())) {
       throw new RuntimeException("id " + unsaved.id() + " already exists");
     }
-    ;
     map.put(unsaved.id(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public SelectBuilder<AllScalarTypesFields, AllScalarTypesRow> select() {
     return new SelectBuilderMock<>(
         AllScalarTypesFields.structure, () -> new ArrayList<>(map.values()), SelectParams.empty());
   }
-  ;
 
   @Override
   public List<AllScalarTypesRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   }
-  ;
 
   @Override
   public Optional<AllScalarTypesRow> selectById(AllScalarTypesId id, Connection c) {
     return Optional.ofNullable(map.get(id));
   }
-  ;
 
   @Override
   public List<AllScalarTypesRow> selectByIds(AllScalarTypesId[] ids, Connection c) {
@@ -106,12 +95,10 @@ public record AllScalarTypesRepoMock(HashMap<AllScalarTypesId, AllScalarTypesRow
       if (opt.isPresent()) {
         result.add(opt.get());
       }
-      ;
     }
     ;
     return result;
   }
-  ;
 
   @Override
   public Map<AllScalarTypesId, AllScalarTypesRow> selectByIdsTracked(
@@ -119,7 +106,6 @@ public record AllScalarTypesRepoMock(HashMap<AllScalarTypesId, AllScalarTypesRow
     return selectByIds(ids, c).stream()
         .collect(Collectors.toMap((AllScalarTypesRow row) -> row.id(), Function.identity()));
   }
-  ;
 
   @Override
   public UpdateBuilder<AllScalarTypesFields, AllScalarTypesRow> update() {
@@ -129,7 +115,6 @@ public record AllScalarTypesRepoMock(HashMap<AllScalarTypesId, AllScalarTypesRow
         UpdateParams.empty(),
         row -> row);
   }
-  ;
 
   @Override
   public Boolean update(AllScalarTypesRow row, Connection c) {
@@ -139,17 +124,14 @@ public record AllScalarTypesRepoMock(HashMap<AllScalarTypesId, AllScalarTypesRow
       map.put(row.id(), row);
       ;
     }
-    ;
     return shouldUpdate;
   }
-  ;
 
   @Override
   public AllScalarTypesRow upsert(AllScalarTypesRow unsaved, Connection c) {
     map.put(unsaved.id(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public List<AllScalarTypesRow> upsertBatch(Iterator<AllScalarTypesRow> unsaved, Connection c) {
@@ -162,5 +144,4 @@ public record AllScalarTypesRepoMock(HashMap<AllScalarTypesId, AllScalarTypesRow
     ;
     return result;
   }
-  ;
 }

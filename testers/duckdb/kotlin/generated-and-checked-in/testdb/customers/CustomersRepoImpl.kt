@@ -27,7 +27,7 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun deleteById(
     customerId: CustomersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"customers\" where \"customer_id\" = "), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.interpolate(Fragment.lit("delete from \"customers\" where \"customer_id\" = "), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     customerIds: Array<CustomersId>,
@@ -96,7 +96,7 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun update(
     row: CustomersRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val customerId: CustomersId = row.customerId
     return Fragment.interpolate(Fragment.lit("update \"customers\"\nset \"name\" = "), Fragment.encode(DuckDbTypes.varchar, row.name), Fragment.lit(",\n\"email\" = "), Fragment.encode(Email.duckDbType.nullable(), row.email), Fragment.lit(",\n\"created_at\" = "), Fragment.encode(DuckDbTypes.timestamp, row.createdAt), Fragment.lit(",\n\"priority\" = "), Fragment.encode(Priority.duckDbType.nullable(), row.priority), Fragment.lit("\nwhere \"customer_id\" = "), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
   }

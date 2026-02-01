@@ -23,7 +23,7 @@ public record Complex(Optional<Double> r, Optional<Double> i) {
   }
   ;
 
-  public static PgStruct<Complex> pgStruct =
+  public static PgStruct<Complex> dbStruct =
       PgStruct.<Complex>builder("public.complex")
           .optField("r", PgTypes.float8, v -> v.r())
           .optField("i", PgTypes.float8, v -> v.i())
@@ -32,9 +32,9 @@ public record Complex(Optional<Double> r, Optional<Double> i) {
                   new Complex(
                       Optional.ofNullable((Double) arr[0]), Optional.ofNullable((Double) arr[1])));
 
-  public static PgType<Complex> pgType = pgStruct.asType();
+  public static PgType<Complex> dbType = dbStruct.asType();
 
-  public static PgType<Complex[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), Complex[]::new), Complex[]::new);
+  public static PgType<Complex[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), Complex[]::new), Complex[]::new);
 }

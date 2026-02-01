@@ -25,34 +25,28 @@ public record OrdersRowUnsaved(
       @JsonProperty("order_id") OrdersId orderId, @JsonProperty("customer_id") Integer customerId) {
     this(orderId, customerId, Optional.empty(), new UseDefault<>(), new UseDefault<>());
   }
-  ;
 
   public OrdersRowUnsaved withOrderId(OrdersId orderId) {
     return new OrdersRowUnsaved(orderId, customerId, totalAmount, orderDate, status);
   }
-  ;
 
   public OrdersRowUnsaved withCustomerId(Integer customerId) {
     return new OrdersRowUnsaved(orderId, customerId, totalAmount, orderDate, status);
   }
-  ;
 
   public OrdersRowUnsaved withTotalAmount(Optional<BigDecimal> totalAmount) {
     return new OrdersRowUnsaved(orderId, customerId, totalAmount, orderDate, status);
   }
-  ;
 
   /** Default: current_date */
   public OrdersRowUnsaved withOrderDate(Defaulted<LocalDate> orderDate) {
     return new OrdersRowUnsaved(orderId, customerId, totalAmount, orderDate, status);
   }
-  ;
 
   /** Default: 'pending' */
   public OrdersRowUnsaved withStatus(Defaulted<Optional<String>> status) {
     return new OrdersRowUnsaved(orderId, customerId, totalAmount, orderDate, status);
   }
-  ;
 
   public OrdersRow toRow(
       java.util.function.Supplier<LocalDate> orderDateDefault,
@@ -64,5 +58,4 @@ public record OrdersRowUnsaved(
         totalAmount,
         status.getOrElse(statusDefault));
   }
-  ;
 }

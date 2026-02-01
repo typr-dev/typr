@@ -1,0 +1,1230 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://typr.dev/typr-config.schema.json",
+  "title": "Typr Configuration",
+  "description": "Configuration schema for Typr code generator with Bridge type alignment",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Configuration version"
+    },
+    "include": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Include other configuration files (glob patterns supported)"
+    },
+    "boundaries": {
+      "type": "object",
+      "description": "Boundaries (databases, APIs, event streams, gRPC services)",
+      "additionalProperties": {
+        "$ref": "#/$defs/boundary"
+      }
+    },
+    "sources": {
+      "type": "object",
+      "description": "[DEPRECATED: use boundaries] Legacy alias for boundaries",
+      "additionalProperties": {
+        "$ref": "#/$defs/boundary"
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "description": "Output configurations that generate code from boundaries",
+      "additionalProperties": {
+        "$ref": "#/$defs/output"
+      }
+    },
+    "types": {
+      "type": "object",
+      "description": "Bridge type definitions - types that span multiple boundaries",
+      "additionalProperties": {
+        "$ref": "#/$defs/bridgeType"
+      }
+    },
+    "name_alignment": {
+      "$ref": "#/$defs/nameAlignmentConfig",
+      "description": "Configuration for automatic name alignment across boundaries"
+    }
+  },
+  "$defs": {
+    "bridgeType": {
+      "description": "A Bridge type that spans multiple boundaries. Can be field (pattern-based) or domain (projection-based).",
+      "oneOf": [
+        { "$ref": "#/$defs/fieldType" },
+        { "$ref": "#/$defs/domainType" }
+      ],
+      "discriminator": {
+        "propertyName": "kind",
+        "mapping": {
+          "field": "#/$defs/fieldType",
+          "domain": "#/$defs/domainType"
+        }
+      }
+    },
+    "fieldType": {
+      "type": "object",
+      "description": "A field Bridge type - matches columns/properties by pattern across all boundaries. Example: Email, CustomerId, Money",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "field",
+          "description": "Type discriminator - must be 'field' for field types"
+        },
+        "underlying": {
+          "type": "string",
+          "description": "The underlying primitive type (String, Long, BigDecimal, etc.)"
+        },
+        "db": { "$ref": "#/$defs/dbMatch" },
+        "model": { "$ref": "#/$defs/modelMatch" },
+        "api": { "$ref": "#/$defs/apiMatch" },
+        "validation": { "$ref": "#/$defs/validationRules" }
+      },
+      "additionalProperties": false
+    },
+    "domainType": {
+      "type": "object",
+      "description": "A domain type - grounded in a primary boundary entity, with optional alignment to other boundaries",
+      "required": ["kind", "fields"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "domain",
+          "description": "Type discriminator - must be 'domain' for domain types"
+        },
+        "primary": {
+          "type": "string",
+          "description": "The primary boundary entity this domain type is based on. Format: 'boundaryName:entityPath' (e.g., 'mydb:sales.customer')"
+        },
+        "fields": {
+          "type": "object",
+          "description": "Named fields of this domain type (selected from primary boundary). Keys are field names, values are types.",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldSpec"
+          }
+        },
+        "alignedSources": {
+          "type": "object",
+          "description": "Other boundary entities that align with this domain type. Keys are 'boundaryName:entityPath' (e.g., 'mariadb:customers', 'api:Customer')",
+          "additionalProperties": {
+            "$ref": "#/$defs/alignedSource"
+          }
+        },
+        "projections": {
+          "type": "object",
+          "description": "[DEPRECATED: use alignedSources] Legacy name for alignedSources",
+          "additionalProperties": {
+            "$ref": "#/$defs/alignedSource"
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of this type"
+        },
+        "generate": {
+          "$ref": "#/$defs/domainGenerateOptions",
+          "description": "Code generation options for this domain type"
+        }
+      },
+      "additionalProperties": false
+    },
+    "fieldSpec": {
+      "description": "Specification for a field in a domain type. Can be compact string or expanded object.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Compact field type syntax: 'TypeName', 'TypeName?' (nullable), 'TypeName[]' (array), 'TypeName?[]' (array of nullable)"
+        },
+        {
+          "type": "object",
+          "description": "Expanded field definition with full control",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "The type name (primitive, field Bridge type, or domain Bridge type)"
+            },
+            "nullable": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether this field can be null"
+            },
+            "array": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether this is an array/list of the type"
+            },
+            "description": {
+              "type": "string",
+              "description": "Human-readable description of this field"
+            },
+            "default": {
+              "description": "Default value for this field when not provided"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "alignedSource": {
+      "type": "object",
+      "description": "Configuration for how a domain type aligns with a specific boundary entity",
+      "properties": {
+        "entity": {
+          "type": "string",
+          "description": "The entity path in the boundary. For DB: 'schema.table' or just 'table'. For OpenAPI/JSON Schema: schema name. For Avro: fully qualified record name."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["exact", "superset", "subset"],
+          "default": "superset",
+          "description": "Compatibility mode: 'exact' = boundary must match exactly, 'superset' = boundary can have extra fields, 'subset' = boundary can have fewer fields"
+        },
+        "mappings": {
+          "type": "object",
+          "description": "Explicit field name mappings when auto-alignment fails. Keys are domain type field names, values are boundary field names.",
+          "additionalProperties": { "type": "string" }
+        },
+        "exclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Boundary fields to ignore (not considered drift)"
+        },
+        "include_extra": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Extra boundary fields to include as parameters in toBoundary mapper (useful for DB audit columns)"
+        },
+        "readonly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this alignment is read-only (no toBoundary mapper generated)"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["in", "out", "in-out"],
+          "default": "in-out",
+          "description": "Flow direction: 'in' = data flows from boundary to domain, 'out' = domain to boundary, 'in-out' = bidirectional"
+        },
+        "type_policy": {
+          "type": "string",
+          "enum": ["exact", "allow_widening", "allow_narrowing", "allow_precision_loss", "allow_truncation", "allow_nullable_to_required"],
+          "default": "exact",
+          "description": "Default type compatibility policy for field mappings in this boundary"
+        },
+        "field_overrides": {
+          "type": "object",
+          "description": "Per-field overrides for mapping behavior. Keys are domain field names.",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldOverride"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "fieldOverride": {
+      "description": "Override for how a specific field is mapped between domain type and boundary",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["forward", "drop"],
+          "description": "Simple override: 'forward' = map directly, 'drop' = exclude from mapping"
+        },
+        {
+          "type": "object",
+          "description": "Detailed field override with full control",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["forward", "drop", "custom"],
+              "description": "The mapping action for this field"
+            },
+            "source_field": {
+              "type": "string",
+              "description": "Boundary field name (if different from domain field name)"
+            },
+            "type_policy": {
+              "type": "string",
+              "enum": ["exact", "allow_widening", "allow_narrowing", "allow_precision_loss", "allow_truncation", "allow_nullable_to_required"],
+              "description": "Type policy override for this specific field"
+            },
+            "reason": {
+              "type": "string",
+              "description": "Reason for dropping this field (when action is 'drop')"
+            },
+            "direction": {
+              "type": "string",
+              "enum": ["out-only", "in-only"],
+              "description": "Direction override for this field"
+            },
+            "merge_from": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Boundary fields to merge into this domain field"
+            },
+            "split_from": {
+              "type": "string",
+              "description": "Boundary field to split into this domain field"
+            },
+            "computed_from": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Domain fields used to compute this field"
+            },
+            "enrichment": {
+              "type": "string",
+              "description": "Description of enrichment logic for this field"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "projection": {
+      "$ref": "#/$defs/alignedSource",
+      "description": "[DEPRECATED: use alignedSource] Legacy alias for alignedSource"
+    },
+    "domainGenerateOptions": {
+      "type": "object",
+      "description": "Code generation options for domain types",
+      "properties": {
+        "domainType": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate the domain type record"
+        },
+        "canonical": {
+          "type": "boolean",
+          "default": true,
+          "description": "[DEPRECATED: use domainType] Legacy alias for domainType"
+        },
+        "mappers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate mapper functions between domain type and aligned boundaries"
+        },
+        "interface": {
+          "type": "boolean",
+          "default": false,
+          "description": "Generate a shared interface that domain type and boundary types implement"
+        },
+        "builder": {
+          "type": "boolean",
+          "default": false,
+          "description": "Generate a builder for the domain type"
+        },
+        "copy": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate copy/with methods for immutable updates"
+        }
+      },
+      "additionalProperties": false
+    },
+    "validationRules": {
+      "type": "object",
+      "description": "Validation rules for field types",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Regex pattern the value must match"
+        },
+        "min_length": {
+          "type": "integer",
+          "description": "Minimum string length"
+        },
+        "max_length": {
+          "type": "integer",
+          "description": "Maximum string length"
+        },
+        "min": {
+          "type": "number",
+          "description": "Minimum numeric value (inclusive)"
+        },
+        "max": {
+          "type": "number",
+          "description": "Maximum numeric value (inclusive)"
+        },
+        "exclusive_min": {
+          "type": "number",
+          "description": "Minimum numeric value (exclusive)"
+        },
+        "exclusive_max": {
+          "type": "number",
+          "description": "Maximum numeric value (exclusive)"
+        },
+        "allowed_values": {
+          "type": "array",
+          "description": "Enumeration of allowed values"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nameAlignmentConfig": {
+      "type": "object",
+      "description": "Configuration for automatic name alignment between boundaries",
+      "properties": {
+        "stemming": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Porter stemmer for word normalization (e.g., 'customers' -> 'customer')"
+        },
+        "abbreviations": {
+          "type": "object",
+          "description": "Custom abbreviation expansions. Keys are abbreviations, values are full forms.",
+          "additionalProperties": { "type": "string" },
+          "examples": [
+            { "usr": "user", "cust": "customer", "acct": "account" }
+          ]
+        },
+        "equivalents": {
+          "type": "object",
+          "description": "Names that should be treated as the same concept. Keys are canonical forms, values are arrays of alternative names.",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "examples": [
+            { "identifier": ["id", "key", "pk"], "created_at": ["created", "creation_date", "insert_time"] }
+          ]
+        },
+        "case_sensitivity": {
+          "type": "string",
+          "enum": ["ignore", "preserve"],
+          "default": "ignore",
+          "description": "How to handle case when matching names"
+        }
+      },
+      "additionalProperties": false
+    },
+    "boundary": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["postgresql", "mariadb", "mysql", "sqlserver", "oracle", "duckdb", "db2", "openapi", "jsonschema", "avro", "grpc"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "enum": ["postgresql", "mariadb", "mysql", "sqlserver", "oracle", "db2"] } }
+          },
+          "then": {
+            "$ref": "#/$defs/databaseBoundary"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "duckdb" } }
+          },
+          "then": {
+            "$ref": "#/$defs/duckdbBoundary"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "openapi" } }
+          },
+          "then": {
+            "$ref": "#/$defs/openapiBoundary"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "jsonschema" } }
+          },
+          "then": {
+            "$ref": "#/$defs/jsonschemaBoundary"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "avro" } }
+          },
+          "then": {
+            "$ref": "#/$defs/avroBoundary"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "grpc" } }
+          },
+          "then": {
+            "$ref": "#/$defs/grpcBoundary"
+          }
+        }
+      ]
+    },
+    "databaseBoundary": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "host": { "type": "string" },
+        "port": { "type": "integer" },
+        "database": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "url": {
+          "type": "string",
+          "description": "JDBC URL (alternative to host/port/database)"
+        },
+        "schemas": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Schemas to include"
+        },
+        "ssl": {
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "string", "enum": ["disable", "allow", "prefer", "require"] }
+          ]
+        },
+        "connection_timeout": {
+          "type": "integer",
+          "description": "Connection timeout in seconds"
+        },
+        "encrypt": { "type": "boolean" },
+        "trust_server_certificate": { "type": "boolean" },
+        "service": {
+          "type": "string",
+          "description": "Oracle service name"
+        },
+        "sid": {
+          "type": "string",
+          "description": "Oracle SID"
+        },
+        "schema_mode": {
+          "type": "string",
+          "description": "Schema mode: 'multi_schema' or 'single_schema:SCHEMA_NAME'"
+        },
+        "sql_scripts": {
+          "type": "string",
+          "description": "Path to SQL scripts directory"
+        },
+        "schema_sql": {
+          "type": "string",
+          "description": "Path to schema SQL file"
+        },
+        "selectors": {
+          "$ref": "#/$defs/boundarySelectors",
+          "description": "Boundary-level selectors for tables, schemas, etc."
+        },
+        "types": {
+          "type": "object",
+          "description": "Boundary-level type definitions (scoped to this boundary only)",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldType"
+          }
+        },
+        "type_override": {
+          "type": "object",
+          "description": "Type override mappings (table.column -> type)",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "duckdbBoundary": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "type": { "type": "string" },
+        "path": {
+          "type": "string",
+          "description": "Path to DuckDB file or :memory:"
+        },
+        "schema_sql": {
+          "type": "string",
+          "description": "Path to schema SQL file to execute on startup"
+        },
+        "sql_scripts": {
+          "type": "string",
+          "description": "Path to SQL scripts directory"
+        },
+        "selectors": {
+          "$ref": "#/$defs/boundarySelectors",
+          "description": "Boundary-level selectors for tables, schemas, etc."
+        },
+        "types": {
+          "type": "object",
+          "description": "Boundary-level type definitions",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldType"
+          }
+        }
+      }
+    },
+    "openapiBoundary": {
+      "type": "object",
+      "description": "OpenAPI boundary for REST API types",
+      "properties": {
+        "type": { "type": "string" },
+        "spec": {
+          "type": "string",
+          "description": "Path or URL to OpenAPI spec"
+        },
+        "specs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Multiple OpenAPI spec paths (glob patterns supported)"
+        },
+        "generate_models": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate model classes from schemas"
+        },
+        "generate_server": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate server interfaces"
+        },
+        "generate_client": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate client implementations"
+        },
+        "types": {
+          "type": "object",
+          "description": "Boundary-level type definitions",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldType"
+          }
+        }
+      }
+    },
+    "jsonschemaBoundary": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "spec": {
+          "type": "string",
+          "description": "Path or URL to JSON Schema file"
+        },
+        "specs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Multiple JSON Schema paths (glob patterns supported)"
+        },
+        "types": {
+          "type": "object",
+          "description": "Boundary-level type definitions",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldType"
+          }
+        }
+      }
+    },
+    "avroBoundary": {
+      "type": "object",
+      "description": "Avro schema boundary for event types",
+      "properties": {
+        "type": { "type": "string" },
+        "schema": {
+          "type": "string",
+          "description": "Path to single .avsc file"
+        },
+        "schemas": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Multiple .avsc file paths (glob patterns supported)"
+        },
+        "schema_registry": {
+          "type": "string",
+          "description": "URL of Confluent Schema Registry"
+        },
+        "subjects": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Schema Registry subjects to include (glob patterns supported)"
+        },
+        "wire_format": {
+          "type": "string",
+          "enum": ["confluent_registry", "binary", "json"],
+          "default": "confluent_registry",
+          "description": "Avro wire format: confluent_registry (default), binary (raw Avro), json (JSON encoding)"
+        },
+        "json_lib": {
+          "type": "string",
+          "description": "JSON library to use when wire_format is 'json'"
+        },
+        "generate_records": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate record classes (event types)"
+        },
+        "generate_serdes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate Serializer/Deserializer classes"
+        },
+        "generate_producers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate type-safe producer classes"
+        },
+        "generate_consumers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate type-safe consumer classes"
+        },
+        "generate_topic_bindings": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate Topics object with typed topic constants"
+        },
+        "generate_headers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate typed header classes"
+        },
+        "generate_schema_validator": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate schema compatibility validation utility"
+        },
+        "generate_protocols": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate RPC service interfaces from .avpr protocol files"
+        },
+        "generate_union_types": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate sealed types for complex union types"
+        },
+        "topic_mapping": {
+          "type": "object",
+          "description": "Topic mapping: schema name -> topic name",
+          "additionalProperties": { "type": "string" }
+        },
+        "topic_groups": {
+          "type": "object",
+          "description": "Multi-event topic grouping: topic name -> list of schema names",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "topic_keys": {
+          "type": "object",
+          "description": "Key types per topic",
+          "additionalProperties": {
+            "$ref": "#/$defs/keyType"
+          }
+        },
+        "default_key_type": {
+          "$ref": "#/$defs/keyType",
+          "description": "Default key type when not specified per-topic"
+        },
+        "header_schemas": {
+          "type": "object",
+          "description": "Header schemas by name",
+          "additionalProperties": {
+            "$ref": "#/$defs/headerSchema"
+          }
+        },
+        "topic_headers": {
+          "type": "object",
+          "description": "Topic to header schema mapping",
+          "additionalProperties": { "type": "string" }
+        },
+        "default_header_schema": {
+          "type": "string",
+          "description": "Default header schema name"
+        },
+        "schema_evolution": {
+          "type": "string",
+          "enum": ["latest_only", "all_versions", "with_migrations"],
+          "default": "latest_only",
+          "description": "Schema evolution strategy"
+        },
+        "compatibility_mode": {
+          "type": "string",
+          "enum": ["backward", "forward", "full", "none"],
+          "default": "backward",
+          "description": "Schema compatibility mode"
+        },
+        "mark_new_fields": {
+          "type": "boolean",
+          "default": false,
+          "description": "Add @Since annotations for new fields"
+        },
+        "enable_precise_types": {
+          "type": "boolean",
+          "default": false,
+          "description": "Generate precise wrapper types for constrained Avro types"
+        },
+        "generate_kafka_events": {
+          "type": "boolean",
+          "default": false,
+          "description": "Generate framework-specific event publishers/listeners"
+        },
+        "generate_kafka_rpc": {
+          "type": "boolean",
+          "default": false,
+          "description": "Generate framework-specific RPC client/server implementations"
+        },
+        "types": {
+          "type": "object",
+          "description": "Boundary-level type definitions",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldType"
+          }
+        }
+      }
+    },
+    "grpcBoundary": {
+      "type": "object",
+      "description": "gRPC/Protobuf boundary for service types",
+      "properties": {
+        "type": { "type": "string" },
+        "proto_path": {
+          "type": "string",
+          "description": "Directory containing .proto files"
+        },
+        "proto_paths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Multiple proto directories"
+        },
+        "include_paths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Additional include paths for proto imports"
+        },
+        "descriptor_set": {
+          "type": "string",
+          "description": "Path to pre-built FileDescriptorSet file"
+        },
+        "generate_messages": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate message classes (clean JVM types)"
+        },
+        "generate_services": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate service interfaces"
+        },
+        "generate_servers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate server adapters (extends grpc-java *ImplBase)"
+        },
+        "generate_clients": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate client wrappers (wraps grpc-java stubs)"
+        },
+        "types": {
+          "type": "object",
+          "description": "Boundary-level type definitions",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldType"
+          }
+        }
+      }
+    },
+    "headerSchema": {
+      "type": "object",
+      "description": "Header schema definition",
+      "required": ["fields"],
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/headerField" },
+          "description": "Header fields"
+        }
+      },
+      "additionalProperties": false
+    },
+    "headerField": {
+      "type": "object",
+      "description": "Header field definition",
+      "required": ["name", "type"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Header field name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "uuid", "instant", "long", "int", "boolean"],
+          "description": "Header field type"
+        },
+        "required": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether this header field is required"
+        }
+      },
+      "additionalProperties": false
+    },
+    "keyType": {
+      "description": "Key type for a topic. Can be a simple string enum or a schema reference object.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["string", "uuid", "long", "int", "bytes"],
+          "description": "Simple key type"
+        },
+        {
+          "type": "object",
+          "description": "Composite key from an Avro schema",
+          "required": ["schema"],
+          "properties": {
+            "schema": {
+              "type": "string",
+              "description": "Schema name for composite key"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "output": {
+      "type": "object",
+      "required": ["path", "package", "language"],
+      "properties": {
+        "sources": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Boundary names to include (glob patterns supported, default: all)"
+        },
+        "path": {
+          "type": "string",
+          "description": "Output directory path"
+        },
+        "package": {
+          "type": "string",
+          "description": "Base package name"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["java", "kotlin", "scala"],
+          "description": "Target language"
+        },
+        "db_lib": {
+          "type": "string",
+          "enum": ["foundations", "anorm", "doobie", "zio-jdbc"],
+          "description": "Database library"
+        },
+        "json": {
+          "type": "string",
+          "enum": ["jackson", "circe", "play-json", "zio-json"],
+          "description": "JSON library"
+        },
+        "scala": {
+          "type": "object",
+          "properties": {
+            "dialect": {
+              "type": "string",
+              "enum": ["scala2", "scala2.13", "scala3", "scala3.3"],
+              "description": "Scala dialect"
+            },
+            "dsl": {
+              "type": "string",
+              "enum": ["java", "scala", "legacy"],
+              "description": "DSL style: java (Java types), scala (Scala types), legacy (Anorm/Doobie/ZioJdbc)"
+            },
+            "use_native_types": {
+              "type": "boolean",
+              "description": "Use Scala native types instead of Java types"
+            }
+          }
+        },
+        "matchers": {
+          "$ref": "#/$defs/matchers",
+          "description": "Output-specific matchers"
+        },
+        "bridge": {
+          "$ref": "#/$defs/bridgeOutputConfig",
+          "description": "Bridge type generation configuration for this output"
+        },
+        "framework": {
+          "type": "string",
+          "enum": ["none", "spring", "quarkus", "jaxrs", "http4s", "cats"],
+          "default": "none",
+          "description": "Framework integration. Applies to all boundary types: spring (Spring Boot/Kafka/gRPC), quarkus (Quarkus REST/Kafka/gRPC), jaxrs (JAX-RS for OpenAPI only), http4s (Http4s for OpenAPI only), cats (Typelevel stack: fs2-kafka, fs2-grpc, http4s), none (vanilla code)"
+        },
+        "effect_type": {
+          "type": "string",
+          "enum": ["blocking", "completable_future", "reactor_mono", "mutiny_uni", "cats_io", "zio"],
+          "default": "blocking",
+          "description": "Effect type for async/reactive operations across all boundary types"
+        }
+      }
+    },
+    "bridgeOutputConfig": {
+      "type": "object",
+      "description": "Configuration for Bridge type code generation in this output",
+      "properties": {
+        "domain_package": {
+          "type": "string",
+          "description": "Package for domain types (default: {package}.bridge)"
+        },
+        "canonical_package": {
+          "type": "string",
+          "description": "[DEPRECATED: use domain_package] Legacy alias for domain_package"
+        },
+        "mappers_package": {
+          "type": "string",
+          "description": "Package for mapper classes (default: {package}.bridge.mappers)"
+        },
+        "generate_mappers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate mapper functions between domain types and aligned boundary types"
+        },
+        "generate_interfaces": {
+          "type": "boolean",
+          "default": false,
+          "description": "Generate shared interfaces for domain types"
+        },
+        "mapper_style": {
+          "type": "string",
+          "enum": ["static", "instance", "extension"],
+          "default": "static",
+          "description": "Style of generated mappers: static methods, instance methods, or extension functions (Kotlin)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dbMatch": {
+      "type": "object",
+      "description": "Pattern-based matching for database columns (used by field types)",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match specific boundary names"
+        },
+        "schema": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match schema names (glob patterns supported)"
+        },
+        "table": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match table names (glob patterns supported)"
+        },
+        "column": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match column names (glob patterns supported)"
+        },
+        "db_type": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match database type names"
+        },
+        "domain": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match domain names"
+        },
+        "primary_key": {
+          "type": "boolean",
+          "description": "Match only primary key columns"
+        },
+        "nullable": {
+          "type": "boolean",
+          "description": "Match nullability"
+        },
+        "references": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match columns that reference specific tables"
+        },
+        "comment": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match column comments (glob patterns supported)"
+        },
+        "annotation": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match @annotations in comments"
+        }
+      },
+      "additionalProperties": false
+    },
+    "modelMatch": {
+      "type": "object",
+      "description": "Pattern-based matching for schema/model properties (OpenAPI, JSON Schema, Avro)",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match specific boundary names"
+        },
+        "schema": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match schema/model names (glob patterns supported)"
+        },
+        "name": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match property/field names (glob patterns supported)"
+        },
+        "json_path": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match JSON path within schema"
+        },
+        "schema_type": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match schema type (string, integer, object, array, etc.)"
+        },
+        "format": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match format (uuid, date-time, email, etc.)"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Match required status"
+        },
+        "extension": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Match x-* extension values"
+        }
+      },
+      "additionalProperties": false
+    },
+    "apiMatch": {
+      "type": "object",
+      "description": "Pattern-based matching for OpenAPI parameters (path, query, header, cookie)",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match specific boundary names"
+        },
+        "location": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["header", "query", "path", "cookie"]
+          },
+          "description": "Match parameter location"
+        },
+        "operation_id": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match operation IDs (glob patterns supported)"
+        },
+        "http_method": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match HTTP methods"
+        },
+        "path": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match URL paths (glob patterns supported)"
+        },
+        "name": {
+          "$ref": "#/$defs/stringOrArray",
+          "description": "Match parameter names (glob patterns supported)"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Match required status"
+        },
+        "extension": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Match x-* extension values"
+        }
+      },
+      "additionalProperties": false
+    },
+    "matchers": {
+      "type": "object",
+      "properties": {
+        "mock_repos": {
+          "$ref": "#/$defs/featureMatcher",
+          "description": "Generate mock repositories"
+        },
+        "primary_key_types": {
+          "$ref": "#/$defs/featureMatcher",
+          "description": "Generate type-safe ID wrappers"
+        },
+        "test_inserts": {
+          "$ref": "#/$defs/featureMatcher",
+          "description": "Generate test insert helpers"
+        },
+        "readonly": {
+          "$ref": "#/$defs/featureMatcher",
+          "description": "Generate read-only repositories"
+        },
+        "field_values": {
+          "$ref": "#/$defs/featureMatcher",
+          "description": "Generate field value types"
+        }
+      }
+    },
+    "matcherValue": {
+      "description": "Patterns support glob syntax (* and ?) and negation (!pattern)",
+      "oneOf": [
+        { "type": "string", "const": "all" },
+        { "type": "array", "items": { "type": "string" } },
+        {
+          "type": "object",
+          "properties": {
+            "include": {
+              "oneOf": [
+                { "type": "string", "const": "all" },
+                { "type": "array", "items": { "type": "string" } }
+              ]
+            },
+            "exclude": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      ]
+    },
+    "featureMatcher": {
+      "description": "Patterns support glob syntax (* and ?) and negation (!pattern)",
+      "oneOf": [
+        { "type": "string", "const": "all" },
+        { "type": "array", "items": { "type": "string" } },
+        {
+          "type": "object",
+          "properties": {
+            "include": {
+              "oneOf": [
+                { "type": "string", "const": "all" },
+                { "type": "array", "items": { "type": "string" } }
+              ]
+            },
+            "exclude": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      ]
+    },
+    "stringOrArray": {
+      "description": "Patterns support glob syntax (* and ?) and negation (!pattern)",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "boundarySelectors": {
+      "type": "object",
+      "description": "Selectors for filtering tables and schemas at the boundary level",
+      "properties": {
+        "tables": {
+          "$ref": "#/$defs/matcherValue",
+          "description": "Tables to include"
+        },
+        "exclude_tables": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Table names to exclude"
+        },
+        "open_enums": {
+          "$ref": "#/$defs/featureMatcher",
+          "description": "Tables to treat as open enums"
+        },
+        "precision_types": {
+          "$ref": "#/$defs/featureMatcher",
+          "description": "Tables for which to generate precise types"
+        }
+      }
+    }
+  }
+}

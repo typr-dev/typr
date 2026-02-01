@@ -28,7 +28,7 @@ data class ProductsRepoMock(val map: MutableMap<ProductsId, ProductsRow> = mutab
   override fun deleteById(
     productId: ProductsId,
     c: Connection
-  ): Boolean = map.remove(productId) != null
+  ): kotlin.Boolean = map.remove(productId) != null
 
   override fun deleteByIds(
     productIds: Array<ProductsId>,
@@ -83,7 +83,7 @@ data class ProductsRepoMock(val map: MutableMap<ProductsId, ProductsRow> = mutab
   ): Map<ProductsId, ProductsRow> = selectByIds(productIds, c).associateBy({ row: ProductsRow -> row.productId })
 
   override fun selectByUniqueSku(
-    sku: String,
+    sku: kotlin.String,
     c: Connection
   ): ProductsRow? = map.values.toList().find({ v -> (sku == v.sku) })
 
@@ -92,7 +92,7 @@ data class ProductsRepoMock(val map: MutableMap<ProductsId, ProductsRow> = mutab
   override fun update(
     row: ProductsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.productId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.productId] = row

@@ -16,13 +16,11 @@ public record AllScalarTypesId(@JsonValue Integer value) {
   public AllScalarTypesId withValue(Integer value) {
     return new AllScalarTypesId(value);
   }
-  ;
 
   @Override
   public java.lang.String toString() {
     return value.toString();
   }
-  ;
 
   public static Bijection<AllScalarTypesId, Integer> bijection =
       Bijection.of(AllScalarTypesId::value, AllScalarTypesId::new);

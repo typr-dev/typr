@@ -12,11 +12,11 @@ import testdb.Priority
 
 interface CustomerSearchSqlRepo {
   abstract fun apply(
-    namePattern: String?,
-    emailPattern: String?,
+    namePattern: kotlin.String?,
+    emailPattern: kotlin.String?,
     minPriority: /* user-picked */ Priority?,
     createdAfter: LocalDateTime?,
-    maxResults: Long,
+    maxResults: kotlin.Long,
     c: Connection
   ): List<CustomerSearchSqlRow>
 }

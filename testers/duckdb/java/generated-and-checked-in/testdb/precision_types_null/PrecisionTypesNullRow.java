@@ -60,7 +60,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withString10(Optional<String> string10) {
     return new PrecisionTypesNullRow(
@@ -77,7 +76,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withString20(Optional<String> string20) {
     return new PrecisionTypesNullRow(
@@ -94,7 +92,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withString50(Optional<String> string50) {
     return new PrecisionTypesNullRow(
@@ -111,7 +108,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withString100(Optional<String> string100) {
     return new PrecisionTypesNullRow(
@@ -128,7 +124,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withString255(Optional<String> string255) {
     return new PrecisionTypesNullRow(
@@ -145,7 +140,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withDecimal52(Optional<Decimal5_2> decimal52) {
     return new PrecisionTypesNullRow(
@@ -162,7 +156,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withDecimal102(Optional<Decimal10_2> decimal102) {
     return new PrecisionTypesNullRow(
@@ -179,7 +172,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withDecimal184(Optional<Decimal18_4> decimal184) {
     return new PrecisionTypesNullRow(
@@ -196,7 +188,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withDecimal50(Optional<Int5> decimal50) {
     return new PrecisionTypesNullRow(
@@ -213,7 +204,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withDecimal100(Optional<Int10> decimal100) {
     return new PrecisionTypesNullRow(
@@ -230,7 +220,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesNullRow withDecimal180(Optional<Int18> decimal180) {
     return new PrecisionTypesNullRow(
@@ -247,7 +236,6 @@ public record PrecisionTypesNullRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public static RowParser<PrecisionTypesNullRow> _rowParser =
       RowParsers.of(
@@ -279,77 +267,64 @@ public record PrecisionTypesNullRow(
                 row.decimal100(),
                 row.decimal180()
               });
-  ;
 
   @Override
   public PrecisionTypesNullId _1() {
     return id;
   }
-  ;
 
   @Override
   public Optional<Int5> _10() {
     return decimal50;
   }
-  ;
 
   @Override
   public Optional<Int10> _11() {
     return decimal100;
   }
-  ;
 
   @Override
   public Optional<Int18> _12() {
     return decimal180;
   }
-  ;
 
   @Override
   public Optional<String> _2() {
     return string10;
   }
-  ;
 
   @Override
   public Optional<String> _3() {
     return string20;
   }
-  ;
 
   @Override
   public Optional<String> _4() {
     return string50;
   }
-  ;
 
   @Override
   public Optional<String> _5() {
     return string100;
   }
-  ;
 
   @Override
   public Optional<String> _6() {
     return string255;
   }
-  ;
 
   @Override
   public Optional<Decimal5_2> _7() {
     return decimal52;
   }
-  ;
 
   @Override
   public Optional<Decimal10_2> _8() {
     return decimal102;
   }
-  ;
 
   @Override
   public Optional<Decimal18_4> _9() {
     return decimal184;
   }
-  ;
 }

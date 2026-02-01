@@ -36,7 +36,7 @@ case class InventoryCheckSqlRow(
   @JsonProperty("quantity_on_hand") quantityOnHand: Int,
   /** Points to [[testdb.inventory.InventoryRow.quantityReserved]] */
   @JsonProperty("quantity_reserved") quantityReserved: Int,
-  /** Points to [[testdb.inventory.InventoryRow.quantityReserved]] */
+  /** Points to [[testdb.inventory.InventoryRow.quantityOnHand]] */
   available: Int,
   /** Points to [[testdb.inventory.InventoryRow.reorderPoint]] */
   @JsonProperty("reorder_point") reorderPoint: Int,

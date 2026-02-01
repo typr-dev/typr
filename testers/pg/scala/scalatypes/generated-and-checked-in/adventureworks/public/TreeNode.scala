@@ -20,9 +20,9 @@ case class TreeNode(
 )
 
 object TreeNode {
-  given pgStruct: PgStruct[TreeNode] = PgStruct.builder[TreeNode]("public.tree_node").optField("id", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.id.asJava).optField("label", PgTypes.text, (v: TreeNode) => v.label.asJava).optField("parentId", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.parentId.asJava).build(arr => TreeNode(id = Option(arr(0).asInstanceOf[Int]), label = Option(arr(1).asInstanceOf[String]), parentId = Option(arr(2).asInstanceOf[Int])))
+  given dbStruct: PgStruct[TreeNode] = PgStruct.builder[TreeNode]("public.tree_node").optField("id", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.id.asJava).optField("label", PgTypes.text, (v: TreeNode) => v.label.asJava).optField("parentId", ScalaDbTypes.PgTypes.int4, (v: TreeNode) => v.parentId.asJava).build(arr => TreeNode(id = Option(arr(0).asInstanceOf[Int]), label = Option(arr(1).asInstanceOf[String]), parentId = Option(arr(2).asInstanceOf[Int])))
 
-  given pgType: PgType[TreeNode] = pgStruct.asType()
+  given dbType: PgType[TreeNode] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[TreeNode]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TreeNode](n)), n => new Array[TreeNode](n))
+  given dbTypeArray: PgType[Array[TreeNode]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[TreeNode](n)), n => new Array[TreeNode](n))
 }
