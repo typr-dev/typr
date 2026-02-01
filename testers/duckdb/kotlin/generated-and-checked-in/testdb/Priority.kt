@@ -15,12 +15,14 @@ enum class Priority(val value: kotlin.String) {
     high("high"),
     critical("critical");
 
+    
+
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, Priority> = entries.associateBy { it.value }
         val duckDbTypeArray: DuckDbType<Array<Priority>> =
           DuckDbTypes.varcharArray
-              .bimap({ xs -> arrayMap.map(xs, Priority::force, Priority::class.java) }, { xs -> arrayMap.map(xs, Priority::value, String::class.java) })
+              .bimap({ xs -> arrayMap.map(xs, Priority::force, Priority::class.java) }, { xs -> arrayMap.map(xs, Priority::value, kotlin.String::class.java) })
             .renamedDropPrecision("priority")
         val duckDbType: DuckDbType<Priority> =
           DuckDbTypes.text.bimap(Priority::force, Priority::value)

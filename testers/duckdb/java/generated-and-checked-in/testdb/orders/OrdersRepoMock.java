@@ -31,17 +31,14 @@ public record OrdersRepoMock(
   public OrdersRepoMock(java.util.function.Function<OrdersRowUnsaved, OrdersRow> toRow) {
     this(toRow, new HashMap<OrdersId, OrdersRow>());
   }
-  ;
 
   public OrdersRepoMock withToRow(java.util.function.Function<OrdersRowUnsaved, OrdersRow> toRow) {
     return new OrdersRepoMock(toRow, map);
   }
-  ;
 
   public OrdersRepoMock withMap(HashMap<OrdersId, OrdersRow> map) {
     return new OrdersRepoMock(toRow, map);
   }
-  ;
 
   @Override
   public DeleteBuilder<OrdersFields, OrdersRow> delete() {
@@ -52,13 +49,11 @@ public record OrdersRepoMock(
         row -> row.orderId(),
         id -> map.remove(id));
   }
-  ;
 
   @Override
   public Boolean deleteById(OrdersId orderId, Connection c) {
     return Optional.ofNullable(map.remove(orderId)).isPresent();
   }
-  ;
 
   @Override
   public Integer deleteByIds(OrdersId[] orderIds, Connection c) {
@@ -68,48 +63,40 @@ public record OrdersRepoMock(
         count = count + 1;
         ;
       }
-      ;
     }
     ;
     return count;
   }
-  ;
 
   @Override
   public OrdersRow insert(OrdersRow unsaved, Connection c) {
     if (map.containsKey(unsaved.orderId())) {
       throw new RuntimeException("id " + unsaved.orderId() + " already exists");
     }
-    ;
     map.put(unsaved.orderId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public OrdersRow insert(OrdersRowUnsaved unsaved, Connection c) {
     return insert(toRow.apply(unsaved), c);
   }
-  ;
 
   @Override
   public SelectBuilder<OrdersFields, OrdersRow> select() {
     return new SelectBuilderMock<>(
         OrdersFields.structure, () -> new ArrayList<>(map.values()), SelectParams.empty());
   }
-  ;
 
   @Override
   public List<OrdersRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   }
-  ;
 
   @Override
   public Optional<OrdersRow> selectById(OrdersId orderId, Connection c) {
     return Optional.ofNullable(map.get(orderId));
   }
-  ;
 
   @Override
   public List<OrdersRow> selectByIds(OrdersId[] orderIds, Connection c) {
@@ -119,19 +106,16 @@ public record OrdersRepoMock(
       if (opt.isPresent()) {
         result.add(opt.get());
       }
-      ;
     }
     ;
     return result;
   }
-  ;
 
   @Override
   public Map<OrdersId, OrdersRow> selectByIdsTracked(OrdersId[] orderIds, Connection c) {
     return selectByIds(orderIds, c).stream()
         .collect(Collectors.toMap((OrdersRow row) -> row.orderId(), Function.identity()));
   }
-  ;
 
   @Override
   public UpdateBuilder<OrdersFields, OrdersRow> update() {
@@ -141,7 +125,6 @@ public record OrdersRepoMock(
         UpdateParams.empty(),
         row -> row);
   }
-  ;
 
   @Override
   public Boolean update(OrdersRow row, Connection c) {
@@ -153,17 +136,14 @@ public record OrdersRepoMock(
       map.put(row.orderId(), row);
       ;
     }
-    ;
     return shouldUpdate;
   }
-  ;
 
   @Override
   public OrdersRow upsert(OrdersRow unsaved, Connection c) {
     map.put(unsaved.orderId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public List<OrdersRow> upsertBatch(Iterator<OrdersRow> unsaved, Connection c) {
@@ -176,5 +156,4 @@ public record OrdersRepoMock(
     ;
     return result;
   }
-  ;
 }

@@ -79,7 +79,7 @@ sealed trait GrpcFrameworkIntegration {
 }
 
 object GrpcFrameworkIntegration {
-  import typr.grpc.codegen.{GrpcFrameworkSpring, GrpcFrameworkQuarkus}
+  import typr.grpc.codegen.{GrpcFrameworkSpring, GrpcFrameworkQuarkus, GrpcFrameworkCats}
 
   /** No framework annotations - generate framework-agnostic code */
   case object None extends GrpcFrameworkIntegration {
@@ -100,5 +100,13 @@ object GrpcFrameworkIntegration {
     */
   case object Quarkus extends GrpcFrameworkIntegration {
     override def grpcFramework: Option[typr.grpc.codegen.GrpcFramework] = Some(GrpcFrameworkQuarkus)
+  }
+
+  /** Cats/Typelevel fs2-grpc integration.
+    *
+    * Server: Pure functional trait-based service implementations Client: IO-based method wrappers
+    */
+  case object Cats extends GrpcFrameworkIntegration {
+    override def grpcFramework: Option[typr.grpc.codegen.GrpcFramework] = Some(GrpcFrameworkCats)
   }
 }

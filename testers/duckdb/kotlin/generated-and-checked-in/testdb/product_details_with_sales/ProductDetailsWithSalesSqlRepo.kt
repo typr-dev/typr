@@ -12,7 +12,7 @@ import kotlin.collections.List
 interface ProductDetailsWithSalesSqlRepo {
   abstract fun apply(
     productIds: Array<Int>?,
-    skuPattern: String?,
+    skuPattern: kotlin.String?,
     minPrice: BigDecimal?,
     maxPrice: BigDecimal?,
     c: Connection

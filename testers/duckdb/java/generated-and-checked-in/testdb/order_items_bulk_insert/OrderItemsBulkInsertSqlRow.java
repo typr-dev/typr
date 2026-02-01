@@ -27,25 +27,21 @@ public record OrderItemsBulkInsertSqlRow(
   public OrderItemsBulkInsertSqlRow withOrderId(Integer orderId) {
     return new OrderItemsBulkInsertSqlRow(orderId, productId, quantity, unitPrice);
   }
-  ;
 
   /** Points to {@link testdb.order_items.OrderItemsRow#productId()} */
   public OrderItemsBulkInsertSqlRow withProductId(Integer productId) {
     return new OrderItemsBulkInsertSqlRow(orderId, productId, quantity, unitPrice);
   }
-  ;
 
   /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
   public OrderItemsBulkInsertSqlRow withQuantity(Integer quantity) {
     return new OrderItemsBulkInsertSqlRow(orderId, productId, quantity, unitPrice);
   }
-  ;
 
   /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
   public OrderItemsBulkInsertSqlRow withUnitPrice(BigDecimal unitPrice) {
     return new OrderItemsBulkInsertSqlRow(orderId, productId, quantity, unitPrice);
   }
-  ;
 
   public static RowParser<OrderItemsBulkInsertSqlRow> _rowParser =
       RowParsers.of(
@@ -55,29 +51,24 @@ public record OrderItemsBulkInsertSqlRow(
           DuckDbTypes.numeric,
           OrderItemsBulkInsertSqlRow::new,
           row -> new Object[] {row.orderId(), row.productId(), row.quantity(), row.unitPrice()});
-  ;
 
   @Override
   public Integer _1() {
     return orderId;
   }
-  ;
 
   @Override
   public Integer _2() {
     return productId;
   }
-  ;
 
   @Override
   public Integer _3() {
     return quantity;
   }
-  ;
 
   @Override
   public BigDecimal _4() {
     return unitPrice;
   }
-  ;
 }

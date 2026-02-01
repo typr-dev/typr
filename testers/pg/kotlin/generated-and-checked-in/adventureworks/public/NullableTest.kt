@@ -18,13 +18,13 @@ data class NullableTest(
   val emptyVsNull: String?
 ) {
   companion object {
-    val pgStruct: PgStruct<NullableTest> =
+    val dbStruct: PgStruct<NullableTest> =
       PgStruct.builder<NullableTest>("public.nullable_test").optField("alwaysPresent", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.alwaysPresent) }).optField("oftenNull", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.oftenNull) }).optField("emptyVsNull", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.emptyVsNull) }).build({ arr -> NullableTest(arr[0] as? String, arr[1] as? String, arr[2] as? String) })
 
-    val pgType: PgType<NullableTest> =
-      pgStruct.asType()
+    val dbType: PgType<NullableTest> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<NullableTest>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<NullableTest>(n) }), { n -> arrayOfNulls<NullableTest>(n) })
+    val dbTypeArray: PgType<Array<NullableTest>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<NullableTest>(n) }), { n -> arrayOfNulls<NullableTest>(n) })
   }
 }

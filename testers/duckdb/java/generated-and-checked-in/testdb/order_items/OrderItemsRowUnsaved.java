@@ -23,31 +23,25 @@ public record OrderItemsRowUnsaved(
       @JsonProperty("unit_price") BigDecimal unitPrice) {
     this(orderId, productId, unitPrice, new UseDefault<>());
   }
-  ;
 
   public OrderItemsRowUnsaved withOrderId(Integer orderId) {
     return new OrderItemsRowUnsaved(orderId, productId, unitPrice, quantity);
   }
-  ;
 
   public OrderItemsRowUnsaved withProductId(Integer productId) {
     return new OrderItemsRowUnsaved(orderId, productId, unitPrice, quantity);
   }
-  ;
 
   public OrderItemsRowUnsaved withUnitPrice(BigDecimal unitPrice) {
     return new OrderItemsRowUnsaved(orderId, productId, unitPrice, quantity);
   }
-  ;
 
   /** Default: 1 */
   public OrderItemsRowUnsaved withQuantity(Defaulted<Integer> quantity) {
     return new OrderItemsRowUnsaved(orderId, productId, unitPrice, quantity);
   }
-  ;
 
   public OrderItemsRow toRow(java.util.function.Supplier<Integer> quantityDefault) {
     return new OrderItemsRow(orderId, productId, quantity.getOrElse(quantityDefault), unitPrice);
   }
-  ;
 }

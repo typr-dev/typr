@@ -14,7 +14,7 @@ interface EmployeeSalaryUpdateSqlRepo {
     raisePercentage: BigDecimal?,
     newSalary: BigDecimal,
     empNumber: Int,
-    empSuffix: String,
+    empSuffix: kotlin.String,
     c: Connection
   ): List<EmployeeSalaryUpdateSqlRow>
 }

@@ -30,29 +30,24 @@ public record CustomersRow(
   public CustomersRow withCustomerId(CustomersId customerId) {
     return new CustomersRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   public CustomersRow withName(String name) {
     return new CustomersRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   public CustomersRow withEmail(Optional</* user-picked */ Email> email) {
     return new CustomersRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   /** Default: current_timestamp */
   public CustomersRow withCreatedAt(LocalDateTime createdAt) {
     return new CustomersRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   /** Default: 'medium' */
   public CustomersRow withPriority(Optional<Priority> priority) {
     return new CustomersRow(customerId, name, email, createdAt, priority);
   }
-  ;
 
   public static RowParser<CustomersRow> _rowParser =
       RowParsers.of(
@@ -66,46 +61,38 @@ public record CustomersRow(
               new Object[] {
                 row.customerId(), row.name(), row.email(), row.createdAt(), row.priority()
               });
-  ;
 
   @Override
   public CustomersId _1() {
     return customerId;
   }
-  ;
 
   @Override
   public String _2() {
     return name;
   }
-  ;
 
   @Override
   public Optional</* user-picked */ Email> _3() {
     return email;
   }
-  ;
 
   @Override
   public LocalDateTime _4() {
     return createdAt;
   }
-  ;
 
   @Override
   public Optional<Priority> _5() {
     return priority;
   }
-  ;
 
   public CustomersId id() {
     return customerId;
   }
-  ;
 
   public CustomersRowUnsaved toUnsavedRow(
       Defaulted<LocalDateTime> createdAt, Defaulted<Optional<Priority>> priority) {
     return new CustomersRowUnsaved(customerId, name, email, createdAt, priority);
   }
-  ;
 }

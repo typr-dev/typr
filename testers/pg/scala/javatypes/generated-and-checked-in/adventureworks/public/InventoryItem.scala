@@ -20,9 +20,9 @@ case class InventoryItem(
 )
 
 object InventoryItem {
-  given pgStruct: PgStruct[InventoryItem] = PgStruct.builder[InventoryItem]("public.inventory_item").optField("name", PgTypes.text, (v: InventoryItem) => v.name).optField("tags", PgTypes.textArray, (v: InventoryItem) => v.tags).optField("prices", PgTypes.numericArray, (v: InventoryItem) => v.prices).optField("available", PgTypes.bool, (v: InventoryItem) => v.available).build(arr => InventoryItem(name = Optional.ofNullable(arr(0).asInstanceOf[String]), tags = Optional.ofNullable(arr(1).asInstanceOf[Array[String]]), prices = Optional.ofNullable(arr(2).asInstanceOf[Array[java.math.BigDecimal]]), available = Optional.ofNullable(arr(3).asInstanceOf[java.lang.Boolean])))
+  given dbStruct: PgStruct[InventoryItem] = PgStruct.builder[InventoryItem]("public.inventory_item").optField("name", PgTypes.text, (v: InventoryItem) => v.name).optField("tags", PgTypes.textArray, (v: InventoryItem) => v.tags).optField("prices", PgTypes.numericArray, (v: InventoryItem) => v.prices).optField("available", PgTypes.bool, (v: InventoryItem) => v.available).build(arr => InventoryItem(name = Optional.ofNullable(arr(0).asInstanceOf[String]), tags = Optional.ofNullable(arr(1).asInstanceOf[Array[String]]), prices = Optional.ofNullable(arr(2).asInstanceOf[Array[java.math.BigDecimal]]), available = Optional.ofNullable(arr(3).asInstanceOf[java.lang.Boolean])))
 
-  given pgType: PgType[InventoryItem] = pgStruct.asType()
+  given dbType: PgType[InventoryItem] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[InventoryItem]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[InventoryItem](n)), n => new Array[InventoryItem](n))
+  given dbTypeArray: PgType[Array[InventoryItem]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[InventoryItem](n)), n => new Array[InventoryItem](n))
 }

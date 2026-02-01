@@ -21,16 +21,16 @@ import testdb.userdefined.Email
   */
 data class CustomersRow(
   @field:JsonProperty("customer_id") val customerId: CustomersId,
-  val name: String,
+  val name: kotlin.String,
   val email: /* user-picked */ Email?,
   /** Default: current_timestamp */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** Default: 'medium' */
   val priority: Priority?
-) : Tuple5<CustomersId, String, /* user-picked */ Email?, LocalDateTime, Priority?> {
+) : Tuple5<CustomersId, kotlin.String, /* user-picked */ Email?, LocalDateTime, Priority?> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   override fun _3(): /* user-picked */ Email? = email
 

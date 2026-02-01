@@ -25,27 +25,22 @@ public record ProductsRow(
   public ProductsRow withProductId(ProductsId productId) {
     return new ProductsRow(productId, sku, name, price, metadata);
   }
-  ;
 
   public ProductsRow withSku(String sku) {
     return new ProductsRow(productId, sku, name, price, metadata);
   }
-  ;
 
   public ProductsRow withName(String name) {
     return new ProductsRow(productId, sku, name, price, metadata);
   }
-  ;
 
   public ProductsRow withPrice(BigDecimal price) {
     return new ProductsRow(productId, sku, name, price, metadata);
   }
-  ;
 
   public ProductsRow withMetadata(Optional<Json> metadata) {
     return new ProductsRow(productId, sku, name, price, metadata);
   }
-  ;
 
   public static RowParser<ProductsRow> _rowParser =
       RowParsers.of(
@@ -57,40 +52,33 @@ public record ProductsRow(
           ProductsRow::new,
           row ->
               new Object[] {row.productId(), row.sku(), row.name(), row.price(), row.metadata()});
-  ;
 
   @Override
   public ProductsId _1() {
     return productId;
   }
-  ;
 
   @Override
   public String _2() {
     return sku;
   }
-  ;
 
   @Override
   public String _3() {
     return name;
   }
-  ;
 
   @Override
   public BigDecimal _4() {
     return price;
   }
-  ;
 
   @Override
   public Optional<Json> _5() {
     return metadata;
   }
-  ;
 
   public ProductsId id() {
     return productId;
   }
-  ;
 }

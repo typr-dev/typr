@@ -18,7 +18,7 @@ import java.math.BigInteger
 data class Int18 private constructor(@field:JsonValue val value: BigInteger) : DecimalN {
   override fun decimalValue(): BigDecimal = BigDecimal(value)
 
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is DecimalN) return false
     return decimalValue().compareTo(other.decimalValue()) == 0
@@ -30,7 +30,7 @@ data class Int18 private constructor(@field:JsonValue val value: BigInteger) : D
 
   override fun scale(): Int = 0
 
-  override fun semanticEquals(other: DecimalN): Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
+  override fun semanticEquals(other: DecimalN): kotlin.Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
 
   override fun semanticHashCode(): Int = decimalValue().stripTrailingZeros().hashCode()
 
@@ -55,7 +55,7 @@ data class Int18 private constructor(@field:JsonValue val value: BigInteger) : D
 
     fun of(value: Int): Int18 = Int18(BigInteger.valueOf(value.toLong()))
 
-    fun of(value: Long): Int18? = Int18.of(BigInteger.valueOf(value))
+    fun of(value: kotlin.Long): Int18? = Int18.of(BigInteger.valueOf(value))
 
     fun unsafeForce(value: BigInteger): Int18 {
       if (value.bitLength() > 72) {

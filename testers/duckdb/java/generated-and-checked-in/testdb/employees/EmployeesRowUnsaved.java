@@ -30,50 +30,42 @@ public record EmployeesRowUnsaved(
       @JsonProperty("emp_name") String empName) {
     this(empNumber, empSuffix, deptCode, deptRegion, empName, Optional.empty(), new UseDefault<>());
   }
-  ;
 
   public EmployeesRowUnsaved withEmpNumber(Integer empNumber) {
     return new EmployeesRowUnsaved(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRowUnsaved withEmpSuffix(String empSuffix) {
     return new EmployeesRowUnsaved(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRowUnsaved withDeptCode(String deptCode) {
     return new EmployeesRowUnsaved(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRowUnsaved withDeptRegion(String deptRegion) {
     return new EmployeesRowUnsaved(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRowUnsaved withEmpName(String empName) {
     return new EmployeesRowUnsaved(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRowUnsaved withSalary(Optional<BigDecimal> salary) {
     return new EmployeesRowUnsaved(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   /** Default: current_date */
   public EmployeesRowUnsaved withHireDate(Defaulted<LocalDate> hireDate) {
     return new EmployeesRowUnsaved(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRow toRow(java.util.function.Supplier<LocalDate> hireDateDefault) {
     return new EmployeesRow(
@@ -85,5 +77,4 @@ public record EmployeesRowUnsaved(
         salary,
         hireDate.getOrElse(hireDateDefault));
   }
-  ;
 }

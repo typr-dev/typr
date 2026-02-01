@@ -19,13 +19,13 @@ data class TreeNode(
   val parentId: Int?
 ) {
   companion object {
-    val pgStruct: PgStruct<TreeNode> =
+    val dbStruct: PgStruct<TreeNode> =
       PgStruct.builder<TreeNode>("public.tree_node").optField("id", KotlinDbTypes.PgTypes.int4, { v: TreeNode -> Optional.ofNullable(v.id) }).optField("label", PgTypes.text, { v: TreeNode -> Optional.ofNullable(v.label) }).optField("parentId", KotlinDbTypes.PgTypes.int4, { v: TreeNode -> Optional.ofNullable(v.parentId) }).build({ arr -> TreeNode(arr[0] as? Int, arr[1] as? String, arr[2] as? Int) })
 
-    val pgType: PgType<TreeNode> =
-      pgStruct.asType()
+    val dbType: PgType<TreeNode> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<TreeNode>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TreeNode>(n) }), { n -> arrayOfNulls<TreeNode>(n) })
+    val dbTypeArray: PgType<Array<TreeNode>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<TreeNode>(n) }), { n -> arrayOfNulls<TreeNode>(n) })
   }
 }

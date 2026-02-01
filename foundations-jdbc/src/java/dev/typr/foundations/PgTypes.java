@@ -52,6 +52,29 @@ public interface PgTypes {
           PgCompositeText.boolArrayUnboxed,
           PgJson.boolArrayUnboxed);
 
+  PgType<Bit> bit =
+      PgType.of(
+              "bit",
+              PgRead.pgObject("bit"),
+              PgWrite.pgObject("bit"),
+              PgText.textString,
+              PgCompositeText.text,
+              PgJson.text)
+          .bimap(Bit::new, Bit::value);
+  PgType<Bit[]> bitArray = bit.array(PgRead.pgObjectArray(Bit::new, Bit.class), Bit[]::new);
+
+  PgType<Varbit> varbit =
+      PgType.of(
+              "varbit",
+              PgRead.pgObject("varbit"),
+              PgWrite.pgObject("varbit"),
+              PgText.textString,
+              PgCompositeText.text,
+              PgJson.text)
+          .bimap(Varbit::new, Varbit::value);
+  PgType<Varbit[]> varbitArray =
+      varbit.array(PgRead.pgObjectArray(Varbit::new, Varbit.class), Varbit[]::new);
+
   PgType<Double> float8 =
       PgType.of(
           "float8",

@@ -19,19 +19,19 @@ import java.time.LocalDate
 data class OrderDetailsViewRow(
   @field:JsonProperty("order_id") val orderId: Int?,
   @field:JsonProperty("order_date") val orderDate: LocalDate?,
-  @field:JsonProperty("customer_name") val customerName: String?,
-  @field:JsonProperty("product_name") val productName: String?,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String?,
+  @field:JsonProperty("product_name") val productName: kotlin.String?,
   val quantity: Int?,
   @field:JsonProperty("unit_price") val unitPrice: BigDecimal?,
   @field:JsonProperty("line_total") val lineTotal: BigDecimal?
-) : Tuple7<Int?, LocalDate?, String?, String?, Int?, BigDecimal?, BigDecimal?> {
+) : Tuple7<Int?, LocalDate?, kotlin.String?, kotlin.String?, Int?, BigDecimal?, BigDecimal?> {
   override fun _1(): Int? = orderId
 
   override fun _2(): LocalDate? = orderDate
 
-  override fun _3(): String? = customerName
+  override fun _3(): kotlin.String? = customerName
 
-  override fun _4(): String? = productName
+  override fun _4(): kotlin.String? = productName
 
   override fun _5(): Int? = quantity
 

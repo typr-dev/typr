@@ -20,9 +20,9 @@ case class PersonName(
 )
 
 object PersonName {
-  given pgStruct: PgStruct[PersonName] = PgStruct.builder[PersonName]("public.person_name").optField("firstName", PgTypes.text, (v: PersonName) => v.firstName).optField("middleName", PgTypes.text, (v: PersonName) => v.middleName).optField("lastName", PgTypes.text, (v: PersonName) => v.lastName).optField("suffix", PgTypes.text, (v: PersonName) => v.suffix).build(arr => PersonName(firstName = Optional.ofNullable(arr(0).asInstanceOf[String]), middleName = Optional.ofNullable(arr(1).asInstanceOf[String]), lastName = Optional.ofNullable(arr(2).asInstanceOf[String]), suffix = Optional.ofNullable(arr(3).asInstanceOf[String])))
+  given dbStruct: PgStruct[PersonName] = PgStruct.builder[PersonName]("public.person_name").optField("firstName", PgTypes.text, (v: PersonName) => v.firstName).optField("middleName", PgTypes.text, (v: PersonName) => v.middleName).optField("lastName", PgTypes.text, (v: PersonName) => v.lastName).optField("suffix", PgTypes.text, (v: PersonName) => v.suffix).build(arr => PersonName(firstName = Optional.ofNullable(arr(0).asInstanceOf[String]), middleName = Optional.ofNullable(arr(1).asInstanceOf[String]), lastName = Optional.ofNullable(arr(2).asInstanceOf[String]), suffix = Optional.ofNullable(arr(3).asInstanceOf[String])))
 
-  given pgType: PgType[PersonName] = pgStruct.asType()
+  given dbType: PgType[PersonName] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[PersonName]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[PersonName](n)), n => new Array[PersonName](n))
+  given dbTypeArray: PgType[Array[PersonName]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[PersonName](n)), n => new Array[PersonName](n))
 }

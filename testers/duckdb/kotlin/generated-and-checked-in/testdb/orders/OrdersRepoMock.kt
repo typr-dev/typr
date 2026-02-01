@@ -31,7 +31,7 @@ data class OrdersRepoMock(
   override fun deleteById(
     orderId: OrdersId,
     c: Connection
-  ): Boolean = map.remove(orderId) != null
+  ): kotlin.Boolean = map.remove(orderId) != null
 
   override fun deleteByIds(
     orderIds: Array<OrdersId>,
@@ -95,7 +95,7 @@ data class OrdersRepoMock(
   override fun update(
     row: OrdersRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.orderId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.orderId] = row

@@ -21,13 +21,13 @@ data class InventoryItem(
   val available: Boolean?
 ) {
   companion object {
-    val pgStruct: PgStruct<InventoryItem> =
+    val dbStruct: PgStruct<InventoryItem> =
       PgStruct.builder<InventoryItem>("public.inventory_item").optField("name", PgTypes.text, { v: InventoryItem -> Optional.ofNullable(v.name) }).optField("tags", PgTypes.textArray, { v: InventoryItem -> Optional.ofNullable(v.tags) }).optField("prices", PgTypes.numericArray, { v: InventoryItem -> Optional.ofNullable(v.prices) }).optField("available", KotlinDbTypes.PgTypes.bool, { v: InventoryItem -> Optional.ofNullable(v.available) }).build({ arr -> InventoryItem(arr[0] as? String, arr[1] as? Array<String>, arr[2] as? Array<BigDecimal>, arr[3] as? Boolean) })
 
-    val pgType: PgType<InventoryItem> =
-      pgStruct.asType()
+    val dbType: PgType<InventoryItem> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<InventoryItem>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<InventoryItem>(n) }), { n -> arrayOfNulls<InventoryItem>(n) })
+    val dbTypeArray: PgType<Array<InventoryItem>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<InventoryItem>(n) }), { n -> arrayOfNulls<InventoryItem>(n) })
   }
 }

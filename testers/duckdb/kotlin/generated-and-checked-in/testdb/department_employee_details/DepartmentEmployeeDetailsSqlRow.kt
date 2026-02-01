@@ -18,41 +18,41 @@ import java.time.LocalDate
 /** SQL file: department_employee_details.sql */
 data class DepartmentEmployeeDetailsSqlRow(
   /** Points to [testdb.departments.DepartmentsRow.deptCode] */
-  @field:JsonProperty("dept_code") val deptCode: String,
+  @field:JsonProperty("dept_code") val deptCode: kotlin.String,
   /** Points to [testdb.departments.DepartmentsRow.deptRegion] */
-  @field:JsonProperty("dept_region") val deptRegion: String,
+  @field:JsonProperty("dept_region") val deptRegion: kotlin.String,
   /** Points to [testdb.departments.DepartmentsRow.deptName] */
-  @field:JsonProperty("dept_name") val deptName: String,
+  @field:JsonProperty("dept_name") val deptName: kotlin.String,
   /** Points to [testdb.departments.DepartmentsRow.budget] */
   val budget: BigDecimal?,
   /** Points to [testdb.employees.EmployeesRow.empNumber] */
   @field:JsonProperty("emp_number") val empNumber: Int?,
   /** Points to [testdb.employees.EmployeesRow.empSuffix] */
-  @field:JsonProperty("emp_suffix") val empSuffix: String?,
+  @field:JsonProperty("emp_suffix") val empSuffix: kotlin.String?,
   /** Points to [testdb.employees.EmployeesRow.empName] */
-  @field:JsonProperty("emp_name") val empName: String?,
+  @field:JsonProperty("emp_name") val empName: kotlin.String?,
   /** Points to [testdb.employees.EmployeesRow.salary] */
   val salary: BigDecimal?,
   /** Points to [testdb.employees.EmployeesRow.hireDate] */
   @field:JsonProperty("hire_date") val hireDate: LocalDate?,
   /** Points to [testdb.employees.EmployeesRow.hireDate] */
   @field:JsonProperty("years_of_service") val yearsOfService: Int?
-) : Tuple10<String, String, String, BigDecimal?, Int?, String?, String?, BigDecimal?, LocalDate?, Int?> {
-  override fun _1(): String = deptCode
+) : Tuple10<kotlin.String, kotlin.String, kotlin.String, BigDecimal?, Int?, kotlin.String?, kotlin.String?, BigDecimal?, LocalDate?, Int?> {
+  override fun _1(): kotlin.String = deptCode
 
   override fun _10(): Int? = yearsOfService
 
-  override fun _2(): String = deptRegion
+  override fun _2(): kotlin.String = deptRegion
 
-  override fun _3(): String = deptName
+  override fun _3(): kotlin.String = deptName
 
   override fun _4(): BigDecimal? = budget
 
   override fun _5(): Int? = empNumber
 
-  override fun _6(): String? = empSuffix
+  override fun _6(): kotlin.String? = empSuffix
 
-  override fun _7(): String? = empName
+  override fun _7(): kotlin.String? = empName
 
   override fun _8(): BigDecimal? = salary
 

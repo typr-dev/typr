@@ -16,13 +16,11 @@ public record CustomersId(@JsonValue Integer value) {
   public CustomersId withValue(Integer value) {
     return new CustomersId(value);
   }
-  ;
 
   @Override
   public java.lang.String toString() {
     return value.toString();
   }
-  ;
 
   public static Bijection<CustomersId, Integer> bijection =
       Bijection.of(CustomersId::value, CustomersId::new);

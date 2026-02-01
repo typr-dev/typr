@@ -19,9 +19,9 @@ case class NullableTest(
 )
 
 object NullableTest {
-  given pgStruct: PgStruct[NullableTest] = PgStruct.builder[NullableTest]("public.nullable_test").optField("alwaysPresent", PgTypes.text, (v: NullableTest) => v.alwaysPresent.asJava).optField("oftenNull", PgTypes.text, (v: NullableTest) => v.oftenNull.asJava).optField("emptyVsNull", PgTypes.text, (v: NullableTest) => v.emptyVsNull.asJava).build(arr => NullableTest(alwaysPresent = Option(arr(0).asInstanceOf[String]), oftenNull = Option(arr(1).asInstanceOf[String]), emptyVsNull = Option(arr(2).asInstanceOf[String])))
+  given dbStruct: PgStruct[NullableTest] = PgStruct.builder[NullableTest]("public.nullable_test").optField("alwaysPresent", PgTypes.text, (v: NullableTest) => v.alwaysPresent.asJava).optField("oftenNull", PgTypes.text, (v: NullableTest) => v.oftenNull.asJava).optField("emptyVsNull", PgTypes.text, (v: NullableTest) => v.emptyVsNull.asJava).build(arr => NullableTest(alwaysPresent = Option(arr(0).asInstanceOf[String]), oftenNull = Option(arr(1).asInstanceOf[String]), emptyVsNull = Option(arr(2).asInstanceOf[String])))
 
-  given pgType: PgType[NullableTest] = pgStruct.asType()
+  given dbType: PgType[NullableTest] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[NullableTest]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[NullableTest](n)), n => new Array[NullableTest](n))
+  given dbTypeArray: PgType[Array[NullableTest]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[NullableTest](n)), n => new Array[NullableTest](n))
 }

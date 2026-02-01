@@ -22,16 +22,16 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
 
-data class EmployeesFields(val _path: List<Path>) : TupleExpr7<Int, String, String, String, String, BigDecimal, LocalDate>, RelationStructure<EmployeesFields, EmployeesRow>, FieldsBase<EmployeesRow> {
+data class EmployeesFields(val _path: List<Path>) : TupleExpr7<Int, kotlin.String, kotlin.String, kotlin.String, kotlin.String, BigDecimal, LocalDate>, RelationStructure<EmployeesFields, EmployeesRow>, FieldsBase<EmployeesRow> {
   override fun _1(): SqlExpr<Int> = empNumber()
 
-  override fun _2(): SqlExpr<String> = empSuffix()
+  override fun _2(): SqlExpr<kotlin.String> = empSuffix()
 
-  override fun _3(): SqlExpr<String> = deptCode()
+  override fun _3(): SqlExpr<kotlin.String> = deptCode()
 
-  override fun _4(): SqlExpr<String> = deptRegion()
+  override fun _4(): SqlExpr<kotlin.String> = deptRegion()
 
-  override fun _5(): SqlExpr<String> = empName()
+  override fun _5(): SqlExpr<kotlin.String> = empName()
 
   override fun _6(): SqlExpr<BigDecimal> = salary()
 
@@ -41,19 +41,19 @@ data class EmployeesFields(val _path: List<Path>) : TupleExpr7<Int, String, Stri
 
   override fun columns(): List<FieldLike<*, EmployeesRow>> = listOf(this.empNumber().underlying, this.empSuffix().underlying, this.deptCode().underlying, this.deptRegion().underlying, this.empName().underlying, this.salary().underlying, this.hireDate().underlying)
 
-  fun compositeIdIn(compositeIds: List<EmployeesId>): SqlExpr<Boolean> = TupleExpr.of(empNumber(), empSuffix()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<EmployeesId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(empNumber(), empSuffix()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: EmployeesId): SqlExpr<Boolean> = SqlExpr.all(empNumber().isEqual(compositeId.empNumber), empSuffix().isEqual(compositeId.empSuffix))
+  fun compositeIdIs(compositeId: EmployeesId): SqlExpr<kotlin.Boolean> = SqlExpr.all(empNumber().isEqual(compositeId.empNumber), empSuffix().isEqual(compositeId.empSuffix))
 
-  fun deptCode(): Field<String, EmployeesRow> = Field<String, EmployeesRow>(_path, "dept_code", EmployeesRow::deptCode, null, null, { row, value -> row.copy(deptCode = value) }, DuckDbTypes.varchar)
+  fun deptCode(): Field<kotlin.String, EmployeesRow> = Field<kotlin.String, EmployeesRow>(_path, "dept_code", EmployeesRow::deptCode, null, null, { row, value -> row.copy(deptCode = value) }, DuckDbTypes.varchar)
 
-  fun deptRegion(): Field<String, EmployeesRow> = Field<String, EmployeesRow>(_path, "dept_region", EmployeesRow::deptRegion, null, null, { row, value -> row.copy(deptRegion = value) }, DuckDbTypes.varchar)
+  fun deptRegion(): Field<kotlin.String, EmployeesRow> = Field<kotlin.String, EmployeesRow>(_path, "dept_region", EmployeesRow::deptRegion, null, null, { row, value -> row.copy(deptRegion = value) }, DuckDbTypes.varchar)
 
-  fun empName(): Field<String, EmployeesRow> = Field<String, EmployeesRow>(_path, "emp_name", EmployeesRow::empName, null, null, { row, value -> row.copy(empName = value) }, DuckDbTypes.varchar)
+  fun empName(): Field<kotlin.String, EmployeesRow> = Field<kotlin.String, EmployeesRow>(_path, "emp_name", EmployeesRow::empName, null, null, { row, value -> row.copy(empName = value) }, DuckDbTypes.varchar)
 
   fun empNumber(): IdField<Int, EmployeesRow> = IdField<Int, EmployeesRow>(_path, "emp_number", EmployeesRow::empNumber, null, "INTEGER", { row, value -> row.copy(empNumber = value) }, KotlinDbTypes.DuckDbTypes.integer)
 
-  fun empSuffix(): IdField<String, EmployeesRow> = IdField<String, EmployeesRow>(_path, "emp_suffix", EmployeesRow::empSuffix, null, null, { row, value -> row.copy(empSuffix = value) }, DuckDbTypes.varchar)
+  fun empSuffix(): IdField<kotlin.String, EmployeesRow> = IdField<kotlin.String, EmployeesRow>(_path, "emp_suffix", EmployeesRow::empSuffix, null, null, { row, value -> row.copy(empSuffix = value) }, DuckDbTypes.varchar)
 
   fun hireDate(): Field<LocalDate, EmployeesRow> = Field<LocalDate, EmployeesRow>(_path, "hire_date", EmployeesRow::hireDate, null, "DATE", { row, value -> row.copy(hireDate = value) }, DuckDbTypes.date)
 

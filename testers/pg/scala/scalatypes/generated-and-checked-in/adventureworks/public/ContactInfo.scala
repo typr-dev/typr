@@ -19,9 +19,9 @@ case class ContactInfo(
 )
 
 object ContactInfo {
-  given pgStruct: PgStruct[ContactInfo] = PgStruct.builder[ContactInfo]("public.contact_info").optField("email", PgTypes.text, (v: ContactInfo) => v.email.asJava).optField("phone", PgTypes.text, (v: ContactInfo) => v.phone.asJava).optField("address", Address.pgType, (v: ContactInfo) => v.address.asJava).build(arr => ContactInfo(email = Option(arr(0).asInstanceOf[String]), phone = Option(arr(1).asInstanceOf[String]), address = Option(arr(2).asInstanceOf[Address])))
+  given dbStruct: PgStruct[ContactInfo] = PgStruct.builder[ContactInfo]("public.contact_info").optField("email", PgTypes.text, (v: ContactInfo) => v.email.asJava).optField("phone", PgTypes.text, (v: ContactInfo) => v.phone.asJava).optField("address", Address.dbType, (v: ContactInfo) => v.address.asJava).build(arr => ContactInfo(email = Option(arr(0).asInstanceOf[String]), phone = Option(arr(1).asInstanceOf[String]), address = Option(arr(2).asInstanceOf[Address])))
 
-  given pgType: PgType[ContactInfo] = pgStruct.asType()
+  given dbType: PgType[ContactInfo] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[ContactInfo]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[ContactInfo](n)), n => new Array[ContactInfo](n))
+  given dbTypeArray: PgType[Array[ContactInfo]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[ContactInfo](n)), n => new Array[ContactInfo](n))
 }

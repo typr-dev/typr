@@ -24,7 +24,7 @@ class ProductsRepoImpl() : ProductsRepo {
   override fun deleteById(
     productId: ProductsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"products\" where \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.interpolate(Fragment.lit("delete from \"products\" where \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     productIds: Array<ProductsId>,
@@ -63,7 +63,7 @@ class ProductsRepoImpl() : ProductsRepo {
   }
 
   override fun selectByUniqueSku(
-    sku: String,
+    sku: kotlin.String,
     c: Connection
   ): ProductsRow? = Fragment.interpolate(Fragment.lit("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"sku\" = "), Fragment.encode(DuckDbTypes.varchar, sku), Fragment.lit("\n")).query(ProductsRow._rowParser.first()).runUnchecked(c)
 
@@ -72,7 +72,7 @@ class ProductsRepoImpl() : ProductsRepo {
   override fun update(
     row: ProductsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val productId: ProductsId = row.productId
     return Fragment.interpolate(Fragment.lit("update \"products\"\nset \"sku\" = "), Fragment.encode(DuckDbTypes.varchar, row.sku), Fragment.lit(",\n\"name\" = "), Fragment.encode(DuckDbTypes.varchar, row.name), Fragment.lit(",\n\"price\" = "), Fragment.encode(DuckDbTypes.numeric, row.price), Fragment.lit(",\n\"metadata\" = "), Fragment.encode(DuckDbTypes.json.nullable(), row.metadata), Fragment.lit("\nwhere \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.lit("")).update().runUnchecked(c) > 0
   }

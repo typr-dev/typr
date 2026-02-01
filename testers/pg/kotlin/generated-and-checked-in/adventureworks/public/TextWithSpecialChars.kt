@@ -21,13 +21,13 @@ data class TextWithSpecialChars(
   val withAll: String?
 ) {
   companion object {
-    val pgStruct: PgStruct<TextWithSpecialChars> =
+    val dbStruct: PgStruct<TextWithSpecialChars> =
       PgStruct.builder<TextWithSpecialChars>("public.text_with_special_chars").optField("withComma", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withComma) }).optField("withQuotes", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withQuotes) }).optField("withParens", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withParens) }).optField("withBackslash", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withBackslash) }).optField("withNewline", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withNewline) }).optField("withAll", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withAll) }).build({ arr -> TextWithSpecialChars(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String, arr[4] as? String, arr[5] as? String) })
 
-    val pgType: PgType<TextWithSpecialChars> =
-      pgStruct.asType()
+    val dbType: PgType<TextWithSpecialChars> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<TextWithSpecialChars>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TextWithSpecialChars>(n) }), { n -> arrayOfNulls<TextWithSpecialChars>(n) })
+    val dbTypeArray: PgType<Array<TextWithSpecialChars>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<TextWithSpecialChars>(n) }), { n -> arrayOfNulls<TextWithSpecialChars>(n) })
   }
 }

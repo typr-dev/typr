@@ -19,9 +19,9 @@ case class NullableTest(
 )
 
 object NullableTest {
-  given pgStruct: PgStruct[NullableTest] = PgStruct.builder[NullableTest]("public.nullable_test").optField("alwaysPresent", PgTypes.text, (v: NullableTest) => v.alwaysPresent).optField("oftenNull", PgTypes.text, (v: NullableTest) => v.oftenNull).optField("emptyVsNull", PgTypes.text, (v: NullableTest) => v.emptyVsNull).build(arr => NullableTest(alwaysPresent = Optional.ofNullable(arr(0).asInstanceOf[String]), oftenNull = Optional.ofNullable(arr(1).asInstanceOf[String]), emptyVsNull = Optional.ofNullable(arr(2).asInstanceOf[String])))
+  given dbStruct: PgStruct[NullableTest] = PgStruct.builder[NullableTest]("public.nullable_test").optField("alwaysPresent", PgTypes.text, (v: NullableTest) => v.alwaysPresent).optField("oftenNull", PgTypes.text, (v: NullableTest) => v.oftenNull).optField("emptyVsNull", PgTypes.text, (v: NullableTest) => v.emptyVsNull).build(arr => NullableTest(alwaysPresent = Optional.ofNullable(arr(0).asInstanceOf[String]), oftenNull = Optional.ofNullable(arr(1).asInstanceOf[String]), emptyVsNull = Optional.ofNullable(arr(2).asInstanceOf[String])))
 
-  given pgType: PgType[NullableTest] = pgStruct.asType()
+  given dbType: PgType[NullableTest] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[NullableTest]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[NullableTest](n)), n => new Array[NullableTest](n))
+  given dbTypeArray: PgType[Array[NullableTest]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[NullableTest](n)), n => new Array[NullableTest](n))
 }

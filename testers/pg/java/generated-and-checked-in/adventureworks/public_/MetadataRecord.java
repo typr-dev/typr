@@ -31,7 +31,7 @@ public record MetadataRecord(
   }
   ;
 
-  public static PgStruct<MetadataRecord> pgStruct =
+  public static PgStruct<MetadataRecord> dbStruct =
       PgStruct.<MetadataRecord>builder("public.metadata_record")
           .optField("key", PgTypes.text, v -> v.key())
           .optField("value", PgTypes.jsonb, v -> v.value())
@@ -43,10 +43,10 @@ public record MetadataRecord(
                       Optional.ofNullable((Jsonb) arr[1]),
                       Optional.ofNullable((Instant) arr[2])));
 
-  public static PgType<MetadataRecord> pgType = pgStruct.asType();
+  public static PgType<MetadataRecord> dbType = dbStruct.asType();
 
-  public static PgType<MetadataRecord[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), MetadataRecord[]::new),
+  public static PgType<MetadataRecord[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), MetadataRecord[]::new),
           MetadataRecord[]::new);
 }

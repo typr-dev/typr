@@ -19,7 +19,7 @@ interface EmployeesRepo {
   abstract fun deleteById(
     compositeId: EmployeesId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
     compositeIds: Array<EmployeesId>,
@@ -60,7 +60,7 @@ interface EmployeesRepo {
   abstract fun update(
     row: EmployeesRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: EmployeesRow,

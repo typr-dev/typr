@@ -59,7 +59,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withString10(String string10) {
     return new PrecisionTypesRow(
@@ -76,7 +75,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withString20(String string20) {
     return new PrecisionTypesRow(
@@ -93,7 +91,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withString50(String string50) {
     return new PrecisionTypesRow(
@@ -110,7 +107,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withString100(String string100) {
     return new PrecisionTypesRow(
@@ -127,7 +123,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withString255(String string255) {
     return new PrecisionTypesRow(
@@ -144,7 +139,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withDecimal52(Decimal5_2 decimal52) {
     return new PrecisionTypesRow(
@@ -161,7 +155,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withDecimal102(Decimal10_2 decimal102) {
     return new PrecisionTypesRow(
@@ -178,7 +171,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withDecimal184(Decimal18_4 decimal184) {
     return new PrecisionTypesRow(
@@ -195,7 +187,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withDecimal50(Int5 decimal50) {
     return new PrecisionTypesRow(
@@ -212,7 +203,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withDecimal100(Int10 decimal100) {
     return new PrecisionTypesRow(
@@ -229,7 +219,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public PrecisionTypesRow withDecimal180(Int18 decimal180) {
     return new PrecisionTypesRow(
@@ -246,7 +235,6 @@ public record PrecisionTypesRow(
         decimal100,
         decimal180);
   }
-  ;
 
   public static RowParser<PrecisionTypesRow> _rowParser =
       RowParsers.of(
@@ -278,77 +266,64 @@ public record PrecisionTypesRow(
                 row.decimal100(),
                 row.decimal180()
               });
-  ;
 
   @Override
   public PrecisionTypesId _1() {
     return id;
   }
-  ;
 
   @Override
   public Int5 _10() {
     return decimal50;
   }
-  ;
 
   @Override
   public Int10 _11() {
     return decimal100;
   }
-  ;
 
   @Override
   public Int18 _12() {
     return decimal180;
   }
-  ;
 
   @Override
   public String _2() {
     return string10;
   }
-  ;
 
   @Override
   public String _3() {
     return string20;
   }
-  ;
 
   @Override
   public String _4() {
     return string50;
   }
-  ;
 
   @Override
   public String _5() {
     return string100;
   }
-  ;
 
   @Override
   public String _6() {
     return string255;
   }
-  ;
 
   @Override
   public Decimal5_2 _7() {
     return decimal52;
   }
-  ;
 
   @Override
   public Decimal10_2 _8() {
     return decimal102;
   }
-  ;
 
   @Override
   public Decimal18_4 _9() {
     return decimal184;
   }
-  ;
 }

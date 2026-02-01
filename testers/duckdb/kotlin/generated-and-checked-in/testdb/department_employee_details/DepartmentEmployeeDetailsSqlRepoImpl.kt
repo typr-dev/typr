@@ -15,8 +15,8 @@ import kotlin.collections.List
 
 class DepartmentEmployeeDetailsSqlRepoImpl() : DepartmentEmployeeDetailsSqlRepo {
   override fun apply(
-    deptCode: String?,
-    deptRegion: String?,
+    deptCode: kotlin.String?,
+    deptRegion: kotlin.String?,
     minSalary: BigDecimal?,
     hiredAfter: LocalDate?,
     c: Connection

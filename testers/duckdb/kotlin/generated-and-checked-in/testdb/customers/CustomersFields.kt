@@ -21,10 +21,10 @@ import kotlin.collections.List
 import testdb.Priority
 import testdb.userdefined.Email
 
-data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, String, /* user-picked */ Email, LocalDateTime, Priority>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
+data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, kotlin.String, /* user-picked */ Email, LocalDateTime, Priority>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   override fun _1(): SqlExpr<CustomersId> = customerId()
 
-  override fun _2(): SqlExpr<String> = name()
+  override fun _2(): SqlExpr<kotlin.String> = name()
 
   override fun _3(): SqlExpr</* user-picked */ Email> = email()
 
@@ -42,7 +42,7 @@ data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, Stri
 
   fun email(): OptField</* user-picked */ Email, CustomersRow> = OptField</* user-picked */ Email, CustomersRow>(_path, "email", CustomersRow::email, null, null, { row, value -> row.copy(email = value) }, Email.duckDbType)
 
-  fun name(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "name", CustomersRow::name, null, null, { row, value -> row.copy(name = value) }, DuckDbTypes.varchar)
+  fun name(): Field<kotlin.String, CustomersRow> = Field<kotlin.String, CustomersRow>(_path, "name", CustomersRow::name, null, null, { row, value -> row.copy(name = value) }, DuckDbTypes.varchar)
 
   fun priority(): OptField<Priority, CustomersRow> = OptField<Priority, CustomersRow>(_path, "priority", CustomersRow::priority, null, "priority", { row, value -> row.copy(priority = value) }, Priority.duckDbType)
 

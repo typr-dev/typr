@@ -35,43 +35,36 @@ public record CustomerOrdersViewRow(
     return new CustomerOrdersViewRow(
         customerId, customerName, email, orderId, orderDate, totalAmount, status);
   }
-  ;
 
   public CustomerOrdersViewRow withCustomerName(Optional<String> customerName) {
     return new CustomerOrdersViewRow(
         customerId, customerName, email, orderId, orderDate, totalAmount, status);
   }
-  ;
 
   public CustomerOrdersViewRow withEmail(Optional<String> email) {
     return new CustomerOrdersViewRow(
         customerId, customerName, email, orderId, orderDate, totalAmount, status);
   }
-  ;
 
   public CustomerOrdersViewRow withOrderId(Optional<Integer> orderId) {
     return new CustomerOrdersViewRow(
         customerId, customerName, email, orderId, orderDate, totalAmount, status);
   }
-  ;
 
   public CustomerOrdersViewRow withOrderDate(Optional<LocalDate> orderDate) {
     return new CustomerOrdersViewRow(
         customerId, customerName, email, orderId, orderDate, totalAmount, status);
   }
-  ;
 
   public CustomerOrdersViewRow withTotalAmount(Optional<BigDecimal> totalAmount) {
     return new CustomerOrdersViewRow(
         customerId, customerName, email, orderId, orderDate, totalAmount, status);
   }
-  ;
 
   public CustomerOrdersViewRow withStatus(Optional<String> status) {
     return new CustomerOrdersViewRow(
         customerId, customerName, email, orderId, orderDate, totalAmount, status);
   }
-  ;
 
   public static RowParser<CustomerOrdersViewRow> _rowParser =
       RowParsers.of(
@@ -93,47 +86,39 @@ public record CustomerOrdersViewRow(
                 row.totalAmount(),
                 row.status()
               });
-  ;
 
   @Override
   public Optional<Integer> _1() {
     return customerId;
   }
-  ;
 
   @Override
   public Optional<String> _2() {
     return customerName;
   }
-  ;
 
   @Override
   public Optional<String> _3() {
     return email;
   }
-  ;
 
   @Override
   public Optional<Integer> _4() {
     return orderId;
   }
-  ;
 
   @Override
   public Optional<LocalDate> _5() {
     return orderDate;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _6() {
     return totalAmount;
   }
-  ;
 
   @Override
   public Optional<String> _7() {
     return status;
   }
-  ;
 }

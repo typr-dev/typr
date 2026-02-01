@@ -28,7 +28,7 @@ data class AllScalarTypesRepoMock(val map: MutableMap<AllScalarTypesId, AllScala
   override fun deleteById(
     id: AllScalarTypesId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
     ids: Array<AllScalarTypesId>,
@@ -87,7 +87,7 @@ data class AllScalarTypesRepoMock(val map: MutableMap<AllScalarTypesId, AllScala
   override fun update(
     row: AllScalarTypesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

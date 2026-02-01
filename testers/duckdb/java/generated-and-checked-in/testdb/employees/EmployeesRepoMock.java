@@ -31,18 +31,15 @@ public record EmployeesRepoMock(
   public EmployeesRepoMock(java.util.function.Function<EmployeesRowUnsaved, EmployeesRow> toRow) {
     this(toRow, new HashMap<EmployeesId, EmployeesRow>());
   }
-  ;
 
   public EmployeesRepoMock withToRow(
       java.util.function.Function<EmployeesRowUnsaved, EmployeesRow> toRow) {
     return new EmployeesRepoMock(toRow, map);
   }
-  ;
 
   public EmployeesRepoMock withMap(HashMap<EmployeesId, EmployeesRow> map) {
     return new EmployeesRepoMock(toRow, map);
   }
-  ;
 
   @Override
   public DeleteBuilder<EmployeesFields, EmployeesRow> delete() {
@@ -53,13 +50,11 @@ public record EmployeesRepoMock(
         row -> row.compositeId(),
         id -> map.remove(id));
   }
-  ;
 
   @Override
   public Boolean deleteById(EmployeesId compositeId, Connection c) {
     return Optional.ofNullable(map.remove(compositeId)).isPresent();
   }
-  ;
 
   @Override
   public Integer deleteByIds(EmployeesId[] compositeIds, Connection c) {
@@ -69,48 +64,40 @@ public record EmployeesRepoMock(
         count = count + 1;
         ;
       }
-      ;
     }
     ;
     return count;
   }
-  ;
 
   @Override
   public EmployeesRow insert(EmployeesRow unsaved, Connection c) {
     if (map.containsKey(unsaved.compositeId())) {
       throw new RuntimeException("id " + unsaved.compositeId() + " already exists");
     }
-    ;
     map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public EmployeesRow insert(EmployeesRowUnsaved unsaved, Connection c) {
     return insert(toRow.apply(unsaved), c);
   }
-  ;
 
   @Override
   public SelectBuilder<EmployeesFields, EmployeesRow> select() {
     return new SelectBuilderMock<>(
         EmployeesFields.structure, () -> new ArrayList<>(map.values()), SelectParams.empty());
   }
-  ;
 
   @Override
   public List<EmployeesRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   }
-  ;
 
   @Override
   public Optional<EmployeesRow> selectById(EmployeesId compositeId, Connection c) {
     return Optional.ofNullable(map.get(compositeId));
   }
-  ;
 
   @Override
   public List<EmployeesRow> selectByIds(EmployeesId[] compositeIds, Connection c) {
@@ -120,12 +107,10 @@ public record EmployeesRepoMock(
       if (opt.isPresent()) {
         result.add(opt.get());
       }
-      ;
     }
     ;
     return result;
   }
-  ;
 
   @Override
   public Map<EmployeesId, EmployeesRow> selectByIdsTracked(
@@ -133,7 +118,6 @@ public record EmployeesRepoMock(
     return selectByIds(compositeIds, c).stream()
         .collect(Collectors.toMap((EmployeesRow row) -> row.compositeId(), Function.identity()));
   }
-  ;
 
   @Override
   public UpdateBuilder<EmployeesFields, EmployeesRow> update() {
@@ -143,7 +127,6 @@ public record EmployeesRepoMock(
         UpdateParams.empty(),
         row -> row);
   }
-  ;
 
   @Override
   public Boolean update(EmployeesRow row, Connection c) {
@@ -155,17 +138,14 @@ public record EmployeesRepoMock(
       map.put(row.compositeId(), row);
       ;
     }
-    ;
     return shouldUpdate;
   }
-  ;
 
   @Override
   public EmployeesRow upsert(EmployeesRow unsaved, Connection c) {
     map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public List<EmployeesRow> upsertBatch(Iterator<EmployeesRow> unsaved, Connection c) {
@@ -178,5 +158,4 @@ public record EmployeesRepoMock(
     ;
     return result;
   }
-  ;
 }

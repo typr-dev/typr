@@ -1,0 +1,649 @@
+outputs:
+  mariadb-java:
+    path: testers/mariadb/java/generated-and-checked-in
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    json: jackson
+    language: java
+    sources: mariadb
+    package: testdb
+    db_lib: foundations
+  duckdb-scala:
+    db_lib: foundations
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    language: scala
+    scala:
+      dialect: scala3
+      dsl: scala
+    package: testdb
+    json: jackson
+    sources: duckdb
+    path: testers/duckdb/scala/generated-and-checked-in
+  postgres-zio-jdbc-scala3:
+    language: scala
+    json: zio-json
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+    path: testers/pg/scala/zio-jdbc/generated-and-checked-in-3
+    package: adventureworks
+    scala:
+      dialect: scala3
+      dsl: legacy
+    sources: postgres
+    db_lib: zio-jdbc
+  sqlserver-scala:
+    db_lib: foundations
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    json: jackson
+    package: testdb
+    sources: sqlserver
+    language: scala
+    path: testers/sqlserver/scala/generated-and-checked-in
+    scala:
+      dialect: scala3
+      dsl: scala
+  oracle-scala-new:
+    json: jackson
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    sources: oracle
+    package: oracledb
+    scala:
+      dialect: scala3
+      dsl: scala
+    path: testers/oracle/scala-new/generated-and-checked-in
+    db_lib: foundations
+    language: scala
+  db2-kotlin:
+    sources: db2
+    language: kotlin
+    package: testdb
+    db_lib: foundations
+    path: testers/db2/kotlin/generated-and-checked-in
+    json: jackson
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+  postgres-anorm-scala2:
+    language: scala
+    path: testers/pg/scala/anorm/generated-and-checked-in-2.13
+    db_lib: anorm
+    package: adventureworks
+    json: play-json
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+    sources: postgres
+    scala:
+      dialect: scala2
+      dsl: legacy
+  db2-java:
+    path: testers/db2/java/generated-and-checked-in
+    sources: db2
+    json: jackson
+    language: java
+    db_lib: foundations
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    package: testdb
+  postgres-doobie-scala3:
+    path: testers/pg/scala/doobie/generated-and-checked-in-3
+    language: scala
+    db_lib: doobie
+    json: circe
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+    package: adventureworks
+    scala:
+      dialect: scala3
+      dsl: legacy
+    sources: postgres
+  postgres-scala-scalatypes:
+    path: testers/pg/scala/scalatypes/generated-and-checked-in
+    language: scala
+    json: jackson
+    db_lib: foundations
+    package: adventureworks
+    sources: postgres
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+    scala:
+      dialect: scala3
+      dsl: scala
+  postgres-kotlin:
+    json: jackson
+    language: kotlin
+    db_lib: foundations
+    sources: postgres
+    package: adventureworks
+    path: testers/pg/kotlin/generated-and-checked-in
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+  mariadb-scala:
+    package: testdb
+    sources: mariadb
+    path: testers/mariadb/scala/generated-and-checked-in
+    scala:
+      dialect: scala3
+      dsl: scala
+    json: jackson
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    db_lib: foundations
+    language: scala
+  sqlserver-java:
+    sources: sqlserver
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    package: testdb
+    language: java
+    db_lib: foundations
+    path: testers/sqlserver/java/generated-and-checked-in
+    json: jackson
+  postgres-zio-jdbc-scala2:
+    sources: postgres
+    language: scala
+    package: adventureworks
+    db_lib: zio-jdbc
+    json: zio-json
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+    scala:
+      dialect: scala2
+      dsl: legacy
+    path: testers/pg/scala/zio-jdbc/generated-and-checked-in-2.13
+  postgres-anorm-scala3:
+    json: play-json
+    db_lib: anorm
+    sources: postgres
+    package: adventureworks
+    scala:
+      dialect: scala3
+      dsl: legacy
+    language: scala
+    path: testers/pg/scala/anorm/generated-and-checked-in-3
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+  oracle-scala:
+    json: jackson
+    path: testers/oracle/scala/generated-and-checked-in
+    scala:
+      dialect: scala3
+      dsl: java
+      use_native_types: false
+    language: scala
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    sources: oracle
+    package: oracledb
+    db_lib: foundations
+  postgres-doobie-scala2:
+    scala:
+      dialect: scala2
+      dsl: legacy
+    json: circe
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+    sources: postgres
+    db_lib: doobie
+    package: adventureworks
+    language: scala
+    path: testers/pg/scala/doobie/generated-and-checked-in-2.13
+  postgres-scala-javatypes:
+    language: scala
+    package: adventureworks
+    path: testers/pg/scala/javatypes/generated-and-checked-in
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+    scala:
+      dialect: scala3
+      dsl: java
+      use_native_types: false
+    db_lib: foundations
+    sources: postgres
+    json: jackson
+  duckdb-java:
+    sources: duckdb
+    language: java
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    db_lib: foundations
+    package: testdb
+    json: jackson
+    path: testers/duckdb/java/generated-and-checked-in
+  mariadb-kotlin:
+    path: testers/mariadb/kotlin/generated-and-checked-in
+    sources: mariadb
+    json: jackson
+    package: testdb
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    language: kotlin
+    db_lib: foundations
+  db2-scala:
+    path: testers/db2/scala/generated-and-checked-in
+    json: jackson
+    language: scala
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    package: testdb
+    db_lib: foundations
+    scala:
+      dialect: scala3
+      dsl: scala
+    sources: db2
+  duckdb-kotlin:
+    json: jackson
+    package: testdb
+    path: testers/duckdb/kotlin/generated-and-checked-in
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    sources: duckdb
+    db_lib: foundations
+    language: kotlin
+  sqlserver-kotlin:
+    path: testers/sqlserver/kotlin/generated-and-checked-in
+    sources: sqlserver
+    db_lib: foundations
+    language: kotlin
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    json: jackson
+    package: testdb
+  postgres-java:
+    sources: postgres
+    json: jackson
+    package: adventureworks
+    db_lib: foundations
+    matchers:
+      mock_repos:
+        exclude:
+        - purchaseorderdetail
+      primary_key_types:
+        exclude:
+        - billofmaterials
+      readonly:
+      - purchaseorderdetail
+      test_inserts: all
+    language: java
+    path: testers/pg/java/generated-and-checked-in
+  oracle-kotlin:
+    language: kotlin
+    sources: oracle
+    json: jackson
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    package: oracledb
+    db_lib: foundations
+    path: testers/oracle/kotlin/generated-and-checked-in
+  oracle-java:
+    sources: oracle
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+    package: oracledb
+    path: testers/oracle/java/generated-and-checked-in
+    db_lib: foundations
+    json: jackson
+    language: java
+  avro-scala-cats:
+    sources: avro-events
+    path: testers/avro/scala-cats/generated-and-checked-in
+    package: com.example.events
+    language: scala
+    scala:
+      dialect: scala3
+      dsl: scala
+    framework: cats
+    effect_type: cats_io
+  grpc-scala-cats:
+    sources: grpc-services
+    path: testers/grpc/scala-cats/generated-and-checked-in
+    package: com.example.grpc
+    language: scala
+    scala:
+      dialect: scala3
+      dsl: scala
+    framework: cats
+    effect_type: cats_io
+boundaries:
+  sqlserver:
+    host: localhost
+    password: YourStrong@Passw0rd
+    selectors:
+      precision_types:
+      - precision_types
+      - precision_types_null
+    username: sa
+    port: 1433
+    types:
+      Email:
+        db:
+          column:
+          - email
+          - '*_email'
+    database: typr
+    schema_mode: single_schema:dbo
+    sql_scripts: sql-scripts/sqlserver
+    type: sqlserver
+  duckdb:
+    type: duckdb
+    path: ':memory:'
+    sql_scripts: sql-scripts/duckdb
+    types:
+      Email:
+        db:
+          column: email
+    selectors:
+      precision_types:
+      - precision_types
+      - precision_types_null
+    schema_sql: sql-init/duckdb/00-schema.sql
+  postgres:
+    password: password
+    sql_scripts: sql-scripts/postgres
+    types:
+      Description:
+        db:
+          column: description
+      LastName:
+        db:
+          column: lastname
+      MiddleName:
+        db:
+          column: middlename
+      FirstName:
+        db:
+          column: firstname
+      CurrentFlag:
+        db:
+          column: currentflag
+      ActiveFlag:
+        db:
+          column: activeflag
+      OnlineOrderFlag:
+        db:
+          column: onlineorderflag
+      SalariedFlag:
+        db:
+          column: salariedflag
+    selectors:
+      open_enums:
+      - title
+      - title_domain
+      - issue142
+      precision_types:
+      - precision_types
+      - precision_types_null
+      tables:
+      - department
+      - employee
+      - employeedepartmenthistory
+      - shift
+      - vemployee
+      - address
+      - addresstype
+      - businessentity
+      - businessentityaddress
+      - countryregion
+      - emailaddress
+      - password
+      - person
+      - stateprovince
+      - product
+      - productcategory
+      - productcosthistory
+      - productmodel
+      - productsubcategory
+      - unitmeasure
+      - flaff
+      - identity-test
+      - issue142
+      - issue142_2
+      - only_pk_columns
+      - pgtest
+      - pgtestnull
+      - title
+      - title_domain
+      - titledperson
+      - users
+      - salesperson
+      - salesterritory
+      - precision_types
+      - precision_types_null
+    port: 6432
+    username: postgres
+    type: postgresql
+    host: localhost
+    database: Adventureworks
+    type_override:
+      sales.creditcard.creditcardid: adventureworks.userdefined.CustomCreditcardId
+    schemas:
+    - humanresources
+    - person
+    - production
+    - public
+    - sales
+  oracle:
+    sql_scripts: sql-scripts/oracle
+    port: 1521
+    selectors:
+      exclude_tables:
+      - test_genkeys_1767399918202
+      - test_genkeys_1767491891912
+      - test_json_rt_1767496451381
+      - test_table_1767489875539
+      precision_types:
+      - PRECISION_TYPES
+      - PRECISION_TYPES_NULL
+    type: oracle
+    service: FREEPDB1
+    types:
+      Email:
+        db:
+          column: '*email*'
+    host: localhost
+    schema_mode: single_schema:TYPR
+    password: typr_password
+    username: typr
+  mariadb:
+    database: typr
+    sql_scripts: sql-scripts/mariadb
+    password: password
+    host: localhost
+    schema_mode: single_schema:typr
+    selectors:
+      precision_types:
+      - precision_types
+      - precision_types_null
+    port: 3307
+    types:
+      IsDefault:
+        db:
+          column: is_default
+      IsActive:
+        db:
+          column: is_active
+      IsApproved:
+        db:
+          column: is_approved
+      FirstName:
+        db:
+          column: first_name
+      IsPrimary:
+        db:
+          column: is_primary
+      IsVerifiedPurchase:
+        db:
+          column: is_verified_purchase
+      LastName:
+        db:
+          column: last_name
+      Email:
+        db:
+          column:
+          - email
+          - contact_email
+    type: mariadb
+    username: typr
+  db2:
+    password: password
+    database: typr
+    type: db2
+    sql_scripts: sql-scripts/db2
+    username: db2inst1
+    port: 50000
+    host: localhost
+    schema_mode: single_schema:DB2INST1
+  avro-events:
+    type: avro
+    schemas:
+    - testers/avro/schemas
+    enable_precise_types: true
+    generate_kafka_rpc: true
+    header_schemas:
+      standard:
+        fields:
+        - name: correlationId
+          type: uuid
+          required: true
+        - name: timestamp
+          type: instant
+          required: true
+        - name: source
+          type: string
+          required: false
+    topic_headers:
+      order-events: standard
+    default_header_schema: standard
+  grpc-services:
+    type: grpc
+    proto_path: testers/grpc/protos
+types:
+  Customer:
+    alignedSources:
+      duckdb:customers:
+        entity: customers
+        mode: superset
+      mariadb:customers:
+        entity: customers
+        mode: superset
+    fields:
+      created_at:
+        array: false
+        nullable: true
+        type: String
+      customer_id:
+        array: false
+        nullable: false
+        type: String
+      email:
+        array: false
+        nullable: true
+        type: String
+    kind: domain
+    primary: sqlserver:customers
+version: 1

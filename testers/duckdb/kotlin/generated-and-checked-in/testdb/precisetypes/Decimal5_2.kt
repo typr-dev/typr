@@ -19,7 +19,7 @@ import java.math.RoundingMode
 data class Decimal5_2 private constructor(@field:JsonValue val value: BigDecimal) : DecimalN {
   override fun decimalValue(): BigDecimal = value
 
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is DecimalN) return false
     return decimalValue().compareTo(other.decimalValue()) == 0
@@ -31,7 +31,7 @@ data class Decimal5_2 private constructor(@field:JsonValue val value: BigDecimal
 
   override fun scale(): Int = 2
 
-  override fun semanticEquals(other: DecimalN): Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
+  override fun semanticEquals(other: DecimalN): kotlin.Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
 
   override fun semanticHashCode(): Int = decimalValue().stripTrailingZeros().hashCode()
 
@@ -59,9 +59,9 @@ data class Decimal5_2 private constructor(@field:JsonValue val value: BigDecimal
 
     fun of(value: Int): Decimal5_2 = Decimal5_2(BigDecimal.valueOf(value.toLong()))
 
-    fun of(value: Long): Decimal5_2? = Decimal5_2.of(BigDecimal.valueOf(value))
+    fun of(value: kotlin.Long): Decimal5_2? = Decimal5_2.of(BigDecimal.valueOf(value))
 
-    fun of(value: Double): Decimal5_2? = Decimal5_2.of(BigDecimal.valueOf(value))
+    fun of(value: kotlin.Double): Decimal5_2? = Decimal5_2.of(BigDecimal.valueOf(value))
 
     fun unsafeForce(value: BigDecimal): Decimal5_2 {
       val scaled = value.setScale(2, RoundingMode.HALF_UP)

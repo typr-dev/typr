@@ -55,7 +55,7 @@ public record TextWithSpecialChars(
   }
   ;
 
-  public static PgStruct<TextWithSpecialChars> pgStruct =
+  public static PgStruct<TextWithSpecialChars> dbStruct =
       PgStruct.<TextWithSpecialChars>builder("public.text_with_special_chars")
           .optField("withComma", PgTypes.text, v -> v.withComma())
           .optField("withQuotes", PgTypes.text, v -> v.withQuotes())
@@ -73,10 +73,10 @@ public record TextWithSpecialChars(
                       Optional.ofNullable((String) arr[4]),
                       Optional.ofNullable((String) arr[5])));
 
-  public static PgType<TextWithSpecialChars> pgType = pgStruct.asType();
+  public static PgType<TextWithSpecialChars> dbType = dbStruct.asType();
 
-  public static PgType<TextWithSpecialChars[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), TextWithSpecialChars[]::new),
+  public static PgType<TextWithSpecialChars[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), TextWithSpecialChars[]::new),
           TextWithSpecialChars[]::new);
 }

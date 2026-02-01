@@ -28,7 +28,7 @@ data class PrecisionTypesNullRepoMock(val map: MutableMap<PrecisionTypesNullId, 
   override fun deleteById(
     id: PrecisionTypesNullId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
     ids: Array<PrecisionTypesNullId>,
@@ -87,7 +87,7 @@ data class PrecisionTypesNullRepoMock(val map: MutableMap<PrecisionTypesNullId, 
   override fun update(
     row: PrecisionTypesNullRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

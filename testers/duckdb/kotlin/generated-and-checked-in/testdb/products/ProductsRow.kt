@@ -19,16 +19,16 @@ import java.math.BigDecimal
   */
 data class ProductsRow(
   @field:JsonProperty("product_id") val productId: ProductsId,
-  val sku: String,
-  val name: String,
+  val sku: kotlin.String,
+  val name: kotlin.String,
   val price: BigDecimal,
   val metadata: Json?
-) : Tuple5<ProductsId, String, String, BigDecimal, Json?> {
+) : Tuple5<ProductsId, kotlin.String, kotlin.String, BigDecimal, Json?> {
   override fun _1(): ProductsId = productId
 
-  override fun _2(): String = sku
+  override fun _2(): kotlin.String = sku
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
   override fun _4(): BigDecimal = price
 

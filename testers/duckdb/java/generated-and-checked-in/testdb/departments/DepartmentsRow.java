@@ -23,22 +23,18 @@ public record DepartmentsRow(
   public DepartmentsRow withDeptCode(String deptCode) {
     return new DepartmentsRow(deptCode, deptRegion, deptName, budget);
   }
-  ;
 
   public DepartmentsRow withDeptRegion(String deptRegion) {
     return new DepartmentsRow(deptCode, deptRegion, deptName, budget);
   }
-  ;
 
   public DepartmentsRow withDeptName(String deptName) {
     return new DepartmentsRow(deptCode, deptRegion, deptName, budget);
   }
-  ;
 
   public DepartmentsRow withBudget(Optional<BigDecimal> budget) {
     return new DepartmentsRow(deptCode, deptRegion, deptName, budget);
   }
-  ;
 
   public static RowParser<DepartmentsRow> _rowParser =
       RowParsers.of(
@@ -48,45 +44,37 @@ public record DepartmentsRow(
           DuckDbTypes.numeric.opt(),
           DepartmentsRow::new,
           row -> new Object[] {row.deptCode(), row.deptRegion(), row.deptName(), row.budget()});
-  ;
 
   public static DepartmentsRow apply(
       DepartmentsId compositeId, String deptName, Optional<BigDecimal> budget) {
     return new DepartmentsRow(compositeId.deptCode(), compositeId.deptRegion(), deptName, budget);
   }
-  ;
 
   @Override
   public String _1() {
     return deptCode;
   }
-  ;
 
   @Override
   public String _2() {
     return deptRegion;
   }
-  ;
 
   @Override
   public String _3() {
     return deptName;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _4() {
     return budget;
   }
-  ;
 
   public DepartmentsId compositeId() {
     return new DepartmentsId(deptCode, deptRegion);
   }
-  ;
 
   public DepartmentsId id() {
     return this.compositeId();
   }
-  ;
 }

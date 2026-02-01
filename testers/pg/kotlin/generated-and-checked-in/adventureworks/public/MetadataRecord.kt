@@ -20,13 +20,13 @@ data class MetadataRecord(
   val createdAt: Instant?
 ) {
   companion object {
-    val pgStruct: PgStruct<MetadataRecord> =
+    val dbStruct: PgStruct<MetadataRecord> =
       PgStruct.builder<MetadataRecord>("public.metadata_record").optField("key", PgTypes.text, { v: MetadataRecord -> Optional.ofNullable(v.key) }).optField("value", PgTypes.jsonb, { v: MetadataRecord -> Optional.ofNullable(v.value) }).optField("createdAt", PgTypes.timestamptz, { v: MetadataRecord -> Optional.ofNullable(v.createdAt) }).build({ arr -> MetadataRecord(arr[0] as? String, arr[1] as? Jsonb, arr[2] as? Instant) })
 
-    val pgType: PgType<MetadataRecord> =
-      pgStruct.asType()
+    val dbType: PgType<MetadataRecord> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<MetadataRecord>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<MetadataRecord>(n) }), { n -> arrayOfNulls<MetadataRecord>(n) })
+    val dbTypeArray: PgType<Array<MetadataRecord>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<MetadataRecord>(n) }), { n -> arrayOfNulls<MetadataRecord>(n) })
   }
 }

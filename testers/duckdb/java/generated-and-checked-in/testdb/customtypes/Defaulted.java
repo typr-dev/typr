@@ -18,28 +18,23 @@ public sealed interface Defaulted<T> permits Defaulted.Provided, Defaulted.UseDe
     public Provided<T> withValue(T value) {
       return new Provided<>(value);
     }
-    ;
 
     @Override
     public <U> U fold(
         java.util.function.Supplier<U> onDefault, java.util.function.Function<T, U> onProvided) {
       return onProvided.apply(value);
     }
-    ;
 
     @Override
     public T getOrElse(java.util.function.Supplier<T> onDefault) {
       return value;
     }
-    ;
 
     @Override
     public void visit(java.lang.Runnable onDefault, java.util.function.Consumer<T> onProvided) {
       onProvided.accept(value);
     }
-    ;
   }
-  ;
 
   record UseDefault<T>() implements Defaulted<T> {
     @Override
@@ -47,21 +42,17 @@ public sealed interface Defaulted<T> permits Defaulted.Provided, Defaulted.UseDe
         java.util.function.Supplier<U> onDefault, java.util.function.Function<T, U> onProvided) {
       return onDefault.get();
     }
-    ;
 
     @Override
     public T getOrElse(java.util.function.Supplier<T> onDefault) {
       return onDefault.get();
     }
-    ;
 
     @Override
     public void visit(java.lang.Runnable onDefault, java.util.function.Consumer<T> onProvided) {
       onDefault.run();
     }
-    ;
   }
-  ;
 
   <U> U fold(
       java.util.function.Supplier<U> onDefault, java.util.function.Function<T, U> onProvided);

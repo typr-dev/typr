@@ -20,12 +20,12 @@ import dev.typr.foundations.kotlin.TupleExpr5
 import java.math.BigDecimal
 import kotlin.collections.List
 
-data class ProductsFields(val _path: List<Path>) : TupleExpr5<ProductsId, String, String, BigDecimal, Json>, RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
+data class ProductsFields(val _path: List<Path>) : TupleExpr5<ProductsId, kotlin.String, kotlin.String, BigDecimal, Json>, RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
   override fun _1(): SqlExpr<ProductsId> = productId()
 
-  override fun _2(): SqlExpr<String> = sku()
+  override fun _2(): SqlExpr<kotlin.String> = sku()
 
-  override fun _3(): SqlExpr<String> = name()
+  override fun _3(): SqlExpr<kotlin.String> = name()
 
   override fun _4(): SqlExpr<BigDecimal> = price()
 
@@ -37,7 +37,7 @@ data class ProductsFields(val _path: List<Path>) : TupleExpr5<ProductsId, String
 
   fun metadata(): OptField<Json, ProductsRow> = OptField<Json, ProductsRow>(_path, "metadata", ProductsRow::metadata, null, "JSON", { row, value -> row.copy(metadata = value) }, DuckDbTypes.json)
 
-  fun name(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "name", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, DuckDbTypes.varchar)
+  fun name(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "name", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, DuckDbTypes.varchar)
 
   fun price(): Field<BigDecimal, ProductsRow> = Field<BigDecimal, ProductsRow>(_path, "price", ProductsRow::price, null, "DECIMAL(10,2)", { row, value -> row.copy(price = value) }, DuckDbTypes.numeric)
 
@@ -45,7 +45,7 @@ data class ProductsFields(val _path: List<Path>) : TupleExpr5<ProductsId, String
 
   override fun rowParser(): RowParser<ProductsRow> = ProductsRow._rowParser.underlying
 
-  fun sku(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "sku", ProductsRow::sku, null, null, { row, value -> row.copy(sku = value) }, DuckDbTypes.varchar)
+  fun sku(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "sku", ProductsRow::sku, null, null, { row, value -> row.copy(sku = value) }, DuckDbTypes.varchar)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductsFields, ProductsRow> = ProductsFields(_path)
 

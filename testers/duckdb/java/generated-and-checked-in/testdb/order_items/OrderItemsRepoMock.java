@@ -32,18 +32,15 @@ public record OrderItemsRepoMock(
       java.util.function.Function<OrderItemsRowUnsaved, OrderItemsRow> toRow) {
     this(toRow, new HashMap<OrderItemsId, OrderItemsRow>());
   }
-  ;
 
   public OrderItemsRepoMock withToRow(
       java.util.function.Function<OrderItemsRowUnsaved, OrderItemsRow> toRow) {
     return new OrderItemsRepoMock(toRow, map);
   }
-  ;
 
   public OrderItemsRepoMock withMap(HashMap<OrderItemsId, OrderItemsRow> map) {
     return new OrderItemsRepoMock(toRow, map);
   }
-  ;
 
   @Override
   public DeleteBuilder<OrderItemsFields, OrderItemsRow> delete() {
@@ -54,13 +51,11 @@ public record OrderItemsRepoMock(
         row -> row.compositeId(),
         id -> map.remove(id));
   }
-  ;
 
   @Override
   public Boolean deleteById(OrderItemsId compositeId, Connection c) {
     return Optional.ofNullable(map.remove(compositeId)).isPresent();
   }
-  ;
 
   @Override
   public Integer deleteByIds(OrderItemsId[] compositeIds, Connection c) {
@@ -70,48 +65,40 @@ public record OrderItemsRepoMock(
         count = count + 1;
         ;
       }
-      ;
     }
     ;
     return count;
   }
-  ;
 
   @Override
   public OrderItemsRow insert(OrderItemsRow unsaved, Connection c) {
     if (map.containsKey(unsaved.compositeId())) {
       throw new RuntimeException("id " + unsaved.compositeId() + " already exists");
     }
-    ;
     map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public OrderItemsRow insert(OrderItemsRowUnsaved unsaved, Connection c) {
     return insert(toRow.apply(unsaved), c);
   }
-  ;
 
   @Override
   public SelectBuilder<OrderItemsFields, OrderItemsRow> select() {
     return new SelectBuilderMock<>(
         OrderItemsFields.structure, () -> new ArrayList<>(map.values()), SelectParams.empty());
   }
-  ;
 
   @Override
   public List<OrderItemsRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   }
-  ;
 
   @Override
   public Optional<OrderItemsRow> selectById(OrderItemsId compositeId, Connection c) {
     return Optional.ofNullable(map.get(compositeId));
   }
-  ;
 
   @Override
   public List<OrderItemsRow> selectByIds(OrderItemsId[] compositeIds, Connection c) {
@@ -121,12 +108,10 @@ public record OrderItemsRepoMock(
       if (opt.isPresent()) {
         result.add(opt.get());
       }
-      ;
     }
     ;
     return result;
   }
-  ;
 
   @Override
   public Map<OrderItemsId, OrderItemsRow> selectByIdsTracked(
@@ -134,7 +119,6 @@ public record OrderItemsRepoMock(
     return selectByIds(compositeIds, c).stream()
         .collect(Collectors.toMap((OrderItemsRow row) -> row.compositeId(), Function.identity()));
   }
-  ;
 
   @Override
   public UpdateBuilder<OrderItemsFields, OrderItemsRow> update() {
@@ -144,7 +128,6 @@ public record OrderItemsRepoMock(
         UpdateParams.empty(),
         row -> row);
   }
-  ;
 
   @Override
   public Boolean update(OrderItemsRow row, Connection c) {
@@ -156,17 +139,14 @@ public record OrderItemsRepoMock(
       map.put(row.compositeId(), row);
       ;
     }
-    ;
     return shouldUpdate;
   }
-  ;
 
   @Override
   public OrderItemsRow upsert(OrderItemsRow unsaved, Connection c) {
     map.put(unsaved.compositeId(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public List<OrderItemsRow> upsertBatch(Iterator<OrderItemsRow> unsaved, Connection c) {
@@ -179,5 +159,4 @@ public record OrderItemsRepoMock(
     ;
     return result;
   }
-  ;
 }

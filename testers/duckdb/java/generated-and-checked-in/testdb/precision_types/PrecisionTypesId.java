@@ -16,13 +16,11 @@ public record PrecisionTypesId(@JsonValue Integer value) {
   public PrecisionTypesId withValue(Integer value) {
     return new PrecisionTypesId(value);
   }
-  ;
 
   @Override
   public java.lang.String toString() {
     return value.toString();
   }
-  ;
 
   public static Bijection<PrecisionTypesId, Integer> bijection =
       Bijection.of(PrecisionTypesId::value, PrecisionTypesId::new);

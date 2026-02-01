@@ -27,7 +27,7 @@ public record ProductSummarySqlRow(
     @JsonProperty("order_count") Long orderCount,
     /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
     @JsonProperty("total_quantity") Optional<Long> totalQuantity,
-    /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
+    /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
     @JsonProperty("total_revenue") Optional<BigDecimal> totalRevenue)
     implements Tuple7<
         ProductsId, String, String, BigDecimal, Long, Optional<Long>, Optional<BigDecimal>> {
@@ -36,48 +36,41 @@ public record ProductSummarySqlRow(
     return new ProductSummarySqlRow(
         productId, productName, sku, price, orderCount, totalQuantity, totalRevenue);
   }
-  ;
 
   /** Points to {@link testdb.products.ProductsRow#name()} */
   public ProductSummarySqlRow withProductName(String productName) {
     return new ProductSummarySqlRow(
         productId, productName, sku, price, orderCount, totalQuantity, totalRevenue);
   }
-  ;
 
   /** Points to {@link testdb.products.ProductsRow#sku()} */
   public ProductSummarySqlRow withSku(String sku) {
     return new ProductSummarySqlRow(
         productId, productName, sku, price, orderCount, totalQuantity, totalRevenue);
   }
-  ;
 
   /** Points to {@link testdb.products.ProductsRow#price()} */
   public ProductSummarySqlRow withPrice(BigDecimal price) {
     return new ProductSummarySqlRow(
         productId, productName, sku, price, orderCount, totalQuantity, totalRevenue);
   }
-  ;
 
   public ProductSummarySqlRow withOrderCount(Long orderCount) {
     return new ProductSummarySqlRow(
         productId, productName, sku, price, orderCount, totalQuantity, totalRevenue);
   }
-  ;
 
   /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
   public ProductSummarySqlRow withTotalQuantity(Optional<Long> totalQuantity) {
     return new ProductSummarySqlRow(
         productId, productName, sku, price, orderCount, totalQuantity, totalRevenue);
   }
-  ;
 
-  /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
+  /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
   public ProductSummarySqlRow withTotalRevenue(Optional<BigDecimal> totalRevenue) {
     return new ProductSummarySqlRow(
         productId, productName, sku, price, orderCount, totalQuantity, totalRevenue);
   }
-  ;
 
   public static RowParser<ProductSummarySqlRow> _rowParser =
       RowParsers.of(
@@ -99,47 +92,39 @@ public record ProductSummarySqlRow(
                 row.totalQuantity(),
                 row.totalRevenue()
               });
-  ;
 
   @Override
   public ProductsId _1() {
     return productId;
   }
-  ;
 
   @Override
   public String _2() {
     return productName;
   }
-  ;
 
   @Override
   public String _3() {
     return sku;
   }
-  ;
 
   @Override
   public BigDecimal _4() {
     return price;
   }
-  ;
 
   @Override
   public Long _5() {
     return orderCount;
   }
-  ;
 
   @Override
   public Optional<Long> _6() {
     return totalQuantity;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _7() {
     return totalRevenue;
   }
-  ;
 }

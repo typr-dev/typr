@@ -26,7 +26,7 @@ class EmployeesRepoImpl() : EmployeesRepo {
   override fun deleteById(
     compositeId: EmployeesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"employees\" where \"emp_number\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.empNumber), Fragment.lit(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.interpolate(Fragment.lit("delete from \"employees\" where \"emp_number\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.empNumber), Fragment.lit(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     compositeIds: Array<EmployeesId>,
@@ -102,7 +102,7 @@ class EmployeesRepoImpl() : EmployeesRepo {
   override fun update(
     row: EmployeesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val compositeId: EmployeesId = row.compositeId()
     return Fragment.interpolate(Fragment.lit("update \"employees\"\nset \"dept_code\" = "), Fragment.encode(DuckDbTypes.varchar, row.deptCode), Fragment.lit(",\n\"dept_region\" = "), Fragment.encode(DuckDbTypes.varchar, row.deptRegion), Fragment.lit(",\n\"emp_name\" = "), Fragment.encode(DuckDbTypes.varchar, row.empName), Fragment.lit(",\n\"salary\" = "), Fragment.encode(DuckDbTypes.numeric.nullable(), row.salary), Fragment.lit(",\n\"hire_date\" = "), Fragment.encode(DuckDbTypes.date, row.hireDate), Fragment.lit("\nwhere \"emp_number\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.empNumber), Fragment.lit(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.lit("")).update().runUnchecked(c) > 0
   }

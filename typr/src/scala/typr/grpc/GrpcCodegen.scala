@@ -1,12 +1,11 @@
 package typr.grpc
 
 import typr.grpc.codegen._
-import typr.grpc.parser.{GrpcParseError, ProtobufParser}
-import typr.{jvm, Lang, Naming, Scope}
-import typr.avro.codegen.FileAvroWrapper
+import typr.grpc.computed.ComputedGrpcService
+import typr.grpc.parser.ProtobufParser
 import typr.internal.codegen._
 import typr.jvm.Code.{CodeOps, TreeOps}
-import typr.openapi.codegen.NoJsonLibSupport
+import typr.{jvm, Lang, Naming, Scope}
 
 /** Main entry point for gRPC/Protobuf code generation */
 object GrpcCodegen {
@@ -114,13 +113,24 @@ object GrpcCodegen {
       }
     }
 
-    // Generate service interfaces, servers, and clients
+    // Generate service interfaces, servers, and clients using Computed/Files pattern
     if (allServices.nonEmpty && (options.generateServices || options.generateServers || options.generateClients)) {
-      val serviceCodegen = new ServiceCodegen(naming, lang, options, typeMapper)
+      val framework = options.frameworkIntegration.grpcFramework
 
       allServices.foreach { service =>
         try {
-          files ++= serviceCodegen.generate(service)
+          // Phase 1: Compute service metadata
+          val computed = ComputedGrpcService.from(
+            proto = service,
+            naming = naming,
+            lang = lang,
+            typeMapper = typeMapper,
+            framework = framework
+          )
+
+          // Phase 2: Generate files from computed metadata
+          val filesGrpcService = new FilesGrpcService(computed, lang, options)
+          files ++= filesGrpcService.all
         } catch {
           case e: Exception =>
             errors += s"Failed to generate service ${service.name}: ${e.getMessage}"

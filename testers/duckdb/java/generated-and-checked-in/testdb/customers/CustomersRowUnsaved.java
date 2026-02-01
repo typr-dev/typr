@@ -25,34 +25,28 @@ public record CustomersRowUnsaved(
   public CustomersRowUnsaved(@JsonProperty("customer_id") CustomersId customerId, String name) {
     this(customerId, name, Optional.empty(), new UseDefault<>(), new UseDefault<>());
   }
-  ;
 
   public CustomersRowUnsaved withCustomerId(CustomersId customerId) {
     return new CustomersRowUnsaved(customerId, name, email, createdAt, priority);
   }
-  ;
 
   public CustomersRowUnsaved withName(String name) {
     return new CustomersRowUnsaved(customerId, name, email, createdAt, priority);
   }
-  ;
 
   public CustomersRowUnsaved withEmail(Optional</* user-picked */ Email> email) {
     return new CustomersRowUnsaved(customerId, name, email, createdAt, priority);
   }
-  ;
 
   /** Default: current_timestamp */
   public CustomersRowUnsaved withCreatedAt(Defaulted<LocalDateTime> createdAt) {
     return new CustomersRowUnsaved(customerId, name, email, createdAt, priority);
   }
-  ;
 
   /** Default: 'medium' */
   public CustomersRowUnsaved withPriority(Defaulted<Optional<Priority>> priority) {
     return new CustomersRowUnsaved(customerId, name, email, createdAt, priority);
   }
-  ;
 
   public CustomersRow toRow(
       java.util.function.Supplier<LocalDateTime> createdAtDefault,
@@ -64,5 +58,4 @@ public record CustomersRowUnsaved(
         createdAt.getOrElse(createdAtDefault),
         priority.getOrElse(priorityDefault));
   }
-  ;
 }

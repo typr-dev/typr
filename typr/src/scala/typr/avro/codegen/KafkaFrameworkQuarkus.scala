@@ -1,7 +1,8 @@
 package typr.avro.codegen
 
-import typr.jvm
+import typr.boundaries.framework.QuarkusFramework
 import typr.internal.codegen._
+import typr.jvm
 
 /** Quarkus Kafka framework integration using SmallRye Reactive Messaging.
   *
@@ -19,26 +20,21 @@ object KafkaFrameworkQuarkus extends KafkaFramework {
   val Metadata: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.eclipse.microprofile.reactive.messaging.Metadata"))
   val KafkaRequestReply: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("io.smallrye.reactive.messaging.kafka.reply.KafkaRequestReply"))
 
-  // CDI/Jakarta annotations
-  val ApplicationScoped: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("jakarta.enterprise.context.ApplicationScoped"))
-  val Inject: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("jakarta.inject.Inject"))
-
   // Reactive Messaging annotations
   val Incoming: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.eclipse.microprofile.reactive.messaging.Incoming"))
   val Outgoing: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.eclipse.microprofile.reactive.messaging.Outgoing"))
   val Channel: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.eclipse.microprofile.reactive.messaging.Channel"))
+
+  // Delegate to QuarkusFramework base
+  override def name: String = QuarkusFramework.name
+  override def serviceAnnotation: jvm.Annotation = QuarkusFramework.serviceAnnotation
+  override def constructorAnnotations: List[jvm.Annotation] = QuarkusFramework.constructorAnnotations
 
   override def effectType: jvm.Type.Qualified = Uni
 
   override def effectOf(inner: jvm.Type): jvm.Type = Uni.of(inner)
 
   override def voidEffectType: jvm.Type = Uni.of(Void)
-
-  override def serviceAnnotation: jvm.Annotation =
-    jvm.Annotation(ApplicationScoped, Nil)
-
-  override def constructorAnnotations: List[jvm.Annotation] =
-    List(jvm.Annotation(Inject, Nil))
 
   override def publisherFieldType(keyType: jvm.Type, valueType: jvm.Type): jvm.Type =
     MutinyEmitter.of(valueType)

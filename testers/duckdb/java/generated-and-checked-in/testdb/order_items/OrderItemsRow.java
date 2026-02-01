@@ -24,23 +24,19 @@ public record OrderItemsRow(
   public OrderItemsRow withOrderId(Integer orderId) {
     return new OrderItemsRow(orderId, productId, quantity, unitPrice);
   }
-  ;
 
   public OrderItemsRow withProductId(Integer productId) {
     return new OrderItemsRow(orderId, productId, quantity, unitPrice);
   }
-  ;
 
   /** Default: 1 */
   public OrderItemsRow withQuantity(Integer quantity) {
     return new OrderItemsRow(orderId, productId, quantity, unitPrice);
   }
-  ;
 
   public OrderItemsRow withUnitPrice(BigDecimal unitPrice) {
     return new OrderItemsRow(orderId, productId, quantity, unitPrice);
   }
-  ;
 
   public static RowParser<OrderItemsRow> _rowParser =
       RowParsers.of(
@@ -50,50 +46,41 @@ public record OrderItemsRow(
           DuckDbTypes.numeric,
           OrderItemsRow::new,
           row -> new Object[] {row.orderId(), row.productId(), row.quantity(), row.unitPrice()});
-  ;
 
   public static OrderItemsRow apply(
       OrderItemsId compositeId, Integer quantity, BigDecimal unitPrice) {
     return new OrderItemsRow(compositeId.orderId(), compositeId.productId(), quantity, unitPrice);
   }
-  ;
 
   @Override
   public Integer _1() {
     return orderId;
   }
-  ;
 
   @Override
   public Integer _2() {
     return productId;
   }
-  ;
 
   @Override
   public Integer _3() {
     return quantity;
   }
-  ;
 
   @Override
   public BigDecimal _4() {
     return unitPrice;
   }
-  ;
 
   public OrderItemsId compositeId() {
     return new OrderItemsId(orderId, productId);
   }
-  ;
 
   public OrderItemsId id() {
     return this.compositeId();
   }
-  ;
 
   public OrderItemsRowUnsaved toUnsavedRow(Defaulted<Integer> quantity) {
     return new OrderItemsRowUnsaved(orderId, productId, unitPrice, quantity);
   }
-  ;
 }

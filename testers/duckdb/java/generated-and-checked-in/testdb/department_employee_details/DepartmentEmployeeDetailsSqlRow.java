@@ -61,7 +61,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.departments.DepartmentsRow#deptRegion()} */
   public DepartmentEmployeeDetailsSqlRow withDeptRegion(String deptRegion) {
@@ -77,7 +76,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.departments.DepartmentsRow#deptName()} */
   public DepartmentEmployeeDetailsSqlRow withDeptName(String deptName) {
@@ -93,7 +91,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.departments.DepartmentsRow#budget()} */
   public DepartmentEmployeeDetailsSqlRow withBudget(Optional<BigDecimal> budget) {
@@ -109,7 +106,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#empNumber()} */
   public DepartmentEmployeeDetailsSqlRow withEmpNumber(Optional<Integer> empNumber) {
@@ -125,7 +121,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#empSuffix()} */
   public DepartmentEmployeeDetailsSqlRow withEmpSuffix(Optional<String> empSuffix) {
@@ -141,7 +136,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#empName()} */
   public DepartmentEmployeeDetailsSqlRow withEmpName(Optional<String> empName) {
@@ -157,7 +151,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#salary()} */
   public DepartmentEmployeeDetailsSqlRow withSalary(Optional<BigDecimal> salary) {
@@ -173,7 +166,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#hireDate()} */
   public DepartmentEmployeeDetailsSqlRow withHireDate(Optional<LocalDate> hireDate) {
@@ -189,7 +181,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   /** Points to {@link testdb.employees.EmployeesRow#hireDate()} */
   public DepartmentEmployeeDetailsSqlRow withYearsOfService(Optional<Integer> yearsOfService) {
@@ -205,7 +196,6 @@ public record DepartmentEmployeeDetailsSqlRow(
         hireDate,
         yearsOfService);
   }
-  ;
 
   public static RowParser<DepartmentEmployeeDetailsSqlRow> _rowParser =
       RowParsers.of(
@@ -233,65 +223,54 @@ public record DepartmentEmployeeDetailsSqlRow(
                 row.hireDate(),
                 row.yearsOfService()
               });
-  ;
 
   @Override
   public String _1() {
     return deptCode;
   }
-  ;
 
   @Override
   public Optional<Integer> _10() {
     return yearsOfService;
   }
-  ;
 
   @Override
   public String _2() {
     return deptRegion;
   }
-  ;
 
   @Override
   public String _3() {
     return deptName;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _4() {
     return budget;
   }
-  ;
 
   @Override
   public Optional<Integer> _5() {
     return empNumber;
   }
-  ;
 
   @Override
   public Optional<String> _6() {
     return empSuffix;
   }
-  ;
 
   @Override
   public Optional<String> _7() {
     return empName;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _8() {
     return salary;
   }
-  ;
 
   @Override
   public Optional<LocalDate> _9() {
     return hireDate;
   }
-  ;
 }

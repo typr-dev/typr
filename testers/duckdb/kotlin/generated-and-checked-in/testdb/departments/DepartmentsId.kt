@@ -13,12 +13,12 @@ import dev.typr.foundations.kotlin.RowParsers
 
 /** Type for the composite primary key of table `departments` */
 data class DepartmentsId(
-  @field:JsonProperty("dept_code") val deptCode: String,
-  @field:JsonProperty("dept_region") val deptRegion: String
-) : Tuple2<String, String> {
-  override fun _1(): String = deptCode
+  @field:JsonProperty("dept_code") val deptCode: kotlin.String,
+  @field:JsonProperty("dept_region") val deptRegion: kotlin.String
+) : Tuple2<kotlin.String, kotlin.String> {
+  override fun _1(): kotlin.String = deptCode
 
-  override fun _2(): String = deptRegion
+  override fun _2(): kotlin.String = deptRegion
 
   companion object {
     val _rowParser: RowParser<DepartmentsId> = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, { t0, t1 -> DepartmentsId(t0, t1) }, { row -> arrayOf<Any?>(row.deptCode, row.deptRegion) })

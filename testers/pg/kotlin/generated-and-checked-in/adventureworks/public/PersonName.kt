@@ -19,13 +19,13 @@ data class PersonName(
   val suffix: String?
 ) {
   companion object {
-    val pgStruct: PgStruct<PersonName> =
+    val dbStruct: PgStruct<PersonName> =
       PgStruct.builder<PersonName>("public.person_name").optField("firstName", PgTypes.text, { v: PersonName -> Optional.ofNullable(v.firstName) }).optField("middleName", PgTypes.text, { v: PersonName -> Optional.ofNullable(v.middleName) }).optField("lastName", PgTypes.text, { v: PersonName -> Optional.ofNullable(v.lastName) }).optField("suffix", PgTypes.text, { v: PersonName -> Optional.ofNullable(v.suffix) }).build({ arr -> PersonName(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String) })
 
-    val pgType: PgType<PersonName> =
-      pgStruct.asType()
+    val dbType: PgType<PersonName> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<PersonName>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<PersonName>(n) }), { n -> arrayOfNulls<PersonName>(n) })
+    val dbTypeArray: PgType<Array<PersonName>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<PersonName>(n) }), { n -> arrayOfNulls<PersonName>(n) })
   }
 }

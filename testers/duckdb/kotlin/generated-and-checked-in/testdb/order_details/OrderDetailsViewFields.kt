@@ -19,14 +19,14 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
 
-data class OrderDetailsViewFields(val _path: List<Path>) : TupleExpr7<Int, LocalDate, String, String, Int, BigDecimal, BigDecimal>, RelationStructure<OrderDetailsViewFields, OrderDetailsViewRow>, FieldsBase<OrderDetailsViewRow> {
+data class OrderDetailsViewFields(val _path: List<Path>) : TupleExpr7<Int, LocalDate, kotlin.String, kotlin.String, Int, BigDecimal, BigDecimal>, RelationStructure<OrderDetailsViewFields, OrderDetailsViewRow>, FieldsBase<OrderDetailsViewRow> {
   override fun _1(): SqlExpr<Int> = orderId()
 
   override fun _2(): SqlExpr<LocalDate> = orderDate()
 
-  override fun _3(): SqlExpr<String> = customerName()
+  override fun _3(): SqlExpr<kotlin.String> = customerName()
 
-  override fun _4(): SqlExpr<String> = productName()
+  override fun _4(): SqlExpr<kotlin.String> = productName()
 
   override fun _5(): SqlExpr<Int> = quantity()
 
@@ -38,7 +38,7 @@ data class OrderDetailsViewFields(val _path: List<Path>) : TupleExpr7<Int, Local
 
   override fun columns(): List<FieldLike<*, OrderDetailsViewRow>> = listOf(this.orderId().underlying, this.orderDate().underlying, this.customerName().underlying, this.productName().underlying, this.quantity().underlying, this.unitPrice().underlying, this.lineTotal().underlying)
 
-  fun customerName(): OptField<String, OrderDetailsViewRow> = OptField<String, OrderDetailsViewRow>(_path, "customer_name", OrderDetailsViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, DuckDbTypes.varchar)
+  fun customerName(): OptField<kotlin.String, OrderDetailsViewRow> = OptField<kotlin.String, OrderDetailsViewRow>(_path, "customer_name", OrderDetailsViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, DuckDbTypes.varchar)
 
   fun lineTotal(): OptField<BigDecimal, OrderDetailsViewRow> = OptField<BigDecimal, OrderDetailsViewRow>(_path, "line_total", OrderDetailsViewRow::lineTotal, null, "DECIMAL(18,2)", { row, value -> row.copy(lineTotal = value) }, DuckDbTypes.numeric)
 
@@ -46,7 +46,7 @@ data class OrderDetailsViewFields(val _path: List<Path>) : TupleExpr7<Int, Local
 
   fun orderId(): OptField<Int, OrderDetailsViewRow> = OptField<Int, OrderDetailsViewRow>(_path, "order_id", OrderDetailsViewRow::orderId, null, "INTEGER", { row, value -> row.copy(orderId = value) }, KotlinDbTypes.DuckDbTypes.integer)
 
-  fun productName(): OptField<String, OrderDetailsViewRow> = OptField<String, OrderDetailsViewRow>(_path, "product_name", OrderDetailsViewRow::productName, null, null, { row, value -> row.copy(productName = value) }, DuckDbTypes.varchar)
+  fun productName(): OptField<kotlin.String, OrderDetailsViewRow> = OptField<kotlin.String, OrderDetailsViewRow>(_path, "product_name", OrderDetailsViewRow::productName, null, null, { row, value -> row.copy(productName = value) }, DuckDbTypes.varchar)
 
   fun quantity(): OptField<Int, OrderDetailsViewRow> = OptField<Int, OrderDetailsViewRow>(_path, "quantity", OrderDetailsViewRow::quantity, null, "INTEGER", { row, value -> row.copy(quantity = value) }, KotlinDbTypes.DuckDbTypes.integer)
 

@@ -35,43 +35,36 @@ public record OrderDetailsViewRow(
     return new OrderDetailsViewRow(
         orderId, orderDate, customerName, productName, quantity, unitPrice, lineTotal);
   }
-  ;
 
   public OrderDetailsViewRow withOrderDate(Optional<LocalDate> orderDate) {
     return new OrderDetailsViewRow(
         orderId, orderDate, customerName, productName, quantity, unitPrice, lineTotal);
   }
-  ;
 
   public OrderDetailsViewRow withCustomerName(Optional<String> customerName) {
     return new OrderDetailsViewRow(
         orderId, orderDate, customerName, productName, quantity, unitPrice, lineTotal);
   }
-  ;
 
   public OrderDetailsViewRow withProductName(Optional<String> productName) {
     return new OrderDetailsViewRow(
         orderId, orderDate, customerName, productName, quantity, unitPrice, lineTotal);
   }
-  ;
 
   public OrderDetailsViewRow withQuantity(Optional<Integer> quantity) {
     return new OrderDetailsViewRow(
         orderId, orderDate, customerName, productName, quantity, unitPrice, lineTotal);
   }
-  ;
 
   public OrderDetailsViewRow withUnitPrice(Optional<BigDecimal> unitPrice) {
     return new OrderDetailsViewRow(
         orderId, orderDate, customerName, productName, quantity, unitPrice, lineTotal);
   }
-  ;
 
   public OrderDetailsViewRow withLineTotal(Optional<BigDecimal> lineTotal) {
     return new OrderDetailsViewRow(
         orderId, orderDate, customerName, productName, quantity, unitPrice, lineTotal);
   }
-  ;
 
   public static RowParser<OrderDetailsViewRow> _rowParser =
       RowParsers.of(
@@ -93,47 +86,39 @@ public record OrderDetailsViewRow(
                 row.unitPrice(),
                 row.lineTotal()
               });
-  ;
 
   @Override
   public Optional<Integer> _1() {
     return orderId;
   }
-  ;
 
   @Override
   public Optional<LocalDate> _2() {
     return orderDate;
   }
-  ;
 
   @Override
   public Optional<String> _3() {
     return customerName;
   }
-  ;
 
   @Override
   public Optional<String> _4() {
     return productName;
   }
-  ;
 
   @Override
   public Optional<Integer> _5() {
     return quantity;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _6() {
     return unitPrice;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _7() {
     return lineTotal;
   }
-  ;
 }

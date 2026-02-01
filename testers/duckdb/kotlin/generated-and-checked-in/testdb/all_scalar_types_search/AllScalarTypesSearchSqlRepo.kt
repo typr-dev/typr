@@ -17,9 +17,9 @@ interface AllScalarTypesSearchSqlRepo {
   abstract fun apply(
     id: Int?,
     minInteger: Int?,
-    maxBigint: Long?,
-    booleanValue: Boolean?,
-    varcharPattern: String?,
+    maxBigint: kotlin.Long?,
+    booleanValue: kotlin.Boolean?,
+    varcharPattern: kotlin.String?,
     minDate: LocalDate?,
     maxDate: LocalDate?,
     afterTimestamp: LocalDateTime?,

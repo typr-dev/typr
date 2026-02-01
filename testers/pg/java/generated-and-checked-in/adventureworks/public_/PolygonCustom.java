@@ -23,20 +23,20 @@ public record PolygonCustom(Optional<String> name, Optional<Point2d[]> vertices)
   }
   ;
 
-  public static PgStruct<PolygonCustom> pgStruct =
+  public static PgStruct<PolygonCustom> dbStruct =
       PgStruct.<PolygonCustom>builder("public.polygon_custom")
           .optField("name", PgTypes.text, v -> v.name())
-          .optField("vertices", Point2d.pgTypeArray, v -> v.vertices())
+          .optField("vertices", Point2d.dbTypeArray, v -> v.vertices())
           .build(
               arr ->
                   new PolygonCustom(
                       Optional.ofNullable((String) arr[0]),
                       Optional.ofNullable((Point2d[]) arr[1])));
 
-  public static PgType<PolygonCustom> pgType = pgStruct.asType();
+  public static PgType<PolygonCustom> dbType = dbStruct.asType();
 
-  public static PgType<PolygonCustom[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), PolygonCustom[]::new),
+  public static PgType<PolygonCustom[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), PolygonCustom[]::new),
           PolygonCustom[]::new);
 }

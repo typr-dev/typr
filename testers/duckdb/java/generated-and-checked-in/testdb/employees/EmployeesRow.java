@@ -29,38 +29,31 @@ public record EmployeesRow(
   public EmployeesRow withEmpNumber(Integer empNumber) {
     return new EmployeesRow(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRow withEmpSuffix(String empSuffix) {
     return new EmployeesRow(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRow withDeptCode(String deptCode) {
     return new EmployeesRow(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRow withDeptRegion(String deptRegion) {
     return new EmployeesRow(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRow withEmpName(String empName) {
     return new EmployeesRow(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public EmployeesRow withSalary(Optional<BigDecimal> salary) {
     return new EmployeesRow(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   /** Default: current_date */
   public EmployeesRow withHireDate(LocalDate hireDate) {
     return new EmployeesRow(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 
   public static RowParser<EmployeesRow> _rowParser =
       RowParsers.of(
@@ -82,7 +75,6 @@ public record EmployeesRow(
                 row.salary(),
                 row.hireDate()
               });
-  ;
 
   public static EmployeesRow apply(
       EmployeesId compositeId,
@@ -100,63 +92,52 @@ public record EmployeesRow(
         salary,
         hireDate);
   }
-  ;
 
   @Override
   public Integer _1() {
     return empNumber;
   }
-  ;
 
   @Override
   public String _2() {
     return empSuffix;
   }
-  ;
 
   @Override
   public String _3() {
     return deptCode;
   }
-  ;
 
   @Override
   public String _4() {
     return deptRegion;
   }
-  ;
 
   @Override
   public String _5() {
     return empName;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _6() {
     return salary;
   }
-  ;
 
   @Override
   public LocalDate _7() {
     return hireDate;
   }
-  ;
 
   public EmployeesId compositeId() {
     return new EmployeesId(empNumber, empSuffix);
   }
-  ;
 
   public EmployeesId id() {
     return this.compositeId();
   }
-  ;
 
   public EmployeesRowUnsaved toUnsavedRow(Defaulted<LocalDate> hireDate) {
     return new EmployeesRowUnsaved(
         empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate);
   }
-  ;
 }

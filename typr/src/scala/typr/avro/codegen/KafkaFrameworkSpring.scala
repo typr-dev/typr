@@ -1,7 +1,8 @@
 package typr.avro.codegen
 
-import typr.jvm
+import typr.boundaries.framework.SpringFramework
 import typr.internal.codegen._
+import typr.jvm
 
 /** Spring Kafka framework integration.
   *
@@ -21,21 +22,20 @@ object KafkaFrameworkSpring extends KafkaFramework {
   val Headers: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.apache.kafka.common.header.Headers"))
   val SendResult: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.springframework.kafka.support.SendResult"))
 
-  // Spring annotations
-  val Service: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.springframework.stereotype.Service"))
+  // Spring Kafka annotations
   val KafkaListener: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.springframework.kafka.annotation.KafkaListener"))
   val SendTo: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.springframework.messaging.handler.annotation.SendTo"))
+
+  // Delegate to SpringFramework base
+  override def name: String = SpringFramework.name
+  override def serviceAnnotation: jvm.Annotation = SpringFramework.serviceAnnotation
+  override def constructorAnnotations: List[jvm.Annotation] = SpringFramework.constructorAnnotations
 
   override def effectType: jvm.Type.Qualified = CompletableFuture
 
   override def effectOf(inner: jvm.Type): jvm.Type = CompletableFuture.of(inner)
 
   override def voidEffectType: jvm.Type = CompletableFuture.of(Void)
-
-  override def serviceAnnotation: jvm.Annotation =
-    jvm.Annotation(Service, Nil)
-
-  override def constructorAnnotations: List[jvm.Annotation] = Nil
 
   override def publisherFieldType(keyType: jvm.Type, valueType: jvm.Type): jvm.Type =
     KafkaTemplate.of(keyType, valueType)

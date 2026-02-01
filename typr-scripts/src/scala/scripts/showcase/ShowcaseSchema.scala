@@ -15,8 +15,125 @@ object ShowcaseSchema {
 
   def relations(dbType: DbType): List[db.Relation] = tables(dbType) ++ views(dbType)
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Domain definitions (PostgreSQL only)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /** PostgreSQL domains for showcase */
+  def domains(dbType: DbType): List[db.Domain] = dbType match {
+    case DbType.PostgreSQL =>
+      List(
+        db.Domain(
+          name = RelationName(Some("showcase"), "email_address"),
+          tpe = db.PgType.VarChar(Some(255)),
+          originalType = "character varying(255)",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = Some("CHECK ((VALUE)::text ~~ '%@%.%'::text)")
+        ),
+        db.Domain(
+          name = RelationName(Some("showcase"), "positive_amount"),
+          tpe = db.PgType.Numeric,
+          originalType = "numeric",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = Some("CHECK (VALUE > 0)")
+        ),
+        db.Domain(
+          name = RelationName(Some("showcase"), "phone_number"),
+          tpe = db.PgType.VarChar(Some(20)),
+          originalType = "character varying(20)",
+          isNotNull = Nullability.Nullable,
+          hasDefault = false,
+          constraintDefinition = Some("CHECK ((VALUE)::text ~ '^[+]?[0-9\\-\\s]+$'::text)")
+        ),
+        db.Domain(
+          name = RelationName(Some("showcase"), "percentage"),
+          tpe = db.PgType.Numeric,
+          originalType = "numeric",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = Some("CHECK (VALUE >= 0 AND VALUE <= 100)")
+        )
+      )
+    case DbType.SqlServer =>
+      // SQL Server uses db.Domain for alias types (CREATE TYPE ... FROM base_type)
+      List(
+        db.Domain(
+          name = RelationName(Some("showcase"), "EmailAddress"),
+          tpe = db.SqlServerType.NVarChar(Some(255)),
+          originalType = "nvarchar(255)",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = None
+        ),
+        db.Domain(
+          name = RelationName(Some("showcase"), "PositiveAmount"),
+          tpe = db.SqlServerType.Decimal(Some(10), Some(2)),
+          originalType = "decimal(10,2)",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = None
+        ),
+        db.Domain(
+          name = RelationName(Some("showcase"), "PhoneNumber"),
+          tpe = db.SqlServerType.NVarChar(Some(20)),
+          originalType = "nvarchar(20)",
+          isNotNull = Nullability.Nullable,
+          hasDefault = false,
+          constraintDefinition = None
+        ),
+        db.Domain(
+          name = RelationName(Some("showcase"), "Percentage"),
+          tpe = db.SqlServerType.Decimal(Some(5), Some(2)),
+          originalType = "decimal(5,2)",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = None
+        )
+      )
+    case DbType.DB2 =>
+      // DB2 uses DISTINCT TYPE (CREATE DISTINCT TYPE)
+      List(
+        db.Domain(
+          name = RelationName(Some("SHOWCASE"), "EMAIL_ADDRESS"),
+          tpe = db.DB2Type.VarChar(Some(255)),
+          originalType = "VARCHAR(255)",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = None
+        ),
+        db.Domain(
+          name = RelationName(Some("SHOWCASE"), "POSITIVE_AMOUNT"),
+          tpe = db.DB2Type.Decimal(Some(10), Some(2)),
+          originalType = "DECIMAL(10,2)",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = None
+        ),
+        db.Domain(
+          name = RelationName(Some("SHOWCASE"), "PHONE_NUMBER"),
+          tpe = db.DB2Type.VarChar(Some(20)),
+          originalType = "VARCHAR(20)",
+          isNotNull = Nullability.Nullable,
+          hasDefault = false,
+          constraintDefinition = None
+        ),
+        db.Domain(
+          name = RelationName(Some("SHOWCASE"), "PERCENTAGE"),
+          tpe = db.DB2Type.Decimal(Some(5), Some(2)),
+          originalType = "DECIMAL(5,2)",
+          isNotNull = Nullability.NoNulls,
+          hasDefault = false,
+          constraintDefinition = None
+        )
+      )
+    case _ => Nil
+  }
+
   def tables(dbType: DbType): List[Table] = {
     val base = List(
+      title(dbType), // Open enum lookup table - must come first as it's referenced by employee
       company(dbType),
       department(dbType),
       employee(dbType),
@@ -40,16 +157,49 @@ object ShowcaseSchema {
     base ++ dbSpecific
   }
 
+  // Enum definitions - used both for registration and column type references
+  val orderStatusEnum = db.StringEnum(RelationName(Some("showcase"), "order_status"), NonEmptyList("pending", List("confirmed", "processing", "shipped", "delivered", "cancelled", "refunded")))
+  val projectStatusEnum = db.StringEnum(RelationName(Some("showcase"), "project_status"), NonEmptyList("planning", List("active", "on_hold", "completed", "cancelled")))
+  val addressTypeEnum = db.StringEnum(RelationName(Some("showcase"), "address_type"), NonEmptyList("billing", List("shipping", "both")))
+  val priorityLevelEnum = db.StringEnum(RelationName(Some("showcase"), "priority_level"), NonEmptyList("low", List("medium", "high", "critical")))
+  val employeeStatusEnum = db.StringEnum(RelationName(Some("showcase"), "employee_status"), NonEmptyList("active", List("on_leave", "terminated")))
+
+  // Open enum values - used for code generation
+  val titleOpenEnumValues: NonEmptyList[String] = NonEmptyList("mr", List("ms", "dr", "phd"))
+
   def enums(dbType: DbType): List[db.StringEnum] = dbType match {
     case DbType.PostgreSQL | DbType.DuckDB =>
-      List(
-        db.StringEnum(RelationName(Some("showcase"), "order_status"), NonEmptyList("pending", List("confirmed", "processing", "shipped", "delivered", "cancelled", "refunded"))),
-        db.StringEnum(RelationName(Some("showcase"), "project_status"), NonEmptyList("planning", List("active", "on_hold", "completed", "cancelled"))),
-        db.StringEnum(RelationName(Some("showcase"), "address_type"), NonEmptyList("billing", List("shipping", "both"))),
-        db.StringEnum(RelationName(Some("showcase"), "priority_level"), NonEmptyList("low", List("medium", "high", "critical"))),
-        db.StringEnum(RelationName(Some("showcase"), "employee_status"), NonEmptyList("active", List("on_leave", "terminated")))
-      )
+      List(orderStatusEnum, projectStatusEnum, addressTypeEnum, priorityLevelEnum, employeeStatusEnum)
     case _ => Nil
+  }
+
+  // Type helpers for enums by database
+  private def orderStatusType(dbType: DbType): db.Type = dbType match {
+    case DbType.PostgreSQL => db.PgType.EnumRef(orderStatusEnum)
+    case DbType.DuckDB     => db.DuckDbType.Enum("order_status", orderStatusEnum.values.toList)
+    case DbType.MariaDB    => db.MariaType.Enum(orderStatusEnum.values.toList)
+    case _                 => varcharType(dbType, Some(20))
+  }
+
+  private def projectStatusType(dbType: DbType): db.Type = dbType match {
+    case DbType.PostgreSQL => db.PgType.EnumRef(projectStatusEnum)
+    case DbType.DuckDB     => db.DuckDbType.Enum("project_status", projectStatusEnum.values.toList)
+    case DbType.MariaDB    => db.MariaType.Enum(projectStatusEnum.values.toList)
+    case _                 => varcharType(dbType, Some(20))
+  }
+
+  private def addressTypeType(dbType: DbType): db.Type = dbType match {
+    case DbType.PostgreSQL => db.PgType.EnumRef(addressTypeEnum)
+    case DbType.DuckDB     => db.DuckDbType.Enum("address_type", addressTypeEnum.values.toList)
+    case DbType.MariaDB    => db.MariaType.Enum(addressTypeEnum.values.toList)
+    case _                 => varcharType(dbType, Some(20))
+  }
+
+  private def priorityLevelType(dbType: DbType): db.Type = dbType match {
+    case DbType.PostgreSQL => db.PgType.EnumRef(priorityLevelEnum)
+    case DbType.DuckDB     => db.DuckDbType.Enum("priority_level", priorityLevelEnum.values.toList)
+    case DbType.MariaDB    => db.MariaType.Enum(priorityLevelEnum.values.toList)
+    case _                 => varcharType(dbType, Some(20))
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -316,6 +466,19 @@ object ShowcaseSchema {
   // Table definitions
   // ═══════════════════════════════════════════════════════════════════════════
 
+  /** Title lookup table for open enum pattern - works across all databases */
+  private def title(dbType: DbType): Table = Table(
+    name = RelationName(Some(schema(dbType)), "title"),
+    comment = Some("Lookup table for title values (open enum pattern)"),
+    cols = NonEmptyList(
+      col("code", varcharType(dbType, Some(10)), notNull = true),
+      Nil
+    ),
+    primaryKey = Some(PrimaryKey(NonEmptyList(ColName("code"), Nil), RelationName(None, "title_pkey"))),
+    uniqueKeys = Nil,
+    foreignKeys = Nil
+  )
+
   private def company(dbType: DbType): Table = Table(
     name = RelationName(Some(schema(dbType)), "company"),
     comment = None,
@@ -357,13 +520,43 @@ object ShowcaseSchema {
   )
 
   private def employee(dbType: DbType): Table = {
+    // Use domain types for databases that support them
+    val (emailType, salaryType, phoneType, bonusPercentageType): (db.Type, db.Type, db.Type, db.Type) = dbType match {
+      case DbType.PostgreSQL =>
+        (
+          db.PgType.DomainRef(RelationName(Some("showcase"), "email_address"), "character varying(255)", db.PgType.VarChar(Some(255))),
+          db.PgType.DomainRef(RelationName(Some("showcase"), "positive_amount"), "numeric", db.PgType.Numeric),
+          db.PgType.DomainRef(RelationName(Some("showcase"), "phone_number"), "character varying(20)", db.PgType.VarChar(Some(20))),
+          db.PgType.DomainRef(RelationName(Some("showcase"), "percentage"), "numeric", db.PgType.Numeric)
+        )
+      case DbType.SqlServer =>
+        (
+          db.SqlServerType.AliasTypeRef(RelationName(Some("showcase"), "EmailAddress"), "nvarchar(255)", db.SqlServerType.NVarChar(Some(255)), hasConstraint = false),
+          db.SqlServerType.AliasTypeRef(RelationName(Some("showcase"), "PositiveAmount"), "decimal(10,2)", db.SqlServerType.Decimal(Some(10), Some(2)), hasConstraint = false),
+          db.SqlServerType.AliasTypeRef(RelationName(Some("showcase"), "PhoneNumber"), "nvarchar(20)", db.SqlServerType.NVarChar(Some(20)), hasConstraint = false),
+          db.SqlServerType.AliasTypeRef(RelationName(Some("showcase"), "Percentage"), "decimal(5,2)", db.SqlServerType.Decimal(Some(5), Some(2)), hasConstraint = false)
+        )
+      case DbType.DB2 =>
+        (
+          db.DB2Type.DistinctType(RelationName(Some("SHOWCASE"), "EMAIL_ADDRESS"), db.DB2Type.VarChar(Some(255))),
+          db.DB2Type.DistinctType(RelationName(Some("SHOWCASE"), "POSITIVE_AMOUNT"), db.DB2Type.Decimal(Some(10), Some(2))),
+          db.DB2Type.DistinctType(RelationName(Some("SHOWCASE"), "PHONE_NUMBER"), db.DB2Type.VarChar(Some(20))),
+          db.DB2Type.DistinctType(RelationName(Some("SHOWCASE"), "PERCENTAGE"), db.DB2Type.Decimal(Some(5), Some(2)))
+        )
+      case _ =>
+        (varcharType(dbType, Some(255)), decimalType(dbType, 10, 2), varcharType(dbType, Some(20)), decimalType(dbType, 5, 2))
+    }
+
     val baseCols = List(
       col("department_id", varcharType(dbType, None), notNull = true),
       col("manager_id", varcharType(dbType, None), notNull = false),
-      col("email", varcharType(dbType, Some(255)), notNull = true),
+      col("title", varcharType(dbType, Some(10)), notNull = false), // Open enum - references title lookup table
+      col("email", emailType, notNull = true),
       col("first_name", varcharType(dbType, Some(50)), notNull = true),
       col("last_name", varcharType(dbType, Some(50)), notNull = true),
-      col("salary", decimalType(dbType, 10, 2), notNull = false),
+      col("salary", salaryType, notNull = false),
+      col("phone", phoneType, notNull = false),
+      col("bonus_percentage", bonusPercentageType, notNull = false),
       col("hired_at", dateType(dbType), notNull = false),
       col("active", boolType(dbType), notNull = false, default = Some("true")),
       col("created_at", timestampType(dbType), notNull = false, default = Some("CURRENT_TIMESTAMP"))
@@ -382,7 +575,30 @@ object ShowcaseSchema {
           col("network_cidr", db.PgType.Cidr, notNull = false),
           col("mac_address", db.PgType.MacAddr, notNull = false),
           col("probation_period", db.PgType.PGInterval, notNull = false),
-          col("photo", db.PgType.Bytea, notNull = false)
+          col("photo", db.PgType.Bytea, notNull = false),
+          // Geometric types
+          col("office_location", db.PgType.PGpoint, notNull = false),
+          col("parking_area", db.PgType.PGbox, notNull = false),
+          col("commute_path", db.PgType.PGpath, notNull = false),
+          col("work_zone", db.PgType.PGpolygon, notNull = false),
+          col("desk_radius", db.PgType.PGcircle, notNull = false),
+          // Other special types
+          col("monthly_salary", db.PgType.PGmoney, notNull = false),
+          col("resume_xml", db.PgType.Xml, notNull = false),
+          col("skill_embedding", db.PgType.Vector, notNull = false),
+          col(
+            "contact_info",
+            db.PgType.CompositeType(
+              RelationName(Some("showcase"), "contact_info"),
+              List(
+                db.PgType.CompositeField("phone", db.PgType.Text, nullable = true),
+                db.PgType.CompositeField("mobile", db.PgType.Text, nullable = true),
+                db.PgType.CompositeField("emergency_contact", db.PgType.Text, nullable = true),
+                db.PgType.CompositeField("emergency_phone", db.PgType.Text, nullable = true)
+              )
+            ),
+            notNull = false
+          )
         )
       case DbType.MariaDB =>
         List(
@@ -418,7 +634,51 @@ object ShowcaseSchema {
           col("resume", db.OracleType.Clob, notNull = false),
           col("photo", db.OracleType.Blob, notNull = false),
           col("probation_period", db.OracleType.IntervalYearToMonth(None), notNull = false),
-          col("shift_duration", db.OracleType.IntervalDayToSecond(None, None), notNull = false)
+          col("shift_duration", db.OracleType.IntervalDayToSecond(None, None), notNull = false),
+          col(
+            "skills",
+            db.OracleType.VArray(
+              RelationName(Some("showcase"), "skills_array"),
+              10,
+              db.OracleType.Varchar2(Some(100))
+            ),
+            notNull = false
+          ),
+          col(
+            "certifications",
+            db.OracleType.NestedTable(
+              RelationName(Some("showcase"), "certifications_table"),
+              db.OracleType.ObjectType(
+                RelationName(Some("showcase"), "certification_t"),
+                List(
+                  db.OracleType.ObjectAttribute("name", db.OracleType.Varchar2(Some(100)), 1),
+                  db.OracleType.ObjectAttribute("issuer", db.OracleType.Varchar2(Some(100)), 2),
+                  db.OracleType.ObjectAttribute("year_obtained", db.OracleType.Number(Some(4), Some(0)), 3)
+                ),
+                isFinal = true,
+                isInstantiable = true,
+                supertype = None
+              ),
+              Some("certifications_nt")
+            ),
+            notNull = false
+          ),
+          col(
+            "contact_info",
+            db.OracleType.ObjectType(
+              RelationName(Some("showcase"), "contact_info_t"),
+              List(
+                db.OracleType.ObjectAttribute("phone", db.OracleType.Varchar2(Some(20)), 1),
+                db.OracleType.ObjectAttribute("mobile", db.OracleType.Varchar2(Some(20)), 2),
+                db.OracleType.ObjectAttribute("emergency_contact", db.OracleType.Varchar2(Some(100)), 3),
+                db.OracleType.ObjectAttribute("emergency_phone", db.OracleType.Varchar2(Some(20)), 4)
+              ),
+              isFinal = true,
+              isInstantiable = true,
+              supertype = None
+            ),
+            notNull = false
+          )
         )
       case DbType.SqlServer =>
         List(
@@ -455,6 +715,12 @@ object ShowcaseSchema {
           RelationName(Some(schema(dbType)), "employee"),
           NonEmptyList(ColName("id"), Nil),
           RelationName(None, "employee_manager_fk")
+        ),
+        ForeignKey(
+          NonEmptyList(ColName("title"), Nil),
+          RelationName(Some(schema(dbType)), "title"),
+          NonEmptyList(ColName("code"), Nil),
+          RelationName(None, "employee_title_fk")
         )
       )
     )
@@ -664,7 +930,7 @@ object ShowcaseSchema {
   private def address(dbType: DbType): Table = {
     val baseCols = List(
       col("customer_id", varcharType(dbType, None), notNull = true),
-      col("address_type", varcharType(dbType, Some(20)), notNull = true),
+      col("address_type", addressTypeType(dbType), notNull = true),
       col("street", varcharType(dbType, Some(200)), notNull = true),
       col("city", varcharType(dbType, Some(100)), notNull = true),
       col("state", varcharType(dbType, Some(100)), notNull = false),
@@ -738,7 +1004,7 @@ object ShowcaseSchema {
       col("customer_id", varcharType(dbType, None), notNull = true),
       col("shipping_address_id", varcharType(dbType, None), notNull = false),
       col("billing_address_id", varcharType(dbType, None), notNull = false),
-      col("status", varcharType(dbType, Some(20)), notNull = false, default = Some("'pending'")),
+      col("status", orderStatusType(dbType), notNull = false, default = Some("'pending'")),
       col("subtotal", decimalType(dbType, 10, 2), notNull = true),
       col("tax", decimalType(dbType, 10, 2), notNull = false, default = Some("0")),
       col("shipping", decimalType(dbType, 10, 2), notNull = false, default = Some("0")),
@@ -878,7 +1144,7 @@ object ShowcaseSchema {
       col("start_date", dateType(dbType), notNull = false),
       col("end_date", dateType(dbType), notNull = false),
       col("budget", decimalType(dbType, 12, 2), notNull = false),
-      col("status", varcharType(dbType, Some(20)), notNull = false, default = Some("'planning'")),
+      col("status", projectStatusType(dbType), notNull = false, default = Some("'planning'")),
       col("created_at", timestampType(dbType), notNull = false, default = Some("CURRENT_TIMESTAMP"))
     )
 

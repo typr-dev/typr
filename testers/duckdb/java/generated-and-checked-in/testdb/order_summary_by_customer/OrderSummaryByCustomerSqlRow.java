@@ -60,7 +60,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   /** Points to {@link testdb.customers.CustomersRow#name()} */
   public OrderSummaryByCustomerSqlRow withCustomerName(String customerName) {
@@ -75,7 +74,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   /** Points to {@link testdb.customers.CustomersRow#email()} */
   public OrderSummaryByCustomerSqlRow withEmail(Optional</* user-picked */ Email> email) {
@@ -90,7 +88,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   /** Points to {@link testdb.customers.CustomersRow#priority()} */
   public OrderSummaryByCustomerSqlRow withPriority(Optional<Priority> priority) {
@@ -105,7 +102,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#orderId()} */
   public OrderSummaryByCustomerSqlRow withOrderCount(Optional<Long> orderCount) {
@@ -120,7 +116,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#totalAmount()} */
   public OrderSummaryByCustomerSqlRow withTotalSpent(Optional<BigDecimal> totalSpent) {
@@ -135,7 +130,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#orderDate()} */
   public OrderSummaryByCustomerSqlRow withLastOrderDate(Optional<LocalDate> lastOrderDate) {
@@ -150,7 +144,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#orderDate()} */
   public OrderSummaryByCustomerSqlRow withFirstOrderDate(Optional<LocalDate> firstOrderDate) {
@@ -165,7 +158,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   /** Points to {@link testdb.orders.OrdersRow#totalAmount()} */
   public OrderSummaryByCustomerSqlRow withAvgOrderAmount(Optional<Double> avgOrderAmount) {
@@ -180,7 +172,6 @@ public record OrderSummaryByCustomerSqlRow(
         firstOrderDate,
         avgOrderAmount);
   }
-  ;
 
   public static RowParser<OrderSummaryByCustomerSqlRow> _rowParser =
       RowParsers.of(
@@ -206,59 +197,49 @@ public record OrderSummaryByCustomerSqlRow(
                 row.firstOrderDate(),
                 row.avgOrderAmount()
               });
-  ;
 
   @Override
   public CustomersId _1() {
     return customerId;
   }
-  ;
 
   @Override
   public String _2() {
     return customerName;
   }
-  ;
 
   @Override
   public Optional</* user-picked */ Email> _3() {
     return email;
   }
-  ;
 
   @Override
   public Optional<Priority> _4() {
     return priority;
   }
-  ;
 
   @Override
   public Optional<Long> _5() {
     return orderCount;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _6() {
     return totalSpent;
   }
-  ;
 
   @Override
   public Optional<LocalDate> _7() {
     return lastOrderDate;
   }
-  ;
 
   @Override
   public Optional<LocalDate> _8() {
     return firstOrderDate;
   }
-  ;
 
   @Override
   public Optional<Double> _9() {
     return avgOrderAmount;
   }
-  ;
 }

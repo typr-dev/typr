@@ -20,9 +20,9 @@ case class TablefuncCrosstab3(
 )
 
 object TablefuncCrosstab3 {
-  given pgStruct: PgStruct[TablefuncCrosstab3] = PgStruct.builder[TablefuncCrosstab3]("public.tablefunc_crosstab_3").optField("rowName", PgTypes.text, (v: TablefuncCrosstab3) => v.rowName).optField("category1", PgTypes.text, (v: TablefuncCrosstab3) => v.category1).optField("category2", PgTypes.text, (v: TablefuncCrosstab3) => v.category2).optField("category3", PgTypes.text, (v: TablefuncCrosstab3) => v.category3).build(arr => TablefuncCrosstab3(rowName = Optional.ofNullable(arr(0).asInstanceOf[String]), category1 = Optional.ofNullable(arr(1).asInstanceOf[String]), category2 = Optional.ofNullable(arr(2).asInstanceOf[String]), category3 = Optional.ofNullable(arr(3).asInstanceOf[String])))
+  given dbStruct: PgStruct[TablefuncCrosstab3] = PgStruct.builder[TablefuncCrosstab3]("public.tablefunc_crosstab_3").optField("rowName", PgTypes.text, (v: TablefuncCrosstab3) => v.rowName).optField("category1", PgTypes.text, (v: TablefuncCrosstab3) => v.category1).optField("category2", PgTypes.text, (v: TablefuncCrosstab3) => v.category2).optField("category3", PgTypes.text, (v: TablefuncCrosstab3) => v.category3).build(arr => TablefuncCrosstab3(rowName = Optional.ofNullable(arr(0).asInstanceOf[String]), category1 = Optional.ofNullable(arr(1).asInstanceOf[String]), category2 = Optional.ofNullable(arr(2).asInstanceOf[String]), category3 = Optional.ofNullable(arr(3).asInstanceOf[String])))
 
-  given pgType: PgType[TablefuncCrosstab3] = pgStruct.asType()
+  given dbType: PgType[TablefuncCrosstab3] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[TablefuncCrosstab3]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TablefuncCrosstab3](n)), n => new Array[TablefuncCrosstab3](n))
+  given dbTypeArray: PgType[Array[TablefuncCrosstab3]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[TablefuncCrosstab3](n)), n => new Array[TablefuncCrosstab3](n))
 }

@@ -18,9 +18,9 @@ case class Complex(
 )
 
 object Complex {
-  given pgStruct: PgStruct[Complex] = PgStruct.builder[Complex]("public.complex").optField("r", PgTypes.float8, (v: Complex) => v.r).optField("i", PgTypes.float8, (v: Complex) => v.i).build(arr => Complex(r = Optional.ofNullable(arr(0).asInstanceOf[java.lang.Double]), i = Optional.ofNullable(arr(1).asInstanceOf[java.lang.Double])))
+  given dbStruct: PgStruct[Complex] = PgStruct.builder[Complex]("public.complex").optField("r", PgTypes.float8, (v: Complex) => v.r).optField("i", PgTypes.float8, (v: Complex) => v.i).build(arr => Complex(r = Optional.ofNullable(arr(0).asInstanceOf[java.lang.Double]), i = Optional.ofNullable(arr(1).asInstanceOf[java.lang.Double])))
 
-  given pgType: PgType[Complex] = pgStruct.asType()
+  given dbType: PgType[Complex] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[Complex]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Complex](n)), n => new Array[Complex](n))
+  given dbTypeArray: PgType[Array[Complex]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[Complex](n)), n => new Array[Complex](n))
 }

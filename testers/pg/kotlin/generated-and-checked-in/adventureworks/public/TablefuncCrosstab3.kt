@@ -19,13 +19,13 @@ data class TablefuncCrosstab3(
   val category3: String?
 ) {
   companion object {
-    val pgStruct: PgStruct<TablefuncCrosstab3> =
+    val dbStruct: PgStruct<TablefuncCrosstab3> =
       PgStruct.builder<TablefuncCrosstab3>("public.tablefunc_crosstab_3").optField("rowName", PgTypes.text, { v: TablefuncCrosstab3 -> Optional.ofNullable(v.rowName) }).optField("category1", PgTypes.text, { v: TablefuncCrosstab3 -> Optional.ofNullable(v.category1) }).optField("category2", PgTypes.text, { v: TablefuncCrosstab3 -> Optional.ofNullable(v.category2) }).optField("category3", PgTypes.text, { v: TablefuncCrosstab3 -> Optional.ofNullable(v.category3) }).build({ arr -> TablefuncCrosstab3(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String) })
 
-    val pgType: PgType<TablefuncCrosstab3> =
-      pgStruct.asType()
+    val dbType: PgType<TablefuncCrosstab3> =
+      dbStruct.asType()
 
-    val pgTypeArray: PgType<Array<TablefuncCrosstab3>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TablefuncCrosstab3>(n) }), { n -> arrayOfNulls<TablefuncCrosstab3>(n) })
+    val dbTypeArray: PgType<Array<TablefuncCrosstab3>> =
+      dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), { n -> arrayOfNulls<TablefuncCrosstab3>(n) }), { n -> arrayOfNulls<TablefuncCrosstab3>(n) })
   }
 }

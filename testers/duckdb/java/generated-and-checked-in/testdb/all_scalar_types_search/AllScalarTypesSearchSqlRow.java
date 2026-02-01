@@ -138,7 +138,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colTinyint()} */
   public AllScalarTypesSearchSqlRow withColTinyint(Optional<Byte> colTinyint) {
@@ -170,7 +169,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colSmallint()} */
   public AllScalarTypesSearchSqlRow withColSmallint(Optional<Short> colSmallint) {
@@ -202,7 +200,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colInteger()} */
   public AllScalarTypesSearchSqlRow withColInteger(Optional<Integer> colInteger) {
@@ -234,7 +231,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colBigint()} */
   public AllScalarTypesSearchSqlRow withColBigint(Optional<Long> colBigint) {
@@ -266,7 +262,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colHugeint()} */
   public AllScalarTypesSearchSqlRow withColHugeint(Optional<BigInteger> colHugeint) {
@@ -298,7 +293,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colUtinyint()} */
   public AllScalarTypesSearchSqlRow withColUtinyint(Optional<Uint1> colUtinyint) {
@@ -330,7 +324,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colUsmallint()} */
   public AllScalarTypesSearchSqlRow withColUsmallint(Optional<Uint2> colUsmallint) {
@@ -362,7 +355,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colUinteger()} */
   public AllScalarTypesSearchSqlRow withColUinteger(Optional<Uint4> colUinteger) {
@@ -394,7 +386,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colUbigint()} */
   public AllScalarTypesSearchSqlRow withColUbigint(Optional<Uint8> colUbigint) {
@@ -426,7 +417,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colFloat()} */
   public AllScalarTypesSearchSqlRow withColFloat(Optional<Float> colFloat) {
@@ -458,7 +448,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colDouble()} */
   public AllScalarTypesSearchSqlRow withColDouble(Optional<Double> colDouble) {
@@ -490,7 +479,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colDecimal()} */
   public AllScalarTypesSearchSqlRow withColDecimal(Optional<BigDecimal> colDecimal) {
@@ -522,7 +510,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colBoolean()} */
   public AllScalarTypesSearchSqlRow withColBoolean(Optional<Boolean> colBoolean) {
@@ -554,7 +541,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colVarchar()} */
   public AllScalarTypesSearchSqlRow withColVarchar(Optional<String> colVarchar) {
@@ -586,7 +572,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colText()} */
   public AllScalarTypesSearchSqlRow withColText(Optional<String> colText) {
@@ -618,7 +603,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colBlob()} */
   public AllScalarTypesSearchSqlRow withColBlob(Optional<byte[]> colBlob) {
@@ -650,7 +634,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colDate()} */
   public AllScalarTypesSearchSqlRow withColDate(Optional<LocalDate> colDate) {
@@ -682,7 +665,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colTime()} */
   public AllScalarTypesSearchSqlRow withColTime(Optional<LocalTime> colTime) {
@@ -714,7 +696,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colTimestamp()} */
   public AllScalarTypesSearchSqlRow withColTimestamp(Optional<LocalDateTime> colTimestamp) {
@@ -746,7 +727,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colTimestamptz()} */
   public AllScalarTypesSearchSqlRow withColTimestamptz(Optional<OffsetDateTime> colTimestamptz) {
@@ -778,7 +758,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colInterval()} */
   public AllScalarTypesSearchSqlRow withColInterval(Optional<Duration> colInterval) {
@@ -810,7 +789,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colUuid()} */
   public AllScalarTypesSearchSqlRow withColUuid(Optional<UUID> colUuid) {
@@ -842,7 +820,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colJson()} */
   public AllScalarTypesSearchSqlRow withColJson(Optional<Json> colJson) {
@@ -874,7 +851,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colMood()} */
   public AllScalarTypesSearchSqlRow withColMood(Optional<Mood> colMood) {
@@ -906,7 +882,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   /** Points to {@link testdb.all_scalar_types.AllScalarTypesRow#colNotNull()} */
   public AllScalarTypesSearchSqlRow withColNotNull(String colNotNull) {
@@ -938,7 +913,6 @@ public record AllScalarTypesSearchSqlRow(
         colMood,
         colNotNull);
   }
-  ;
 
   public static RowParser<AllScalarTypesSearchSqlRow> _rowParser =
       RowParsers.of(
@@ -998,161 +972,134 @@ public record AllScalarTypesSearchSqlRow(
                 row.colMood(),
                 row.colNotNull()
               });
-  ;
 
   @Override
   public AllScalarTypesId _1() {
     return id;
   }
-  ;
 
   @Override
   public Optional<Uint8> _10() {
     return colUbigint;
   }
-  ;
 
   @Override
   public Optional<Float> _11() {
     return colFloat;
   }
-  ;
 
   @Override
   public Optional<Double> _12() {
     return colDouble;
   }
-  ;
 
   @Override
   public Optional<BigDecimal> _13() {
     return colDecimal;
   }
-  ;
 
   @Override
   public Optional<Boolean> _14() {
     return colBoolean;
   }
-  ;
 
   @Override
   public Optional<String> _15() {
     return colVarchar;
   }
-  ;
 
   @Override
   public Optional<String> _16() {
     return colText;
   }
-  ;
 
   @Override
   public Optional<byte[]> _17() {
     return colBlob;
   }
-  ;
 
   @Override
   public Optional<LocalDate> _18() {
     return colDate;
   }
-  ;
 
   @Override
   public Optional<LocalTime> _19() {
     return colTime;
   }
-  ;
 
   @Override
   public Optional<Byte> _2() {
     return colTinyint;
   }
-  ;
 
   @Override
   public Optional<LocalDateTime> _20() {
     return colTimestamp;
   }
-  ;
 
   @Override
   public Optional<OffsetDateTime> _21() {
     return colTimestamptz;
   }
-  ;
 
   @Override
   public Optional<Duration> _22() {
     return colInterval;
   }
-  ;
 
   @Override
   public Optional<UUID> _23() {
     return colUuid;
   }
-  ;
 
   @Override
   public Optional<Json> _24() {
     return colJson;
   }
-  ;
 
   @Override
   public Optional<Mood> _25() {
     return colMood;
   }
-  ;
 
   @Override
   public String _26() {
     return colNotNull;
   }
-  ;
 
   @Override
   public Optional<Short> _3() {
     return colSmallint;
   }
-  ;
 
   @Override
   public Optional<Integer> _4() {
     return colInteger;
   }
-  ;
 
   @Override
   public Optional<Long> _5() {
     return colBigint;
   }
-  ;
 
   @Override
   public Optional<BigInteger> _6() {
     return colHugeint;
   }
-  ;
 
   @Override
   public Optional<Uint1> _7() {
     return colUtinyint;
   }
-  ;
 
   @Override
   public Optional<Uint2> _8() {
     return colUsmallint;
   }
-  ;
 
   @Override
   public Optional<Uint4> _9() {
     return colUinteger;
   }
-  ;
 }

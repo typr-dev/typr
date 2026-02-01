@@ -37,7 +37,7 @@ public record PersonName(
   }
   ;
 
-  public static PgStruct<PersonName> pgStruct =
+  public static PgStruct<PersonName> dbStruct =
       PgStruct.<PersonName>builder("public.person_name")
           .optField("firstName", PgTypes.text, v -> v.firstName())
           .optField("middleName", PgTypes.text, v -> v.middleName())
@@ -51,10 +51,10 @@ public record PersonName(
                       Optional.ofNullable((String) arr[2]),
                       Optional.ofNullable((String) arr[3])));
 
-  public static PgType<PersonName> pgType = pgStruct.asType();
+  public static PgType<PersonName> dbType = dbStruct.asType();
 
-  public static PgType<PersonName[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), PersonName[]::new),
+  public static PgType<PersonName[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), PersonName[]::new),
           PersonName[]::new);
 }

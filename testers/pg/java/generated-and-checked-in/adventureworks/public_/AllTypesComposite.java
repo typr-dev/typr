@@ -543,7 +543,7 @@ public record AllTypesComposite(
   }
   ;
 
-  public static PgStruct<AllTypesComposite> pgStruct =
+  public static PgStruct<AllTypesComposite> dbStruct =
       PgStruct.<AllTypesComposite>builder("public.all_types_composite")
           .optField("colBoolean", PgTypes.bool, v -> v.colBoolean())
           .optField("colSmallint", PgTypes.int2, v -> v.colSmallint())
@@ -589,10 +589,10 @@ public record AllTypesComposite(
                       Optional.ofNullable((Jsonb) arr[18]),
                       Optional.ofNullable((Xml) arr[19])));
 
-  public static PgType<AllTypesComposite> pgType = pgStruct.asType();
+  public static PgType<AllTypesComposite> dbType = dbStruct.asType();
 
-  public static PgType<AllTypesComposite[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), AllTypesComposite[]::new),
+  public static PgType<AllTypesComposite[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), AllTypesComposite[]::new),
           AllTypesComposite[]::new);
 }

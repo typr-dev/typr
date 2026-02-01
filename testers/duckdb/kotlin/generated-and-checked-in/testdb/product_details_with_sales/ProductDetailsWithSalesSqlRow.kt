@@ -21,39 +21,39 @@ data class ProductDetailsWithSalesSqlRow(
   /** Points to [testdb.products.ProductsRow.productId] */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.products.ProductsRow.sku] */
-  val sku: String,
+  val sku: kotlin.String,
   /** Points to [testdb.products.ProductsRow.name] */
-  val name: String,
+  val name: kotlin.String,
   /** Points to [testdb.products.ProductsRow.price] */
   val price: BigDecimal,
   /** Points to [testdb.products.ProductsRow.metadata] */
   val metadata: Json?,
   /** Points to [testdb.order_items.OrderItemsRow.orderId] */
-  @field:JsonProperty("times_ordered") val timesOrdered: Long?,
+  @field:JsonProperty("times_ordered") val timesOrdered: kotlin.Long?,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
-  @field:JsonProperty("total_quantity_sold") val totalQuantitySold: Long?,
-  /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
-  @field:JsonProperty("total_revenue") val totalRevenue: Double?,
+  @field:JsonProperty("total_quantity_sold") val totalQuantitySold: kotlin.Long?,
+  /** Points to [testdb.order_items.OrderItemsRow.quantity] */
+  @field:JsonProperty("total_revenue") val totalRevenue: kotlin.Double?,
   /** Points to [testdb.order_items.OrderItemsRow.orderId] */
-  val popularity: String?
-) : Tuple9<ProductsId, String, String, BigDecimal, Json?, Long?, Long?, Double?, String?> {
+  val popularity: kotlin.String?
+) : Tuple9<ProductsId, kotlin.String, kotlin.String, BigDecimal, Json?, kotlin.Long?, kotlin.Long?, kotlin.Double?, kotlin.String?> {
   override fun _1(): ProductsId = productId
 
-  override fun _2(): String = sku
+  override fun _2(): kotlin.String = sku
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
   override fun _4(): BigDecimal = price
 
   override fun _5(): Json? = metadata
 
-  override fun _6(): Long? = timesOrdered
+  override fun _6(): kotlin.Long? = timesOrdered
 
-  override fun _7(): Long? = totalQuantitySold
+  override fun _7(): kotlin.Long? = totalQuantitySold
 
-  override fun _8(): Double? = totalRevenue
+  override fun _8(): kotlin.Double? = totalRevenue
 
-  override fun _9(): String? = popularity
+  override fun _9(): kotlin.String? = popularity
 
   companion object {
     val _rowParser: RowParser<ProductDetailsWithSalesSqlRow> = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric, DuckDbTypes.json.nullable(), KotlinDbTypes.DuckDbTypes.bigint.nullable(), KotlinDbTypes.DuckDbTypes.bigint.nullable(), KotlinDbTypes.DuckDbTypes.double_.nullable(), DuckDbTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> ProductDetailsWithSalesSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.price, row.metadata, row.timesOrdered, row.totalQuantitySold, row.totalRevenue, row.popularity) })

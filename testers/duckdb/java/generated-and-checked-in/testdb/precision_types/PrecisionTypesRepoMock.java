@@ -29,12 +29,10 @@ public record PrecisionTypesRepoMock(HashMap<PrecisionTypesId, PrecisionTypesRow
   public PrecisionTypesRepoMock() {
     this(new HashMap<PrecisionTypesId, PrecisionTypesRow>());
   }
-  ;
 
   public PrecisionTypesRepoMock withMap(HashMap<PrecisionTypesId, PrecisionTypesRow> map) {
     return new PrecisionTypesRepoMock(map);
   }
-  ;
 
   @Override
   public DeleteBuilder<PrecisionTypesFields, PrecisionTypesRow> delete() {
@@ -45,13 +43,11 @@ public record PrecisionTypesRepoMock(HashMap<PrecisionTypesId, PrecisionTypesRow
         row -> row.id(),
         id -> map.remove(id));
   }
-  ;
 
   @Override
   public Boolean deleteById(PrecisionTypesId id, Connection c) {
     return Optional.ofNullable(map.remove(id)).isPresent();
   }
-  ;
 
   @Override
   public Integer deleteByIds(PrecisionTypesId[] ids, Connection c) {
@@ -61,42 +57,35 @@ public record PrecisionTypesRepoMock(HashMap<PrecisionTypesId, PrecisionTypesRow
         count = count + 1;
         ;
       }
-      ;
     }
     ;
     return count;
   }
-  ;
 
   @Override
   public PrecisionTypesRow insert(PrecisionTypesRow unsaved, Connection c) {
     if (map.containsKey(unsaved.id())) {
       throw new RuntimeException("id " + unsaved.id() + " already exists");
     }
-    ;
     map.put(unsaved.id(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public SelectBuilder<PrecisionTypesFields, PrecisionTypesRow> select() {
     return new SelectBuilderMock<>(
         PrecisionTypesFields.structure, () -> new ArrayList<>(map.values()), SelectParams.empty());
   }
-  ;
 
   @Override
   public List<PrecisionTypesRow> selectAll(Connection c) {
     return new ArrayList<>(map.values());
   }
-  ;
 
   @Override
   public Optional<PrecisionTypesRow> selectById(PrecisionTypesId id, Connection c) {
     return Optional.ofNullable(map.get(id));
   }
-  ;
 
   @Override
   public List<PrecisionTypesRow> selectByIds(PrecisionTypesId[] ids, Connection c) {
@@ -106,12 +95,10 @@ public record PrecisionTypesRepoMock(HashMap<PrecisionTypesId, PrecisionTypesRow
       if (opt.isPresent()) {
         result.add(opt.get());
       }
-      ;
     }
     ;
     return result;
   }
-  ;
 
   @Override
   public Map<PrecisionTypesId, PrecisionTypesRow> selectByIdsTracked(
@@ -119,7 +106,6 @@ public record PrecisionTypesRepoMock(HashMap<PrecisionTypesId, PrecisionTypesRow
     return selectByIds(ids, c).stream()
         .collect(Collectors.toMap((PrecisionTypesRow row) -> row.id(), Function.identity()));
   }
-  ;
 
   @Override
   public UpdateBuilder<PrecisionTypesFields, PrecisionTypesRow> update() {
@@ -129,7 +115,6 @@ public record PrecisionTypesRepoMock(HashMap<PrecisionTypesId, PrecisionTypesRow
         UpdateParams.empty(),
         row -> row);
   }
-  ;
 
   @Override
   public Boolean update(PrecisionTypesRow row, Connection c) {
@@ -139,17 +124,14 @@ public record PrecisionTypesRepoMock(HashMap<PrecisionTypesId, PrecisionTypesRow
       map.put(row.id(), row);
       ;
     }
-    ;
     return shouldUpdate;
   }
-  ;
 
   @Override
   public PrecisionTypesRow upsert(PrecisionTypesRow unsaved, Connection c) {
     map.put(unsaved.id(), unsaved);
     return unsaved;
   }
-  ;
 
   @Override
   public List<PrecisionTypesRow> upsertBatch(Iterator<PrecisionTypesRow> unsaved, Connection c) {
@@ -162,5 +144,4 @@ public record PrecisionTypesRepoMock(HashMap<PrecisionTypesId, PrecisionTypesRow
     ;
     return result;
   }
-  ;
 }

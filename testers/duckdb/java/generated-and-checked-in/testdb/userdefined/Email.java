@@ -16,13 +16,11 @@ public record Email(@JsonValue String value) {
   public Email withValue(String value) {
     return new Email(value);
   }
-  ;
 
   @Override
   public java.lang.String toString() {
     return value.toString();
   }
-  ;
 
   public static Bijection<Email, String> bijection = Bijection.of(Email::value, Email::new);
 

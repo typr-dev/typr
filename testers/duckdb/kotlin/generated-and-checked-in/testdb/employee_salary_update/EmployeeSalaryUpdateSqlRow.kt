@@ -20,27 +20,27 @@ data class EmployeeSalaryUpdateSqlRow(
   /** Points to [testdb.employees.EmployeesRow.empNumber] */
   @field:JsonProperty("emp_number") val empNumber: Int,
   /** Points to [testdb.employees.EmployeesRow.empSuffix] */
-  @field:JsonProperty("emp_suffix") val empSuffix: String,
+  @field:JsonProperty("emp_suffix") val empSuffix: kotlin.String,
   /** Points to [testdb.employees.EmployeesRow.deptCode] */
-  @field:JsonProperty("dept_code") val deptCode: String,
+  @field:JsonProperty("dept_code") val deptCode: kotlin.String,
   /** Points to [testdb.employees.EmployeesRow.deptRegion] */
-  @field:JsonProperty("dept_region") val deptRegion: String,
+  @field:JsonProperty("dept_region") val deptRegion: kotlin.String,
   /** Points to [testdb.employees.EmployeesRow.empName] */
-  @field:JsonProperty("emp_name") val empName: String,
+  @field:JsonProperty("emp_name") val empName: kotlin.String,
   /** Points to [testdb.employees.EmployeesRow.salary] */
   val salary: BigDecimal?,
   /** Points to [testdb.employees.EmployeesRow.hireDate] */
   @field:JsonProperty("hire_date") val hireDate: LocalDate
-) : Tuple7<Int, String, String, String, String, BigDecimal?, LocalDate> {
+) : Tuple7<Int, kotlin.String, kotlin.String, kotlin.String, kotlin.String, BigDecimal?, LocalDate> {
   override fun _1(): Int = empNumber
 
-  override fun _2(): String = empSuffix
+  override fun _2(): kotlin.String = empSuffix
 
-  override fun _3(): String = deptCode
+  override fun _3(): kotlin.String = deptCode
 
-  override fun _4(): String = deptRegion
+  override fun _4(): kotlin.String = deptRegion
 
-  override fun _5(): String = empName
+  override fun _5(): kotlin.String = empName
 
   override fun _6(): BigDecimal? = salary
 

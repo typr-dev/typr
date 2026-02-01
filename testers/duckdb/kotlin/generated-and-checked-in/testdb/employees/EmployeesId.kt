@@ -15,11 +15,11 @@ import dev.typr.foundations.kotlin.RowParsers
 /** Type for the composite primary key of table `employees` */
 data class EmployeesId(
   @field:JsonProperty("emp_number") val empNumber: Int,
-  @field:JsonProperty("emp_suffix") val empSuffix: String
-) : Tuple2<Int, String> {
+  @field:JsonProperty("emp_suffix") val empSuffix: kotlin.String
+) : Tuple2<Int, kotlin.String> {
   override fun _1(): Int = empNumber
 
-  override fun _2(): String = empSuffix
+  override fun _2(): kotlin.String = empSuffix
 
   companion object {
     val _rowParser: RowParser<EmployeesId> = RowParsers.of(KotlinDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, { t0, t1 -> EmployeesId(t0, t1) }, { row -> arrayOf<Any?>(row.empNumber, row.empSuffix) })

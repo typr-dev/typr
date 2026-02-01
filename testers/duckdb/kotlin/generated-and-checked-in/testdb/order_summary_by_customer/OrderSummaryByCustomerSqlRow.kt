@@ -23,13 +23,13 @@ data class OrderSummaryByCustomerSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  @field:JsonProperty("customer_name") val customerName: String,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String,
   /** Points to [testdb.customers.CustomersRow.email] */
   val email: /* user-picked */ Email?,
   /** Points to [testdb.customers.CustomersRow.priority] */
   val priority: Priority?,
   /** Points to [testdb.orders.OrdersRow.orderId] */
-  @field:JsonProperty("order_count") val orderCount: Long?,
+  @field:JsonProperty("order_count") val orderCount: kotlin.Long?,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
   @field:JsonProperty("total_spent") val totalSpent: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.orderDate] */
@@ -37,17 +37,17 @@ data class OrderSummaryByCustomerSqlRow(
   /** Points to [testdb.orders.OrdersRow.orderDate] */
   @field:JsonProperty("first_order_date") val firstOrderDate: LocalDate?,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
-  @field:JsonProperty("avg_order_amount") val avgOrderAmount: Double?
-) : Tuple9<CustomersId, String, /* user-picked */ Email?, Priority?, Long?, BigDecimal?, LocalDate?, LocalDate?, Double?> {
+  @field:JsonProperty("avg_order_amount") val avgOrderAmount: kotlin.Double?
+) : Tuple9<CustomersId, kotlin.String, /* user-picked */ Email?, Priority?, kotlin.Long?, BigDecimal?, LocalDate?, LocalDate?, kotlin.Double?> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = customerName
+  override fun _2(): kotlin.String = customerName
 
   override fun _3(): /* user-picked */ Email? = email
 
   override fun _4(): Priority? = priority
 
-  override fun _5(): Long? = orderCount
+  override fun _5(): kotlin.Long? = orderCount
 
   override fun _6(): BigDecimal? = totalSpent
 
@@ -55,7 +55,7 @@ data class OrderSummaryByCustomerSqlRow(
 
   override fun _8(): LocalDate? = firstOrderDate
 
-  override fun _9(): Double? = avgOrderAmount
+  override fun _9(): kotlin.Double? = avgOrderAmount
 
   companion object {
     val _rowParser: RowParser<OrderSummaryByCustomerSqlRow> = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable(), Priority.duckDbType.nullable(), KotlinDbTypes.DuckDbTypes.bigint.nullable(), DuckDbTypes.numeric.nullable(), DuckDbTypes.date.nullable(), DuckDbTypes.date.nullable(), KotlinDbTypes.DuckDbTypes.double_.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> OrderSummaryByCustomerSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount) })

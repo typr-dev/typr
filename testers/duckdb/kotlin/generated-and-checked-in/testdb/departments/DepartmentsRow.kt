@@ -17,16 +17,16 @@ import java.math.BigDecimal
   * Composite primary key: dept_code, dept_region
   */
 data class DepartmentsRow(
-  @field:JsonProperty("dept_code") val deptCode: String,
-  @field:JsonProperty("dept_region") val deptRegion: String,
-  @field:JsonProperty("dept_name") val deptName: String,
+  @field:JsonProperty("dept_code") val deptCode: kotlin.String,
+  @field:JsonProperty("dept_region") val deptRegion: kotlin.String,
+  @field:JsonProperty("dept_name") val deptName: kotlin.String,
   val budget: BigDecimal?
-) : Tuple4<String, String, String, BigDecimal?> {
-  override fun _1(): String = deptCode
+) : Tuple4<kotlin.String, kotlin.String, kotlin.String, BigDecimal?> {
+  override fun _1(): kotlin.String = deptCode
 
-  override fun _2(): String = deptRegion
+  override fun _2(): kotlin.String = deptRegion
 
-  override fun _3(): String = deptName
+  override fun _3(): kotlin.String = deptName
 
   override fun _4(): BigDecimal? = budget
 
@@ -39,7 +39,7 @@ data class DepartmentsRow(
 
     fun apply(
       compositeId: DepartmentsId,
-      deptName: String,
+      deptName: kotlin.String,
       budget: BigDecimal?
     ): DepartmentsRow = DepartmentsRow(compositeId.deptCode, compositeId.deptRegion, deptName, budget)
   }

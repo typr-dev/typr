@@ -28,7 +28,7 @@ data class DepartmentsRepoMock(val map: MutableMap<DepartmentsId, DepartmentsRow
   override fun deleteById(
     compositeId: DepartmentsId,
     c: Connection
-  ): Boolean = map.remove(compositeId) != null
+  ): kotlin.Boolean = map.remove(compositeId) != null
 
   override fun deleteByIds(
     compositeIds: Array<DepartmentsId>,
@@ -87,7 +87,7 @@ data class DepartmentsRepoMock(val map: MutableMap<DepartmentsId, DepartmentsRow
   override fun update(
     row: DepartmentsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.compositeId()]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.compositeId()] = row

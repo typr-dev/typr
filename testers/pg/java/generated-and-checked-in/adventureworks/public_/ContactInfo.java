@@ -29,11 +29,11 @@ public record ContactInfo(
   }
   ;
 
-  public static PgStruct<ContactInfo> pgStruct =
+  public static PgStruct<ContactInfo> dbStruct =
       PgStruct.<ContactInfo>builder("public.contact_info")
           .optField("email", PgTypes.text, v -> v.email())
           .optField("phone", PgTypes.text, v -> v.phone())
-          .optField("address", Address.pgType, v -> v.address())
+          .optField("address", Address.dbType, v -> v.address())
           .build(
               arr ->
                   new ContactInfo(
@@ -41,10 +41,10 @@ public record ContactInfo(
                       Optional.ofNullable((String) arr[1]),
                       Optional.ofNullable((Address) arr[2])));
 
-  public static PgType<ContactInfo> pgType = pgStruct.asType();
+  public static PgType<ContactInfo> dbType = dbStruct.asType();
 
-  public static PgType<ContactInfo[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), ContactInfo[]::new),
+  public static PgType<ContactInfo[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), ContactInfo[]::new),
           ContactInfo[]::new);
 }

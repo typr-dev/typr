@@ -19,9 +19,9 @@ case class TablefuncCrosstab2(
 )
 
 object TablefuncCrosstab2 {
-  given pgStruct: PgStruct[TablefuncCrosstab2] = PgStruct.builder[TablefuncCrosstab2]("public.tablefunc_crosstab_2").optField("rowName", PgTypes.text, (v: TablefuncCrosstab2) => v.rowName.asJava).optField("category1", PgTypes.text, (v: TablefuncCrosstab2) => v.category1.asJava).optField("category2", PgTypes.text, (v: TablefuncCrosstab2) => v.category2.asJava).build(arr => TablefuncCrosstab2(rowName = Option(arr(0).asInstanceOf[String]), category1 = Option(arr(1).asInstanceOf[String]), category2 = Option(arr(2).asInstanceOf[String])))
+  given dbStruct: PgStruct[TablefuncCrosstab2] = PgStruct.builder[TablefuncCrosstab2]("public.tablefunc_crosstab_2").optField("rowName", PgTypes.text, (v: TablefuncCrosstab2) => v.rowName.asJava).optField("category1", PgTypes.text, (v: TablefuncCrosstab2) => v.category1.asJava).optField("category2", PgTypes.text, (v: TablefuncCrosstab2) => v.category2.asJava).build(arr => TablefuncCrosstab2(rowName = Option(arr(0).asInstanceOf[String]), category1 = Option(arr(1).asInstanceOf[String]), category2 = Option(arr(2).asInstanceOf[String])))
 
-  given pgType: PgType[TablefuncCrosstab2] = pgStruct.asType()
+  given dbType: PgType[TablefuncCrosstab2] = dbStruct.asType()
 
-  given pgTypeArray: PgType[Array[TablefuncCrosstab2]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TablefuncCrosstab2](n)), n => new Array[TablefuncCrosstab2](n))
+  given dbTypeArray: PgType[Array[TablefuncCrosstab2]] = dbType.array(PgRead.readCompositeArray(dbType.pgCompositeText(), n => new Array[TablefuncCrosstab2](n)), n => new Array[TablefuncCrosstab2](n))
 }

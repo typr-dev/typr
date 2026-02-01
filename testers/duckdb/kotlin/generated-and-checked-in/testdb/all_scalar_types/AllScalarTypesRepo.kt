@@ -19,7 +19,7 @@ interface AllScalarTypesRepo {
   abstract fun deleteById(
     id: AllScalarTypesId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
     ids: Array<AllScalarTypesId>,
@@ -55,7 +55,7 @@ interface AllScalarTypesRepo {
   abstract fun update(
     row: AllScalarTypesRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: AllScalarTypesRow,

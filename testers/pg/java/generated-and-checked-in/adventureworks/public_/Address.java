@@ -37,7 +37,7 @@ public record Address(
   }
   ;
 
-  public static PgStruct<Address> pgStruct =
+  public static PgStruct<Address> dbStruct =
       PgStruct.<Address>builder("public.address")
           .optField("street", PgTypes.text, v -> v.street())
           .optField("city", PgTypes.text, v -> v.city())
@@ -51,9 +51,9 @@ public record Address(
                       Optional.ofNullable((String) arr[2]),
                       Optional.ofNullable((String) arr[3])));
 
-  public static PgType<Address> pgType = pgStruct.asType();
+  public static PgType<Address> dbType = dbStruct.asType();
 
-  public static PgType<Address[]> pgTypeArray =
-      pgType.array(
-          PgRead.readCompositeArray(pgType.pgCompositeText(), Address[]::new), Address[]::new);
+  public static PgType<Address[]> dbTypeArray =
+      dbType.array(
+          PgRead.readCompositeArray(dbType.pgCompositeText(), Address[]::new), Address[]::new);
 }

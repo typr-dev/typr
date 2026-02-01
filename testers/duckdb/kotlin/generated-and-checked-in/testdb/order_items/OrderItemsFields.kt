@@ -33,9 +33,9 @@ data class OrderItemsFields(val _path: List<Path>) : TupleExpr4<Int, Int, Int, B
 
   override fun columns(): List<FieldLike<*, OrderItemsRow>> = listOf(this.orderId().underlying, this.productId().underlying, this.quantity().underlying, this.unitPrice().underlying)
 
-  fun compositeIdIn(compositeIds: List<OrderItemsId>): SqlExpr<Boolean> = TupleExpr.of(orderId(), productId()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<OrderItemsId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(orderId(), productId()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: OrderItemsId): SqlExpr<Boolean> = SqlExpr.all(orderId().isEqual(compositeId.orderId), productId().isEqual(compositeId.productId))
+  fun compositeIdIs(compositeId: OrderItemsId): SqlExpr<kotlin.Boolean> = SqlExpr.all(orderId().isEqual(compositeId.orderId), productId().isEqual(compositeId.productId))
 
   fun orderId(): IdField<Int, OrderItemsRow> = IdField<Int, OrderItemsRow>(_path, "order_id", OrderItemsRow::orderId, null, "INTEGER", { row, value -> row.copy(orderId = value) }, KotlinDbTypes.DuckDbTypes.integer)
 

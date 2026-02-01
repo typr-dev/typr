@@ -29,7 +29,7 @@ class PrecisionTypesRepoImpl() : PrecisionTypesRepo {
   override fun deleteById(
     id: PrecisionTypesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"precision_types\" where \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.interpolate(Fragment.lit("delete from \"precision_types\" where \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
 
   override fun deleteByIds(
     ids: Array<PrecisionTypesId>,
@@ -72,7 +72,7 @@ class PrecisionTypesRepoImpl() : PrecisionTypesRepo {
   override fun update(
     row: PrecisionTypesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: PrecisionTypesId = row.id
     return Fragment.interpolate(Fragment.lit("update \"precision_types\"\nset \"string10\" = "), Fragment.encode(DuckDbTypes.varchar, row.string10), Fragment.lit(",\n\"string20\" = "), Fragment.encode(DuckDbTypes.varchar, row.string20), Fragment.lit(",\n\"string50\" = "), Fragment.encode(DuckDbTypes.varchar, row.string50), Fragment.lit(",\n\"string100\" = "), Fragment.encode(DuckDbTypes.varchar, row.string100), Fragment.lit(",\n\"string255\" = "), Fragment.encode(DuckDbTypes.varchar, row.string255), Fragment.lit(",\n\"decimal5_2\" = "), Fragment.encode(Decimal5_2.duckDbType, row.decimal52), Fragment.lit(",\n\"decimal10_2\" = "), Fragment.encode(Decimal10_2.duckDbType, row.decimal102), Fragment.lit(",\n\"decimal18_4\" = "), Fragment.encode(Decimal18_4.duckDbType, row.decimal184), Fragment.lit(",\n\"decimal5_0\" = "), Fragment.encode(Int5.duckDbType, row.decimal50), Fragment.lit(",\n\"decimal10_0\" = "), Fragment.encode(Int10.duckDbType, row.decimal100), Fragment.lit(",\n\"decimal18_0\" = "), Fragment.encode(Int18.duckDbType, row.decimal180), Fragment.lit("\nwhere \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
   }
