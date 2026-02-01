@@ -28,6 +28,14 @@ project(":testers:sqlserver:kotlin").projectDir = file("testers/sqlserver/kotlin
 include("testers:db2:kotlin")
 project(":testers:db2:kotlin").projectDir = file("testers/db2/kotlin")
 
+// Avro Kotlin testers
+include("testers:avro:kotlin")
+project(":testers:avro:kotlin").projectDir = file("testers/avro/kotlin")
+include("testers:avro:kotlin-json")
+project(":testers:avro:kotlin-json").projectDir = file("testers/avro/kotlin-json")
+include("testers:avro:kotlin-quarkus-mutiny")
+project(":testers:avro:kotlin-quarkus-mutiny").projectDir = file("testers/avro/kotlin-quarkus-mutiny")
+
 // OpenAPI Kotlin testers
 include("testers:openapi:kotlin:jaxrs")
 project(":testers:openapi:kotlin:jaxrs").projectDir = file("testers/openapi/kotlin/jaxrs")

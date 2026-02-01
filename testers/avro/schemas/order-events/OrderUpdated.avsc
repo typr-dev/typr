@@ -1,0 +1,34 @@
+{
+  "type": "record",
+  "name": "OrderUpdated",
+  "namespace": "com.example.events",
+  "doc": "Event emitted when an order status changes",
+  "fields": [
+    {
+      "name": "orderId",
+      "type": {"type": "string", "logicalType": "uuid"},
+      "doc": "Unique identifier for the order"
+    },
+    {
+      "name": "previousStatus",
+      "type": "com.example.events.OrderStatus",
+      "doc": "Previous status of the order"
+    },
+    {
+      "name": "newStatus",
+      "type": "com.example.events.OrderStatus",
+      "doc": "New status of the order"
+    },
+    {
+      "name": "updatedAt",
+      "type": {"type": "long", "logicalType": "timestamp-millis"},
+      "doc": "When the status was updated"
+    },
+    {
+      "name": "shippingAddress",
+      "type": ["null", "com.example.events.Address"],
+      "default": null,
+      "doc": "Shipping address if status is SHIPPED"
+    }
+  ]
+}

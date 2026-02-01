@@ -155,6 +155,19 @@ object TypeSupportKotlin extends TypeSupport {
 
     def valuesToList(map: jvm.Code): jvm.Code =
       code"$map.values.toList()"
+
+    def createWithEntries(entries: List[(jvm.Code, jvm.Code)]): jvm.Code = {
+      if (entries.isEmpty) {
+        code"emptyMap()"
+      } else {
+        val mapEntries = entries.map { case (k, v) => code"$k to $v" }
+        code"mapOf(${mapEntries.mkCode(", ")})"
+      }
+    }
+
+    // Kotlin map access already returns nullable type
+    def getNullable(map: jvm.Code, key: jvm.Code): jvm.Code =
+      code"$map[$key]"
   }
 
   override object IteratorOps extends IteratorSupport {

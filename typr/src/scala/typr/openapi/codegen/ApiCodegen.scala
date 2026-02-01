@@ -2,6 +2,7 @@ package typr.openapi.codegen
 
 import typr.{jvm, Lang, Scope}
 import typr.jvm.Code.TypeOps
+import typr.effects.EffectTypeOps
 import typr.internal.codegen._
 import typr.openapi._
 

@@ -1,0 +1,23 @@
+{
+  "type": "record",
+  "name": "DynamicValue",
+  "namespace": "com.example.events",
+  "doc": "A record with complex union types for testing union type generation",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "doc": "Unique identifier"
+    },
+    {
+      "name": "value",
+      "type": ["string", "int", "boolean"],
+      "doc": "A value that can be string, int, or boolean"
+    },
+    {
+      "name": "optionalValue",
+      "type": ["null", "string", "long"],
+      "doc": "An optional value that can be string or long"
+    }
+  ]
+}

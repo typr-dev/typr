@@ -2276,4 +2276,91 @@ object FilePreciseType {
       isDefault = false
     )
   }
+
+  // ========== Avro-specific precise type generation (no database instances) ==========
+
+  /** Generate DecimalN for Avro (without database instances) */
+  def forDecimalNAvro(
+      typoType: jvm.Type.Qualified,
+      precision: Int,
+      scale: Int,
+      lang: Lang
+  ): jvm.File = {
+    val value = jvm.Ident("value")
+    val underlyingType = lang.BigDecimal
+    val valueParam = jvm.Param(value, underlyingType)
+
+    val staticMethods = List(
+      Some(ofMethodDecimal(typoType, precision, scale, lang)),
+      Some(unsafeForceMethodDecimal(typoType, precision, scale, lang)),
+      ofMethodDecimalFromInt(typoType, precision, scale, lang),
+      ofMethodDecimalFromLong(typoType, precision, scale, lang),
+      ofMethodDecimalFromDouble(typoType, precision, scale, lang)
+    ).flatten
+
+    val instanceMethods = List(
+      decimalValueMethod(scale, lang),
+      precisionMethod(precision, lang),
+      scaleMethod(scale, lang),
+      semanticEqualsMethodDecimal(lang),
+      semanticHashCodeMethodDecimal(lang),
+      equalsMethodDecimal(lang),
+      hashCodeMethodDecimal(lang)
+    )
+
+    val cls = jvm.Adt.Record(
+      annotations = Nil,
+      constructorAnnotations = Nil,
+      isWrapper = true,
+      privateConstructor = true,
+      comments = jvm.Comments.Empty,
+      name = typoType,
+      tparams = Nil,
+      params = List(valueParam),
+      implicitParams = Nil,
+      `extends` = None,
+      implements = List(FoundationsTypes.precise.DecimalN),
+      members = instanceMethods,
+      staticMembers = staticMethods
+    )
+
+    jvm.File(typoType, cls, secondaryTypes = Nil, scope = Scope.Main)
+  }
+
+  /** Generate BinaryN for Avro (without database instances) */
+  def forBinaryNAvro(
+      typoType: jvm.Type.Qualified,
+      maxLength: Int,
+      lang: Lang
+  ): jvm.File = {
+    val value = jvm.Ident("value")
+    val valueParam = jvm.Param(value, lang.ByteArrayType)
+
+    val staticMethods = List(
+      ofMethodBinary(typoType, maxLength, lang),
+      unsafeForceMethodBinary(typoType, maxLength, lang)
+    )
+
+    val instanceMethods = List(
+      maxLengthMethod(maxLength, lang)
+    )
+
+    val cls = jvm.Adt.Record(
+      annotations = Nil,
+      constructorAnnotations = Nil,
+      isWrapper = true,
+      privateConstructor = true,
+      comments = jvm.Comments.Empty,
+      name = typoType,
+      tparams = Nil,
+      params = List(valueParam),
+      implicitParams = Nil,
+      `extends` = None,
+      implements = List(FoundationsTypes.precise.BinaryN),
+      members = instanceMethods,
+      staticMembers = staticMethods
+    )
+
+    jvm.File(typoType, cls, secondaryTypes = Nil, scope = Scope.Main)
+  }
 }
