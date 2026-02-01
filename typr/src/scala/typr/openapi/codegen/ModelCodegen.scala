@@ -134,6 +134,7 @@ class ModelCodegen(
       comments = comments,
       tpe = tpe,
       values = values,
+      members = Nil,
       staticMembers = staticMembers
     )
 

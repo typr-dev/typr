@@ -1,0 +1,78 @@
+syntax = "proto3";
+package testgrpc;
+
+import "typr/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_package = "com.example.grpc.proto";
+option java_multiple_files = true;
+
+// Simple message with all scalar types
+message ScalarTypes {
+  double double_val = 1;
+  float float_val = 2;
+  int32 int32_val = 3;
+  int64 int64_val = 4;
+  uint32 uint32_val = 5;
+  uint64 uint64_val = 6;
+  sint32 sint32_val = 7;
+  sint64 sint64_val = 8;
+  fixed32 fixed32_val = 9;
+  fixed64 fixed64_val = 10;
+  sfixed32 sfixed32_val = 11;
+  sfixed64 sfixed64_val = 12;
+  bool bool_val = 13;
+  string string_val = 14;
+  bytes bytes_val = 15;
+}
+
+// Message with wrapper types
+message Customer {
+  string customer_id = 1 [(typr.wrapper) = "CustomerId"];
+  string name = 2;
+  string email = 3;
+}
+
+message Order {
+  string order_id = 1 [(typr.wrapper) = "OrderId"];
+  string customer_id = 2 [(typr.wrapper) = "CustomerId"];
+  int64 amount_cents = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+// Message with repeated and map fields
+message Inventory {
+  string warehouse_id = 1;
+  repeated string product_ids = 2;
+  map<string, int32> stock_counts = 3;
+  repeated Order recent_orders = 4;
+}
+
+// Nested message
+message Outer {
+  string name = 1;
+  Inner inner = 2;
+
+  message Inner {
+    int32 value = 1;
+    string description = 2;
+  }
+}
+
+// Message with optional fields (proto3 explicit optional)
+message OptionalFields {
+  optional string name = 1;
+  optional int32 age = 2;
+  optional Customer customer = 3;
+}
+
+// Well-known types
+message WellKnownTypesMessage {
+  google.protobuf.Timestamp created_at = 1;
+  google.protobuf.Duration ttl = 2;
+  google.protobuf.StringValue nullable_string = 3;
+  google.protobuf.Int32Value nullable_int = 4;
+  google.protobuf.BoolValue nullable_bool = 5;
+}

@@ -170,6 +170,8 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
   override def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code =
     code"($expr as $targetType)"
 
+  override def nullableRefType(tpe: jvm.Type): jvm.Type = jvm.Type.KotlinNullable(tpe)
+
   val Quote = '"'.toString
   val TripleQuote = Quote * 3
 
@@ -254,6 +256,7 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
       case jvm.MethodRef(tpe, name)                                  => code"$tpe::$name"
       case jvm.New(target, args)                                     => code"$target(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
       case jvm.LocalVar(name, tpe, value)                            => tpe.fold(code"val $name = $value")(t => code"val $name: $t = $value")
+      case jvm.MutableVar(name, tpe, value)                          => tpe.fold(code"var $name = $value")(t => code"var $name: $t = $value")
       case jvm.InferredTargs(target)                                 => target
       case jvm.GenericMethodCall(target, methodName, typeArgs, args) =>
         // Kotlin: target.method<T1, T2>(args)
@@ -357,19 +360,19 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
         val boundIdent = jvm.Ident("__r")
         val nullCaseCode = nullCase.map(body => code"null -> $body").toList
         val typeCases = cases.map { case jvm.TypeSwitch.Case(pat, ident, body) =>
-          // Convert type to wildcard version for pattern matching and cast
+          // Convert type to wildcard version for pattern matching
           // Ok<T> -> Ok<*>, Response2004XX5XX<T> -> Response2004XX5XX<*>
           val wildcardPat = toWildcardType(pat)
-          // If body starts with {, unwrap it and merge with cast assignment
+          // Kotlin smart-casts __r to the matched type after `is` check, no explicit `as` needed
           val bodyStr = body.render(this).asString.trim
           if (bodyStr.startsWith("{") && bodyStr.endsWith("}")) {
             val innerBody = bodyStr.drop(1).dropRight(1).trim
             code"""|is $wildcardPat -> {
-                   |  val $ident = $boundIdent as $wildcardPat
+                   |  val $ident = $boundIdent
                    |  $innerBody
                    |}""".stripMargin
           } else {
-            code"is $wildcardPat -> { val $ident = $boundIdent as $wildcardPat; $body }"
+            code"is $wildcardPat -> { val $ident = $boundIdent; $body }"
           }
         }
         val defaultCaseCode = defaultCase.map(body => code"else -> $body").toList
@@ -439,6 +442,8 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
       case enm: jvm.Enum =>
         code"""|enum class ${enm.tpe.name}(val value: ${TypesKotlin.String}) {
                |    ${enm.values.map { case (name, expr) => code"$name($expr)" }.mkCode(",\n")};
+               |
+               |    ${enm.members.map(t => code"$t").mkCode("\n")}
                |
                |    companion object {
                |        val Names: ${TypesKotlin.String} = entries.joinToString(", ") { it.value }

@@ -1,0 +1,46 @@
+syntax = "proto3";
+package testgrpc;
+
+import "enums.proto";
+
+option java_package = "com.example.grpc.proto";
+option java_multiple_files = true;
+
+// Message with oneof
+message PaymentMethod {
+  string id = 1;
+
+  oneof method {
+    CreditCard credit_card = 2;
+    BankTransfer bank_transfer = 3;
+    Wallet wallet = 4;
+  }
+}
+
+message CreditCard {
+  string card_number = 1;
+  string expiry_date = 2;
+  string cvv = 3;
+}
+
+message BankTransfer {
+  string account_number = 1;
+  string routing_number = 2;
+}
+
+message Wallet {
+  string wallet_id = 1;
+  string provider = 2;
+}
+
+// Message with oneof and enum
+message Notification {
+  string message = 1;
+  Priority priority = 2;
+
+  oneof target {
+    string email = 3;
+    string phone = 4;
+    string webhook_url = 5;
+  }
+}

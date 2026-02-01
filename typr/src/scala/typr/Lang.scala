@@ -150,6 +150,9 @@ trait Lang {
   /** Cast from Object to a specific type. Java: (Type) expr, Scala: expr.asInstanceOf[Type] */
   def castFromObject(targetType: jvm.Type, expr: jvm.Code): jvm.Code
 
+  /** Make a reference type nullable. Java/Scala: noop (reference types are nullable). Kotlin: T? */
+  def nullableRefType(tpe: jvm.Type): jvm.Type
+
   /** Convenience method for property access on generated data classes */
   final def prop(target: jvm.Code, field: jvm.Ident): jvm.Code = propertyGetterAccess(target, field)
   final def prop(target: jvm.Code, field: String): jvm.Code = propertyGetterAccess(target, jvm.Ident(field))
@@ -179,6 +182,13 @@ trait ListSupport {
 
   /** Iterate over collection with a consumer lambda (for side effects) */
   def forEach(collection: jvm.Code, lambda: jvm.Code): jvm.Code
+
+  /** For-each loop over collection elements with statement body (not a lambda).
+    *   - Java: `for (Type elem : collection) { body }`
+    *   - Scala: `for (elem <- collection) { body }`
+    *   - Kotlin: `for (elem in collection) { body }`
+    */
+  def forEachStmt(collection: jvm.Code, elem: jvm.Ident, elemType: jvm.Type)(body: jvm.Code => List[jvm.Code]): jvm.Code
 
   /** Map over array elements and collect to list. Scala: array.map(mapper).toList, Java: Arrays.stream(array).map(mapper).toList() */
   def arrayMapToList(array: jvm.Code, mapper: jvm.Code): jvm.Code
@@ -323,4 +333,10 @@ trait MapSupport {
     *   - Kotlin: map[key]
     */
   def getNullable(map: jvm.Code, key: jvm.Code): jvm.Code
+
+  /** Iterate over map entries with key and value references.
+    *   - Java/Kotlin: for (Map.Entry<K,V> entry : map.entrySet()) { body(entry.getKey(), entry.getValue()) }
+    *   - Scala: for ((key, value) <- map) { body }
+    */
+  def forEachEntry(map: jvm.Code, keyType: jvm.Type, valueType: jvm.Type)(body: (jvm.Code, jvm.Code) => List[jvm.Code]): jvm.Code
 }

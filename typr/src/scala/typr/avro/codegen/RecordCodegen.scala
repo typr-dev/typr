@@ -223,6 +223,7 @@ class RecordCodegen(
       comments = comments,
       tpe = tpe,
       values = values,
+      members = Nil,
       staticMembers = Nil
     )
 

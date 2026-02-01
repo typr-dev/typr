@@ -1,0 +1,81 @@
+syntax = "proto3";
+package testgrpc;
+
+import "messages.proto";
+import "enums.proto";
+import "oneofs.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_package = "com.example.grpc.proto";
+option java_multiple_files = true;
+
+// Request/response messages for services
+message GetCustomerRequest {
+  string customer_id = 1;
+}
+
+message GetCustomerResponse {
+  Customer customer = 1;
+}
+
+message CreateOrderRequest {
+  Order order = 1;
+}
+
+message CreateOrderResponse {
+  string order_id = 1;
+  OrderStatus status = 2;
+}
+
+message ListOrdersRequest {
+  string customer_id = 1;
+  int32 page_size = 2;
+}
+
+message OrderUpdate {
+  string order_id = 1;
+  OrderStatus status = 2;
+  google.protobuf.Timestamp updated_at = 3;
+}
+
+message ChatMessage {
+  string sender = 1;
+  string content = 2;
+  google.protobuf.Timestamp sent_at = 3;
+}
+
+message OrderSummary {
+  int32 total_orders = 1;
+  int64 total_amount_cents = 2;
+}
+
+// Service with all 4 RPC patterns
+service OrderService {
+  // Unary
+  rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
+
+  // Unary
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+
+  // Server streaming
+  rpc ListOrders(ListOrdersRequest) returns (stream OrderUpdate);
+
+  // Client streaming
+  rpc SubmitOrders(stream CreateOrderRequest) returns (OrderSummary);
+
+  // Bidirectional streaming
+  rpc Chat(stream ChatMessage) returns (stream ChatMessage);
+}
+
+// Echo service for roundtrip testing of all message types
+service EchoService {
+  rpc EchoScalarTypes(ScalarTypes) returns (ScalarTypes);
+  rpc EchoCustomer(Customer) returns (Customer);
+  rpc EchoOrder(Order) returns (Order);
+  rpc EchoInventory(Inventory) returns (Inventory);
+  rpc EchoOuter(Outer) returns (Outer);
+  rpc EchoOptionalFields(OptionalFields) returns (OptionalFields);
+  rpc EchoWellKnownTypes(WellKnownTypesMessage) returns (WellKnownTypesMessage);
+  rpc EchoPaymentMethod(PaymentMethod) returns (PaymentMethod);
+  rpc EchoNotification(Notification) returns (Notification);
+}

@@ -359,6 +359,93 @@ class Naming(val pkg: jvm.QIdent, lang: Lang) {
     val basePkg = namespace.map(ns => jvm.QIdent(ns)).getOrElse(avroProtocolPackage)
     jvm.Type.Qualified(basePkg / jvm.Ident("Result"))
   }
+
+  // ============================================================================
+  // gRPC/Protobuf naming methods
+  // ============================================================================
+
+  /** Package for gRPC service types */
+  def grpcServicePackage: jvm.QIdent = pkg / jvm.Ident("service")
+
+  /** Message class name from protobuf full name.
+    *
+    * Places the clean type under the user's configured `pkg`, using the simple message name.
+    */
+  def grpcMessageTypeName(protoFullName: String): jvm.Type.Qualified = {
+    val parts = protoFullName.split('.')
+    val messageName = parts.last
+    jvm.Type.Qualified(pkg / jvm.Ident(messageName))
+  }
+
+  /** Enum class name from protobuf full name */
+  def grpcEnumTypeName(protoFullName: String): jvm.Type.Qualified =
+    grpcMessageTypeName(protoFullName)
+
+  /** OneOf sealed interface/trait name.
+    *
+    * Uses MessageNameOneofName as a sibling type to avoid Java file/package name clashes.
+    */
+  def grpcOneofTypeName(messageFullName: String, oneofName: String): jvm.Type.Qualified = {
+    val parts = messageFullName.split('.')
+    val messageName = parts.last
+    val oneofSimpleName = Naming.titleCase(oneofName)
+    jvm.Type.Qualified(pkg / jvm.Ident(messageName + oneofSimpleName))
+  }
+
+  /** OneOf case name for a field within a oneof.
+    *
+    * If TitleCase(fieldName) would collide with the field's message type simple name, appends "Value" suffix.
+    */
+  def grpcOneofCaseName(field: typr.grpc.ProtoField): jvm.Ident = {
+    val baseName = Naming.titleCase(field.name)
+    val fieldTypeSimpleName = field.fieldType match {
+      case typr.grpc.ProtoType.Message(fullName) => fullName.split('.').last
+      case _                                     => ""
+    }
+    if (baseName == fieldTypeSimpleName) jvm.Ident(baseName + "Value")
+    else jvm.Ident(baseName)
+  }
+
+  /** Field name from protobuf field (convert snake_case to camelCase) */
+  def grpcFieldName(protoFieldName: String): jvm.Ident =
+    jvm.Ident(Naming.camelCase(protoFieldName.split("_")))
+
+  /** Enum value name */
+  def grpcEnumValueName(symbol: String): jvm.Ident = {
+    val sanitized = symbol
+      .replace("-", "_")
+      .replace(".", "_")
+    if (sanitized.isEmpty) jvm.Ident("UNKNOWN")
+    else jvm.Ident(sanitized)
+  }
+
+  /** Service interface name */
+  def grpcServiceTypeName(serviceName: String): jvm.Type.Qualified =
+    jvm.Type.Qualified(pkg / jvm.Ident(serviceName))
+
+  /** Server adapter class name */
+  def grpcServerTypeName(serviceName: String): jvm.Type.Qualified =
+    jvm.Type.Qualified(pkg / jvm.Ident(serviceName + "Server"))
+
+  /** Client wrapper class name */
+  def grpcClientTypeName(serviceName: String): jvm.Type.Qualified =
+    jvm.Type.Qualified(pkg / jvm.Ident(serviceName + "Client"))
+
+  /** Wrapper type name from (typr.wrapper) */
+  def grpcWrapperTypeName(wrapperName: String): jvm.Type.Qualified =
+    jvm.Type.Qualified(pkg / jvm.Ident(wrapperName))
+
+  /** Marshaller field/given name. Scala: `marshaller` (given), Java/Kotlin: `MARSHALLER` (static field) */
+  def grpcMarshallerName: jvm.Ident =
+    if (lang.extension == "scala") jvm.Ident("marshaller")
+    else jvm.Ident("MARSHALLER")
+
+  /** Method name for gRPC method (convert PascalCase to camelCase) */
+  def grpcMethodName(protoMethodName: String): jvm.Ident = {
+    val camelCased = protoMethodName.head.toLower + protoMethodName.tail
+    jvm.Ident(camelCased)
+  }
+
 }
 
 object Naming {

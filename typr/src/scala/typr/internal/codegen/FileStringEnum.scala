@@ -13,6 +13,6 @@ object FileStringEnum {
     val comments = scaladoc(s"Enum `${enm.dbEnum.name.value}`" +: enm.members.toList.map { case (_, v) => " - " + v })
 
     val memberExpresions = enm.members.map { case (name, value) => (name, jvm.StrLit(value).code) }
-    jvm.File(enm.tpe, jvm.Enum(Nil, comments, enm.tpe, memberExpresions, instances), secondaryTypes = Nil, scope = Scope.Main)
+    jvm.File(enm.tpe, jvm.Enum(Nil, comments, enm.tpe, memberExpresions, Nil, instances), secondaryTypes = Nil, scope = Scope.Main)
   }
 }
